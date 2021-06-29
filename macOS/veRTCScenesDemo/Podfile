@@ -1,0 +1,9 @@
+
+
+
+target 'veRTC_Demo' do
+  pod 'Masonry'
+  pod 'Socket.IO-Client-Swift', '~> 15.2.0'
+  pod 'YYModel'
+end
+

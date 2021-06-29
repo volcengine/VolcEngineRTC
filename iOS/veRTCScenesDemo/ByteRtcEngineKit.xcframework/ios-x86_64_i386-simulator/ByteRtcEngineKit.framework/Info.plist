@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BuildMachineOSBuild</key>
+	<string>20E241</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>ByteRtcEngineKit</string>
+	<key>CFBundleIdentifier</key>
+	<string>ByteRtcEngineKit</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>ByteRtcEngineKit</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.19.205</string>
+	<key>CFBundleSupportedPlatforms</key>
+	<array>
+		<string>iPhoneOS</string>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>1.0.1</string>
+	<key>DTCompiler</key>
+	<string>com.apple.compilers.llvm.clang.1_0</string>
+	<key>DTPlatformBuild</key>
+	<string>17F65</string>
+	<key>DTPlatformName</key>
+	<string>iphoneos</string>
+	<key>DTPlatformVersion</key>
+	<string>13.5</string>
+	<key>DTSDKBuild</key>
+	<string>17F65</string>
+	<key>DTSDKName</key>
+	<string>iphoneos13.5</string>
+	<key>DTXcode</key>
+	<string>1150</string>
+	<key>DTXcodeBuild</key>
+	<string>11E608c</string>
+	<key>GitCommitSHA</key>
+	<string>add01498875afb56e420e18eed19f25866f9e3a6</string>
+	<key>MinimumOSVersion</key>
+	<string>8.0</string>
+	<key>RealXCommitID</key>
+	<string>62f36bf149ad686f0091b3e1ee509d78a6048939</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+	</array>
+</dict>
+</plist>
