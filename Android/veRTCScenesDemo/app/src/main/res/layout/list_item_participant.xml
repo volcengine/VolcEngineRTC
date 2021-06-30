@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_user_height"
+    tools:background="#1D2129">
+
+    <View
+        android:id="@+id/user_name_highlight"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="14dp"
+        android:background="@drawable/user_avatar_highlight"
+        tools:text="B" />
+
+    <TextView
+        android:id="@+id/user_prefix"
+        android:layout_width="@dimen/item_user_avatar_width"
+        android:layout_height="@dimen/item_user_avatar_height"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/item_user_margin"
+        android:background="@drawable/user_avatar_bg"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="B" />
+
+    <ImageView
+        android:id="@+id/user_right_iv1"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/item_user_margin" />
+
+    <ImageView
+        android:id="@+id/user_right_iv2"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="24dp"
+        android:layout_toLeftOf="@id/user_right_iv1" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="9dp"
+        android:layout_toRightOf="@id/user_prefix"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/user_txt_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#E5E6EB"
+            android:textSize="@dimen/txt_H3_14sp"
+            tools:text="用户名" />
+
+        <TextView
+            android:id="@+id/user_host_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_txt_tv"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:text="主持人"
+            android:textColor="#4080FF"
+            android:textSize="@dimen/txt_H3_14sp" />
+
+        <ImageView
+            android:id="@+id/user_share_screen_status"
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:layout_alignTop="@id/user_txt_tv"
+            android:layout_alignBottom="@id/user_txt_tv"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/user_txt_tv"
+            android:src="@drawable/screen_share_on"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:background="#1AFFFFFF" />
+</RelativeLayout>

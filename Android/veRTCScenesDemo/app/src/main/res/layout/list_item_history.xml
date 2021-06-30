@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/meeting_record_url"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="50dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        tools:ignore="RtlHardcoded"
+        tools:text="https://www.figma.com/file/S03zuVFFcsD9MaUsIxFHUj/RTC%E8%A7%86%E9%A2%91%E4%BC%9A%E8%AE%AEDemo?node-id=522%3A0" />
+
+    <ImageView
+        android:id="@+id/meeting_record_arrow"
+        android:layout_width="14dp"
+        android:layout_height="26dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/more_arrow"
+        tools:ignore="ContentDescription,RtlHardcoded" />
+</RelativeLayout>
