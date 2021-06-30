@@ -1953,10 +1953,10 @@ public:
 		{
 			MDICREATESTRUCT * pMDIC = (MDICREATESTRUCT *)((LPCREATESTRUCT)lParam)->lpCreateParams;
 			pWindow = (BDWndImplBaseT< TBase, TWinTraits > *)(pMDIC->lParam);
-			SetWindowLong(hWnd, GWL_USERDATA, (LONG)pWindow);
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pWindow);
 		}
 		else
-			pWindow = (BDWndImplBaseT< TBase, TWinTraits > *)GetWindowLong(hWnd, GWL_USERDATA);
+			pWindow = (BDWndImplBaseT< TBase, TWinTraits > *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
 		if (pWindow) {
 			// Save current Msg
