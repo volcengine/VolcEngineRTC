@@ -1,0 +1,53 @@
+# Autodetect text files
+* text=auto
+# Force the following filetypes to have unix eols, so Windows does not break them
+* text eol=native
+*.vcxproj -text
+*.material binary
+*.mesh binary
+*.xshader binary
+*.texture binary
+*.rt binary
+*.scene binary
+*.animaz binary
+*.jpg binary
+*.exe binary
+*.zip binary
+*.tar.gz binary
+*.pcm binary
+*.yuv binary
+*.so binary
+*.data binary
+*.jar binary
+*.aar binary
+*.mp3 binary
+*.png binary
+*.dll binary
+*.ico binary
+*.lib binary
+*.rc binary
+*.pdb binary
+*.sym binary
+*.xmind
+*.dylib binary
+*.a binary
+*.la binary
+*.lai binary
+*.lo binary
+*.sqllite binary
+*.exe binary
+*.gz filter=lfs diff=lfs merge=lfs -text
+*.bz2 filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.rar filter=lfs diff=lfs merge=lfs -text
+*.jar filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
+*.a filter=lfs diff=lfs merge=lfs -text
+*.dylib filter=lfs diff=lfs merge=lfs -text
+*.pdb filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.lib filter=lfs diff=lfs merge=lfs -text
+*.meatllib filter=lfs diff=lfs merge=lfs -text
+*.weights filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.aar filter=lfs diff=lfs merge=lfs -text
