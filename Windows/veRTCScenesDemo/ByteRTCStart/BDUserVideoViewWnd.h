@@ -327,6 +327,7 @@ public:
     }
 
     void Reset() {
+        m_showHeader = false;
         m_have_stream = false;
         m_highlight = false;
         m_frist_video_frame = false;
@@ -336,7 +337,7 @@ public:
 private:
     void SubScribeStream(bool show) {
         if (!m_name.empty() && m_type == REMOTE_USER) {
-            bool subVideo = !m_showHeader && m_have_stream && show;
+            bool subVideo = (m_screen_view || !m_showHeader) && m_have_stream && show;
             if (subVideo) {
                 EngineWrapper::GetInstance()->SubscribeVideoStream(m_name.c_str(), { m_screen_view, subVideo });
             } else {

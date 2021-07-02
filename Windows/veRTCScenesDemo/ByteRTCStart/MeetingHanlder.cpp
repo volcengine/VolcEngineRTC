@@ -378,6 +378,7 @@ void BDMainContainerFrame::StartScreenShare(const SnapshotAttr& shared, const Sn
                         excluded.push_back(m_controlWnd->GetTipHandler());
                     }
                     excluded.push_back(m_bubbleTipWnd.m_hWnd);
+                    excluded.push_back(m_leaveWnd.m_hWnd);
                     EngineWrapper::GetInstance()->startScreenCapture(shared.source_id, excluded);
                     break;
                 }
