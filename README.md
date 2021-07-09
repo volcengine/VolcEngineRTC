@@ -13,7 +13,7 @@
 
 功能新增
 1. 增加会议Demo场景。
-2. 支持iOS，macOS，Android，Windows
+2. 支持iOS，macOS，Android，Windows。
 
 ## Demo 体验地址
 
