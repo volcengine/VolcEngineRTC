@@ -2,7 +2,7 @@
 //  ParticipantTableRowView.h
 //  veRTC_Demo
 //
-//  Created by on 2021/4/26.
+//  Created by  on 2021/4/26.
 //
 
 #import <Cocoa/Cocoa.h>

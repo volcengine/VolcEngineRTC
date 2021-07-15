@@ -2,7 +2,7 @@
 //  MeetingControlCompoments.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,6 +12,9 @@
 #import "MeetingControlAckModel.h"
 #import "LoginModel.h"
 #import "MeetingSocketIOManager.h"
+#import "MenuUpgradeModel.h"
+#import "BaseUserModel.h"
+#import "RoomUserModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,9 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * Join the meeting
  * @param loginModel Login user data
+ * @param user User lists
  * @param block Callback
  */
-+ (void)joinMeeting:(LoginModel *)loginModel block:(void (^)(NSString *token, MeetingControlAckModel *model))block;
++ (void)joinMeeting:(LoginModel *)loginModel block:(void (^)(NSString *token, NSArray<RoomUserModel *> *userLists, MeetingControlAckModel *model))block;
 
 /*
  * Leave Meeting
@@ -143,6 +147,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)updateRecordLayout:(NSArray *)uids screenId:(NSString *)screenId;
 
+/*
+ * Delete Video Record
+ * @param vid Vid
+ * @param block Callback
+ */
++ (void)deleteVideoRecord:(NSString *)vid block:(void (^)(MeetingControlAckModel *ackModel))block;
 
 #pragma mark - Notification message
 
@@ -229,6 +239,38 @@ NS_ASSUME_NONNULL_BEGIN
  * @param block Callback
  */
 + (void)onAskingCameraOnWithBlock:(void (^)(NSString *uid))block;
+
+#pragma mark - Upgrade
+
+/*
+ * Get updates
+ * @param block Callback
+ */
++ (void)getAuditState:(void (^)(MenuUpgradeModel *upgradeModel, MeetingControlAckModel *ackModel))block;
+
+#pragma mark - Login
+
+/*
+ * login
+ * @param name User Name
+
+ * @param block Callback
+ */
++ (void)login:(NSString *)name block:(void (^)(BaseUserModel *userModel, MeetingControlAckModel *ackModel))block;
+
+/*
+ * Change User Name
+ * @param userModel User model
+ * @param block Callback
+ */
++ (void)changeUserName:(BaseUserModel *)userModel block:(void (^)(MeetingControlAckModel *ackModel))block;
+
+
+/*
+ * Verify login token
+ */
++ (void)verifyLoginToken;
+
 
 @end
 

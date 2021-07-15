@@ -2,7 +2,7 @@
 //  MeetingSocketIOManager.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import "MeetingSocketIOManager.h"
@@ -126,8 +126,9 @@ typedef NS_ENUM(NSInteger, MeetingConnectStatus) {
     [self.socket connect];
 }
 
-- (void)connect {
-    [self.socket connect];
+- (void)disConnect {
+    [self.timer suspend];
+    [self.manager disconnect];
 }
 
 #pragma mark - set
@@ -147,21 +148,22 @@ typedef NS_ENUM(NSInteger, MeetingConnectStatus) {
 - (void)socketOnSuccess {
     if (self.connectStatus == MeetingConnectStatusFailure) {
         self.connectStatus = MeetingConnectStatusIng;
+        __weak __typeof(self) wself = self;
         [MeetingControlCompoments reconnectWithBlock:^(MeetingControlAckModel * _Nonnull model) {
             NSString *type = @"";
             if (model.result) {
                 type = @"resume";
-                self.connectStatus = MeetingConnectStatusSuccess;
+                wself.connectStatus = MeetingConnectStatusSuccess;
             } else if (model.code == 404 || model.code == 422) {
                 type = @"exit";
-                self.connectStatus = MeetingConnectStatusNone;
+                wself.connectStatus = MeetingConnectStatusNone;
             } else {
                 //reconnect
             }
             if (type.length > 0) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMeetingControlChange object:type];
-                [self showSocketConnectStatus:YES];
             }
+            [wself showSocketConnectStatus:YES];
         }];
     } else {
         self.connectStatus = MeetingConnectStatusSuccess;

@@ -2,7 +2,7 @@
 //  MeetingControlTool.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/17.
+//  Created by  on 2021/3/17.
 //
 
 #import "MeetingControlTool.h"
@@ -42,6 +42,9 @@
                 message = dic[@"message"];
             }
             model.message = message;
+            if (model.code == 450) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NotificationLoginExpired object:nil];
+            }
         }
     }
     return model;
@@ -55,6 +58,21 @@
             break;
         case 412:
             message = @"屏幕共享发起失败，请提示前一位参会者结束共享";
+            break;
+        case 422:
+            message = @"房间已经解散";
+            break;
+        case 430:
+            message = @"输入内容包含敏感词，请重新输入";
+            break;
+        case 440:
+            message = @"验证码过期，请重新发送验证码";
+            break;
+        case 441:
+            message = @"验证码不正确，请重新发送验证码";
+            break;
+        case 450:
+            message = @"登录已经过期，请重新登录";
             break;
         case 503:
             message = @"全体静音失败，请重试";
@@ -83,5 +101,16 @@
     return model;
 }
 
++ (NSDictionary *)addToken:(NSDictionary *)dic {
+    NSMutableDictionary *tokenDic = nil;
+    if (dic && [dic isKindOfClass:[NSDictionary class]] && dic.count > 0) {
+        tokenDic = [dic mutableCopy];
+        [tokenDic setValue:[MenuTokenCompoments token] forKey:@"login_token"];
+    } else {
+        tokenDic = [[NSMutableDictionary alloc] init];
+        [tokenDic setValue:[MenuTokenCompoments token] forKey:@"login_token"];
+    }
+    return [tokenDic copy];
+}
 
 @end

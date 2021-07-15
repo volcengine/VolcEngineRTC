@@ -2,7 +2,7 @@
 //  LoginModel.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/15.
+//  Created by  on 2021/3/15.
 //
 
 #import <Foundation/Foundation.h>
@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *token;
 
 @property (nonatomic, copy) NSString *uid;
+
+@property (nonatomic, copy) NSString *name;
 
 @property (nonatomic, copy) NSString *roomId;
 

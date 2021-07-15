@@ -2,7 +2,7 @@
 //  MeetingControlUserModel.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MeetingControlUserModel : NSObject
 
 @property (nonatomic, copy) NSString *user_id;
+
+@property (nonatomic, copy) NSString *user_name;
+
+@property (nonatomic, copy) NSString *user_uniform_id;
 
 @property (nonatomic, copy) NSString *room_id;
 

@@ -2,7 +2,7 @@
 //  RoomViewController+Listener.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import "RoomViewController+Listener.h"
@@ -12,57 +12,64 @@
 - (void)addSocketListener {
     __weak __typeof(self) wself = self;
     [MeetingControlCompoments onUserMicStatusChangeWithBlock:^(NSString * _Nonnull uid, BOOL result) {
-        //update par ui
-        if (wself && wself.participantViewController) {
-            [wself.participantViewController updateUserMicStatus:result uid:uid];
+        if (wself) {
+            [wself updateRenderModeViewWithMicStatus:uid enableMic:result];
         }
-        [wself updateRenderModeViewWithMicStatus:uid enableMic:result];
+    }];
+    
+    //Camera change
+    [MeetingControlCompoments onUserCameraStatusChangeWithBlock:^(NSString * _Nonnull uid, BOOL result) {
+        //update par ui
+        if (wself) {
+            [wself updateRenderModeViewWithCameraStatus:uid enableCamera:result];
+        }
+    }];
+    
+    //Mute all user microphone
+    [MeetingControlCompoments onMuteAllWithBlock:^(BOOL result) {
+        if (wself) {
+            //update self
+            if (![wself.currentRoomModel.host_id isEqualToString:[LocalUserCompoments userModel].uid]) {
+                if (wself.loginModel.isEnableAudio) {
+                    wself.loginModel.isEnableAudio = NO;
+                    [wself updateRenderModeViewWithMicStatus:[LocalUserCompoments userModel].uid enableMic:NO];
+                    [[MeetingRTCManager shareMeetingRTCManager] enableLocalAudio:NO];
+                    [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
+                    [wself.roomBottomBarView updateButtonStatus:BottomBarStatusMic close:YES];
+                }
+            }
+            //update all user
+            [wself updateRenderModeViewWithMicStatus:@"" enableMic:NO];
+        }
     }];
 
     //Microphone change group notice
     [MeetingControlCompoments onMuteUserWithBlock:^(NSString * _Nonnull uid) {
         if (wself) {
-            if ([uid isEqualToString:wself.loginModel.uid]) {
+            if ([uid isEqualToString:[LocalUserCompoments userModel].uid]) {
                 //Close microphone
                 wself.loginModel.isEnableAudio = NO;
                 [MeetingControlCompoments turnOffMic];
+                [wself updateRenderModeViewWithMicStatus:uid enableMic:NO];
                 [[MeetingRTCManager shareMeetingRTCManager] enableLocalAudio:NO];
                 [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
                 [wself.roomBottomBarView updateButtonStatus:BottomBarStatusMic close:YES];
             }
-            //update par ui
-            if (wself.participantViewController) {
-                [wself.participantViewController updateUserMicStatus:NO uid:uid];
-            }
-
         }
     }];
 
-    //Camera change
-    [MeetingControlCompoments onUserCameraStatusChangeWithBlock:^(NSString * _Nonnull uid, BOOL result) {
-        //update par ui
-        if (wself) {
-            if (wself.participantViewController) {
-                [wself.participantViewController updateUserCameraStatus:result uid:uid];
-            }
-            [wself updateRenderModeViewWithCameraStatus:uid enableCamera:result];
-        }
-    }];
 
     //Asking Microphone On
     [MeetingControlCompoments onAskingMicOnWithBlock:^(NSString * _Nonnull uid) {
-        if (wself && [uid isEqualToString:wself.loginModel.uid]) {
+        if (wself && [uid isEqualToString:[LocalUserCompoments userModel].uid]) {
             //Open microphone
             [[MeetingAlertCompoments share] showWithTitle:@"主持人邀请你打开麦克风" clickBlock:^(BOOL result) {
                 if (result) {
-                    [MeetingControlCompoments turnOnMic];
-                    [[MeetingRTCManager shareMeetingRTCManager] enableLocalAudio:YES];
                     wself.loginModel.isEnableAudio = YES;
+                    [MeetingControlCompoments turnOnMic];
                     [wself updateRenderModeViewWithMicStatus:uid enableMic:YES];
+                    [[MeetingRTCManager shareMeetingRTCManager] enableLocalAudio:YES];
                     [wself.roomBottomBarView updateButtonStatus:BottomBarStatusMic close:NO];
-                    if (wself.participantViewController) {
-                        [wself.participantViewController updateUserMicStatus:YES uid:uid];
-                    }
                 }
             }];
         }
@@ -73,26 +80,7 @@
         if (wself) {
             //update par and render ui
             wself.currentRoomModel.host_id = hostUid;
-            [wself updateCurrentUserListHostStatus];
-            [wself updateRenderModeViewUserRankeWithAudioVolume:nil];
-            wself.participantViewController.isLoginHost = [wself.loginModel.uid isEqualToString:hostUid] ? YES : NO;
-            [wself.participantViewController updateUserHostStatusWithUid:hostUid];
-        }
-    }];
-
-    //Mute all user microphone
-    [MeetingControlCompoments onMuteAllWithBlock:^(BOOL result) {
-        if (wself) {
-            if (![wself.currentRoomModel.host_id isEqualToString:wself.loginModel.uid]) {
-                if (wself.loginModel.isEnableAudio) {
-                    wself.loginModel.isEnableAudio = NO;
-                    [wself updateRenderModeViewWithMicStatus:wself.loginModel.uid enableMic:NO];
-                    [[MeetingRTCManager shareMeetingRTCManager] enableLocalAudio:NO];
-                    [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
-                    [wself.roomBottomBarView updateButtonStatus:BottomBarStatusMic close:YES];
-                }
-            }
-            [wself.participantViewController updateUserMicStatus:NO uid:@""];
+            [wself updateRenderModeViewWithHost:hostUid];
         }
     }];
 
@@ -100,17 +88,17 @@
     [MeetingControlCompoments onUserJoinMeetingWithBlock:^(MeetingControlUserModel * _Nonnull model) {
         if (wself) {
             RoomUserModel *roomUserModel = [RoomUserModel roomUserModelToMeetingControlUserModel:model];
-            if (![roomUserModel.name isEqualToString:wself.loginModel.uid]) {
+            if (![roomUserModel.uid isEqualToString:[LocalUserCompoments userModel].uid]) {
                 [wself addUser:roomUserModel];
             }
-            [wself.participantViewController loadDataWithGetMeetingUserInfo];
         }
     }];
 
     //User Leave
     [MeetingControlCompoments onUserLeaveMeetingWithBlock:^(NSString * _Nonnull uid) {
-        [wself removeUser:uid];
-        [wself.participantViewController loadDataWithGetMeetingUserInfo];
+        if (wself) {
+            [wself removeUser:uid];
+        }
     }];
     
     //User Kicked Off
@@ -136,11 +124,10 @@
             //uid
             dispatch_async(dispatch_get_main_queue(), ^{
                 wself.currentRoomModel.screen_shared_uid = result ? uid : @"";
-                if (!result || ![uid isEqualToString:wself.loginModel.uid]) {
+                if (!result || ![uid isEqualToString:[LocalUserCompoments userModel].uid]) {
                     [wself updateModeWithStatus:result ? RoomModeStatusSpaker : RoomModeStatusGallery];
                 }
                 [wself updateRenderModeViewWithScreenStatus:uid enableScreen:result];
-                [wself.participantViewController updateUserScreenStatus:result uid:uid];
                 [wself.roomBottomBarView updateButtonStatus:BottomBarStatusScreenShare close:result];
             });
         }
@@ -155,13 +142,13 @@
 }
 
 - (void)meetingEnd {
-    if ([self.currentRoomModel.screen_shared_uid isEqualToString:self.loginModel.uid]) {
+    if ([self.currentRoomModel.screen_shared_uid isEqualToString:[LocalUserCompoments userModel].uid]) {
         //User screen sharing
         [[NSNotificationCenter defaultCenter] postNotificationName:NoticeCloseEndWindowName object:@"leave"];
     } else {
         [self hangUpAction];
     }
-    if (![self.currentRoomModel.host_id isEqualToString:self.loginModel.uid]) {
+    if (![self.currentRoomModel.host_id isEqualToString:[LocalUserCompoments userModel].uid]) {
         //host does not need to be toast
     }
 }

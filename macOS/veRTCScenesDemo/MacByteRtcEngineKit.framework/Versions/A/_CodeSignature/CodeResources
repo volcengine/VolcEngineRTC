@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		n+ZZKHh35fn4Kx2cZkfZqtkTADY=
+		wvYl/hvp+bsbwbWMUMH444eUKHQ=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,11 +15,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			nYMXOOTIUgE3R94zi/QJe8psbF8=
+			l38wa/aKMq8U+JQqsUtYjamZt7k=
 			</data>
 			<key>hash2</key>
 			<data>
-			ND/35FM2IP0cJ8bSlylZM3wXTdOU0dzqFHNKrGS18KA=
+			4dyIVg+wf8GtqDbu4kr2NNwaXb4eVveyQdK4h1BLYRg=
 			</data>
 		</dict>
 		<key>Headers/ByteRtcRoom.h</key>
@@ -37,22 +37,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			ONdBM2h0q9Hw4RkEk+4LgUAcQKg=
+			8bNlhurrc4cOTBwxQ6jMeO7SnNg=
 			</data>
 			<key>hash2</key>
 			<data>
-			eaOiUScss/bae656k0HV4NzmjC5bYzqzPAoPrtYEwc4=
+			lm+vOA3WmRQZGTC9CfROLJKqRRFiD3ks1bkzKNkcNcA=
 			</data>
 		</dict>
 		<key>Headers/byte_rtc_engine_kit.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			nW83hxDeq7Skomg+H5K58Aw4cIs=
+			HKtV+X5cfanjvZer5EZb243E+Sc=
 			</data>
 			<key>hash2</key>
 			<data>
-			/RzESt4GT3y3FvY3dq/nTkgZ5WBc3WdlDVbzVk+6mZA=
+			RjPuOwmwJYNreUEKr6WiRCFLq0ncyl5ZsWxRI1V5R48=
 			</data>
 		</dict>
 		<key>Headers/byte_rtc_engine_kit_advance.h</key>
@@ -81,11 +81,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			n+ZZKHh35fn4Kx2cZkfZqtkTADY=
+			wvYl/hvp+bsbwbWMUMH444eUKHQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			lLccq2rgLEwHDMPxCjE0edDIcQDp/u42Z6qdoqywgiA=
+			jSy4eWrDGYXJU9Fzd819tWuxUUkcVliaTX2W2VrlXKQ=
 			</data>
 		</dict>
 	</dict>

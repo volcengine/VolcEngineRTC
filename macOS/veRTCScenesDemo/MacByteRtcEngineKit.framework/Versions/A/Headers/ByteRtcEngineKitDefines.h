@@ -2281,4 +2281,31 @@ BYTE_RTC_EXPORT @interface ByteRtcScreenCaptureSourceInfo : NSObject
 
 @end
 
+/**
+ * @type keytype
+ * @brief 用户机型等级信息。
+ *        在部分应用场景下，需要关注用户机型的配置高低，根据不同的配置，选择不同复杂度的音频处理算法，在能耗、用户体验上进行折中。
+*/
+typedef NS_ENUM(NSUInteger, ByteAudioPerformanceProfile) {
+    /**
+     * @brief 自动策略，SDK 会在加入房间时上传机型信息。服务端根据机型信息判断性能级别，下发对应配置。
+    */
+    kByteAudioPerformanceProfileAuto = 0,
+    /**
+     * @brief 低配策略，关闭 AEC、ANS、AGC 算法，播放 sample rate 为 16000。
+     *        策略内容可以定制，联系销售咨询具体方案
+    */
+    kByteAudioPerformanceProfileLow = 1,
+    /**
+     * @brief 中配策略，开启 AEC、ANS、AGC 算法，播放 sample rate 为 16000。
+     *        策略内容可以定制，联系销售咨询具体方案
+    */
+    kByteAudioPerformanceProfileMid = 2,
+    /**
+     * @brief 高配策略，开启 AEC、ANS、AGC 算法，播放 sample rate 为 48000。
+     *        策略内容可以定制，联系销售咨询具体方案
+    */
+    kByteAudioPerformanceProfileHigh = 3
+};
+
 #endif /* Header_h */

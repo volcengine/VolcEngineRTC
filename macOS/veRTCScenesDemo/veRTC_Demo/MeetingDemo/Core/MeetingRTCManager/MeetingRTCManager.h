@@ -2,7 +2,7 @@
 //  MeetingRTCManager.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/3.
+//  Created by  on 2021/3/3.
 //
 
 #import <Foundation/Foundation.h>
@@ -20,19 +20,17 @@
 
 @protocol MeetingRTCManagerDelegate <NSObject>
 
-- (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didStreamAdded:(NSArray<NSString *> *_Nullable)streamsUid;
+- (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didStreamAdded:(NSString *_Nullable)streamsUid;
 
 - (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didScreenStreamAdded:(NSString *_Nullable)screenStreamsUid;
 
-- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didStreamRemoved:(NSArray<NSString *> *_Nullable)streamsUid;
+- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didStreamRemoved:(NSString *_Nullable)streamsUid;
 
 - (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didScreenStreamRemoved:(NSString *_Nonnull)screenStreamsUid;
 
 - (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager reportRtcParamModel:(ParamModel *_Nonnull)paramModel;
 
 - (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager reportAudioVolume:(NSDictionary<NSString *, ByteRtcAudioVolumeInfo *> *_Nonnull)volumeInfo;
-
-- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager reportAllAudioVolume:(NSDictionary<NSString *, NSNumber *> *_Nonnull)volumeInfo;
 
 @end
 

@@ -2,7 +2,7 @@
 //  LoginBottonErrorView.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/11.
+//  Created by  on 2021/3/11.
 //
 
 #import <Cocoa/Cocoa.h>

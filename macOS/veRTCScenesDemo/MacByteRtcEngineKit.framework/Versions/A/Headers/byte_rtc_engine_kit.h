@@ -49,28 +49,6 @@
 /**
  *  @type callback
  *  @region 网络连接
- *  @brief SDK 与信令服务器连接中断回调。
- *  @param engine ByteRtcEngineKit 对象
- *  @notes
- *         1.当 SDK 检测到与信令服务器的网络连接中断时回调该事件；
- *         2.除非主动调用 leaveChannel:{@link #leaveChannel:} ，否则 SDK 会一直尝试重连。
- */
-- (void)rtcEngineConnectionDidInterrupted:(ByteRtcEngineKit * _Nonnull)engine;
-
-/**
- *  @type callback
- *  @region 网络连接
- *  @brief SDK 与信令服务器连接断开回调。
- *  @param engine ByteRtcEngineKit 对象
- *  @notes
- *         1.当 SDK 与信令服务器的网络连接断开超过 10 秒时回调该事件;
- *         2.除非主动调用 leaveChannel:{@link #leaveChannel:} ，否则 SDK 会一直尝试重连。
- */
-- (void)rtcEngineConnectionDidLost:(ByteRtcEngineKit * _Nonnull)engine;
-
-/**
- *  @type callback
- *  @region 网络连接
  *  @brief SDK 当前网络连接类型改变回调。
  *  @param engine ByteRtcEngineKit 对象
  *  @param type SDK 当前的网络连接类型，详见：ByteRtcNetworkType{@link #ByteRtcNetworkType}
@@ -296,7 +274,7 @@
  *  @param elapsed 从开始订阅音频流到收到该事件经历的时间（毫秒单位）
  */
 - (void)rtcEngine:(ByteRtcEngineKit * _Nonnull)engine firstRemoteAudioFrameOfUid:(NSString * _Nonnull)uid elapsed:(NSInteger)elapsed;
-    
+
 /**
  * @hidden
  * @type callback
@@ -304,7 +282,7 @@
  * @brief 远端用户静音/取消静音所有远端音频流时回调
  *        1. 提示该远端用户对房间内其他所有用户静音/取消静音了音频流
  *        2. 该回调由远端用户调用 MuteAllRemoteAudioStreams{@link #IRtcRoom#MuteAllRemoteAudioStreams} 或 UnmuteAllRemoteAudioStreams{@link #IRtcRoom#UnmuteAllRemoteAudioStreams} 触发
- * @param uid 远端用户 ID 
+ * @param uid 远端用户 ID
  * @param muted  YES: 该用户静音所有远端音频流；NO: 该用户取消静音了所有远端音频流
  */
 - (void)rtcEngine:(ByteRtcEngineKit * _Nonnull)engine didAllRemoteAudioMuted:(BOOL)muted byUid:(NSString * _Nonnull)uid;
@@ -556,11 +534,11 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 引擎管理
  * @brief 创建引擎对象，此方法应该作为正常 SDK 流程中的第一步操作，通过创建一个引擎实例，来使用 SDK 的其他能力
- * @param appId 每个应用的唯一标识符，由 VRTC 控制台随机生成的。不同的 AppId 生成的实例在 VRTC 
+ * @param appId 每个应用的唯一标识符，由 VRTC 控制台随机生成的。不同的 AppId 生成的实例在 VRTC
  *              中进行音视频通话完全独立，无法互通。
  * @param delegate SDK 回调给应用层的 delegate，详见 ByteRtcEngineDelegate{@link #ByteRtcEngineDelegate}
  * @return 可用的 ByteRtcEngineKit{@link #ByteRtcEngineKit} 实例
- * @notes 
+ * @notes
  *      1. 该方法在第一次调用时初始化一个 RTCEngine 单例，除非调用 destroy{@link #destroy} 方法，否则后续的所有调用均
  *      返回同一个内部实例
  *      2. 连续多次调用该方法不会创建不同的 ByteRtcEngineKit{@link #ByteRtcEngineKit}，该方法应该与 destroy{@link #destroy}
@@ -569,17 +547,17 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  */
 + (instancetype _Nonnull)sharedEngineWithAppId:(NSString * _Nonnull)appId
                                       delegate:(id<ByteRtcEngineDelegate> _Nullable)delegate;
-                                      
+
 /**
  * @type api
  * @region 引擎管理
  * @brief 创建引擎对象，此方法应该作为正常 SDK 流程中的第一步操作，通过创建一个引擎实例，来使用 SDK 的其他能力
- * @param appId 每个应用的唯一标识符，由 VRTC 控制台随机生成的。不同的 AppId 生成的实例在 VRTC 
+ * @param appId 每个应用的唯一标识符，由 VRTC 控制台随机生成的。不同的 AppId 生成的实例在 VRTC
  *              中进行音视频通话完全独立，无法互通。
  * @param delegate SDK 回调给应用层的 delegate，详见 ByteRtcEngineDelegate{@link #ByteRtcEngineDelegate}
  * @param parameters 用以覆盖全局参数，详情可见 setParameters{@link #setParameters}
  * @return 可用的 ByteRtcEngineKit{@link #ByteRtcEngineKit} 实例
- * @notes 
+ * @notes
  *      1. 连续多次调用该方法会创建不同的 ByteRtcEngineKit{@link #ByteRtcEngineKit}
  *      2. 必须使用相同的App ID，App间才能进行通话
  */
@@ -616,7 +594,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
 /**
  * @type api
  * @region 引擎管理
- * @brief 手动销毁引擎实例对象，如果当前的引擎对象是通过 sharedEngineWithAppId:delegate:{@link #sharedEngineWithAppId:delegate:} 
+ * @brief 手动销毁引擎实例对象，如果当前的引擎对象是通过 sharedEngineWithAppId:delegate:{@link #sharedEngineWithAppId:delegate:}
  *      所创建的，则行为与 destroy{@link #destroy} 保持一致
  * @notes
  *      1. 请确保一定是在所有业务场景的最后阶段才调用该方法
@@ -895,7 +873,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @region 音频管理
  *  @brief 开启/关闭本地音频采集。
  *  @param enabled YES:开启本地音频采集（默认）; NO:关闭本地音频采集
- *  @return    
+ *  @return
  *           0：方法调用成功；
  *         < 0： 方法调用失败
  *  @notes 调用该方法后，房间中的其他用户会收到 rtcEngine:didLocalAudioEnabled:byUid:{@link #rtcEngine:didLocalAudioEnabled:byUid:} 事件回调。
@@ -941,7 +919,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @region 音频管理
  *  @brief 静音本地音频流
  *  @param mute YES: 静音本地音频流；NO: 关闭静音本地音频流（默认）
- *  @return   
+ *  @return
  *           0：方法调用成功；
  *         < 0： 方法调用失败
  *  @notes
@@ -956,7 +934,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @brief 静音/取消静音指定用户的音频流。
  *  @param uid 指定远端用户的ID
  *  @param mute YES:静音指定用户音频流；NO:取消对指定用户音频流的静音
- *  @return 
+ *  @return
  *           0：方法调用成功；
  *         < 0： 方法调用失败
 */
@@ -967,7 +945,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @region 音频管理
  *  @brief 静音/取消静音所有音频流
  *  @param mute YES: 静音所有音频流；NO: 取消静音所有音频流
- *  @return 
+ *  @return
  *           0：方法调用成功；
  *         < 0：方法调用失败
  *  @notes 本方法只控制本地是否静音远端音频流，并不能控制远端音频设备的采集发送功能
@@ -1038,7 +1016,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @region 视频管理
  *  @brief 推送共享桌面的视频帧。
  *  @param frame 视频帧数据，详见：ByteRtcVideoFrameData{@link #ByteRtcVideoFrameData}
- *  @return   YES: 推送成功; 
+ *  @return   YES: 推送成功;
  *             NO: 推送失败;
 */
 - (bool)pushScreenFrame:(ByteRtcVideoFrameData * _Nonnull)frame;
@@ -1234,7 +1212,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 混音
  * @brief 获取音乐文件时长
- * @return 
+ * @return
  *        > 0: 成功, 音乐文件时长，单位为毫秒。
  *        < 0: 失败
  * @notes 请在房间内调用该方法。
@@ -1245,7 +1223,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 混音
  * @brief 获取音乐文件播放进度
- * @return 
+ * @return
  *        > 0: 成功, 音乐文件播放进度，单位为毫秒。
  *        < 0: 失败
  * @notes 请在房间内调用该方法。
@@ -1259,8 +1237,8 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @return
  *       0：成功
  *     < 0：失败
- * @notes 
- *      1. 调用 startAudioMixing:loopback:replace:cycle:{@link #startAudioMixing:loopback:replace:cycle:} 开始播放音乐文件及混音后，调用该方法可以停止播放音乐文件及混音。 
+ * @notes
+ *      1. 调用 startAudioMixing:loopback:replace:cycle:{@link #startAudioMixing:loopback:replace:cycle:} 开始播放音乐文件及混音后，调用该方法可以停止播放音乐文件及混音。
  *      2. 请在房间内调用该方法。
  */
 - (int)stopAudioMixing;
@@ -1272,7 +1250,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 调用 startAudioMixing:loopback:replace:cycle:{@link #startAudioMixing:loopback:replace:cycle:} 开始播放音乐文件及混音后，可以通过调用该方法暂停播放音乐文件。
  *      2. 暂停播放音乐文件后，可调用 resumeAudioMixing{@link #resumeAudioMixing} 方法恢复播放。
  *      3. 请在房间内调用该方法
@@ -1286,7 +1264,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 调用 pauseAudioMixing{@link #pauseAudioMixing} 暂停播放音乐文件后，可以通过该方法恢复播放。
  *      2. 请在房间内调用该方法
  */
@@ -1295,13 +1273,13 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
 /**
  * @type api
  * @region 混音
- * @brief 调节音乐文件的文件音量。   
- * @param volume 
- *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量   
+ * @brief 调节音乐文件的文件音量。
+ * @param volume
+ *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *        1. 该方法同时调节的是本地和远端播放音量。仅调节本端音量可使用 adjustAudioMixingPlayoutVolume{@link #adjustAudioMixingPlayoutVolume:} ， 仅调节远端音量可使用 adjustAudioMixingPublishVolume{@link #adjustAudioMixingPublishVolume:} 。
  *        2. 该方法对 adjustAudioMixingPlayoutVolume{@link #adjustAudioMixingPlayoutVolume:} 和 adjustAudioMixingPublishVolume{@link #adjustAudioMixingPublishVolume:} 的音量调节影响是乘积关系。
  *        3. 请在房间内调用该方法。
@@ -1314,7 +1292,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @brief 开始播放音乐文件及混音。
  * @param  filePath
  *        指定需要混音的本地文件的绝对路径。支持音频文件格式有: mp3，aac，m4a，3gp，wav。
- * @param  loopback 
+ * @param  loopback
  *        YES: 只有本地可以听到混音或替换后的音频流。
  *        NO: 本地和对方都可以听到混音或替换后的音频流
  * @param  replace
@@ -1356,12 +1334,12 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 混音
  * @brief 调节音乐文件的本地播放音量
- * @param  volume 
+ * @param  volume
  *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 该方法调节混音的音乐文件在本地播放的音量大小。
  *      2. 请在房间内调用该方法。
  */
@@ -1371,12 +1349,12 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 混音
  * @brief 调节音乐文件的远端播放音量
- * @param volume 
+ * @param volume
  *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *       1. 该方法调节混音的音乐文件在远端播放的音量大小。如果需要同时调节本地和远端播放音量可使用 AdjustAudioMixingVolume{@link #AdjustAudioMixingVolume:} 方法。
  *       2. 请在房间内调用该方法。
  */
@@ -1386,13 +1364,13 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 调节指定音效文件的文件音量
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性。确保此处的 soundId 与  playEffect:filePath:loopback:cycle:withVolume:{@link #playEffect:filePath:loopback:cycle:withVolume:} 设置的 soundId 相同。
  * @param volume 音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 该方法调节音效文件在本地和远端播放的音量大小。
  *      2. 请在房间内调用该方法。
  */
@@ -1403,9 +1381,9 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 获取指定音效文件的文件音量
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性。确保此处的 soundId 与  playEffect:filePath:loopback:cycle:withVolume:{@link #playEffect:filePath:loopback:cycle:withVolume:} 设置的 soundId 相同。
- * @return 
+ * @return
  *        > 0: 成功，文件音量，音量范围为 0~400。
  *        < 0: 失败
  * @notes 请在房间内调用该方法。
@@ -1416,22 +1394,22 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 开始播放指定音效文件。你可以在该方法中设置音效文件的播放次数、音量大小，以及远端用户是否能听到该音效。
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性。如果已经通过 preloadEffect:filePath:{@link #preloadEffect:filePath:}  将音效加载至内存，确保此处的 soundId 与 preloadEffect:filePath:{@link #preloadEffect:filePath:} 设置的 soundId 相同。
- * @param filePath 
+ * @param filePath
  *        指定需要混音的音频文件名和文件路径名。支持以下音频格式: mp3，aac，m4a，3gp，wav
- * @param loopback 
+ * @param loopback
  *        YES: 只有本地可以听到该音效；
  *        NO: 本地和远端用户都可以听到该音效
  * @param  cycle 指定音频文件循环播放的次数。
  *        > 0：循环的次数；
  *         -1：无限循环，直至调用 stopEffect{@link #stopEffect:} 或 stopAllEffects{@link #stopAllEffects} 后停止。
- * @param volume 
+ * @param volume
  *        音效文件播放音量范围为 0~400。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 可以多次调用该方法，通过传入不同的音效文件的 soundId 和 filePath，以实现同时播放多个音效文件，实现音效叠加。
  *      2. 可以通过 stopEffect{@link #stopEffect:} 方法停止播放指定音效文件。
  *      3. 请在房间内调用该方法。
@@ -1446,16 +1424,16 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 预加载指定音效文件
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性
- * @param filePath 
+ * @param filePath
  *        指定需要混音的音频文件名和文件路径名。支持以下音频格式: mp3，aac，m4a，3gp，wav
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *       1. 该方法预加载播放指定音效文件。预加载操作可以在进房间之前完成（所有混音相关接口，如果没有标注请在房间内调用都可在没有进入房间的时候调用）。如果音效文件很长，加载操作可能会耗时较长，建议应用开发者将预加载操作放在子线程进行。
- *       2. 该方法只是预加载播放指定音效文件，只有通过 playEffect:filePath:loopback:cycle:withVolume:{@link #playEffect:filePath:loopback:cycle:withVolume:} 才开始播放指定音效文件。      
+ *       2. 该方法只是预加载播放指定音效文件，只有通过 playEffect:filePath:loopback:cycle:withVolume:{@link #playEffect:filePath:loopback:cycle:withVolume:} 才开始播放指定音效文件。
  *       3. 该方法预加载指定音效文件可以通过 unloadEffect{@link #unloadEffect:} 来卸载。
  */
 - (int)preloadEffect:(NSInteger)soundId filePath:(NSString * _Nullable)filePath;
@@ -1464,12 +1442,12 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 卸载指定音效文件
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 该方法卸载指定音效文件。
  *      2. 如果 unloadEffect{@link #unloadEffect:} 时音效文件没有被卸载，SDK会自动调用该方法卸载音效文件。
  */
@@ -1479,12 +1457,12 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 暂停播放指定音效文件
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. pauseEffect{@link #pauseEffect:} 暂停播放指定音效文件可以通过该方法恢复播放。
  *      2. pauseAllEffects{@link #pauseAllEffects} 暂停所有音效文件的播放后，也可以通过该方法恢复单个音效文件播放。
  */
@@ -1494,7 +1472,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 混音
  * @brief 恢复播放指定音效文件
- * @param  soundId 
+ * @param  soundId
  *        音效ID，应用调用者维护，请保证唯一性
  * @return
  *        0: 成功
@@ -1507,12 +1485,12 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 音效
  * @brief 停止播放指定音效文件
- * @param soundId 
+ * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性。如果已经通过 preloadEffect:filePath:{@link #preloadEffect:filePath:}  将音效加载至内存，确保此处的 soundId 与  preloadEffect:filePath:{@link #preloadEffect:filePath:} 设置的 soundId 相同。
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *      1. 该方法停止播放指定音效文件。
  *      2. 该方法内部会主动调用 unloadEffect{@link #unloadEffect:} 来卸载指定音效文。
  */
@@ -1522,12 +1500,12 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 混音
  * @brief 调节所有音效文件的文件音量
- * @param  volume 
+ * @param  volume
  *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
- * @notes 
+ * @notes
  *       1. 该方法调节混音的音效文件在本地和远端播放的音量大小。
  *       2. 请在房间内调用该方法。
  */
@@ -1540,7 +1518,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @return
  *       0: 成功
  *     < 0: 失败
- * @notes 
+ * @notes
  *      1. 该方法卸载所有音效文件。如果引擎被销毁时有音效文件没有被卸载，SDK会自动调用该方法卸载所有音效文件。
  *      2. 离开房间  leaveChannel:{@link #leaveChannel:} 后不会自动调用该方法卸载所有音效文件。如果需要在离开房间后卸载所有音效文件，需要应用主动调用该方法。
  */
@@ -1561,7 +1539,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @return
  *       0: 成功
  *     < 0: 失败
- * @notes 
+ * @notes
      *     1. 该方法恢复所有音效文件的播放。在调用 pauseAllEffects{@link #pauseAllEffects} 暂停所有音效文件的播放后，可以通过该方法可恢复所有音效文件的播放。
      *     2. pauseEffect{@link #pauseEffect:} 方法暂停单个指定音效文件的播放后，也可以通过该方法恢复播放，但是效率太低，不推荐这么使用。
  */
@@ -1628,7 +1606,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @param interval 指定音量提示的时间间隔; <=0: 禁用音量提示功能；>0 : 提示间隔，单位为毫秒(ms)。建议设置到大于 200 毫秒。少于 10 毫秒时，行为未定义。
  *  @param smooth 音量提示的灵敏度，灵敏度取值范围为 [0,10]。数字越大，波动越灵敏；数字越小，波动越平滑
  *  @return 0： 代表方法调用成功
- *  @notes 开启或禁用发言者音量提示功能。功能开启时将以你设置的 interval 为间隔通过 rtcEngine:reportAudioVolumeIndicationOfSpeakers:totalVolume:{@link 
+ *  @notes 开启或禁用发言者音量提示功能。功能开启时将以你设置的 interval 为间隔通过 rtcEngine:reportAudioVolumeIndicationOfSpeakers:totalVolume:{@link
  * #rtcEngine:reportAudioVolumeIndicationOfSpeakers:totalVolume:} 回调用户的音量。
  */
 - (int)enableAudioVolumeIndication:(NSInteger)interval
@@ -1682,7 +1660,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @type api
  * @region 视频管理
  * @brief 禁用视频图像分割，替换背景
- */       
+ */
 - (void) disableBackground;
 
 #pragma mark - MediaMetadataData InnerVideoSource
@@ -1764,7 +1742,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @param enableSpeaker 是否切换语音路由到扬声器（外放）
  *                       true: 切换到外放
  *                       false: 切换到听筒
- *  @return 
+ *  @return
  *            0: 方法调用成功；
  *          < 0: 方法调用失败；
  */
@@ -1824,7 +1802,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @brief 设置AES加密算法和加密密钥，有四种内置的加密算法
  * @param encrypt_type 加密类型，详见 ByteEncryptType{@link #ByteEncryptType}
  * @param key 加密密钥，长度限制为36位，超出部分将会被截断
- * @notes 
+ * @notes
  *      1. 该方法与 setCustomizeEncryptHandler:{@link #setCustomizeEncryptHandler:} 为互斥关系,
  *      即按照调用顺序，最后一个调用的方法为最终生效的版本。
  *      2. 该方法必须在调用 joinChannelByKey:channelName:info:uid:{@link #joinChannelByKey:channelName:info:uid:} 之前调用，可重复调用，以最后调用的参数作为生效参数
@@ -1835,7 +1813,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
 /**
  * @type api
  * @region 加密
- * @brief 设置自定义加密，需要实现对应的加密/解密方法，详情参考 
+ * @brief 设置自定义加密，需要实现对应的加密/解密方法，详情参考
  *      ByteEncryptHandler{@link #ByteEncryptHandler}
  * @param handler 自定义加密handler，需要实现里面的加密和解密方法
  * @notes
@@ -1856,7 +1834,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @param rendingInfo 渲染功能相关参数。 <br>
  *  @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br> 
+ *         + <0: 方法调用失败  <br>
 */
 - (int)enableCloudRending:(NSString *_Nonnull)rendingInfo;
 
@@ -1867,7 +1845,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @param rendingInfo 渲染功能相关参数。 <br>
  *  @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br> 
+ *         + <0: 方法调用失败  <br>
 */
 - (int)updateCloudRending:(NSString *_Nonnull)rendingInfo;
 
@@ -1877,7 +1855,7 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  *  @brief 停止云端渲染。 <br>
  *  @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br> 
+ *         + <0: 方法调用失败  <br>
 */
 - (int)disableCloudRending;
 
@@ -1889,5 +1867,75 @@ BYTE_RTC_EXPORT @interface ByteRtcEngineKit : NSObject
  * @notes
  */
 - (void)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @brief 调节录音音量。
+ * @param volume 录音音量，可在 0~400 范围内进行调节  <br>
+ *              + 0：静音  <br>
+ *              + 100：原始音量  <br>
+ *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
+ * @notes 为保证更好的通话质量，建议将 volume 值设为 [0,100]
+ */
+- (void)setRecordingVolume:(NSInteger)volume;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @brief 调节本地播放的所有远端用户音量
+ * @param volume 播放音量，可在 0~400 范围内进行调节  <br>
+ *              + 0：静音  <br>
+ *              + 100：原始音量  <br>
+ *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)
+ * @notes  <br>
+ *       + 该方法调节的是本地播放的所有远端用户混音后的音量  <br>
+ *       + 为保证更好的通话质量，建议将 volume 值设为 [0,100]
+ */
+- (void)setPlaybackVolume:(NSInteger)volume;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @brief 设置音频处理复杂度。对于希望性能占用较低，可设置较低的音频处理复杂度，如果更在意通话质量，可选择设置更高的音频处理复杂度。
+ *        加入房间时，会携带本接口传入的机型等级，然后从服务端拉起相应音频配置。如果传入的是 auto，服务端会查询数据库，获得机型等级，再下发配置。
+ *        不同复杂度会开关AEC、ANS、AGC算法，调整播放sample rate等, 进行性能和质量的控制。
+ *        默认为AUDIO_PERF_PROFILE_AUTO{@link #AUDIO_PERF_PROFILE_AUTO}
+ * @param profile 机型等级, 详见枚举类 AudioPerfProfile{@link #AudioPerfProfile}
+ * @notes  <br>
+ *       + 需要在进房之前调用。  <br>
+ *       + 本次进房时下发的配置，需要下次进房发布才会应用。  <br>
+ *       + 支持自定义配置，详细操作方式请联系技术支持人员。
+*/
+- (void)setAudioPerformanceProfile:(ByteAudioPerformanceProfile) profile;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @brief 调节远端用户音量，默认值为100
+ * @param uid 远端用户ID
+ * @param volume  播放音量，可在 0~400 范围内进行调节  <br>
+ *              + 0: 静音  <br>
+ *              + 100: 原始音量  <br>
+ *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + <0：方法调用失败  <br>
+ */
+- (void)setRemoteAudioPlaybackVolume:(NSString* _Nonnull)uid volume:(int)volume;
+
+/*
+ * @region 其他
+ * @brief 通话结束，用户反馈上报 <br>
+ * @param grade 打分 1～5分  <br>
+ * @param type 问题列表  <br>
+ * @param desc 其他问题  <br>
+ * @return  0: 成功  <br>
+ *         -1: 还没加入过房间，上报失败 <br>
+ *         -2: 数据解析错误  <br>
+ *         -3: 字段缺失  <br>
+ *         -4: grade不合法  <br>
+ */
++ (int)feedbackGrade:(NSInteger)grade type:(NSInteger)type desc:(NSString* _Nullable)desc;
 
 @end

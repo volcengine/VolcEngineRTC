@@ -2,7 +2,7 @@
 //  MeetingTextFileComponents.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/8.
+//  Created by  on 2021/3/8.
 //
 
 #import "MeetingTextFileComponents.h"
@@ -42,7 +42,9 @@
 #pragma mark - Publish Action
 - (void)setText:(NSString *)text {
     _text = text;
-    self.textField.stringValue = text;
+    if (NOEmptyStr(text)) {
+        self.textField.stringValue = text;
+    }
 }
 
 - (NSString *)text {
@@ -64,7 +66,10 @@
     self.textField.placeholderAttributedString = attrString;
 }
 
-#define ALPHANUM @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-"
+- (void)textBecomeFirstResponder {
+    [self.textField becomeFirstResponder];
+}
+
 - (void)controlTextDidChange:(NSNotification *)notification {
     NSTextField *textField = (NSTextField *)notification.object;
 
@@ -74,11 +79,34 @@
         [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"输入长度超过18位字符。"];
     }
     
-    if (self.isCheck) {
-        BOOL isIllegal = [self isIllegalCharacter:textField.stringValue];
+    if (self.isCheckNumberEng || self.isCheckAll) {
+        BOOL isIllegal = NO;
+        if (self.isCheckNumberEng) {
+            isIllegal = ![LocalUserCompoments isMatchRoomID:textField.stringValue];
+        }
+        if (self.isCheckAll) {
+            isIllegal = ![LocalUserCompoments isMatchUserName:textField.stringValue];
+        }
+
         if ([self.delegate respondsToSelector:@selector(meetingTextFileComponents:checkInputIllegal:)]) {
             [self.delegate meetingTextFileComponents:self checkInputIllegal:isIllegal];
         }
+    }
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector {
+    if (commandSelector == @selector(insertTab:)) {
+        if (self.keyboardClickTab) {
+            self.keyboardClickTab();
+        }
+        return YES;
+    } else if (commandSelector == @selector(insertNewline:)) {
+        if (self.keyboardClickEnter) {
+            self.keyboardClickEnter();
+        }
+        return YES;
+    } else {
+        return NO;
     }
 }
 
@@ -94,30 +122,6 @@
         }
     }
     return isExceed;
-}
-
-- (BOOL)isIllegalCharacter:(NSString *)text {
-    BOOL isIllegal = NO;
-    if (self.isCheck) {
-        NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:ALPHANUM];
-        char *stringResult = malloc([text length] * 10);
-        int cpt = 0;
-        for (int i = 0; i < [text length]; i++) {
-            unichar c = [text characterAtIndex:i];
-            if ([charSet characterIsMember:c]) {
-                stringResult[cpt] = c;
-                cpt++;
-            }
-        }
-        stringResult[cpt] = '\0';
-        NSString *cropSrt  = [NSString stringWithUTF8String:stringResult];
-        free(stringResult);
-        
-        if (![cropSrt isEqualToString:text]) {
-            isIllegal = YES;
-        }
-    }
-    return isIllegal;
 }
 
 #pragma mark - getter

@@ -2,7 +2,7 @@
 //  GalleryModeView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/9.
+//  Created by  on 2021/3/9.
 //
 
 #import "GalleryModeView.h"
@@ -14,7 +14,6 @@
 @property (nonatomic, strong) GalleryModeLineView *topView;
 @property (nonatomic, strong) GalleryModeLineView *centerView;
 @property (nonatomic, strong) GalleryModeLineView *bottomView;
-@property (nonatomic, assign) CGFloat rightSpace;
 
 @end
 
@@ -23,8 +22,6 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.rightSpace = 0;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateParticipantVCNotice:) name:NoticeUpdateParticipantVCName object:nil];
         [self addSubview:self.bottomView];
         [self addSubview:self.centerView];
         [self addSubview:self.topView];
@@ -87,7 +84,28 @@
         NSArray *bottomLists = [self.dataLists subarrayWithRange:NSMakeRange(lineMaxNum, self.dataLists.count - lineMaxNum)];
         [self updateSpaceHorizontalWithDataLists:topLists lineView:self.topView lineXaxNum:lineMaxNum avatarStatus:RoomAvatarStatusGalleryFour];
         [self updateSpaceHorizontalWithDataLists:bottomLists lineView:self.centerView lineXaxNum:lineMaxNum avatarStatus:RoomAvatarStatusGalleryFour];
-    } else if (self.dataLists.count >= 5) {
+    } else if (self.dataLists.count == 5 || self.dataLists.count == 6) {
+        //format 2 * 3
+        self.topView.hidden = NO;
+        self.centerView.hidden = NO;
+        self.bottomView.hidden = YES;
+        itemHeight = (self.frame.size.height - itemSpace - 60) / 2;
+        self.topView.frame = CGRectMake(0,
+                                        0,
+                                        viewWidth,
+                                        itemHeight);
+        self.centerView.frame = CGRectMake(0,
+                                           itemHeight + itemSpace,
+                                           viewWidth,
+                                           itemHeight);
+        self.bottomView.frame = CGRectZero;
+
+        NSInteger lineMaxNum = 3;
+        NSArray *topLists = [self.dataLists subarrayWithRange:NSMakeRange(0, lineMaxNum)];
+        NSArray *bottomLists = [self.dataLists subarrayWithRange:NSMakeRange(lineMaxNum, self.dataLists.count - lineMaxNum)];
+        [self updateSpaceHorizontalWithDataLists:topLists lineView:self.topView lineXaxNum:lineMaxNum avatarStatus:RoomAvatarStatusGalleryFour];
+        [self updateSpaceHorizontalWithDataLists:bottomLists lineView:self.centerView lineXaxNum:lineMaxNum avatarStatus:RoomAvatarStatusGalleryFour];
+    } else if (self.dataLists.count > 6) {
         //format 3 * 3
         self.topView.hidden = NO;
         self.centerView.hidden = NO;
@@ -137,7 +155,7 @@
             avatarView.hidden = YES;
             avatarView.userModel = nil;
         }
-        CGFloat viewWidth = self.frame.size.width - self.rightSpace;
+        CGFloat viewWidth = self.frame.size.width;
         CGFloat itemWidth = (viewWidth - (itemSpace * (maxNum + 1))) / maxNum;
         CGFloat itemLeft = (i * itemWidth) + (itemSpace * (i + 1));
         if (maxNum == 1) {
@@ -165,15 +183,6 @@
         return;
     }
  
-    [self setNeedsLayout:YES];
-}
-
-#pragma mark - Notice Method
-
-- (void)updateParticipantVCNotice:(NSNotification *)notification {
-    NSNumber *width = (NSNumber *)notification.object;
-    self.rightSpace = width.floatValue;
-
     [self setNeedsLayout:YES];
 }
 

@@ -2,7 +2,7 @@
 //  WindowManager.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/2.
+//  Created by  on 2021/3/2.
 //
 
 #import "WindowManager.h"
@@ -10,14 +10,19 @@
 #import "ScreenBottomWindowController.h"
 #import "MeetingEndWindowController.h"
 #import "MeetingToastWindowController.h"
+#import "PhoneLoginWindowController.h"
+#import "MenuUpgradeCompoments.h"
 
 @interface WindowManager () <NSWindowDelegate>
+@property (nonatomic, weak) PhoneLoginWindowController *phoneLoginWindowController;
 
 @property (nonatomic, strong) MeetingWindowController *meetingWindow;
 
 @property (nonatomic, strong) MeetingEndWindowController *endWindowController;
 @property (nonatomic, strong) MeetingToastWindowController *toastWindowController;
 @property (nonatomic, assign) BOOL isSendScreen;
+@property (nonatomic, assign) BOOL isLogin;
+@property (nonatomic, strong) MenuUpgradeCompoments *upgradeCompoments;
 
 @end
 
@@ -27,39 +32,49 @@
     self = [super init];
     if (self) {
         _isSendScreen = NO;
+        _isLogin = NO;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginExpiredNotificate) name:NotificationLoginExpired object:nil];
     }
     return self;
-}
-
-- (void)windowWillClose:(NSNotification *)notification {
-    NSWindow *window = notification.object;
-    if (window == self.meetingWindow.window && !_isSendScreen) {
-        [NSApp terminate:self];
-    }
 }
 
 #pragma mark - Publish Action
 
 - (void)start {
-    self.meetingWindow.window.delegate = self;
-    [self.meetingWindow showWindow:nil];
-    _currentWindowController = self.meetingWindow;
+    if (NOEmptyStr([MenuTokenCompoments token])) {
+        self.isLogin = YES;
+        [self showMeetingWindowController:YES];
+    } else {
+        [self showPhoneWindow];
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.upgradeCompoments checkUpgrade];
+    });
 }
 
-- (void)stop {
+- (void)showPhoneWindow {
+    if (self.meetingWindow) {
+        _isSendScreen = YES;
+        [self.meetingWindow close];
+    }
+    PhoneLoginWindowController *phoneLoginWindowController = [[PhoneLoginWindowController alloc] initWithWindowNibName:@"PhoneLoginWindowController"];
+    [phoneLoginWindowController.window setMovableByWindowBackground:YES];
+    [phoneLoginWindowController.window setBackgroundColor:[NSColor clearColor]];
     
+    phoneLoginWindowController.window.delegate = self;
+    [phoneLoginWindowController showWindow:nil];
+    _currentWindowController = phoneLoginWindowController;
+    _isSendScreen = NO;
+    __weak __typeof(self) wself = self;
+    phoneLoginWindowController.loginBlock = ^{
+        wself.isLogin = YES;
+        [wself showMeetingWindowController:YES];
+    };
+    self.phoneLoginWindowController = phoneLoginWindowController;
 }
 
-- (void)awake {
-    [self.meetingWindow.window orderFront:nil];
-}
-
-- (void)showPreference {
-    
-}
-
-#pragma mark - NSWindowDelegate
+#pragma mark - 通知
 
 - (BOOL)windowShouldClose:(NSWindow *)sender {
     if (sender == self.meetingWindow.window) {
@@ -69,18 +84,48 @@
             [self.meetingWindow showEndView];
             return NO;
         }
+    } else if (sender == self.phoneLoginWindowController.window) {
+        return YES;
     } else {
         return YES;
     }
 }
 
+- (void)loginExpiredNotificate {
+    [MenuTokenCompoments updateToken:@""];
+    [LocalUserCompoments updateLocalUserModel:nil];
+    [self showPhoneWindow];
+}
+
+#pragma mark - NSWindowDelegate
+
+- (void)windowWillClose:(NSNotification *)notification {
+    NSWindow *window = notification.object;
+    if (window == self.meetingWindow.window) {
+        if (!_isSendScreen) {
+            [NSApp terminate:self];
+        }
+    } else if (window == self.phoneLoginWindowController.window) {
+        if (!_isLogin) {
+            _isLogin = NO;
+            [NSApp terminate:self];
+        }
+    } else {
+        
+    }
+}
+
 #pragma mark - Meeting
 
-- (void)showMeetingWindowController {
+- (void)showMeetingWindowController:(BOOL)isInitialize {
     _isSendScreen = NO;
     [_currentWindowController close];
+    self.meetingWindow.window.delegate = self;
     [self.meetingWindow showWindow:nil];
     _currentWindowController = self.meetingWindow;
+    if (isInitialize) {
+        [self.meetingWindow show];
+    }
 }
 
 #pragma mark - toast
@@ -166,6 +211,13 @@
         [_meetingWindow.window setMinSize:CGSizeMake(960, 700)];
     }
     return _meetingWindow;
+}
+
+- (MenuUpgradeCompoments *)upgradeCompoments {
+    if (!_upgradeCompoments) {
+        _upgradeCompoments = [[MenuUpgradeCompoments alloc] init];
+    }
+    return _upgradeCompoments;
 }
 
 @end

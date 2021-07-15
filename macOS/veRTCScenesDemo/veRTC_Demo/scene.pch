@@ -2,7 +2,7 @@
 //  scene.pch
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/2.
+//  Created by  on 2021/3/2.
 //
 
 #ifndef scene_pch
@@ -18,7 +18,8 @@
 #import "MeetingToastComponents.h"
 #import "MeetingAlertCompoments.h"
 #import "MeetingControlCompoments.h"
-
+#import "LocalUserCompoments.h"
+#import "MenuTokenCompoments.h"
 #import "TrackButton.h"
 
 #import "NSView+Snippet.h"
@@ -28,8 +29,7 @@
 #import "MeetingRTCManager.h"
 #import <YYModel/YYModel.h>
 
-//
-static NSString * _Nullable const NoticeUpdateParticipantVCName = @"NoticeUpdateParticipantVCName";
+static NSString * _Nullable const NoticeUpdateLocalMicStatusName = @"NoticeUpdateLocalMicStatusName";
 
 static NSString * _Nullable const NoticeUpdateLocalCameraStatusName = @"NoticeUpdateLocalCameraStatusName";
 
@@ -44,6 +44,8 @@ static NSString * _Nullable const NoticeScreenUpdateRoomMicName = @"NoticeScreen
 static NSString * _Nullable const NoticeScreenUpdateRoomCameraName = @"NoticeScreenUpdateRoomCameraName";
 
 static NSString * _Nullable const NoticeScreenBottomStartRecordName = @"NoticeScreenBottomStartRecordName";
+
+static NSString * _Nullable const NotificationLoginExpired = @"NotificationLoginExpired";
 
 //
 #define  IsEmptyStr(string) string == nil || string == NULL ||[string isKindOfClass:[NSNull class]]|| [string isEqualToString:@""] ||[[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length]==0 ? YES : NO

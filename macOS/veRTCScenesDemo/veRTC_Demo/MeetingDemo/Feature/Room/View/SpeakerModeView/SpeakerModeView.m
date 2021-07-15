@@ -2,7 +2,7 @@
 //  SpeakerModeView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/9.
+//  Created by  on 2021/3/9.
 //
 
 #import "SpeakerModeView.h"
@@ -14,7 +14,6 @@ static const NSInteger ItemWidth = 160;
 
 @property (nonatomic, strong) NSView *avatarListView;
 @property (nonatomic, strong) NSView *screenView;
-@property (nonatomic, assign) CGFloat rightSpace;
 
 @property (nonatomic, assign) BOOL avatarHidden;
 
@@ -26,10 +25,7 @@ static const NSInteger ItemWidth = 160;
     self = [super init];
     if (self) {
         self.avatarHidden = NO;
-        self.rightSpace = 0;
         [self addSubviewAndConstraints];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateParticipantVCNotice:) name:NoticeUpdateParticipantVCName object:nil];
     }
     return self;
 }
@@ -51,13 +47,13 @@ static const NSInteger ItemWidth = 160;
     [self addSubview:self.screenView];
     [self.screenView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.bottom.equalTo(self);
-        make.right.equalTo(self).offset(-self.rightSpace);
+        make.right.equalTo(self).offset(0);
         make.top.equalTo(self.avatarListView.mas_bottom).offset(8);
     }];
 }
 
 - (void)resizeSubviewsWithOldSize:(NSSize)oldSize {
-    if (self.avatarListView.frame.size.width > oldSize.width - fabs(self.rightSpace)) {
+    if (self.avatarListView.frame.size.width > oldSize.width) {
         //left
         [self.avatarListView mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(self.avatarHidden ? 0 : 92);
@@ -67,7 +63,7 @@ static const NSInteger ItemWidth = 160;
         //center X
         [self.avatarListView mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(self.avatarHidden ? 0 : 92);
-            make.centerX.equalTo(self).offset(-self.rightSpace/2);
+            make.centerX.equalTo(self).offset(0);
             make.top.equalTo(self);
         }];
     }
@@ -79,17 +75,6 @@ static const NSInteger ItemWidth = 160;
             make.width.mas_equalTo(width);
         }];
     }
-}
-
-#pragma mark - Notice Method
-
-- (void)updateParticipantVCNotice:(NSNotification *)notification {
-    NSNumber *width = (NSNumber *)notification.object;
-    self.rightSpace = width.floatValue;
-    [self.screenView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self).offset(-width.floatValue);
-    }];
-    [self resizeSubviewsWithOldSize:self.frame.size];
 }
 
 #pragma mark - Publish Action

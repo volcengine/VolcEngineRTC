@@ -7,29 +7,28 @@
 
 namespace bytertc {
 
-/**
- * @type keytype
- * @region 视频管理
- * @brief 旋转角度
- */
-enum VideoRotation {
-    /**
-     * @brief 顺时针旋转0度
-     */
-    VideoRotation_0 = 0,
-    /**
-     * @brief 顺时针旋转90度
-     */
-    VideoRotation_90 = 90,
-    /**
-     * @brief 顺时针旋转180度
-     */
-    VideoRotation_180 = 180,
-    /**
-     * @brief 顺时针旋转270度
-     */
-    VideoRotation_270 = 270
-};
+  /**
+   * @type keytype
+   * @brief 视频帧旋转角度
+   */
+  enum VideoRotation {
+      /**
+       * @brief 顺时针旋转0度
+       */
+      VideoRotation_0 = 0,
+      /**
+       * @brief 顺时针旋转90度
+       */
+      VideoRotation_90 = 90,
+      /**
+       * @brief 顺时针旋转180度
+       */
+      VideoRotation_180 = 180,
+      /**
+       * @brief 顺时针旋转270度
+       */
+      VideoRotation_270 = 270
+  };
 
 /**
  * @type keytype
@@ -52,21 +51,23 @@ enum VIDEO_FRAME_TYPE {
  */
 enum ScaleMode {
     /**
-     * @brief 自由模式，默认使用FitWithCropping模式
+     * @brief 自动模式，默认值为 FitWithCropping。
      */
     Auto = 0,
     /**
-     * @brief 视频尺寸进行缩放和拉伸以充满显示视窗
+     * @brief 对视频帧进行缩放，直至充满和视窗分辨率一致为止。这一过程不保证等比缩放。
      */
     Stretch = 1,
     /**
-     * @brief
-     * 优先保证视窗被填满。视频尺寸等比缩放，直至整个视窗被视频填满。如果视频长宽与显示窗口不同，多出的视频将被截掉
+     * @brief 视窗填满优先。<br>
+     *        视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>
+     *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
      */
     FitWithCropping = 2,
     /**
-     * @brief
-     * 优先保证视频内容全部显示。视频尺寸等比缩放，直至视频窗口的一边与视窗边框对齐。如果视频长宽与显示窗口不同，视窗上未被填满的区域将被涂黑
+     * @brief 视频帧内容全部显示优先。<br>
+     *        视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>
+     *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
      */
     FitWithFilling = 3,
 };
@@ -96,35 +97,35 @@ enum CodecMode {
  */
 enum VideoCodecType {
     /**
+     * @hidden
      * @brief 未知类型
      */
     kVideoCodecUnknown = 0,
     /**
-     * @brief 标准H264
+     * @brief 标准 H264 编码器
      */
     kVideoCodecH264 = 1,
     /**
-     * @brief 标准ByteVC1
+     * @brief 标准 ByteVC1 编码器
      */
     kVideoCodecByteVC1 = 2,
 };
 
 /**
  * @type keytype
- * @brief 视频编码质量偏好
- *      网络不好时的编码降级策略
+ * @brief 网络不好时的视频编码降级策略
  */
 enum EncodePreference {
     /**
-     * @brief 关闭
+     * @brief 不降级
      */
     EncodePreferenceDisabled = 0,
     /**
-     * @brief 保持帧率
+     * @brief 优先保证帧率，以保证视频流畅度
      */
     EncodePreferenceFramerate,
     /**
-     * @brief 保持画质
+     * @brief 优先保证画质
      */
     EncodePreferenceQuality,
     /**
@@ -138,15 +139,15 @@ enum EncodePreference {
 
 /**
  * @type keytype
- * @brief 视频属性
+ * @brief 视频参数
  */
 struct VideoSolution {
     /**
-     * @brief 视频的宽
+     * @brief 宽（像素）
      */
     int width;
     /**
-     * @brief 视频的高
+     * @brief 高（像素）
      */
     int height;
     /**
@@ -154,15 +155,16 @@ struct VideoSolution {
      */
     int fps;
     /**
-     * @brief 最高编码码率（千比特每秒）
+     * @brief 最高编码码率（千比特每秒）<br>
+     *        建议使用预估值。
      */
     int max_send_kbps = SEND_KBPS_AUTO_CALCULATE;
     /**
-     * @brief 缩放模式，详见 ScaleMode{@link #ScaleMode}
+     * @brief 视频帧缩放模式。你可以设置缩放以适应视窗，参见 ScaleMode{@link #ScaleMode}
      */
     ScaleMode scale_mode = ScaleMode::Auto;
     /**
-     * @brief 视频编码质量偏好，详见 EncodePreference{@link #EncodePreference}
+     * @brief 视频编码质量策略，参见 EncodePreference{@link #EncodePreference}
      */
     EncodePreference encode_preference = EncodePreference::EncodePreferenceFramerate;
 };
@@ -173,11 +175,11 @@ struct VideoSolution {
  */
 struct VideoSolutionDescription {
     /**
-     * @brief 视频的宽
+     * @brief 宽（像素）
      */
     int width;
     /**
-     * @brief 视频的高
+     * @brief 高（像素）
      */
     int height;
     /**
@@ -189,11 +191,11 @@ struct VideoSolutionDescription {
      */
     int max_send_kbps;
     /**
-     * @brief 缩放模式，详见 ScaleMode{@link #ScaleMode}
+     * @brief 缩放模式。参看 ScaleMode{@link #ScaleMode}
      */
     ScaleMode scale_mode = ScaleMode::Auto;
     /**
-     * @brief 视频的编码类型，详见 VideoCodecType{@link #VideoCodecType}
+     * @brief 视频的编码类型。参看 VideoCodecType{@link #VideoCodecType}
      */
     VideoCodecType codec_name = VideoCodecType::kVideoCodecUnknown;
     /**
@@ -201,7 +203,7 @@ struct VideoSolutionDescription {
      */
     CodecMode codec_mode = CodecMode::AutoMode;
     /**
-     * @brief 视频编码质量偏好，详见 EncodePreference{@link #EncodePreference}
+     * @brief 视频编码质量偏好策略，详见 EncodePreference{@link #EncodePreference}
      */
     EncodePreference encode_preference = EncodePreference::EncodePreferenceFramerate;
 };

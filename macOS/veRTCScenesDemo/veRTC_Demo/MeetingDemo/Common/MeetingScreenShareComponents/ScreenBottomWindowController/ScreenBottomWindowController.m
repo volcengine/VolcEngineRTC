@@ -2,7 +2,7 @@
 //  ScreenBottomWindowController.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/28.
+//  Created by  on 2021/3/28.
 //
 
 #import "ScreenBottomWindowController.h"
@@ -82,12 +82,12 @@
                 [MeetingControlCompoments endShareScreen];
                 [[MeetingRTCManager shareMeetingRTCManager] stopScreenCapture];
                 AppDelegate *appDelegate = (AppDelegate *)[NSApplication sharedApplication].delegate;
-                [(WindowManager *)(appDelegate.windowManager) showMeetingWindowController];
+                [(WindowManager *)(appDelegate.windowManager) showMeetingWindowController:NO];
             }
             break;
         case BottomBarStatusRecord:
             if (!button.isClose) {
-                if ([self.roomModel.host_id isEqualToString:self.loginModel.uid]) {
+                if ([self.roomModel.host_id isEqualToString:[LocalUserCompoments userModel].uid]) {
                     button.isClose = YES;
                     [[NSNotificationCenter defaultCenter] postNotificationName:NoticeUpdateRoomRecordName object:@(button.isClose)];
                     [[NSNotificationCenter defaultCenter] postNotificationName:NoticeScreenBottomStartRecordName object:nil];

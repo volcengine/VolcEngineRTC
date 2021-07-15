@@ -2,7 +2,7 @@
 //  MeetingScreenShareComponents.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/2.
+//  Created by  on 2021/3/2.
 //
 
 #import "MeetingScreenShareComponents.h"

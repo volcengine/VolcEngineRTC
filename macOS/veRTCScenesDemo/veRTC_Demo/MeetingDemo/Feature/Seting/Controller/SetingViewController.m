@@ -2,7 +2,7 @@
 //  SetingViewController.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/8.
+//  Created by  on 2021/3/8.
 //
 
 #import "SetingViewController.h"
@@ -29,7 +29,7 @@
 
     [self.view addSubview:self.setingView];
     [self.setingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.size.mas_equalTo(CGSizeMake(720, 487));
+        make.size.mas_equalTo(CGSizeMake(720, 540));
         make.centerY.equalTo(self.view).offset(-60);
         make.centerX.equalTo(self.view);
     }];
@@ -83,8 +83,20 @@
 #pragma mark - Private Action
 
 - (void)loadDataWithHistoryVideoRecord {
+    __weak __typeof(self) wself = self;
     [MeetingControlCompoments getHistoryVideoRecordWithBlock:^(NSArray<MeetingControlRecordModel *> * _Nonnull recordLists, MeetingControlAckModel * _Nonnull model) {
-        self.setingView.historyVideoRecordLists = recordLists;
+        NSMutableArray *lists = [[NSMutableArray alloc] init];
+        NSMutableArray *hostLists = [[NSMutableArray alloc] init];
+        for (int i = 0; i < recordLists.count; i++) {
+            MeetingControlRecordModel *model = recordLists[i];
+            if (model.video_holder) {
+                [hostLists addObject:model];
+            } else {
+                [lists addObject:model];
+            }
+        }
+        wself.setingView.historyVideoRecordLists = [lists copy];
+        wself.setingView.historyHostVideoRecordLists = [hostLists copy];
     }];
 }
 

@@ -2,7 +2,7 @@
 //  LoginViewController.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/10.
+//  Created by  on 2021/3/10.
 //
 
 #import "LoginViewController.h"
@@ -35,7 +35,12 @@
     [[MeetingRTCManager shareMeetingRTCManager] startPreview:self.videoPreview];
     
     [self updateAuthorCameraWithBgImage];
-    [self showTestAlert];
+}
+
+- (void)viewDidAppear {
+    [super viewDidAppear];
+    
+    [self.loginBottonBarView updateUserNameTextFile:[LocalUserCompoments userModel].name];
 }
 
 - (void)updateLayoutViewFrame {
@@ -88,19 +93,24 @@
             self.videoPreview.hidden = NO;
         }
     } else if (status == ButtonStatusStart) {
+        if (IsEmptyStr(self.loginBottonBarView.roomId) || IsEmptyStr(self.loginBottonBarView.userName)) {
+            return;
+        }
         __block LoginModel *loginModel = [[LoginModel alloc] init];
         loginModel.isEnableVideo = self.loginBottonBarView.isEnableVideo;
         loginModel.isEnableAudio = self.loginBottonBarView.isEnableAudio;
         loginModel.roomId = self.loginBottonBarView.roomId;
-        loginModel.uid = self.loginBottonBarView.uid;
+        loginModel.name = self.loginBottonBarView.userName;
+        loginModel.uid = [LocalUserCompoments userModel].uid;
         loginModel.token = @"";
         loginModel.appid = self.appId;
         
-        [MeetingControlCompoments joinMeeting:loginModel block:^(NSString * _Nonnull token, MeetingControlAckModel * _Nonnull model) {
+        __weak __typeof(self) wself = self;
+        [MeetingControlCompoments joinMeeting:loginModel block:^(NSString * _Nonnull token, NSArray<RoomUserModel *> * _Nonnull userLists, MeetingControlAckModel * _Nonnull model) {
             if (model.result) {
                 loginModel.token = token;
-                if (self.clickJoinRoomBlock) {
-                    self.clickJoinRoomBlock(loginModel);
+                if (wself.clickJoinRoomBlock) {
+                    wself.clickJoinRoomBlock(loginModel, userLists);
                 }
             } else {
                 [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:model.message];
@@ -245,15 +255,7 @@
     return _closeVideoImageView;
 }
 
-- (void)showTestAlert {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSAlert *alert = [NSAlert new];
-        [alert addButtonWithTitle:@"确定"];
-        [alert setMessageText:@"本产品仅用于功能体验，单次会议时长不超过10分钟"];
-        [alert setAlertStyle:NSWarningAlertStyle];
-        [alert runModal];
-    });
-}
+
 
 
 @end

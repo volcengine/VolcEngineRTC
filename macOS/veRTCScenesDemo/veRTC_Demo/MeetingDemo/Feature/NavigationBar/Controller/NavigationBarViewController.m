@@ -2,7 +2,7 @@
 //  NavigationBarViewController.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/11.
+//  Created by  on 2021/3/11.
 //
 
 #import "NavigationBarViewController.h"
@@ -27,21 +27,11 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRoomExpandList:) name:NoticeUpdateRoomExpandListName object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRoomRecord:) name:NoticeUpdateRoomRecordName object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateParticipantVCNotice:) name:NoticeUpdateParticipantVCName object:nil];
     
     [self updateUIWithStatus:NavigationBarStatusLogin];
     
 }
 #pragma mark - NSNotification Method
-
-- (void)updateParticipantVCNotice:(NSNotification *)notification {
-    NSNumber *width = (NSNumber *)notification.object;
-    if (self.roomView && self.roomView.superview) {
-        [self.roomView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.view).offset(-width.floatValue);
-        }];
-    }
-}
 
 - (void)updateRoomExpandList:(NSNotification *)notification {
     NSNumber *isExpand = (NSNumber *)notification.object;

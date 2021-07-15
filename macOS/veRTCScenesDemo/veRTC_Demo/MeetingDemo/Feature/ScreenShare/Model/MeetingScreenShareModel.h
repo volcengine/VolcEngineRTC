@@ -2,7 +2,7 @@
 //  MeetingScreenShareModel.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/5.
+//  Created by  on 2021/3/5.
 //
 
 #import <Foundation/Foundation.h>

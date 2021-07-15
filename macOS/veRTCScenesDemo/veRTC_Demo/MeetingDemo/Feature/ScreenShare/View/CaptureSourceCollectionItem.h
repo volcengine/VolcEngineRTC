@@ -2,7 +2,7 @@
 //  CaptureSourceCollectionItem.h
 //  TXLiteAVMacDemo
 //
-//  Created by on 2021/3/4.
+//  Created by  on 2021/3/4.
 //
 
 #import <Cocoa/Cocoa.h>

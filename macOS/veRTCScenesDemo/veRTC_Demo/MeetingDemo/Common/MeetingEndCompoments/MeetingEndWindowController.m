@@ -2,7 +2,7 @@
 //  MeetingEndWindowController.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/29.
+//  Created by  on 2021/3/29.
 //
 
 #import "MeetingEndWindowController.h"
@@ -21,7 +21,7 @@
 }
 
 - (void)show {
-    BOOL host = [self.roomModel.host_id isEqualToString:self.loginModel.uid];
+    BOOL host = [self.roomModel.host_id isEqualToString:[LocalUserCompoments userModel].uid];
     [self.endCompoments showWithStatus:host ? MeetingEndStatusHost : MeetingEndStatusNone view:self.window.contentView];
     __weak __typeof(self) wself = self;
     self.endCompoments.clickButtonBlock = ^(MeetingButtonStatus status) {
@@ -33,7 +33,7 @@
         } else if (status == MeetingButtonStatusCancel) {
             key = @"cancel";
         }
-        [[NSNotificationCenter defaultCenter] postNotificationName:NoticeCloseEndWindowName object:key];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationLoginExpired object:key];
         wself.endCompoments = nil;
     };
 }

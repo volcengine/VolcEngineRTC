@@ -2,7 +2,7 @@
 //  ScreenBottomWindowController.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/28.
+//  Created by  on 2021/3/28.
 //
 
 #import <Cocoa/Cocoa.h>

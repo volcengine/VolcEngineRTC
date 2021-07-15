@@ -46,11 +46,11 @@ public:
 
     virtual void OnUserOffline(const char* uid, bytertc::USER_OFFLINE_REASON_TYPE reason) override;
 
-    virtual void OnMuteAllRemoteAudio(const char* uid, bool muted) override;
+    virtual void OnMuteAllRemoteAudio(const char* uid, bytertc::MuteState mute_state) override;
 
-    virtual void OnMuteAllRemoteVideo(const char* uid, bool muted) override;
+    virtual void OnMuteAllRemoteVideo(const char* uid, bytertc::MuteState mute) override;
 
-    virtual void OnUserMuteAudio(const char* uid, bool muted) override;
+    virtual void OnUserMuteAudio(const char* uid, bytertc::MuteState mute_state) override;
 
     virtual void OnUserEnableLocalAudio(const char* uid, bool enabled) override;
 
@@ -58,9 +58,9 @@ public:
 
     virtual void OnRemoteAudioStats(const bytertc::RemoteAudioStats& stats) override;
 
-    virtual void OnFirstLocalAudioFrame(int elapsed) override;
+    virtual void OnFirstLocalAudioFrame(bytertc::StreamIndex index) override;
 
-    virtual void OnFirstRemoteAudioFrame(const char* uid, int elapsed) override;
+    virtual void OnFirstRemoteAudioFrame(const bytertc::RemoteStreamKey& key) override;
 
     virtual void OnStreamRemove(const bytertc::ByteStream& stream, bytertc::RtcStreamRemoveReason reason) override;
 
@@ -84,19 +84,15 @@ public:
 
     virtual void OnTranscodingError(const char* url, int error) override;
 
-    virtual void OnFirstLocalVideoFrame(int width, int height, int elapsed) override;
+    virtual void OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
 
-    virtual void OnFirstLocalScreenFrame(int width, int height, int elapsed) override;
+    virtual void OnLocalVideoSizeChanged(bytertc::StreamIndex index, const bytertc::VideoFrameInfo& info) override;
+    
+    virtual void OnRemoteVideoSizeChanged(bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info) override;
 
-    virtual void OnFirstRemoteVideoDecoded(const char* uid, int width, int height, int elapsed) override;
+    virtual void OnFirstRemoteVideoFrameRendered(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info) override;
 
-    virtual void OnVideoSizeChanged(const char* uid, int width, int height, int rotation) override;
-
-    virtual void OnFirstRemoteVideoFrame(const char* uid, int width, int height, int elapsed) override;
-
-    virtual void OnFirstRemoteScreenFrame(const char* uid, int width, int height, int elapsed) override;
-
-    virtual void OnUserMuteVideo(const char* uid, bool muted) override;
+    virtual void OnUserMuteVideo(const char* uid, bytertc::MuteState mute) override;
 
     virtual void OnUserEnableLocalVideo(const char* uid, bool enabled) override;
 

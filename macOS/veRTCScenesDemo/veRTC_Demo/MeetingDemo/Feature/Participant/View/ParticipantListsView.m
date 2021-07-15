@@ -2,7 +2,7 @@
 //  ParticipantListsView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/10.
+//  Created by  on 2021/3/10.
 //
 
 #import "ParticipantListsView.h"
@@ -36,9 +36,8 @@
 
 - (void)setDataLists:(NSArray *)dataLists {
     _dataLists = dataLists;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
-    });
+    
+    [self.tableView reloadData];
 }
 
 
@@ -52,11 +51,12 @@
     }];
 }
 
-- (void)showAlert:(NSString *)uid {
-    NSString *message = [NSString stringWithFormat:@"是否将主持人移交给：%@", uid];
+- (void)showAlert:(NSString *)uid name:(NSString *)name {
+    NSString *message = [NSString stringWithFormat:@"是否将主持人移交给：%@", name];
+    __weak __typeof(self) wself = self;
     [[MeetingAlertCompoments share] showWithTitle:message clickBlock:^(BOOL result) {
         if (result) {
-            [self changeHost:uid];
+            [wself changeHost:uid];
         }
     }];
 }
@@ -64,25 +64,27 @@
 #pragma mark - NSTableViewDataSource
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    return nil;
+    ParticipantCell *cellView = [tableView makeViewWithIdentifier:@"ParticipantCellID" owner:nil];
+    cellView.isLoginHost = self.isLoginHost;
+    if (row < self.dataLists.count) {
+        cellView.roomUserModel = self.dataLists[row];
+    } else {
+        cellView.roomUserModel = nil;
+    }
+
+    __weak __typeof(self) wself = self;
+    cellView.clickChangeHost = ^(NSString *uid, NSString *name) {
+        [wself showAlert:uid name:name];
+    };
+    cellView.moveTrackBlock = ^(NSString *uid) {
+        [wself trackUid:uid];
+    };
+    return cellView;
+    
 }
 
 - (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
     ParticipantTableRowView *rowView = [tableView makeViewWithIdentifier:@"ParticipantTableRowViewID" owner:self];
-    ParticipantCell *cellView = [tableView makeViewWithIdentifier:@"ParticipantCellID" owner:nil];
-    cellView.isLoginHost = self.isLoginHost;
-    if (row < self.dataLists.count) {
-        cellView.participantModel = self.dataLists[row];
-    } else {
-        cellView.participantModel = nil;
-    }
-    
-    __weak __typeof(self) wself = self;
-    cellView.clickChangeHost = ^(NSString *uid) {
-        [wself showAlert:uid];
-    };
-    [rowView removeAllSubView];
-    [rowView addSubview:cellView];
     return rowView;
 }
 
@@ -92,6 +94,18 @@
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row {
     return 48;
+}
+
+#pragma mark - Private Action
+
+- (void)trackUid:(NSString *)uid {
+    for (RoomUserModel *model in self.dataLists) {
+        if ([model.uid isEqualToString:uid]) {
+            model.isTrack = YES;
+        } else {
+            model.isTrack = NO;
+        }
+    }
 }
 
 #pragma mark - getter

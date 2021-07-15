@@ -2,7 +2,7 @@
 //  CaptureSourceCollectionItem.m
 //  TXLiteAVMacDemo
 //
-//  Created by on 2021/3/4.
+//  Created by  on 2021/3/4.
 //
 
 #import "CaptureSourceCollectionItem.h"

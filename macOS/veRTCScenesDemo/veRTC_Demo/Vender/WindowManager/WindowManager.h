@@ -2,7 +2,7 @@
 //  WindowManager.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/2.
+//  Created by  on 2021/3/2.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,15 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSWindowController *currentWindowController;
 
 - (void)start;
-- (void)stop;
-- (void)awake;
-- (void)showPreference;
 
 - (void)showScreenBottomWindowController:(LoginModel *)loginModel roomModel:(MeetingControlRoomModel *)roomModel;
 
-- (void)showMeetingWindowController;
+- (void)showMeetingWindowController:(BOOL)isInitialize;
 
 - (void)showEndWindowController:(LoginModel *)loginModel roomModel:(MeetingControlRoomModel *)roomModel;
+
 - (void)closeEndWindowController;
 
 - (void)showToastWindowController:(NSString *)message;

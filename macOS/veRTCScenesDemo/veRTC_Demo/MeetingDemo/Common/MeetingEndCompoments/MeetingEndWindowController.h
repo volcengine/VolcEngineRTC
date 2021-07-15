@@ -2,7 +2,7 @@
 //  MeetingEndWindowController.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/29.
+//  Created by  on 2021/3/29.
 //
 
 #import <Cocoa/Cocoa.h>

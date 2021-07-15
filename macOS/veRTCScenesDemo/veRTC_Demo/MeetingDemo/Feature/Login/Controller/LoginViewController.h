@@ -2,7 +2,7 @@
 //  LoginViewController.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/10.
+//  Created by  on 2021/3/10.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *appId;
 
-@property (nonatomic, copy) void (^clickJoinRoomBlock)(LoginModel *loginModel);
+@property (nonatomic, copy) void (^clickJoinRoomBlock)(LoginModel *loginModel, NSArray<RoomUserModel *> * _Nonnull userLists);
 
 - (void)reStartPreview;
 

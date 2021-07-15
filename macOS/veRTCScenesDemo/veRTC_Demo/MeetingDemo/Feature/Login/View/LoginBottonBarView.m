@@ -2,7 +2,7 @@
 //  LoginBottonBarView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/8.
+//  Created by  on 2021/3/8.
 //
 
 #import "LoginBottonBarView.h"
@@ -15,7 +15,7 @@
 
 @property (nonatomic, strong) NSLabel *messageLabel;
 @property (nonatomic, strong) MeetingTextFileComponents *roomIDTextFile;
-@property (nonatomic, strong) MeetingTextFileComponents *userIDTextFile;
+@property (nonatomic, strong) MeetingTextFileComponents *userNameTextFile;
 @property (nonatomic, assign) bool isRoomIllegal;
 @property (nonatomic, assign) bool isUserIllegal;
 @property (nonatomic, strong) TrackButton *startButton;
@@ -38,6 +38,14 @@
         self.startButton.currentStatus = TrackButtonStatusDisabled;
         
         [self updateSystemAuthority];
+        
+        __weak __typeof(self) wself = self;
+        self.roomIDTextFile.keyboardClickTab = ^{
+            [wself.userNameTextFile textBecomeFirstResponder];
+        };
+        self.userNameTextFile.keyboardClickEnter = ^{
+            [wself startButtonAction];
+        };
     }
     return self;
 }
@@ -56,8 +64,8 @@
         make.left.equalTo(self.messageLabel.mas_right).offset(24);
     }];
     
-    [self addSubview:self.userIDTextFile];
-    [self.userIDTextFile mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self addSubview:self.userNameTextFile];
+    [self.userNameTextFile mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(160, 32));
         make.centerY.equalTo(self);
         make.left.equalTo(self.roomIDTextFile.mas_right).offset(16);
@@ -67,7 +75,7 @@
     [self.startButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(88, 32));
         make.centerY.equalTo(self);
-        make.left.equalTo(self.userIDTextFile.mas_right).offset(16);
+        make.left.equalTo(self.userNameTextFile.mas_right).offset(16);
     }];
     
     [self addSubview:self.micButton];
@@ -94,17 +102,16 @@
 
 #pragma mark - Publish Action
 
-- (void)updateRoomIDTextFile:(NSString *)text {
-    self.roomIDTextFile.text = text;
-    
+- (void)updateUserNameTextFile:(NSString *)text {
+    self.userNameTextFile.text = text;   
 }
 
 - (NSString *)roomId {
     return self.roomIDTextFile.text;
 }
 
-- (NSString *)uid {
-    return self.userIDTextFile.text;
+- (NSString *)userName {
+    return self.userNameTextFile.text;
 }
 
 - (BOOL)isEnableVideo {
@@ -174,11 +181,11 @@
     if (meetingTextFileComponents == self.roomIDTextFile) {
         self.isRoomIllegal = isIllegal;
         [self updateInputState:meetingTextFileComponents isIllegal:isIllegal];
-    } else if (meetingTextFileComponents == self.userIDTextFile) {
+    } else if (meetingTextFileComponents == self.userNameTextFile) {
         self.isUserIllegal = isIllegal;
         [self updateInputState:meetingTextFileComponents isIllegal:isIllegal];
     }
-    BOOL isEmpty = (self.roomIDTextFile.text.length <= 0) || (self.userIDTextFile.text.length <= 0);
+    BOOL isEmpty = (self.roomIDTextFile.text.length <= 0) || (self.userNameTextFile.text.length <= 0);
     BOOL isAllisIllegal = self.isUserIllegal || self.isRoomIllegal;
     [self updateInputErrorView:isAllisIllegal];
     
@@ -242,7 +249,7 @@
         _roomIDTextFile = [[MeetingTextFileComponents alloc] init];
         _roomIDTextFile.placeholderString = @"房间ID";
         _roomIDTextFile.maxLength = 18;
-        _roomIDTextFile.isCheck = YES;
+        _roomIDTextFile.isCheckNumberEng = YES;
         _roomIDTextFile.wantsLayer = YES;
         _roomIDTextFile.layer.cornerRadius = 2;
         _roomIDTextFile.layer.masksToBounds = YES;
@@ -251,18 +258,18 @@
     return _roomIDTextFile;
 }
 
-- (MeetingTextFileComponents *)userIDTextFile {
-    if (!_userIDTextFile) {
-        _userIDTextFile = [[MeetingTextFileComponents alloc] init];
-        _userIDTextFile.placeholderString = @"用户ID";
-        _userIDTextFile.maxLength = 18;
-        _userIDTextFile.isCheck = YES;
-        _userIDTextFile.wantsLayer = YES;
-        _userIDTextFile.layer.cornerRadius = 2;
-        _userIDTextFile.layer.masksToBounds = YES;
-        _userIDTextFile.delegate = self;
+- (MeetingTextFileComponents *)userNameTextFile {
+    if (!_userNameTextFile) {
+        _userNameTextFile = [[MeetingTextFileComponents alloc] init];
+        _userNameTextFile.placeholderString = @"用户昵称";
+        _userNameTextFile.maxLength = 18;
+        _userNameTextFile.isCheckAll = YES;
+        _userNameTextFile.wantsLayer = YES;
+        _userNameTextFile.layer.cornerRadius = 2;
+        _userNameTextFile.layer.masksToBounds = YES;
+        _userNameTextFile.delegate = self;
     }
-    return _userIDTextFile;
+    return _userNameTextFile;
 }
 
 - (TrackButton *)startButton {

@@ -2,7 +2,7 @@
 //  NSButton+Snippet.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/8.
+//  Created by  on 2021/3/8.
 //
 
 #import "NSButton+Snippet.h"
@@ -20,7 +20,11 @@
 }
 
 - (void)setTitleColor:(NSString *)hexString title:(NSString *)title {
-    NSColor *color = [NSColor colorFromRGBHexString:hexString];
+    [self setTitleColor:hexString andAlpha:1 * 255 title:title];
+}
+
+- (void)setTitleColor:(NSString *)hexString andAlpha:(NSInteger)andAlpha title:(NSString *)title {
+    NSColor *color = [NSColor colorFromRGBHexString:hexString andAlpha:andAlpha];
     NSMutableParagraphStyle *btnStyle = [[NSMutableParagraphStyle alloc] init];
     btnStyle.alignment = NSTextAlignmentCenter;
     NSDictionary *dicAtt = @{NSForegroundColorAttributeName : color, NSParagraphStyleAttributeName : btnStyle};

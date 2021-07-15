@@ -2,7 +2,7 @@
 //  RoomBottomBarView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/9.
+//  Created by  on 2021/3/9.
 //
 
 #import "RoomBottomBarView.h"
@@ -71,7 +71,6 @@
     [self.leftBarView updateButtonStatus:status close:isClose];
 }
 
-//模拟点击下按钮
 - (void)clickButtonStatus:(BottomBarStatus)status {
     [self.leftBarView clickButtonStatus:status];
 }

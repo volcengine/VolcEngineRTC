@@ -2,7 +2,7 @@
 //  ParticipantCell.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/10.
+//  Created by  on 2021/3/10.
 //
 
 #import "ParticipantCell.h"
@@ -98,22 +98,22 @@
 
 - (void)hostButtonAction {
     if (self.clickChangeHost) {
-        self.clickChangeHost(self.participantModel.roomUserModel.name);
+        self.clickChangeHost(self.roomUserModel.uid, self.roomUserModel.name);
     }
 }
 
 - (void)micButtonAction {
-    BOOL isOpenAudio = self.participantModel.roomUserModel.audioType == 2 ? NO : YES;
+    BOOL isOpenAudio = self.roomUserModel.isEnableMic;
     if (isOpenAudio) {
         //mute microphone
-        [MeetingControlCompoments muteUser:self.participantModel.roomUserModel.name block:^(BOOL result, MeetingControlAckModel * _Nonnull model) {
+        [MeetingControlCompoments muteUser:self.roomUserModel.uid block:^(BOOL result, MeetingControlAckModel * _Nonnull model) {
             if (!model.result) {
                 [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:model.message];
             }
         }];
     } else {
         //Ask microphone On
-        [MeetingControlCompoments askMicOn:self.participantModel.roomUserModel.name block:^(BOOL result) {
+        [MeetingControlCompoments askMicOn:self.roomUserModel.uid block:^(BOOL result) {
                     
         }];
     }
@@ -121,45 +121,44 @@
 
 #pragma mark - Publish Action
 
-- (void)setParticipantModel:(ParticipantModel *)participantModel {
-    _participantModel = participantModel;
-    self.hidden = participantModel == nil ? YES : NO;
+- (void)setRoomUserModel:(RoomUserModel *)roomUserModel {
+    _roomUserModel = roomUserModel;
+    self.hidden = roomUserModel == nil ? YES : NO;
     
-    NSString *name = participantModel.roomUserModel.name;
+    NSString *name = roomUserModel.name;
     NSInteger macLength = 12;
     if (name.length > macLength) {
-        name = [participantModel.roomUserModel.name substringToIndex:macLength];
+        name = [roomUserModel.name substringToIndex:macLength];
         name = [NSString stringWithFormat:@"%@...", name];
     }
-    self.avatartView.text = participantModel.roomUserModel.name;
+    self.avatartView.text = roomUserModel.name;
     self.nameLabel.text = name;
-    
-    if (participantModel.roomUserModel.audioType == 1) {
-        //open
-        self.micImageView.image = [NSImage imageNamed:@"metting_audio_de"];
-        self.micButton.isClose = NO;
-        self.avatarSpeakView.hidden = YES;
-    } else if (participantModel.roomUserModel.audioType == 2) {
+
+    if (roomUserModel.isEnableMic) {
+        if (roomUserModel.volume > 0) {
+            //ing
+            self.micImageView.image = [NSImage imageNamed:@"metting_audio_ing"];
+            self.micButton.isClose = NO;
+            self.avatarSpeakView.hidden = NO;
+        } else {
+            self.micImageView.image = [NSImage imageNamed:@"metting_audio_de"];
+            self.micButton.isClose = NO;
+            self.avatarSpeakView.hidden = YES;
+        }
+    } else {
         //close
         self.micImageView.image = [NSImage imageNamed:@"metting_login_audio_close"];
         self.micButton.isClose = YES;
         self.avatarSpeakView.hidden = YES;
-    } else if (participantModel.roomUserModel.audioType == 3) {
-        //ing
-        self.micImageView.image = [NSImage imageNamed:@"metting_audio_ing"];
-        self.micButton.isClose = NO;
-        self.avatarSpeakView.hidden = NO;
-    } else {
-        
     }
-    
-    if (participantModel.roomUserModel.isOpenVideo) {
+
+    if (roomUserModel.isEnableCamera) {
         self.videoImageView.image = [NSImage imageNamed:@"metting_video_de"];
     } else {
         self.videoImageView.image = [NSImage imageNamed:@"metting_login_video_close"];
     }
-    
-    if (participantModel.roomUserModel.isHost) {
+
+    if (roomUserModel.isHost) {
         self.hostTipView.hidden = NO;
         [self.nameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
             make.centerY.equalTo(self).offset(-8);
@@ -170,14 +169,14 @@
             make.centerY.equalTo(self);
         }];
     }
-    
-    if (participantModel.roomUserModel.isOpenScreen) {
+
+    if (roomUserModel.isOpenScreen) {
         self.screenImageView.hidden = NO;
     } else {
         self.screenImageView.hidden = YES;
     }
-    
-    [self updateEnterStatus:self.participantModel.isTrack];
+
+    [self updateEnterStatus];
 }
 
 - (void)mouseEntered:(NSEvent *)event {
@@ -198,15 +197,20 @@
 
 - (void)trackWithEnter:(BOOL)isEnter {
     if (!self.isLoginHost ||
-        self.participantModel.roomUserModel.isOneself) {
+        self.roomUserModel.isSelf) {
         return;
     }
-    [self updateEnterStatus:isEnter];
+    self.roomUserModel.isTrack = isEnter;
+    [self updateEnterStatus];
+    if (isEnter) {
+        if (self.moveTrackBlock) {
+            self.moveTrackBlock(self.roomUserModel.uid);
+        }
+    }
 }
 
-- (void)updateEnterStatus:(BOOL)isEnter {
-    self.participantModel.isTrack = isEnter;
-    if (isEnter) {
+- (void)updateEnterStatus {
+    if (self.roomUserModel.isTrack) {
         [self setBackgroundColorWithHexString:@"#272E3B"];
         self.micImageView.hidden = YES;
         self.videoImageView.hidden = YES;

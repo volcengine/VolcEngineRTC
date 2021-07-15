@@ -2,7 +2,7 @@
 //  LoginBottonBarView.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/8.
+//  Created by  on 2021/3/8.
 //
 
 #import <Cocoa/Cocoa.h>
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LoginBottonBarView : NSView
 
-- (void)updateRoomIDTextFile:(NSString *)text;
+- (void)updateUserNameTextFile:(NSString *)text;
 
 - (void)updateBottomBar:(LoginModel *)loginModel;
 
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) NSString *roomId;
 
-@property (nonatomic, copy, readonly) NSString *uid;
+@property (nonatomic, copy, readonly) NSString *userName;
 
 @property (nonatomic, assign, readonly) BOOL isEnableVideo;
 

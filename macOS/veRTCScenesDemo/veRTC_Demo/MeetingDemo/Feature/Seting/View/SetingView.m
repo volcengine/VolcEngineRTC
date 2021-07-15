@@ -2,7 +2,7 @@
 //  SetingView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/8.
+//  Created by  on 2021/3/8.
 //
 
 #import "SetingView.h"
@@ -10,6 +10,7 @@
 #import "BitRateSelectView.h"
 #import "MeetingBaseSetingComponents.h"
 #import "MeetingMockDataCompoments.h"
+#import "MeetingRecordComponents.h"
 #import "BaseSilder.h"
 
 @interface SetingView ()
@@ -27,7 +28,8 @@
 
 @property (nonatomic, strong) MeetingSelectComponents *micSelectView;
 @property (nonatomic, strong) MeetingSelectComponents *cameraSelectView;
-@property (nonatomic, strong) MeetingSelectComponents *pathSelectView;
+@property (nonatomic, strong) MeetingRecordComponents *pathSelectView;
+@property (nonatomic, strong) MeetingRecordComponents *hostPathSelectView;
 @property (nonatomic, strong) MeetingBaseSetingComponents *switchParamenterView;
 
 @property (nonatomic, strong) NSMutableDictionary *dataDic;
@@ -80,10 +82,28 @@
             [wself changeParam];
         };
         self.pathSelectView.clickBlock = ^(NSString * _Nonnull key) {
-            MeetingControlRecordModel *modle = [wself modelToTimerStr:key];
+            MeetingControlRecordModel *modle = [wself modelToTimerStr:key isHost:NO];
             if (key.length > 0 && modle) {
                 [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:modle.download_url]];
             }
+        };
+        self.hostPathSelectView.clickBlock = ^(NSString * _Nonnull key) {
+            MeetingControlRecordModel *modle = [wself modelToTimerStr:key isHost:YES];
+            if (key.length > 0 && modle) {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:modle.download_url]];
+            }
+        };
+        self.hostPathSelectView.deleteBlock = ^(NSString * _Nonnull key) {
+            __block MeetingControlRecordModel *modle = [wself modelToTimerStr:key isHost:YES];
+            [MeetingControlCompoments deleteVideoRecord:modle.vid block:^(MeetingControlAckModel * _Nonnull ackModel) {
+                if (ackModel.result) {
+                    NSMutableArray *lists = [wself.hostPathSelectView.dataLists mutableCopy];
+                    [lists removeObject:[wself getTimerStrWithModel:modle]];
+                    wself.hostPathSelectView.dataLists = [lists copy];
+                } else {
+                    [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:ackModel.message];
+                }
+            }];
         };
     }
     return self;
@@ -167,18 +187,26 @@
     _historyVideoRecordLists = historyVideoRecordLists;
 
     NSMutableArray<NSString *> *pathLists = [[NSMutableArray alloc] init];
-    NSString *urlName = @"--";
     for (int i = 0; i < historyVideoRecordLists.count; i++) {
         MeetingControlRecordModel *model = historyVideoRecordLists[i];
         [pathLists addObject:[self getTimerStrWithModel:model]];
     }
-    if (pathLists.count > 0) {
-        MeetingControlRecordModel *model = historyVideoRecordLists.firstObject;
-        urlName = [self getTimerStrWithModel:model];
+    //path
+    self.pathSelectView.stringValue = @"选择历史会议点击链接查看";
+    self.pathSelectView.dataLists = [pathLists copy];
+}
+
+- (void)setHistoryHostVideoRecordLists:(NSArray<MeetingControlRecordModel *> *)historyHostVideoRecordLists {
+    _historyHostVideoRecordLists = historyHostVideoRecordLists;
+
+    NSMutableArray<NSString *> *pathLists = [[NSMutableArray alloc] init];
+    for (int i = 0; i < historyHostVideoRecordLists.count; i++) {
+        MeetingControlRecordModel *model = historyHostVideoRecordLists[i];
+        [pathLists addObject:[self getTimerStrWithModel:model]];
     }
     //path
-    self.pathSelectView.stringValue = urlName;
-    self.pathSelectView.dataLists = [pathLists copy];
+    self.hostPathSelectView.stringValue = @"会议录制者有权在此处查看和删除录像";
+    self.hostPathSelectView.dataLists = [pathLists copy];
 }
 
 - (NSString *)getTimerStrWithModel:(MeetingControlRecordModel *)model {
@@ -189,9 +217,10 @@
     return [formatter stringFromDate:date];;
 }
 
-- (MeetingControlRecordModel *)modelToTimerStr:(NSString *)str {
+- (MeetingControlRecordModel *)modelToTimerStr:(NSString *)str isHost:(BOOL)isHost {
     MeetingControlRecordModel *cModel = nil;
-    for (MeetingControlRecordModel *model in self.historyVideoRecordLists) {
+    NSArray<MeetingControlRecordModel *> *lists = isHost ? self.historyHostVideoRecordLists : self.historyVideoRecordLists;
+    for (MeetingControlRecordModel *model in lists) {
         NSString *timeStr = [self getTimerStrWithModel:model];
         if ([timeStr isEqualToString:str]) {
             cModel = model;
@@ -348,11 +377,18 @@
         make.top.equalTo(self.cameraSelectView.mas_bottom).offset(20);
         make.size.mas_equalTo(CGSizeMake(320, 32));
     }];
+    
+    [self addSubview:self.hostPathSelectView];
+    [self.hostPathSelectView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.resolutionSelectView);
+        make.top.equalTo(self.pathSelectView.mas_bottom).offset(20);
+        make.size.mas_equalTo(CGSizeMake(320, 32));
+    }];
 
     [self addSubview:self.switchParamenterView];
     [self.switchParamenterView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.resolutionSelectView);
-        make.top.equalTo(self.pathSelectView.mas_bottom).offset(20);
+        make.top.equalTo(self.hostPathSelectView.mas_bottom).offset(20);
         make.size.mas_equalTo(CGSizeMake(160, 32));
     }];
 }
@@ -436,12 +472,22 @@
     return _cameraSelectView;
 }
 
-- (MeetingSelectComponents *)pathSelectView {
+- (MeetingRecordComponents *)pathSelectView {
     if (!_pathSelectView) {
-        _pathSelectView = [[MeetingSelectComponents alloc] init];
+        _pathSelectView = [[MeetingRecordComponents alloc] init];
         _pathSelectView.title = @"查看历史会议";
+        _pathSelectView.isDelete = NO;
     }
     return _pathSelectView;
+}
+
+- (MeetingRecordComponents *)hostPathSelectView {
+    if (!_hostPathSelectView) {
+        _hostPathSelectView = [[MeetingRecordComponents alloc] init];
+        _hostPathSelectView.title = @"我的云录制";
+        _hostPathSelectView.isDelete = YES;
+    }
+    return _hostPathSelectView;
 }
 
 - (MeetingBaseSetingComponents *)switchParamenterView {

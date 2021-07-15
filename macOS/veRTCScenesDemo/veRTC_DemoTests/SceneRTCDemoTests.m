@@ -2,7 +2,7 @@
 //  SceneRTCDemoTests.m
 //  SceneRTCDemoTests
 //
-//  Created by on 2021/3/2.
+//  Created by bytedance on 2021/3/2.
 //
 
 #import <XCTest/XCTest.h>

@@ -2,7 +2,7 @@
 //  RoomBottomLeftBarView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/2.
+//  Created by  on 2021/3/2.
 //
 
 #import "RoomBottomLeftBarView.h"
@@ -31,9 +31,9 @@
     model3.status = BottomBarStatusScreenShare;
     [self.dataLists addObject:model3];
     
-//    RoomBottomBarModel *model4 = [[RoomBottomBarModel alloc] init];
-//    model4.status = BottomBarStatusRecord;
-//    [self.dataLists addObject:model4];
+    RoomBottomBarModel *model4 = [[RoomBottomBarModel alloc] init];
+    model4.status = BottomBarStatusRecord;
+    [self.dataLists addObject:model4];
     
     RoomBottomBarModel *model5 = [[RoomBottomBarModel alloc] init];
     model5.status = BottomBarStatusPeople;
@@ -89,20 +89,20 @@
             button.isClose = isClose;
         }
     }
-//    else if (status == BottomBarStatusRecord) {
-//        if (self.buttonLists.count >= 4) {
-//            TrackButton *button = self.buttonLists[3];
-//            button.isClose = isClose;
-//        }
-//    }
+    else if (status == BottomBarStatusRecord) {
+        if (self.buttonLists.count >= 4) {
+            TrackButton *button = self.buttonLists[3];
+            button.isClose = isClose;
+        }
+    }
     else if (status == BottomBarStatusScreenShare) {
         if (self.buttonLists.count >= 3) {
             TrackButton *button = self.buttonLists[2];
             button.isClose = isClose;
         }
     } else if (status == BottomBarStatusPeople) {
-        if (self.buttonLists.count >= 3) {
-            TrackButton *button = self.buttonLists[3];
+        if (self.buttonLists.count >= 4) {
+            TrackButton *button = self.buttonLists[4];
             button.isClose = isClose;
         }
     } else {

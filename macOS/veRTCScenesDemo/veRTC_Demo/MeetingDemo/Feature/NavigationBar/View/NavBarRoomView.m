@@ -3,7 +3,7 @@
 //  NavBarRoomView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/11.
+//  Created by  on 2021/3/11.
 //
 
 #import "NavBarRoomView.h"
@@ -75,8 +75,8 @@
     _loginModel = loginModel;
     
     self.roomIDLabel.text = [NSString stringWithFormat:@"房间ID：%@",loginModel.roomId];
-    self.nameLabel.text = loginModel.uid;
-    self.avatarView.text = loginModel.uid;
+    self.nameLabel.text = [LocalUserCompoments userModel].name;
+    self.avatarView.text = [LocalUserCompoments userModel].name;
 }
 
 - (void)setIsExpandList:(BOOL)isExpandList {

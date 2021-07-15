@@ -48,12 +48,14 @@ public:
     ~ByteRtcEngineLite();
 
     const char* GetVersion(int* build) override;
-    void AdjustRecordingSignalVolume(const int volume) override;
-    void AdjustPlaybackSignalVolume(const int volume) override;
-    void EnableAudioLoopBackCapture(bool enable) override;
-    void AdjustAudioLoopbackCaptureVolume(int volume) override;
+    void SetRecordingVolume(const int volume) override;
+    void SetPlaybackVolume(const int volume) override;
+    void StartMixScreenAudioToMainStream() override;
+    void StopMixScreenAudioToMainStream() override;
+    void SetScreenAudioVolumeBeforeMixing(int volume) override;
     int EnableLocalAudio(bool enable) override;
-    int MuteLocalAudioStream(bool mute) override;
+    void MuteLocalAudio(MuteState state) override;
+    void SetAudioScenario(AudioScenarioType scenario) override;
     void SetExternalAudioSource(
             bool enable, int sample_rate, unsigned int record_channels, unsigned int playout_channels) override;
     void SetAudioDeviceObserver(IAudioDeviceObserver* obs) override;
@@ -90,12 +92,11 @@ public:
     static const char* GetErrorDescription(int code);
 #ifndef BYTERTC_AUDIO_ONLY
     int EnableLocalVideo(bool enable) override;
-    int SetVideoProfiles(const VideoSolution* solutions, int solution_num) override;
-    int SetupLocalVideo(const VideoCanvas& canvas) override;
-    int SetupLocalScreen(const VideoCanvas& canvas) override;
+    int SetVideoEncoderConfig(const VideoSolution* solutions, int solution_num) override;
+    int SetLocalVideoCanvas(StreamIndex index, const VideoCanvas& canvas) override;
     int SetLocalVideoRender(IVideoSink* render) override;
     int SetLocalScreenRender(IVideoSink* sink) override;
-    int MuteLocalVideoStream(bool mute) override;
+    int MuteLocalVideo(MuteState muteState) override;
     int StartPreview() override;
     int StopPreview() override;
     int SwitchCamera() override;
@@ -125,7 +126,7 @@ public:
     int SetSubscribeFallbackOption(SubscribeFallbackOptions option) override;
     int SetRemoteUserPriority(const char* user_id, RemoteUserPriority priority) override;
     int SetBusinessId(const char* business_id) override;
-    void SetLocalVideoMirrorMode(bool enable) override;
+    void SetLocalVideoMirrorMode(MirrorMode mirrorMode) override;
     bool GetLocalVideoMirrorMode() override;
     IVideoEffect* GetVideoEffectInterface() override;
 
@@ -144,7 +145,7 @@ public:
 #ifndef BYTERTC_AUDIO_ONLY
 #endif
     static void HttpClientCallback(int callback_id, int client_id, int code, std::string data);
-    static void SetUpperHttpClient(bool is_upper_impl);
+    static void SetHttpClient(bool is_upper_impl);
     // void SetLogReportContext(const char* project_key, const char* device_id);
     static int SetParameters(const char* parameters);
     // void SetSdkContext(const char* rtc_sdk_version, const char* rtc_sdk_git_commit);
@@ -176,7 +177,7 @@ public:
 
     IRtcRoom* CreateRtcRoom(ByteRtcEngine* engine);
 
-    void SetAudioPerfProfile(AudioPerfProfile profile) override;
+    void SetAudioPerformanceProfile(AudioPerformanceProfile profile) override;
 
     void SetEncryptInfo(ByteEngineEncryptType encrypt_type, const char* key, int key_size) override;
     void SetCustomizeEncryptHandler(IByteEngineEncryptHandler* handler) override;

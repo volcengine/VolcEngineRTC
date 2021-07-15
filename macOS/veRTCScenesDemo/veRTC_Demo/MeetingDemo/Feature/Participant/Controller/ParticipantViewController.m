@@ -2,7 +2,7 @@
 //  ParticipantViewController.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/9.
+//  Created by  on 2021/3/9.
 //
 
 #import "ParticipantViewController.h"
@@ -25,95 +25,17 @@
         [self setBackgroundColorWithHexString:@"#101319"];
         
         [self addSubviewAndConstraints];
-        
-        [self loadDataWithGetMeetingUserInfo];
     }
     return self;
 }
 
 #pragma mark - Publish Action
 
-- (void)loadDataWithGetMeetingUserInfo {
-    [MeetingControlCompoments getMeetingUserInfo:@"" block:^(NSArray<MeetingControlUserModel *> * _Nonnull userLists, MeetingControlAckModel * _Nonnull model) {
-        NSMutableArray *dataLists = [[NSMutableArray alloc] init];
-        for (int i = 0; i < userLists.count; i++) {
-            ParticipantModel *participantModel = [ParticipantModel participantModelToMeetingControlUserModel:userLists[i]];
-            //is oneself
-            if ([participantModel.roomUserModel.name isEqualToString:self.loginModel.uid]) {
-                participantModel.roomUserModel.isOneself = YES;
-            }
-            [dataLists addObject:participantModel];
-        }
-        self.listView.dataLists = [dataLists copy];
-        self.titleLabel.text = [NSString stringWithFormat:@"参会人（%lu）", (unsigned long)self.listView.dataLists.count];
-    }];
-}
-
-- (void)updateUserMicStatus:(BOOL)isOpen uid:(NSString *)uid {
-    BOOL isRefresh = NO;
-    NSArray *lists = self.listView.dataLists;
-    for (ParticipantModel *model in lists) {
-        if (uid && [uid isKindOfClass:[NSString class]] &&uid.length > 0) {
-            //Update a person's microphone
-            if ([model.roomUserModel.name isEqualToString:uid]) {
-                model.roomUserModel.audioType = isOpen ? 1 : 2;
-                isRefresh = YES;
-                break;
-            }
-        } else {
-            //Update everyone microphone
-            if (!model.roomUserModel.isHost) {
-                model.roomUserModel.audioType = isOpen ? 1 : 2;
-            }
-            isRefresh = YES;
-        }
-    }
-    if (isRefresh) {
-        self.listView.dataLists = lists;
-    }
-}
-
-- (void)updateUserCameraStatus:(BOOL)isOpen uid:(NSString *)uid {
-    BOOL isRefresh = NO;
-    NSArray *lists = self.listView.dataLists;
-    for (ParticipantModel *model in lists) {
-        if ([model.roomUserModel.name isEqualToString:uid]) {
-            model.roomUserModel.isOpenVideo = isOpen;
-            isRefresh = YES;
-            break;
-        }
-    }
-    if (isRefresh) {
-        self.listView.dataLists = lists;
-    }
-}
-
-- (void)updateUserScreenStatus:(BOOL)isOpen uid:(NSString *)uid {
-    for (ParticipantModel *model in self.listView.dataLists) {
-        if ([model.roomUserModel.name isEqualToString:uid]) {
-            model.roomUserModel.isOpenScreen = isOpen;
-        } else {
-            model.roomUserModel.isOpenScreen = NO;
-        }
-    }
-}
-
-- (void)updateUserHostStatusWithUid:(NSString *)uid {
-    ParticipantModel *hostModel = nil;
-    for (ParticipantModel *model in self.listView.dataLists) {
-        if ([model.roomUserModel.name isEqualToString:uid]) {
-            model.roomUserModel.isHost = YES;
-            hostModel = model;
-        } else {
-            model.roomUserModel.isHost = NO;
-        }
-    }
-    if (hostModel) {
-        NSMutableArray *lists = [self.listView.dataLists mutableCopy];
-        [lists removeObject:hostModel];
-        [lists insertObject:hostModel atIndex:0];
-        self.listView.dataLists = [lists copy];
-    }
+- (void)setVideoSessions:(NSArray<RoomUserModel *> *)videoSessions {
+    _videoSessions = videoSessions;
+    
+    self.listView.dataLists = videoSessions;
+    self.titleLabel.text = [NSString stringWithFormat:@"参会人（%lu）", (unsigned long)self.listView.dataLists.count];
 }
 
 - (void)setIsLoginHost:(BOOL)isLoginHost {
@@ -129,26 +51,6 @@
             make.height.mas_equalTo(0);
         }];
     }
-}
-
-- (void)updateUserMicStatus:(NSDictionary<NSString *,NSNumber *> *)speakUid {
-    for (ParticipantModel *model in self.listView.dataLists) {
-        NSNumber *number = speakUid[model.roomUserModel.name];
-        if (model.roomUserModel.audioType == 1 || model.roomUserModel.audioType == 3) {
-            if (number && number.integerValue > 0) {
-                model.roomUserModel.audioType = 3;
-            } else {
-                if (model.roomUserModel.audioType == 3) {
-                    model.roomUserModel.audioType = 1;
-                } else {
-
-                }
-            }
-        } else {
-            
-        }
-    }
-    self.listView.dataLists = self.listView.dataLists;
 }
 
 #pragma mark - Action Method

@@ -2,7 +2,7 @@
 //  RoomAvatarRenderView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/12.
+//  Created by  on 2021/3/12.
 //
 
 #import "RoomAvatarRenderView.h"
@@ -131,9 +131,9 @@
 #pragma mark - Notice Method
 
 - (void)updateLocalCameraStatusNotice:(NSNotification *)notification {
-    if (self.userModel.isOneself) {
+    if (self.userModel.isSelf) {
         NSNumber *number = (NSNumber *)notification.object;
-        self.userModel.isOpenVideo = number.boolValue;
+        self.userModel.isEnableCamera = number.boolValue;
         [self updateUIWithModel:self.userModel];
     }
 }
@@ -147,7 +147,7 @@
 }
 
 - (void)updateUIWithModel:(RoomUserModel *)userModel {
-    if (userModel.isVideoStream && userModel.isOpenVideo) {
+    if (userModel.isEnableCamera && userModel.isVideoStream) {
         userModel.streamView.hidden = NO;
         [self addSubview:userModel.streamView positioned:NSWindowBelow relativeTo:nil];
         [userModel.streamView mas_remakeConstraints:^(MASConstraintMaker *make) {
