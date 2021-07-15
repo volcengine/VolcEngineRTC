@@ -9,11 +9,11 @@
 | Win(C++)| [DOC](https://bytedance.feishu.cn/docs/doccnZ4PZCLhAQMQSt2jpVMDz2c)|
 | Mac| [DOC](https://bytedance.feishu.cn/docs/doccnhsMAlm2dTnJMrZXQAwlRfe#)|
 
-## Demo 1.0.0 @ 2021.06.30
+## Demo 2.1.0 @ 2021.07.15
 
 功能新增
-1. 增加会议Demo场景。
-2. 支持iOS，macOS，Android，Windows。
+1. 增加语音沙龙Demo场景。
+2. 增加手机号验证
 
 ## Demo 体验地址
 
