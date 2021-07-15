@@ -17,7 +17,7 @@ public class LengthFilterWithCallback implements InputFilter {
                                int dstart, int dend) {
         int keep = mMax - (dest.length() - (dend - dstart));
         if (keep <= 0) {
-            mOverflowCallback.isOverflow(false);
+            mOverflowCallback.isOverflow(true);
             return "";
         } else if (keep >= end - start) {
             mOverflowCallback.isOverflow(false);

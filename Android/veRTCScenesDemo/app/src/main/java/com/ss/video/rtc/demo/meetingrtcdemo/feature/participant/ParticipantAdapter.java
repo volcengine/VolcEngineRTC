@@ -16,6 +16,9 @@ import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingUserInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.resource.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.ParticipantViewHolder> {
@@ -27,7 +30,7 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
     private Runnable mAutoRecoverRunnable;
 
     public ParticipantAdapter(List<MeetingUserInfo> list, UserOptionCallback userOptionCallback) {
-        mList.addAll(list);
+        mList.addAll(sortUsers(list));
         mUserOptionCallback = userOptionCallback;
     }
 
@@ -60,7 +63,7 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
 
     public void setData(List<MeetingUserInfo> list) {
         mList.clear();
-        mList.addAll(list);
+        mList.addAll(sortUsers(list));
         notifyDataSetChanged();
     }
 
@@ -178,9 +181,9 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
 
     private void bindView(ParticipantViewHolder holder, MeetingUserInfo entity) {
         holder.bindUid(entity.user_id);
-        String uid = entity.user_id == null ? "" : entity.user_id;
-        holder.mPrefixTv.setText(uid.substring(0, 1));
-        holder.mUidTv.setText(uid);
+        String userName = entity.user_name == null ? " " : entity.user_name;
+        holder.mPrefixTv.setText(userName.substring(0, 1));
+        holder.mUidTv.setText(userName);
         holder.mHostTv.setVisibility(entity.is_host ? View.VISIBLE : View.GONE);
         holder.mScreenShare.setVisibility(entity.is_sharing ? View.VISIBLE : View.GONE);
         if (mAutoRecoverRunnable != null) {
@@ -212,6 +215,93 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
             holder.mUserNameHighlight.setVisibility(View.GONE);
         }
     }
+
+    private List<MeetingUserInfo> sortUsers(List<MeetingUserInfo> list) {
+        List<MeetingUserInfo> result = new LinkedList<>();
+        if (list == null || list.isEmpty()) {
+            return result;
+        }
+        String hostUid = MeetingDataManager.getHostUid();
+        String selfUid = MeetingDataManager.getSelfId();
+        String loudestUid = MeetingDataManager.getLoudestUid();
+        MeetingUserInfo host = null;
+        MeetingUserInfo mine = null;
+        MeetingUserInfo loudest = null;
+        List<MeetingUserInfo> cameraOnMicOn = new LinkedList<>();
+        List<MeetingUserInfo> cameraOffMicOn = new LinkedList<>();
+        List<MeetingUserInfo> cameraOnMicOff = new LinkedList<>();
+        List<MeetingUserInfo> cameraOffMicOff = new LinkedList<>();
+        for (MeetingUserInfo info : list) {
+            if (TextUtils.equals(info.user_id, hostUid)) {
+                host = info;
+            } else if (TextUtils.equals(info.user_id, selfUid)) {
+                mine = info;
+            } else if (TextUtils.equals(info.user_id, loudestUid)) {
+                loudest = info;
+            } else if (info.is_mic_on && info.is_camera_on) {
+                cameraOnMicOn.add(info);
+            } else if (info.is_mic_on) {
+                cameraOffMicOn.add(info);
+            } else if (info.is_camera_on) {
+                cameraOnMicOff.add(info);
+            } else {
+                cameraOffMicOff.add(info);
+            }
+        }
+        if (host != null) {
+            result.add(host);
+        }
+        if (mine != null) {
+            result.add(mine);
+        }
+        if (loudest != null) {
+            result.add(loudest);
+        }
+        result.addAll(sortByDictOrder(cameraOnMicOn));
+        result.addAll(sortByDictOrder(cameraOffMicOn));
+        result.addAll(sortByDictOrder(cameraOnMicOff));
+        result.addAll(sortByDictOrder(cameraOffMicOff));
+
+        return result;
+    }
+
+    private List<MeetingUserInfo> sortByDictOrder(List<MeetingUserInfo> list) {
+        MeetingUserInfo[] array = list.toArray(new MeetingUserInfo[]{});
+        Arrays.sort(array, mComparator);
+        return new LinkedList<>(Arrays.asList(array));
+    }
+
+    private final Comparator<MeetingUserInfo> mComparator = new Comparator<MeetingUserInfo>() {
+
+        @Override
+        public int compare(MeetingUserInfo o1, MeetingUserInfo o2) {
+            String uid1 = o1.user_uniform_name == null ? "" : o1.user_uniform_name;
+            String uid2 = o2.user_uniform_name == null ? "" : o2.user_uniform_name;
+            return compareString(uid1, uid2);
+        }
+
+        private int compareString(String o1, String o2) {
+            char[] chars1 = o1.toLowerCase().toCharArray();
+            char[] chars2 = o2.toLowerCase().toCharArray();
+            int i = 0;
+            while (i < chars1.length && i < chars2.length) {
+                if (chars1[i] > chars2[i]) {
+                    return 1;
+                } else if (chars1[i] < chars2[i]) {
+                    return -1;
+                } else {
+                    i++;
+                }
+            }
+            if (i == chars1.length) {
+                return -1;
+            }
+            if (i == chars2.length) {
+                return 1;
+            }
+            return 0;
+        }
+    };
 
     static class ParticipantViewHolder extends RecyclerView.ViewHolder {
 

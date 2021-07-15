@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/join_meeting_root_background"
+    android:paddingTop="25dp">
+
+    <include
+        android:id="@+id/layout_room_title_bar"
+        layout="@layout/layout_chat_room_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/layout_room_user_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="80dp"
+        tools:listitem="@layout/item_voice_listener_layout" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/layout_room_chat_rv"
+        android:layout_width="240dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:listitem="@layout/item_voice_chat_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="#1D2129"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/voice_chat_room_raise_hand_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="3dp"
+                android:src="@drawable/voice_user_list_unselected" />
+
+            <TextView
+                android:id="@+id/voice_chat_room_raise_hand_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="列表管理"
+                android:textColor="#86909C"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/voice_chat_room_mute_local_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/voice_chat_room_mute_local_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="3dp"
+                android:src="@drawable/voice_audio_enable" />
+
+            <TextView
+                android:id="@+id/voice_chat_room_mute_local_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="静音自己"
+                android:textColor="#86909C"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/voice_chat_room_audio_stats_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="3dp"
+                android:src="@drawable/voice_audio_stats_unselected" />
+
+            <TextView
+                android:id="@+id/voice_chat_room_audio_stats_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="音频数据"
+                android:textColor="#86909C"
+                android:textSize="12dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/room_toast_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#394254"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/layout_room_title_bar"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/close_red" />
+
+        <TextView
+            android:id="@+id/room_toast_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="48dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            tools:text="网络链接已断开，请检查设置" />
+    </FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

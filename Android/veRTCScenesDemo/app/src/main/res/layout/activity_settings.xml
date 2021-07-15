@@ -27,12 +27,27 @@
             layout="@layout/layout_meeting_item_arrow" />
 
         <include
+            android:id="@+id/settings_screen_resolution"
+            layout="@layout/layout_meeting_item_arrow" />
+
+        <include
+            android:id="@+id/settings_screen_frame_rate"
+            layout="@layout/layout_meeting_item_arrow" />
+
+        <include
+            android:id="@+id/settings_screen_bit_rate"
+            layout="@layout/layout_meeting_item_arrow" />
+
+        <include
             android:id="@+id/settings_video_log"
             layout="@layout/layout_meeting_item_switch" />
 
         <include
             android:id="@+id/settings_history_meetings"
-            layout="@layout/layout_meeting_item_arrow"
-            android:visibility="gone" />
+            layout="@layout/layout_meeting_item_arrow" />
+
+        <include
+            android:id="@+id/settings_my_history_meetings"
+            layout="@layout/layout_meeting_item_arrow" />
     </LinearLayout>
 </FrameLayout>

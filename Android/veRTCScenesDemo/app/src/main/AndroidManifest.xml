@@ -20,18 +20,16 @@
         android:roundIcon="@drawable/app_logo"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".feature.login.LoginActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity
+            android:name=".feature.verify.VerifyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.login.LoginActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".feature.room.RoomActivity"
-            android:keepScreenOn="true"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:keepScreenOn="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".feature.settings.SettingsActivity"
@@ -42,13 +40,34 @@
         <activity
             android:name=".feature.history.HistoryActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".voicechat.MainActivity"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".voicechat.ChatRoomActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".voicechat.ChatRoomListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".voicechat.ProfileDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".voicechat.CreateChatRoomActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".common.MoiraeService"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="true"
-            android:foregroundServiceType="mediaProjection" />
+            android:foregroundServiceType="mediaProjection"
+            android:stopWithTask="true" />
     </application>
 
 </manifest>

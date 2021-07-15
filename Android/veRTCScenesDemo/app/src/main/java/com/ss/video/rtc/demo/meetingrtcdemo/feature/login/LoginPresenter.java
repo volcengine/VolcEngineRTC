@@ -8,10 +8,12 @@ import com.ss.video.rtc.demo.basic_module.ui.CommonExperienceDialog;
 import com.ss.video.rtc.demo.basic_module.utils.AppExecutors;
 import com.ss.video.rtc.demo.basic_module.utils.IMEUtils;
 import com.ss.video.rtc.demo.meetingrtcdemo.R;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingApplication;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingDataManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingRTCManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEventManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RecordEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RefreshUserNameEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingTokenInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.feature.room.RoomActivity;
 import com.ss.video.rtc.demo.meetingrtcdemo.feature.settings.SettingsActivity;
@@ -40,9 +42,10 @@ public class LoginPresenter {
         }
         isJoining = true;
         final String meetingId = mLoginActivity.getMeetingId();
-        final String userId = mLoginActivity.getUserId();
+        final String userName = mLoginActivity.getUserName();
         AppExecutors.networkIO().execute(() -> {
-            final MeetingTokenInfo info = MeetingDataManager.getManager().joinMeeting(userId, meetingId,
+            final MeetingTokenInfo info = MeetingDataManager.getManager().joinMeeting(
+                    userName, meetingId,
                     MeetingDataManager.getMicStatus(), MeetingDataManager.getCameraStatus());
 
             isJoining = false;
@@ -60,9 +63,12 @@ public class LoginPresenter {
                     mLoginActivity.onJoinRoom();
                     IMEUtils.closeIME(view);
 
+                    MeetingApplication.sUserName = userName;
+                    MeetingEventManager.post(new RefreshUserNameEvent(userName, true));
                     Intent intent = new Intent(mLoginActivity, RoomActivity.class);
                     intent.putExtra(Constants.EXTRA_KEY_MEETING_ID, meetingId);
-                    intent.putExtra(Constants.EXTRA_KEY_USER_ID, userId);
+                    intent.putExtra(Constants.EXTRA_KEY_USER_ID, MeetingApplication.sUserID);
+                    intent.putExtra(Constants.EXTRA_KEY_USER_NAME, userName);
                     intent.putExtra(Constants.EXTRA_KEY_TOKEN, token);
                     intent.putExtra(Constants.EXTRA_KEY_MEETING_LAST, getMeetingLastMs(info));
 

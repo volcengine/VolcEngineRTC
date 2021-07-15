@@ -1,6 +1,8 @@
 package com.ss.video.rtc.demo.meetingrtcdemo.core.socket;
 
 import com.ss.video.rtc.demo.basic_module.utils.GsonUtils;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEventManager;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.TokenExpiredEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +28,9 @@ public class ServerResponse<T> {
                     response = resp.getJSONObject("response");
                     data = GsonUtils.gson().fromJson(response.toString(), clz);
                 }
+                if (code == 450) {
+                    MeetingEventManager.post(new TokenExpiredEvent());
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -44,6 +49,9 @@ public class ServerResponse<T> {
                 if (!JSONObject.NULL.equals(respObj)) {
                     response = resp.getString("response");
                     data = GsonUtils.gson().fromJson(response, type);
+                }
+                if (code == 450) {
+                    MeetingEventManager.post(new TokenExpiredEvent());
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

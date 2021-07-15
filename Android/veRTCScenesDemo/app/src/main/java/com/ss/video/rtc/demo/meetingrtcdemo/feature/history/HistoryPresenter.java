@@ -7,6 +7,7 @@ import com.ss.video.rtc.demo.basic_module.utils.AppExecutors;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingDataManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingRecordInfo;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class HistoryPresenter {
@@ -17,11 +18,17 @@ public class HistoryPresenter {
         mHistoryActivity = historyActivity;
     }
 
-    public void loadData() {
+    public void loadData(boolean isMine) {
         AppExecutors.networkIO().submit(() -> {
             List<MeetingRecordInfo> infoList = MeetingDataManager.getManager().getHistoryMeetingRecord();
             if (mHistoryActivity != null && !mHistoryActivity.isFinishing()) {
-                mHistoryActivity.runOnUiThread(() -> mHistoryActivity.showData(infoList));
+                List<MeetingRecordInfo> filterList = new LinkedList<>();
+                for (MeetingRecordInfo info : infoList) {
+                    if (info.video_holder == isMine) {
+                        filterList.add(info);
+                    }
+                }
+                mHistoryActivity.runOnUiThread(() -> mHistoryActivity.showData(filterList));
             }
         });
     }

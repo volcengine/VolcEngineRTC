@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="30dp"
+    android:layout_margin="5dp"
+    android:gravity="center|left"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:background="@drawable/item_voice_chat_bg"
+    android:textColor="@color/white"
+    android:textSize="16dp"
+    tools:text="Anna 加入了房间" />

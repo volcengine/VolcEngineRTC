@@ -29,12 +29,14 @@ import com.ss.video.rtc.demo.basic_module.utils.WindowUtils;
 import com.ss.video.rtc.demo.meetingrtcdemo.R;
 import com.ss.video.rtc.demo.meetingrtcdemo.common.LengthFilterWithCallback;
 import com.ss.video.rtc.demo.meetingrtcdemo.common.MoiraeService;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingApplication;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingDataManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingRTCManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.CameraStatusChangedEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEventManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MicStatusChangeEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.SocketConnectEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.TokenExpiredEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.VideoCanvasWrapper;
 import com.ss.video.rtc.demo.meetingrtcdemo.resource.Constants;
 import com.ss.video.rtc.engine.RtcEngine;
@@ -48,7 +50,8 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
-    public static final String INPUT_REGEX = "^[a-zA-Z0-9@_-]+$";
+    public static final String ROOM_INPUT_REGEX = "^[a-zA-Z0-9@_-]+$";
+    public static final String NAME_INPUT_REGEX = "^[\\u4e00-\\u9fa5a-zA-Z0-9@_-]+$";
     private static final long DISCONNECT_SHOW_INTERVAL = 3000;
 
     private boolean mIsJoinRoom = false;
@@ -83,13 +86,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MeetingDataManager.init();
+
         setContentView(R.layout.activity_login);
         startMoiraeService();
 
         mLoginPresenter = new LoginPresenter(this);
         mLoginPresenter.init();
-
-        MeetingDataManager.init();
+        MeetingDataManager.requestAppId();
     }
 
     @Override
@@ -119,6 +123,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         mMicSwitch.setOnClickListener(this);
         mSetting.setOnClickListener(this);
 
+        mInputUserId.setText(MeetingApplication.sUserName);
         mInputMeetingId.addTextChangedListener(mTextWatcher);
         mInputUserId.addTextChangedListener(mTextWatcher);
 
@@ -134,8 +139,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
         MeetingEventManager.register(this);
 
-        mInputMeetingId.setText("");
-        mInputUserId.setText("");
         version.setText(String.format("Demo版本 v1.0.0 / SDK版本 %s", RtcEngine.getSdkVersion()));
 
         updateAudioStatus(MeetingDataManager.getMicStatus());
@@ -240,7 +243,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         int userIDLength = mInputUserId.getText().length();
         boolean meetingIdRegexMatch = false;
         boolean userIdRegexMatch = false;
-        if (Pattern.matches(INPUT_REGEX, mInputMeetingId.getText().toString())) {
+        if (Pattern.matches(ROOM_INPUT_REGEX, mInputMeetingId.getText().toString())) {
             if (mMeetingIdOverflow) {
                 mInputMeetingIdError.setVisibility(View.VISIBLE);
                 mInputMeetingIdError.setText(R.string.login_input_meeting_id_waring);
@@ -258,7 +261,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 mInputMeetingIdError.setVisibility(View.INVISIBLE);
             }
         }
-        if (Pattern.matches(INPUT_REGEX, mInputUserId.getText().toString())) {
+        if (Pattern.matches(NAME_INPUT_REGEX, mInputUserId.getText().toString())) {
             if (mUserIdOverflow) {
                 mInputUserIdError.setVisibility(View.VISIBLE);
                 mInputUserIdError.setText(R.string.login_input_meeting_id_waring);
@@ -271,7 +274,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         } else {
             if (userIDLength > 0) {
                 mInputUserIdError.setVisibility(View.VISIBLE);
-                mInputUserIdError.setText(R.string.login_input_wrong_content_waring);
+                mInputUserIdError.setText(R.string.audio_input_wrong_content_waring);
             } else {
                 mInputUserIdError.setVisibility(View.INVISIBLE);
             }
@@ -312,10 +315,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     public void onJoinRoom() {
         mIsJoinRoom = true;
-        SPUtils.putString(Constants.SP_KEY_USER_ID, getUserId());
+        SPUtils.putString(Constants.SP_KEY_USER_NAME, getUserName());
     }
 
-    public String getUserId() {
+    public String getUserName() {
         return mInputUserId.getText().toString().trim();
     }
 
@@ -343,5 +346,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 mLastShowToast = now;
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTokenExpiredEvent(TokenExpiredEvent event) {
+        finish();
     }
 }

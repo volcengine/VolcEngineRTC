@@ -8,18 +8,26 @@
     <string name="login_input_meeting_id_waring">输入长度不能超过18位</string>
     <string name="login_input_user_id_waring">输入长度不能超过18位</string>
     <string name="login_input_wrong_content_waring">请输入数字、英文字母或符号@_-</string>
+    <string name="audio_input_wrong_content_waring">仅支持中文、字母、数字、1~18位</string>
     <string name="login_duplicate_login">相同ID的用户登录，您已被强制下线</string>
-    <string name="history_title">会议录像</string>
+    <string name="all_history_title">会议录像</string>
+    <string name="mine_history_title">我的云录制</string>
     <string name="settings_title">会议设置</string>
     <string name="settings_video_resolution">分辨率</string>
+    <string name="settings_screen_resolution">屏幕共享分辨率</string>
     <string name="settings_video_frame_rate">帧率</string>
+    <string name="settings_screen_frame_rate">屏幕共享帧率</string>
     <string name="settings_video_bit_rate">码率</string>
+    <string name="settings_screen_bit_rate">屏幕共享码率</string>
     <string name="settings_video_log">实时视频参数</string>
-    <string name="settings_view_history_meetings">查看会议录像</string>
+    <string name="settings_view_history_meetings">查看历史会议</string>
+    <string name="settings_view_my_history_meetings">我的云录制</string>
     <string name="settings_frame_rate">%dfps</string>
     <string name="settings_bit_rate">%dkbps</string>
     <string name="users_title">参会人（%d）</string>
     <string name="on_ask_open_mic">主持人邀请你打开麦克风</string>
+    <string name="verify_input_phone_number_hint">请输入手机号</string>
+    <string name="verify_input_code_hint">请输入验证码</string>
 
     <string-array name="video_resolution">
         <item>160 * 160</item>
@@ -32,16 +40,6 @@
         <item>720 * 1280</item>
         <item>1080 * 1920</item>
     </string-array>
-
-    160 * 160   40 - 150
-    180 * 320   80 - 350
-    240 * 320   100 - 400
-    360 * 640    200 - 1000
-    480 * 480    200 - 1000
-    480 * 640    250 - 1000
-    540 * 960    400 - 1600
-    720 * 1280    500 - 2000
-    1080 * 1920    800 - 3000
 
     <string-array name="video_frame_rate">
         <item>15 / 20 / 24</item>

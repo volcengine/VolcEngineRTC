@@ -10,6 +10,7 @@ import com.ss.video.rtc.demo.basic_module.utils.Utilities;
 import com.ss.video.rtc.demo.meetingrtcdemo.common.MLog;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEventManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RTCStatEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RTCVolumeEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingUserInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.resource.Constants;
 import com.ss.video.rtc.engine.ByteStream;
@@ -104,13 +105,17 @@ public class MeetingRTCManager {
         }
 
         @Override
+        public void onLocalAudioStats(LocalAudioStats stats) {
+            super.onLocalAudioStats(stats);
+            MeetingEventManager.post(stats);
+        }
+
+        @Override
         public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
             if (speakers == null || speakers.length == 0) {
                 return;
             }
-            AppExecutors.mainThread().execute(() -> {
-                MeetingDataManager.updateUserVolume(speakers);
-            });
+            MeetingEventManager.post(new RTCVolumeEvent(speakers, totalVolume));
         }
 
         @Override
@@ -125,7 +130,7 @@ public class MeetingRTCManager {
 
             RtcEngine.setDeviceId(MeetingDataManager.getDeviceId());
 
-            RtcEngine.ByteRtcEnv env = Constants.IS_TEST ? RtcEngine.ByteRtcEnv.kByteRtcEnvTest : RtcEngine.ByteRtcEnv.kByteRtcEnvProduct;
+            RtcEngine.ByteRtcEnv env = RtcEngine.ByteRtcEnv.kByteRtcEnvProduct;
             RtcEngine.setEnv(env);
 
             try {
@@ -232,7 +237,7 @@ public class MeetingRTCManager {
     }
 
     public static void joinChannel(String token, String roomId, PublisherConfiguration configuration, String uid) {
-        MLog.d("joinChannel", ":" + token + ":" + roomId + ":" + uid);
+        MLog.d("joinChannel", "token:" + token + " roomId:" + roomId + " uid:" + uid);
         if (sInstance == null) {
             return;
         }

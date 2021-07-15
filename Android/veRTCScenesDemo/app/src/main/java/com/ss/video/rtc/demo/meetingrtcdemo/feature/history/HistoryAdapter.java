@@ -68,6 +68,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void bind(MeetingRecordInfo info) {
             mUrl.setText(formatTime(info.created_at));
             itemView.setOnClickListener(v -> mOnClickRecord.onClick(info.download_url));
+            itemView.setOnLongClickListener((v) -> {
+                mOnClickRecord.onLongClick(info);
+                return true;
+            });
         }
 
         private String formatTime(long time){
@@ -78,5 +82,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnClickRecord {
         void onClick(String url);
+        void onLongClick(MeetingRecordInfo info);
     }
 }

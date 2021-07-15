@@ -2,6 +2,7 @@ package com.ss.video.rtc.demo.meetingrtcdemo.feature.history;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -10,7 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ss.video.rtc.demo.basic_module.acivities.BaseActivity;
+import com.ss.video.rtc.demo.basic_module.ui.CommonDialog;
+import com.ss.video.rtc.demo.basic_module.utils.AppExecutors;
 import com.ss.video.rtc.demo.meetingrtcdemo.R;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.MeetingDataManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEndEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEventManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingRecordInfo;
@@ -29,8 +33,21 @@ public class HistoryActivity extends BaseActivity {
     private HistoryAdapter mHistoryAdapter;
 
     private String mRefer = "";
+    private String mViewType;
 
-    private final HistoryAdapter.OnClickRecord mOnClickRecord = url -> mHistoryPresenter.downloadMeetingFile(url);
+    private final HistoryAdapter.OnClickRecord mOnClickRecord = new HistoryAdapter.OnClickRecord() {
+        @Override
+        public void onClick(String url) {
+            mHistoryPresenter.downloadMeetingFile(url);
+        }
+
+        @Override
+        public void onLongClick(MeetingRecordInfo info) {
+            if (TextUtils.equals(mViewType, Constants.EXTRA_VIEW_TYPE_MINE) && info.video_holder) {
+                deleteMineRecord(info);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +56,7 @@ public class HistoryActivity extends BaseActivity {
 
         Intent intent = getIntent();
         mRefer = intent.getStringExtra(Constants.REFER_KEY);
+        mViewType = intent.getStringExtra(Constants.EXTRA_KEY_VIEW_TYPE);
     }
 
     @Override
@@ -49,7 +67,11 @@ public class HistoryActivity extends BaseActivity {
         backArrow.setImageResource(R.drawable.back_arrow);
         backArrow.setOnClickListener(v -> finish());
         TextView title = findViewById(R.id.title_bar_title_tv);
-        title.setText(R.string.history_title);
+        if (TextUtils.equals(mViewType, Constants.EXTRA_VIEW_TYPE_MINE)) {
+            title.setText(R.string.mine_history_title);
+        } else {
+            title.setText(R.string.all_history_title);
+        }
 
         RecyclerView recyclerView = findViewById(R.id.meeting_record_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, VERTICAL, false));
@@ -57,7 +79,7 @@ public class HistoryActivity extends BaseActivity {
         recyclerView.setAdapter(mHistoryAdapter);
 
         mHistoryPresenter = new HistoryPresenter(this);
-        mHistoryPresenter.loadData();
+        mHistoryPresenter.loadData(TextUtils.equals(mViewType, Constants.EXTRA_VIEW_TYPE_MINE));
         MeetingEventManager.register(this);
     }
 
@@ -69,6 +91,17 @@ public class HistoryActivity extends BaseActivity {
 
     public void showData(List<MeetingRecordInfo> infoList) {
         mHistoryAdapter.setRecordList(infoList);
+    }
+
+    private void deleteMineRecord(MeetingRecordInfo info) {
+        CommonDialog dialog = new CommonDialog(this);
+        dialog.setMessage("是否删除该会议记录?");
+        dialog.setPositiveListener(v -> {
+            AppExecutors.networkIO().execute(() -> MeetingDataManager.getManager().deleteHistoryMeetingRecord(info.vid));
+            dialog.dismiss();
+        });
+        dialog.setNegativeListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -26,9 +26,9 @@
 
     <ImageView
         android:layout_width="200dp"
-        android:layout_height="25dp"
+        android:layout_height="115dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="90dp"
+        android:paddingTop="90dp"
         android:src="@drawable/meeting_logo" />
 
     <LinearLayout

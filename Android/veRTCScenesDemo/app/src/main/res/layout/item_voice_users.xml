@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <TextView
+        android:id="@+id/item_voice_user_prefix"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/room_avatar_bg"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        tools:text="B" />
+
+    <TextView
+        android:id="@+id/item_voice_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="65dp"
+        android:layout_marginRight="100dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        tools:text="Bytedance" />
+
+    <TextView
+        android:id="@+id/item_voice_user_option"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/item_voice_listener_option_selected_bg"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        tools:text="同意" />
+
+</FrameLayout>

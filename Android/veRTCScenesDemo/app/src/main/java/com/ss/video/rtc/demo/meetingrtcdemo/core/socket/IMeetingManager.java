@@ -1,5 +1,9 @@
 package com.ss.video.rtc.demo.meetingrtcdemo.core.socket;
 
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RefreshUserNameEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.entity.CreateJoinRoomResult;
+import com.ss.video.rtc.demo.meetingrtcdemo.entity.AuditStateResult;
+import com.ss.video.rtc.demo.meetingrtcdemo.entity.LoginInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingRecordInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingRoomInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingTokenInfo;
@@ -33,6 +37,10 @@ public interface IMeetingManager {
      */
     boolean hasConnected();
 
+    LoginInfo passwordFreeLogin(String userName);
+
+    int verifyLoginToken(String token);
+
     /**
      * Get appId.
      *
@@ -41,9 +49,16 @@ public interface IMeetingManager {
     String getAppId();
 
     /**
+     * Change user name
+     *
+     * @param userName new user name
+     */
+    RefreshUserNameEvent changeUserName(String userName);
+
+    /**
      * Request server to start a meeting or join a meeting.
      *
-     * @param userId   user's id
+     * @param userName   user's name
      * @param roomId   meeting's id
      * @param micOn    status of local microphone
      * @param cameraOn status of local camera
@@ -52,7 +67,7 @@ public interface IMeetingManager {
      *      -1:fail
      *      406:
      */
-    MeetingTokenInfo joinMeeting(String userId, String roomId, boolean micOn, boolean cameraOn);
+    MeetingTokenInfo joinMeeting(String userName, String roomId, boolean micOn, boolean cameraOn);
 
     /**
      * Notice server that local user is leaving meeting.
@@ -167,4 +182,45 @@ public interface IMeetingManager {
      * @return record info struct.See {@link MeetingRecordInfo}
      */
     List<MeetingRecordInfo> getHistoryMeetingRecord();
+
+    CreateJoinRoomResult csReconnect();
+
+    String csGetAppID();
+
+    List<MeetingRoomInfo> csGetMeetings();
+
+    CreateJoinRoomResult csCreateMeeting(String roomName, String userName);
+
+    CreateJoinRoomResult csJoinMeeting(String roomId, String userName);
+
+    void csLeaveMeeting();
+
+    List<MeetingUserInfo> csGetRaiseHands();
+
+    List<MeetingUserInfo> csGetAudiences();
+
+    void csInviteMic(String userId);
+
+    void csConfirmMic();
+
+    void csRaiseHandsMic();
+
+    void csAgreeMic(String userId);
+
+    void csOffSelfMic();
+
+    void csOffMic(String userId);
+
+    void csMuteMic();
+
+    void csUnmuteMic();
+
+    /**
+     * Delete meeting record which owner is me.
+     *
+     * @param vid video id.
+     */
+    void deleteHistoryMeetingRecord(String vid);
+
+    AuditStateResult getAuditState(String deviceType, String appVersion);
 }

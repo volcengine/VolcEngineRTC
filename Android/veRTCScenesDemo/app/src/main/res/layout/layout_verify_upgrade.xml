@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/common_dialog_bg"
+    tools:layout_marginLeft="50dp"
+    tools:layout_marginRight="50dp">
+
+    <TextView
+        android:id="@+id/verify_upgrade_dialog_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="65dp"
+        android:text="应用有更新，\n立即去下载最新版本？"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/verify_update"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="30dp"
+        android:background="#101319"
+        app:layout_constraintTop_toBottomOf="@id/verify_upgrade_dialog_title" />
+
+    <View
+        android:id="@+id/verify_upgrade_dialog_baseline"
+        android:layout_width="1dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="30dp"
+        android:background="#101319"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/verify_upgrade_dialog_title" />
+
+    <TextView
+        android:id="@+id/verify_upgrade_dialog_cancel"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:text="取消"
+        android:textColor="#C9CDD4"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/verify_upgrade_dialog_baseline"
+        app:layout_constraintTop_toTopOf="@id/verify_upgrade_dialog_baseline" />
+
+    <TextView
+        android:id="@+id/verify_upgrade_dialog_confirm"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:gravity="center"
+        android:text="确定"
+        android:textColor="#4080FF"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="@id/verify_upgrade_dialog_baseline"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/verify_upgrade_dialog_baseline" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,6 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +44,7 @@ import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RoomCloseEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.ShareScreenEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.SocketConnectEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.SpeakerStatusChangedEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.TokenExpiredEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.VolumeEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingUserInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.resource.Constants;
@@ -69,6 +69,8 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
     private long mLastShowDisconnectMs = 0;
     private String mMeetingId;
     private String mUserId;
+    private String mUserName;
+    private String mUserUniformName;
     private String mToken;
 
     private SocketConnectEvent.ConnectStatus mConnectStatus;
@@ -81,13 +83,13 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
     private TextView mMoreFuncTv;
     private ImageView mSwitchCameraIv;
     private ImageView mLeaveMeetingIv;
-//    private ImageView mRecordStatusIv;
+    private ImageView mRecordStatusIv;
     private ImageView mMicIv;
     private ImageView mCameraIv;
     private ImageView mScreenShareIv;
     private ImageView mParticipantIv;
     private ImageView mMoreFuncIv;
-//    private ImageView mRecordIv;
+    private ImageView mRecordIv;
     private ImageView mSpeakerIv;
     private ImageView mSettingIv;
     private ImageView mExpandIv;
@@ -140,10 +142,12 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
         Intent intent = getIntent();
         mMeetingId = intent.getStringExtra(Constants.EXTRA_KEY_MEETING_ID);
         mUserId = intent.getStringExtra(Constants.EXTRA_KEY_USER_ID);
+        mUserName = intent.getStringExtra(Constants.EXTRA_KEY_USER_NAME);
+        mUserUniformName = intent.getStringExtra(Constants.EXTRA_KEY_USER_UNIFORM_NAME);
         mToken = intent.getStringExtra(Constants.EXTRA_KEY_TOKEN);
         mMeetingLastMs = intent.getLongExtra(Constants.EXTRA_KEY_MEETING_LAST, 0);
 
-        MeetingDataManager.startMeeting(mUserId, mMeetingId);
+        MeetingDataManager.startMeeting(mUserId, mUserName, mUserUniformName, mMeetingId);
 
         setContentView(R.layout.activity_room);
         mRoomPresenter = new RoomPresenter(this);
@@ -174,18 +178,14 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
         mRTCStatTv = findViewById(R.id.room_stat);
         mSwitchCameraIv = findViewById(R.id.room_switch_camera);
         mLeaveMeetingIv = findViewById(R.id.room_leave_meeting);
-        /*
         mRecordStatusIv = findViewById(R.id.room_record_status);
-         */
         mMicIv = findViewById(R.id.room_bottom_mic);
         mCameraIv = findViewById(R.id.room_bottom_camera);
         mScreenShareIv = findViewById(R.id.room_bottom_screen_share);
         mParticipantIv = findViewById(R.id.room_bottom_participants);
         mMoreFuncIv = findViewById(R.id.room_bottom_more_iv);
         mMoreFuncTv = findViewById(R.id.room_bottom_more_tv);
-        /*
         mRecordIv = findViewById(R.id.room_bottom_record);
-         */
         mSpeakerIv = findViewById(R.id.room_bottom_speaker);
         mSpeakerTv = findViewById(R.id.room_bottom_speaker_tv);
         mSettingIv = findViewById(R.id.room_bottom_setting);
@@ -213,7 +213,7 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
         mScreenShareIv.setOnClickListener(this);
         mParticipantIv.setOnClickListener(this);
         mMoreFuncIv.setOnClickListener(this);
-//        mRecordIv.setOnClickListener(this);
+        mRecordIv.setOnClickListener(this);
         mSpeakerIv.setOnClickListener(this);
         mSettingIv.setOnClickListener(this);
         mScreenShareStatus.setOnClickListener(this);
@@ -285,13 +285,9 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
             mRoomPresenter.openParticipant();
         } else if (v == mMoreFuncIv) {
             showOrHideMore(mBottomFuncExtension.getVisibility() != View.VISIBLE);
-        }
-        /*
-        else if (v == mRecordIv) {
+        } else if (v == mRecordIv) {
             mRoomPresenter.onRecordClick();
-        }
-        */
-        else if (v == mSpeakerIv) {
+        } else if (v == mSpeakerIv) {
             MeetingDataManager.switchSpeaker();
         } else if (v == mSettingIv) {
             mRoomPresenter.openSettings();
@@ -463,7 +459,6 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void updateRecStatusUI() {
-        /*
         mRecordStatusIv.setVisibility(MeetingDataManager.isRecording() ? View.VISIBLE : View.GONE);
         mRecordIv.setImageResource(MeetingDataManager.isRecording() ? R.drawable.record_on : R.drawable.record_off);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRecordStatusIv.getLayoutParams();
@@ -477,7 +472,6 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
             params.topMargin = (int) Utilities.dip2Px(62);
         }
         mRecordStatusIv.setLayoutParams(params);
-         */
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -586,5 +580,10 @@ public class RoomActivity extends BaseActivity implements View.OnClickListener {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onVolumeEvent(VolumeEvent event) {
         mRoomMainLayout.onVolumeEvent(event.uidVolumeMap);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTokenExpiredEvent(TokenExpiredEvent event) {
+        finish();
     }
 }

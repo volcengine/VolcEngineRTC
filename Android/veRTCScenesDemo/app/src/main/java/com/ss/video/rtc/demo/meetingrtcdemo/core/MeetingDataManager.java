@@ -2,21 +2,26 @@ package com.ss.video.rtc.demo.meetingrtcdemo.core;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.ss.video.rtc.demo.basic_module.utils.AppExecutors;
 import com.ss.video.rtc.demo.basic_module.utils.SPUtils;
 import com.ss.video.rtc.demo.basic_module.utils.SafeToast;
 import com.ss.video.rtc.demo.basic_module.utils.Utilities;
+import com.ss.video.rtc.demo.meetingrtcdemo.R;
 import com.ss.video.rtc.demo.meetingrtcdemo.common.MLog;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.CameraStatusChangedEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.HostChangedEvent;
@@ -24,20 +29,25 @@ import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MeetingEventManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MicStatusChangeEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MuteAllEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.MuteEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RTCVolumeEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RecordEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.RefreshRoomUserEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.ShareScreenEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.SocketConnectEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.SpeakerStatusChangedEvent;
+import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.UpgradeAppEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.UserJoinEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.UserLeaveEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.eventbus.VolumeEvent;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.socket.IMeetingManager;
 import com.ss.video.rtc.demo.meetingrtcdemo.core.socket.MeetingSocketIOManager;
+import com.ss.video.rtc.demo.meetingrtcdemo.entity.AuditStateResult;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.MeetingUserInfo;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.SettingsConfigEntity;
 import com.ss.video.rtc.demo.meetingrtcdemo.entity.VideoCanvasWrapper;
+import com.ss.video.rtc.demo.meetingrtcdemo.feature.verify.VerifyActivity;
 import com.ss.video.rtc.demo.meetingrtcdemo.resource.Constants;
+import com.ss.video.rtc.demo.meetingrtcdemo.voicechat.MD5Util;
 import com.ss.video.rtc.engine.SubscribeConfig;
 import com.ss.video.rtc.engine.VideoCanvas;
 import com.ss.video.rtc.engine.handler.IRtcEngineEventHandler;
@@ -73,9 +83,12 @@ public class MeetingDataManager {
     private static final String sServerHost = "https://rtcio.bytedance.com:443";
 
     private static String sAppId = "";
-    private static String sSelfUid = "";
+    private static String sToken = "";
+    private static String sSelfUserName = "";
+    private static String sSelfUniformName = "";
     private static String sHostUid = "";
     private static String sMeetingId = "";
+    private static String sLoudestUid = "";
     private static String sScreenShareUid = null;
     private static boolean sMicStatus = false;
     private static boolean sCameraStatus = false;
@@ -83,6 +96,7 @@ public class MeetingDataManager {
     private static boolean sIsRequestAppId = false;
     private static boolean sIsFrontCamera = true;
     private static boolean sIsRecordMeeting = false;
+    private static boolean sHasCheckedUpdate = false;
 
     private static final MeetingUserInfo sMyUserInfo = new MeetingUserInfo();
     private static final Map<String, MeetingUserInfo> mMeetingUserInfoMap = new LinkedHashMap<>();
@@ -120,8 +134,8 @@ public class MeetingDataManager {
         }
 
         public int compareString(String o1, String o2) {
-            char[] chars1 = o1.toCharArray();
-            char[] chars2 = o2.toCharArray();
+            char[] chars1 = o1.toLowerCase().toCharArray();
+            char[] chars2 = o2.toLowerCase().toCharArray();
             int i = 0;
             while (i < chars1.length && i < chars2.length) {
                 if (chars1[i] > chars2[i]) {
@@ -142,13 +156,17 @@ public class MeetingDataManager {
         }
     };
 
-    private MeetingDataManager() { }
+    private MeetingDataManager() {
+    }
 
     public static void init() {
         sAppId = "";
-        sSelfUid = "";
+        sToken = SPUtils.getString(Constants.SP_KEY_TOKEN, "");
+        sSelfUserName = "";
+        sSelfUniformName = "";
         sHostUid = "";
         sMeetingId = "";
+        sLoudestUid = "";
         sScreenShareUid = null;
         sMicStatus = false;
         sCameraStatus = false;
@@ -163,7 +181,7 @@ public class MeetingDataManager {
 
         sMeetingInstance = new MeetingDataManager();
         MeetingEventManager.register(sMeetingInstance);
-        sInstance = getManager();
+//        sInstance = getManager();
 
         VideoCanvas canvas = new VideoCanvas(new SurfaceView(Utilities.getApplicationContext()),
                 VideoCanvas.BYTERTC_RENDER_HIDDEN, "", true);
@@ -190,20 +208,22 @@ public class MeetingDataManager {
     }
 
     public static MeetingUserInfo getMyUserInfo() {
-        sMyUserInfo.user_id = sSelfUid;
+        sMyUserInfo.user_id = MeetingApplication.sUserID;
+        sMyUserInfo.user_name = sSelfUserName;
+        sMyUserInfo.user_uniform_name = sSelfUniformName;
         sMyUserInfo.is_host = isSelfHost();
         sMyUserInfo.is_mic_on = sMicStatus;
         sMyUserInfo.is_camera_on = sCameraStatus;
-        sMyUserInfo.is_sharing = !TextUtils.isEmpty(sSelfUid) && isSelf(sScreenShareUid);
+        sMyUserInfo.is_sharing = !TextUtils.isEmpty(MeetingApplication.sUserID) && isSelf(sScreenShareUid);
         return sMyUserInfo.deepCopy(new MeetingUserInfo());
     }
 
     public static String getSelfId() {
-        return sSelfUid;
+        return MeetingApplication.sUserID;
     }
 
     public static boolean isRecording() {
-        return  sIsRecordMeeting;
+        return sIsRecordMeeting;
     }
 
     public static boolean isInMeeting() {
@@ -211,10 +231,10 @@ public class MeetingDataManager {
     }
 
     public static boolean isSelf(String uid) {
-        return !TextUtils.isEmpty(sSelfUid) && sSelfUid.equals(uid);
+        return !TextUtils.isEmpty(MeetingApplication.sUserID) && MeetingApplication.sUserID.equals(uid);
     }
 
-    public static void setHostUid(String uid){
+    public static void setHostUid(String uid) {
         sHostUid = uid;
     }
 
@@ -223,20 +243,28 @@ public class MeetingDataManager {
     }
 
     public static boolean isSelfHost() {
-        return !TextUtils.isEmpty(sSelfUid) && sSelfUid.equals(sHostUid);
+        return !TextUtils.isEmpty(MeetingApplication.sUserID) && MeetingApplication.sUserID.equals(sHostUid);
+    }
+
+    public static String getLoudestUid() {
+        return sLoudestUid;
     }
 
     private static void initDeviceId() {
         String uuid = SPUtils.getString(SP_KEY_MEETING_DEVICE_ID, "");
         if (TextUtils.isEmpty(uuid)) {
             uuid = UUID.randomUUID().toString();
-            SPUtils.putString(SP_KEY_MEETING_DEVICE_ID, uuid);
+            String md5 = MD5Util.encrypt(uuid);
+            if (md5.length() > 16) {
+                md5 = md5.substring(0, 16);
+            }
+            SPUtils.putString(SP_KEY_MEETING_DEVICE_ID, md5);
         }
     }
 
     public static String getDeviceId() {
-        String uuid = SPUtils.getString(SP_KEY_MEETING_DEVICE_ID, "");
-        if (TextUtils.isEmpty(uuid)) {
+        String deviceId = SPUtils.getString(SP_KEY_MEETING_DEVICE_ID, "");
+        if (TextUtils.isEmpty(deviceId)) {
             initDeviceId();
         }
         return SPUtils.getString(SP_KEY_MEETING_DEVICE_ID, "");
@@ -246,8 +274,18 @@ public class MeetingDataManager {
         return sAppId;
     }
 
-    public static void startMeeting(String uid, String meetingId) {
-        sSelfUid = uid;
+    public static void setToken(String token) {
+        SPUtils.putString(Constants.SP_KEY_TOKEN, token);
+        sToken = token;
+    }
+
+    public static String getToken() {
+        return sToken;
+    }
+
+    public static void startMeeting(String uid, String name, String uniformName, String meetingId) {
+        sSelfUserName = name;
+        sSelfUniformName = uniformName;
         sMeetingId = meetingId;
         mMeetingUserInfoMap.clear();
         sLastShowingList.clear();
@@ -264,10 +302,10 @@ public class MeetingDataManager {
         if (!sSpeakerStatus) {
             switchSpeaker();
         }
-        sSelfUid = "";
         sHostUid = "";
         sMeetingId = "";
         sScreenShareUid = "";
+        sLoudestUid = "";
         sIsRecordMeeting = false;
         mMeetingUserInfoMap.clear();
         sUidScreenViewMap.clear();
@@ -291,12 +329,12 @@ public class MeetingDataManager {
         sMicStatus = !sMicStatus;
         sMyUserInfo.is_mic_on = sMicStatus;
 
-        MeetingUserInfo aInfo = mMeetingUserInfoMap.get(sSelfUid);
+        MeetingUserInfo aInfo = mMeetingUserInfoMap.get(MeetingApplication.sUserID);
         if (aInfo != null) {
             aInfo.is_mic_on = sMicStatus;
         }
         for (MeetingUserInfo info : sLastShowingList) {
-            if (TextUtils.equals(info.user_id, sSelfUid)) {
+            if (TextUtils.equals(info.user_id, MeetingApplication.sUserID)) {
                 info.is_mic_on = sMicStatus;
             }
         }
@@ -304,7 +342,7 @@ public class MeetingDataManager {
         if (!TextUtils.isEmpty(sMeetingId)) {
             AppExecutors.networkIO().execute(() -> getManager().toggleMicState(sMicStatus));
         }
-        MeetingEventManager.post(new MicStatusChangeEvent(sSelfUid, sMicStatus));
+        MeetingEventManager.post(new MicStatusChangeEvent(MeetingApplication.sUserID, sMicStatus));
         MeetingRTCManager.muteLocalAudioStream(sMicStatus);
     }
 
@@ -329,13 +367,13 @@ public class MeetingDataManager {
         sMyWrapper.showVideo = sCameraStatus;
         sMyUserInfo.is_camera_on = sCameraStatus;
 
-        MeetingUserInfo aInfo = mMeetingUserInfoMap.get(sSelfUid);
+        MeetingUserInfo aInfo = mMeetingUserInfoMap.get(MeetingApplication.sUserID);
         if (aInfo != null) {
             aInfo.is_camera_on = sCameraStatus;
         }
 
         for (MeetingUserInfo info : sLastShowingList) {
-            if (TextUtils.equals(info.user_id, sSelfUid)) {
+            if (TextUtils.equals(info.user_id, MeetingApplication.sUserID)) {
                 info.is_camera_on = sCameraStatus;
             }
         }
@@ -343,7 +381,7 @@ public class MeetingDataManager {
         if (!TextUtils.isEmpty(sMeetingId)) {
             AppExecutors.networkIO().execute(() -> getManager().toggleCameraState(sCameraStatus));
         }
-        MeetingEventManager.post(new CameraStatusChangedEvent(sSelfUid, sCameraStatus));
+        MeetingEventManager.post(new CameraStatusChangedEvent(MeetingApplication.sUserID, sCameraStatus));
         MeetingRTCManager.enableLocalVideo(sCameraStatus);
     }
 
@@ -370,12 +408,14 @@ public class MeetingDataManager {
     }
 
     private static final List<MeetingUserInfo> sLastShowingList = new LinkedList<>();
+
     public static void updateUserVolume(IRtcEngineEventHandler.AudioVolumeInfo[] speakers) {
         //sort by volume's value
         Arrays.sort(speakers, sVolumeComparator);
         if (speakers.length >= 1) {
             if (speakers[0].volume >= Constants.VOLUME_MIN_THRESHOLD) {
                 speakers[0].volume = Constants.VOLUME_OVERFLOW_THRESHOLD;
+                sLoudestUid = speakers[0].uid;
             }
         }
 
@@ -404,8 +444,8 @@ public class MeetingDataManager {
             }
         }
 
-        if (sUidVolumeMap.containsKey(sSelfUid) && TextUtils.equals(sSelfUid, meetingUserInfoList.get(0).user_id)) {
-            meetingUserInfoList.get(0).volume = sUidVolumeMap.get(sSelfUid);
+        if (sUidVolumeMap.containsKey(MeetingApplication.sUserID) && TextUtils.equals(MeetingApplication.sUserID, meetingUserInfoList.get(0).user_id)) {
+            meetingUserInfoList.get(0).volume = sUidVolumeMap.get(MeetingApplication.sUserID);
         }
 
         if (!sUidVolumeMap.isEmpty()) {
@@ -559,12 +599,12 @@ public class MeetingDataManager {
     }
 
     public static MeetingUserInfo getSecondUserInfo() {
-       for (MeetingUserInfo info : sLastShowingList) {
-           if (info != null && !isSelf(info.user_id)) {
-               return info;
-           }
-       }
-       return null;
+        for (MeetingUserInfo info : sLastShowingList) {
+            if (info != null && !isSelf(info.user_id)) {
+                return info;
+            }
+        }
+        return null;
     }
 
     public static VideoCanvasWrapper getMyRenderView() {
@@ -613,7 +653,7 @@ public class MeetingDataManager {
             wrapper.showVideo = hasVideo;
         }
 
-        MeetingRTCManager.subscribeStream(uid, new SubscribeConfig(true, true ,false, 0));
+        MeetingRTCManager.subscribeStream(uid, new SubscribeConfig(true, true, false, 0));
         MeetingRTCManager.setupRemoteScreen(wrapper.videoCanvas);
 
         sUidScreenViewMap.put(uid, wrapper);
@@ -644,22 +684,22 @@ public class MeetingDataManager {
     public static void onScreenSharingIntent(int resultCode, Intent intent) {
         if (resultCode == Activity.RESULT_OK) {
             ScreenSharingParameters parameters = new ScreenSharingParameters();
-            Pair<Integer, Integer> resolution = sSettingsConfigEntity.getResolution();
+            Pair<Integer, Integer> resolution = sSettingsConfigEntity.getScreenResolution();
             parameters.maxWidth = resolution.first;
             parameters.maxHeight = resolution.second;
             parameters.frameRate = sSettingsConfigEntity.getFrameRate();
             parameters.bitrate = sSettingsConfigEntity.getBitRate();
 
-            sScreenShareUid = sSelfUid;
+            sScreenShareUid = MeetingApplication.sUserID;
             sMyUserInfo.is_camera_on = false;
             sMyUserInfo.is_sharing = true;
 
             if (sCameraStatus) {
                 switchCamera(false);
-                MeetingEventManager.post(new CameraStatusChangedEvent(sSelfUid, false));
+                MeetingEventManager.post(new CameraStatusChangedEvent(MeetingApplication.sUserID, false));
             }
 
-            MeetingEventManager.post(new ShareScreenEvent(true, sSelfUid));
+            MeetingEventManager.post(new ShareScreenEvent(true, MeetingApplication.sUserID));
             MeetingRTCManager.startScreenSharing(intent, parameters);
             AppExecutors.networkIO().execute(() -> {
                 getManager().startScreenShare();
@@ -674,14 +714,14 @@ public class MeetingDataManager {
         sMyUserInfo.is_camera_on = sCameraStatus;
         sMyUserInfo.is_sharing = false;
 
-        MeetingEventManager.post(new ShareScreenEvent(false, sSelfUid));
+        MeetingEventManager.post(new ShareScreenEvent(false, MeetingApplication.sUserID));
         MeetingRTCManager.stopScreenSharing();
         AppExecutors.networkIO().execute(() -> {
             getManager().stopScreenShare();
         });
 
         MeetingRTCManager.enableLocalVideo(sCameraStatus);
-        MeetingEventManager.post(new CameraStatusChangedEvent(sSelfUid, sCameraStatus));
+        MeetingEventManager.post(new CameraStatusChangedEvent(MeetingApplication.sUserID, sCameraStatus));
     }
 
     public static void switchCameraType(boolean isFromUser) {
@@ -710,6 +750,35 @@ public class MeetingDataManager {
                 uidList.add(info.user_id);
             }
             getManager().startMeetingRecord(uidList, sScreenShareUid);
+        });
+    }
+
+    public static void requestAppId() {
+        if (!TextUtils.isEmpty(sAppId)) {
+            return;
+        }
+        AppExecutors.networkIO().execute(() -> {
+            if (sIsRequestAppId) {
+                return;
+            }
+            sIsRequestAppId = true;
+            String appId = getManager().getAppId();
+            if (!TextUtils.isEmpty(appId)) {
+                sAppId = appId;
+                MeetingRTCManager.createEngine(appId);
+                if (!sCameraStatus) {
+                    switchCamera(false);
+                }
+                if (!sMicStatus) {
+                    switchMic(false);
+                }
+            }
+            try {
+                Thread.sleep(3000);
+                requestAppId();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -800,6 +869,8 @@ public class MeetingDataManager {
         }
         if (event.isStart) {
             addOrUpdateScreenView(sScreenShareUid, true);
+        } else {
+            removeScreenView(sScreenShareUid);
         }
         MeetingEventManager.post(new RefreshRoomUserEvent());
     }
@@ -878,33 +949,28 @@ public class MeetingDataManager {
     public void onSocketConnectEvent(SocketConnectEvent event) {
         sConnectStatus = event.status;
 
-        if (!TextUtils.isEmpty(sAppId)) {
-            return;
-        }
-        if (event.status != SocketConnectEvent.ConnectStatus.CONNECTED) {
-            return;
-        }
-        AppExecutors.networkIO().execute(() -> {
-            if (sIsRequestAppId) {
-                return;
-            }
-            sIsRequestAppId = true;
-            String appId = getManager().getAppId();
-            if (!TextUtils.isEmpty(appId)) {
-                sAppId = appId;
-                MeetingRTCManager.createEngine(appId);
-                if (!sCameraStatus) {
-                    switchCamera(false);
+        if (!sHasCheckedUpdate && event.status == SocketConnectEvent.ConnectStatus.CONNECTED) {
+            sHasCheckedUpdate = true;
+            AppExecutors.networkIO().execute(() -> {
+                AuditStateResult result = MeetingDataManager.getManager()
+                        .getAuditState("android", "2.1.0");
+
+                if (result != null && result.state == AuditStateResult.UPDATE) {
+                    if (!TextUtils.isEmpty(result.url)) {
+                        MeetingEventManager.post(new UpgradeAppEvent(result));
+                    }
                 }
-                if (!sMicStatus) {
-                    switchMic(false);
-                }
-            }
-        });
+            });
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRecordEvent(RecordEvent event) {
         sIsRecordMeeting = event.isStart;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRTCVolumeEvent(RTCVolumeEvent event) {
+        updateUserVolume(event.speakers);
     }
 }

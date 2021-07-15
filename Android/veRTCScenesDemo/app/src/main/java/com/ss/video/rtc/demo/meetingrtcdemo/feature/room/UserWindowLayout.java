@@ -96,6 +96,7 @@ public class UserWindowLayout extends RelativeLayout {
             mVideoContainer.removeAllViews();
         } else {
             String uid = info.user_id;
+            String userName = info.user_name;
             String originUid = mMeetingUserInfo == null ? "" : mMeetingUserInfo.user_id;
             if (uid == null || !uid.equals(originUid) || !info.is_camera_on) {
                 mVideoContainer.removeAllViews();
@@ -105,7 +106,7 @@ public class UserWindowLayout extends RelativeLayout {
                 mBigUid.setVisibility(View.GONE);
                 mBigTags.setVisibility(View.GONE);
                 mSmallUid.setVisibility(View.VISIBLE);
-                mSmallUid.setText(uid);
+                mSmallUid.setText(userName);
                 mSmallTags.setVisibility(View.VISIBLE);
                 mSmallHostTag.setVisibility(info.is_host ? View.VISIBLE : View.GONE);
                 mSmallScreenShareTag.setVisibility(info.is_sharing ? View.VISIBLE : View.GONE);
@@ -132,8 +133,8 @@ public class UserWindowLayout extends RelativeLayout {
                 mUidPrefix.setVisibility(View.VISIBLE);
                 mBigUid.setVisibility(View.VISIBLE);
                 mBigTags.setVisibility(View.VISIBLE);
-                mUidPrefix.setText(uid == null ? "" : uid.substring(0, 1));
-                mBigUid.setText(uid);
+                mUidPrefix.setText(userName == null ? "" : userName.substring(0, 1));
+                mBigUid.setText(userName);
                 mBigHostTag.setVisibility(info.is_host ? View.VISIBLE : View.GONE);
                 mBigScreenShareTag.setVisibility(info.is_sharing ? View.VISIBLE : View.GONE);
                 mSmallTags.setVisibility(View.GONE);
