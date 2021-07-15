@@ -2,7 +2,7 @@
 //  MeetingSocketIOManager.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import <Foundation/Foundation.h>
@@ -25,6 +25,8 @@ static NSString *const NotificationSocketStatusChange = @"NotificationSocketStat
 - (void)connectWithSdkVersion:(NSString *)sdkVersion block:(void (^)(BOOL relust))block;
 
 - (void)connect;
+
+- (void)disConnect;
 
 @end
 

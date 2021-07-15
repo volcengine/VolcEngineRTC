@@ -2,8 +2,8 @@
 //  RoomBottomView.m
 //  quickstart
 //
-//  Created by on 2021/3/23.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/23.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "RoomBottomView.h"
@@ -181,9 +181,9 @@
         case RoomBottomStatusMore:
             name = @"更多";
             break;
-//        case RoomBottomStatusRecord:
-//            name = @"录制";
-//            break;
+        case RoomBottomStatusRecord:
+            name = @"录制";
+            break;
         case RoomBottomStatusAudio:
             name = @"扬声器";
             break;
@@ -214,9 +214,9 @@
         case RoomBottomStatusMore:
             name = @"meeting_room_more";
             break;
-//        case RoomBottomStatusRecord:
-//            name = @"meeting_room_recor";
-//            break;
+        case RoomBottomStatusRecord:
+            name = @"meeting_room_recor";
+            break;
         case RoomBottomStatusAudio:
             name = @"meeting_room_audio";
             break;
@@ -241,9 +241,9 @@
         case RoomBottomStatusMore:
             name = @"meeting_room_more_s";
             break;
-//        case RoomBottomStatusRecord:
-//            name = @"meeting_room_recor_s";
-//            break;
+        case RoomBottomStatusRecord:
+            name = @"meeting_room_recor_s";
+            break;
         case RoomBottomStatusScreen:
             name = @"meeting_par_screen_s";
             break;

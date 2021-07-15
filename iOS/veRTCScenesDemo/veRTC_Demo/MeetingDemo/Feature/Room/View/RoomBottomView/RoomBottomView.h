@@ -2,8 +2,8 @@
 //  RoomBottomView.h
 //  quickstart
 //
-//  Created by on 2021/3/23.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/23.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -16,10 +16,10 @@ typedef NS_ENUM(NSInteger, RoomBottomStatus) {
     RoomBottomStatusScreen,
     RoomBottomStatusPar,
     RoomBottomStatusMore,
+    RoomBottomStatusRecord,
     RoomBottomStatusAudio,
     RoomBottomStatusSet,
-    RoomBottomStatusTest,
-    RoomBottomStatusRecord,
+//    RoomBottomStatusTest,
 };
 
 @protocol RoomBottomViewDelegate <NSObject>

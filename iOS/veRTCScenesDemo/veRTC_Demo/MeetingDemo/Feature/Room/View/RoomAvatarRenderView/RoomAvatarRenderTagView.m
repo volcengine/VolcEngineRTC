@@ -2,7 +2,7 @@
 //  RoomAvatarRenderTagView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/14.
+//  Created by  on 2021/3/14.
 //
 
 #import "RoomAvatarRenderTagView.h"
@@ -55,7 +55,7 @@
 
     self.screenImageView.hidden = !userModel.isScreen;
     self.hostButton.hidden = !userModel.isHost;
-    self.nameLabel.text = userModel.uid;
+    self.nameLabel.text = userModel.name;
 
 
     [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {

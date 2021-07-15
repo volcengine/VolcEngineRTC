@@ -13,17 +13,21 @@ typedef NS_ENUM(NSInteger, RoomModeStatus) {
 
 @interface RoomViewController : UIViewController
 
-@property (nonatomic, weak) UserListViewController *userListViewController;
-
 @property (nonatomic, strong) RoomBottomView *bottomView;
 
 @property (nonatomic, strong) RoomVideoSession *localVideoSession;
 
 @property (nonatomic, strong) MeetingControlRoomModel *currentRoomModel;
 
+//只做添加，删除，更新，不能直接使用。
+@property (nonatomic, strong) NSMutableArray<RoomVideoSession *> *userDataPool;
+
+@property (nonatomic, weak) RoomVideoSession *maxVolumeUserModel;
+
 @property (nonatomic, copy) void (^closeRoomBlock)(BOOL isEnableAudio, BOOL isEnableVideo);
 
-- (instancetype)initWithVideoSession:(RoomVideoSession *)videoSession;
+- (instancetype)initWithVideoSession:(RoomVideoSession *)loginModel
+                           userLists:(NSArray<RoomVideoSession *> *)userLists;
 
 - (void)hangUp;
 
@@ -31,9 +35,7 @@ typedef NS_ENUM(NSInteger, RoomModeStatus) {
 
 - (void)updateRenderModeViewWithMicStatus:(NSString *)uid enableMic:(BOOL)isEnable;
 
-- (void)updateCurrentUserListHostStatus;
-
-- (void)updateRenderModeViewUserRankeWithAudioVolume:(NSDictionary *)volumeInfo;
+- (void)updateRenderModeViewWithHost:(NSString *)hostID;
 
 - (void)updateRenderModeViewWithScreenStatus:(NSString *)uid enableScreen:(BOOL)isShare;
 

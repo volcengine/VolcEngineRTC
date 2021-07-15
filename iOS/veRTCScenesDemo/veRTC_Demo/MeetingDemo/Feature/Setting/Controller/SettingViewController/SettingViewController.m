@@ -12,11 +12,15 @@ static NSString *const kSettingsRightLabelCellIdentifier = @"kSettingsRightLabel
 static NSString *const kSettingsSwitchCellIdentifier = @"kSettingsSwitchCellIdentifier";
 
 typedef NS_ENUM(NSInteger, SettingsGroupType) {
-    SettingsGroupTypeResolution,     // Resolution configuration
-    SettingsGroupTypeFrameRate,      // Frame rate configuration
-    SettingsGroupTypeBitRate,        // Bit rate configuration
-    SettingsGroupTypeShowVideoParam, // View real-time parameter configuration
-    SettingsGroupTypeHistory,        // Historical meeting
+    SettingsGroupTypeResolution,        // Resolution configuration
+    SettingsGroupTypeFrameRate,         // Frame rate configuration
+    SettingsGroupTypeBitRate,           // Bit rate configuration
+    SettingsGroupTypeScreenResolution,  // Screen Resolution configuration
+    SettingsGroupTypeScreenFrameRate,   // Screen Frame rate configuration
+    SettingsGroupTypeScreenBitRate,     // Screen Bit rate configuration
+    SettingsGroupTypeShowVideoParam,    // View real-time parameter configuration
+    SettingsGroupTypeHistory,           // Historical meeting
+    SettingsGroupTypeSelfHistory,       // Self Historical meeting
 };
 
 @interface SettingViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -30,6 +34,11 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
 @property (nonatomic, copy) NSArray *currentResolutionItem;
 @property (nonatomic, strong) NSNumber *currentFrameRate;
 @property (nonatomic, strong) NSNumber *currentBitRate;
+
+@property (nonatomic, copy) NSArray *currentScreenResolutionItem;
+@property (nonatomic, strong) NSNumber *currentScreenFrameRate;
+@property (nonatomic, strong) NSNumber *currentScreenBitRate;
+
 @property (nonatomic, assign) BOOL isShowVideoParam;
 
 @end
@@ -39,15 +48,21 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
-    self.groupTypes = @[ @"分辨率", @"帧率", @"码率", @"实时视频参数"];
+    self.groupTypes = @[@"分辨率", @"帧率", @"码率",
+                        @"屏幕共享分辨率", @"屏幕共享帧率", @"屏幕共享码率",
+                        @"实时视频参数", @"查看历史会议", @"我的云录制"];
 
     [self createUIComponents];
     [self defaultSelectBitRateRang];
+    [self defaultSelectScreenBitRateRang];
     [self.settingsTableView reloadData];
     
     self.currentResolutionItem = [SettingsService getResolutionArray];
     self.currentFrameRate = @([SettingsService getFrameRate]);
     self.currentBitRate = @([SettingsService getKBitRate]);
+    self.currentScreenResolutionItem = [SettingsService getScreenResolutionArray];
+    self.currentScreenFrameRate = @([SettingsService getScreenFrameRate]);
+    self.currentScreenBitRate = @([SettingsService getScreenKBitRate]);
     self.isShowVideoParam = [SettingsService getOpenParam];
 }
 
@@ -66,7 +81,7 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell;
+    UITableViewCell *cell = [UITableViewCell new];
     switch (indexPath.row) {
         case SettingsGroupTypeResolution: {
             cell = [tableView dequeueReusableCellWithIdentifier:kSettingsRightLabelCellIdentifier forIndexPath:indexPath];
@@ -83,6 +98,23 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
             [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
             [(SettingsRightLabelCell *)cell settingsRightLabel].text = [NSString stringWithFormat:@"%dkbps", [SettingsService getKBitRate]];
         } break;
+            
+        case SettingsGroupTypeScreenResolution: {
+            cell = [tableView dequeueReusableCellWithIdentifier:kSettingsRightLabelCellIdentifier forIndexPath:indexPath];
+            [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
+            [(SettingsRightLabelCell *)cell settingsRightLabel].text = [NSString stringWithFormat:@"%d*%d", (int)[SettingsService getScreenResolution].width, (int)[SettingsService getScreenResolution].height];
+        } break;
+        case SettingsGroupTypeScreenFrameRate: {
+            cell = [tableView dequeueReusableCellWithIdentifier:kSettingsRightLabelCellIdentifier forIndexPath:indexPath];
+            [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
+            [(SettingsRightLabelCell *)cell settingsRightLabel].text = [NSString stringWithFormat:@"%dfps", [SettingsService getScreenFrameRate]];
+        } break;
+        case SettingsGroupTypeScreenBitRate: {
+            cell = [tableView dequeueReusableCellWithIdentifier:kSettingsRightLabelCellIdentifier forIndexPath:indexPath];
+            [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
+            [(SettingsRightLabelCell *)cell settingsRightLabel].text = [NSString stringWithFormat:@"%dkbps", [SettingsService getScreenKBitRate]];
+        } break;
+            
         case SettingsGroupTypeShowVideoParam: {
             cell = [tableView dequeueReusableCellWithIdentifier:kSettingsSwitchCellIdentifier forIndexPath:indexPath];
             [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
@@ -96,6 +128,10 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
             }];
         } break;
         case SettingsGroupTypeHistory: {
+            cell = [tableView dequeueReusableCellWithIdentifier:kSettingsRightLabelCellIdentifier forIndexPath:indexPath];
+            [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
+        } break;
+        case SettingsGroupTypeSelfHistory: {
             cell = [tableView dequeueReusableCellWithIdentifier:kSettingsRightLabelCellIdentifier forIndexPath:indexPath];
             [(SettingsRightLabelCell *)cell settingsLabel].text = self.groupTypes[indexPath.row];
         } break;
@@ -160,8 +196,66 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
                 view = nil;
             };
         } break;
+            
+        case SettingsGroupTypeScreenResolution: {
+            [self.resolutionPicker show:self.localDataModel.resolutionLists
+                             selectItem:self.currentScreenResolutionItem];
+            __weak __typeof(self) wself = self;
+            self.resolutionPicker.clickDismissBlock = ^(BOOL isCancel, id selectItem, NSInteger row) {
+                if (!isCancel) {
+                    wself.currentScreenResolutionItem = selectItem;
+                    [SettingsService setScreenResolutions:selectItem];
+                    [wself.localDataModel selectScreenBitRateRangWithRow:row isDefault:NO];
+                    [wself.settingsTableView reloadData];
+                }
+                wself.resolutionPicker = nil;
+            };
+        } break;
+        case SettingsGroupTypeScreenFrameRate: {
+            [self.frameRatePicker show:self.localDataModel.frameRateLists
+                             selectItem:self.currentScreenFrameRate];
+            __weak __typeof(self) wself = self;
+            self.frameRatePicker.clickDismissBlock = ^(BOOL isCancel, id selectItem, NSInteger row) {
+                if (!isCancel) {
+                    wself.currentScreenFrameRate = selectItem;
+                    int frameRate = ((NSNumber *)selectItem).intValue;
+                    [SettingsService setScreenFrameRate:frameRate];
+                    [wself.settingsTableView reloadData];
+                }
+                wself.frameRatePicker = nil;
+            };
+        } break;
+        case SettingsGroupTypeScreenBitRate: {
+            __block SettingsSliderView *view = [[SettingsSliderView alloc] init];
+            NSRange bitRateRang = self.localDataModel.bitScreenRateRang;
+            [view show:bitRateRang.location
+              maxValue:(bitRateRang.location + bitRateRang.length)
+                 value:[SettingsService getScreenKBitRate]];
+            [self.view addSubview:view];
+            [view mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.edges.equalTo(self.view);
+            }];
+            __weak __typeof(self) wself = self;
+            view.clickDismissBlock = ^(BOOL isCancel, id  _Nonnull selectItem) {
+                if (!isCancel) {
+                    NSNumber *valueNumber = (NSNumber *)selectItem;
+                    wself.currentScreenBitRate = valueNumber;
+                    [SettingsService setScreenKBitRate:valueNumber.intValue];
+                    [wself.settingsTableView reloadData];
+                }
+                view = nil;
+            };
+        } break;
+            
+            
         case SettingsGroupTypeHistory: {
             HistoryViewController *next = [[HistoryViewController alloc] init];
+            next.isDelete = NO;
+            [self.navigationController pushViewController:next animated:YES];
+        } break;
+        case SettingsGroupTypeSelfHistory: {
+            HistoryViewController *next = [[HistoryViewController alloc] init];
+            next.isDelete = YES;
             [self.navigationController pushViewController:next animated:YES];
         } break;
         default:
@@ -195,6 +289,22 @@ typedef NS_ENUM(NSInteger, SettingsGroupType) {
     }
 
     [self.localDataModel selectBitRateRangWithRow:defaultRow];
+}
+
+- (void)defaultSelectScreenBitRateRang {
+    CGSize resolution = [SettingsService getScreenResolution];
+    NSInteger defaultRow = 0;
+    NSString *resolutionString = [NSString stringWithFormat:@"%ld*%ld", (long)resolution.width, (long)resolution.height];
+    for (int i = 0; i < self.localDataModel.resolutionLists.count; i++) {
+        NSArray *resolutions = self.localDataModel.resolutionLists[i];
+        NSString *titleString = [NSString stringWithFormat:@"%@*%@", resolutions[0], resolutions[1]];
+        if ([titleString isEqualToString:resolutionString]) {
+            defaultRow = i;
+            break;
+        }
+    }
+
+    [self.localDataModel selectScreenBitRateRangWithRow:defaultRow isDefault:YES];
 }
 
 #pragma mark - getter

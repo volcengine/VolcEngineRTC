@@ -2,8 +2,8 @@
 //  RoomSpeakerView.m
 //  quickstart
 //
-//  Created by on 2021/3/25.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/25.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "RoomSpeakerView.h"
@@ -45,26 +45,54 @@
 #pragma mark - Publish Action
 
 - (void)bindVideoSessions:(NSArray<RoomVideoSession *> *)videoSessions {
-    if (videoSessions.count > 0) {
-        self.renderFirstView.userModel = videoSessions.firstObject;
-        self.landscapeStatusView.userModel = [self getScreenUser:videoSessions];
+    if (videoSessions.count <= 0) {
+        return;
     }
+    self.landscapeStatusView.userModel = [self getScreenUser:videoSessions];
+    NSArray *dataLists = [self screenStreamShowUsers:videoSessions];
     
-    if (videoSessions.count > 1) {
-        self.renderSeconsView.userModel = videoSessions[1];
-    }
-    
-    if (videoSessions.count <= 1) {
-        [self.renderFirstView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(-0);
-        }];
+    if (dataLists.count >= 1) {
+        self.renderFirstView.hidden = NO;
+        self.renderFirstView.userModel = dataLists.firstObject;
         self.renderSeconsView.hidden = YES;
-    } else {
+        [self.renderFirstView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.centerX.mas_equalTo(0);
+        }];
+    }
+    if (dataLists.count >= 2) {
+        self.renderSeconsView.userModel = dataLists[1];
+        self.renderSeconsView.hidden = NO;
         [self.renderFirstView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.centerX.mas_equalTo(-88);
         }];
-        self.renderSeconsView.hidden = NO;
     }
+}
+
+- (NSArray *)screenStreamShowUsers:(NSArray<RoomVideoSession *> *)videoSessions {
+    NSMutableArray *dataLists = [[NSMutableArray alloc] init];
+    if ([self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id]) {
+        //login user is host
+        NSInteger length = MIN(videoSessions.count, 2);
+        for (int i = 0; i < length; i++) {
+            [dataLists addObject:videoSessions[i]];
+        }
+    } else {
+        NSInteger selfNumber = 0;
+        for (int i = 0; i < videoSessions.count; i++) {
+            RoomVideoSession *user = videoSessions[i];
+            if ([user.uid isEqualToString:self.localVideoSession.uid]) {
+                [dataLists addObject:user];
+                selfNumber = i;
+                break;
+            }
+        }
+        if (selfNumber + 1 >= videoSessions.count) {
+            [dataLists addObject:videoSessions.firstObject];
+        } else {
+            [dataLists addObject:videoSessions[selfNumber + 1]];
+        }
+    }
+    return dataLists;
 }
 
 - (void)setIsLandscape:(BOOL)isLandscape {
@@ -93,6 +121,7 @@
 }
 
 - (void)setCurrentRoomModel:(MeetingControlRoomModel *)currentRoomModel {
+    _currentRoomModel = currentRoomModel;
     if ([self.localVideoSession.uid isEqualToString:currentRoomModel.screen_shared_uid]) {
         self.screenView.hidden = NO;
         self.screenView.clickCloseBlock = self.clickCloseBlock;
@@ -104,11 +133,10 @@
 - (void)setScreenStreamsUid:(NSString *)screenStreamsUid {
     _screenStreamsUid = screenStreamsUid;
     if (screenStreamsUid && screenStreamsUid.length > 0) {
-        self.screenView.hidden = YES;
         [[MeetingRTCManager shareRtc] setupRemoteScreen:self.renderScreenView uid:screenStreamsUid];
         [[MeetingRTCManager shareRtc] subscribeScreenStream:screenStreamsUid];
     } else {
-        [[MeetingRTCManager shareRtc] unsubscribeScreen:screenStreamsUid];
+        [[MeetingRTCManager shareRtc] unsubscribeScreen:NOEmptyStr(screenStreamsUid) ? screenStreamsUid : @""];
     }
 }
 
@@ -172,6 +200,7 @@
 - (RoomAvatarRenderView *)renderFirstView {
     if (!_renderFirstView) {
         _renderFirstView = [[RoomAvatarRenderView alloc] init];
+        _renderFirstView.hidden = YES;
         _renderFirstView.avatarStatus = RoomAvatarStatusSpaker;
         _renderFirstView.backgroundColor = [UIColor colorFromHexString:@"#272E3B"];
         _renderFirstView.layer.masksToBounds = YES;
@@ -183,6 +212,7 @@
 - (RoomAvatarRenderView *)renderSeconsView {
     if (!_renderSeconsView) {
         _renderSeconsView = [[RoomAvatarRenderView alloc] init];
+        _renderSeconsView.hidden = YES;
         _renderSeconsView.avatarStatus = RoomAvatarStatusSpaker;
         _renderSeconsView.backgroundColor = [UIColor colorFromHexString:@"#272E3B"];
         _renderSeconsView.layer.masksToBounds = YES;

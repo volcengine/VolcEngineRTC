@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, readonly) NSRange bitRateRang;
 
+@property (nonatomic, assign, readonly) NSRange bitScreenRateRang;
+
 @property (nonatomic, copy) NSArray *frameRateLists;
 
 @property (nonatomic, copy, readonly) NSArray<NSArray *> *resolutionLists;
@@ -21,6 +23,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @return Corresponding bit rate
  */
 - (NSRange)selectBitRateRangWithRow:(NSInteger)row;
+
+/*
+ * Get the corresponding bit rate by selecting the screen resolution
+ * @param The position of the resolution in the array
+ * @return Corresponding bit rate
+ */
+- (NSRange)selectScreenBitRateRangWithRow:(NSInteger)row isDefault:(BOOL)isDefault;
 
 @end
 

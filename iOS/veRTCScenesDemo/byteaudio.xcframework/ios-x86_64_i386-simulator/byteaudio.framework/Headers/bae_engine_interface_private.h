@@ -36,15 +36,10 @@ enum ByteAudioEnginePrivateOptionKey {
     kEngineOptEnableHandsFreeEarMonitor = 3,
 
     /**
-     * @brief whether change voip mode to media mode when stop capture(enable_local_audio:false), default true.
-     */
-    kEngineOptChangeToMediaModeWhenStopCapture = 4,
-
-    /**
      * @brief whether enable audiosession deactive to avoid the low voice problem in ios14 device, default false.
      *        enable this option will interrupt the audio playback of other processes, such as game audio.
      */
-    kEngineOptEnableAudioSessionDeactive = 5,
+    kEngineOptEnableAudioSessionDeactive = 4,
 };
 
 /**

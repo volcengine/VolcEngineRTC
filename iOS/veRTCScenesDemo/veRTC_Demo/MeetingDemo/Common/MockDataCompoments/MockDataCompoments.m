@@ -46,6 +46,26 @@
     return _bitRateRang;
 }
 
+- (NSRange)selectScreenBitRateRangWithRow:(NSInteger)row isDefault:(BOOL)isDefault {
+    //根据分辨率选择对应的码率
+    //Select the corresponding bit rate according to the resolution
+    NSValue *value = self.bitRatelists[row];
+    _bitScreenRateRang = [value rangeValue];
+
+    NSInteger bitRate = [SettingsService getKBitRate];
+    if (bitRate < _bitScreenRateRang.location) {
+        bitRate = _bitScreenRateRang.location;
+    }
+    if (bitRate > _bitScreenRateRang.location + _bitScreenRateRang.length) {
+        bitRate = _bitScreenRateRang.location + _bitScreenRateRang.length;
+    }
+    if (!isDefault) {
+        [SettingsService setScreenKBitRate:(int)bitRate];
+    }
+
+    return _bitScreenRateRang;
+}
+
 #pragma mark - Private Action
 
 - (NSArray *)resolutionListsWithMockData:(NSDictionary *)mockDataDic {

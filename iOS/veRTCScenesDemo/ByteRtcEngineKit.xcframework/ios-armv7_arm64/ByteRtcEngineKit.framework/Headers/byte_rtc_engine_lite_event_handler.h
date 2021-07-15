@@ -106,59 +106,14 @@ public:
     };
 
     /**
-     * @deprecated 与 OnConnectionStateChanged{@link #OnConnectionStateChanged} 事件重复
      * @type callback
      * @region 引擎管理
-     * @brief SDK 正在连接信令服务器回调。开始建连时触发。
-     * @notes  <br>
-     *       + 该回调已废弃，请使用 OnConnectionStateChanged{@link #OnConnectionStateChanged} 回调的 CONNECTION_STATE_CONNECTING 状态判断。  <br>
-     */
-    virtual void OnConnecting() {
-    }
-
-    /**
-     * @deprecated 与 OnConnectionStateChanged{@link #OnConnectionStateChanged} 事件重复
-     * @type callback
-     * @region 引擎管理
-     * @brief SDK 正在重新连接信令服务器回调。开始重连时触发。
-     * @notes  <br>
-     *       + 该回调已废弃，请使用 OnConnectionStateChanged{@link #OnConnectionStateChanged} 回调的 CONNECTION_STATE_RECONNECTING 状态判断。  <br>
-     */
-    virtual void OnReconnecting() {
-    }
-
-    /**
-     * @deprecated 与 OnConnectionStateChanged{@link #OnConnectionStateChanged} 事件重复
-     * @type callback
-     * @region 引擎管理
-     * @brief SDK 已经连接上信令服务器回调。连接完成时触发。
-     * @notes  <br>
-     *       + 该回调已废弃，请使用 OnConnectionStateChanged{@link #OnConnectionStateChanged} 回调
-     *         的 CONNECTION_STATE_CONNECTED 或 CONNECTION_STATE_RECONNECTED 状态判断。  <br>
-     */
-    virtual void OnConnected() {
-    }
-
-    /**
-     * @deprecated 与 OnConnectionStateChanged{@link #OnConnectionStateChanged} 事件重复
-     * @type callback
-     * @region 引擎管理
-     * @brief SDK 与信令服务器连接断开回调。连接断开时触发。
-     * @notes  <br>
-     *       + 该回调已废弃，请使用 OnConnectionStateChanged{@link #OnConnectionStateChanged} 回调的 CONNECTION_STATE_DISCONNECTED 状态判断。  <br>
-     */
-    virtual void OnDisconnected() {
-    }
-
-    /**
-     * @type callback
-     * @region 引擎管理
-     * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
-     * @param [in] state  <br>
-     *        当前 SDK 与信令服务器的连接状态，详见：CONNECTION_STATE{@link #CONNECTION_STATE} 。
+     * @brief SDK 与 RTC 服务器的网络连接状态改变时，会收到此回调。
+     * @param [in] state 发生改变后的连接状态，参看 CONNECTION_STATE{@link #CONNECTION_STATE} 。
      */
     virtual void OnConnectionStateChanged(bytertc::CONNECTION_STATE state) {
     }
+
 
     /**
      * @type callback

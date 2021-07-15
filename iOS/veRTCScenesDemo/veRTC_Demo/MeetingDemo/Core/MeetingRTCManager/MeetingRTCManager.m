@@ -37,8 +37,6 @@
 }
 
 - (void)joinChannelWithRoomVideoSession:(RoomVideoSession *)videoSession {
-    _localVideoSession = videoSession;
-    
     //置场景模式，多人场景中推荐使用 ByteChannelProfileLiveBroadcasting
     //Set scene mode, recommended to use ByteChannelProfileLiveBroadcasting in multiplayer scenes
     [self.rtcKit setChannelProfile:ByteChannelProfileLiveBroadcasting];
@@ -57,7 +55,7 @@
 
     //开启/关闭 本地音频采集
     //Turn on/off local audio capture
-    [self enableLocalAudio:(videoSession.audioType == 2) ? NO : YES];
+    [self enableLocalAudio:videoSession.isEnableAudio];
 
     //Turn on/off local video capture
     [self enableLocalVideo:videoSession.isEnableVideo];
@@ -133,6 +131,11 @@
         //do something
         NSLog(@"dealloc == leaveChannel");
     }];
+    [self.subscribeUidDic removeAllObjects];
+}
+
+- (void)destroy {
+    [ByteRtcEngineKit destroy];
 }
 
 - (void)startPreview:(UIView *)view {
@@ -145,18 +148,20 @@
     [self.rtcKit setupLocalVideo:canvas];
     [self.rtcKit enableLocalVideo:YES];
     [self.rtcKit startPreview];
-    NSLog(@"dealloc == startPreview");
 }
 
 - (void)subscribeStream:(NSString *_Nullable)uid {
     if (IsEmptyStr(uid)) {
         return;
     }
-    SubscribeConfig *config = [[SubscribeConfig alloc] init];
-    config.isScreen = NO;
-    config.subscribeVideo = YES;
-    [self.rtcKit subscribeStream:uid subscribeConfig:config];
-    [self.subscribeUidDic setValue:@"1" forKey:uid];
+    NSString *value = [self.subscribeUidDic objectForKey:uid];
+    if ([value integerValue] != 1) {
+        SubscribeConfig *config = [[SubscribeConfig alloc] init];
+        config.isScreen = NO;
+        config.subscribeVideo = YES;
+        [self.rtcKit subscribeStream:uid subscribeConfig:config];
+        [self.subscribeUidDic setValue:@"1" forKey:uid];
+    }
 }
 
 - (void)subscribeScreenStream:(NSString *)uid {
@@ -173,8 +178,11 @@
     if (IsEmptyStr(uid)) {
         return;
     }
-    [self.rtcKit unSubscribeStream:uid isScreen:NO];
-    [self.subscribeUidDic setValue:@"0" forKey:uid];
+    NSString *value = [self.subscribeUidDic objectForKey:uid];
+    if ([value integerValue] == 1) {
+        [self.rtcKit unSubscribeStream:uid isScreen:NO];
+        [self.subscribeUidDic setValue:@"0" forKey:uid];
+    }
 }
 
 - (void)unsubscribeScreen:(NSString *)uid {
@@ -209,60 +217,35 @@
 
 - (void)rtcEngine:(ByteRtcEngineKit * _Nonnull)engine
       onStreamAdd:(id <ByteStream> _Nonnull)stream {
-    NSMutableArray *uidLists = [[NSMutableArray alloc] init];
-    NSMutableArray *screenLists = [[NSMutableArray alloc] init];
-
-    if (stream && stream.userId.length > 0) {
-        if (!stream.isScreen) {
-            //video stream
-            [uidLists addObject:stream.userId];
-        } else {
-            //screen stream
-            [screenLists addObject:stream.userId];
+    if (stream.isScreen) {
+        if ([self.delegate respondsToSelector:@selector(rtcManager:didScreenStreamAdded:)]) {
+            [self.delegate rtcManager:self didScreenStreamAdded:stream.userId];
+        }
+    } else {
+        NSLog(@"yuboyang-onStreamAdd%@",stream.userId);
+        if ([self.delegate respondsToSelector:@selector(rtcManager:didStreamAdded:)]) {
+            [self.delegate rtcManager:self didStreamAdded:stream.userId];
         }
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(rtcManager:didStreamAdded:)]) {
-            [self.delegate rtcManager:self didStreamAdded:[uidLists copy]];
-        }
-
-        if (screenLists.count > 0) {
-            NSString *screenUid = screenLists.firstObject;
-            if ([self.delegate respondsToSelector:@selector(rtcManager:didScreenStreamAdded:)]) {
-                [self.delegate rtcManager:self didScreenStreamAdded:screenUid];
-            }
-        }
-    });
 }
 
 - (void)rtcEngine:(ByteRtcEngineKit *_Nonnull)engine
     didStreamRemoved:(NSString *_Nonnull)uid
               stream:(id<ByteStream> _Nonnull)stream
               reason:(RtcStreamRemoveReason)reason {
-    NSMutableArray *uidLists = [[NSMutableArray alloc] init];
-    NSMutableArray *screenLists = [[NSMutableArray alloc] init];
-    if (stream && stream.userId.length > 0) {
-        if (!stream.isScreen) {
-            //video stream
-            [uidLists addObject:stream.userId];
-        } else {
-            //screen stream
-            [screenLists addObject:stream.userId];
+    if (stream.isScreen) {
+        if ([self.delegate respondsToSelector:@selector(rtcManager:didScreenStreamRemoved:)]) {
+            [self.delegate rtcManager:self didScreenStreamRemoved:stream.userId];
+        }
+    } else {
+        [self.subscribeUidDic setValue:@"0" forKey:stream.userId];
+        if ([self.delegate respondsToSelector:@selector(rtcManager:didStreamRemoved:)]) {
+            [self.delegate rtcManager:self didStreamRemoved:stream.userId];
         }
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([self.delegate respondsToSelector:@selector(rtcManager:didStreamRemoved:)]) {
-            [self.delegate rtcManager:self didStreamRemoved:uidLists];
-        }
-        
-        if (screenLists.count > 0) {
-            NSString *screenUid = screenLists.firstObject;
-            if ([self.delegate respondsToSelector:@selector(rtcManager:didScreenStreamRemoved:)]) {
-                [self.delegate rtcManager:self didScreenStreamRemoved:screenUid];
-            }
-        }
-    });
 }
+
+#pragma mark - Rtc Stats
 
 - (void)rtcEngine:(ByteRtcEngineKit *)engine localVideoStats:(ByteRtcLocalVideoStats *)stats {
     self.paramInfoModel.local_bit_video = [NSString stringWithFormat:@"%.0f",stats.sentKBitrate];
@@ -308,40 +291,16 @@
 }
 
 - (void)rtcEngine:(ByteRtcEngineKit * _Nonnull)engine reportAudioVolumeIndicationOfSpeakers:(NSArray<ByteRtcAudioVolumeInfo *> * _Nonnull)speakers totalVolume:(NSInteger)totalVolume {
-    NSArray *sorce = [speakers sortedArrayUsingComparator:^NSComparisonResult(ByteRtcAudioVolumeInfo *_Nonnull obj1, ByteRtcAudioVolumeInfo *_Nonnull obj2) {
-        if (obj1.volume > obj2.volume) {
-            return NSOrderedAscending;
-        } else if (obj1.volume == obj2.volume) {
-            return NSOrderedSame;
-        } else {
-            return NSOrderedDescending;
-        }
-    }];
-    
     NSInteger minVolume = 10;
-    //par
     NSMutableDictionary *parDic = [[NSMutableDictionary alloc] init];
-    for (int i = 0; i < sorce.count; i++) {
-        ByteRtcAudioVolumeInfo *model = sorce[i];
+    for (int i = 0; i < speakers.count; i++) {
+        ByteRtcAudioVolumeInfo *model = speakers[i];
         if (model.volume > minVolume) {
             [parDic setValue:@(model.volume) forKey:model.uid];
         }
     }
-    if ([self.delegate respondsToSelector:@selector(rtcManager:reportAudioVolume:)]) {
+    if ([self.delegate respondsToSelector:@selector(rtcManager:reportAllAudioVolume:)]) {
         [self.delegate rtcManager:self reportAllAudioVolume:[parDic copy]];
-    }
-    
-    //render
-    sorce = [sorce subarrayWithRange:NSMakeRange(0, MIN(sorce.count, 9))];
-    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-    for (int i = 0; i < sorce.count; i++) {
-        ByteRtcAudioVolumeInfo *model = sorce[i];
-        if (model.volume > minVolume) {
-            [dic setValue:model forKey:model.uid];
-        }
-    }
-    if ([self.delegate respondsToSelector:@selector(rtcManager:reportAudioVolume:)]) {
-        [self.delegate rtcManager:self reportAudioVolume:[dic copy]];
     }
 }
 

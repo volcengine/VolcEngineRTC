@@ -56,10 +56,6 @@ struct ByteAudioInputStreamReport {
     uint32_t prep_agc_mode = 0;
     float prep_agc_gain_db = 0;
 
-    bool prep_vad_enable = false;
-    uint32_t prep_vad_mode = 0;
-    uint32_t prep_vad_proc_count = 0;
-
     bool loudnorm_enable = false;
 
     double prep_echo_return_loss = 0.0;
@@ -70,9 +66,18 @@ struct ByteAudioInputStreamReport {
     float prep_residual_echo_likelihood = 0;
     float prep_residual_echo_likelihood_max = 0;
     double prep_nonlinear_process_suppression = 0.0;
+
+    // vad report
+    bool prep_vad_enable = false;
+    bool prep_vad_enable_process = false;
+    int prep_vad_level = 0;
+    double prep_vad_process_rate = 0;
+    double prep_vad_process_power_rate = 0;
+
     double prep_aec_rtf = 0.0;
     double prep_ans_rtf = 0.0;
     double prep_agc_rtf = 0.0;
+    double prep_vad_rtf = 0.0;
     double record_frame_rate = 0.0;
     double vocal_loudnorm_rtf = 0.0f;
 

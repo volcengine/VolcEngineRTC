@@ -12,15 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)meetingRTCManager:(MeetingRTCManager *)meetingRTCManager changeParamInfo:(RoomParamInfoModel *)model;
 
-- (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didStreamAdded:(NSArray<NSString *> *_Nullable)streamsUid;
+- (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didStreamAdded:(NSString *_Nullable)streamsUid;
 
 - (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didScreenStreamAdded:(NSString *_Nullable)screenStreamsUid;
 
-- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didStreamRemoved:(NSArray<NSString *> *_Nullable)streamsUid;
+- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didStreamRemoved:(NSString *_Nullable)streamsUid;
 
 - (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didScreenStreamRemoved:(NSString *)screenStreamsUid;
-
-- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager reportAudioVolume:(NSDictionary<NSString *, ByteRtcAudioVolumeInfo *> *_Nonnull)volumeInfo;
 
 - (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager reportAllAudioVolume:(NSDictionary<NSString *, NSNumber *> *_Nonnull)volumeInfo;
 
@@ -81,6 +79,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Leave the room
  */
 - (void)leaveChannel;
+
+/*
+ * destroy
+ */
+- (void)destroy;
 
 /*
  * Open preview

@@ -2,8 +2,8 @@
 //  RoomItemButton.m
 //  quickstart
 //
-//  Created by on 2021/3/24.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/24.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "RoomItemButton.h"

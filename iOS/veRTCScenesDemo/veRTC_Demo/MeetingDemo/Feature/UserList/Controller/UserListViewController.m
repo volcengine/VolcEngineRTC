@@ -7,7 +7,6 @@
 @property (nonatomic, strong) UITableView *settingsTableView;
 @property (nonatomic, strong) BaseButton *muteAllButton;
 @property (nonatomic, assign) BOOL isEdit;
-@property (nonatomic, copy) NSArray<RoomVideoSession *> *videoSessions;
 
 @end
 
@@ -30,10 +29,14 @@
     [self.settingsTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.view);
         make.top.equalTo(self.navView.mas_bottom);
-        make.bottom.equalTo(self.muteAllButton.mas_top).offset(-32/2);
+        if (self.isLoginHost) {
+            make.bottom.equalTo(self.muteAllButton.mas_top).offset(-32/2);
+        } else {
+            make.bottom.equalTo(self.view);
+        }
     }];
     
-    [self loadDataWithGetMeetingUserInfo:YES];
+    self.muteAllButton.hidden = !self.isLoginHost;
 }
 
 #pragma mark - Action Method
@@ -51,120 +54,25 @@
 - (void)setIsLoginHost:(BOOL)isLoginHost {
     _isLoginHost = isLoginHost;
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (isLoginHost) {
-            [self.muteAllButton mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.height.mas_equalTo(44);
-            }];
-        } else {
-            [self.muteAllButton mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.height.mas_equalTo(0);
-            }];
-        }
-    });
-}
-
-- (void)updateUserMicStatus:(BOOL)isOpen uid:(NSString *)uid {
-    BOOL isRefresh = NO;
-    NSArray *lists = self.videoSessions;
-    for (RoomVideoSession *model in lists) {
-        if (uid && [uid isKindOfClass:[NSString class]] &&uid.length > 0) {
-            //更新一个人麦克风
-            //Update a person's microphone
-            if ([model.uid isEqualToString:uid]) {
-                model.audioType = isOpen ? 1 : 2;
-                isRefresh = YES;
-                break;
-            }
-        } else {
-            //更新所有人麦克风
-            //Update everyone microphone
-            if (!model.isHost) {
-                model.audioType = isOpen ? 1 : 2;
-            }
-            isRefresh = YES;
-        }
-    }
-    if (isRefresh) {
-        self.videoSessions = lists;
-        [self settingsTableViewReloadData];
-    }
-}
-
-- (void)updateUserCameraStatus:(BOOL)isOpen uid:(NSString *)uid {
-    BOOL isRefresh = NO;
-    NSArray *lists = self.videoSessions;
-    for (RoomVideoSession *model in lists) {
-        if ([model.uid isEqualToString:uid]) {
-            model.isEnableVideo = isOpen;
-            isRefresh = YES;
-            break;
-        }
-    }
-    if (isRefresh) {
-        self.videoSessions = lists;
-        [self settingsTableViewReloadData];
-    }
-}
-
-- (void)updateUserHostStatusWithUid:(NSString *)uid {
-    RoomVideoSession *hostModel = nil;
-    for (RoomVideoSession *model in self.videoSessions) {
-        if ([model.uid isEqualToString:uid]) {
-            model.isHost = YES;
-            hostModel = model;
-        } else {
-            model.isHost = NO;
-        }
-    }
-    if (hostModel) {
-        NSMutableArray *lists = [self.videoSessions mutableCopy];
-        [lists removeObject:hostModel];
-        [lists insertObject:hostModel atIndex:0];
-        self.videoSessions = [lists copy];
-        [self settingsTableViewReloadData];
-    }
-}
-
-- (void)loadDataWithGetMeetingUserInfo:(BOOL)isAlert {
-    [MeetingControlCompoments getMeetingUserInfo:@"" block:^(NSArray<MeetingControlUserModel *> * _Nonnull userLists, MeetingControlAckModel * _Nonnull model) {
-        if (model.result) {
-            NSMutableArray *dataLists = [[NSMutableArray alloc] init];
-            for (int i = 0; i < userLists.count; i++) {
-                RoomVideoSession *model = [RoomVideoSession roomVideoSessionToMeetingControlUserModel:userLists[i]];
-                [dataLists addObject:model];
-            }
-            self.videoSessions = [dataLists copy];
-            [self settingsTableViewReloadData];
-            self.navTitle = [NSString stringWithFormat:@"参会人(%lu)", (unsigned long)[self.videoSessions count]];
-        } else {
-            if (isAlert) {
-                [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:model.message];
-            }
-        }
-    }];
-}
-
-- (void)updateUserMicStatus:(NSDictionary<NSString *,NSNumber *> *)speakUid {
-    for (RoomVideoSession *model in self.videoSessions) {
-        NSNumber *number = speakUid[model.uid];
-        if (model.audioType == 1 || model.audioType == 3) {
-            if (number && number.integerValue > 0) {
-                model.audioType = 3;
+    if (self.settingsTableView.superview) {
+        [self.settingsTableView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.equalTo(self.view);
+            make.top.equalTo(self.navView.mas_bottom);
+            if (isLoginHost) {
+                make.bottom.equalTo(self.muteAllButton.mas_top).offset(-32/2);
             } else {
-                if (model.audioType == 3) {
-                    model.audioType = 1;
-                } else {
-                    
-                }
+                make.bottom.equalTo(self.view);
             }
-        } else {
-            
-        }
+        }];
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self settingsTableViewReloadData];
-    });
+    self.muteAllButton.hidden = !isLoginHost;
+}
+
+- (void)setVideoSessions:(NSMutableArray<RoomVideoSession *> *)videoSessions {
+    _videoSessions = videoSessions;
+    
+    [self settingsTableViewReloadData];
+    self.navTitle = [NSString stringWithFormat:@"参会人(%lu)", (unsigned long)[videoSessions count]];
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -220,14 +128,14 @@
         model1.title = @"确定";
         AlertActionModel *model2 = [[AlertActionModel alloc] init];
         model2.title = @"取消";
-        NSString *message = [NSString stringWithFormat:@"是否将主持人移交给：%@", model.uid];
+        NSString *message = [NSString stringWithFormat:@"是否将主持人移交给：%@", model.name];
         [[AlertActionManager shareAlertActionManager] showWithMessage:message actions:@[model2, model1]];
         model1.alertModelClickBlock = ^(UIAlertAction * _Nonnull action) {
             [wself changeHost:model.uid];
         };
     }];
     hostAction.backgroundColor = [UIColor colorFromHexString:@"#4080FF"];
-    NSString *message = (model.audioType == 2) ? @"请求开麦" : @"静音";
+    NSString *message = !model.isEnableAudio ? @"请求开麦" : @"静音";
     UITableViewRowAction *muteAction = [UITableViewRowAction
                                         rowActionWithStyle:UITableViewRowActionStyleNormal
                                         title:message
@@ -263,7 +171,7 @@
 }
 
 - (void)muteUserOrAskMic:(RoomVideoSession *)videoSession {
-    BOOL isOpenAudio = videoSession.audioType == 2 ? NO : YES;
+    BOOL isOpenAudio = videoSession.isEnableAudio;
     if (isOpenAudio) {
         //mute microphone
         [MeetingControlCompoments muteUser:videoSession.uid block:^(BOOL result, MeetingControlAckModel * _Nonnull model) {
@@ -309,6 +217,7 @@
         _muteAllButton.layer.cornerRadius = 22;
         _muteAllButton.imageEdgeInsets = UIEdgeInsetsMake(10, 0, 10, 0);
         _muteAllButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+        _muteAllButton.hidden = YES;
     }
     return _muteAllButton;
 }

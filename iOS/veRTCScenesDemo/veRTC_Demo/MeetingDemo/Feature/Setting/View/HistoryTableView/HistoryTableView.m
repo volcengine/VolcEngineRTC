@@ -2,8 +2,8 @@
 //  HistoryTableView.m
 //  quickstart
 //
-//  Created by on 2021/3/23.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/23.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "HistoryTableView.h"
@@ -67,6 +67,51 @@
     return self.dataLists.count;
 }
 
+#pragma mark - UITableView Edit
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return self.isDelete;
+}
+
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    __weak __typeof(self) wself = self;
+    MeetingControlRecordModel *model = self.dataLists[indexPath.row];
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleDestructive title:@"删除" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        [wself deleteVideoRecord:model tableView:tableView indexPath:indexPath];
+    }];
+    return @[deleteAction];
+}
+ 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    editingStyle = UITableViewCellEditingStyleDelete;
+}
+
+#pragma mark - loadData
+
+- (void)deleteVideoRecord:(MeetingControlRecordModel *)model tableView:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath{
+    if (IsEmptyStr(model.vid)) {
+        return;
+    }
+    __weak __typeof(self) wself = self;
+    [MeetingControlCompoments deleteVideoRecord:model.vid block:^(MeetingControlAckModel * _Nonnull ackModel) {
+        if (ackModel.result) {
+            NSMutableArray *lists = [wself.dataLists mutableCopy];
+            MeetingControlRecordModel *deleteModel = nil;
+            for (MeetingControlRecordModel *cModel in lists) {
+                if ([cModel.vid isEqualToString:model.vid]) {
+                    deleteModel = cModel;
+                    break;
+                }
+            }
+            [lists removeObject:deleteModel];
+            wself.dataLists = [lists copy];
+            
+            [tableView reloadData];
+        } else {
+            [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:ackModel.message];
+        }
+    }];
+}
 
 #pragma mark - getter
 

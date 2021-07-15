@@ -34,7 +34,7 @@ class IRTCRoomEventHandler;
 class IRtcEngine : public IRtcRoom,
                    public IRtcEngineLite {
 public:
-                       
+
     /**
      * @hidden
      * @brief 析构函数
@@ -63,7 +63,7 @@ public:
      *            3. 10个数字 0 ~ 9 。  <br>
      *            4. 下划线"_", at符"@", 减号"-"。  <br>
      * @param [in] info 预留参数。  <br>
-     * @return 方法调用结果。  <br> 
+     * @return 方法调用结果。  <br>
      *        +  0: 成功  <br>
      *        + -1: channel_id 为空，失败  <br>
      *        + -2: uid 为空，失败  <br>
@@ -72,7 +72,7 @@ public:
      *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnRejoinChannelSuccess{@link #OnRejoinChannelSuccess} 回调通知。  <br>
      *       + 房间模式（房间模式参考 SetChannelProfile{@link #SetChannelProfile} ）为通话模式下的用户或直播、游戏、云游戏模式下用户角色（用户角色参考 SetClientRole{@link #SetClientRole} ）为主播、观众的用户加入房间成功后，远端用户会收到 OnUserJoined{@link #OnUserJoined} 回调通知。  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户ID 必须是唯一的。如果两个用户的用户ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 OnChannelError{@link #OnChannelError} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN{@link #BRERR_DUPLICATE_LOGIN} 。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户ID 必须是唯一的。如果两个用户的用户ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 OnError{@link #OnError} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN{@link #BRERR_DUPLICATE_LOGIN} 。  <br>
      */
     virtual int JoinChannel(const char* token, const char* channel_id, const char* uid, const char* info) = 0;
 
@@ -97,12 +97,12 @@ private:
  *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
- *        + 该方法在第一次调用时初始化一个 RTCEngine 单例，除非调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine} 
+ *        + 该方法在第一次调用时初始化一个 RTCEngine 单例，除非调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine}
  *          方法，否则后续的所有调用均返回同一个实例。  <br>
  *        + 连续多次调用该方法不会创建不同的 IRtcEngine{@link #IRtcEngine} 实例，仅第一次设置的 event_handler 是有效值，后续
  *          的调用均会被忽略。  <br>
  *        + 必须使用相同的 AppId，App 间才能进行通话。  <br>
- *        + 在调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine} 之后会销毁 IRtcEngine{@link #IRtcEngine} 实例，再次调用 
+ *        + 在调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine} 之后会销毁 IRtcEngine{@link #IRtcEngine} 实例，再次调用
  *          CreateByteRtcEngine{@link #CreateByteRtcEngine} 方法则会重新创建一个全新的 IRtcEngine{@link #IRtcEngine} 实例。
  */
 BYTE_API bytertc::IRtcEngine* CreateByteRtcEngine(const char* app_id, bytertc::IRtcEngineEventHandler* event_handler);
@@ -120,12 +120,12 @@ BYTE_API bytertc::IRtcEngine* CreateByteRtcEngine(const char* app_id, bytertc::I
  *        JSON字符串，用以覆盖全局参数，详情可见 SetParameters{@link #SetParameters}
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
- *        + 该方法在第一次调用时初始化一个 RTCEngine 单例，除非调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine} 
+ *        + 该方法在第一次调用时初始化一个 RTCEngine 单例，除非调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine}
  *          方法，否则后续的所有调用均返回同一个实例。  <br>
  *        + 连续多次调用该方法不会创建不同的 IRtcEngine{@link #IRtcEngine} 实例，仅第一次设置的 event_handler 是有效值，后续
  *          的调用均会被忽略。  <br>
  *        + 必须使用相同的 AppId，App 间才能进行通话。  <br>
- *        + 在调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine} 之后会销毁 IRtcEngine{@link #IRtcEngine} 实例，再次调用 
+ *        + 在调用 DestroyByteRtcEngine{@link #DestroyByteRtcEngine} 之后会销毁 IRtcEngine{@link #IRtcEngine} 实例，再次调用
  *          CreateByteRtcEngine{@link #CreateByteRtcEngine} 方法则会重新创建一个全新的 IRtcEngine{@link #IRtcEngine} 实例。
  */
 BYTE_API bytertc::IRtcEngine* CreateByteRtcEngineWithParameters(const char* app_id, bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
@@ -141,7 +141,7 @@ BYTE_API bytertc::IRtcEngine* CreateByteRtcEngineWithParameters(const char* app_
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
  *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTE_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id, bytertc::IRtcEngineEventHandler* event_handler);
@@ -159,7 +159,7 @@ BYTE_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id, bytertc::I
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
  *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTE_API bytertc::IRtcEngine* CreateGameRtcEngineWithParameters(
@@ -176,7 +176,7 @@ BYTE_API bytertc::IRtcEngine* CreateGameRtcEngineWithParameters(
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
  *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTE_API bytertc::IRtcEngine* createByteRtcEngineWithPtr(
@@ -195,7 +195,7 @@ BYTE_API bytertc::IRtcEngine* createByteRtcEngineWithPtr(
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
  *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTE_API bytertc::IRtcEngine* createByteRtcEngineWithPtrAndParameters(
@@ -213,7 +213,7 @@ BYTE_API bytertc::IRtcEngine* createByteRtcEngineWithPtrAndParameters(
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
  *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTE_API bytertc::IRtcEngine* createGameRtcEngineWithPtr(
@@ -232,7 +232,7 @@ BYTE_API bytertc::IRtcEngine* createGameRtcEngineWithPtr(
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
  *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTE_API bytertc::IRtcEngine* createGameRtcEngineWithPtrAndParameters(
@@ -295,6 +295,24 @@ BYTE_API void EnablePerformanceCollect(bool enable);
  */
 BYTE_API const char* GetErrorDescription(int code);
 
+/**
+ * @type api
+ * @region 其他
+ * @brief 本次通话质量打分评价
+ * @param [in] data
+ *        上报的数据，JSON格式，必须包含以下5个字段:
+ *        grade: 打分 1～5  <br>
+ *        type: 反馈问题集合可多选，参考 PROBLEM_FEEDBACK{@link #PROBLEM_FEEDBACK}  <br>
+ *        problem_desc: 其他问题描述  <br>
+ *        os_version: 系统版本  <br>
+ *        network_type: 网络类型, WiFi, 2g, 3g, 4g, 5g, 台式机填pc  <br>
+ * @return
+ *        +  0: 成功  <br>
+ *        + -1: 上报失败，可能原因JoinChannel失败  <br>
+ *        + -2: 传入json解析失败  <br>
+ *        + -3: 传入json字段缺失  <br>
+ *        + -4: grade取值不合法
+ */
+BYTE_API int Feedback(const char* data);
 }    // namespace bytertc
 #endif // I_BYTE_RTC_ENGINE
-

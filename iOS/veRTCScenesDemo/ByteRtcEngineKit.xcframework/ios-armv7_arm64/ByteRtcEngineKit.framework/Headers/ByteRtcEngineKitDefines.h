@@ -129,36 +129,94 @@ typedef NS_ENUM(NSInteger, ByteRtcClientRole) {
     ByteRtc_ClientRole_Silent_Audience = 4,
 };
 
+    /**
+    * @type keytype
+    * @brief 音频场景类型。<br>
+    *        选择音频场景后，RTC 会自动根据客户端音频路由和发布订阅状态，适用通话音量/媒体音量。<br>
+    *        你可以调用 setAudioScenario:{@link #setAudioScenario:} 设置音频场景。<br>
+    *        如果以下音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
+    */
+typedef NS_ENUM(NSInteger, ByteRtcAudioScenarioType) {
+    /**
+     * @brief 音乐场景。默认为此场景。<br>
+     *        此场景适用于对音乐表现力有要求的场景。如音乐直播等。<br>
+     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *        </table>
+     */
+    ByteAudioScenarioMusic = 0,
+    /**
+     * @brief 高质量通话场景。<br>
+     *        此场景适用于对音乐表现力有要求的场景。
+     *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验。<br>
+     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th> <th>备注</th> </tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *        </table>
+     */
+    ByteAudioScenarioHighqualityCommunication = 1,
+    /**
+     * @brief 纯通话音量场景。<br>
+     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用通话音量。
+     *        适用于需要频繁上下麦的通话或会议场景。<br>
+     *        此场景可以保持统一的音频模式，不会有音量突变的听感；
+     *        最大程度上的消除回声，使通话清晰度达到最优；
+     *        使用蓝牙耳机时，能够使用蓝牙耳机上自带的麦克风进行音频采集。<br>
+     *        但是，使用媒体音量进行播放的其他音频的音量会被压低，且音质会变差。
+     */
+    ByteAudioScenarioCommunication = 2,
+    /**
+     * @brief 纯媒体场景。一般不建议使用。<br>
+     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用媒体音量。
+     *        外放通话时，极易出现回声和啸叫。
+     */
+    ByteAudioScenarioMedia = 3,
+};
+
+
+
+
+
+
+
 /**
  * @type keytype
- * @brief SDK 与信令服务器连接状态。
+ * @brief SDK 与 RTC 服务器连接状态。
  */
 typedef NS_ENUM(NSInteger, ByteRtcConnectionState) {
     /**
-     * @brief 连接中断。
+     * @brief 连接断开。
      */
     ByteRtc_ConnectionState_Disconnected = 1,
     /**
-     * @brief 连接建立中。
+     * @brief 首次连接，正在连接中。
      */
     ByteRtc_ConnectionState_Connecting = 2,
     /**
-     * @brief 连接已建立。
+     * @brief 首次连接成功。
      */
     ByteRtc_ConnectionState_Connected = 3,
     /**
-     * @brief 连接重连中。
+     * @brief 连接断开后，重新连接中。
      */
     ByteRtc_ConnectionState_Reconnecting = 4,
     /**
-     * @brief 连接已重连。
+     * @brief 连接断开后，重连成功。
      */
     ByteRtc_ConnectionState_Reconnected = 5,
     /**
-     * @brief 连接已断开。
+     * @brief 网络连接断开超过 10 秒。SDK 仍然会继续尝试重连。
      */
     ByteRtc_ConnectionState_Lost = 6,
 };
+
 
 /**
  * @type keytype
@@ -579,7 +637,7 @@ typedef enum {
 /**
  *  @type keytype
  *  @brief 音频输出路由
- *         音频路由变化时 SDK 通过 rtcEngine:didAudioRouteChanged:{@link #rtcEngine:didAudioRouteChanged:} 回调该错误码  
+ *         音频路由变化时 SDK 通过 rtcEngine:didAudioRouteChanged:{@link #rtcEngine:didAudioRouteChanged:} 回调该错误码
 */
 typedef NS_ENUM(NSInteger, ByteAudioOutputRouting) {
     /**
@@ -1050,19 +1108,19 @@ typedef NS_ENUM(NSInteger, ByteLocalAudioStreamState) {
     * @brief 本地音频默认初始状态。
     *        麦克风停止工作时回调该状态，对应错误码 ByteLocalAudioStreamErrorOk{@link #ByteLocalAudioStreamErrorOk}
     */
-    ByteLocalAudioStreamStateStopped = 0,   
+    ByteLocalAudioStreamStateStopped = 0,
 
     /**
     * @brief 本地音频录制设备启动成功。
     *        采集到音频首帧时回调该状态，对应错误码 ByteLocalAudioStreamErrorOk{@link #ByteLocalAudioStreamErrorOk}
     */
-    ByteLocalAudioStreamStateRecording = 1, 
+    ByteLocalAudioStreamStateRecording = 1,
 
     /**
     * @brief 本地音频首帧编码成功。
     *        音频首帧编码成功时回调该状态，对应错误码 ByteLocalAudioStreamErrorOk{@link #ByteLocalAudioStreamErrorOk}
     */
-    ByteLocalAudioStreamStateEncoding = 2, 
+    ByteLocalAudioStreamStateEncoding = 2,
 
     /**
     * @brief  本地音频启动失败，在以下时机回调该状态：  <br>
@@ -1070,7 +1128,7 @@ typedef NS_ENUM(NSInteger, ByteLocalAudioStreamState) {
     *       + 检测到没有录音设备权限，对应错误码 ByteLocalAudioStreamErrorDeviceNoPermission{@link #ByteLocalAudioStreamErrorDeviceNoPermission}  <br>
     *       + 音频编码失败，对应错误码 ByteLocalAudioStreamErrorEncodeFailure{@link #ByteLocalAudioStreamErrorEncodeFailure}  <br>
     */
-    ByteLocalAudioStreamStateFailed = 3,   
+    ByteLocalAudioStreamStateFailed = 3,
 };
 
 /**
@@ -1082,17 +1140,17 @@ typedef NS_ENUM(NSInteger, ByteLocalAudioStreamError) {
     /**
      * @brief 本地音频状态正常
      */
-    ByteLocalAudioStreamErrorOk = 0,      
+    ByteLocalAudioStreamErrorOk = 0,
 
     /**
      * @brief 本地音频出错原因未知
      */
-    ByteLocalAudioStreamErrorFailure = 1, 
+    ByteLocalAudioStreamErrorFailure = 1,
 
     /**
      * @brief 没有权限启动本地音频录制设备
      */
-    ByteLocalAudioStreamErrorDeviceNoPermission = 2, 
+    ByteLocalAudioStreamErrorDeviceNoPermission = 2,
 
     /**
      * @brief 本地音频录制设备已经在使用中
@@ -1104,12 +1162,12 @@ typedef NS_ENUM(NSInteger, ByteLocalAudioStreamError) {
     /**
      * @brief 本地音频录制失败，建议你检查录制设备是否正常工作
      */
-    ByteLocalAudioStreamErrorRecordFailure = 4, 
+    ByteLocalAudioStreamErrorRecordFailure = 4,
 
     /**
      * @brief 本地音频编码失败
      */
-    ByteLocalAudioStreamErrorEncodeFailure = 5, 
+    ByteLocalAudioStreamErrorEncodeFailure = 5,
 };
 
 /**
@@ -1184,13 +1242,13 @@ typedef NS_ENUM(NSInteger, ByteRemoteAudioState) {
      *       + 远端用户停止发送音频流，对应错误码 ByteRemoteAudioReasonRemoteMuted{@link #ByteRemoteAudioReasonRemoteMuted}  <br>
      *       + 远端用户离开房间，对应错误码 ByteRemoteAudioReasonRemoteOffline{@link #ByteRemoteAudioReasonRemoteOffline}  <br>
      */
-    ByteRemoteAudioStateStopped = 0, 
+    ByteRemoteAudioStateStopped = 0,
 
     /**
      * @brief 本地用户已接收远端音频首包。
      *        收到远端音频首包时回调该状态，对应错误码 ByteRemoteAudioReasonLocalUnmuted{@link #ByteRemoteAudioReasonLocalUnmuted}
      */
-    ByteRemoteAudioStateStarting = 1, 
+    ByteRemoteAudioStateStarting = 1,
 
     /**
      * @brief  远端音频流正在解码，正常播放，在以下时机回调该状态：  <br>
@@ -1199,19 +1257,19 @@ typedef NS_ENUM(NSInteger, ByteRemoteAudioState) {
      *       + 本地用户恢复接收远端音频流，对应错误码 ByteRemoteAudioReasonLocalUnmuted{@link #ByteRemoteAudioReasonLocalUnmuted}  <br>
      *       + 远端用户恢复发送音频流，对应错误码 ByteRemoteAudioReasonRemoteUnmuted{@link #ByteRemoteAudioReasonRemoteUnmuted}  <br>
      */
-    ByteRemoteAudioStateDecoding = 2, 
+    ByteRemoteAudioStateDecoding = 2,
 
     /**
      * @brief 远端音频流卡顿。
      *        网络阻塞、丢包率大于40%时回调该状态，对应错误码 ByteRemoteAudioReasonNetworkCongestion{@link #ByteRemoteAudioReasonNetworkCongestion}
      */
-    ByteRemoteAudioStateFrozen = 3,   
+    ByteRemoteAudioStateFrozen = 3,
 
     /**
      * @brief 远端音频流播放失败
      * @notes 该错误码暂未使用
      */
-    ByteRemoteAudioStateFailed = 4,   
+    ByteRemoteAudioStateFailed = 4,
 };
 
 /**
@@ -1223,42 +1281,42 @@ typedef NS_ENUM(NSInteger, ByteRemoteAudioReason) {
     /**
      * @brief 内部原因
      */
-    ByteRemoteAudioReasonInternal = 0,    
+    ByteRemoteAudioReasonInternal = 0,
 
     /**
      * @brief 网络阻塞
-     */      
-    ByteRemoteAudioReasonNetworkCongestion = 1, 
+     */
+    ByteRemoteAudioReasonNetworkCongestion = 1,
 
     /**
      * @brief 网络恢复正常
      */
-    ByteRemoteAudioReasonNetworkRecovery = 2,   
+    ByteRemoteAudioReasonNetworkRecovery = 2,
 
     /**
      * @brief 本地用户停止接收远端音频流
      */
-    ByteRemoteAudioReasonLocalMuted = 3, 
+    ByteRemoteAudioReasonLocalMuted = 3,
 
     /**
      * @brief 本地用户恢复接收远端音频流
      */
-    ByteRemoteAudioReasonLocalUnmuted = 4, 
+    ByteRemoteAudioReasonLocalUnmuted = 4,
 
     /**
      * @brief 远端用户停止发送音频流
      */
-    ByteRemoteAudioReasonRemoteMuted = 5, 
+    ByteRemoteAudioReasonRemoteMuted = 5,
 
     /**
      * @brief 远端用户恢复发送音频流
      */
-    ByteRemoteAudioReasonRemoteUnmuted = 6, 
+    ByteRemoteAudioReasonRemoteUnmuted = 6,
 
     /**
      * @brief 远端用户离开房间
      */
-    ByteRemoteAudioReasonRemoteOffline = 7, 
+    ByteRemoteAudioReasonRemoteOffline = 7,
 };
 
 /**
@@ -1524,6 +1582,10 @@ typedef NS_ENUM(NSUInteger, FirstFrameSendState) {
      * 发送成功
      */
     kFirstFrameSendStateSent = 1,
+    /**
+     * 发送失败
+     */
+    kFirstFrameSendStateEnd = 2,
 };
 
 /**
@@ -1540,6 +1602,10 @@ typedef NS_ENUM(NSUInteger, FirstFramePlayState) {
      * 播放成功
      */
     kFirstFramePlayStatePlay = 1,
+    /**
+     * 播放失败
+     */
+    kFirstFramePlayStateEnd = 2,
 };
 
 /**
@@ -2618,6 +2684,22 @@ BYTE_RTC_EXPORT @interface ScreenCaptureParam : NSObject
  *  @brief 是否采集鼠标
  */
 @property (nonatomic, assign) BOOL captureMouseCursor;
+@end
+
+/**
+ *  @type keytype
+ *  @region 视频管理
+ *  @brief 屏幕采集设置参数
+ */
+BYTE_RTC_EXPORT @interface ScreenParam : NSObject
+/**
+ * @brief 编码帧率,单位为 fps
+ */
+@property (nonatomic, assign) NSInteger frameRate;
+/**
+ * @brief 编码码率，小于 0 时 SDK 会根据高宽自适应码率, 单位 kbps
+ */
+@property (nonatomic, assign) NSInteger bitrate;
 @end
 
 /**

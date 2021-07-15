@@ -486,53 +486,58 @@ public:
     /**
      * @type api
      * @region 音频管理
-     * @brief 调节录音音量
-     * @param [in] volume 录音音量，可在 0~400 范围内进行调节  <br>
+     * @brief 调节音频采集音量
+     * @param [in] volume 音频采集音量，取值范围： [0,400]  <br>
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
-     * @notes 为保证更好的通话质量，建议将 volume 值设为 [0,100]
+     * @notes 为保证更好的通话质量，建议将 volume 值设为 [0,100]。
      */
-    virtual void AdjustRecordingSignalVolume(const int volume) = 0;
+    virtual void SetRecordingVolume(const int volume) = 0;
 
     /**
      * @type api
      * @region 音频管理
-     * @brief 调节本地播放的所有远端用户音量
-     * @param [in] volume 播放音量，可在 0~400 范围内进行调节  <br>
+     * @brief 调节本地播放的所有远端用户混音后的音量
+     * @param [in] volume 音频播放音量，取值范围： [0,400] <br>
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
+     * @notes 为保证更好的通话质量，建议将 volume 值设为 [0,100]。
+     */
+    virtual void SetPlaybackVolume(const int volume) = 0;
+
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 开启声卡采集，将声卡播放的音频流合到本地采集的音频流中。<br>
+     *         如果你希望将声卡播放的声音传输到远端（比如屏幕共享等场景），你必须开启声卡采集。如此，声卡播放的声音会合到本地采集的音频流在中，一起发送到远端。
      * @notes  <br>
-     *       + 该方法调节的是本地播放的所有远端用户混音后的音量  <br>
-     *       + 为保证更好的通话质量，建议将 volume 值设为 [0,100]  <br>
+     *       + 开启声卡采集后，你可以设置对应音量，参看 SetScreenAudioVolumeBeforeMixing{@link #SetScreenAudioVolumeBeforeMixing} <br>
+     *       + 如果需要关闭声卡采集，参看 StopMixScreenAudioToMainStream{@link #StopMixScreenAudioToMainStream}
      */
-    virtual void AdjustPlaybackSignalVolume(const int volume) = 0;
+    virtual void StartMixScreenAudioToMainStream() = 0;
 
     /**
      * @type api
      * @region 音频管理
-     * @brief 开启声卡采集
-     *        开启声卡采集后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端，一般会用于屏幕共享的场景，声卡采集的声音可以通过
-     * AdjustAudioLoopbackCaptureVolume{@link #AdjustAudioLoopbackCaptureVolume} 调节
-     * @param  enable 是否开启声卡采集  <br>
-     *       + true: 开启声卡采集  <br>
-     *       + false: 关闭声卡采集（默认）  <br>
+     * @brief 关闭声卡采集，声卡播放的音频流不再合到本地采集的音频流中。
+     * @notes 如果需要开启声卡采集，请参看 StartMixScreenAudioToMainStream{@link #StartMixScreenAudioToMainStream}
      */
-    virtual void EnableAudioLoopBackCapture(bool enable) = 0;
+    virtual void StopMixScreenAudioToMainStream() = 0;
 
     /**
      * @type api
      * @region 音频管理
-     * @brief 调节声卡采集音量
-     *        开启声卡采集后，声卡采集的声音可通过此 API 调节，开启声卡采集详情参考 EnableAudioLoopBackCapture{@link
-     * #EnableAudioLoopBackCapture}
-     * @param volume 声卡采集音量，可在 0~400 范围内进行调节  <br>
+     * @brief 调节本地声卡采集音量。<br>
+     *        开启本地声卡采集后，你可以使用此接口调节采集音量。
+     *        关于如何开启本地声卡采集，参考 StartMixScreenAudioToMainStream{@link #StartMixScreenAudioToMainStream}。
+     * @param volume 声卡采集音量，取值范围： [0,400]  <br>
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
      */
-    virtual void AdjustAudioLoopbackCaptureVolume(int volume) = 0;
+    virtual void SetScreenAudioVolumeBeforeMixing(int volume) = 0;
 
     /**
      * @type api
@@ -550,21 +555,39 @@ public:
     virtual int EnableLocalAudio(bool enable) = 0;
 
     /**
+     * @hidden(macOS,Windows)
      * @type api
      * @region 音频管理
-     * @brief 静音本地音频流
-     * @param [in] mute 是否静音本地音频流  <br>
-     *       + true: 静音本地音频流
-     *       + false: 关闭静音本地音频流（默认）
+     * @brief 设置音频场景类型。<br>
+     *        你可以根据你的应用所在场景，选择合适的音频场景类型。
+     *        选择音频场景后，RTC 会自动根据客户端音频路由和发布订阅状态，适用通话音量/媒体音量。<br>
+     *        在进房前和进房后设置均可生效。
+     * @param [in] audioScenario 音频场景类型，
+     *        参见 AudioScenarioType{@link #AudioScenarioType}
+     * @notes 
+     *        + 通话音量更适合通话，会议等对信息准确度更高的场景。通话音量会激活系统硬件信号处理，使通话声音会更清晰。同时，音量无法降低到 0。<br>
+     *        + 媒体音量更适合娱乐场景，因其声音的表现力会更强。媒体音量下，音量最低可以降低到 0。
+     */
+    virtual void SetAudioScenario(AudioScenarioType scenario) = 0;
+
+
+
+
+
+
+
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 控制本地音频流的发送状态：发送/不发送  <br>
+     *        使用此方法后，房间中的其他用户会收到回调： OnUserMuteAudio{@link #OnUserMuteAudio}
+     * @param [in] mute_state 发送状态，标识是否发送本地音频流，详见：MuteState{@link #MuteState}
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + <0：方法调用失败  <br>
-     * @notes  <br>
-     *       + 该方法静音本地音频流。调用该方法后，房间中的其他用户会收到 OnUserMuteAudio{@link #OnUserMuteAudio}
-     * 的回调。  <br>
-     *       + 本方法只是静音本地流，并未关闭本地音频采集设备。  <br>
+     * @notes 本方法仅控制本地音频流的发送状态，并不影响本地音频采集状态。
      */
-    virtual int MuteLocalAudioStream(bool mute) = 0;
+    virtual void MuteLocalAudio(MuteState mute_state) = 0;
 
     /**
      * @type api
@@ -1071,37 +1094,33 @@ public:
     /**
      * @type api
      * @region 视频管理
-     * @brief 设置 SimulCast（联播模式）发布的一组视频分辨率，需要指定每个分辨率 VideoSolution{@link #VideoSolution}
-     * 的宽、高、帧率、码率。 当发布的视频分辨率与采集的视频的长宽比与不同的时候，根据 ScaleMode{@link #ScaleMode}
-     * 进行裁剪。 调用该方法代表使用 SimulCast 进行视频发布。
-     * @param [in] solutions
-     *        发布的分辨率数组首地址
-     * @param [in] solution_num
-     *        分辨率数组长度
+     * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，
+     *         包括分辨率，帧率，码率，缩放模式，网络不佳时的回退策略等。
+     * @param [in] solutions 视频参数数组首地址。参看 VideoSolution{@link #VideoSolution}。
+     * @param [in] solution_num 视频参数数组长度
      * @return  <br>
      *        + 0：成功  <br>
      *        + !0：失败  <br>
      * @notes  <br>
-     *       + 分辨率必须是依次减小， 从大到小排列的。  <br>
-     *       + 分辨率最大是多少没有限制， 如果设置的分辨率无法编码，就会导致编码推流失败。  <br>
-     *       + 设置多个分辨率后，最多传输三路视频数据。  <br>
+     *       + 视频参数数组中，分辨率必须是依次减小，从大到小排列的。  <br>
+     *       + 最大分辨率没有限制。但是如果设置的分辨率无法编码，就会导致编码推流失败。  <br>
+     *       + 数组元素不超过3个。  <br>
      */
-    virtual int SetVideoProfiles(const VideoSolution* solutions, int solution_num) = 0;
+    virtual int SetVideoEncoderConfig(const VideoSolution* solutions, int solution_num) = 0;
 
     /**
-     * @type api
-     * @region 视频管理
-     * @brief 设置本地视频画布
-     *   该方法设置本地视频显示信息。应用通过调用此接口绑定本地视频流的显示视窗 canvas，并设置本地用户视图的渲染模式。
-     *   在应用开发中，通常在初始化后调用该方法进行本地视频设置，然后再加入房间。退出房间后，绑定仍然有效。
-     *   如果需要解除绑定，可以指定空 canvas 调用该函数。
-     * @param [in] canvas
-     *        画布信息，详见：VideoCanvas{@link #VideoCanvas}
-     * @return  <br>
-     *        + 0：成功  <br>
-     *        + !0：失败  <br>
-     */
-    virtual int SetupLocalVideo(const VideoCanvas& canvas) = 0;
+    * @type api
+    * @region 视频管理
+    * @brief 设置本地视频渲染时，使用的视图，并设置渲染模式。 <br>
+    *        你应在加入房间前，绑定本地视图。退出房间后，此设置仍然有效。
+    *        如果需要解除绑定，你可以调用本方法绑定空视图。
+    * @param [in] index 视频流属性, 参看 StreamIndex{@link #StreamIndex}
+    * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}
+    * @return  <br>
+    *        + 0：成功  <br>
+    *        + !0：失败  <br>
+    */
+   virtual int SetLocalVideoCanvas(StreamIndex index, const VideoCanvas& canvas) = 0;
 
     /**
      * @type api
@@ -1121,21 +1140,6 @@ public:
     /**
      * @type api
      * @region 视频管理
-     * @brief 设置屏幕共享本地视图
-     *   该方法设置屏幕共享本地视图信息。应用通过调用此接口绑定本地屏幕共享流的显示视图 VideoCanvas{@link #VideoCanvas}
-     * 。 在应用开发中，通常在初始化后调用该方法进行本地屏幕共享设置，然后再加入房间。退出房间后，绑定仍然有效， 可调用
-     * SetupLocalScreen{@link #SetupLocalScreen} 解除绑定。
-     * @param [in] canvas
-     *        本地视图，详见：VideoCanvas{@link #VideoCanvas}
-     * @return
-     *        0 :成功；
-     *       -1 :失败；
-     */
-    virtual int SetupLocalScreen(const VideoCanvas& canvas) = 0;
-
-    /**
-     * @type api
-     * @region 视频管理
      * @brief 设置屏幕共享本地渲染器
      *   该方法设置屏幕共享本地外部渲染器。应用通过调用此接口绑定本地屏幕共享流的渲染器 IVideoSink{@link #IVideoSink} 。
      *   在应用开发中，通常在初始化后调用该方法进行本地屏幕共享设置，然后再加入房间。退出房间后，绑定仍然有效，
@@ -1151,18 +1155,18 @@ public:
     /**
      * @type api
      * @region 视频管理
-     * @brief 停止/启动发送本地视频流
-     *  该方法停止/启动发送本地视频流；调用该方法后，房间中的其他用户会收到 OnUserMuteVideo{@link #OnUserMuteVideo}
-     * 的回调。
-     * @param  [in] mute  <br>
-     *       + true：停止本地的视频  <br>
-     *       + false：开启本地的视频  <br>
+     * @brief 停止/启动发送本地视频流，默认不发送。<br>
+     *        无论你使用 SDK 的视频采集编码功能，还是使用自定义采集功能，你都应使用此接口启动发送本地视频流。
+     *        调用该方法后，房间中的其他用户会收到 OnUserMuteVideo{@link #OnUserMuteVideo} 的回调。
+     * @param  [in] muteState 参看 MuteState{@link #MuteState}   <br>
+     *       + true：停止发送  <br>
+     *       + false：开启发送  <br>
      * @return  <br>
      *        + 0：成功  <br>
      *        + !0：失败  <br>
-     * @notes 本方法只是停止本地视频流的发送，并未关闭本地视频采集设备。
+     * @notes 本方法只是停止本地视频流的发送，不影响视频采集状态。
      */
-    virtual int MuteLocalVideoStream(bool mute) = 0;
+    virtual int MuteLocalVideo(MuteState muteState) = 0;
 
     /**
      * @type api
@@ -1533,12 +1537,11 @@ public:
     /**
      * @type api
      * @region 视频管理
-     * @brief 设置本地视频镜像
-     * @param  [in] enable 是否开启镜像模式  <br>
-     *       + true：开启镜像模式  <br>
-     *       + false：不开启镜像模式  <br>
+     * @brief 设置采用前置摄像头采集时，是否开启镜像模式。 <br>
+     *        调用后，你会收到回调：OnMirrorStateChanged{@link #OnMirrorStateChanged}
+     * @param  [in] mirrorMode 是否开启镜像模式
      */
-    virtual void SetLocalVideoMirrorMode(bool enable) = 0;
+    virtual void SetLocalVideoMirrorMode(MirrorMode mirrorMode) = 0;
 
     /**
      * @type api
@@ -1562,19 +1565,19 @@ public:
     /**
      * @type api
      * @region 音频管理
-     * @brief
-     * 设置音频处理复杂度。对于希望性能占用较低，可设置较低的音频处理复杂度，如果更在意通话质量，可选择设置更高的音频处理复杂度。
-     *        加入房间时，会携带本接口传入的机型等级，然后从服务端拉起相应音频配置。如果传入的是
-     * auto，服务端会查询数据库，获得机型等级，再下发配置。 不同复杂度会开关 AEC、ANS、AGC 算法，调整播放 sample rate
-     * 等, 进行性能和质量的控制。
-     * @param profile 机型等级, 详见枚举类 AudioPerfProfile{@link #AudioPerfProfile}
+     * @brief 通过设置音频处理策略等级，获得不同的音频处理质量。默认使用 auto 模式。 <br>
+     *        此设置会影响音频采集端在音频采集后，发送前对音频的处理策略，达成不同的处理效果； <br>
+     *        也会影响音频接收端在音频流接收后，播放前对音频的处理策略，达成不同的处理效果。 <br>
+     *        你应使用此方法，实现音频体验和系统性能占用之间的平衡: <br>
+     *        如果你希望系统性能占用较低，你应设置较低的策略等级；如果你更在意音频质量，你应选择设置更高的策略等级。 <br>
+     *        一般情况下，你可使用 auto 模式（默认）。此时，sdk 会根据应用所在机型等级，自动适配音频处理策略。
+     * @param profile 音频处理策略等级, 参看 AudioPerformanceProfile{@link #AudioPerformanceProfile}
      * @notes  <br>
-     *       + 需要在进房之前调用。  <br>
-     *       + 本次进房时下发的配置，需要下次进房发布才会应用。  <br>
-     *       + 支持自定义配置，详细操作方式请联系技术支持人员。  <br>
+     *       + 如果你希望在此次音视频通话中设置音频处理策略等级，你必须在进房前调用此方法。  <br>
+     *       + 如果在进房后调用此方法，下次进房时才会应用你设置的策略等级。 <br>
+     *       + 如果以下策略无法满足需求，请联系技术支持人员实现自定义配置。  <br>
      */
-    virtual void SetAudioPerfProfile(AudioPerfProfile profile) {
-    }
+    virtual void SetAudioPerformanceProfile(AudioPerformanceProfile profile) = 0;
 
     /**
      * @type api
@@ -1732,7 +1735,7 @@ public:
      * @notes 注册该回调，可以收到单个远端用户的PCM数据
      */
     virtual void RegisterRemoteAudioFrameObserver(IRemoteAudioFrameObserver* observer) = 0;
-    
+
     /**
      * @type api
      * @region 其他

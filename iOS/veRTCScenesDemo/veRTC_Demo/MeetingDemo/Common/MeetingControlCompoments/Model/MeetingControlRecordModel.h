@@ -2,7 +2,7 @@
 //  MeetingControlRecordModel.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,8 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *download_url;
 
-//1618388196 000000000
 @property (nonatomic, assign) NSInteger created_at;
+
+@property (nonatomic, copy) NSString *vid;
+
+@property (nonatomic, assign) BOOL video_holder;
 
 @end
 

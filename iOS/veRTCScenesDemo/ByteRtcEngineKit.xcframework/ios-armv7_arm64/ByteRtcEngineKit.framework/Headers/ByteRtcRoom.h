@@ -65,10 +65,6 @@
 
 - (void)rtcRoom:(ByteRtcRoom *_Nonnull)rtcRoom remoteAudioStats:(ByteRtcRemoteAudioStats *_Nonnull)stats;
 
-- (void)rtcRoomConnectionDidLost:(ByteRtcRoom *_Nonnull)rtcRoom;
-
-- (void)rtcRoomConnectionDidInterrupted:(ByteRtcRoom *_Nonnull)rtcRoom;
-
 - (void)rtcRoom:(ByteRtcRoom *_Nonnull)rtcRoom firstLocalAudioFrame:(NSInteger)elapsed;
 
 - (void)rtcRoom:(ByteRtcRoom *_Nonnull)rtcRoom
@@ -210,6 +206,10 @@ BYTE_RTC_EXPORT @interface ByteRtcRoom : NSObject @property(nonatomic, weak) id<
 - (int)publish;
 
 - (int)unpublish;
+
+- (int)publishScreen:(ScreenParam * _Nonnull)param;
+
+- (int)unpublishScreen;
 
 - (int)subscribeStream:(NSString *_Nonnull)userId subscribeConfig:(SubscribeConfig *_Nonnull)info;
 

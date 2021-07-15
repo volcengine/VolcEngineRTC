@@ -49,7 +49,6 @@
 		2BA17328260892DD002F8365 /* SettingsService.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1730F260892DD002F8365 /* SettingsService.m */; };
 		2BA1732A260892DD002F8365 /* SettingsRightLabelCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA17315260892DD002F8365 /* SettingsRightLabelCell.m */; };
 		2BA1732B260892DD002F8365 /* SettingsSwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA17317260892DD002F8365 /* SettingsSwitchCell.m */; };
-		2BA1732D260892DD002F8365 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1731B260892DD002F8365 /* LoginViewController.m */; };
 		2BA1735026089E3E002F8365 /* UIColor+String.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1734E26089E3E002F8365 /* UIColor+String.m */; };
 		2BA173612608C58C002F8365 /* mockData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2BA1735E2608C58C002F8365 /* mockData.plist */; };
 		2BA173622608C58C002F8365 /* MockDataCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1735F2608C58C002F8365 /* MockDataCompoments.m */; };
@@ -61,11 +60,11 @@
 		2BA2F5AD260C677600869057 /* RoomSpeakerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA2F5AC260C677600869057 /* RoomSpeakerView.m */; };
 		2BA2F5D1260C878100869057 /* RoomAvatarRenderTagView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA2F5CD260C878100869057 /* RoomAvatarRenderTagView.m */; };
 		2BA2F5D2260C878100869057 /* RoomAvatarRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA2F5D0260C878100869057 /* RoomAvatarRenderView.m */; };
-		2BA69DE4268AD0A700A34BE8 /* byteaudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA69DDE268AD0A200A34BE8 /* byteaudio.xcframework */; };
-		2BA69DE5268AD0A700A34BE8 /* byteaudio.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA69DDE268AD0A200A34BE8 /* byteaudio.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2BA69DE8268AD0AA00A34BE8 /* ByteRtcEngineKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA69DDF268AD0A500A34BE8 /* ByteRtcEngineKit.xcframework */; };
-		2BA69DE9268AD0AA00A34BE8 /* ByteRtcEngineKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA69DDF268AD0A500A34BE8 /* ByteRtcEngineKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2BA69DEC268AD0B700A34BE8 /* ByteRtcEngineKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA69DDF268AD0A500A34BE8 /* ByteRtcEngineKit.xcframework */; };
+		2BA37127268982AA00743B06 /* MenuLoginCodeButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA37123268982AA00743B06 /* MenuLoginCodeButton.m */; };
+		2BA37128268982AA00743B06 /* MenuLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA37126268982AA00743B06 /* MenuLoginViewController.m */; };
+		2BA371C42689C8F200743B06 /* BaseUserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA371C32689C8F200743B06 /* BaseUserModel.m */; };
+		2BA371CC2689D29700743B06 /* LocalUserComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA371CB2689D29700743B06 /* LocalUserComponents.m */; };
+		2BA371D32689D30E00743B06 /* VoiceUserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA371D12689D30E00743B06 /* VoiceUserModel.m */; };
 		2BA6B2F9261C3AB8005316D2 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA6B2F8261C3AB8005316D2 /* ReplayKit.framework */; };
 		2BA6B2FD261C3AB9005316D2 /* SampleHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6B2FC261C3AB9005316D2 /* SampleHandler.m */; };
 		2BA6B311261C3AB9005316D2 /* MeetingScreenShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 2BA6B2F7261C3AB8005316D2 /* MeetingScreenShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -73,7 +72,71 @@
 		2BA6B386261C616F005316D2 /* MeetingScreenComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA6B385261C616F005316D2 /* MeetingScreenComponents.m */; };
 		2BACA92A26159DCE00F7591E /* MeetingToastComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BACA92926159DCE00F7591E /* MeetingToastComponents.m */; };
 		2BACA941261716C900F7591E /* GalleryModeLineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BACA940261716C900F7591E /* GalleryModeLineView.m */; };
+		2BBADF52268EFA790020CA59 /* MenuTokenCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBADF51268EFA790020CA59 /* MenuTokenCompoments.m */; };
+		2BD76B9F2680C83A00F80084 /* MenuItemButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B832680C83900F80084 /* MenuItemButton.m */; };
+		2BD76BA02680C83A00F80084 /* ScenesItemButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B882680C83A00F80084 /* ScenesItemButton.m */; };
+		2BD76BA12680C83A00F80084 /* ScenesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B892680C83A00F80084 /* ScenesViewController.m */; };
+		2BD76BA22680C83A00F80084 /* UserNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B8E2680C83A00F80084 /* UserNameViewController.m */; };
+		2BD76BA32680C83A00F80084 /* UserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B912680C83A00F80084 /* UserViewController.m */; };
+		2BD76BA42680C83A00F80084 /* MenuCellModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B942680C83A00F80084 /* MenuCellModel.m */; };
+		2BD76BA52680C83A00F80084 /* UserHeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B982680C83A00F80084 /* UserHeadView.m */; };
+		2BD76BA62680C83A00F80084 /* UserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76B992680C83A00F80084 /* UserCell.m */; };
+		2BD76BB82680CA2D00F80084 /* MenuUpgradeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76BB62680CA2D00F80084 /* MenuUpgradeModel.m */; };
+		2BD76BBD2680CA5000F80084 /* MenuUpgradeCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD76BBC2680CA5000F80084 /* MenuUpgradeCompoments.m */; };
 		2BDC7F0626171BF5007268D4 /* RoomVideoSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC7F0526171BF5007268D4 /* RoomVideoSession.m */; };
+		2BE179B7269D48C000FDE091 /* byteaudio.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE179B2269D48B600FDE091 /* byteaudio.xcframework */; };
+		2BE179B8269D48C000FDE091 /* byteaudio.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE179B2269D48B600FDE091 /* byteaudio.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BE179BB269D48C100FDE091 /* ByteRtcEngineKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE179B1269D48B600FDE091 /* ByteRtcEngineKit.xcframework */; };
+		2BE179BC269D48C100FDE091 /* ByteRtcEngineKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE179B1269D48B600FDE091 /* ByteRtcEngineKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BE179BF269D48CB00FDE091 /* ByteRtcEngineKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE179B1269D48B600FDE091 /* ByteRtcEngineKit.xcframework */; };
+		2BE941AB267095E0005EBF28 /* MeetingLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941AA267095E0005EBF28 /* MeetingLoginViewController.m */; };
+		2BE942512670964A005EBF28 /* VoiceRTCManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941DC26709649005EBF28 /* VoiceRTCManager.m */; };
+		2BE942522670964A005EBF28 /* VoiceSocketIOManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941DF26709649005EBF28 /* VoiceSocketIOManager.m */; };
+		2BE942532670964A005EBF28 /* VoiceControlAckModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941E526709649005EBF28 /* VoiceControlAckModel.m */; };
+		2BE942542670964A005EBF28 /* VoiceControlRoomModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941E626709649005EBF28 /* VoiceControlRoomModel.m */; };
+		2BE942552670964A005EBF28 /* VoiceControlRecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941E726709649005EBF28 /* VoiceControlRecordModel.m */; };
+		2BE942562670964A005EBF28 /* VoiceControlUserModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941E826709649005EBF28 /* VoiceControlUserModel.m */; };
+		2BE942572670964A005EBF28 /* VoiceControlNoticeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941EE26709649005EBF28 /* VoiceControlNoticeModel.m */; };
+		2BE942582670964A005EBF28 /* VoiceControlTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941EF26709649005EBF28 /* VoiceControlTool.m */; };
+		2BE942592670964A005EBF28 /* VoiceControlCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941F026709649005EBF28 /* VoiceControlCompoments.m */; };
+		2BE9425A2670964A005EBF28 /* VoiceAvatarCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941F326709649005EBF28 /* VoiceAvatarCompoments.m */; };
+		2BE9425B2670964A005EBF28 /* VoiceRoomUserListtCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941F626709649005EBF28 /* VoiceRoomUserListtCell.m */; };
+		2BE9425C2670964A005EBF28 /* VoiceRoomUserListCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941F726709649005EBF28 /* VoiceRoomUserListCompoments.m */; };
+		2BE9425D2670964A005EBF28 /* VoiceRoomTopSelectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941F826709649005EBF28 /* VoiceRoomTopSelectView.m */; };
+		2BE9425E2670964A005EBF28 /* VoiceRoomRaiseHandListsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941F926709649005EBF28 /* VoiceRoomRaiseHandListsView.m */; };
+		2BE9425F2670964A005EBF28 /* VoiceRoomAudienceListsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE941FB26709649005EBF28 /* VoiceRoomAudienceListsView.m */; };
+		2BE942602670964A005EBF28 /* VoiceNavViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9420026709649005EBF28 /* VoiceNavViewController.m */; };
+		2BE942612670964A005EBF28 /* VoiceRoomParamInfoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9420426709649005EBF28 /* VoiceRoomParamInfoModel.m */; };
+		2BE942622670964A005EBF28 /* VoiceRoomParamInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9420626709649005EBF28 /* VoiceRoomParamInfoView.m */; };
+		2BE942632670964A005EBF28 /* VoiceRoomParamCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9420826709649005EBF28 /* VoiceRoomParamCompoments.m */; };
+		2BE942642670964A005EBF28 /* VoiceEndCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9420D26709649005EBF28 /* VoiceEndCompoments.m */; };
+		2BE942652670964A005EBF28 /* VoiceRoomEndView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9420E26709649005EBF28 /* VoiceRoomEndView.m */; };
+		2BE942682670964A005EBF28 /* VoiceIMCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942172670964A005EBF28 /* VoiceIMCell.m */; };
+		2BE942692670964A005EBF28 /* VoiceIMView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942182670964A005EBF28 /* VoiceIMView.m */; };
+		2BE9426A2670964A005EBF28 /* VoiceIMModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942192670964A005EBF28 /* VoiceIMModel.m */; };
+		2BE9426B2670964A005EBF28 /* VoiceIMCompoments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9421B2670964A005EBF28 /* VoiceIMCompoments.m */; };
+		2BE9426C2670964A005EBF28 /* VoiceRoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942202670964A005EBF28 /* VoiceRoomViewController.m */; };
+		2BE9426D2670964A005EBF28 /* VoiceRoomViewController+SocketControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942232670964A005EBF28 /* VoiceRoomViewController+SocketControl.m */; };
+		2BE9426E2670964A005EBF28 /* VoiceRoomBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942272670964A005EBF28 /* VoiceRoomBottomView.m */; };
+		2BE9426F2670964A005EBF28 /* VoiceRoomItemButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942282670964A005EBF28 /* VoiceRoomItemButton.m */; };
+		2BE942702670964A005EBF28 /* VoiceRoomNavView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9422D2670964A005EBF28 /* VoiceRoomNavView.m */; };
+		2BE942712670964A005EBF28 /* VoiceUserAvatarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942302670964A005EBF28 /* VoiceUserAvatarCell.m */; };
+		2BE942722670964A005EBF28 /* VoiceRoomAudienceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942342670964A005EBF28 /* VoiceRoomAudienceView.m */; };
+		2BE942732670964A005EBF28 /* VoiceRoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942362670964A005EBF28 /* VoiceRoomView.m */; };
+		2BE942742670964A005EBF28 /* VoiceRoomMicUserView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942382670964A005EBF28 /* VoiceRoomMicUserView.m */; };
+		2BE942752670964A005EBF28 /* VoiceRoomSubTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9423B2670964A005EBF28 /* VoiceRoomSubTitleCell.m */; };
+		2BE942762670964A005EBF28 /* VoiceRoomMicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9423C2670964A005EBF28 /* VoiceRoomMicCell.m */; };
+		2BE942772670964A005EBF28 /* VoiceRoomTitleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9423D2670964A005EBF28 /* VoiceRoomTitleCell.m */; };
+		2BE942782670964A005EBF28 /* VoiceRoomAudienceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9423E2670964A005EBF28 /* VoiceRoomAudienceCell.m */; };
+		2BE942792670964A005EBF28 /* VoiceRoomListsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942452670964A005EBF28 /* VoiceRoomListsViewController.m */; };
+		2BE9427A2670964A005EBF28 /* VoiceCreateRoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942482670964A005EBF28 /* VoiceCreateRoomViewController.m */; };
+		2BE9427B2670964A005EBF28 /* VocieCreateTextFieldView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9424E2670964A005EBF28 /* VocieCreateTextFieldView.m */; };
+		2BE9427C2670964A005EBF28 /* VoiceRoomCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9424F2670964A005EBF28 /* VoiceRoomCell.m */; };
+		2BE9427D2670964A005EBF28 /* VoiceRoomTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942502670964A005EBF28 /* VoiceRoomTableView.m */; };
+		2BE9428226709658005EBF28 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9428026709658005EBF28 /* MenuViewController.m */; };
+		2BE942882670967C005EBF28 /* BaseCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE942872670967C005EBF28 /* BaseCollectionLayout.m */; };
+		2BE9428D26709718005EBF28 /* ToastView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9428C26709718005EBF28 /* ToastView.m */; };
+		2BE9429226709782005EBF28 /* RoomViewController+Sort.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE9429126709782005EBF28 /* RoomViewController+Sort.m */; };
 		2BEA42812499BDED001C0A2D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEA42802499BDED001C0A2D /* AppDelegate.m */; };
 		2BEA428A2499BDED001C0A2D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BEA42882499BDED001C0A2D /* Main.storyboard */; };
 		2BEA428F2499BDEE001C0A2D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BEA428D2499BDEE001C0A2D /* LaunchScreen.storyboard */; };
@@ -112,8 +175,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2BA69DE9268AD0AA00A34BE8 /* ByteRtcEngineKit.xcframework in Embed Frameworks */,
-				2BA69DE5268AD0A700A34BE8 /* byteaudio.xcframework in Embed Frameworks */,
+				2BE179BC269D48C100FDE091 /* ByteRtcEngineKit.xcframework in Embed Frameworks */,
+				2BE179B8269D48C000FDE091 /* byteaudio.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,8 +291,6 @@
 		2BA17313260892DD002F8365 /* SettingsSwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsSwitchCell.h; sourceTree = "<group>"; };
 		2BA17315260892DD002F8365 /* SettingsRightLabelCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsRightLabelCell.m; sourceTree = "<group>"; };
 		2BA17317260892DD002F8365 /* SettingsSwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsSwitchCell.m; sourceTree = "<group>"; };
-		2BA1731B260892DD002F8365 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
-		2BA1731C260892DD002F8365 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		2BA1734E26089E3E002F8365 /* UIColor+String.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+String.m"; sourceTree = "<group>"; };
 		2BA1734F26089E3E002F8365 /* UIColor+String.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+String.h"; sourceTree = "<group>"; };
 		2BA1735326089E8B002F8365 /* veRTC.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = veRTC.pch; sourceTree = "<group>"; };
@@ -256,8 +317,16 @@
 		2BA2F5CE260C878100869057 /* RoomAvatarRenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomAvatarRenderView.h; sourceTree = "<group>"; };
 		2BA2F5CF260C878100869057 /* RoomAvatarRenderTagView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomAvatarRenderTagView.h; sourceTree = "<group>"; };
 		2BA2F5D0260C878100869057 /* RoomAvatarRenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomAvatarRenderView.m; sourceTree = "<group>"; };
-		2BA69DDE268AD0A200A34BE8 /* byteaudio.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = byteaudio.xcframework; sourceTree = "<group>"; };
-		2BA69DDF268AD0A500A34BE8 /* ByteRtcEngineKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ByteRtcEngineKit.xcframework; sourceTree = "<group>"; };
+		2BA37122268982AA00743B06 /* MenuLoginCodeButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuLoginCodeButton.h; sourceTree = "<group>"; };
+		2BA37123268982AA00743B06 /* MenuLoginCodeButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuLoginCodeButton.m; sourceTree = "<group>"; };
+		2BA37125268982AA00743B06 /* MenuLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuLoginViewController.h; sourceTree = "<group>"; };
+		2BA37126268982AA00743B06 /* MenuLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuLoginViewController.m; sourceTree = "<group>"; };
+		2BA371C22689C8F200743B06 /* BaseUserModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseUserModel.h; sourceTree = "<group>"; };
+		2BA371C32689C8F200743B06 /* BaseUserModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseUserModel.m; sourceTree = "<group>"; };
+		2BA371CA2689D29700743B06 /* LocalUserComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalUserComponents.h; sourceTree = "<group>"; };
+		2BA371CB2689D29700743B06 /* LocalUserComponents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalUserComponents.m; sourceTree = "<group>"; };
+		2BA371D12689D30E00743B06 /* VoiceUserModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceUserModel.m; sourceTree = "<group>"; };
+		2BA371D22689D30E00743B06 /* VoiceUserModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceUserModel.h; sourceTree = "<group>"; };
 		2BA6B2F7261C3AB8005316D2 /* MeetingScreenShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MeetingScreenShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BA6B2F8261C3AB8005316D2 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		2BA6B2FB261C3AB9005316D2 /* SampleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SampleHandler.h; sourceTree = "<group>"; };
@@ -275,8 +344,128 @@
 		2BACA92926159DCE00F7591E /* MeetingToastComponents.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MeetingToastComponents.m; sourceTree = "<group>"; };
 		2BACA93F261716C900F7591E /* GalleryModeLineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GalleryModeLineView.h; sourceTree = "<group>"; };
 		2BACA940261716C900F7591E /* GalleryModeLineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GalleryModeLineView.m; sourceTree = "<group>"; };
+		2BBADF50268EFA790020CA59 /* MenuTokenCompoments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MenuTokenCompoments.h; sourceTree = "<group>"; };
+		2BBADF51268EFA790020CA59 /* MenuTokenCompoments.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MenuTokenCompoments.m; sourceTree = "<group>"; };
+		2BD76B832680C83900F80084 /* MenuItemButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuItemButton.m; sourceTree = "<group>"; };
+		2BD76B842680C83900F80084 /* MenuItemButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuItemButton.h; sourceTree = "<group>"; };
+		2BD76B882680C83A00F80084 /* ScenesItemButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScenesItemButton.m; sourceTree = "<group>"; };
+		2BD76B892680C83A00F80084 /* ScenesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScenesViewController.m; sourceTree = "<group>"; };
+		2BD76B8A2680C83A00F80084 /* ScenesItemButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScenesItemButton.h; sourceTree = "<group>"; };
+		2BD76B8B2680C83A00F80084 /* ScenesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScenesViewController.h; sourceTree = "<group>"; };
+		2BD76B8E2680C83A00F80084 /* UserNameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserNameViewController.m; sourceTree = "<group>"; };
+		2BD76B8F2680C83A00F80084 /* UserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserViewController.h; sourceTree = "<group>"; };
+		2BD76B902680C83A00F80084 /* UserNameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserNameViewController.h; sourceTree = "<group>"; };
+		2BD76B912680C83A00F80084 /* UserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserViewController.m; sourceTree = "<group>"; };
+		2BD76B932680C83A00F80084 /* MenuCellModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuCellModel.h; sourceTree = "<group>"; };
+		2BD76B942680C83A00F80084 /* MenuCellModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuCellModel.m; sourceTree = "<group>"; };
+		2BD76B962680C83A00F80084 /* UserHeadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserHeadView.h; sourceTree = "<group>"; };
+		2BD76B972680C83A00F80084 /* UserCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCell.h; sourceTree = "<group>"; };
+		2BD76B982680C83A00F80084 /* UserHeadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserHeadView.m; sourceTree = "<group>"; };
+		2BD76B992680C83A00F80084 /* UserCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCell.m; sourceTree = "<group>"; };
+		2BD76BB62680CA2D00F80084 /* MenuUpgradeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuUpgradeModel.m; sourceTree = "<group>"; };
+		2BD76BB72680CA2D00F80084 /* MenuUpgradeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuUpgradeModel.h; sourceTree = "<group>"; };
+		2BD76BBB2680CA5000F80084 /* MenuUpgradeCompoments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MenuUpgradeCompoments.h; sourceTree = "<group>"; };
+		2BD76BBC2680CA5000F80084 /* MenuUpgradeCompoments.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MenuUpgradeCompoments.m; sourceTree = "<group>"; };
 		2BDC7F0426171BF5007268D4 /* RoomVideoSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RoomVideoSession.h; sourceTree = "<group>"; };
 		2BDC7F0526171BF5007268D4 /* RoomVideoSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RoomVideoSession.m; sourceTree = "<group>"; };
+		2BE179B1269D48B600FDE091 /* ByteRtcEngineKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ByteRtcEngineKit.xcframework; sourceTree = "<group>"; };
+		2BE179B2269D48B600FDE091 /* byteaudio.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = byteaudio.xcframework; sourceTree = "<group>"; };
+		2BE941A9267095E0005EBF28 /* MeetingLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingLoginViewController.h; sourceTree = "<group>"; };
+		2BE941AA267095E0005EBF28 /* MeetingLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingLoginViewController.m; sourceTree = "<group>"; };
+		2BE941DB26709649005EBF28 /* VoiceRTCManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRTCManager.h; sourceTree = "<group>"; };
+		2BE941DC26709649005EBF28 /* VoiceRTCManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRTCManager.m; sourceTree = "<group>"; };
+		2BE941DE26709649005EBF28 /* VoiceSocketIOManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceSocketIOManager.h; sourceTree = "<group>"; };
+		2BE941DF26709649005EBF28 /* VoiceSocketIOManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceSocketIOManager.m; sourceTree = "<group>"; };
+		2BE941E226709649005EBF28 /* VoiceControlTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlTool.h; sourceTree = "<group>"; };
+		2BE941E326709649005EBF28 /* VoiceControlCompoments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlCompoments.h; sourceTree = "<group>"; };
+		2BE941E526709649005EBF28 /* VoiceControlAckModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlAckModel.m; sourceTree = "<group>"; };
+		2BE941E626709649005EBF28 /* VoiceControlRoomModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlRoomModel.m; sourceTree = "<group>"; };
+		2BE941E726709649005EBF28 /* VoiceControlRecordModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlRecordModel.m; sourceTree = "<group>"; };
+		2BE941E826709649005EBF28 /* VoiceControlUserModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlUserModel.m; sourceTree = "<group>"; };
+		2BE941E926709649005EBF28 /* VoiceControlNoticeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlNoticeModel.h; sourceTree = "<group>"; };
+		2BE941EA26709649005EBF28 /* VoiceControlRoomModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlRoomModel.h; sourceTree = "<group>"; };
+		2BE941EB26709649005EBF28 /* VoiceControlAckModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlAckModel.h; sourceTree = "<group>"; };
+		2BE941EC26709649005EBF28 /* VoiceControlUserModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlUserModel.h; sourceTree = "<group>"; };
+		2BE941ED26709649005EBF28 /* VoiceControlRecordModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceControlRecordModel.h; sourceTree = "<group>"; };
+		2BE941EE26709649005EBF28 /* VoiceControlNoticeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlNoticeModel.m; sourceTree = "<group>"; };
+		2BE941EF26709649005EBF28 /* VoiceControlTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlTool.m; sourceTree = "<group>"; };
+		2BE941F026709649005EBF28 /* VoiceControlCompoments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceControlCompoments.m; sourceTree = "<group>"; };
+		2BE941F226709649005EBF28 /* VoiceAvatarCompoments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceAvatarCompoments.h; sourceTree = "<group>"; };
+		2BE941F326709649005EBF28 /* VoiceAvatarCompoments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceAvatarCompoments.m; sourceTree = "<group>"; };
+		2BE941F526709649005EBF28 /* VoiceRoomAudienceListsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomAudienceListsView.h; sourceTree = "<group>"; };
+		2BE941F626709649005EBF28 /* VoiceRoomUserListtCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomUserListtCell.m; sourceTree = "<group>"; };
+		2BE941F726709649005EBF28 /* VoiceRoomUserListCompoments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomUserListCompoments.m; sourceTree = "<group>"; };
+		2BE941F826709649005EBF28 /* VoiceRoomTopSelectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomTopSelectView.m; sourceTree = "<group>"; };
+		2BE941F926709649005EBF28 /* VoiceRoomRaiseHandListsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomRaiseHandListsView.m; sourceTree = "<group>"; };
+		2BE941FA26709649005EBF28 /* VoiceRoomUserListtCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomUserListtCell.h; sourceTree = "<group>"; };
+		2BE941FB26709649005EBF28 /* VoiceRoomAudienceListsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomAudienceListsView.m; sourceTree = "<group>"; };
+		2BE941FC26709649005EBF28 /* VoiceRoomUserListCompoments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomUserListCompoments.h; sourceTree = "<group>"; };
+		2BE941FD26709649005EBF28 /* VoiceRoomTopSelectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomTopSelectView.h; sourceTree = "<group>"; };
+		2BE941FE26709649005EBF28 /* VoiceRoomRaiseHandListsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomRaiseHandListsView.h; sourceTree = "<group>"; };
+		2BE9420026709649005EBF28 /* VoiceNavViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceNavViewController.m; sourceTree = "<group>"; };
+		2BE9420126709649005EBF28 /* VoiceNavViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceNavViewController.h; sourceTree = "<group>"; };
+		2BE9420326709649005EBF28 /* VoiceRoomParamCompoments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomParamCompoments.h; sourceTree = "<group>"; };
+		2BE9420426709649005EBF28 /* VoiceRoomParamInfoModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomParamInfoModel.m; sourceTree = "<group>"; };
+		2BE9420626709649005EBF28 /* VoiceRoomParamInfoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomParamInfoView.m; sourceTree = "<group>"; };
+		2BE9420726709649005EBF28 /* VoiceRoomParamInfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomParamInfoView.h; sourceTree = "<group>"; };
+		2BE9420826709649005EBF28 /* VoiceRoomParamCompoments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomParamCompoments.m; sourceTree = "<group>"; };
+		2BE9420926709649005EBF28 /* VoiceRoomParamInfoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomParamInfoModel.h; sourceTree = "<group>"; };
+		2BE9420B26709649005EBF28 /* VoiceEndCompoments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceEndCompoments.h; sourceTree = "<group>"; };
+		2BE9420C26709649005EBF28 /* VoiceRoomEndView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomEndView.h; sourceTree = "<group>"; };
+		2BE9420D26709649005EBF28 /* VoiceEndCompoments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceEndCompoments.m; sourceTree = "<group>"; };
+		2BE9420E26709649005EBF28 /* VoiceRoomEndView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomEndView.m; sourceTree = "<group>"; };
+		2BE942152670964A005EBF28 /* VoiceIMModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceIMModel.h; sourceTree = "<group>"; };
+		2BE942162670964A005EBF28 /* VoiceIMCompoments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceIMCompoments.h; sourceTree = "<group>"; };
+		2BE942172670964A005EBF28 /* VoiceIMCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceIMCell.m; sourceTree = "<group>"; };
+		2BE942182670964A005EBF28 /* VoiceIMView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceIMView.m; sourceTree = "<group>"; };
+		2BE942192670964A005EBF28 /* VoiceIMModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceIMModel.m; sourceTree = "<group>"; };
+		2BE9421A2670964A005EBF28 /* VoiceIMCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceIMCell.h; sourceTree = "<group>"; };
+		2BE9421B2670964A005EBF28 /* VoiceIMCompoments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceIMCompoments.m; sourceTree = "<group>"; };
+		2BE9421C2670964A005EBF28 /* VoiceIMView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceIMView.h; sourceTree = "<group>"; };
+		2BE942202670964A005EBF28 /* VoiceRoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomViewController.m; sourceTree = "<group>"; };
+		2BE942212670964A005EBF28 /* VoiceRoomViewController+SocketControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VoiceRoomViewController+SocketControl.h"; sourceTree = "<group>"; };
+		2BE942222670964A005EBF28 /* VoiceRoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomViewController.h; sourceTree = "<group>"; };
+		2BE942232670964A005EBF28 /* VoiceRoomViewController+SocketControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "VoiceRoomViewController+SocketControl.m"; sourceTree = "<group>"; };
+		2BE942272670964A005EBF28 /* VoiceRoomBottomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomBottomView.m; sourceTree = "<group>"; };
+		2BE942282670964A005EBF28 /* VoiceRoomItemButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomItemButton.m; sourceTree = "<group>"; };
+		2BE942292670964A005EBF28 /* VoiceRoomBottomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomBottomView.h; sourceTree = "<group>"; };
+		2BE9422A2670964A005EBF28 /* VoiceRoomItemButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomItemButton.h; sourceTree = "<group>"; };
+		2BE9422C2670964A005EBF28 /* VoiceRoomNavView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomNavView.h; sourceTree = "<group>"; };
+		2BE9422D2670964A005EBF28 /* VoiceRoomNavView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomNavView.m; sourceTree = "<group>"; };
+		2BE9422F2670964A005EBF28 /* VoiceUserAvatarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceUserAvatarCell.h; sourceTree = "<group>"; };
+		2BE942302670964A005EBF28 /* VoiceUserAvatarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceUserAvatarCell.m; sourceTree = "<group>"; };
+		2BE942322670964A005EBF28 /* VoiceRoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomView.h; sourceTree = "<group>"; };
+		2BE942342670964A005EBF28 /* VoiceRoomAudienceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomAudienceView.m; sourceTree = "<group>"; };
+		2BE942352670964A005EBF28 /* VoiceRoomAudienceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomAudienceView.h; sourceTree = "<group>"; };
+		2BE942362670964A005EBF28 /* VoiceRoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomView.m; sourceTree = "<group>"; };
+		2BE942382670964A005EBF28 /* VoiceRoomMicUserView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomMicUserView.m; sourceTree = "<group>"; };
+		2BE942392670964A005EBF28 /* VoiceRoomMicUserView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomMicUserView.h; sourceTree = "<group>"; };
+		2BE9423B2670964A005EBF28 /* VoiceRoomSubTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomSubTitleCell.m; sourceTree = "<group>"; };
+		2BE9423C2670964A005EBF28 /* VoiceRoomMicCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomMicCell.m; sourceTree = "<group>"; };
+		2BE9423D2670964A005EBF28 /* VoiceRoomTitleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomTitleCell.m; sourceTree = "<group>"; };
+		2BE9423E2670964A005EBF28 /* VoiceRoomAudienceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomAudienceCell.m; sourceTree = "<group>"; };
+		2BE9423F2670964A005EBF28 /* VoiceRoomMicCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomMicCell.h; sourceTree = "<group>"; };
+		2BE942402670964A005EBF28 /* VoiceRoomTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomTitleCell.h; sourceTree = "<group>"; };
+		2BE942412670964A005EBF28 /* VoiceRoomSubTitleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomSubTitleCell.h; sourceTree = "<group>"; };
+		2BE942422670964A005EBF28 /* VoiceRoomAudienceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomAudienceCell.h; sourceTree = "<group>"; };
+		2BE942452670964A005EBF28 /* VoiceRoomListsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomListsViewController.m; sourceTree = "<group>"; };
+		2BE942462670964A005EBF28 /* VoiceCreateRoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceCreateRoomViewController.h; sourceTree = "<group>"; };
+		2BE942472670964A005EBF28 /* VoiceRoomListsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomListsViewController.h; sourceTree = "<group>"; };
+		2BE942482670964A005EBF28 /* VoiceCreateRoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceCreateRoomViewController.m; sourceTree = "<group>"; };
+		2BE9424B2670964A005EBF28 /* VoiceRoomCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomCell.h; sourceTree = "<group>"; };
+		2BE9424C2670964A005EBF28 /* VocieCreateTextFieldView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VocieCreateTextFieldView.h; sourceTree = "<group>"; };
+		2BE9424D2670964A005EBF28 /* VoiceRoomTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceRoomTableView.h; sourceTree = "<group>"; };
+		2BE9424E2670964A005EBF28 /* VocieCreateTextFieldView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VocieCreateTextFieldView.m; sourceTree = "<group>"; };
+		2BE9424F2670964A005EBF28 /* VoiceRoomCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomCell.m; sourceTree = "<group>"; };
+		2BE942502670964A005EBF28 /* VoiceRoomTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoiceRoomTableView.m; sourceTree = "<group>"; };
+		2BE9428026709658005EBF28 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuViewController.m; sourceTree = "<group>"; };
+		2BE9428126709658005EBF28 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
+		2BE942862670967C005EBF28 /* BaseCollectionLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCollectionLayout.h; sourceTree = "<group>"; };
+		2BE942872670967C005EBF28 /* BaseCollectionLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseCollectionLayout.m; sourceTree = "<group>"; };
+		2BE9428B26709718005EBF28 /* ToastView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToastView.h; sourceTree = "<group>"; };
+		2BE9428C26709718005EBF28 /* ToastView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToastView.m; sourceTree = "<group>"; };
+		2BE9429026709782005EBF28 /* RoomViewController+Sort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RoomViewController+Sort.h"; sourceTree = "<group>"; };
+		2BE9429126709782005EBF28 /* RoomViewController+Sort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RoomViewController+Sort.m"; sourceTree = "<group>"; };
 		2BEA427C2499BDED001C0A2D /* veRTC_Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = veRTC_Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BEA427F2499BDED001C0A2D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		2BEA42802499BDED001C0A2D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -296,7 +485,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BA69DEC268AD0B700A34BE8 /* ByteRtcEngineKit.xcframework in Frameworks */,
+				2BE179BF269D48CB00FDE091 /* ByteRtcEngineKit.xcframework in Frameworks */,
 				2BA6B36F261C5620005316D2 /* libc++.1.tbd in Frameworks */,
 				2BA6B2F9261C3AB8005316D2 /* ReplayKit.framework in Frameworks */,
 			);
@@ -306,8 +495,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BA69DE4268AD0A700A34BE8 /* byteaudio.xcframework in Frameworks */,
-				2BA69DE8268AD0AA00A34BE8 /* ByteRtcEngineKit.xcframework in Frameworks */,
+				2BE179B7269D48C000FDE091 /* byteaudio.xcframework in Frameworks */,
+				2BE179BB269D48C100FDE091 /* ByteRtcEngineKit.xcframework in Frameworks */,
 				6334515DBDFE4945D0DF6CA1 /* libPods-veRTC_Demo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -643,6 +832,8 @@
 				2BA172F2260892DD002F8365 /* RoomViewController.m */,
 				2B9E3932261458C70000D3B9 /* RoomViewController+Listener.h */,
 				2B9E3923261458C60000D3B9 /* RoomViewController+Listener.m */,
+				2BE9429026709782005EBF28 /* RoomViewController+Sort.h */,
+				2BE9429126709782005EBF28 /* RoomViewController+Sort.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -759,8 +950,8 @@
 		2BA1731A260892DD002F8365 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				2BA1731C260892DD002F8365 /* LoginViewController.h */,
-				2BA1731B260892DD002F8365 /* LoginViewController.m */,
+				2BE941A9267095E0005EBF28 /* MeetingLoginViewController.h */,
+				2BE941AA267095E0005EBF28 /* MeetingLoginViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -845,6 +1036,42 @@
 			path = RoomAvatarRenderView;
 			sourceTree = "<group>";
 		};
+		2BA37121268982AA00743B06 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BA37122268982AA00743B06 /* MenuLoginCodeButton.h */,
+				2BA37123268982AA00743B06 /* MenuLoginCodeButton.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2BA37124268982AA00743B06 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2BA37125268982AA00743B06 /* MenuLoginViewController.h */,
+				2BA37126268982AA00743B06 /* MenuLoginViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2BA371C12689C8D600743B06 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2BA371C22689C8F200743B06 /* BaseUserModel.h */,
+				2BA371C32689C8F200743B06 /* BaseUserModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2BA371C92689D29700743B06 /* MenuLocalUserComponents */ = {
+			isa = PBXGroup;
+			children = (
+				2BA371CA2689D29700743B06 /* LocalUserComponents.h */,
+				2BA371CB2689D29700743B06 /* LocalUserComponents.m */,
+			);
+			path = MenuLocalUserComponents;
+			sourceTree = "<group>";
+		};
 		2BA6B2FA261C3AB9005316D2 /* MeetingScreenShare */ = {
 			isa = PBXGroup;
 			children = (
@@ -892,13 +1119,514 @@
 			children = (
 				2BACA92826159DCE00F7591E /* MeetingToastComponents.h */,
 				2BACA92926159DCE00F7591E /* MeetingToastComponents.m */,
+				2BE9428B26709718005EBF28 /* ToastView.h */,
+				2BE9428C26709718005EBF28 /* ToastView.m */,
 			);
 			path = MeetingToastComponents;
+			sourceTree = "<group>";
+		};
+		2BB6CDC426982468000A3D2B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B8A2680C83A00F80084 /* ScenesItemButton.h */,
+				2BD76B882680C83A00F80084 /* ScenesItemButton.m */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		2BB6CDC626982474000A3D2B /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B8B2680C83A00F80084 /* ScenesViewController.h */,
+				2BD76B892680C83A00F80084 /* ScenesViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2BBADF4F268EFA6E0020CA59 /* MenuTokenCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BBADF50268EFA790020CA59 /* MenuTokenCompoments.h */,
+				2BBADF51268EFA790020CA59 /* MenuTokenCompoments.m */,
+			);
+			path = MenuTokenCompoments;
+			sourceTree = "<group>";
+		};
+		2BBFC51A269826A500574408 /* CreateRoom */ = {
+			isa = PBXGroup;
+			children = (
+				2BBFC51B269826A500574408 /* Controller */,
+				2BBFC51C269826A500574408 /* View */,
+			);
+			path = CreateRoom;
+			sourceTree = "<group>";
+		};
+		2BBFC51B269826A500574408 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942462670964A005EBF28 /* VoiceCreateRoomViewController.h */,
+				2BE942482670964A005EBF28 /* VoiceCreateRoomViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2BBFC51C269826A500574408 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9424C2670964A005EBF28 /* VocieCreateTextFieldView.h */,
+				2BE9424E2670964A005EBF28 /* VocieCreateTextFieldView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2BD76B812680C83900F80084 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				2BBADF4F268EFA6E0020CA59 /* MenuTokenCompoments */,
+				2BA371C92689D29700743B06 /* MenuLocalUserComponents */,
+				2BD76BAB2680C8A700F80084 /* MenuUpgradeCompoments */,
+				2BD76B822680C83900F80084 /* MenuItemButton */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		2BD76B822680C83900F80084 /* MenuItemButton */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B842680C83900F80084 /* MenuItemButton.h */,
+				2BD76B832680C83900F80084 /* MenuItemButton.m */,
+			);
+			path = MenuItemButton;
+			sourceTree = "<group>";
+		};
+		2BD76B862680C83A00F80084 /* Feature */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B872680C83A00F80084 /* Scenes */,
+				2BD76B8C2680C83A00F80084 /* User */,
+				2BD76B9A2680C83A00F80084 /* Login */,
+			);
+			path = Feature;
+			sourceTree = "<group>";
+		};
+		2BD76B872680C83A00F80084 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				2BB6CDC626982474000A3D2B /* Controller */,
+				2BB6CDC426982468000A3D2B /* View */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		2BD76B8C2680C83A00F80084 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B8D2680C83A00F80084 /* Controller */,
+				2BD76B922680C83A00F80084 /* Model */,
+				2BD76B952680C83A00F80084 /* View */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		2BD76B8D2680C83A00F80084 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B8F2680C83A00F80084 /* UserViewController.h */,
+				2BD76B912680C83A00F80084 /* UserViewController.m */,
+				2BD76B902680C83A00F80084 /* UserNameViewController.h */,
+				2BD76B8E2680C83A00F80084 /* UserNameViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2BD76B922680C83A00F80084 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B932680C83A00F80084 /* MenuCellModel.h */,
+				2BD76B942680C83A00F80084 /* MenuCellModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2BD76B952680C83A00F80084 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B972680C83A00F80084 /* UserCell.h */,
+				2BD76B992680C83A00F80084 /* UserCell.m */,
+				2BD76B962680C83A00F80084 /* UserHeadView.h */,
+				2BD76B982680C83A00F80084 /* UserHeadView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2BD76B9A2680C83A00F80084 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				2BA37124268982AA00743B06 /* Controller */,
+				2BA371C12689C8D600743B06 /* Model */,
+				2BA37121268982AA00743B06 /* View */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		2BD76BAB2680C8A700F80084 /* MenuUpgradeCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76BB52680CA2D00F80084 /* MenuUpgradeModel */,
+				2BD76BBB2680CA5000F80084 /* MenuUpgradeCompoments.h */,
+				2BD76BBC2680CA5000F80084 /* MenuUpgradeCompoments.m */,
+			);
+			path = MenuUpgradeCompoments;
+			sourceTree = "<group>";
+		};
+		2BD76BB52680CA2D00F80084 /* MenuUpgradeModel */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76BB72680CA2D00F80084 /* MenuUpgradeModel.h */,
+				2BD76BB62680CA2D00F80084 /* MenuUpgradeModel.m */,
+			);
+			path = MenuUpgradeModel;
+			sourceTree = "<group>";
+		};
+		2BE941AE26709617005EBF28 /* MenuClass */ = {
+			isa = PBXGroup;
+			children = (
+				2BD76B862680C83A00F80084 /* Feature */,
+				2BD76B812680C83900F80084 /* Common */,
+			);
+			path = MenuClass;
+			sourceTree = "<group>";
+		};
+		2BE941D826709649005EBF28 /* VoiceDemo */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941D926709649005EBF28 /* Core */,
+				2BE941E026709649005EBF28 /* Common */,
+				2BE9421D2670964A005EBF28 /* Feature */,
+			);
+			path = VoiceDemo;
+			sourceTree = "<group>";
+		};
+		2BE941D926709649005EBF28 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941DA26709649005EBF28 /* VoiceRTCManager */,
+				2BE941DD26709649005EBF28 /* VoiceSocketIOManager */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		2BE941DA26709649005EBF28 /* VoiceRTCManager */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941DB26709649005EBF28 /* VoiceRTCManager.h */,
+				2BE941DC26709649005EBF28 /* VoiceRTCManager.m */,
+			);
+			path = VoiceRTCManager;
+			sourceTree = "<group>";
+		};
+		2BE941DD26709649005EBF28 /* VoiceSocketIOManager */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941DE26709649005EBF28 /* VoiceSocketIOManager.h */,
+				2BE941DF26709649005EBF28 /* VoiceSocketIOManager.m */,
+			);
+			path = VoiceSocketIOManager;
+			sourceTree = "<group>";
+		};
+		2BE941E026709649005EBF28 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941E126709649005EBF28 /* VoiceControlCompoments */,
+				2BE941F126709649005EBF28 /* VoiceAvatarCompoments */,
+				2BE941F426709649005EBF28 /* VoiceRoomUserListCompoments */,
+				2BE941FF26709649005EBF28 /* VoiceNavViewController */,
+				2BE9420226709649005EBF28 /* VoiceRoomParamCompoments */,
+				2BE9420A26709649005EBF28 /* VoiceEndCompoments */,
+				2BE9421426709649005EBF28 /* VoiceIMCompoments */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		2BE941E126709649005EBF28 /* VoiceControlCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941E426709649005EBF28 /* Model */,
+				2BE941E326709649005EBF28 /* VoiceControlCompoments.h */,
+				2BE941F026709649005EBF28 /* VoiceControlCompoments.m */,
+				2BE941E226709649005EBF28 /* VoiceControlTool.h */,
+				2BE941EF26709649005EBF28 /* VoiceControlTool.m */,
+			);
+			path = VoiceControlCompoments;
+			sourceTree = "<group>";
+		};
+		2BE941E426709649005EBF28 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941E526709649005EBF28 /* VoiceControlAckModel.m */,
+				2BE941E626709649005EBF28 /* VoiceControlRoomModel.m */,
+				2BE941E726709649005EBF28 /* VoiceControlRecordModel.m */,
+				2BE941E826709649005EBF28 /* VoiceControlUserModel.m */,
+				2BE941E926709649005EBF28 /* VoiceControlNoticeModel.h */,
+				2BE941EA26709649005EBF28 /* VoiceControlRoomModel.h */,
+				2BE941EB26709649005EBF28 /* VoiceControlAckModel.h */,
+				2BE941EC26709649005EBF28 /* VoiceControlUserModel.h */,
+				2BE941ED26709649005EBF28 /* VoiceControlRecordModel.h */,
+				2BE941EE26709649005EBF28 /* VoiceControlNoticeModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2BE941F126709649005EBF28 /* VoiceAvatarCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941F226709649005EBF28 /* VoiceAvatarCompoments.h */,
+				2BE941F326709649005EBF28 /* VoiceAvatarCompoments.m */,
+			);
+			path = VoiceAvatarCompoments;
+			sourceTree = "<group>";
+		};
+		2BE941F426709649005EBF28 /* VoiceRoomUserListCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BE941F526709649005EBF28 /* VoiceRoomAudienceListsView.h */,
+				2BE941FB26709649005EBF28 /* VoiceRoomAudienceListsView.m */,
+				2BE941FE26709649005EBF28 /* VoiceRoomRaiseHandListsView.h */,
+				2BE941F926709649005EBF28 /* VoiceRoomRaiseHandListsView.m */,
+				2BE941FD26709649005EBF28 /* VoiceRoomTopSelectView.h */,
+				2BE941F826709649005EBF28 /* VoiceRoomTopSelectView.m */,
+				2BE941FC26709649005EBF28 /* VoiceRoomUserListCompoments.h */,
+				2BE941F726709649005EBF28 /* VoiceRoomUserListCompoments.m */,
+				2BE941FA26709649005EBF28 /* VoiceRoomUserListtCell.h */,
+				2BE941F626709649005EBF28 /* VoiceRoomUserListtCell.m */,
+			);
+			path = VoiceRoomUserListCompoments;
+			sourceTree = "<group>";
+		};
+		2BE941FF26709649005EBF28 /* VoiceNavViewController */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9420126709649005EBF28 /* VoiceNavViewController.h */,
+				2BE9420026709649005EBF28 /* VoiceNavViewController.m */,
+			);
+			path = VoiceNavViewController;
+			sourceTree = "<group>";
+		};
+		2BE9420226709649005EBF28 /* VoiceRoomParamCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9420326709649005EBF28 /* VoiceRoomParamCompoments.h */,
+				2BE9420826709649005EBF28 /* VoiceRoomParamCompoments.m */,
+				2BE9420926709649005EBF28 /* VoiceRoomParamInfoModel.h */,
+				2BE9420426709649005EBF28 /* VoiceRoomParamInfoModel.m */,
+				2BE9420526709649005EBF28 /* VoiceRoomParamInfoView */,
+			);
+			path = VoiceRoomParamCompoments;
+			sourceTree = "<group>";
+		};
+		2BE9420526709649005EBF28 /* VoiceRoomParamInfoView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9420726709649005EBF28 /* VoiceRoomParamInfoView.h */,
+				2BE9420626709649005EBF28 /* VoiceRoomParamInfoView.m */,
+			);
+			path = VoiceRoomParamInfoView;
+			sourceTree = "<group>";
+		};
+		2BE9420A26709649005EBF28 /* VoiceEndCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9420B26709649005EBF28 /* VoiceEndCompoments.h */,
+				2BE9420D26709649005EBF28 /* VoiceEndCompoments.m */,
+				2BE9420C26709649005EBF28 /* VoiceRoomEndView.h */,
+				2BE9420E26709649005EBF28 /* VoiceRoomEndView.m */,
+			);
+			path = VoiceEndCompoments;
+			sourceTree = "<group>";
+		};
+		2BE9421426709649005EBF28 /* VoiceIMCompoments */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9421A2670964A005EBF28 /* VoiceIMCell.h */,
+				2BE942172670964A005EBF28 /* VoiceIMCell.m */,
+				2BE942162670964A005EBF28 /* VoiceIMCompoments.h */,
+				2BE9421B2670964A005EBF28 /* VoiceIMCompoments.m */,
+				2BE942152670964A005EBF28 /* VoiceIMModel.h */,
+				2BE942192670964A005EBF28 /* VoiceIMModel.m */,
+				2BE9421C2670964A005EBF28 /* VoiceIMView.h */,
+				2BE942182670964A005EBF28 /* VoiceIMView.m */,
+			);
+			path = VoiceIMCompoments;
+			sourceTree = "<group>";
+		};
+		2BE9421D2670964A005EBF28 /* Feature */ = {
+			isa = PBXGroup;
+			children = (
+				2BBFC51A269826A500574408 /* CreateRoom */,
+				2BE9421E2670964A005EBF28 /* Room */,
+				2BE942432670964A005EBF28 /* RoomLists */,
+			);
+			path = Feature;
+			sourceTree = "<group>";
+		};
+		2BE9421E2670964A005EBF28 /* Room */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9421F2670964A005EBF28 /* Controller */,
+				2BE942252670964A005EBF28 /* View */,
+			);
+			path = Room;
+			sourceTree = "<group>";
+		};
+		2BE9421F2670964A005EBF28 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942222670964A005EBF28 /* VoiceRoomViewController.h */,
+				2BE942202670964A005EBF28 /* VoiceRoomViewController.m */,
+				2BE942212670964A005EBF28 /* VoiceRoomViewController+SocketControl.h */,
+				2BE942232670964A005EBF28 /* VoiceRoomViewController+SocketControl.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2BE942252670964A005EBF28 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942262670964A005EBF28 /* VoiceRoomBottomView */,
+				2BE9422B2670964A005EBF28 /* VoiceRoomNavView */,
+				2BE9422E2670964A005EBF28 /* VoiceUserAvatarView */,
+				2BE942312670964A005EBF28 /* VoiceRoomView */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2BE942262670964A005EBF28 /* VoiceRoomBottomView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942292670964A005EBF28 /* VoiceRoomBottomView.h */,
+				2BE942272670964A005EBF28 /* VoiceRoomBottomView.m */,
+				2BE9422A2670964A005EBF28 /* VoiceRoomItemButton.h */,
+				2BE942282670964A005EBF28 /* VoiceRoomItemButton.m */,
+			);
+			path = VoiceRoomBottomView;
+			sourceTree = "<group>";
+		};
+		2BE9422B2670964A005EBF28 /* VoiceRoomNavView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9422C2670964A005EBF28 /* VoiceRoomNavView.h */,
+				2BE9422D2670964A005EBF28 /* VoiceRoomNavView.m */,
+			);
+			path = VoiceRoomNavView;
+			sourceTree = "<group>";
+		};
+		2BE9422E2670964A005EBF28 /* VoiceUserAvatarView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9422F2670964A005EBF28 /* VoiceUserAvatarCell.h */,
+				2BE942302670964A005EBF28 /* VoiceUserAvatarCell.m */,
+			);
+			path = VoiceUserAvatarView;
+			sourceTree = "<group>";
+		};
+		2BE942312670964A005EBF28 /* VoiceRoomView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942332670964A005EBF28 /* VoiceRoomAudienceView */,
+				2BE942372670964A005EBF28 /* VoiceRoomMicUserView */,
+				2BE9423A2670964A005EBF28 /* VoiceRoomTableCell */,
+				2BE942322670964A005EBF28 /* VoiceRoomView.h */,
+				2BE942362670964A005EBF28 /* VoiceRoomView.m */,
+			);
+			path = VoiceRoomView;
+			sourceTree = "<group>";
+		};
+		2BE942332670964A005EBF28 /* VoiceRoomAudienceView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942352670964A005EBF28 /* VoiceRoomAudienceView.h */,
+				2BE942342670964A005EBF28 /* VoiceRoomAudienceView.m */,
+			);
+			path = VoiceRoomAudienceView;
+			sourceTree = "<group>";
+		};
+		2BE942372670964A005EBF28 /* VoiceRoomMicUserView */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942392670964A005EBF28 /* VoiceRoomMicUserView.h */,
+				2BE942382670964A005EBF28 /* VoiceRoomMicUserView.m */,
+			);
+			path = VoiceRoomMicUserView;
+			sourceTree = "<group>";
+		};
+		2BE9423A2670964A005EBF28 /* VoiceRoomTableCell */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942422670964A005EBF28 /* VoiceRoomAudienceCell.h */,
+				2BE9423E2670964A005EBF28 /* VoiceRoomAudienceCell.m */,
+				2BE9423F2670964A005EBF28 /* VoiceRoomMicCell.h */,
+				2BE9423C2670964A005EBF28 /* VoiceRoomMicCell.m */,
+				2BE942412670964A005EBF28 /* VoiceRoomSubTitleCell.h */,
+				2BE9423B2670964A005EBF28 /* VoiceRoomSubTitleCell.m */,
+				2BE942402670964A005EBF28 /* VoiceRoomTitleCell.h */,
+				2BE9423D2670964A005EBF28 /* VoiceRoomTitleCell.m */,
+			);
+			path = VoiceRoomTableCell;
+			sourceTree = "<group>";
+		};
+		2BE942432670964A005EBF28 /* RoomLists */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942442670964A005EBF28 /* Controller */,
+				2BE942492670964A005EBF28 /* Model */,
+				2BE9424A2670964A005EBF28 /* View */,
+			);
+			path = RoomLists;
+			sourceTree = "<group>";
+		};
+		2BE942442670964A005EBF28 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942472670964A005EBF28 /* VoiceRoomListsViewController.h */,
+				2BE942452670964A005EBF28 /* VoiceRoomListsViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		2BE942492670964A005EBF28 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2BA371D22689D30E00743B06 /* VoiceUserModel.h */,
+				2BA371D12689D30E00743B06 /* VoiceUserModel.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2BE9424A2670964A005EBF28 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2BE9424B2670964A005EBF28 /* VoiceRoomCell.h */,
+				2BE9424F2670964A005EBF28 /* VoiceRoomCell.m */,
+				2BE9424D2670964A005EBF28 /* VoiceRoomTableView.h */,
+				2BE942502670964A005EBF28 /* VoiceRoomTableView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2BE942852670967C005EBF28 /* BaseCollection */ = {
+			isa = PBXGroup;
+			children = (
+				2BE942862670967C005EBF28 /* BaseCollectionLayout.h */,
+				2BE942872670967C005EBF28 /* BaseCollectionLayout.m */,
+			);
+			name = BaseCollection;
+			path = Vender/BaseCollection;
 			sourceTree = "<group>";
 		};
 		2BE9918F2599784500EB79DF /* Vender */ = {
 			isa = PBXGroup;
 			children = (
+				2BE942852670967C005EBF28 /* BaseCollection */,
 				2BA1CC14261FFBEA00D74CF5 /* GCDTimer */,
 				2BA0B735260AE367006E1684 /* BaseButton */,
 				2BA1733E26089E05002F8365 /* Category */,
@@ -938,6 +1666,10 @@
 			children = (
 				2BA1CC12261FFB7F00D74CF5 /* veRTC_Demo.entitlements */,
 				2BA1CC5E262034BE00D74CF5 /* veRTC_Demo_Debug.entitlements */,
+				2BE9428126709658005EBF28 /* MenuViewController.h */,
+				2BE9428026709658005EBF28 /* MenuViewController.m */,
+				2BE941AE26709617005EBF28 /* MenuClass */,
+				2BE941D826709649005EBF28 /* VoiceDemo */,
 				2BA1711226084AE6002F8365 /* MeetingDemo */,
 				2BE9918F2599784500EB79DF /* Vender */,
 				2BEA427F2499BDED001C0A2D /* AppDelegate.h */,
@@ -972,8 +1704,8 @@
 		9FC5082AF94145C8BB9945D6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2BA69DDE268AD0A200A34BE8 /* byteaudio.xcframework */,
-				2BA69DDF268AD0A500A34BE8 /* ByteRtcEngineKit.xcframework */,
+				2BE179B2269D48B600FDE091 /* byteaudio.xcframework */,
+				2BE179B1269D48B600FDE091 /* ByteRtcEngineKit.xcframework */,
 				2BA6B36E261C5620005316D2 /* libc++.1.tbd */,
 				2BA6B2F8261C3AB8005316D2 /* ReplayKit.framework */,
 				2BA6B305261C3AB9005316D2 /* UIKit.framework */,
@@ -1201,57 +1933,120 @@
 			files = (
 				2BA17323260892DD002F8365 /* FeedbackManager.m in Sources */,
 				2BACA92A26159DCE00F7591E /* MeetingToastComponents.m in Sources */,
+				2BE942652670964A005EBF28 /* VoiceRoomEndView.m in Sources */,
 				2BA1714626084AE6002F8365 /* MeetingSocketIOManager.m in Sources */,
+				2BE942702670964A005EBF28 /* VoiceRoomNavView.m in Sources */,
 				2BA1714926084AE6002F8365 /* AlertActionModel.m in Sources */,
 				2B75E4E5260B512E00945D11 /* MeetingControlNoticeModel.m in Sources */,
+				2BE9426C2670964A005EBF28 /* VoiceRoomViewController.m in Sources */,
+				2BE9427B2670964A005EBF28 /* VocieCreateTextFieldView.m in Sources */,
+				2BE942722670964A005EBF28 /* VoiceRoomAudienceView.m in Sources */,
+				2BD76BA02680C83A00F80084 /* ScenesItemButton.m in Sources */,
 				2B9EEB322609CED700869E04 /* SettingsSliderView.m in Sources */,
 				2BA17328260892DD002F8365 /* SettingsService.m in Sources */,
+				2BE942682670964A005EBF28 /* VoiceIMCell.m in Sources */,
 				2BA1CC17261FFBEA00D74CF5 /* GCDTimer.m in Sources */,
 				2BA0EB36260D7C5B005587F8 /* MeetingEndView.m in Sources */,
+				2BE942642670964A005EBF28 /* VoiceEndCompoments.m in Sources */,
 				2BA1CC6326203AA000D74CF5 /* RoomParamInfoView.m in Sources */,
+				2BE942582670964A005EBF28 /* VoiceControlTool.m in Sources */,
 				2BA1716E26084BAE002F8365 /* MeetingRTCManager.m in Sources */,
 				2B9EEB1C26098DEF00869E04 /* SetingModel.m in Sources */,
+				2BA37127268982AA00743B06 /* MenuLoginCodeButton.m in Sources */,
 				2B75E4CE260B45B800945D11 /* UIViewController+Orientation.m in Sources */,
 				2BA0B740260B13B7006E1684 /* RoomItemButton.m in Sources */,
 				2B9EEB492609E4A700869E04 /* HistoryTableCell.m in Sources */,
 				2BEA42812499BDED001C0A2D /* AppDelegate.m in Sources */,
 				2BA17327260892DD002F8365 /* SettingViewController.m in Sources */,
+				2BE942572670964A005EBF28 /* VoiceControlNoticeModel.m in Sources */,
+				2BD76BA62680C83A00F80084 /* UserCell.m in Sources */,
+				2BD76BA22680C83A00F80084 /* UserNameViewController.m in Sources */,
+				2BD76BA32680C83A00F80084 /* UserViewController.m in Sources */,
+				2BD76B9F2680C83A00F80084 /* MenuItemButton.m in Sources */,
 				2B9EEB512609EA1800869E04 /* RoomNavView.m in Sources */,
+				2BE9426E2670964A005EBF28 /* VoiceRoomBottomView.m in Sources */,
 				2BA172C926088841002F8365 /* DeviceInforTool.m in Sources */,
-				2BA1732D260892DD002F8365 /* LoginViewController.m in Sources */,
+				2BE942712670964A005EBF28 /* VoiceUserAvatarCell.m in Sources */,
+				2BE942792670964A005EBF28 /* VoiceRoomListsViewController.m in Sources */,
 				2BA0B738260AE394006E1684 /* BaseButton.m in Sources */,
+				2BE942552670964A005EBF28 /* VoiceControlRecordModel.m in Sources */,
+				2BD76BA42680C83A00F80084 /* MenuCellModel.m in Sources */,
+				2BE942882670967C005EBF28 /* BaseCollectionLayout.m in Sources */,
+				2BBADF52268EFA790020CA59 /* MenuTokenCompoments.m in Sources */,
+				2BE9425D2670964A005EBF28 /* VoiceRoomTopSelectView.m in Sources */,
 				2BEA42922499BDEE001C0A2D /* main.m in Sources */,
 				2BA1714826084AE6002F8365 /* AlertActionManager.m in Sources */,
 				2BA1735026089E3E002F8365 /* UIColor+String.m in Sources */,
 				2BA1732B260892DD002F8365 /* SettingsSwitchCell.m in Sources */,
 				2B75E4B5260B1FDD00945D11 /* UserListCell.m in Sources */,
 				2B338D8A260CBCB3003F2C24 /* FeedbackInputView.m in Sources */,
+				2BE9426A2670964A005EBF28 /* VoiceIMModel.m in Sources */,
+				2BE9429226709782005EBF28 /* RoomViewController+Sort.m in Sources */,
 				2B75E4B6260B1FDD00945D11 /* UserListViewController.m in Sources */,
+				2BE942632670964A005EBF28 /* VoiceRoomParamCompoments.m in Sources */,
 				2BA6B386261C616F005316D2 /* MeetingScreenComponents.m in Sources */,
 				2B9EEB222609902100869E04 /* MeetingPickerCompoments.m in Sources */,
 				2B75E4E7260B512E00945D11 /* MeetingControlRoomModel.m in Sources */,
+				2BE942742670964A005EBF28 /* VoiceRoomMicUserView.m in Sources */,
 				2BA173702608C879002F8365 /* MeetingNavViewController.m in Sources */,
 				2BA1CC6626203BB300D74CF5 /* RoomParamInfoModel.m in Sources */,
+				2BE9425A2670964A005EBF28 /* VoiceAvatarCompoments.m in Sources */,
+				2BE942592670964A005EBF28 /* VoiceControlCompoments.m in Sources */,
+				2BE942692670964A005EBF28 /* VoiceIMView.m in Sources */,
+				2BD76BB82680CA2D00F80084 /* MenuUpgradeModel.m in Sources */,
+				2BE942522670964A005EBF28 /* VoiceSocketIOManager.m in Sources */,
+				2BE942762670964A005EBF28 /* VoiceRoomMicCell.m in Sources */,
 				2BA0EB35260D7C5B005587F8 /* MeetingEndCompoments.m in Sources */,
 				2BA1732A260892DD002F8365 /* SettingsRightLabelCell.m in Sources */,
+				2BE9425C2670964A005EBF28 /* VoiceRoomUserListCompoments.m in Sources */,
+				2BD76BBD2680CA5000F80084 /* MenuUpgradeCompoments.m in Sources */,
+				2BE9428226709658005EBF28 /* MenuViewController.m in Sources */,
+				2BE9427C2670964A005EBF28 /* VoiceRoomCell.m in Sources */,
 				2BA1731F260892DD002F8365 /* RoomViewController.m in Sources */,
 				2B75E4C1260B222800945D11 /* MeetingAvatarCompoments.m in Sources */,
 				2B9EEB2A26099A8C00869E04 /* UIView+addition.m in Sources */,
+				2BE9428D26709718005EBF28 /* ToastView.m in Sources */,
+				2BE9425E2670964A005EBF28 /* VoiceRoomRaiseHandListsView.m in Sources */,
+				2BE9427D2670964A005EBF28 /* VoiceRoomTableView.m in Sources */,
+				2BE9426B2670964A005EBF28 /* VoiceIMCompoments.m in Sources */,
+				2BE9426D2670964A005EBF28 /* VoiceRoomViewController+SocketControl.m in Sources */,
 				2BA1714726084AE6002F8365 /* MeetingSocketIOManager.swift in Sources */,
 				2B75E4EA260B512E00945D11 /* MeetingControlTool.m in Sources */,
+				2BE942732670964A005EBF28 /* VoiceRoomView.m in Sources */,
+				2BE942752670964A005EBF28 /* VoiceRoomSubTitleCell.m in Sources */,
 				2BDC7F0626171BF5007268D4 /* RoomVideoSession.m in Sources */,
 				2B9EEB3B2609E04000869E04 /* HistoryViewController.m in Sources */,
+				2BA371C42689C8F200743B06 /* BaseUserModel.m in Sources */,
+				2BE9426F2670964A005EBF28 /* VoiceRoomItemButton.m in Sources */,
 				2BA17322260892DD002F8365 /* RoomMatrixView.m in Sources */,
+				2BE941AB267095E0005EBF28 /* MeetingLoginViewController.m in Sources */,
 				2B9EEB432609E0F100869E04 /* HistoryTableView.m in Sources */,
+				2BE942532670964A005EBF28 /* VoiceControlAckModel.m in Sources */,
+				2BE942512670964A005EBF28 /* VoiceRTCManager.m in Sources */,
 				2B9EEB592609ECDF00869E04 /* RoomBottomView.m in Sources */,
+				2BE942622670964A005EBF28 /* VoiceRoomParamInfoView.m in Sources */,
 				2B75E4E9260B512E00945D11 /* MeetingControlRecordModel.m in Sources */,
 				2BA173622608C58C002F8365 /* MockDataCompoments.m in Sources */,
 				2BA2F5D2260C878100869057 /* RoomAvatarRenderView.m in Sources */,
 				2B75E4E8260B512E00945D11 /* MeetingControlUserModel.m in Sources */,
+				2BA371D32689D30E00743B06 /* VoiceUserModel.m in Sources */,
+				2BD76BA12680C83A00F80084 /* ScenesViewController.m in Sources */,
 				2BA2F5D1260C878100869057 /* RoomAvatarRenderTagView.m in Sources */,
+				2BE9425B2670964A005EBF28 /* VoiceRoomUserListtCell.m in Sources */,
 				2BA1CC7F2620426500D74CF5 /* UIView+Fillet.m in Sources */,
+				2BE942772670964A005EBF28 /* VoiceRoomTitleCell.m in Sources */,
+				2BE942612670964A005EBF28 /* VoiceRoomParamInfoModel.m in Sources */,
 				2B338D75260C9862003F2C24 /* RoomScreenView.m in Sources */,
+				2BE9427A2670964A005EBF28 /* VoiceCreateRoomViewController.m in Sources */,
+				2BE942782670964A005EBF28 /* VoiceRoomAudienceCell.m in Sources */,
+				2BE9425F2670964A005EBF28 /* VoiceRoomAudienceListsView.m in Sources */,
+				2BA37128268982AA00743B06 /* MenuLoginViewController.m in Sources */,
+				2BE942542670964A005EBF28 /* VoiceControlRoomModel.m in Sources */,
+				2BD76BA52680C83A00F80084 /* UserHeadView.m in Sources */,
+				2BE942562670964A005EBF28 /* VoiceControlUserModel.m in Sources */,
 				2B75E4E6260B512E00945D11 /* MeetingControlAckModel.m in Sources */,
+				2BE942602670964A005EBF28 /* VoiceNavViewController.m in Sources */,
+				2BA371CC2689D29700743B06 /* LocalUserComponents.m in Sources */,
 				2BA2F5AD260C677600869057 /* RoomSpeakerView.m in Sources */,
 				2B75E4E4260B512E00945D11 /* MeetingControlCompoments.m in Sources */,
 				2B9E3933261458C70000D3B9 /* RoomViewController+Listener.m in Sources */,
@@ -1335,7 +2130,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = rtc.veRTC.ios.MeetingScreenShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1365,7 +2160,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = rtc.veRTCDemo.ios.MeetingScreenShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = VERTCDemoInHouseMeetingExtDist;
@@ -1496,7 +2291,7 @@
 				CODE_SIGN_ENTITLEMENTS = veRTC_Demo/veRTC_Demo_Debug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = D882YEGCUP;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1518,7 +2313,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = rtc.veRTC.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1538,7 +2333,7 @@
 				CODE_SIGN_ENTITLEMENTS = veRTC_Demo/veRTC_Demo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = X46375UBYG;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1560,7 +2355,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = rtc.veRTCDemo.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = VERTCDemoInHouseDist;

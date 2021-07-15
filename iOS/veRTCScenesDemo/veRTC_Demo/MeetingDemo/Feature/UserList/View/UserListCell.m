@@ -34,26 +34,28 @@
     _videoSession = videoSession;
     
     //name
-    self.userIDLabel.text = videoSession.uid;
-    self.avatarView.text = videoSession.uid;
+    self.userIDLabel.text = videoSession.name;
+    self.avatarView.text = videoSession.name;
     
     //camera
     BOOL isOpenVideo = videoSession.isEnableVideo;
     self.enableVideoBtn.status = isOpenVideo ? ButtonStatusNone : ButtonStatusActive;
     
     //mic
-    if (videoSession.audioType == 1) {
-        //open
-        self.enableAudioBtn.status = ButtonStatusNone;
-        self.avatarSpeakView.hidden = YES;
-    } else if (videoSession.audioType == 2) {
+    if (videoSession.isEnableAudio) {
+        if (videoSession.volume > 0) {
+            //ing
+            self.enableAudioBtn.status = ButtonStatusIng;
+            self.avatarSpeakView.hidden = NO;
+        } else {
+            //open
+            self.enableAudioBtn.status = ButtonStatusNone;
+            self.avatarSpeakView.hidden = YES;
+        }
+    } else {
         //close
         self.enableAudioBtn.status = ButtonStatusActive;
         self.avatarSpeakView.hidden = YES;
-    } else {
-        //ing
-        self.enableAudioBtn.status = ButtonStatusIng;
-        self.avatarSpeakView.hidden = NO;
     }
     
     //host

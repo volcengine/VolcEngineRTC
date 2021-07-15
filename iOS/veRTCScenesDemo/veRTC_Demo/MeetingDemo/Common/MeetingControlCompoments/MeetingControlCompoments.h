@@ -2,7 +2,7 @@
 //  MeetingControlCompoments.h
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import <Foundation/Foundation.h>
@@ -30,9 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  * Join the meeting
  * @param loginModel Login user data
+ * @param userLists user lists data
  * @param block Callback
  */
-+ (void)joinMeeting:(RoomVideoSession *)loginModel block:(void (^)(NSString *token, MeetingControlAckModel *model))block;
++ (void)joinMeeting:(RoomVideoSession *)loginModel block:(void (^)(NSString *token, NSArray<RoomVideoSession *> *userLists, MeetingControlAckModel *model))block;
 
 /*
  * Leave Meeting
@@ -74,9 +75,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*
  * Get historical video download address
+ * @param isHolder Holder Video
  * @param block Callback
  */
-+ (void)getHistoryVideoRecordWithBlock:(void (^)(NSArray<MeetingControlRecordModel *> *recordLists, MeetingControlAckModel *model))block;
++ (void)getHistoryVideoRecord:(BOOL)isHolder block:(void (^)(NSArray<MeetingControlRecordModel *> *recordLists, MeetingControlAckModel *model))block;
+
+/*
+ * Delete historical video download address
+ * @param vid Video vid
+ * @param block Callback
+ */
++ (void)deleteVideoRecord:(NSString *)vid block:(void (^)(MeetingControlAckModel *model))block;
 
 /*
  * Reconnect

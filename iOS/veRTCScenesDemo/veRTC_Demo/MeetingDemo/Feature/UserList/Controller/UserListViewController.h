@@ -10,15 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) RoomVideoSession *localVideoSession;
 
-- (void)updateUserMicStatus:(BOOL)isOpen uid:(NSString *)uid;
-
-- (void)updateUserCameraStatus:(BOOL)isOpen uid:(NSString *)uid;
-
-- (void)updateUserHostStatusWithUid:(NSString *)uid;
-
-- (void)loadDataWithGetMeetingUserInfo:(BOOL)isAlert;
-
-- (void)updateUserMicStatus:(NSDictionary<NSString *,NSNumber *> *)speakUid;
+@property (nonatomic, strong) NSMutableArray<RoomVideoSession *> *videoSessions;
 
 @end
 

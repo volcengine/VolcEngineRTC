@@ -2,7 +2,7 @@
 //  RoomViewController+Listener.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import "RoomViewController+Listener.h"
@@ -13,9 +13,29 @@
     __weak __typeof(self) wself = self;
     [MeetingControlCompoments onUserMicStatusChangeWithBlock:^(NSString * _Nonnull uid, BOOL result) {
         if (wself) {
-            //update par ui
-            [wself.userListViewController updateUserMicStatus:result uid:uid];
             [wself updateRenderModeViewWithMicStatus:uid enableMic:result];
+        }
+    }];
+    
+    //Camera change
+    [MeetingControlCompoments onUserCameraStatusChangeWithBlock:^(NSString * _Nonnull uid, BOOL result) {
+        if (wself) {
+            //update par ui
+            [wself updateRenderModeViewWithCameraStatus:uid enableCamera:result];
+        }
+    }];
+    
+    //Mute all user microphone
+    [MeetingControlCompoments onMuteAllWithBlock:^(BOOL result) {
+        if (wself && ![wself.currentRoomModel.host_id isEqualToString:wself.localVideoSession.uid]) {
+            ButtonStatus status = [wself.bottomView getButtonStatus:RoomBottomStatusMic];
+            if (status == ButtonStatusNone) {
+                [[MeetingRTCManager shareRtc] enableLocalAudio:NO];
+                wself.localVideoSession.isEnableAudio = NO;
+                [wself updateRenderModeViewWithMicStatus:wself.localVideoSession.uid enableMic:NO];
+                [wself.bottomView updateButtonStatus:RoomBottomStatusMic close:YES];
+                [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
+            }
         }
     }];
 
@@ -28,23 +48,12 @@
                     //Close microphone
                     [MeetingControlCompoments turnOffMic];
                     [[MeetingRTCManager shareRtc] enableLocalAudio:NO];
-                    [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
-                    wself.localVideoSession.audioType = 2;
-                    [wself.bottomView updateButtonStatus:RoomBottomStatusMic close:YES];
+                    wself.localVideoSession.isEnableAudio = NO;
                     [wself updateRenderModeViewWithMicStatus:uid enableMic:NO];
+                    [wself.bottomView updateButtonStatus:RoomBottomStatusMic close:YES];
+                    [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
                 }
             }
-            //update par ui
-            [wself.userListViewController updateUserMicStatus:NO uid:uid];
-        }
-    }];
-
-    //Camera change
-    [MeetingControlCompoments onUserCameraStatusChangeWithBlock:^(NSString * _Nonnull uid, BOOL result) {
-        if (wself) {
-            //update par ui
-            [wself.userListViewController updateUserCameraStatus:result uid:uid];
-            [wself updateRenderModeViewWithCameraStatus:uid enableCamera:result];
         }
     }];
 
@@ -60,8 +69,7 @@
                 if ([action.title isEqualToString:@"确定"]) {
                     [MeetingControlCompoments turnOnMic];
                     [[MeetingRTCManager shareRtc] enableLocalAudio:YES];
-                    [wself.userListViewController updateUserMicStatus:YES uid:uid];
-                    wself.localVideoSession.audioType = 1;
+                    wself.localVideoSession.isEnableAudio = YES;
                     [wself updateRenderModeViewWithMicStatus:uid enableMic:YES];
                     [wself.bottomView updateButtonStatus:RoomBottomStatusMic close:NO];
                 }
@@ -75,26 +83,8 @@
         if (wself) {
             //update par and render ui
             wself.currentRoomModel.host_id = hostUid;
-            [wself updateCurrentUserListHostStatus];
-            [wself updateRenderModeViewUserRankeWithAudioVolume:nil];
-            wself.userListViewController.isLoginHost = [wself.localVideoSession.uid isEqualToString:hostUid] ? YES : NO;
-            [wself.userListViewController updateUserHostStatusWithUid:hostUid];
+            [wself updateRenderModeViewWithHost:hostUid];
         }
-    }];
-
-    //Mute all user microphone
-    [MeetingControlCompoments onMuteAllWithBlock:^(BOOL result) {
-        if (wself && ![wself.currentRoomModel.host_id isEqualToString:wself.localVideoSession.uid]) {
-            ButtonStatus status = [wself.bottomView getButtonStatus:RoomBottomStatusMic];
-            if (status == ButtonStatusNone) {
-                [[MeetingRTCManager shareRtc] enableLocalAudio:NO];
-                wself.localVideoSession.audioType = 2;
-                [wself updateRenderModeViewWithMicStatus:wself.localVideoSession.uid enableMic:NO];
-                [wself.bottomView updateButtonStatus:RoomBottomStatusMic close:YES];
-                [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"你已被主持人静音"];
-            }
-        }
-        [wself.userListViewController updateUserMicStatus:NO uid:@""];
     }];
 
     //User Join
@@ -104,7 +94,6 @@
             if (![roomUserModel.uid isEqualToString:wself.localVideoSession.uid]) {
                 [wself addUser:roomUserModel];
             }
-            [wself.userListViewController loadDataWithGetMeetingUserInfo:NO];
         }
     }];
 
@@ -112,7 +101,6 @@
     [MeetingControlCompoments onUserLeaveMeetingWithBlock:^(NSString * _Nonnull uid) {
         if (wself) {
             [wself removeUser:uid];
-            [wself.userListViewController loadDataWithGetMeetingUserInfo:NO];
         }
     }];
     

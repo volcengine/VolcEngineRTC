@@ -35,7 +35,7 @@
 }
 
 - (void)bindVideoSessions:(NSArray<RoomVideoSession *> *)videoSessions {
-    NSArray *dataLists = videoSessions;
+    NSArray *dataLists = [videoSessions subarrayWithRange:NSMakeRange(0, MIN(videoSessions.count, 9))];;
     
     [self.topView removeAllSubviews];
     [self.centerView removeAllSubviews];
@@ -179,9 +179,8 @@
 }
 
 - (NSArray<NSString *> *)getUidsWithModels:(NSArray<RoomVideoSession *> *)dataLists {
-    NSArray *lists = @[];
     NSInteger maxLen = MIN(dataLists.count, 9);
-    lists = [dataLists subarrayWithRange:NSMakeRange(0, maxLen)];
+    NSArray *lists = [dataLists subarrayWithRange:NSMakeRange(0, maxLen)];
     NSMutableArray *uids = [[NSMutableArray alloc] init];
     for (int i = 0; i < lists.count; i++) {
         RoomVideoSession *userModel = lists[i];

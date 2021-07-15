@@ -1,5 +1,5 @@
 #import "AppDelegate.h"
-#import "LoginViewController.h"
+#import "MenuViewController.h"
 
 @interface AppDelegate ()
 
@@ -10,12 +10,12 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
 
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        LoginViewController *loginVc = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewControllerID"];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:loginVc];
-        self.window.rootViewController = nav;
-        [self.window makeKeyWindow];
-        return YES;
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    MenuViewController *menuVC = [storyboard instantiateViewControllerWithIdentifier:@"MenuViewControllerID"];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:menuVC];
+    self.window.rootViewController = nav;
+    [self.window makeKeyWindow];
+    return YES;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

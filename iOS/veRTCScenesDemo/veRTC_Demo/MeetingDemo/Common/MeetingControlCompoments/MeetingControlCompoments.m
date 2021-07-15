@@ -2,7 +2,7 @@
 //  MeetingControlCompoments.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import "MeetingControlCompoments.h"
@@ -20,6 +20,7 @@ static const CGFloat DefaultTimeout = 3;
         dic = @{@"user_id" : uid,
                 @"room_id" : roomId};
     }
+    dic = [MeetingControlTool addToken:dic];
     
     OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"getAppID" with:@[dic]];
     [callback timingOutAfter:1 callback:^(NSArray * _Nonnull dataLists) {
@@ -38,25 +39,38 @@ static const CGFloat DefaultTimeout = 3;
 
 }
 
-+ (void)joinMeeting:(RoomVideoSession *)loginModel block:(void (^)(NSString *token, MeetingControlAckModel *model))block {
++ (void)joinMeeting:(RoomVideoSession *)loginModel block:(void (^)(NSString *token, NSArray<RoomVideoSession *> *userLists, MeetingControlAckModel *model))block {
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     [dic setValue:loginModel.appid forKey:@"app_id"];
     [dic setValue:loginModel.uid forKey:@"user_id"];
+    [dic setValue:loginModel.name forKey:@"user_name"];
     [dic setValue:loginModel.roomId forKey:@"room_id"];
-    BOOL isEnableAudio = loginModel.audioType == 2 ? NO : YES;
+    BOOL isEnableAudio = loginModel.isEnableAudio;
     [dic setValue:@(isEnableAudio) forKey:@"mic"];
     [dic setValue:@(loginModel.isEnableVideo) forKey:@"camera"];
     
-    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"joinMeeting" with:@[dic]];
+    NSDictionary *dicData = [MeetingControlTool addToken:[dic copy]];
+    
+    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"joinMeeting" with:@[dicData]];
     [callback timingOutAfter:DefaultTimeout callback:^(NSArray * _Nonnull dataLists) {
         MeetingControlAckModel *ackModel = [MeetingControlTool dataToAckModel:dataLists];
         NSString *token = @"";
+        NSMutableArray *userLists = [[NSMutableArray alloc] init];
         if ([ackModel.response isKindOfClass:[NSDictionary class]]) {
             token = ackModel.response[@"token"];
+            NSArray *lists = ackModel.response[@"users"];
+            for (int i = 0; i < lists.count; i++) {
+                MeetingControlUserModel *meetingUserModel = [MeetingControlUserModel yy_modelWithJSON:lists[i]];
+                RoomVideoSession *videoSession = [RoomVideoSession roomVideoSessionToMeetingControlUserModel:meetingUserModel];
+                [userLists addObject:videoSession];
+            }
+            BaseUserModel *localUser = [LocalUserComponents userModel];
+            localUser.name = loginModel.name;
+            [LocalUserComponents updateLocalUserModel:localUser];
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             if (block) {
-                block(token, ackModel);
+                block(token, [userLists copy], ackModel);
             }
         });
         NSLog(@"[%@]-joinMeeting %@", [self class], dataLists);
@@ -65,27 +79,33 @@ static const CGFloat DefaultTimeout = 3;
 }
 
 + (void)leaveMeeting {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"leaveMeeting" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"leaveMeeting" with:@[dic]];
 }
 
 + (void)turnOnMic {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOnMic" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOnMic" with:@[dic]];
 }
 
 + (void)turnOffMic {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOffMic" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOffMic" with:@[dic]];
 }
 
 + (void)turnOnCamera {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOnCamera" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOnCamera" with:@[dic]];
 }
 
 + (void)turnOffCamera {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOffCamera" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"turnOffCamera" with:@[dic]];
 }
 
 + (void)getMeetingUserInfo:(NSString *)userId block:(void (^)(NSArray<MeetingControlUserModel *> *userLists, MeetingControlAckModel *model))block {
     NSDictionary *dic = @{@"user_id" : userId};
+    dic = [MeetingControlTool addToken:dic];
     
     OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"getMeetingUserInfo" with:@[dic]];
     [callback timingOutAfter:DefaultTimeout callback:^(NSArray * _Nonnull dataLists) {
@@ -109,7 +129,9 @@ static const CGFloat DefaultTimeout = 3;
 }
 
 + (void)getMeetingInfoWithBlock:(void (^)(MeetingControlRoomModel *roomModel, MeetingControlAckModel *model))block {
-    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"getMeetingInfo" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    
+    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"getMeetingInfo" with:@[dic]];
     [callback timingOutAfter:20 callback:^(NSArray * _Nonnull dataLists) {
         MeetingControlAckModel *ackModel = [MeetingControlTool dataToAckModel:dataLists];
         MeetingControlRoomModel *roomModel = [MeetingControlRoomModel yy_modelWithJSON:ackModel.response];
@@ -122,8 +144,10 @@ static const CGFloat DefaultTimeout = 3;
     }];
 }
 
-+ (void)getHistoryVideoRecordWithBlock:(void (^)(NSArray<MeetingControlRecordModel *> *recordLists, MeetingControlAckModel *model))block {
-    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"getHistoryVideoRecord" with:@[]];
++ (void)getHistoryVideoRecord:(BOOL)isHolder block:(void (^)(NSArray<MeetingControlRecordModel *> *recordLists, MeetingControlAckModel *model))block {
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    
+    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"getHistoryVideoRecord" with:@[dic]];
     [callback timingOutAfter:DefaultTimeout callback:^(NSArray * _Nonnull dataLists) {
         MeetingControlAckModel *ackModel = [MeetingControlTool dataToAckModel:dataLists];
         NSMutableArray *modelLsts = [[NSMutableArray alloc] init];
@@ -131,7 +155,9 @@ static const CGFloat DefaultTimeout = 3;
         if (data && [data isKindOfClass:[NSArray class]]) {
             for (int i = 0; i < data.count; i++) {
                 MeetingControlRecordModel *model = [MeetingControlRecordModel yy_modelWithJSON:data[i]];
-                [modelLsts addObject:model];
+                if (isHolder == model.video_holder) {
+                    [modelLsts addObject:model];
+                }
             }
         }
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -143,8 +169,26 @@ static const CGFloat DefaultTimeout = 3;
     }];
 }
 
++ (void)deleteVideoRecord:(NSString *)vid block:(void (^)(MeetingControlAckModel *model))block {
+    NSDictionary *dic = @{@"vid" : vid};
+    dic = [MeetingControlTool addToken:dic];
+    
+    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"deleteVideoRecord" with:@[dic]];
+    [callback timingOutAfter:DefaultTimeout callback:^(NSArray * _Nonnull dataLists) {
+        MeetingControlAckModel *ackModel = [MeetingControlTool dataToAckModel:dataLists];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (block) {
+                block(ackModel);
+            }
+        });
+        NSLog(@"[%@]-deleteVideoRecord %@", [self class], dataLists);
+    }];
+}
+
 + (void)reconnectWithBlock:(void (^)(MeetingControlAckModel *model))block {
-    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"userReconnect" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    
+    OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"userReconnect" with:@[dic]];
     [callback timingOutAfter:5 callback:^(NSArray * _Nonnull dataLists) {
         MeetingControlAckModel *ackModel = [MeetingControlTool dataToAckModel:dataLists];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -164,6 +208,8 @@ static const CGFloat DefaultTimeout = 3;
     if (userId.length > 0) {
         dic = @{@"user_id" : userId};
     }
+    dic = [MeetingControlTool addToken:dic];
+    
     OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"changeHost" with:@[dic]];
     [callback timingOutAfter:DefaultTimeout callback:^(NSArray * _Nonnull dataLists) {
         MeetingControlAckModel *ackModel = [MeetingControlTool dataToAckModel:dataLists];
@@ -180,6 +226,7 @@ static const CGFloat DefaultTimeout = 3;
     if (userId.length > 0) {
         dic = @{@"user_id" : userId};
     }
+    dic = [MeetingControlTool addToken:dic];
     
     OnAckCallback *callback = [[MeetingSocketIOManager shareSocketManager].socket emitWithAck:@"muteUser" with:@[dic]];
     [callback timingOutAfter:DefaultTimeout callback:^(NSArray * _Nonnull dataLists) {
@@ -197,6 +244,8 @@ static const CGFloat DefaultTimeout = 3;
     if (userId.length > 0) {
         dic = @{@"user_id" : userId};
     }
+    dic = [MeetingControlTool addToken:dic];
+    
     [[MeetingSocketIOManager shareSocketManager].socket emit:@"askMicOn" with:@[dic] completion:^{
         if (block) {
             block(NO);
@@ -209,6 +258,8 @@ static const CGFloat DefaultTimeout = 3;
     if (userId.length > 0) {
         dic = @{@"user_id" : userId};
     }
+    dic = [MeetingControlTool addToken:dic];
+    
     [[MeetingSocketIOManager shareSocketManager].socket emit:@"askCameraOn" with:@[dic] completion:^{
         if (block) {
             block(NO);
@@ -217,15 +268,18 @@ static const CGFloat DefaultTimeout = 3;
 }
 
 + (void)endMeeting {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"endMeeting" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"endMeeting" with:@[dic]];
 }
 
 + (void)startShareScreen {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"startShareScreen" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"startShareScreen" with:@[dic]];
 }
 
 + (void)endShareScreen {
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"endShareScreen" with:@[]];
+    NSDictionary *dic = [MeetingControlTool addToken:nil];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"endShareScreen" with:@[dic]];
 }
 
 + (void)recordMeeting:(NSArray *)uids screenId:(NSString *)screenId {
@@ -236,7 +290,8 @@ static const CGFloat DefaultTimeout = 3;
     if (screenId.length > 0) {
         [dic setValue:screenId forKey:@"screen_uid"];
     }
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"recordMeeting" with:@[dic]];
+    NSDictionary *dicData = [MeetingControlTool addToken:[dic copy]];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"recordMeeting" with:@[dicData]];
 }
 
 + (void)updateRecordLayout:(NSArray *)uids screenId:(NSString *)screenId {
@@ -247,7 +302,8 @@ static const CGFloat DefaultTimeout = 3;
     if (screenId.length > 0) {
         [dic setValue:screenId forKey:@"screen_uid"];
     }
-    [[MeetingSocketIOManager shareSocketManager].socket emit:@"updateRecordLayout" with:@[dic]];
+    NSDictionary *dicData = [MeetingControlTool addToken:[dic copy]];
+    [[MeetingSocketIOManager shareSocketManager].socket emit:@"updateRecordLayout" with:@[dicData]];
 }
 
 

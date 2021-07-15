@@ -2,8 +2,8 @@
 //  HistoryViewController.m
 //  quickstart
 //
-//  Created by on 2021/3/23.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/23.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "HistoryViewController.h"
@@ -20,8 +20,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navTitle = @"会议录像";
-    
     [self.view addSubview:self.historyTableView];
     [self.historyTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.navView.mas_bottom);
@@ -32,13 +30,24 @@
 }
 
 - (void)loadDataWithHistoryVideoRecord {
-    [MeetingControlCompoments getHistoryVideoRecordWithBlock:^(NSArray<MeetingControlRecordModel *> * _Nonnull recordLists, MeetingControlAckModel * _Nonnull model) {
+    __weak __typeof(self) wself = self;
+    [MeetingControlCompoments getHistoryVideoRecord:self.isDelete block:^(NSArray<MeetingControlRecordModel *> * _Nonnull recordLists, MeetingControlAckModel * _Nonnull model) {
         if (model.result) {
-            self.historyTableView.dataLists = recordLists;
+            wself.historyTableView.dataLists = recordLists;
         } else {
             [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:model.message];
         }
     }];
+}
+
+- (void)setIsDelete:(BOOL)isDelete {
+    _isDelete = isDelete;
+    self.historyTableView.isDelete = isDelete;
+    if (isDelete) {
+        self.navTitle = @"我的云录制";
+    } else {
+        self.navTitle = @"会议录像";
+    }
 }
 
 #pragma mark - getter

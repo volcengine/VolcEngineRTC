@@ -2,7 +2,7 @@
 //  MeetingSocketIOManager.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/16.
+//  Created by  on 2021/3/16.
 //
 
 #import "MeetingSocketIOManager.h"
@@ -67,7 +67,6 @@ typedef NS_ENUM(NSInteger, MeetingConnectStatus) {
 #pragma mark - Publish Action
 
 - (void)connectWithSdkVersion:(NSString *)sdkVersion block:(void (^)(BOOL relust))block {
-    //rtcio
     NSString *urlStr = @"wss://rtcio.bytedance.com";
     NSURL *url = [[NSURL alloc] initWithString:urlStr];
     
@@ -142,26 +141,32 @@ typedef NS_ENUM(NSInteger, MeetingConnectStatus) {
     [self.socket connect];
 }
 
+- (void)disConnect {
+    [self.timer suspend];
+    [self.manager disconnect];
+}
+
 #pragma mark - Private Action
 
 - (void)socketOnSuccess {
     if (self.connectStatus == MeetingConnectStatusFailure ||
         self.connectStatus == MeetingConnectStatusIng) {
         self.connectStatus = MeetingConnectStatusIng;
+        __weak __typeof(self) wself = self;
         [MeetingControlCompoments reconnectWithBlock:^(MeetingControlAckModel * _Nonnull model) {
             NSString *type = @"";
             if (model.result) {
                 type = @"resume";
-                self.connectStatus = MeetingConnectStatusSuccess;
+                wself.connectStatus = MeetingConnectStatusSuccess;
             } else if (model.code == 404 || model.code == 422) {
                 type = @"exit";
-                self.connectStatus = MeetingConnectStatusNone;
+                wself.connectStatus = MeetingConnectStatusNone;
             } else {
                 
             }
             if (type.length > 0) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMeetingControlChange object:type];
-                [self showSocketConnectStatus:YES];
+                [wself showSocketConnectStatus:YES];
             }
         }];
     } else {
@@ -171,24 +176,25 @@ typedef NS_ENUM(NSInteger, MeetingConnectStatus) {
 }
 
 - (void)socketOnFailure {
-    NSLog(@"socket-yu socketOnFailure");
     [self showSocketConnectStatus:NO];
 }
 
 - (void)showSocketConnectStatus:(BOOL)isConnect {
-    UIViewController *topVC = [DeviceInforTool topViewController];
-    if ([NSStringFromClass([topVC class]) isEqualToString:@"LoginViewController"]) {
-        //login show alert
-        if (!isConnect) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *topVC = [DeviceInforTool topViewController];
+        if ([NSStringFromClass([topVC class]) isEqualToString:@"MeetingLoginViewController"]) {
+            //login show alert
+            if (!isConnect) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:NotificationSocketStatusChange object:@"faile"];
+            }
+            return;
+        }
+        if (isConnect) {
+            [[MeetingToastComponents shareMeetingToastComponents] dismiss];
+        } else {
             [[NSNotificationCenter defaultCenter] postNotificationName:NotificationSocketStatusChange object:@"faile"];
         }
-        return;
-    }
-    if (isConnect) {
-        [[MeetingToastComponents shareMeetingToastComponents] dismiss];
-    } else {
-        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationSocketStatusChange object:@"faile"];
-    }
+    });
 }
 
 #pragma mark - tool

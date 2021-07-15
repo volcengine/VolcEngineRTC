@@ -2,8 +2,8 @@
 //  MeetingScreenComponents.m
 //  quickstart
 //
-//  Created by on 2021/4/6.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/4/6.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "MeetingScreenComponents.h"
@@ -36,10 +36,10 @@
 - (void)start:(void (^)(void))block {
     self.startBlock = block;
     ScreenCaptureParam *screenShareParam = [[ScreenCaptureParam alloc] init];
-    screenShareParam.width = [SettingsService getResolution].width;
-    screenShareParam.height = [SettingsService getResolution].height;
-    screenShareParam.bitrate = [SettingsService getKBitRate];
-    screenShareParam.frameRate = [SettingsService getFrameRate];
+    screenShareParam.width = [SettingsService getScreenResolution].width;
+    screenShareParam.height = [SettingsService getScreenResolution].height;
+    screenShareParam.bitrate = [SettingsService getScreenKBitRate];
+    screenShareParam.frameRate = [SettingsService getScreenFrameRate];
     screenShareParam.captureMouseCursor = NO;
     
 #ifdef DEBUG

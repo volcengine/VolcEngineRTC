@@ -5,6 +5,7 @@
 #import "RoomNavView.h"
 #import "UIViewController+Orientation.h"
 #import "RoomViewController+Listener.h"
+#import "RoomViewController+Sort.h"
 #import "RoomSpeakerView.h"
 #import "RoomParamInfoView.h"
 #import "MeetingEndCompoments.h"
@@ -15,13 +16,12 @@
 @property (nonatomic, strong) RoomParamInfoView *paramInfoView;
 @property (nonatomic, strong) UIView *toastView;
 @property (nonatomic, strong) UIImageView *recordTipView;
-@property (nonatomic, strong) NSString *recordID;
+@property (nonatomic, weak) UserListViewController *userListViewController;
 @property (nonatomic, strong) RoomMatrixView *videoMatrixView;
 @property (nonatomic, strong) RoomSpeakerView *videoSpeakerView;
 @property (nonatomic, strong) MeetingEndCompoments *endCompoments;
 
-@property (nonatomic, strong) NSMutableArray<RoomVideoSession *> *currentUserLists;
-@property (nonatomic, copy) NSArray <RoomVideoSession *> *currentTopUserLists;
+@property (nonatomic, strong) NSString *recordID;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, NSString *> *currentStreamDic;
 @property (nonatomic, assign) BOOL isLandscape;
 @property (nonatomic, strong) MeetingScreenComponents *screenComponents;
@@ -32,12 +32,15 @@
 
 @implementation RoomViewController
 
-- (instancetype)initWithVideoSession:(RoomVideoSession *)videoSession {
+- (instancetype)initWithVideoSession:(RoomVideoSession *)loginModel
+                           userLists:(NSArray<RoomVideoSession *> *)userLists {
     self = [super init];
     if (self) {
         [UIApplication sharedApplication].idleTimerDisabled = YES;
-        _localVideoSession = videoSession;
+        _localVideoSession = loginModel;
         _isLandscape = NO;
+        [self.userDataPool removeAllObjects];
+        [self.userDataPool addObjectsFromArray:userLists];
     }
     return self;
 }
@@ -64,6 +67,13 @@
             [wself setDeviceInterfaceOrientation:UIDeviceOrientationPortrait];
         }
     };
+    
+    [self statrSort:^(NSMutableArray * _Nonnull userLists) {
+        [wself sortEndCallback:userLists];
+    }];
+    
+    //Refresh now render view
+    [self updateRenderModeView:[self updateSortListsPromptly]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -109,26 +119,9 @@
 
 #pragma mark - Publish Action
 
-- (void)updateRenderModeViewWithCameraStatus:(NSString *)uid enableCamera:(BOOL)isEnable {
-    for (RoomVideoSession *userModel in self.currentTopUserLists) {
-        if ([userModel.uid isEqualToString:uid]) {
-            userModel.isEnableVideo = isEnable;
-            break;
-        }
-    }
-    [self updateRenderModeView];
-}
-
-- (void)updateRenderModeViewWithMicStatus:(NSString *)uid enableMic:(BOOL)isEnable {
-    for (RoomVideoSession *userModel in self.currentUserLists) {
-        if ([userModel.uid isEqualToString:uid]) {
-            userModel.audioType = isEnable ? 1 : 2;
-            break;
-        }
-    }
-}
-
 - (void)hangUp {
+    //Stop sort timer
+    [self stopSort];
     //User screen sharing
     if ([self.currentRoomModel.screen_shared_uid isEqualToString:self.localVideoSession.uid]) {
         [MeetingControlCompoments endShareScreen];
@@ -157,10 +150,10 @@
         self.videoMatrixView.hidden = NO;
         [self setAllowAutoRotate:NO];
     } else {
-        self.videoMatrixView.hidden = YES;
-        self.videoSpeakerView.hidden = NO;
         self.videoSpeakerView.localVideoSession = self.localVideoSession;
         self.videoSpeakerView.currentRoomModel = self.currentRoomModel;
+        self.videoMatrixView.hidden = YES;
+        self.videoSpeakerView.hidden = NO;
         [self setAllowAutoRotate:YES];
     }
     [self updateRecordTipViewTop];
@@ -184,40 +177,9 @@
     }];
 }
 
-- (void)updateRenderModeView {
-    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!self.videoMatrixView.hidden) {
-            [self.videoMatrixView bindVideoSessions:self.currentUserLists];
-        } else if (!self.videoSpeakerView.hidden) {
-            [self.videoSpeakerView bindVideoSessions:self.currentUserLists];
-        } else {
-            //error
-        }
-        [self updateCurrentUserListHostStatus];
-    });
-    dispatch_semaphore_signal(self.lock);
-}
-
-
 - (void)updateRecordTipStatusWithHidden:(BOOL)isHidden {
     self.recordTipView.hidden = isHidden;
     [self.bottomView updateButtonStatus:RoomBottomStatusRecord close:!isHidden];
-}
-
-- (void)updateRenderModeViewWithScreenStatus:(NSString *)uid enableScreen:(BOOL)isShare {
-    for (RoomVideoSession *userModel in self.currentTopUserLists) {
-        if (isShare) {
-            if ([userModel.uid isEqualToString:uid]) {
-                userModel.isScreen = YES;
-            } else {
-                userModel.isScreen = NO;
-            }
-        } else {
-            userModel.isScreen = NO;
-        }
-    }
-    [self updateRenderModeView];
 }
 
 - (void)restoreScreenOrientation {
@@ -228,37 +190,16 @@
 
 #pragma mark - MeetingRTCManagerDelegate
 
-- (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didStreamAdded:(NSArray<NSString *> *_Nullable)streamsUid {
-    if ([self getRenderViewTopUserModel].count < 9) {
-        //需要立即刷新
-        //Need to refresh immediately
-        for (NSString *uid in streamsUid) {
-            for (RoomVideoSession *userModel in self.currentTopUserLists) {
-                if ([userModel.uid isEqualToString:uid]) {
-                    userModel.isVideoStream = YES;
-                    [[MeetingRTCManager shareRtc] subscribeStream:userModel.uid];
-                }
-            }
-        }
-        [self updateRenderModeView];
-    }
-    //添加到缓存池
-    //Current video stream buffer pool
-    for (NSString *uid in streamsUid) {
-        [self.currentStreamDic setValue:@"1" forKey:uid];
+- (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didStreamAdded:(NSString * _Nullable)streamsUid {
+    if (NOEmptyStr(streamsUid)) {
+        [self.currentStreamDic setValue:@"1" forKey:streamsUid];
     }
 }
 
-- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didStreamRemoved:(NSArray<NSString *> *_Nullable)streamsUid {
-    for (RoomVideoSession *model in self.currentTopUserLists) {
-        for (NSString *removeUid in streamsUid) {
-            if ([model.uid isEqualToString:removeUid]) {
-                model.isVideoStream = NO;
-            }
-        }
+- (void)rtcManager:(MeetingRTCManager *_Nonnull)rtcManager didStreamRemoved:(NSString * _Nullable)streamsUid {
+    if (NOEmptyStr(streamsUid)) {
+        [self.currentStreamDic removeObjectForKey:streamsUid];
     }
-    [self.currentStreamDic removeObjectsForKeys:streamsUid];
-    [self updateRenderModeView];
 }
 
 - (void)rtcManager:(MeetingRTCManager * _Nonnull)rtcManager didScreenStreamAdded:(NSString *_Nullable)screenStreamsUid {
@@ -275,12 +216,8 @@
     self.paramInfoView.paramInfoModel = model;
 }
 
-- (void)rtcManager:(MeetingRTCManager *)rtcManager reportAudioVolume:(NSDictionary<NSString *,ByteRtcAudioVolumeInfo *> *)volumeInfo {
-    [self updateRenderModeViewUserRankeWithAudioVolume:volumeInfo];
-}
-
 - (void)rtcManager:(MeetingRTCManager *)rtcManager reportAllAudioVolume:(NSDictionary<NSString *, NSNumber *> *)volumeInfo {
-    [self.userListViewController updateUserMicStatus:volumeInfo];
+    [self updateRenderModeViewUserRankeWithAudioVolume:volumeInfo];
 }
 
 #pragma mark - RoomBottomViewDelegate
@@ -311,6 +248,7 @@
         UserListViewController *userListViewController = [[UserListViewController alloc] init];
         userListViewController.localVideoSession = self.localVideoSession;
         userListViewController.isLoginHost = [self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id] ? YES : NO;
+        userListViewController.videoSessions = [self getSortUserLists];
         [self.navigationController pushViewController:userListViewController animated:YES];
         self.userListViewController = userListViewController;
     } else if (status == RoomBottomStatusAudio) {
@@ -337,7 +275,8 @@
                 [self updateRecordTipStatusWithHidden:NO];
             
                 //Start record Meeting socket api
-                [MeetingControlCompoments recordMeeting:[self getRecordUids] screenId:self.currentRoomModel.screen_shared_uid];
+                [MeetingControlCompoments recordMeeting:[self getRecordUids]
+                                               screenId:self.currentRoomModel.screen_shared_uid];
             } else {
                 [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"如需录制会议，请提醒主持人开启录制。"];
             }
@@ -359,7 +298,7 @@
     }
 }
 
-#pragma mark - 通知
+#pragma mark - Notice
 
 - (void)meetingControlChange:(NSNotification *)notification {
     NSString *type = (NSString *)notification.object;
@@ -383,34 +322,130 @@
     }
 }
 
+#pragma mark - RoomViewController + Sort
+
+- (void)sortEndCallback:(NSMutableArray * _Nonnull)userLists {
+    NSDictionary *subscribeUidDic = [[MeetingRTCManager shareRtc] getSubscribeUidDic];
+    //Unsubscribe first
+    if (subscribeUidDic.count > 0) {
+        for (int i = 0; i < userLists.count; i++) {
+            RoomVideoSession *userModel = userLists[i];
+            NSString *value = [subscribeUidDic objectForKey:userModel.uid];
+            if ([value integerValue] == 1 && i >= MaxAvatarNumber) {
+                [[MeetingRTCManager shareRtc] unsubscribe:userModel.uid];
+                userModel.isVideoStream = NO;
+            }
+        }
+    }
+
+    for (int i = 0; i < userLists.count; i++) {
+        RoomVideoSession *userModel = userLists[i];
+        if (![userModel.uid isEqualToString:self.localVideoSession.uid]) {
+            //Don't subscribe self
+            NSString *isStream = self.currentStreamDic[userModel.uid];
+            if (i < MaxAvatarNumber) {
+                if ([isStream integerValue] == 1) {
+                    //subscribe
+                    userModel.isVideoStream = YES;
+                    [[MeetingRTCManager shareRtc] subscribeStream:userModel.uid];
+                } else {
+                    //unsubscribe
+                    userModel.isVideoStream = NO;
+                    [[MeetingRTCManager shareRtc] unsubscribe:userModel.uid];
+                }
+            } else {
+                
+            }
+        }
+    }
+    
+    [self updateRenderModeView:userLists];
+    
+    if ([self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id]) {
+        [self updateRecordLayout:[self getRecordUids]
+                        screenId:self.currentRoomModel.screen_shared_uid];
+    }
+}
+
+- (void)updateRenderModeViewUserRankeWithAudioVolume:(NSDictionary<NSString *, NSNumber *> *)volumeInfo {
+    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
+    for (RoomVideoSession *userModel in self.userDataPool) {
+        NSNumber *volumeNumber = [volumeInfo objectForKey:userModel.uid];
+        if (volumeNumber) {
+            userModel.volume = [volumeNumber integerValue];
+        } else {
+            userModel.volume = 0;
+        }
+    }
+    dispatch_semaphore_signal(self.lock);
+}
+
+- (void)updateRenderModeViewWithCameraStatus:(NSString *)uid enableCamera:(BOOL)isEnable {
+    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
+    for (RoomVideoSession *userModel in self.userDataPool) {
+        if ([userModel.uid isEqualToString:uid]) {
+            userModel.isEnableVideo = isEnable;
+            break;
+        }
+    }
+    dispatch_semaphore_signal(self.lock);
+}
+
+- (void)updateRenderModeViewWithMicStatus:(NSString *)uid enableMic:(BOOL)isEnable {
+    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
+    for (RoomVideoSession *userModel in self.userDataPool) {
+        if ([userModel.uid isEqualToString:uid]) {
+            userModel.isEnableAudio = isEnable;
+            break;
+        }
+    }
+    dispatch_semaphore_signal(self.lock);
+}
+
+- (void)updateRenderModeViewWithHost:(NSString *)hostID {
+    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
+    for (RoomVideoSession *userModel in self.userDataPool) {
+        //Because there is only one host, the status of everyone needs to be updated
+        userModel.isHost = ([userModel.uid isEqualToString:hostID]) ? YES : NO;
+    }
+    self.userListViewController.isLoginHost = [self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id] ? YES : NO;
+    dispatch_semaphore_signal(self.lock);
+}
+
+- (void)updateRenderModeViewWithScreenStatus:(NSString *)uid enableScreen:(BOOL)isShare {
+    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
+    for (RoomVideoSession *userModel in self.userDataPool) {
+        if (isShare) {
+            if ([userModel.uid isEqualToString:uid]) {
+                userModel.isScreen = YES;
+            } else {
+                userModel.isScreen = NO;
+            }
+        } else {
+            userModel.isScreen = NO;
+        }
+    }
+    dispatch_semaphore_signal(self.lock);
+}
+
 #pragma mark - Private Action
 
 - (void)loadDataWithMeetingContrller {
+    __weak __typeof(self) wself = self;
     [MeetingControlCompoments getMeetingInfoWithBlock:^(MeetingControlRoomModel * _Nonnull roomModel, MeetingControlAckModel * _Nonnull model) {
         if (model.result) {
-            self.currentRoomModel = roomModel;
+            wself.currentRoomModel = roomModel;
             BOOL isOpenScreen = (roomModel.screen_shared_uid.length > 0);
-            [self updateModeWithStatus:!isOpenScreen ? RoomModeStatusGallery : RoomModeStatusSpaker];
-            [self updateRecordTipStatusWithHidden:!roomModel.record];
-            [self.bottomView updateButtonStatus:RoomBottomStatusMic close:(self.localVideoSession.audioType == 2)];
-            [self.bottomView updateButtonStatus:RoomBottomStatusCamera close:!self.localVideoSession.isEnableVideo];
-            [self.bottomView updateButtonStatus:RoomBottomStatusScreen close:isOpenScreen];
-            [self updateNavTimeWithModel:roomModel];
+            [wself updateModeWithStatus:!isOpenScreen ? RoomModeStatusGallery : RoomModeStatusSpaker];
+            [wself updateRecordTipStatusWithHidden:!roomModel.record];
+            [wself.bottomView updateButtonStatus:RoomBottomStatusMic close:!wself.localVideoSession.isEnableAudio];
+            [wself.bottomView updateButtonStatus:RoomBottomStatusCamera close:!wself.localVideoSession.isEnableVideo];
+            [wself.bottomView updateButtonStatus:RoomBottomStatusScreen close:isOpenScreen];
+            [wself updateNavTimeWithModel:roomModel];
         } else {
             AlertActionModel *alertModel = [[AlertActionModel alloc] init];
             alertModel.title = @"确定";
             [[AlertActionManager shareAlertActionManager] showWithMessage:model.message actions:@[alertModel]];
-        }
-    }];
-    
-    [MeetingControlCompoments getMeetingUserInfo:@"" block:^(NSArray<MeetingControlUserModel *> * _Nonnull userLists, MeetingControlAckModel * _Nonnull model) {
-        for (int i = 0; i < userLists.count; i++) {
-            RoomVideoSession *videoSession = [RoomVideoSession roomVideoSessionToMeetingControlUserModel:userLists[i]];
-            if ([videoSession.uid isEqualToString:self.localVideoSession.uid]) {
-                [self addLocalUser:self.localVideoSession];
-            } else {
-                [self addUser:videoSession];
-            }
         }
     }];
 }
@@ -424,81 +459,50 @@
     self.navView.localVideoSession = self.localVideoSession;
 }
 
-- (void)updateCurrentUserListHostStatus {
-    for (RoomVideoSession *userModel in self.currentUserLists) {
-        //Because there is only one host, the status of everyone needs to be updated
-        userModel.isHost = ([userModel.uid isEqualToString:self.currentRoomModel.host_id]) ? YES : NO;
-    }
-}
-
-- (void)addLocalUser:(RoomVideoSession *)localVideoSession {
-    localVideoSession.isVideoStream = YES;
-    [self addUser:localVideoSession];
-}
-
 - (void)addUser:(RoomVideoSession *)roomUserModel {
+    dispatch_semaphore_wait(self.lock, DISPATCH_TIME_FOREVER);
     //重复数据删除
     //Deduplication
     NSInteger index = -1;
-    for (int i = 0; i < self.currentUserLists.count; i++) {
-        RoomVideoSession *userModel = self.currentUserLists[i];
+    for (int i = 0; i < self.userDataPool.count; i++) {
+        RoomVideoSession *userModel = self.userDataPool[i];
         if ([userModel.uid isEqualToString:roomUserModel.uid]) {
             index = i;
             break;
         }
     }
     if (index >= 0) {
-        [self.currentUserLists replaceObjectAtIndex:index withObject:roomUserModel];
+        [self.userDataPool replaceObjectAtIndex:index withObject:roomUserModel];
     } else {
         if ([roomUserModel.uid isEqualToString:self.localVideoSession.uid]) {
-            [self.currentUserLists insertObject:roomUserModel atIndex:0];
+            [self.userDataPool insertObject:roomUserModel atIndex:0];
         } else {
-            [self.currentUserLists addObject:roomUserModel];
+            [self.userDataPool addObject:roomUserModel];
         }
     }
-    
-    //只有前9个用户才需要展示视频流
-    //Only the first 6 users need to show the video stream
-    if (index <= MaxAvatarNumber) {
-        NSString *value = self.currentStreamDic[roomUserModel.uid];
-        if ([value integerValue] == 1) {
-            roomUserModel.isVideoStream = YES;
-            [[MeetingRTCManager shareRtc] subscribeStream:roomUserModel.uid];
-        }
-    }
-    
-    if ([self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id]) {
-        [self updateRecordLayout:[self getRecordUids] screenId:self.currentRoomModel.screen_shared_uid];
-    }
-    [self updateRenderModeView];
+    dispatch_semaphore_signal(self.lock);
 }
 
 - (void)removeUser:(NSString *)uid {
-    RoomVideoSession *deleteModel = nil;
-    for (RoomVideoSession *roomUserModel in self.currentUserLists) {
-        if ([roomUserModel.uid isEqualToString:uid]) {
-            deleteModel = roomUserModel;
-            break;
-        }
-    }
-    if (deleteModel) {
-        [self.currentUserLists removeObject:deleteModel];
-    }
-    
-    if ([self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id]) {
-        [self updateRecordLayout:[self getRecordUids] screenId:self.currentRoomModel.screen_shared_uid];
-    }
-    [self updateRenderModeView];
+    NSMutableArray *sortUserLists = [self removeSortListsPromptly:uid];
+    [self updateRenderModeView:sortUserLists];
 }
 
-- (void)updateVideoParamInfoLabel {
-    
-        
-    
+
+- (void)updateRenderModeView:(NSArray *)userLists {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!self.videoMatrixView.hidden) {
+            [self.videoMatrixView bindVideoSessions:userLists];
+        } else if (!self.videoSpeakerView.hidden) {
+            [self.videoSpeakerView bindVideoSessions:userLists];
+        } else {
+            //error
+        }
+        self.userListViewController.videoSessions = [userLists mutableCopy];
+    });
 }
 
 - (void)createUIComponents {
-    //header view
     [self.view addSubview:self.navView];
     [self.view addSubview:self.videoMatrixView];
     [self.view addSubview:self.videoSpeakerView];
@@ -533,7 +537,6 @@
         make.bottom.equalTo(self.bottomView.mas_top);
         make.width.mas_equalTo(150.f);
         make.height.mas_equalTo(16 * 16 + 10 + 10);
-        //16 * n + 10 + 10
     }];
     
     [self.toastView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -563,165 +566,21 @@
     };
 }
 
-- (void)updateRenderModeViewUserRankeWithAudioVolume:(NSDictionary<NSString *, ByteRtcAudioVolumeInfo *> *)volumeInfo {
-    NSMutableArray *speakUserLists = [[NSMutableArray alloc] init];
-    NSMutableArray *volumeUserLists = [[NSMutableArray alloc] init];
-    for (int i = 0; i < self.currentUserLists.count; i++) {
-        //ranke
-        RoomVideoSession *userModel = self.currentUserLists[i];
-        BOOL isMicOpen = NO;
-        if ([userModel.uid isEqualToString:self.localVideoSession.uid]) {
-            isMicOpen = (self.localVideoSession.audioType == 2) ? NO : YES;
-        } else {
-            isMicOpen = (userModel.audioType == 2) ? NO : YES;
-        }
-        //每次重新计算最大音量用户
-        //Recalculate the maximum volume user
-        userModel.isMaxVolume = NO;
-        if ([userModel.uid isEqualToString:self.localVideoSession.uid]) {
-            userModel.rankeFactor = 257;
-        } else {
-            //音量取值范围为 [0, 255]
-            //The volume range is [0, 255]
-            if (volumeInfo &&
-                [volumeInfo isKindOfClass:[NSDictionary class]] &&
-                volumeInfo.count > 0 &&
-                isMicOpen) {
-                ByteRtcAudioVolumeInfo *volumeModel = [volumeInfo objectForKey:userModel.uid];
-                if (volumeModel) {
-                    userModel.rankeFactor = volumeModel.volume;
-                } else {
-                    userModel.rankeFactor = 0;
-                }
-            } else {
-                userModel.rankeFactor = 0;
-            }
-        }
-        [speakUserLists addObject:userModel];
-        
-        //volume
-        if (volumeInfo &&
-            [volumeInfo isKindOfClass:[NSDictionary class]] &&
-            volumeInfo.count > 0 &&
-            isMicOpen) {
-            ByteRtcAudioVolumeInfo *volumeModel = [volumeInfo objectForKey:userModel.uid];
-            if (volumeModel && [volumeModel isKindOfClass:[ByteRtcAudioVolumeInfo class]]) {
-                userModel.volume = volumeModel.volume;
-            } else {
-                userModel.volume = 0;
-            }
-            [volumeUserLists addObject:userModel];
-        }
-    }
-    NSArray *sorceSpeakUserLists = [speakUserLists sortedArrayUsingComparator:^NSComparisonResult(RoomVideoSession *_Nonnull obj1, RoomVideoSession *_Nonnull obj2) {
-        if (obj1.rankeFactor > obj2.rankeFactor) {
-            return NSOrderedAscending;
-        } else if (obj1.rankeFactor == obj2.rankeFactor) {
-            return NSOrderedSame;
-        } else {
-            return NSOrderedDescending;
-        }
-    }];
-    
-    NSArray *sorceVolumeUserLists = [volumeUserLists sortedArrayUsingComparator:^NSComparisonResult(RoomVideoSession *_Nonnull obj1, RoomVideoSession *_Nonnull obj2) {
-        if (obj1.volume > obj2.volume) {
-            return NSOrderedAscending;
-        } else if (obj1.volume == obj2.volume) {
-            return NSOrderedSame;
-        } else {
-            return NSOrderedDescending;
-        }
-    }];
-    if (sorceVolumeUserLists.count > 0) {
-        RoomVideoSession *maxVolumeUser = sorceVolumeUserLists.firstObject;
-        if (maxVolumeUser.volume > 0) {
-            maxVolumeUser.isMaxVolume = YES;
-        }
-    }
-    
-    //只需要前6名用户
-    //Only the first 6 users are required
-    NSInteger maxLen = MIN(sorceSpeakUserLists.count, MaxAvatarNumber);
-    sorceSpeakUserLists = [sorceSpeakUserLists subarrayWithRange:NSMakeRange(0, maxLen)];
-    
-    if (sorceSpeakUserLists.count > 0) {
-        NSMutableArray *resultLists = [[NSMutableArray alloc] init];
-        [self.currentUserLists removeObjectsInArray:sorceSpeakUserLists];
-        
-        [resultLists addObjectsFromArray:sorceSpeakUserLists];
-        [resultLists addObjectsFromArray:[self.currentUserLists copy]];
-        self.currentUserLists = [resultLists mutableCopy];
-        
-        [self needToSubscribeStreams:self.currentUserLists];
-        
-        if ([self.localVideoSession.uid isEqualToString:self.currentRoomModel.host_id]) {
-            [self updateRecordLayout:[self getRecordUids] screenId:self.currentRoomModel.screen_shared_uid];
-        }
-        [self updateRenderModeView];
-    }
-}
-
-- (void)needToSubscribeStreams:(NSArray<RoomVideoSession *> *)userList {
-    NSDictionary *subscribeUidDic = [[MeetingRTCManager shareRtc] getSubscribeUidDic];
-    //Unsubscribe first
-    if (subscribeUidDic.count > 0) {
-        for (int i = 0; i < userList.count; i++) {
-            RoomVideoSession *userModel = userList[i];
-            NSString *value = [subscribeUidDic objectForKey:userModel.uid];
-            if ([value integerValue] == 1 && i >= MaxAvatarNumber) {
-                [[MeetingRTCManager shareRtc] unsubscribe:userModel.uid];
-            }
-        }
-    }
-    
-    for (int i = 0; i < userList.count; i++) {
-        RoomVideoSession *userModel = userList[i];
-        if (![userModel.uid isEqualToString:self.localVideoSession.uid]) {
-            //Don't subscribe self
-            NSString *isStream = self.currentStreamDic[userModel.uid];
-            if (i < MaxAvatarNumber) {
-                if ([isStream integerValue] == 1) {
-                    //subscribe
-                    userModel.isVideoStream = YES;
-                    [[MeetingRTCManager shareRtc] subscribeStream:userModel.uid];
-                } else {
-                    //unsubscribe
-                    [[MeetingRTCManager shareRtc] unsubscribe:userModel.uid];
-                }
-            }
-        }
-    }
-}
-
 - (NSArray<NSString *> *)getRecordUids {
-    NSArray *lists = @[];
+    NSArray *userLists = [self getSortUserLists];
+    NSInteger maxLimit = 9;
     if (self.currentRoomModel.screen_shared_uid.length > 0) {
         //There is screen flow
-        NSInteger maxLen = MIN(self.currentUserLists.count, 8);
-        lists = [self.currentUserLists subarrayWithRange:NSMakeRange(0, maxLen)];
-    } else {
-        lists = self.currentTopUserLists;
+        maxLimit = 8;
     }
+    NSInteger currentLen = MIN(userLists.count, maxLimit);
+    NSArray *lists = [userLists subarrayWithRange:NSMakeRange(0, currentLen)];
     NSMutableArray *uids = [[NSMutableArray alloc] init];
     for (int i = 0; i < lists.count; i++) {
         RoomVideoSession *userModel = lists[i];
         [uids addObject:userModel.uid];
     }
     return [uids copy];
-}
-
-- (NSArray *)getRenderViewTopUserModel {
-    NSMutableArray *lists = [[NSMutableArray alloc] init];
-    for (int i = 0 ; i < self.currentUserLists.count; i++) {
-        RoomVideoSession *mdoel = self.currentUserLists[i];
-        if (mdoel.isVideoStream && mdoel.isEnableVideo) {
-            [lists addObject:mdoel];
-            if (lists.count >= 9) {
-                break;
-            }
-        }
-    }
-    return [lists copy];
 }
 
 - (void)startScreenWithCamera {
@@ -740,16 +599,16 @@
     [SystemAuthority authorizationStatusWithType:AuthorizationTypeAudio block:^(BOOL isAuthorize) {
         if (isAuthorize) {
             itemButton.status = (itemButton.status == ButtonStatusActive) ? ButtonStatusNone : ButtonStatusActive;
-            BOOL isEnableAudio = (self.localVideoSession.audioType == 2) ? NO : YES;
+            BOOL isEnableAudio = self.localVideoSession.isEnableAudio;
             [[MeetingRTCManager shareRtc] enableLocalAudio:!isEnableAudio];
             [SystemAuthority autoJumpWithAuthorizationStatusWithType:AuthorizationTypeAudio];
             if (itemButton.status == ButtonStatusActive) {
                 //off
                 [MeetingControlCompoments turnOffMic];
-                self.localVideoSession.audioType = 2;
+                self.localVideoSession.isEnableAudio = NO;
             } else if (itemButton.status == ButtonStatusNone) {
                 [MeetingControlCompoments turnOnMic];
-                self.localVideoSession.audioType = 1;
+                self.localVideoSession.isEnableAudio = YES;
             }
         } else {
             [[MeetingToastComponents shareMeetingToastComponents] showWithMessage:@"麦克风权限已关闭，请至设备设置页开启"];
@@ -781,7 +640,7 @@
     }];
 }
 
-- (void)updateRecordLayout:(NSArray *)uids screenId:(NSString *)screenId {
+- (void)updateRecordLayout:(NSArray<NSString *> *)uids screenId:(NSString *)screenId {
     NSString *temoRecordID = @"";
     for (int i = 0; i < uids.count; i++) {
         temoRecordID = [NSString stringWithFormat:@"%@%@", temoRecordID, uids[i]];
@@ -791,6 +650,17 @@
         self.recordID = temoRecordID;
         [MeetingControlCompoments updateRecordLayout:uids screenId:screenId];
     }
+}
+
+- (void)videoSpeakerViewTouchAction {
+    [self.bottomView dismissMoreView];
+    if (self.isLandscape) {
+        [self setDeviceInterfaceOrientation:UIDeviceOrientationPortrait];
+    }
+}
+
+- (void)videoMatrixViewTouchAction {
+    [self.bottomView dismissMoreView];
 }
 
 #pragma mark - getter
@@ -841,17 +711,6 @@
     return _videoMatrixView;
 }
 
-- (void)videoSpeakerViewTouchAction {
-    [self.bottomView dismissMoreView];
-    if (self.isLandscape) {
-        [self setDeviceInterfaceOrientation:UIDeviceOrientationPortrait];
-    }
-}
-
-- (void)videoMatrixViewTouchAction {
-    [self.bottomView dismissMoreView];
-}
-
 - (RoomSpeakerView *)videoSpeakerView {
     if (!_videoSpeakerView) {
         _videoSpeakerView = [[RoomSpeakerView alloc] init];
@@ -871,17 +730,11 @@
     return _endCompoments;
 }
 
-- (NSMutableArray<RoomVideoSession *> *)currentUserLists {
-    if (!_currentUserLists) {
-        _currentUserLists = [[NSMutableArray alloc] init];
+- (NSMutableArray<RoomVideoSession *> *)userDataPool {
+    if (!_userDataPool) {
+        _userDataPool = [[NSMutableArray alloc] init];
     }
-    return _currentUserLists;
-}
-
-- (NSArray<RoomVideoSession *> *)currentTopUserLists {
-    NSInteger maxLen = MIN(self.currentUserLists.count, MaxAvatarNumber);
-    _currentTopUserLists = [self.currentUserLists subarrayWithRange:NSMakeRange(0, maxLen)];
-    return _currentTopUserLists;
+    return _userDataPool;
 }
 
 - (NSMutableDictionary<NSString *,NSString *> *)currentStreamDic {
@@ -898,13 +751,6 @@
     return _screenComponents;
 }
 
-- (dispatch_semaphore_t)lock {
-    if (_lock == nil) {
-        _lock = dispatch_semaphore_create(1);
-    }
-    return _lock;
-}
-
 - (UIView *)toastView {
     if (!_toastView) {
         _toastView = [[UIView alloc] init];
@@ -914,9 +760,15 @@
     return _toastView;
 }
 
+- (dispatch_semaphore_t)lock {
+    if (_lock == nil) {
+        _lock = dispatch_semaphore_create(1);
+    }
+    return _lock;
+}
+
 - (void)dealloc {
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-    NSLog(@"dealloc %@",NSStringFromClass([self class]));
 }
 
 @end

@@ -246,6 +246,97 @@ enum ByteAudioDeviceStateType {
 };
 
 /**
+ * @brief Audio scenario type.
+ */
+enum ByteAudioScenarioType {
+    /**
+     * @brief music scenario, which is default.
+     *        use communication mode in speaker/receiver, media mode in others.
+     *        suitable in need of music performance such as live broatcasting or game.
+     */
+    kByteAudioScenarioMusic = 0,
+
+    /**
+     * @brief high-quality communication scenario.
+     *        use communication mode in speaker/receiver and bluetooth, media mode in others.
+     *        suitable in scenes of voice chat app with music.
+     */
+    kByteAudioScenarioHighQualityCommunication = 1,
+    /**
+     * @brief communication scenario.
+     *        use communication mode every time whenever.
+     *        suitable in scenes of switch mic frequently or video conference.
+     */
+    kByteAudioScenarioCommunication = 2,
+
+    /**
+     * @brief media scenario.
+     *        use media mode every time whenever.
+     *        suitable for special business needs and not recommended.
+     */
+    kByteAudioScenarioMedia = 3,
+};
+
+/**
+ * @brief Audio scenario strategy.
+ */
+struct ByteAudioScenarioStrategy {
+    /**
+     * @brief Audio session mode.
+     */
+    enum Mode {
+        // for iOS, use remote io audiounit and default session mode
+        // for Android, use default audiosource and normal mode
+        Media = 0,
+        // for iOS, use vpio audiounit and voicechat session mode
+        // for Android, use voice_communication audiosource and communication mode
+        Communication = 1,
+    };
+
+    /**
+     * @brief Audio scenario option in the state of broadcast/audience/voicechat
+     */
+    struct Option {
+        Option() = default;
+
+        Option(Mode broadcast, Mode audience, Mode voicechat);
+
+        Option(const Option& src) = default;
+
+        Option& operator=(const Option& src) = default;
+
+        bool operator!=(const ByteAudioScenarioStrategy::Option& other) const;
+
+        bool operator==(const ByteAudioScenarioStrategy::Option& other) const;
+
+        Mode broadcast_session_mode;
+        Mode audience_session_mode;
+        Mode voicechat_session_mode;
+    };
+
+    ByteAudioScenarioStrategy() = default;
+
+    explicit ByteAudioScenarioStrategy(ByteAudioScenarioType type);
+
+    ByteAudioScenarioStrategy(const ByteAudioScenarioStrategy& src) = default;
+
+    ByteAudioScenarioStrategy& operator=(const ByteAudioScenarioStrategy& src) = default;
+
+    bool operator!=(const ByteAudioScenarioStrategy& other) const;
+
+    bool operator==(const ByteAudioScenarioStrategy& other) const;
+
+    // indicates scenario strategy when using built-in receiver/speaker
+    Option built_in_device_info;
+    // indicates scenario strategy when using wired headset
+    Option wired_headset_info;
+    // indicates scenario strategy when using bluetooth headset
+    Option bt_headset_info;
+    // indicates type of scenario
+    ByteAudioScenarioType type;
+};
+
+/**
  * @brief Event callback handler.
  */
 class ByteAudioEventHandler {
@@ -408,10 +499,16 @@ enum ByteAudioStreamOptionKey {
     kAuxOptIntegratedLoudness = 20012,
 
     /**
-     * @brief loudness enable
-     * value_type: bool, default false
+     * @brief playout delay in ms of the aux stream.
+     * value_type: int32_t, read only
      */
-    kAuxOptLoudnormEnable = 20013,
+    kAuxOptPlayoutDelayMs = 20013,
+
+    /**
+     * @brief publish delay in ms of the aux stream.
+     * value_type: int32_t, read only
+     */
+    kAuxOptPublishDelayMs = 20014,
 
     /**
      * @brief User customized Option Key (for all stream).
@@ -1033,6 +1130,23 @@ public:
     virtual void enable_local_audio(bool enabled) = 0;
 
     /**
+     * @brief Set audio scenario
+     * @param scenario: Set the audio scenario, see @ByteAudioScenarioType.
+     *                  Note: 1. only valid in Android/iOS.
+     *                        2. support runtime change to device
+     */
+    virtual int set_audio_scenario(ByteAudioScenarioType scenario) = 0;
+
+    /**
+     * @brief Customize the audio mode strategy for the type of audio scenario
+     * @param scenario_strategy: the scenario strategy with the type of ByteAudioScenarioType that want to customize, see @ByteAudioScenarioStrategy.
+     *                  Note: 1. will be reset to default after every time that the last stream stop
+     *                        2. support runtime change to device
+     *                        3. only valid in Android/iOS.
+     */
+    virtual int customize_audio_scenario(const ByteAudioScenarioStrategy& scenario_strategy) = 0;
+
+    /**
      * @brief Adjusts the recording volume of all input streams.
      * @param [in] volume: volume of recording for all input streams, scope: 0 ~ 400 (default 100)
      */
@@ -1065,13 +1179,19 @@ public:
      */
     virtual int set_value(int key, ByteAudioValue value) = 0;
 
-     /**
+    /**
      * @brief get optinal values from engine.
      * @param key option key, defined in private interface.
      * @param value value to be get.
      * @return error code, refer to @ByteAudioErrorCode.
      */
     virtual int get_value(int key, ByteAudioValue* value) = 0;
+
+    /**
+     * @brief share cpu state with rx_media_engine.
+     * @param cpu_overload_times to be set.
+     */
+    virtual void set_cpu_overload_times(int cpu_overload_times) = 0;
 };
 
 BYTEAUDIO_API IByteAudioEngine* get_engine_instance();

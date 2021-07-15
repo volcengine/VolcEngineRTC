@@ -2,8 +2,8 @@
 //  MeetingToastComponents.h
 //  quickstart
 //
-//  Created by on 2021/4/1.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/4/1.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

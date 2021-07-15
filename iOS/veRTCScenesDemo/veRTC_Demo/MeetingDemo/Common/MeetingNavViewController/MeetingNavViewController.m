@@ -2,8 +2,8 @@
 //  MeetingNavViewController.m
 //  quickstart
 //
-//  Created by on 2021/3/22.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/22.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "MeetingNavViewController.h"
@@ -48,6 +48,11 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:NO];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
     self.navigationController.interactivePopGestureRecognizer.enabled = YES;
 }
 

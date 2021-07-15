@@ -1,25 +1,22 @@
 #import "SystemAuthority.h"
 #import "SettingsService.h"
-#import "LoginViewController.h"
+#import "MeetingLoginViewController.h"
 #import "MeetingRTCManager.h"
 #import "RoomViewController.h"
 #import "FeedbackManager.h"
 #import "RoomVideoSession.h"
 #import "SettingViewController.h"
-
 #import "MeetingSocketIOManager.h"
 
-#define NUM @"0123456789"
-#define ALPHA @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-#define ALPHANUM @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-"
 #define TEXTFIELD_MAX_LENGTH 18
 
-@interface LoginViewController () <UITextFieldDelegate>
+@interface MeetingLoginViewController () <UITextFieldDelegate>
 @property (nonatomic, strong) UIImageView *logoImageView;
 @property (nonatomic, strong) BaseButton *enableAudioBtn;
 @property (nonatomic, strong) BaseButton *enableVideoBtn;
 @property (nonatomic, strong) UIButton *setingBtn;
 @property (nonatomic, strong) UIButton *enterRoomBtn;
+@property (nonatomic, strong) BaseButton *navLeftButton;
 @property (nonatomic, strong) UITextField *roomIdTextField;
 @property (nonatomic, strong) UITextField *userIdTextField;
 @property (nonatomic, strong) UILabel *verLabel;
@@ -33,15 +30,17 @@
 
 @end
 
-@implementation LoginViewController
+@implementation MeetingLoginViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor blackColor];
     [self initUIComponents];
     [self authorizationStatusMicAndCamera];
     
     NSString *sdkVer = [[MeetingRTCManager shareRtc] getSdkVersion];
     NSString *appVer = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     self.verLabel.text = [NSString stringWithFormat:@"App版本 v%@ / SDK版本 v%@", appVer, sdkVer];
+    self.userIdTextField.text = [LocalUserComponents userModel].name;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardDidShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardDidHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -49,8 +48,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     
     __weak __typeof(self) wself = self;
-    NSString *sdkVersion = [[MeetingRTCManager shareRtc] getSdkVersion];
-    [[MeetingSocketIOManager shareSocketManager] connectWithSdkVersion:sdkVersion block:^(BOOL relust) {
+    [[MeetingSocketIOManager shareSocketManager] connectWithSdkVersion:sdkVer block:^(BOOL relust) {
         if (relust) {
             if (wself.currentAppid.length <= 0) {
                 [wself loadDataWithGetAppIDWithUid];
@@ -79,10 +77,10 @@
 
 - (void)applicationBecomeActive {
     UIViewController *topVC = [DeviceInforTool topViewController];
-    if ([topVC isKindOfClass:[LoginViewController class]]) {
+    if ([topVC isKindOfClass:[MeetingLoginViewController class]]) {
         AlertActionModel *alertModel = [[AlertActionModel alloc] init];
         alertModel.title = @"确定";
-        [[AlertActionManager shareAlertActionManager] showWithMessage:@"单次会议时长不超过10分钟"
+        [[AlertActionManager shareAlertActionManager] showWithMessage:@"本产品仅用于功能体验，单次会议时长不超过10分钟"
                                                               actions:@[alertModel]];
     }
 }
@@ -109,21 +107,7 @@
 }
 
 - (void)socketStatusChange:(NSNotification *)notifiction {
-    NSString *statsuStr = (NSString *)notifiction.object;
-    if ([statsuStr isEqualToString:@"faile"]) {
-        UIViewController *topVC = [DeviceInforTool topViewController];
-        if ([topVC isKindOfClass:[LoginViewController class]]) {
-            AlertActionModel *alertModel = [[AlertActionModel alloc] init];
-            alertModel.title = @"确定";
-            alertModel.alertModelClickBlock = ^(UIAlertAction * _Nonnull action) {
-                if ([action.title isEqualToString:@"确定"] && self.currentAppid.length <= 0) {
-                    //Socket reconnection
-                    [[MeetingSocketIOManager shareSocketManager] connect];
-                }
-            };
-            [[AlertActionManager shareAlertActionManager] showWithMessage:@"网络链接已断开，请检查设置。" actions:@[alertModel]];
-        }
-    }
+
 }
 
 #pragma mark - Action Method
@@ -140,28 +124,27 @@
     if (self.userIdTextField.text.length <= 0) {
         return;
     }
-    BOOL checkRoomId = [self isIllegalCharacter:self.roomIdTextField.text];
-    BOOL checkUid = [self isIllegalCharacter:self.userIdTextField.text];
-    if (checkRoomId || checkUid) {
+    BOOL checkRoomId = ![LocalUserComponents isMatchRoomID:self.roomIdTextField.text];
+    if (checkRoomId) {
         return;
     }
     
-    __block RoomVideoSession *roomVideoSession = [[RoomVideoSession alloc] initWithUid:self.userIdTextField.text];
+    __block RoomVideoSession *roomVideoSession = [[RoomVideoSession alloc] initWithUid:[LocalUserComponents userModel].uid];
+    roomVideoSession.name = self.userIdTextField.text;
     roomVideoSession.appid = self.currentAppid;
     roomVideoSession.roomId = self.roomIdTextField.text;
     roomVideoSession.isLoginUser = YES;
-    roomVideoSession.audioType = (self.enableAudioBtn.status == ButtonStatusNone) ? 1 : 2;
+    roomVideoSession.isEnableAudio = self.enableAudioBtn.status == ButtonStatusNone;
     roomVideoSession.isEnableVideo = self.enableVideoBtn.status == ButtonStatusNone;
     roomVideoSession.isHost = NO;
     roomVideoSession.isScreen = NO;
-    roomVideoSession.isEnableVideo = self.enableVideoBtn.status == ButtonStatusNone;
-    roomVideoSession.audioType = (self.enableAudioBtn.status == ButtonStatusNone) ? 1 : 2;
     
     sender.userInteractionEnabled = NO;
-    [MeetingControlCompoments joinMeeting:roomVideoSession block:^(NSString * _Nonnull token, MeetingControlAckModel * _Nonnull model) {
+    __weak __typeof(self) wself = self;
+    [MeetingControlCompoments joinMeeting:roomVideoSession block:^(NSString * _Nonnull token, NSArray<RoomVideoSession *> * _Nonnull userLists, MeetingControlAckModel * _Nonnull model) {
         if (model.result) {
             roomVideoSession.token = token;
-            [self jumpToRoomVC:roomVideoSession];
+            [wself jumpToRoomVC:roomVideoSession userLists:userLists];
         } else {
             AlertActionModel *alertModel = [[AlertActionModel alloc] init];
             alertModel.title = @"确定";
@@ -171,8 +154,8 @@
     }];
 }
 
-- (void)jumpToRoomVC:(RoomVideoSession *)localSession {
-    RoomViewController *roomVC = [[RoomViewController alloc] initWithVideoSession:localSession];
+- (void)jumpToRoomVC:(RoomVideoSession *)localSession userLists:(NSArray<RoomVideoSession *> *)userLists {
+    RoomViewController *roomVC = [[RoomViewController alloc] initWithVideoSession:localSession userLists:userLists];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:roomVC];
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     [self presentViewController:navController animated:YES completion:nil];
@@ -224,13 +207,13 @@
     [self.navigationController pushViewController:settingsVC animated:YES];
 }
 
+- (void)navBackAction:(BaseButton *)sender {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 #pragma mark - UITextField delegate
 
 - (void)roomNumTextFieldChange:(UITextField *)textField {
-    [self updateTextFieldChange:textField];
-}
-
-- (void)userNameTextFieldChange:(UITextField *)textField {
     [self updateTextFieldChange:textField];
 }
 
@@ -246,10 +229,19 @@
     }
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(dismissErrorLabel:) object:textField];
-    BOOL isIllegal = [self isIllegalCharacter:textField.text];
+    BOOL isIllegal = NO;
+    if (self.userIdTextField == textField) {
+        isIllegal = ![LocalUserComponents isMatchUserName:textField.text];;
+    }
+    if (self.roomIdTextField == textField) {
+        isIllegal = ![LocalUserComponents isMatchRoomID:textField.text];
+    }
     if (isIllegal || isExceedMaximLength) {
         if (isIllegal) {
             message = @"请输入数字、英文字母或符号@_-";
+            if (self.userIdTextField == textField) {
+                message = @"仅支持中文、字母、数字，1-18位";
+            }
         } else if (isExceedMaximLength) {
             [self performSelector:@selector(dismissErrorLabel:) withObject:textField afterDelay:2];
             message = @"输入长度不能超过18位";
@@ -274,16 +266,16 @@
 #pragma mark - Private Action
 
 - (void)loadDataWithGetAppIDWithUid {
+    __weak __typeof(self) wself = self;
     [MeetingControlCompoments getAppIDWithUid:@"" roomId:@"" block:^(NSString * _Nonnull appID, MeetingControlAckModel * _Nonnull model) {
         if (model.result) {
-            self.currentAppid = appID;
+            wself.currentAppid = appID;
             [[MeetingRTCManager shareRtc] createEngine:appID];
             [[MeetingRTCManager shareRtc] updateRtcVideoParams];
-            [[MeetingRTCManager shareRtc] startPreview:self.videoView];
+            [[MeetingRTCManager shareRtc] startPreview:wself.videoView];
         } else {
             AlertActionModel *alertModel = [[AlertActionModel alloc] init];
             alertModel.title = @"重试";
-            __weak __typeof(self) wself = self;
             alertModel.alertModelClickBlock = ^(UIAlertAction * _Nonnull action) {
                 if ([action.title isEqualToString:@"重试"]) {
                     [wself loadDataWithGetAppIDWithUid];
@@ -410,35 +402,18 @@
         make.bottom.equalTo(self.view).offset(-([DeviceInforTool getVirtualHomeHeight] + 20));
     }];
     
+    [self.view addSubview:self.navLeftButton];
+    [self.navLeftButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.width.mas_equalTo(16);
+        make.left.mas_equalTo(16);
+        make.top.equalTo(self.view).offset([DeviceInforTool getStatusBarHight] + 16);
+    }];
+    
     [self addLineView:self.userIdTextField];
     [self addLineView:self.roomIdTextField];
     
     [self addErrorLabel:self.roomIdTextField tag:3001];
     [self addErrorLabel:self.userIdTextField tag:3002];
-}
-
-- (BOOL)isIllegalCharacter:(NSString *)text {
-    BOOL isIllegal = NO;
-    NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:ALPHANUM];
-    //不可输入汉字等不合法字符
-    char *stringResult = malloc([text length] * 10);
-    int cpt = 0;
-    for (int i = 0; i < [text length]; i++) {
-        unichar c = [text characterAtIndex:i];
-        if ([charSet characterIsMember:c]) {
-            stringResult[cpt] = c;
-            cpt++;
-        }
-    }
-    stringResult[cpt] = '\0';
-    NSString *cropSrt  = [NSString stringWithUTF8String:stringResult];
-    free(stringResult);
-    
-    if (![cropSrt isEqualToString:text]) {
-        isIllegal = YES;
-    }
-    
-    return isIllegal;
 }
 
 - (void)closeRoomAction:(BOOL)isEnableAudio isEnableVideo:(BOOL)isEnableVideo {
@@ -498,7 +473,7 @@
         [_userIdTextField setTextColor:[UIColor whiteColor]];
         _userIdTextField.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_userIdTextField addTarget:self action:@selector(roomNumTextFieldChange:) forControlEvents:UIControlEventEditingChanged];
-        NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:@"请输入用户ID"
+        NSAttributedString *attrString = [[NSAttributedString alloc] initWithString:@"请输入用户昵称"
                                                                          attributes:
                                                                              @{NSForegroundColorAttributeName : [UIColor colorFromHexString:@"#86909C"]}];
         _userIdTextField.attributedPlaceholder = attrString;
@@ -604,6 +579,21 @@
         _verLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     }
     return _verLabel;
+}
+
+- (BaseButton *)navLeftButton {
+    if (!_navLeftButton) {
+        _navLeftButton = [[BaseButton alloc] init];
+        [_navLeftButton setImage:[UIImage imageNamed:@"meeting_nav_left"] forState:UIControlStateNormal];
+        _navLeftButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        [_navLeftButton addTarget:self action:@selector(navBackAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _navLeftButton;
+}
+
+- (void)dealloc {
+    [[MeetingSocketIOManager shareSocketManager] disConnect];
+    [[MeetingRTCManager shareRtc] destroy];
 }
 
 @end

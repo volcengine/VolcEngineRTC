@@ -2,7 +2,7 @@
 //  RoomAvatarRenderView.m
 //  SceneRTCDemo
 //
-//  Created by on 2021/3/12.
+//  Created by  on 2021/3/12.
 //
 
 #import "RoomAvatarRenderView.h"
@@ -127,33 +127,28 @@
 }
 
 - (void)updateUIWithModel:(RoomVideoSession *)userModel {
-    if (userModel.isVideoStream) {
+    BOOL isSpeack = userModel.isMaxVolume && userModel.volume > 0;
+    if (userModel.isEnableVideo && userModel.isVideoStream) {
         [self.renderView addSubview:userModel.streamView];
         [userModel.streamView mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(self.renderView);
         }];
-    }
-    [self updateAvatarSpeakViewWithModel:userModel];
-}
-
-- (void)updateAvatarSpeakViewWithModel:(RoomVideoSession *)userModel {
-    if (userModel.isEnableVideo) {
         self.tagView.userModel = userModel;
         self.tagView.hidden = NO;
         self.renderView.hidden = NO;
         self.avatarBgView.hidden = YES;
         self.emptyVideoTagView.hidden = YES;
-        self.speakView.hidden = !userModel.isMaxVolume;
+        self.speakView.hidden = !isSpeack;
         self.avatarSpeakView.hidden = YES;
     } else {
         self.emptyVideoTagView.userModel = userModel;
         self.emptyVideoTagView.hidden = NO;
         self.renderView.hidden = YES;
         self.tagView.hidden = YES;
-        self.avatarBgView.text = userModel.uid;
+        self.avatarBgView.text = userModel.name;
         self.avatarBgView.hidden = NO;
         self.speakView.hidden = YES;
-        self.avatarSpeakView.hidden = !userModel.isMaxVolume;
+        self.avatarSpeakView.hidden = !isSpeack;
     }
 }
 

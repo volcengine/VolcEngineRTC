@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>20E241</string>
+	<string>20F71</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.19.205</string>
+	<string>3.20.101</string>
 	<key>CFBundleSupportedPlatforms</key>
 	<array>
 		<string>iPhoneOS</string>
@@ -41,11 +41,11 @@
 	<key>DTXcodeBuild</key>
 	<string>11E608c</string>
 	<key>GitCommitSHA</key>
-	<string>add01498875afb56e420e18eed19f25866f9e3a6</string>
+	<string>258377c81fbcc8a41f6cd77e944a19f41a7c750c</string>
 	<key>MinimumOSVersion</key>
 	<string>8.0</string>
 	<key>RealXCommitID</key>
-	<string>62f36bf149ad686f0091b3e1ee509d78a6048939</string>
+	<string>a65d253cc1304c38e6d5e9a30ffcea2c06fd4ca4</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>

@@ -2,24 +2,33 @@
 //  veRTC.pch
 //  quickstart
 //
-//  Created by on 2021/3/22.
-//  Copyright © 2021. All rights reserved.
+//  Created by  on 2021/3/22.
+//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #ifndef veRTC_pch
 #define veRTC_pch
 
+//base
 #import "UIView+addition.h"
 #import "UIColor+String.h"
 #import "Masonry.h"
 #import "DeviceInforTool.h"
 #import "AlertActionManager.h"
-#import "MeetingToastComponents.h"
 #import "BaseButton.h"
+#import "LocalUserComponents.h"
 #import <YYModel/YYModel.h>
+#import "MenuTokenCompoments.h"
 
+//meeting
+#import "MeetingToastComponents.h"
 #import "MeetingControlCompoments.h"
 #import "MeetingRTCManager.h"
+
+//voice
+#import "VoiceSocketIOManager.h"
+#import "VoiceControlCompoments.h"
+#import "VoiceRTCManager.h"
 
 #define SCREEN_WIDTH  ([UIScreen mainScreen].bounds.size.width)
 #define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
