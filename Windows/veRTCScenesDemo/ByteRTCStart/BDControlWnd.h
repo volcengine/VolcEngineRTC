@@ -18,7 +18,7 @@
 #include "BDTipsWnd.h"
 
 const int ICON_SQUARE = 36;
-const double COUNT = 6.5;
+const double COUNT = 7.5;
 
 class BDControlWnd : public BDWndImpl<BDControlWnd>
 {
@@ -35,7 +35,6 @@ public:
     BEGIN_MSG_MAP(BDControlWnd)
         MSG_WM_CREATE(OnCreate)
         MSG_WM_SIZE(OnSize)
-        MSG_WM_SHOWWINDOW(OnFrameShow)
         MESSAGE_HANDLER(WM_PAINT, OnPaint)
         MSG_WM_NCHITTEST(OnNcHitTest)
         MSG_WM_DESTROY(OnDestroy)
@@ -72,7 +71,7 @@ public:
         m_share_screen.SetDisable(IDB_SHARE_ACTIVE);
         m_share_screen.SetID(DUID_SHARE_SCREEN);
 
-        m_video_recording.Create(m_hWnd, r, BDHMenu(DUID_VIDEO_RECORDING), L"VR", WS_CHILD /*| WS_VISIBLE*/);
+        m_video_recording.Create(m_hWnd, r, BDHMenu(DUID_VIDEO_RECORDING), L"VR", WS_CHILD | WS_VISIBLE);
         m_video_recording.SetNormal(IDB_RECORD);
         m_video_recording.SetHover(IDB_RECORD_HOVER);
         m_video_recording.SetDisable(IDB_RECORD_ACTIVE);
@@ -105,15 +104,6 @@ public:
         return 0;
     }
 
-    void OnFrameShow(BOOL show, int lParam) {
-        if (show) {
-            m_video_recording.SetState(BUTTON_STATE_NORMAL);
-            m_video_recording.SetNormal(IDB_RECORD);
-            m_video_recording.SetHover(IDB_RECORD_HOVER);
-            m_move_enable = false;
-        }
-    }
-
     void OnSize(UINT nType, BDSize size) {
         int interval = (size.cx - ICON_SQUARE * COUNT) / (COUNT + 1);
         int delta = interval + ICON_SQUARE;
@@ -121,10 +111,10 @@ public:
         m_muteAudio.MoveWindow(interval, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
         m_muteVideo.MoveWindow(interval + delta, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
         m_share_screen.MoveWindow(interval + delta * 2, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
-        //m_video_recording.MoveWindow(interval + delta * 3, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
-        m_showUsers.MoveWindow(interval + delta * 3, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
-        m_showSettings.MoveWindow(interval + delta * 4, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
-        m_leaveButton.MoveWindow(interval + delta * 5.5, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
+        m_video_recording.MoveWindow(interval + delta * 3, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
+        m_showUsers.MoveWindow(interval + delta * 4, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
+        m_showSettings.MoveWindow(interval + delta * 5, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
+        m_leaveButton.MoveWindow(interval + delta * 6.5, (size.cy - ICON_SQUARE) / 2, ICON_SQUARE, ICON_SQUARE);
 
         //RECT rect;
         //m_muteAudio.GetWindowRect(&rect);
@@ -134,13 +124,13 @@ public:
         //m_share_screen.GetWindowRect(&rect);
         m_share_screen.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 2, "屏幕共享", "屏幕共享"));
         //m_video_recording.GetWindowRect(&rect);
-        //m_video_recording.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, rect.left, "开启录制", "开启录制"));
+        m_video_recording.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 3, "开启录制", "开启录制"));
         //m_showUsers.GetWindowRect(&rect);
-        m_showUsers.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 3, "参会人列表", "参会人列表"));
+        m_showUsers.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 4, "参会人列表", "参会人列表"));
         //m_showSettings.GetWindowRect(&rect);
-        m_showSettings.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 4, "设置", "设置"));
+        m_showSettings.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 5, "设置", "设置"));
         //m_leaveButton.GetWindowRect(&rect);
-        m_leaveButton.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 5.5, "结束通话", "结束通话"));
+        m_leaveButton.OnHover(std::bind(&BDControlWnd::OnButtonHover, this, std::placeholders::_1, std::placeholders::_2, interval + delta * 6.5, "结束通话", "结束通话"));
     }
 
     void SetMuteValue() {
@@ -163,7 +153,7 @@ public:
         int interval = (rc.right - ICON_SQUARE * COUNT) / (COUNT + 1);
         int delta = interval + ICON_SQUARE;
 
-        int x0 = interval + delta * 5.1;
+        int x0 = interval + delta * 6.1;
         int y0 = rc.bottom / 4;
         int x1 = x0;
         int y1 = rc.bottom * 3 / 4;

@@ -222,11 +222,38 @@ void string_replace(std::string *strBig, const std::string &strsrc, const std::s
     }
 }
 
-
 std::string getTimestampDescription(int64_t timestamp) {
     time_t tm(timestamp);
     std::string des(ctime(&tm));
     string_replace(&des, "\n", "");
     return des;
+}
+
+bool IsValidRoomString(const BDString& str) {
+    for (int i = 0; i < (int)str.GetLength(); i++) {
+        wchar_t ch = str[i];
+        if (ch >= L'a' && ch <= L'z') continue;
+        else if (ch >= L'A' && ch <= L'Z') continue;
+        else if (ch >= L'0' && ch <= L'9') continue;
+        else if (ch == L'@' || ch == L'.' || ch == L'_' || ch == L'-') continue;
+        return false;
+    }
+
+    return true;
+}
+
+bool IsValidUserString(const BDString& str) {
+    for (int i = 0; i < (int)str.GetLength(); i++) {
+        wchar_t ch = str[i];
+        if (ch >= L'a' && ch <= L'z') continue;
+        else if (ch >= L'A' && ch <= L'Z') continue;
+        else if (ch >= L'0' && ch <= L'9') continue;
+        else if(ch >= 0x4E00 && ch <= 0x9FEF) continue;
+        else if (ch >= 0x3400 && ch <= 0x4DB5) continue;
+
+        return false;
+    }
+
+    return true;
 }
 }  // namespace rtcutil

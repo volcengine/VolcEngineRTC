@@ -15,6 +15,9 @@ void SetWindowCentor(HWND hwnd);
 std::string GetSystemTimeText();
 int64_t GetTimestamp();
 
+bool IsValidUserString(const BDString& str);
+bool IsValidRoomString(const BDString& str);
+
 bool LoadFile(LPCWSTR szFileName, Gdiplus::Image*& pImage);
 bool DrawImage(HDC DC, Gdiplus::Image* pImage, INT nXPos, INT nYPos, INT Width, INT Height);
 

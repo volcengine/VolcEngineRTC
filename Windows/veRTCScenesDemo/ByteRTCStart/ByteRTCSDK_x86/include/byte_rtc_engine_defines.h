@@ -47,20 +47,24 @@ enum RangeAudioMode {
 };
 
 /**
- * @hidden
  * @type keytype
- * @brief 设置渲染模式
+ * @brief 渲染模式
  */
 enum RENDER_MODE_TYPE {
-    /**
-     * @brief 优先保证视窗被填满。视频尺寸等比缩放，直至整个视窗被视频填满。如果视频长宽与显示窗口不同，多出的视频将被截掉
+     /**
+     * @brief 视窗填满优先。<br>
+     *        视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>
+     *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
      */
     RENDER_MODE_HIDDEN = 1,
-    /**
-     * @brief 优先保证视频内容全部显示。视频尺寸等比缩放，直至视频窗口的一边与视窗边框对齐。如果视频长宽与显示窗口不同，视窗上未被填满的区域将被涂黑
+     /**
+     * @brief 视频帧内容全部显示优先。<br>
+     *        视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>
+     *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
      */
     RENDER_MODE_FIT = 2,
     /**
+     * @hidden
      * @brief 暂时不支持设置为该值
      */
     RENDER_MODE_ADAPTIVE = 3,
@@ -88,8 +92,7 @@ enum USER_OFFLINE_REASON_TYPE {
 
 /**
  * @type keytype
- * @brief 房间内远端流移除原因。  <br>
- *        房间内远端音视频流移除时，SDK 会通过 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 回调通知用户。此枚举类型即为通知的远端流移除的原因。  <br>
+ * @brief 房间内远端流被移除的原因。  <br>
  */
 enum RtcStreamRemoveReason {
     /**
@@ -211,7 +214,7 @@ enum RoomMessageSendResult {
 
 /**
  * @type keytype
- * @brief SDK 与信令服务器连接状态。
+ * @brief SDK 与 RTC 服务器连接状态。
  */
 enum CONNECTION_STATE {
     /**
@@ -227,18 +230,19 @@ enum CONNECTION_STATE {
      */
     CONNECTION_STATE_CONNECTED = 3,
     /**
-     * @brief 连接断开后重新连接中。
+     * @brief 连接断开后，重新连接中。
      */
     CONNECTION_STATE_RECONNECTING = 4,
     /**
-     * @brief 连接断开后重连成功。
+     * @brief 连接断开后，重连成功。
      */
     CONNECTION_STATE_RECONNECTED = 5,
     /**
-     * @brief 网络连接断开超过 10 秒，仍然会继续重连。
+     * @brief 网络连接断开超过 10 秒。SDK 仍然会继续尝试重连。
      */
     CONNECTION_STATE_LOST = 6,
 };
+
 
 /**
  * @type keytype
@@ -419,78 +423,62 @@ enum MediaDeviceState {
 };
 
 /**
- * @hidden
- * @type keytype
- * @brief 音频采集编码属性。每一项代表一组特定的采样率、编码码率、通道数、编码场景。
- * @notes 暂时不支持该参数的设置。
- */
-enum AUDIO_PROFILE_TYPE {
+* @hidden(macOS,Windows)
+* @type keytype
+* @brief 音频场景类型。<br>
+*        选择音频场景后，RTC 会自动根据客户端音频路由和发布订阅状态，适用通话音量/媒体音量。<br>
+*        你可以调用 SetAudioScenario{@link #SetAudioScenario} 设置音频场景。<br>
+*        如果以下音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
+*/
+enum AudioScenarioType {
     /**
-     * @brief 用户默认设置
+     * @brief 音乐场景。默认为此场景。<br>
+     *        此场景适用于对音乐表现力有要求的场景。如音乐直播等。<br>
+     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
+     *        </table>
      */
-    AUDIO_PROFILE_DEFAULT = 0,
+    kAudioScenarioMusic = 0,
     /**
-     * @brief 指定 32 KHz 采样率，单声道，编码码率最大值为 18 Kbps，适用于语音通话场景
+     * @brief 高质量通话场景。<br>
+     *        此场景适用于对音乐表现力有要求的场景。但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。
+     *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验；并尽可能避免使用蓝牙耳机时音量类型切换导致的听感突变。<br>
+     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th> <th>备注</th> </tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *        </table>
      */
-    AUDIO_PROFILE_SPEECH_STANDARD = 1,
+    kAudioScenarioHighQualityCommunication = 1,
     /**
-     * @brief 指定 48 KHz 采样率，单声道，编码码率最大值为 50 Kbps，适用于有音乐播放需求的场景
+     * @brief 纯通话音量场景。<br>
+     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用通话音量。
+     *        适用于需要频繁上下麦的通话或会议场景。<br>
+     *        此场景可以保持统一的音频模式，不会有音量突变的听感；
+     *        最大程度上的消除回声，使通话清晰度达到最优；
+     *        使用蓝牙耳机时，能够使用蓝牙耳机上自带的麦克风进行音频采集。<br>
+     *        但是，使用媒体音量进行播放的其他音频的音量会被压低，且音质会变差。
      */
-    AUDIO_PROFILE_MUSIC_STANDARD = 2,
+    kAudioScenarioCommunication = 2,
     /**
-     * @brief 指定 48 KHz 采样率，双声道，编码码率最大值为 50 Kbps，适用于有音乐播放需求的场景
+     * @brief 纯媒体场景。一般不建议使用。<br>
+     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用媒体音量。
+     *        外放通话时，极易出现回声和啸叫。
      */
-    AUDIO_PROFILE_MUSIC_STANDARD_STEREO = 3,
-    /**
-     * @brief 指定 48 KHz 采样率，单声道，编码码率最大值为 128 Kbps，适用于有音乐播放需求且音质要求较高的场景
-     */
-    AUDIO_PROFILE_MUSIC_HIGH_QUALITY = 4,
-    /**
-     * @brief 指定 48 KHz 采样率，双声道，编码码率最大值为 192 Kbps，适用于有音乐播放需求且音质要求较高的场景
-     */
-    AUDIO_PROFILE_MUSIC_HIGH_QUALITY_STEREO = 5,
-    /**
-     * @brief 音频采集编码的枚举数量
-     */
-    AUDIO_PROFILE_NUM = 6,
+    kAudioScenarioMedia = 3,
 };
 
-/**
- * @hidden
- * @type keytype
- * @brief 设置音频采集编码场景。
- * @notes 暂时不支持该参数的设置。
- */
-enum AUDIO_SCENARIO_TYPE {
-    /**
-     * @brief 默认的音频应用场景
-     */
-    AUDIO_SCENARIO_DEFAULT = 0,
-    /**
-     * @brief 娱乐场景，适用于用户需要频繁上下麦的场景
-     */
-    AUDIO_SCENARIO_CHATROOM_ENTERTAINMENT = 1,
-    /**
-     * @brief 教育场景，适用于需要高流畅度和稳定性的场景
-     */
-    AUDIO_SCENARIO_EDUCATION = 2,
-    /**
-     * @brief 高音质语聊房场景，适用于音乐为主的场景
-     */
-    AUDIO_SCENARIO_GAME_STREAMING = 3,
-    /**
-     * @brief 秀场场景，适用于需要高音质的单主播场景
-     */
-    AUDIO_SCENARIO_SHOWROOM = 4,
-    /**
-     * @brief 游戏开黑场景，适用于只有人声的场景
-     */
-    AUDIO_SCENARIO_CHATROOM_GAMING = 5,
-    /**
-     * @brief 音频应用场景的枚举数量
-     */
-    AUDIO_SCENARIO_NUM = 6,
-};
+
+
+
+
+
 
 /**
  * @hidden
@@ -535,7 +523,7 @@ enum SubscribeFallbackOptions {
 
 /*
  * @type keytype
- * @brief 订阅模式选项。业务方在加入房间前，调用 EnableAutoSubscribe{@link #IRtcEngine#EnableAutoSubscribe} 接口设置订阅模式。  <br>
+ * @brief 订阅模式选项。业务方在加入房间前，调用 EnableAutoSubscribe{@link #EnableAutoSubscribe} 接口设置订阅模式。  <br>
  */
 enum SubscribeMode {
     /**
@@ -543,7 +531,7 @@ enum SubscribeMode {
      */
     kAutoSubscribeMode = 0,
     /**
-     * @brief 手动订阅模式。SDK 不为自动订阅流。用户需要自己手动调用 SubscribeStream{@link #IRtcEngine#SubscribeStream} 接口去订阅远端流。
+     * @brief 手动订阅模式。SDK 不为自动订阅流。用户需要自己手动调用 SubscribeStream{@link #SubscribeStream} 接口去订阅远端流。
      */
     kManualSubscribeMode = 1
 };
@@ -649,7 +637,7 @@ struct RemoteStreamSwitch {
 /**
  * @type errorcode
  * @brief 回调错误码。
- *        SDK 内部遇到不可恢复的错误时，会通过 OnChannelError{@link #OnChannelError} 回调通知用户。
+ *        SDK 内部遇到不可恢复的错误时，会通过 OnError{@link #OnError} 回调通知用户。
  */
 enum RTC_ERROR_CODE {
 
@@ -929,20 +917,18 @@ enum LocalAudioStreamError {
 enum LocalVideoStreamState {
 
     /**
-     * @brief 本地视频默认初始状态
+     * @brief 本地视频采集停止状态
      */
     kLocalVideoStreamStateStopped = 0,
 
     /**
-     * @brief 本地视频录制设备启动成功
+     * @brief 本地视频采集设备启动成功
      */
     kLocalVideoStreamStateRecording,
-
     /**
-     * @brief 本地视频首帧编码成功
+     * @brief 本地视频采集后，首帧编码成功
      */
     kLocalVideoStreamStateEncoding,
-
     /**
      * @brief 本地视频启动失败
      */
@@ -954,31 +940,35 @@ enum LocalVideoStreamState {
  * @brief 本地视频状态改变时的错误码
  */
 enum LocalVideoStreamError {
-
     /**
-     * @brief 本地视频状态正常
+     * @brief 状态正常
      */
     kLocalVideoStreamErrorOk = 0,
 
     /**
-     * @brief 视频流发布失败
+     * @brief 本地视频流发布失败
      */
     kLocalVideoStreamErrorFailure,
 
     /**
-     * @brief 没有权限启动本地视频录制设备
+     * @brief 没有权限启动本地视频采集设备
      */
     kLocalVideoStreamErrorDeviceNoPermission,
 
     /**
-     * @brief 本地视频录制设备已经在使用中
+     * @brief 本地视频采集设备被占用
      */
     kLocalVideoStreamErrorDeviceBusy,
 
     /**
-     * @brief 本地视频录制失败，建议检查录制设备是否正常工作
+     * @brief 本地视频采集设备不存在或已移除
      */
-    kLocalVideoStreamErrorRecordFailure,
+    kLocalVideoStreamErrorDeviceNotFound,
+
+    /**
+     * @brief 本地视频采集失败，建议检查采集设备是否正常工作
+     */
+    kLocalVideoStreamErrorCaptureFailure,
 
     /**
      * @brief 本地视频编码失败
@@ -988,42 +978,45 @@ enum LocalVideoStreamError {
 
 /**
  * @type keytype
- * @brief 远端音频流状态
- *        SDK 通过 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged} 回调该状态
+ * @brief 远端音频流状态。<br>
+ *        用户可以通过 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged} 了解该状态。
  */
 enum RemoteAudioState {
 
     /**
-     * @brief  远端音频流默认初始状态，在以下时机回调该状态：  <br>
-     *       + 本地用户停止接收远端音频流，对应错误码 kRemoteAudioReasonLocalMuted{@link #kRemoteAudioReasonLocalMuted}  <br>
-     *       + 远端用户停止发送音频流，对应错误码 kRemoteAudioReasonRemoteMuted{@link #kRemoteAudioReasonRemoteMuted}  <br>
-     *       + 远端用户离开房间，对应错误码 kRemoteAudioReasonRemoteOffline{@link #kRemoteAudioReasonRemoteOffline}  <br>
+     * @brief  不接收远端音频流。 <br>
+     *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}：  <br>
+     *       + 本地用户停止接收远端音频流，对应原因是：kRemoteAudioReasonLocalMuted{@link #RemoteAudioStateReason}  <br>
+     *       + 远端用户停止发送音频流，对应原因是：kRemoteAudioReasonRemoteMuted{@link #RemoteAudioStateReason}  <br>
+     *       + 远端用户离开房间，对应原因是：kRemoteAudioReasonRemoteOffline{@link #RemoteAudioStateReason}  <br>
      */
     kRemoteAudioStateStopped = 0,
-
     /**
-     * @brief 本地用户已接收远端音频首包。
-     *        收到远端音频首包时回调该状态，对应错误码 kRemoteAudioReasonLocalUnmuted{@link #kRemoteAudioReasonLocalUnmuted}
+     * @brief 开始接收远端音频流首包。<br>
+     *        刚收到远端音频流首包会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}，
+     *        对应原因是： kRemoteAudioReasonLocalUnmuted{@link #RemoteAudioStateReason}。
      */
     kRemoteAudioStateStarting,
 
     /**
-     * @brief  远端音频流正在解码，正常播放，在以下时机回调该状态：  <br>
-     *       + 成功解码远端音频首帧，对应错误码 kRemoteAudioReasonLocalUnmuted{@link #kRemoteAudioReasonLocalUnmuted}  <br>
-     *       + 网络由阻塞恢复正常，对应错误码 kRemoteAudioReasonNetworkRecovery{@link #kRemoteAudioReasonNetworkRecovery}  <br>
-     *       + 本地用户恢复接收远端音频流，对应错误码 kRemoteAudioReasonLocalUnmuted{@link #kRemoteAudioReasonLocalUnmuted}  <br>
-     *       + 远端用户恢复发送音频流，对应错误码 kRemoteAudioReasonRemoteUnmuted{@link #kRemoteAudioReasonRemoteUnmuted}  <br>
+     * @brief  远端音频流正在解码，正常播放。 <br>
+     *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}：  <br>
+     *       + 成功解码远端音频首帧，对应原因是：kRemoteAudioReasonLocalUnmuted{@link #RemoteAudioStateReason}  <br>
+     *       + 网络由阻塞恢复正常，对应原因是：kRemoteAudioReasonNetworkRecovery{@link #RemoteAudioStateReason}  <br>
+     *       + 本地用户恢复接收远端音频流，对应原因是：kRemoteAudioReasonLocalUnmuted{@link #RemoteAudioStateReason}  <br>
+     *       + 远端用户恢复发送音频流，对应原因是：kRemoteAudioReasonRemoteUnmuted{@link #RemoteAudioStateReason}  <br>
      */
     kRemoteAudioStateDecoding,
 
     /**
-     * @brief 远端音频流卡顿。
-     *        网络阻塞、丢包率大于40%时回调该状态，对应错误码 kRemoteAudioReasonNetworkCongestion{@link
-     * #kRemoteAudioReasonNetworkCongestion}
+     * @brief 远端音频流卡顿。<br>
+     *        网络阻塞、丢包率大于 40% 时，会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}，
+     *        对应原因是：kRemoteAudioReasonNetworkCongestion{@link #RemoteAudioStateReason}
      */
     kRemoteAudioStateFrozen,
 
     /**
+     * @hidden
      * @brief 远端音频流播放失败
      * @notes 该错误码暂未使用
      */
@@ -1032,8 +1025,8 @@ enum RemoteAudioState {
 
 /**
  * @type keytype
- * @brief 远端音频流状态改变的原因。
- *        SDK 通过 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged} 回调该错误码。
+ * @brief 接收远端音频流状态改变的原因。<br>
+ *        用户可以通过 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged} 了解该原因。
  */
 enum RemoteAudioStateReason {
     /**
@@ -1076,23 +1069,23 @@ enum RemoteAudioStateReason {
  */
 enum RemoteVideoState {
     /**
-     * @brief 远端视频流默认初始状态，视频尚未开始播放
+     * @brief 远端视频流默认初始状态，视频尚未开始播放。
      */
     kRemoteVideoStateStopped = 0,
     /**
-     * @brief 本地用户已接收远端视频首包，状态改变详见 OnRemoteVideoFirstPacketReceived
+     * @brief 本地用户已接收远端视频流首包。状态改变时，会收到回调：OnRemoteVideoStateChanged{@link #OnRemoteVideoStateChanged}
      */
     kRemoteVideoStateStarting,
     /**
-     * @brief 远端视频流正在解码，正常播放
+     * @brief 远端视频流正在解码，正常播放。状态改变时，会收到回调：OnRemoteVideoStateChanged{@link #OnRemoteVideoStateChanged}
      */
     kRemoteVideoStateDecoding,
     /**
-     * @brief 可能因为网络质量等原因，远端视频流卡顿，状态改变详见 OnVideoStreamNetworkQuality
+     * @brief 远端视频流卡顿，可能有网络等原因。状态改变时，会收到回调：OnRemoteVideoStateChanged{@link #OnRemoteVideoStateChanged}
      */
     kRemoteVideoStateFrozen,
     /**
-     * @brief 远端视频流播放失败，错误场景详见 OnVideoStreamSubscribe
+     * @brief 远端视频流播放失败。状态改变时，会收到回调：OnRemoteVideoStateChanged{@link #OnRemoteVideoStateChanged}
      */
     kRemoteVideoStateFailed,
 };
@@ -1104,42 +1097,35 @@ enum RemoteVideoState {
 enum RemoteVideoStateReason {
     /**
      * @brief 内部原因
-     *     错误原因详见 OnVideoStreamSubscribe
      */
     kRemoteVideoReasonInternal = 0,
     /**
      * @brief 网络阻塞
-     *     错误原因详见 OnVideoStreamNetworkQuality
      */
     kRemoteVideoReasonNetworkCongestion,
     /**
      * @brief 网络恢复正常
-     *     状态转换详见 OnVideoStreamNetworkQuality
      */
     kRemoteVideoReasonNetworkRecovery,
     /**
      * @brief 本地用户停止接收远端视频流或本地用户禁用视频模块
-     *     状态转换详见 OnMuteRemoteVideoStream
      */
     kRemoteVideoReasonLocalMuted,
     /**
      * @brief 本地用户恢复接收远端视频流或本地用户启用视频模块
-     *     状态转换参考 OnMuteRemoteVideoStream
      */
     kRemoteVideoReasonLocalUnmuted,
     /**
      * @brief 远端用户停止发送视频流或远端用户禁用视频模块
-     *     状态转换参考 OnUpdateRemoteVideoStreamMuteAttribute
      */
     kRemoteVideoSReasonRemoteMuted,
     /**
      * @brief 远端用户恢复发送视频流或远端用户启用视频模块
-     *     状态转换参考 OnUpdateRemoteVideoStreamMuteAttribute
      */
     kRemoteVideoReasonRemoteUnmuted,
     /**
-     * @brief 远端用户离开频道
-     *     状态转换参考 OnStreamRemove{@link #OnStreamRemove}
+     * @brief 远端用户离开频道。
+     *        状态转换参考 OnStreamRemove{@link #OnStreamRemove}
      */
     kRemoteVideoReasonRemoteOffline,
 };
@@ -1186,15 +1172,15 @@ enum DIVIDE_MODEL {
 
 /**
  * @type keytype
- * @brief 用于表示用户音量大小
+ * @brief 房间内的用户 ID, 及其在房间内发送音量。
  */
 struct AudioVolumeInfo {
     /**
-     * @brief 音量大小，范围 [0,255]
+     * @brief 该用户在房间内发送音频的音量大小，取值范围为：[0,255]
      */
     unsigned int volume;
     /**
-     * @brief 用户ID
+     * @brief 用户 ID
      */
     const char* uid;
 };
@@ -1392,33 +1378,33 @@ struct LocalAudioStats {
 /**
  * @type keytype
  * @brief 流属性。房间中的远端流的流属性。  <br>
- *        用户加入房间成功后，房间中所有已发布和未来发布的流和流的相关属性，都会通过 OnStreamAdd{@link #OnStreamAdd} 回调时间通知用户。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct ByteStream {
     /**
-     * @brief 用户ID 。此流的发布用户的用户ID 。  <br>
+     * @brief 发布此流的用户 ID 。
      */
     const char* user_id;
     /**
-     * @brief 此流是否为共享屏幕流。  <br>
+     * @brief 此流是否为共享屏幕流。
      */
     bool is_screen;
     /**
-     * @brief 此流是否包括视频流。  <br>
+     * @brief 此流是否包括视频流。
      */
     bool has_video;
     /**
-     * @brief 流是否包括音频流。  <br>
+     * @brief 流是否包括音频流。
      */
     bool has_audio;
     /**
-     * @brief 视频流的分辨率信息。  <br>
-     *        用户可以通过调用 SetVideoProfiles{@link #SetVideoProfiles} 方法在一路流中发布多个不同分辨率的视频。此参数即为流中所有视频的分辨率等相关信息。  <br>
+     * @brief 视频流的属性。  <br>
+     *        当远端用户调用 SetVideoProfiles{@link #SetVideoProfiles} 方法发布多个配置的视频流时，此处会包含这个用户发布的所有视频流的属性信息。
+     *        参看 VideoSolutionDescription{@link #VideoSolutionDescription}。
      */
     VideoSolutionDescription* profiles;
     /**
-     * @brief 流中不同分辨率的个数。  <br>
-     *        用户可以通过调用 SetVideoProfiles{@link #SetVideoProfiles} 方法在一路流中发布多个不同分辨率的视频。此参数即为流中所有视频的分辨率的总数。  <br>
+     * @brief 不同配置流的个数。  <br>
+     *        当远端用户调用 SetVideoProfiles{@link #SetVideoProfiles} 方法发布多个配置的视频流时，此处会包含这个用户发布的视频流的数目。
      */
     int profile_count;
 };
@@ -1588,23 +1574,24 @@ enum REMOTE_VIDEO_STREAM_TYPE {
 
 /**
  * @type keytype
- * @brief 视频渲染图层结构。app 通过该结构将要渲染的窗口和视频流进行绑定
+ * @brief 画布信息和渲染模式。<br>
+ *        你应使用 SetLocalVideoCanvas{@link #SetLocalVideoCanvas} 将视频流绑定到本地视图。
  */
 struct VideoCanvas {
     /**
-     * @brief 渲染窗口句柄
+     * @brief 本地视图句柄
      */
     void* view;
     /**
-     * @brief 设置渲染模式，参见 RENDER_MODE_TYPE
+     * @brief 渲染模式，参见 RENDER_MODE_TYPE{@link #RENDER_MODE_TYPE}
      */
     int render_mode;
     /**
-     * @brief 设置渲染流的用户标识
+     * @brief 视图对应的用户 ID
      */
     const char* uid;
     /**
-     * @brief 用户自定义数据，sdk 透传该数据。
+     * @brief 你的自定义数据，SDK 透传该数据。
      */
     void* priv;
     /**
@@ -1902,30 +1889,29 @@ struct ByteStreamInfo {
 
 /**
 * @type keytype
-* @brief 用户机型等级信息。
-*        在部分应用场景下，需要关注用户机型的配置高低，根据不同的配置，选择不同复杂度的音频处理算法，在能耗、用户体验上进行折中。
+* @brief 音频处理策略等级。 <br>
+*        你可以设置音频处理策略等级。参看 SetAudioPerformanceProfile{@link #SetAudioPerformanceProfile}。
+* @notes 如果以下策略无法满足需求，请联系技术支持人员实现自定义配置。
 */
-enum class AudioPerfProfile {
+enum class AudioPerformanceProfile {
     /**
-    * @brief 自动策略，SDK 会在加入房间时上传机型信息。服务端根据机型信息判断性能级别，下发对应配置。
+     * @brief 自动策略。根据应用所在机型等级，自动适配音频处理策略。
     */
-    kAudioPerfProfileAuto = 0,
+    kAudioPerformanceProfileAuto = 0,
     /**
-    * @brief 低配策略，关闭AEC、ANS、AGC算法，播放sample rate为16000。
-    *        策略内容可以定制，联系销售咨询具体方案
+     * @brief 低配策略。关闭 AEC、ANS、AGC 算法，音频采样率设置为 16000。
     */
-    kAudioPerfProfileLow = 1,
+    kAudioPerformanceProfileLow = 1,
     /**
-    * @brief 中配策略，开启AEC、ANS、AGC算法，播放sample rate为16000。
-    *        策略内容可以定制，联系销售咨询具体方案
+     * @brief 中配策略。开启 AEC、ANS、AGC 算法，音频采样率设置为 16000。
     */
-    kAudioPerfProfileMid = 2,
+    kAudioPerformanceProfileMid = 2,
     /**
-    * @brief 高配策略，开启AEC、ANS、AGC算法，播放sample rate为48000。
-    *        策略内容可以定制，联系销售咨询具体方案
+     * @brief 高配策略。开启 AEC、ANS、AGC 算法，音频采样率设置为 48000。
     */
-    kAudioPerfProfileHigh = 3,
+    kAudioPerformanceProfileHigh = 3,
 };
+
 
 /**
  * @type keytype
@@ -2124,6 +2110,10 @@ enum FirstFrameSendState {
      * @brief 发送成功
      */
     kFirstFrameSendStateSent = 1,
+    /**
+     * @brief 发送失败
+     */
+    kFirstFrameSendStateEnd = 2,
 };
 
 /**
@@ -2140,6 +2130,97 @@ enum FirstFramePlayState {
      * @brief 播放成功
      */
     kFirstFramePlayStatePlayed = 1,
+    /**
+     * @brief 播放失败
+     */
+    kFirstFramePlayStateEnd = 2,
 };
 
+/**
+ * @type keytype
+ * @brief 是否开启镜像模式
+ */
+enum MirrorMode {
+    /**
+     * @brief 不开启
+     */
+    kMirrorModeOff = 0,
+    /**
+     * @brief 开启
+     */
+    kMirrorModeOn = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 停止/启动发送音/视频流的状态
+ */
+enum MuteState {
+    /**
+     * @brief 启动发送音/视频流的状态
+     */
+    kMuteStateOff = 0,
+    /**
+     * @brief 停止发送音/视频流的状态
+     */
+    kMuteStateOn = 1,
+};
+
+/**
+ * @type keytype
+ * @region 房间管理
+ * @brief 流属性
+ */
+enum StreamIndex {
+    /**
+     * @brief 主流。<br>
+     *        包括：<br>
+     *        + 通过默认摄像头/麦克风采集到的视频/音频; <br>
+     *        + 通过自定义设备采集到的视频/音频。
+     */
+    kStreamIndexMain = 0,
+    /**
+     * @brief 屏幕流。 <br>
+     *        屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
+     */
+    kStreamIndexScreen = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 远端流信息
+ */
+struct RemoteStreamKey {
+    /**
+     * @brief 房间 ID
+     */
+    const char *room_id;
+    /**
+     * @brief 用户 ID
+     */
+    const char *user_id;
+    /**
+     * @brief 流属性，主流或屏幕流。参看 StreamIndex{@link #StreamIndex}
+     */
+    StreamIndex stream_index;
+};
+
+/**
+ * @type keytype
+ * @brief 视频帧信息
+ */
+struct VideoFrameInfo {
+    /**
+     * @brief 宽（像素）
+     */
+    int width = 0;
+    /**
+     * @brief 高（像素）
+     */
+    int height = 0;
+    /**
+     * @brief 视频帧顺时针旋转角度。参看 VideoRotation{@link #VideoRotation}。
+     */
+    VideoRotation rotation = VideoRotation::VideoRotation_0;
+};
 }  // namespace bytertc

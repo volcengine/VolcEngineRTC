@@ -14,8 +14,8 @@
 #include "BDCtrl.h"
 #include "EngineWrapper.h"
 #include "Utils.h"
-#include "meeting-manager/IMeetingNotification.h"
-
+#include "BDComboxEx.h"
+#include "meeting-manager/MeetingManager.h"
 #include <tuple>
 #include <shellapi.h>
 #include <sstream>
@@ -104,7 +104,7 @@ public:
         m_title_camera.SetFont(m_font);
 
         BDRect r5(0, 0, 100, 20);
-        m_title_history.Create(m_hWnd, r5, m, L"查看会议录像", WS_CHILD | WS_VISIBLE | SS_RIGHT | SS_CENTERIMAGE);
+        m_title_history.Create(m_hWnd, r5, m, L"查看历史会议", WS_CHILD | WS_VISIBLE | SS_RIGHT | SS_CENTERIMAGE);
         m_title_history.SetFont(m_font);
 
         m_title_my_videos.Create(m_hWnd, r5, m, L"我的云录制", WS_CHILD | WS_VISIBLE | SS_RIGHT | SS_CENTERIMAGE);
@@ -198,8 +198,24 @@ public:
         m_cameras.SetFont(m_font);
         m_cameras.SetCurSel(0);
 
-        m_history.Create(m_hWnd, re4, NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL, NULL, DUID_HISTORY);
-        m_my_videos.Create(m_hWnd, re4, NULL, WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | WS_VSCROLL, NULL, DUID_MY_VIDEOS);
+        m_history.Create(m_hWnd, &re4, m, 0, WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN);
+        m_history.SetMessage(L"选择历史会议点击链接查看");
+        m_history.SetSelectHandler(std::bind(&BDSettingWnd::OnBrowseVideoRecord, this, std::placeholders::_1));
+
+        m_my_videos.Create(m_hWnd, &re4, m, 0, WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN);
+        m_my_videos.SetMessage(L"会议录制者有权在此处查看和删除录像");
+        m_my_videos.SetDeleteHanlder(std::bind(&BDSettingWnd::OnDeleteVideoRecord, this, std::placeholders::_1));
+        m_my_videos.SetSelectHandler(std::bind(&BDSettingWnd::OnBrowseVideoRecord, this, std::placeholders::_1));
+
+        //std::list<ItemAttr> items;
+        //for (int i = 0; i < 7; ++i) {
+        //    ItemAttr item;
+        //    item.data = std::to_string(i);
+        //    item.title = "2021/4/12 14:10:0" + std::to_string(i);
+        //    items.push_back(item);
+        //}
+
+        //m_my_videos.AddAllItems(items);
 
         BDRect re6(240, 35, 280, 59);
         m_showInfo.Create(m_hWnd, re6, BDHMenu(DUID_SHOW_INFO), NULL, WS_VISIBLE | WS_CHILD);
@@ -214,6 +230,7 @@ public:
         m_cancel.SetID(DUID_CANCEL);
         //m_cancel.SetFont(m_bitrate_font);
         m_cancel.SetBackgroundColor(m_bitrate_font,
+            RGB(0xFF, 0xFF, 0xFF),
             RGB(0xF2, 0xF3, 0xF8), RGB(0x1D, 0x21, 0x29),
             RGB(0xF2, 0xF3, 0xF8), RGB(0x1D, 0x21, 0x29),
             RGB(0xF2, 0xF3, 0xF8), RGB(0x1D, 0x21, 0x29),
@@ -224,6 +241,7 @@ public:
         m_ok.SetID(DUID_OK);
         //m_ok.SetFont(m_bitrate_font);
         m_ok.SetBackgroundColor(m_bitrate_font,
+            RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
@@ -235,6 +253,12 @@ public:
 
     void OnFrameShow(BOOL show, int lParam) {
         if (show) {
+            MeetingManager::GetInstance()->getHistoryMeetingRecord([this](int code, const std::list<RecordInfo>& records) {
+                if (code == 200) {
+                    SetRecordList(records);
+                }
+            });
+
             // audio setting
             char guid[256];
             memset(guid, 0x00, sizeof(guid));
@@ -278,7 +302,7 @@ public:
         m_title_input.MoveWindow(0, 229, 100, 20);
         m_input.MoveWindow(120, 226, 160, 32);
 
-        m_title_camera.MoveWindow(0, 281, 100, 20);
+        m_title_camera.MoveWindow(0, 275, 100, 20);
         m_cameras.MoveWindow(120, 275, 160, 32);
 
         m_title_history.MoveWindow(0, 333, 100, 20);
@@ -390,11 +414,7 @@ public:
 
     LRESULT OnInputSel(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled) {
         m_title.SetFocus();
-        if (wID == DUID_HISTORY) {
-            BDString url = rtcutil::ConvertUTF8ToBDString(m_records[m_history.GetCurSel()].url);
-            ShellExecute(0, L"open", url, L"", L"", 0);
-        }
-        else if (wID == DUID_RESOLUTION) {
+        if (wID == DUID_RESOLUTION) {
             const VideoProfile& videoProfile = m_video_profiles[m_solutions.GetCurSel()];
             m_bitrate.SetScrollRange(videoProfile.minBitrate, videoProfile.maxBitrate);
 
@@ -484,11 +504,8 @@ public:
     }
 
     void SetRecordList(const std::list<RecordInfo>& records) {
-        // history setting
-        int count = m_history.GetCount();
-        for (int i = count - 1; i >= 0; --i) {
-            m_history.DeleteString(i);
-        }
+        m_history.Clear();
+        m_my_videos.Clear();
 
         std::vector<RecordInfo> r(records.begin(), records.end());
         std::sort(r.begin(), r.end(), [](const RecordInfo& left, const RecordInfo& right)->bool {
@@ -496,24 +513,29 @@ public:
         });
 
         m_records.swap(r);
-
-        int i = 0;
-        for (auto pos = m_records.begin(); pos != m_records.end(); ++pos) {
-            time_t second = pos->meeting_start_time / 1000000000;
+        for (int i = 0; i < m_records.size(); ++i) {
+            auto& record = m_records[i];
+            time_t second = record.meeting_start_time / 1000000000;
             struct tm * timeinfo = localtime(&second);
             timeinfo->tm_year += 1900;
 
             std::ostringstream out;
-            out << timeinfo->tm_year << "/" << timeinfo->tm_mon << "/" << timeinfo->tm_mday << " ";
+            out << timeinfo->tm_year << "/" << timeinfo->tm_mon + 1 << "/" << timeinfo->tm_mday << " ";
             out << std::setfill('0') << std::setw(2) << timeinfo->tm_hour << ":"
                 << std::setfill('0') << std::setw(2) << timeinfo->tm_min << ":"
                 << std::setfill('0') << std::setw(2) << timeinfo->tm_sec;
+            
+            ItemAttr item;
+            item.title = out.str();
+            item.data = (void*)&record;
 
-            BDString str = rtcutil::ConvertUTF8ToBDString(out.str());
-            m_history.InsertString(i, str);
-            ++i;
+            if (record.video_holder) {
+                m_my_videos.AddItem(item);
+            }
+            else {
+                m_history.AddItem(item);
+            }
         }
-        m_history.SetCurSel(0);
     }
 
     bool IsAVInfoShow() {
@@ -733,6 +755,20 @@ private:
         m_showInfo.m_state = m_showInfo_state;
     }
 
+    void OnDeleteVideoRecord(const ItemAttr& item) {
+        auto record = (RecordInfo*)item.data;
+        m_my_videos.DeleteItem(item.title);
+        MeetingManager::GetInstance()->deleteVideoRecord(record->vid, [](int code) {
+            assert(code == 200);
+        });
+    }
+
+    void OnBrowseVideoRecord(const ItemAttr& item) {
+        auto record = (RecordInfo*)item.data;
+        BDString url = rtcutil::ConvertUTF8ToBDString(record->url);
+        ShellExecute(0, L"open", url, L"", L"", 0);
+    }
+
 private:
     struct VideoProfile {
         int width;
@@ -777,8 +813,8 @@ private:
     BDScrollBar m_screen_bitrate;
     BDComboBox m_input;
     BDComboBox m_cameras;
-    BDComboBox m_history;
-    BDComboBox m_my_videos;
+    BDComboxEx m_history;
+    BDComboxEx m_my_videos;
     BDBmpButton m_showInfo;
 
     std::vector<int> m_fps_vec;

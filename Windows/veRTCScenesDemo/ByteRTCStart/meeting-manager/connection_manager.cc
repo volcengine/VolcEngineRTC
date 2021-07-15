@@ -27,10 +27,10 @@ void ConnectionManager::RegisterConnectingEvetn(std::function<void()> notificati
 void ConnectionManager::StartConnection() {
     mSignalingQueue->SafeAsyncTask(CODE_FROM_HERE, this, [&]() {
 #ifdef _DEBUG
-        const std::string host("rtcio.bytedance.com:80");
+        const std::string host("rtc-newton.bytedance.com:80");
         m_ws_url = "http://" + host;
 #else
-        const std::string host("rtcio.bytedance.com");
+        const std::string host("rtc-newton.bytedance.com");
         m_ws_url = "https://" + host;
 #endif // DEBUG
 

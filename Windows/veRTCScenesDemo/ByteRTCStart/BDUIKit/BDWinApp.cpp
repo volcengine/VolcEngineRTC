@@ -221,6 +221,49 @@ BOOL BDMessageLoop::RemoveIdleHandler(BDIdleHandler* pIdleHandler)
     return TRUE;
 }
 
+void SetTabFocus(HWND hChildWnd)
+{
+    HWND hwndFirst = ::GetParent(hChildWnd);
+
+    if (hwndFirst)
+    {
+        BOOL bFound = FALSE;
+        HWND hwndNext = NULL;
+        HWND FirstChild = NULL;
+
+        while (hwndNext = ::FindWindowEx(hwndFirst, hwndNext, NULL, NULL))
+        {
+
+            DWORD dwStyle = ::GetWindowLong(hwndNext, GWL_STYLE);
+
+            if ((dwStyle & WS_TABSTOP) && (dwStyle & WS_VISIBLE) && !(dwStyle & WS_DISABLED))
+            {
+                if (!bFound)
+                {
+                    if (FirstChild == NULL) FirstChild = hwndNext;
+
+                    if (GetFocus() == hwndNext)
+                    {
+                        bFound = TRUE;
+                    }
+
+                }
+                else {
+                    bFound = FALSE;
+                    ::SetFocus(hwndNext);
+                    break;
+                }
+
+            }
+
+        }
+
+        if (bFound) ::SetFocus(FirstChild);
+
+    }
+}
+
+
 int BDMessageLoop::Run()
 {
     BOOL bDoIdle = TRUE;
@@ -248,6 +291,11 @@ int BDMessageLoop::Run()
 
         if(!PreTranslateMessage(&m_msg))
         {
+            if (m_msg.message == WM_KEYDOWN && m_msg.wParam == VK_TAB)
+            {
+                ::SetTabFocus(m_msg.hwnd);
+            }
+
             ::TranslateMessage(&m_msg);
             ::DispatchMessage(&m_msg);
         }

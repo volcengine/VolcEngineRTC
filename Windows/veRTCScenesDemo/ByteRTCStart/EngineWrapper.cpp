@@ -16,20 +16,6 @@ EngineWrapper* EngineWrapper::GetInstance() {
     return g_pEngine;
 }
 
-bool EngineWrapper::isValidID(std::string id)
-{
-    if (id.size() > 128) return false;
-    for (int i = 0; i < (int)id.size(); i++) {
-        char ch = id[i];
-        if (ch >= 'a' && ch <= 'z') continue;
-        else if (ch >= 'A' && ch <= 'Z') continue;
-        else if (ch >= '0' && ch <= '9') continue;
-        else if (ch == '@' || ch == '.' || ch == '_' || ch == '-') continue;
-        return false;
-    }
-    return true;
-}
-
 void EngineWrapper::setEventHandler(HWND hwnd) {
     m_desktop = hwnd;
 }
@@ -42,15 +28,15 @@ void EngineWrapper::createEngine(const std::string& appid) {
 
     m_bMuteAudio = false;
     m_bMuteVideo = false;
-    bytertc::SetEnv(bytertc::kEnvProduct);
+    bytertc::SetEnv(bytertc::kEnvTest);
 
     m_pEngine = bytertc::CreateByteRtcEngine(appid.c_str(), this);
     if (m_pEngine) {
         m_pEngine->EnableAutoSubscribe(bytertc::kAutoSubscribeMode, bytertc::kManualSubscribeMode);
         m_pEngine->EnableLocalVideo(true);
-        m_pEngine->MuteLocalVideoStream(false);
-        m_pEngine->UnmuteAllRemoteVideoStreams();
-        m_pEngine->SetLocalVideoMirrorMode(true);
+        m_pEngine->MuteLocalVideo(bytertc::MuteState::kMuteStateOff);
+        m_pEngine->MuteAllRemoteVideo(bytertc::MuteState::kMuteStateOff);
+        m_pEngine->SetLocalVideoMirrorMode(bytertc::MirrorMode::kMirrorModeOn);
         m_pEngine->SetSubscribeFallbackOption(bytertc::kStreamFallbackOptionAudioOnly);
     }
 
@@ -120,7 +106,7 @@ void EngineWrapper::stopPreview() {
 
 void EngineWrapper::muteLocalAudio(bool bMute) {
     if (m_pEngine) {
-        m_pEngine->MuteLocalAudioStream(bMute);
+        m_pEngine->MuteLocalAudio(bMute ? bytertc::MuteState::kMuteStateOn : bytertc::MuteState::kMuteStateOff);
         m_pEngine->EnableLocalAudio(!bMute);
     }
 }
@@ -133,18 +119,13 @@ void EngineWrapper::muteLocalVideo(bool bMute) {
 
 void EngineWrapper::muteAllRemoteVideo(bool mute) {
     if (m_pEngine) {
-        if (mute) {
-            m_pEngine->MuteAllRemoteVideoStreams();
-        }
-        else {
-            m_pEngine->UnmuteAllRemoteVideoStreams();
-        }
+        m_pEngine->MuteAllRemoteVideo(mute ? bytertc::MuteState::kMuteStateOn : bytertc::MuteState::kMuteStateOff);
     }
 }
 
 void EngineWrapper::EnableAudioVolumeIndication(int interval, int smooth) {
     if (m_pEngine) {
-        m_pEngine->EnableAudioVolumeIndication(interval, smooth);
+        m_pEngine->SetAudioVolumeIndicationInterval(interval);
     }
 }
 
@@ -154,7 +135,8 @@ void EngineWrapper::setupLocal(HWND hwnd, const char* uid) {
         canvas.uid = uid;
         canvas.render_mode = bytertc::RENDER_MODE_HIDDEN;
         canvas.view = hwnd;
-        m_pEngine->SetupLocalVideo(canvas);
+
+        m_pEngine->SetLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, canvas);
     }
 }
 
@@ -163,7 +145,8 @@ void EngineWrapper::setupRemote(HWND hwnd, const char* uid) {
     canvas.uid = uid;
     canvas.render_mode = bytertc::RENDER_MODE_HIDDEN;
     canvas.view = hwnd;
-    m_pEngine->SetupRemoteVideo(canvas);
+
+    m_pEngine->SetRemoteVideoCanvas(uid, bytertc::StreamIndex::kStreamIndexMain, canvas);
 }
 
 void EngineWrapper::setScreenProfiles(const bytertc::VideoSolution& solution) {
@@ -197,7 +180,8 @@ int EngineWrapper::setupRemoteScreenRender(std::string& uid, const HWND render) 
     canvas.uid = uid.c_str();
     canvas.render_mode = bytertc::RENDER_MODE_FIT;
     canvas.view = render;
-    m_pEngine->SetupRemoteScreen(canvas);
+
+    m_pEngine->SetRemoteVideoCanvas(uid.c_str(), bytertc::StreamIndex::kStreamIndexScreen, canvas);
 
     return 0;
 }
@@ -349,13 +333,13 @@ void EngineWrapper::SetVideoDefaultProfile() {
     vs.max_send_kbps = 600;
 
     if (m_pEngine) {
-        m_pEngine->SetVideoProfiles(&vs, 1);
+        m_pEngine->SetVideoEncoderConfig(&vs, 1);
     }
 }
 
 void EngineWrapper::setVideoProfiles(const bytertc::VideoSolution* solutions, int solution_num) {
     if (m_pEngine) {
-        m_pEngine->SetVideoProfiles(solutions, solution_num);
+        m_pEngine->SetVideoEncoderConfig(solutions, solution_num);
     }
 }
 
@@ -646,28 +630,18 @@ void EngineWrapper::OnUserOffline(const char* uid, bytertc::USER_OFFLINE_REASON_
     ::SendMessage(m_desktop, WM_NOTIFY_USER_LEAVE_SUCCEED, (WPARAM)uid, 0);
 }
 
-void EngineWrapper::OnUserMuteAudio(const char* uid, bool muted) {
-    ::SendMessage(m_desktop, WM_NOTIFY_ENABLE_AUDIO, (WPARAM)uid, (LPARAM)!muted);
+void EngineWrapper::OnUserMuteAudio(const char* user_id, bytertc::MuteState mute_state) {
+    ::SendMessage(m_desktop, WM_NOTIFY_ENABLE_AUDIO, (WPARAM)user_id, (LPARAM)(mute_state == bytertc::MuteState::kMuteStateOff));
 }
 
 void EngineWrapper::OnUserEnableLocalAudio(const char* uid, bool enabled) {
     ::SendMessage(m_desktop, WM_NOTIFY_ENABLE_AUDIO, (WPARAM)uid, (LPARAM)enabled);
 }
 
-void EngineWrapper::OnConnectionLost() {
-
-}
-
-void EngineWrapper::OnConnectionInterrupted() {
-
-}
-
-void EngineWrapper::OnFirstLocalAudioFrame(int elapsed) {
-    ::SendMessage(m_desktop, WM_LOCAL_AUDIO, 0, 0);
-}
-
-void EngineWrapper::OnFirstRemoteAudioFrame(const char* uid, int elapsed) {
-
+void EngineWrapper::OnFirstLocalAudioFrame(bytertc::StreamIndex index) {
+    if (bytertc::StreamIndex::kStreamIndexMain == index) {
+        ::SendMessage(m_desktop, WM_LOCAL_AUDIO, 0, 0);
+    }
 }
 
 void EngineWrapper::OnLogReport(const char* log_type, const char* log_content) {
@@ -708,24 +682,23 @@ void EngineWrapper::OnAudioRouteChanged(int routing) {
 
 }
 
-void EngineWrapper::OnFirstLocalVideoFrame(int width, int height, int elapsed) {
-    ::SendMessage(m_desktop, WM_LOCAL_VIDEO, 0, 0);
+void EngineWrapper::OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) {
+    if (bytertc::StreamIndex::kStreamIndexMain == index) {
+        ::SendMessage(m_desktop, WM_LOCAL_VIDEO, 0, 0);
+    }
 }
 
-void EngineWrapper::OnVideoSizeChanged(const char* uid, int width, int height, int rotation) {
-
+void EngineWrapper::OnFirstRemoteVideoFrameRendered(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info) {
+    if (key.stream_index == bytertc::StreamIndex::kStreamIndexMain) {
+        ::SendMessage(m_desktop, WM_NOTIFY_REMOTE_FIRST_VIDEO, (WPARAM)key.user_id, 0);
+    }
+    else if (key.stream_index == bytertc::StreamIndex::kStreamIndexScreen) {
+        ::SendMessage(m_desktop, WM_NOTIFY_REMOTE_SCREEN_FIRST_VIDEO, (WPARAM)key.user_id, 0);
+    }
 }
 
-void EngineWrapper::OnFirstRemoteVideoFrame(const char* uid, int width, int height, int elapsed) {
-    ::SendMessage(m_desktop, WM_NOTIFY_REMOTE_FIRST_VIDEO, (WPARAM)uid, 0);
-}
-
-void EngineWrapper::OnFirstRemoteScreenFrame(const char* uid, int width, int height, int elapsed) {
-    ::SendMessage(m_desktop, WM_NOTIFY_REMOTE_SCREEN_FIRST_VIDEO, (WPARAM)uid, 0);
-}
-
-void EngineWrapper::OnUserMuteVideo(const char* uid, bool muted) {
-    ::SendMessage(m_desktop, WM_NOTIFY_MUTE_VIDEO, (WPARAM)uid, (LPARAM)muted);
+void EngineWrapper::OnUserMuteVideo(const char* uid, bytertc::MuteState mute) {
+    ::SendMessage(m_desktop, WM_NOTIFY_MUTE_VIDEO, (WPARAM)uid, (LPARAM)(mute == bytertc::MuteState::kMuteStateOn));
 }
 
 void EngineWrapper::OnUserEnableLocalVideo(const char* uid, bool enabled) {
@@ -761,10 +734,12 @@ void EngineWrapper::OnMediaDeviceNotification(const char* device_id, bytertc::Me
         (LPARAM)notification_type);
 }
 
-void EngineWrapper::OnLocalVideoStateChanged(bytertc::LocalVideoStreamState state, bytertc::LocalVideoStreamError error) {
-    ::SendMessage(m_desktop, WM_VIDEO_DEVICE_STATE_CHANGE,
-        (WPARAM)state,
-        (LPARAM)error);
+void EngineWrapper::OnLocalVideoStateChanged(bytertc::StreamIndex index, bytertc::LocalVideoStreamState state, bytertc::LocalVideoStreamError error) {
+    if (index == bytertc::StreamIndex::kStreamIndexMain) {
+        ::SendMessage(m_desktop, WM_VIDEO_DEVICE_STATE_CHANGE,
+            (WPARAM)state,
+            (LPARAM)error);
+    }
 }
 
 void EngineWrapper::OnLocalAudioStateChanged(bytertc::LocalAudioStreamState state, bytertc::LocalAudioStreamError error) {

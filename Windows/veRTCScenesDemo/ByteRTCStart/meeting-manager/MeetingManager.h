@@ -35,7 +35,8 @@ public:
     * @param cameraOn: camera on or not, true: camera on  false: camera off
     * @return error code and token
     */
-    void joinMeeting(const std::string& userId,
+    void joinMeeting(const std::string& userName,
+        const std::string& userId,
         const std::string& roomId,
         bool micOn,
         bool cameraOn,
@@ -154,6 +155,20 @@ public:
     */
     void getHistoryMeetingRecord(std::function<void(int code, const std::list<RecordInfo>&)> callback);
 
+    void deleteVideoRecord(const std::string& vid, std::function<void(int)> callback);
+
+    void getAuditState(const std::string& version, std::function<void(int, const AuditState&)> callback);
+
+    void passwordFreeLogin(const std::string& user_name, std::function<void(int, const VerifySms&)> callback);
+
+    void changeUserName(const std::string& nickname, std::function<void(int)> callback);
+
+    void verifyLoginToken(const std::string& token, std::function<void(int)> callback);
+
+    void setMeetingToken(const std::string& token) {
+        m_token = token;
+    }
+
 private:
     MeetingManager();
     ~MeetingManager();
@@ -164,6 +179,8 @@ protected:
     * Register all conference callback events
     */
     void registerEevent();
+
+    void onInvalidToken(int code);
 
     void onWebsocketConnected();
 
@@ -235,9 +252,10 @@ protected:
     void onUserKickedOff(const Json::Value& response);
 
 protected:
-    IMeetingNotification* m_notification = nullptr;
+    std::vector<IMeetingNotification*> m_notifications;
     std::unique_ptr<ConnectionManager> m_connectionManager = nullptr;
     std::string m_appId;
     std::string m_room_id;
     std::string m_user_id;
+    std::string m_token;
 };

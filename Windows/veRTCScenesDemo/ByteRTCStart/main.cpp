@@ -3,18 +3,12 @@
 
 #include "framework.h"
 #include "resource.h"
-#include "BDMainContainerFrame.h"
-
+#include "BDUserLoginWnd.h"
 #include <gdiplus.h>
 #include <windows.h>
 #include <DbgHelp.h>
 #include <stdlib.h>
 #pragma comment(lib, "dbghelp.lib")
-
-//#ifndef _M_IX86
-//#error "The following code only works for x86!"
-//#endif
-
 using namespace Gdiplus;
 
 inline BOOL IsDataSectionNeeded(const WCHAR* pModuleName)
@@ -83,11 +77,6 @@ LONG __stdcall MyUnhandledExceptionFilter(PEXCEPTION_POINTERS pExceptionInfo) {
     BDString name;
     name.Format(L"crash\\veRTC%ld.dmp");
     CreateMiniDump(pExceptionInfo, name);
-    /*printf("Error   address   %x/n", pExceptionInfo->ExceptionRecord->ExceptionAddress);
-    printf("CPU   register:/n");
-    printf("eax   %x   ebx   %x   ecx   %x   edx   %x/n", pExceptionInfo->ContextRecord->Eax,
-        pExceptionInfo->ContextRecord->Ebx, pExceptionInfo->ContextRecord->Ecx,
-        pExceptionInfo->ContextRecord->Edx);*/
     return   EXCEPTION_EXECUTE_HANDLER;
 }
 
@@ -145,21 +134,36 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pszCmdLine, int) {
 
     auto delta_x = 0;
     auto delta_y = 0;
-    if (display.right - display.left > 1280) {
-        delta_x = (display.right - display.left - 1280) / 2;
+    if (display.right - display.left > 800) {
+        delta_x = (display.right - display.left - 800) / 2;
     }
 
-    if (display.bottom - display.top > 720) {
-        delta_y = (display.bottom - display.top - 720) / 2;
+    if (display.bottom - display.top > 584) {
+        delta_y = (display.bottom - display.top - 584) / 2;
     }
 
-    BDMainContainerFrame wnd;
-    RECT r = { display.left + delta_x, display.top + delta_y, display.left + delta_x + 1280, display.top + delta_y + 720};
+    bool loginInfo = APPConfig::Instance()->HaveLoginInfo();
+
+    BDUserLoginWnd wnd;
+    RECT r = { display.left + delta_x, display.top + delta_y, display.left + delta_x + 800, display.top + delta_y + 584};
+    AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
     BDHMenu menu;
-    wnd.Create(NULL, &r, menu, L"veRTC", WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN, 0, hMenu);
-    rtcutil::SetWindowCentor(wnd);
-    wnd.ShowWindow(SW_SHOW);
-    wnd.UpdateWindow();
+    wnd.Create(NULL, &r, menu, L"veRTC", WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, 0, hMenu);
+
+    if (loginInfo) {
+        VerifySms sms;
+        sms.create_at = 0;
+        sms.login_token = APPConfig::Instance()->GetLoginToken();
+        sms.user_id = APPConfig::Instance()->GetLoginUserID();
+
+        auto name = APPConfig::Instance()->GetLoginUserName();
+        sms.user_name = rtcutil::ConvertUTF8ToBDString(name);
+
+        wnd.ShowMeetingFrame(sms);
+    }
+    else {
+        wnd.ShowWindow(SW_SHOW);
+    }
 
     BDMessageLoop* loop = BDMessageLoop::GetCurrentLoop();
     loop->Run();

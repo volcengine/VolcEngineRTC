@@ -55,7 +55,7 @@ public:
         m_share = share;
     }
 
-    void SetName(const std::string& name) {
+    void SetName(const BDString& name) {
         m_name = name;
     }
 
@@ -67,7 +67,7 @@ public:
         dc.SelectFont(m_nameFont);
 
         SIZE text_size;
-        ::GetTextExtentPoint32A(dc.m_hDC, m_name.c_str(), m_name.size(), &text_size);
+        ::GetTextExtentPoint(dc.m_hDC, m_name, m_name.GetLength(), &text_size);
         RECT rText = {0,
             0,
             rc.right,
@@ -96,7 +96,7 @@ public:
             rText.left += (rText.right - rText.left - text_size.cx) / 2;
         }
         else {
-            m_name = m_name.substr(0, 12);
+            m_name = m_name.Left(12);
             m_name += "...";
         }
 
@@ -104,7 +104,7 @@ public:
 
         dc.SetTextColor(RGB(0xFF, 0xFF, 0xFF));
         dc.SetBkColor(RGB(0x1D, 0x21, 0x29));
-        ::DrawTextA(dc.m_hDC, m_name.c_str(), m_name.size(), &rText, DT_LEFT | DT_VCENTER);
+        ::DrawText(dc.m_hDC, m_name, m_name.GetLength(), &rText, DT_LEFT | DT_VCENTER);
 
         return 0;
     }
@@ -115,7 +115,7 @@ public:
     BDBitmap m_host_image;
     BDBitmap m_share_image;
 
-    std::string m_name;
+    BDString m_name;
     bool m_host = false;
     bool m_share = false;
 };

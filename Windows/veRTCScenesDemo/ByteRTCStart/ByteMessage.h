@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include <vector>
+#include "BDMisc.h"
 
 #define WM_LOGIN                WM_USER + 100
 #define WM_NOTIFY_JOIN_OK        WM_USER + 200
@@ -58,6 +59,12 @@
 #define WM_NOTIFY_USER_LEAVE_SUCCEED   WM_USER + 245
 #define WM_NOTIFY_CHANNEL_LEAVE_SUCCEED    WM_USER + 246
 #define WM_NOTIFY_VIDEO        WM_USER + 247
+#define WM_NOTIFY_UPDATE_APP   WM_USER + 248
+#define WM_NOTIFY_SHOW_MEETING_LOGIN WM_USER + 249
+
+#define WM_NOTIFY_MODIFY_NICKNAME_CALLBACK WM_USER + 250
+#define WM_NOTIFY_MODIFY_NICKNAME_ERROR WM_USER + 251
+#define WM_NOTIFY_CHECK_TOKEN    WM_USER + 252
 
 #define WM_NOTIFY_FUNCTION_EXECUTE     WM_USER + 1000
 
@@ -66,7 +73,10 @@
 #define DUID_VIDEO                1003
 #define DUID_ROOMID               1004
 #define DUID_USERID               1005
-#define DUID_SHOW_SETTING_LOGIN   1006
+#define DUID_PHONE_NUMBER         1006
+#define DUID_VERIFICATION         1007
+#define DUID_GET_VERIFICATION     1008
+#define DUID_SHOW_SETTING_LOGIN   1009
 
 #define DUID_MEETING_END       1100
 #define DUID_MEETING_LEAVE     1101
@@ -137,7 +147,9 @@ enum UserType {
  * @brief User attribute data structure
 */
 struct UserAttr{
-    std::string m_name;   // user name
+    std::string m_user_id;   // user name
+    BDString m_name;
+    std::string m_user_uniform_id;
     UserType m_type;      // customer type
     int64_t timeOfJoining; // Time to join the meeting
     unsigned int m_audioLevel = 0;   // audio level
@@ -146,7 +158,6 @@ struct UserAttr{
     bool m_bVideo = false;   // have video stream
     bool m_isHost = false;   // Host or not
     bool m_shared = false;   // share screen or not
-    bool m_highlight = false; // Highlight
     BDUserVideoViewWnd* m_view = nullptr; //Video rendering window, Never destroy
     BDUserVideoViewWnd* m_screen_view = nullptr; //screen rendering windows, Never destroy
 };

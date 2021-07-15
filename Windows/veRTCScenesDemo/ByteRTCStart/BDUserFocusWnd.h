@@ -121,12 +121,6 @@ public:
     }
 
     void OnLButtonUp(UINT nFlags, BDPoint point) {
-        RECT rect;
-        GetClientRect(&rect);
-
-        RECT audio_rect{ rect.right - 64, 18, rect.right - 64 + 16, 18 + 16 };
-        RECT transfer_rect{ rect.right - 40, 14, rect.right - 40 + 24, 14 + 24 };
-
         UserAttr user = m_user;
         if (m_audio_hover && m_auidoMuteCallback) {
             m_auidoMuteCallback(user);
@@ -157,12 +151,15 @@ public:
     }
 
     void SetUserInfo(const UserAttr& user) {
+        bool change = m_user.m_bAudio != user.m_bAudio
+            || m_user.m_name != user.m_name;
         m_user = user;
-
-        RECT rect;
-        GetClientRect(&rect);
-        RECT audio_rect{ rect.right - 64, 18, rect.right - 64 + 16, 18 + 16 };
-        InvalidateRect(&audio_rect);
+        if (change) {
+            RECT rect;
+            GetClientRect(&rect);
+            RECT audio_rect{ rect.right - 64, 18, rect.right - 64 + 16, 18 + 16 };
+            InvalidateRect(&audio_rect);
+        }
     }
 
     const UserAttr& GetUserInf() const {
@@ -184,12 +181,12 @@ public:
             28);
 
         dc.SelectFont(m_abbreviationFont);
-        char n = m_user.m_name[0];
-        if (isalpha(n)) {
-            n = toupper(n);
+        wchar_t n = m_user.m_name[0];
+        if (iswalpha(n)) {
+            n = towupper(n);
         }
         SIZE size;
-        ::GetTextExtentPoint32A(dc.m_hDC, &n, 1, &size);
+        ::GetTextExtentPoint(dc.m_hDC, &n, 1, &size);
 
         RECT rText = {
                 16,
@@ -197,14 +194,20 @@ public:
                 16 + 28,
                 1028
         };
-        ::DrawTextA(dc.m_hDC, &n, 1, &rText, DT_CENTER | DT_VCENTER);
+        ::DrawText(dc.m_hDC, &n, 1, &rText, DT_CENTER | DT_VCENTER);
 
         //Draw Name
+        auto name = m_user.m_name;
+        if (name.GetLength() > 12) {
+            name = name.Left(12);
+            name += L"...";
+        }
+
         dc.SetBkMode(TRANSPARENT);
         dc.SetTextColor(RGB(0xFF, 0xFF, 0xFF));
         dc.SelectFont(m_nameFont);
         rText = { 52, 18, 160, 50 };
-        ::DrawTextA(dc.m_hDC, m_user.m_name.c_str(), m_user.m_name.size(), &rText, DT_LEFT | DT_VCENTER);
+        ::DrawText(dc.m_hDC, name, name.GetLength(), &rText, DT_LEFT | DT_VCENTER);
 
         rtcutil::DrawImage(dc.m_hDC, m_user.m_bAudio ? m_audio : m_audioDisable, rect.right - 16 - 16 - 16 - 16, 18, 16, 16);
 

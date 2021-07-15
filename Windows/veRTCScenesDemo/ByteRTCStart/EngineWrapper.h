@@ -47,8 +47,6 @@ class EngineWrapper : public bytertc::IRtcEngineEventHandler
 public:
     static EngineWrapper* GetInstance();
 
-    static bool isValidID(std::string id);
-
     void setEventHandler(HWND hwnd);
     void createEngine(const std::string& appid);
     void destroyEngine();
@@ -140,12 +138,10 @@ public:
     //void OnUserOffline(const bytertc::ByteUserOfflineInfo* users_list, int user_number) override;
     void OnUserJoined(const char* uid, const char* team_id, const bytertc::RangeAudioMode send_mode, int elapsed) override;
     void OnUserOffline(const char* uid, bytertc::USER_OFFLINE_REASON_TYPE reason) override;
-    void OnUserMuteAudio(const char* uid, bool muted) override;
+    void OnUserMuteAudio(const char* user_id, bytertc::MuteState mute_state) override;
     void OnUserEnableLocalAudio(const char* uid, bool enabled) override;
-    void OnConnectionLost() override;
-    void OnConnectionInterrupted() override;
-    void OnFirstLocalAudioFrame(int elapsed) override;
-    void OnFirstRemoteAudioFrame(const char* uid, int elapsed) override;
+
+    void OnFirstLocalAudioFrame(bytertc::StreamIndex index) override;
     //void OnStreamRemove(const bytertc::ByteStreamRemovedInfo* streams_list, int stream_number) override;
     void OnStreamRemove(const bytertc::ByteStream& stream, bytertc::RtcStreamRemoveReason reason) override;
     void OnLogReport(const char* log_type, const char* log_content) override;
@@ -154,15 +150,14 @@ public:
     void OnStreamSubscribed(bytertc::SUBSCRIBE_STATE stateCode, const char* stream_id, const bytertc::SubscribeConfig& info) override;
     void OnStreamPublishSucceed(const char* user_id, bool is_screen) override;
     void OnAudioRouteChanged(int routing) override;
-    void OnFirstLocalVideoFrame(int width, int height, int elapsed) override;
-    void OnVideoSizeChanged(const char* uid, int width, int height, int rotation) override;
-    void OnFirstRemoteScreenFrame(const char* uid, int width, int height, int elapsed) override;
-    void OnFirstRemoteVideoFrame(const char* uid, int width, int height, int elapsed) override;
-    void OnUserMuteVideo(const char* uid, bool muted) override;
+    void OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
+    void OnFirstRemoteVideoFrameRendered(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info) override;
+    void OnUserMuteVideo(const char* uid, bytertc::MuteState mute) override;
+
     void OnUserEnableLocalVideo(const char* uid, bool enabled) override;
     void OnMediaDeviceNotification(const char* device_id, bytertc::MediaDeviceType device_type,
         bytertc::MediaDeviceNotification notification_type) override;
-    void OnLocalVideoStateChanged(bytertc::LocalVideoStreamState state, bytertc::LocalVideoStreamError error) override;
+    void OnLocalVideoStateChanged(bytertc::StreamIndex index, bytertc::LocalVideoStreamState state, bytertc::LocalVideoStreamError error) override;
     void OnLocalAudioStateChanged(bytertc::LocalAudioStreamState state, bytertc::LocalAudioStreamError error) override;
 
 public:

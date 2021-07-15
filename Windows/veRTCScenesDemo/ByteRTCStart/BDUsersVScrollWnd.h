@@ -26,7 +26,7 @@ public:
     BDUsersVScrollWnd()
     {
         BDWndClassInfo& wci = GetWndClassInfo();
-        wci.m_wc.hbrBackground = CreateSolidBrush(RGB(0x10, 0x13, 0x19));
+        wci.m_wc.hbrBackground = nullptr; //CreateSolidBrush(RGB(0x10, 0x13, 0x19));
         if (!wci.m_atom)
         {
             wci.m_wc.hIcon = LoadIcon(BDWinApp::GetResInstance(), MAKEINTRESOURCE(IDI_BYTERTCSTART));
@@ -132,14 +132,17 @@ public:
 
                 if (!m_userFocusWnd.IsWindowVisible()) {
                     m_userFocusWnd.ShowWindow(SW_SHOW);
-                    find = true;
                 }
+
+                find = true;
             }
         }
 
         if (!find) {
             m_userFocusWnd.ShowWindow(SW_HIDE);
         }
+
+        m_last_point = point;
 
         TRACKMOUSEEVENT tme;
         tme.cbSize = sizeof(tme);
@@ -155,11 +158,10 @@ public:
     }
 
     LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-        RECT rect;
-        GetClientRect(&rect);
-
         BDPaintDC dc(m_hWnd);
 
+        RECT rect;
+        GetClientRect(&rect);
         BDDC localDc = ::CreateCompatibleDC(dc);
         auto hBitmap = ::CreateCompatibleBitmap(dc, rect.right, rect.bottom);//rt为RECT变量
         ::SelectObject(localDc, hBitmap);
@@ -198,11 +200,8 @@ public:
         for (auto& item : m_users) {
             if (item.m_delta + CAPTION_HEIGHT > 0 && item.m_delta < rect.bottom) {
                 //Draw Head
-                //mydc.SelectBitmap(m_head);
-                //localDc.BitBlt(16, item.m_delta + 10, 28, 28, mydc, 0, 0, SRCCOPY);
-
                 int delta = 0;
-                if (item.m_highlight) {
+                if (item.m_audioLevel > 5) {
                     delta = 2;
                     rtcutil::DrawImage(localDc.m_hDC, m_highlight_circular,
                         16,
@@ -222,12 +221,12 @@ public:
                 localDc.SetTextColor(RGB(0xFF, 0xFF, 0xFF));
                 // abbreviation
                 localDc.SelectFont(m_abbreviationFont);
-                char n = item.m_name[0];
-                if (isalpha(n)) {
-                    n = toupper(n);
+                wchar_t n = item.m_name[0];
+                if (iswalpha(n)) {
+                    n = towupper(n);
                 }
                 SIZE size;
-                ::GetTextExtentPoint32A(localDc.m_hDC, &n, 1, &size);
+                ::GetTextExtentPoint(localDc.m_hDC, &n, 1, &size);
 
                 RECT rText = { 
                         16,
@@ -235,7 +234,7 @@ public:
                         16 + 28,
                         item.m_delta + 1028
                 };
-                ::DrawTextA(localDc.m_hDC, &n, 1, &rText, DT_CENTER | DT_VCENTER);
+                ::DrawText(localDc.m_hDC, &n, 1, &rText, DT_CENTER | DT_VCENTER);
                 // name
                 localDc.SelectFont(m_nameFont);
                 rText = {52, item.m_delta + 18 , 134 + 52, item.m_delta + 50 };
@@ -247,13 +246,13 @@ public:
                 }
 
                 auto name = item.m_name;
-                if (name.size() > 12) {
-                    name = name.substr(0, 12);
-                    name += "...";
+                if (name.GetLength() > 12) {
+                    name = name.Left(12);
+                    name += L"...";
                 }
 
-                ::DrawTextA(localDc.m_hDC, name.c_str(), name.size(), &rText, DT_LEFT | DT_VCENTER);
-                ::GetTextExtentPoint32A(localDc.m_hDC, name.c_str(), name.size(), &size);
+                ::DrawText(localDc.m_hDC, name, name.GetLength(), &rText, DT_LEFT | DT_VCENTER);
+                ::GetTextExtentPoint(localDc.m_hDC, name, name.GetLength(), &size);
 
                 if(item.m_shared){
                     mydc.SelectBitmap(m_userShare);
@@ -262,7 +261,7 @@ public:
 
                 //Draw Audio
                 if (item.m_bAudio) {
-                    mydc.SelectBitmap(item.m_highlight ? m_audio_highlight : m_audio);
+                    mydc.SelectBitmap(item.m_audioLevel > 5 ? m_audio_highlight : m_audio);
                     localDc.BitBlt(rect.right - 16 - 16 - 16 - 16, item.m_delta + 18, 16, 16, mydc, 0, 0, SRCCOPY);
                 }
                 else {
@@ -286,186 +285,64 @@ public:
         }
 
         dc.BitBlt(0, 0, rect.right, rect.bottom, localDc, 0, 0, SRCCOPY);
-
         DeleteObject(hBitmap);
         return 0;
     }
 
-    LRESULT OnExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled) 
-    {
+    LRESULT OnExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled) {
         return 0;
     }
-
-    void AddItem(const UserAttr& user) {
-        std::list<UserAttr> local(m_users.begin(), m_users.end());
-        local.push_back(user);
-       
-        auto host = std::find_if(local.begin(), local.end(), [](const UserAttr& user)->bool {
-            return user.m_isHost;
+    // only update screen share attribute
+    void UpdateItem(const UserAttr& user) {
+        auto pos = std::find_if(m_users.begin(), m_users.end(), [user](const UserAttr& other)->bool {
+            return user.m_user_id == other.m_user_id;
         });
 
-        bool find = false;
-        UserAttr hostUser;
-        if (host != local.end()) {
-            hostUser = *host;
-            local.erase(host);
-            find = true;
+        if (pos != m_users.end()) {
+            pos->m_bAudio = user.m_bAudio;
+            pos->m_bVideo = user.m_bVideo;
+            pos->m_user_id = user.m_user_id;
+            pos->m_name = user.m_name;
+            pos->m_user_uniform_id = user.m_user_uniform_id;
+            pos->m_isHost = user.m_isHost;
+            pos->m_shared = user.m_shared;
+            pos->m_type = user.m_type;
+            pos->m_audioLevel = user.m_audioLevel;
+            pos->timeOfJoining = user.timeOfJoining;
+
+            RECT rect;
+            GetClientRect(&rect);
+            rect.top = pos->m_delta;
+            rect.bottom = rect.top + CAPTION_HEIGHT;
+            InvalidateRect(&rect);
+
+            if (m_userFocusWnd.IsWindowVisible() && m_userFocusWnd.GetUserInf().m_user_id == user.m_user_id) {
+                m_userFocusWnd.SetUserInfo(user);
+            }
         }
+    }
 
-        local.sort([](const UserAttr& left, const UserAttr& right)->bool {
-            return left.m_name < right.m_name;
-        });
-
-        if (find) {
-            local.push_front(hostUser);
-        }
-
-        m_users.swap(local);
-        m_vscroll_pos = 0;
+    // update all users attribute
+    void UpdateAllUsers(const std::list<UserAttr>& users) {
+        std::list<UserAttr> localUsers(users.begin(), users.end());
+        m_users.swap(localUsers);
 
         RECT rect;
         GetClientRect(&rect);
         RecalculationScroll(0, rect);
+
+        OnMouseMove(0, m_last_point);
     }
 
-    void RemoveItem(const UserAttr& user) {
-        auto pos = std::find_if(m_users.begin(), m_users.end(), [user](const UserAttr& other)->bool {
-            return user.m_name == other.m_name;
-        });
-
-        if (pos != m_users.end()) {
-            int delta = pos->m_delta;
-            m_users.erase(pos);
-
-            RECT rect;
-            GetClientRect(&rect);
-            rect.top = delta > rect.bottom ? rect.bottom : delta;
-            rect.top = rect.top < 0 ? 0 : rect.top;
-            RecalculationScroll(0, rect);
-        }
-    }
-
-    void UpdateItem(const UserAttr& user) {
-        auto pos = std::find_if(m_users.begin(), m_users.end(), [user](const UserAttr& other)->bool {
-            return user.m_name == other.m_name;
-        });
-
-        bool hostChange = false;
-
-        if (pos != m_users.end()) {
-            hostChange = pos->m_isHost != user.m_isHost;
-
-            pos->m_bAudio = user.m_bAudio;
-            pos->m_bVideo = user.m_bVideo;
-            pos->m_name = user.m_name;
-            pos->m_isHost = user.m_isHost;
-            pos->m_shared = user.m_shared;
-            //pos->m_highlight = user.m_highlight;
-            pos->m_type = user.m_type;
-            //pos->m_audioLevel = user.m_audioLevel;
-
-            UserAttr;
-            if (m_userFocusWnd.IsWindowVisible() && m_userFocusWnd.GetUserInf().m_name == user.m_name) {
-                m_userFocusWnd.SetUserInfo(user);
-            }
-        }
-
-        RECT rect;
-        GetClientRect(&rect);
-        // When the host change, the order needs to be changed
-        if (hostChange) {
-            auto host = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& user)->bool {
-                return user.m_isHost;
-            });
-
-            bool find = false;
-            UserAttr hostUser;
-            if (host != m_users.end()) {
-                hostUser = *host;
-                m_users.erase(host);
-                find = true;
-            }
-
-            m_users.sort([](const UserAttr& left, const UserAttr& right)->bool {
-                return left.m_name < right.m_name;
-            });
-
-            if (find) {
-                m_users.push_front(hostUser);
-            }
-            m_vscroll_pos = 0;
-            RecalculationScroll(0, rect);
-        }
-        else {
-            rect.top = pos->m_delta;
-            rect.bottom = rect.top + CAPTION_HEIGHT;
-            InvalidateRect(&rect);
-        }
-    }
-
-    bool IsMember(const std::string& name) {
-        auto pos = std::find_if(m_users.begin(), m_users.end(), [name](const UserAttr& user)->bool {
-            return user.m_name == name;
+    bool IsMember(const std::string& id) {
+        auto pos = std::find_if(m_users.begin(), m_users.end(), [id](const UserAttr& user)->bool {
+            return user.m_user_id == id;
         });
         return pos != m_users.end();
     }
 
     void Clear() {
         m_users.clear();
-        RECT rect;
-        GetClientRect(&rect);
-        RecalculationScroll(0, rect);
-    }
-
-    // users are sorted by volume
-    void UpdateAllAudioLevel(const std::list<UserAttr>& users) {
-        for (auto& user : m_users) {
-            user.m_audioLevel = 0;
-        }
-
-        // New highlights
-        for (const auto& user : users) {
-            const std::string name = user.m_name;
-            auto pos = std::find_if(m_users.begin(), m_users.end(), [name](const UserAttr& user)->bool {
-                return user.m_name == name;
-            });
-
-            if (pos != m_users.end()) {
-                pos->m_audioLevel = user.m_audioLevel;
-
-                if (!pos->m_highlight && pos->m_audioLevel > 5) {
-                    pos->m_highlight = true;
-
-                    RECT rect;
-                    GetClientRect(&rect);
-                    rect.top = pos->m_delta;
-                    rect.bottom = rect.top + CAPTION_HEIGHT;
-                    InvalidateRect(&rect);
-                }
-            }
-        }
-
-        // Clear old invalid highlights
-        for (auto& user : m_users) {
-            if (user.m_audioLevel < 5 && user.m_highlight) {
-                user.m_highlight = false;
-
-                RECT rect;
-                GetClientRect(&rect);
-                rect.top = user.m_delta;
-                rect.bottom = rect.top + CAPTION_HEIGHT;
-                InvalidateRect(&rect);
-            }
-        }
-    }
-
-    void OnAudioMuteAll() {
-        for (auto& user : m_users) {
-            if (!user.m_isHost) {
-                user.m_bAudio = false;
-            }
-        }
-
         RECT rect;
         GetClientRect(&rect);
         RecalculationScroll(0, rect);
@@ -519,6 +396,7 @@ private:
     int m_vscroll_pos = 0;
     int m_vscroll_range = -1;
 
+    BDPoint m_last_point;
     std::list<UserAttr> m_users;
 
     BDBrush m_blackBrush;

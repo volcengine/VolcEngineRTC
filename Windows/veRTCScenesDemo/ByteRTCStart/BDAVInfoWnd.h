@@ -20,8 +20,8 @@ public:
     DECLARE_BDWND_CLASS(L"BDAVInfoWnd")
     BDAVInfoWnd() {
         BDWndClassInfo& wci = GetWndClassInfo();
-        if (!wci.m_atom)
-        {
+        wci.m_wc.hbrBackground = nullptr;
+        if (!wci.m_atom) {
             wci.m_wc.hIcon = LoadIcon(BDWinApp::GetResInstance(), MAKEINTRESOURCE(IDI_BYTERTCSTART));
         }
     }
@@ -55,86 +55,90 @@ public:
         }
     }
 
-    void OnSize(UINT nType, BDSize size)
-    {
+    void OnSize(UINT nType, BDSize size) {
     }
 
     LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
         BDPaintDC dc(m_hWnd);
         RECT rc;
         GetClientRect(&rc);
-        dc.FillRect(&rc, (HBRUSH)::CreateSolidBrush(RGB(0, 0, 0)));
 
-        dc.SetTextColor(RGB(0xFF, 0xFF, 0xFF));
-        dc.SetBkColor(RGB(0, 0, 0));
-        dc.SelectFont(m_font);
+        BDDC localDc = ::CreateCompatibleDC(dc);
+        auto hBitmap = ::CreateCompatibleBitmap(dc, rc.right, rc.bottom);
+        ::SelectObject(localDc, hBitmap);
+
+        localDc.FillRect(&rc, (HBRUSH)::CreateSolidBrush(RGB(0, 0, 0)));
+
+        localDc.SetTextColor(RGB(0xFF, 0xFF, 0xFF));
+        localDc.SetBkColor(RGB(0, 0, 0));
+        localDc.SelectFont(m_font);
 
         int index = 0;
 
         RECT rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         std::string tmp = "[LOCAL]";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "RES: " + std::to_string(m_local_width) + "*" + std::to_string(m_local_height);
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "FPS: " + std::to_string(m_local_fps);
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "BIT(VIDEO): " + std::to_string(m_local_video_bandwidth) + "kbps";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "BIT(AUDIO): " + std::to_string(m_local_audio_bandwidth) + "kbps";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "[REMOTE]";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "RTT(VIDEO): " + std::to_string(m_remote_video_rtt) + "ms";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "RTT(AUDIO): " + std::to_string(m_remote_audio_rtt) + "ms";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "CPU: 0%|0%";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "BIT(VIDEO): " + std::to_string(m_remote_video_bandwidth) + "kbps";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "BIT(AUDIO): " + std::to_string(m_remote_audio_bandwidth) + "kbps";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
@@ -142,27 +146,29 @@ public:
         tmp = "RES: " + std::to_string(m_remote_min_video_width == INT_MAX ? 0 : m_remote_min_video_width)
             + "*" + std::to_string(m_remote_min_video_height == INT_MAX ? 0 : m_remote_min_video_height);
         tmp += "-" + std::to_string(m_remote_max_video_width) + "*" + std::to_string(m_remote_max_video_height);
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "FPS: " + std::to_string(m_remote_min_video_fps == INT_MAX ? 0 : m_remote_min_video_fps)
             + "-" + std::to_string(m_remote_max_video_fps == INT_MAX ? 0 : m_remote_max_video_fps);
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "LOSS(VIDEO): " + std::to_string(m_remote_video_loss) + "%";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
         ++index;
 
         rText = rText = { 20, 30 + index * 18, rc.right, 30 + (index + 1) * 18 };
         tmp = "LOSS(AUDIO): " + std::to_string(m_remote_audio_loss) + "%";
-        ::DrawTextA(dc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
+        ::DrawTextA(localDc.m_hDC, tmp.c_str(), tmp.size(), &rText, DT_LEFT | DT_TOP);
 
+        dc.BitBlt(0, 0, rc.right, rc.bottom, localDc, 0, 0, SRCCOPY);
+        DeleteObject(hBitmap);
         return 0;
     }
 

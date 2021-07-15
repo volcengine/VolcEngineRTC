@@ -84,9 +84,6 @@
     <ClInclude Include="BDControlWnd.h">
       <Filter>Window</Filter>
     </ClInclude>
-    <ClInclude Include="BDLoginWnd.h">
-      <Filter>Window</Filter>
-    </ClInclude>
     <ClInclude Include="BDUserWnd.h">
       <Filter>Window</Filter>
     </ClInclude>
@@ -243,6 +240,15 @@
     <ClInclude Include="BDMaskWnd.h">
       <Filter>Window</Filter>
     </ClInclude>
+    <ClInclude Include="BDMeetingLoginWnd.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="BDUserLoginWnd.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="BDUIKit\BDComboxEx.h">
+      <Filter>BDUIKit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineWrapper.cpp">
@@ -304,6 +310,9 @@
     </ClCompile>
     <ClCompile Include="MeetingHanlder.cpp">
       <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteAppConfig.cpp">
+      <Filter>Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

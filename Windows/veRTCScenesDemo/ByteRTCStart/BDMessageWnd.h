@@ -22,8 +22,7 @@ class BDMessageWnd : public BDWndImpl<BDMessageWnd>
 {
 public:
     DECLARE_BDWND_CLASS(L"BDMessageWnd")
-    BDMessageWnd()
-    {
+    BDMessageWnd() {
         BDWndClassInfo& wci = GetWndClassInfo();
         if (!wci.m_atom)
         {
@@ -42,8 +41,7 @@ public:
         
     END_MSG_MAP()
 
-    int OnCreate(LPCREATESTRUCT lpCreateStruct)
-    {
+    int OnCreate(LPCREATESTRUCT lpCreateStruct) {
         m_font = CreateFont(14, 0, 0, 0, 0, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"PingFang SC");
         m_bkBrush = CreateSolidBrush(RGB(0xFF, 0xFF, 0xFF));
         m_warn.LoadBitmap(IDB_WARN);
@@ -57,6 +55,7 @@ public:
         BDRect r(0, 0, 240, 36);
         m_ok.Create(m_hWnd, r, BDHMenu(DUID_MESSAGE_AGREE), L"ok", WS_CHILD | WS_VISIBLE, 0);
         m_ok.SetBackgroundColor(m_font,
+            RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
@@ -66,6 +65,7 @@ public:
 
         m_cancel.Create(m_hWnd, r, BDHMenu(DUID_MEETING_REFUSE), L"cancel", WS_CHILD | WS_VISIBLE, 0);
         m_cancel.SetBackgroundColor(m_font,
+            RGB(0xFF, 0xFF, 0xFF),
             RGB(0xF2, 0xF3, 0xF5), RGB(0x1D, 0x21, 0x29),
             RGB(0xF2, 0xF3, 0xF5), RGB(0x1D, 0x21, 0x29),
             RGB(0xF2, 0xF3, 0xF5), RGB(0x1D, 0x21, 0x29),
@@ -85,8 +85,7 @@ public:
         return (HBRUSH)m_bkBrush;
     }
 
-    void OnSize(UINT nType, BDSize size)
-    {
+    void OnSize(UINT nType, BDSize size) {
         m_tips.MoveWindow(60, 32, 266, 22);
 
         int gap = (size.cx - 2 * 80) / 3;
@@ -94,8 +93,7 @@ public:
         m_ok.MoveWindow(2 * gap + 80, size.cy - 24 - 36, 80, 36);
     }
 
-    LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-    {
+    LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
         BDPaintDC dc(m_hWnd);
         RECT rc;
         GetClientRect(&rc);

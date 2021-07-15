@@ -24,6 +24,7 @@
 #include <direct.h>
 #include <stdio.h>
 #include "BDMaskWnd.h"
+#include "meeting-manager/MeetingManager.h"
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version = '6.0.0.0' processorArchitecture = '*' publicKeyToken = '6595b64144ccf1df' language = '*'\"")
 const unsigned int ROOMIDWARNINGID = 0;
@@ -38,11 +39,11 @@ const unsigned int USERIDWARNINGID = 1;
 #define IMAGE_PNG_VIDEO_DISABLE L"resource\\login_video_disable.png"
 #define IMAGE_PNG_SETTING L"resource\\login_setting.png"
 
-class BDLoginWnd : public BDWndImpl<BDLoginWnd>
+class BDMeetingLoginWnd : public BDWndImpl<BDMeetingLoginWnd>
 {
 public:
     DECLARE_BDWND_CLASS(L"BDLoginWnd")
-    BDLoginWnd()
+    BDMeetingLoginWnd()
     {
         BDWndClassInfo& wci = GetWndClassInfo();
         if (!wci.m_atom)
@@ -52,13 +53,14 @@ public:
         }
     }
 
-    BEGIN_MSG_MAP(BDLoginWnd)
+    BEGIN_MSG_MAP(BDMeetingLoginWnd)
         MSG_WM_CREATE(OnCreate)
         MSG_WM_SIZE(OnSize)
         MSG_WM_TIMER(OnTimer)
         MSG_WM_SHOWWINDOW(OnFrameShow)
         MSG_WM_CTLCOLOREDIT(OnCtlColorEdit)
         MESSAGE_HANDLER(WM_PAINT, OnPaint)
+        MESSAGE_HANDLER(WM_NOTIFY_MODIFY_NICKNAME_CALLBACK, OnModifyUserNicknameBack)
         COMMAND_ID_HANDLER(DUID_LOGIN, OnClickLogin)
         COMMAND_ID_HANDLER(DUID_AUDIO, OnClickAudio)
         COMMAND_ID_HANDLER(DUID_VIDEO, OnClickVideo)
@@ -101,8 +103,9 @@ public:
         m_userBackgroud.Create(m_hWnd, r, m, L"", WS_CHILD | WS_VISIBLE | SS_CENTER | SS_CENTERIMAGE);
 
         BDRect r3(120, 180, 240, 210);
-        m_login.Create(m_hWnd, r3, BDHMenu(DUID_LOGIN), L"进入房间", WS_CHILD | WS_VISIBLE, 0);
+        m_login.Create(m_hWnd, r3, BDHMenu(DUID_LOGIN), L"进入房间", WS_CHILD | WS_VISIBLE | WS_TABSTOP, WS_EX_CONTROLPARENT);
         m_login.SetBackgroundColor(m_font,
+            RGB(0xFF, 0xFF, 0xFF),
             RGB(0x16, 0x64, 0xFF), RGB(0xFF, 0xFF, 0xFF),
             RGB(0x40, 0x80, 0xFF), RGB(0xFF, 0xFF, 0xFF),
             RGB(0x0E, 0x42, 0xD2), RGB(0xFF, 0xFF, 0xFF),
@@ -111,16 +114,20 @@ public:
         m_login.SetID(DUID_LOGIN);
 
         BDRect r1(120, 100, 240, 130);
-        m_roomID.Create(m_hWnd, r1, BDHMenu(DUID_ROOMID), 0, WS_CHILD | WS_VISIBLE);
+        m_roomID.Create(m_hWnd, r1, BDHMenu(DUID_ROOMID), 0, WS_CHILD | WS_VISIBLE | WS_TABSTOP, WS_EX_CONTROLPARENT);
         m_roomID.SendMessage(EM_LIMITTEXT, 18, 0);
         m_roomID.SetCueBannerText(L"  房间ID");
         m_roomID.SetFont(m_font);
         
         BDRect r2(120, 150, 240, 180);
-        m_userID.Create(m_hWnd, r2, BDHMenu(DUID_USERID), 0, WS_CHILD | WS_VISIBLE);
-        m_userID.SendMessage(EM_LIMITTEXT, 18, 0);
-        m_userID.SetCueBannerText(L"  用户ID");
-        m_userID.SetFont(m_font);
+        m_user_nickname.Create(m_hWnd, r2, BDHMenu(DUID_USERID), 0, WS_CHILD | WS_VISIBLE | WS_TABSTOP, WS_EX_CONTROLPARENT);
+        m_user_nickname.SendMessage(EM_LIMITTEXT, 18, 0);
+        m_user_nickname.SetCueBannerText(L"  用户昵称");
+        m_user_nickname.SetFont(m_font);
+        m_user_nickname.SetWindowTextW(m_nickname);
+        if (!m_nickname.IsEmpty()) {
+            m_user_statue = ES_NORMAL;
+        }
 
         BDRect r4(0, 0, 32, 32);
         m_audio.Create(m_hWnd, r4, BDHMenu(DUID_AUDIO), L"audio", WS_CHILD | WS_VISIBLE, 0);
@@ -155,8 +162,12 @@ public:
         return m_roomID.GetWindowText();
     }
 
-    BDString GetUserId() {
-        return m_userID.GetWindowText();
+    BDString GetUserNickname() {
+        return m_nickname;
+    }
+
+    void SetUserNickname(const BDString& name) {
+        m_nickname = name;
     }
 
     void SetMessageHandler(HWND handler) {
@@ -172,6 +183,10 @@ public:
 
     void ResetLogin() {
         m_login.SetState(BDTxtButton::BUTTON_STATE_DEFAULT);
+    }
+
+    void ResetRoomEdit() {
+        m_roomID.SetWindowTextW(L"");
     }
 
     LRESULT OnCtlColorEdit(HDC hDc, HWND handler) {
@@ -224,27 +239,21 @@ public:
             return 0;
         }
 
-        auto showHint = [ wNotifyCode, this](BDEdit& content, EditStatus& status){
+        auto showHint = [wNotifyCode, this](BDEdit& content, EditStatus& status, std::function<bool(const BDString&)> func) {
             if (wNotifyCode == EN_MAXTEXT) {
                 if (status != ES_INVALID) {
                     status = ES_MAXTEXT;
                 }
                 ::PostMessage(m_notify_handler, WM_NOTIFY_WARNING, ES_MAXTEXT, 0);
-            }
-            else if (wNotifyCode == EN_CHANGE)
-            {
-                BDString str1 = content.GetWindowText();
-                std::string value = rtcutil::ConvertBDStringToUTF8(str1);
+            } else if (wNotifyCode == EN_CHANGE) {
+                BDString str = content.GetWindowText();
+                int len = str.GetLength();
 
-                if (!EngineWrapper::isValidID(value))
-                {
+                if (!func(str)) {
                     status = ES_INVALID;
-                }
-                else if (value.empty())
-                {
+                } else if (str.IsEmpty()) {
                     status = ES_EMPTY;
-                }
-                else {
+                } else {
                     status = ES_NORMAL;
                 }
             }
@@ -258,10 +267,10 @@ public:
         auto lastUserState = m_user_statue;
 
         if (hWndCtl == (HWND)m_roomID) {
-            showHint(m_roomID, m_room_statue);
+            showHint(m_roomID, m_room_statue, rtcutil::IsValidRoomString);
         }
-        else if (hWndCtl == (HWND)m_userID) {
-            showHint(m_userID, m_user_statue);
+        else if (hWndCtl == (HWND)m_user_nickname) {
+            showHint(m_user_nickname, m_user_statue, rtcutil::IsValidUserString);
         }
 
         if ((m_room_statue == ES_MAXTEXT || m_room_statue == ES_NORMAL)
@@ -290,7 +299,7 @@ public:
         m_roomID.MoveWindow(96, (size.cy - 32) / 2 + 8, 128, 32 - 8);
 
         m_userBackgroud.MoveWindow(272, (size.cy - 32) / 2, 128, 8);
-        m_userID.MoveWindow(272, (size.cy - 32) / 2 + 8, 128, 32 - 8);
+        m_user_nickname.MoveWindow(272, (size.cy - 32) / 2 + 8, 128, 32 - 8);
         m_login.MoveWindow(448, (size.cy - 32) / 2, 88, 32);
         m_audio.MoveWindow(568, (size.cy - 32) / 2, 32, 32);
         m_video.MoveWindow(616, (size.cy - 32) / 2, 32, 32);
@@ -343,14 +352,41 @@ public:
         return 0;
     }
 
-    LRESULT OnClickLogin(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
-    {
+    void ModifyUserNickname(const BDString& nickname) {
+        MeetingManager::GetInstance()->changeUserName(rtcutil::ConvertBDStringToUTF8(nickname),
+            [this](int code) {
+            ::PostMessage(m_hWnd, WM_NOTIFY_MODIFY_NICKNAME_CALLBACK, code, 0);
+        });
+    }
+
+    LRESULT OnModifyUserNicknameBack(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        int code = (int)wParam;
+        if (code = 200) {
+            m_nickname = m_user_nickname.GetWindowText();
+            APPConfig::Instance()->SetLoginUserName(rtcutil::ConvertBDStringToUTF8(m_nickname));
+            m_login.SetState(BDTxtButton::BUTTON_STATE_DISABLE);
+            ::PostMessage(m_notify_handler, WM_NOTIFY_LOGIN_CLICK, 0, 0);
+        }
+        else {
+            ::PostMessage(m_notify_handler, WM_NOTIFY_MODIFY_NICKNAME_ERROR, code, 0);
+        }
+        return 0;
+    }
+
+    LRESULT OnClickLogin(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled) {
         if (m_login.m_state == BDTxtButton::BUTTON_STATE_DISABLE || !m_connedtion) {
             return 0;
         }
-        m_login.SetState(BDTxtButton::BUTTON_STATE_DISABLE);
 
-        ::PostMessage(m_notify_handler, WM_NOTIFY_LOGIN_CLICK, 0, 0);
+        auto nickname = m_user_nickname.GetWindowText();
+        if (nickname != m_nickname) {
+            ModifyUserNickname(nickname);
+        }
+        else {
+            m_login.SetState(BDTxtButton::BUTTON_STATE_DISABLE);
+            ::PostMessage(m_notify_handler, WM_NOTIFY_LOGIN_CLICK, 0, 0);
+        }
+
         return 0;
     }
 
@@ -484,14 +520,13 @@ private:
     EditStatus m_room_statue = ES_NORMAL;
 
     BDStatic m_userBackgroud;
-    BDEdit m_userID;
+    BDEdit m_user_nickname;
     EditStatus m_user_statue = ES_EMPTY;
 
     BDTxtButton m_login;
     BDPngButton m_audio;
     BDPngButton m_video;
     BDPngButton m_showSettings;
-    bool m_created = false;
 
     HWND m_notify_handler = nullptr;
     BDBrush m_whiteBk;
@@ -499,7 +534,10 @@ private:
     BDBrush m_pinkBk;
     BDBitmap m_error;
 
+    bool m_created = false;
     bool m_connedtion = false;
     bool m_show_alert = false;
+
+    BDString m_nickname;
 };
 

@@ -139,7 +139,7 @@ public:
      * @type api
      * @region 流消息
      * @brief 给房间内指定的用户发送消息，返回这次发送消息的编号。  <br>
-     *        调用该函数后会收到一次 OnUserMessageSendResult{@link #IRTCRoomEventHandler#OnUserMessageSendResult} 
+     *        调用该函数后会收到一次 OnUserMessageSendResult{@link #IRTCRoomEventHandler#OnUserMessageSendResult}
      *        回调，告知发送结果。
      * @param [in] uid  <br>
      *        指定用户 ID 。
@@ -153,7 +153,7 @@ public:
      * OnUserMessageReceived{@link #IRTCRoomEventHandler#OnUserMessageReceived} 回调。
      */
     virtual int64_t SendUserMessage(const char* uid, const char* message) = 0;
-    
+
     /**
      * @type api
      * @region 流消息
@@ -285,89 +285,51 @@ public:
     /**
      * @type api
      * @region 音频管理
-     * @brief 启用说话者音量提示。
-     * @param interval  指定音量提示的时间间隔  <br>
+     * @brief 设置是否开启房间内音量提示。<br>
+     *        如果开启，将以设置的时间间隔收到音量事件回调。无论房间内有无发言，都会收到回调。
+     *        具体回调参看 OnAudioVolumeIndication{@link #IRTCRoomEventHandler#OnAudioVolumeIndication}
+     * @param interval 收到音量提示回调的时间间隔  <br>
      *                + ≤ 0：禁用音量提示功能。  <br>
-     *                + > 0：返回音量提示的间隔，单位为毫秒。建议设置到大于等于200 毫秒。少于 10 毫秒时，行为未定义。  <br>
-     * @param smooth 该参数未使用
-     * @notes  <br>
-     *       + 该方法启用说话者音量提示。调用该方法后，将以你设置的 internal 为间隔收到 OnAudioVolumeIndication{@link
-     * #IRTCRoomEventHandler#OnAudioVolumeIndication} 事件回调。
+     *                + > 0：启用音量提示功能，并设置收到音量提示回调的时间间隔。单位为毫秒。<br>
+     *                建议设置为大于等于 200 毫秒；小于 10 毫秒时，行为未定义。
      */
-    virtual void EnableAudioVolumeIndication(int interval, int smooth) = 0;
+    virtual void SetAudioVolumeIndicationInterval(int interval) = 0;
 
     /**
      * @type api
      * @region 音频管理
-     * @brief 调节远端用户音量
-     * @param uid 远端用户ID
-     * @param volume  播放音量，可在 0~400 范围内进行调节  <br>
+     * @brief 调节来自远端用户的音频播放音量
+     * @param user_id 音频来源的远端用户 ID
+     * @param volume  播放音量，取值范围： [0,400]  <br>
      *              + 0: 静音  <br>
      *              + 100: 原始音量  <br>
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
      */
-    virtual void AdjustRemoteAudioVolume(const char* uid, int volume){};
+    virtual void SetRemoteAudioPlaybackVolume(const char* user_id, int volume) = 0;
 
     /**
      * @type api
      * @region 音频管理
-     * @brief 设置是否默认静音所有远端音频流。默认状态为非静音所有远端音频流。
-     * @param [in] mute 是否默认静音所有远端音频流  <br>
-     *        + true: 默认静音所有远端音频流  <br>
-     *        + false: 默认取消静音所有远端音频流（默认）  <br>
-     * @notes  <br>
-     *       + 如果在加入房间前调用此 API，进房后对所有远端用户音频流生效  <br>
-     *       + 如果在加入房间后调用此 API，则只对在调用 API 之后进房的远端用户的音频流生效  <br>
-     *       + 对于已静音的远端用户音频流，如果想要取消静音，请调用 UnmuteRemoteAudioStream{@link #UnmuteRemoteAudioStream}  <br>
+     * @brief 设置对来自远端的所有音频流的接收状态。默认为接收。
+     * @param [in] mute_state 接收状态。参看：MuteState{@link #MuteState}
+     * @notes 本方法只影响本地是否接收远端音频流，并不影响远端音频设备的采集发送功能。
      */
-    virtual void SetDefaultMuteAllRemoteAudioStreams(bool mute) = 0;
+    virtual void MuteAllRemoteAudio(MuteState mute_state) = 0;
 
     /**
      * @type api
      * @region 音频管理
-     * @brief 静音所有音频流。默认状态为非静音所有远端音频流。
-     * @notes  <br>
-     *       + 如果想取消静音所有远端音频流，可参考 UnmuteAllRemoteAudioStreams{@link #UnmuteAllRemoteAudioStreams}  <br>
-     *       + 本方法只控制本地对远端音频流是否静音，并不能控制远端音频设备的采集发送功能  <br>
+     * @brief 设置对来自远端指定用户的音频流的接收状态。默认为接收。
+     * @param [in] uid 指定远端用户的 ID
+     * @param [in] mute_state 接收状态。参看：MuteState{@link #MuteState}
+     * @notes 本方法只影响本地是否接收远端音频流，并不影响远端音频设备的采集发送功能。
      */
-    virtual void MuteAllRemoteAudioStreams() = 0;
-
-    /**
-     * @type api
-     * @region 音频管理
-     * @brief 取消静音所有远端音频流。默认状态为非静音所有远端音频流。
-     * @notes  <br>
-     *       + 如果想静音所有远端音频流，可参考 MuteAllRemoteAudioStreams{@link #MuteAllRemoteAudioStreams}  <br>
-     *       + 本方法只控制本地对远端音频流是否静音，并不能控制远端音频设备的采集发送功能  <br>
-     */
-    virtual void UnmuteAllRemoteAudioStreams() = 0;
-
-    /**
-     * @type api
-     * @region 音频管理
-     * @brief 静音指定用户音频流
-     * @param [in] uid 指定远端用户ID
-     * @notes  <br>
-     *       + 如果想取消静音指定用户的音频流，可参考 UnmuteRemoteAudioStream{@link #UnmuteRemoteAudioStream}  <br>
-     *       + 本方法只控制本地是否静音远端指定音频流，并不能控制远端音频设备的采集发送功能  <br>
-     */
-    virtual void MuteRemoteAudioStream(const char* uid) = 0;
-
-    /**
-     * @type api
-     * @region 音频管理
-     * @brief 取消对指定用户音频流的静音
-     * @param [in] uid 指定远端用户ID
-     * @notes  <br>
-     *       + 如果想静音指定用户音频流，可参考 MuteRemoteAudioStream{@link #MuteRemoteAudioStream}  <br>
-     *       + 本方法只控制本地是否静音远端指定音频流，并不能控制远端音频设备的采集发送功能  <br>
-     */
-    virtual void UnmuteRemoteAudioStream(const char* uid) = 0;
+    virtual void MuteRemoteAudio(const char* uid, MuteState mute_state) = 0;
 
 #ifndef BYTERTC_AUDIO_ONLY
 
     /**
-     * @brief @hidden
+     * @hidden
     */
     virtual void UpdateCloudRending(const char* cloudrenderJsonString) = 0;
 
@@ -406,18 +368,21 @@ public:
     /**
      * @type api
      * @region 视频管理
-     * @brief 设置远端视频渲染画布信息
-     * @param [in] canvas
-     *        画布信息，详见：VideoCanvas{@link #VideoCanvas}
+     * @brief 设置来自指定远端用户 user_id 的视频渲染时，使用的视图，并设置渲染模式。 <br>
+     *        你应在加入房间前，绑定视图。退出房间后，此设置失效。<br>
+     *        如果需要解除某个用户的绑定视图，你可以把 view 设置为空。
      * @notes  <br>
-     *       + 该方法绑定远程用户和显示视图，即设定 userid 指定的用户用哪个视图显示。  <br>
-     *       + 调用该接口时需要指定远程视频的 userid，一般可以在进房间前提前设置好。  <br>
-     *       + 如果应用不能事先知道对方的 userid，可以在应用收到 OnUserJoined{@link #OnUserJoined} 事件时设置。  <br>
-     *       + 如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端也会收到它的 OnUserJoined{@link #OnUserJoined} 事件，应用不应给它绑定视图（因为它不会发送视频流）；  <br>
-     *       + 如果应用不能识别哑客户端，可以在收到 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 事件时再绑定视图。 解除某个用户的绑定视图可以把 view 设置为空。  <br>
-     *       + 退出房间后，SDK 会把远程用户的绑定关系清除掉。  <br>
+     *       + 实际使用时，你可以在收到回调 OnUserJoined{@link #OnUserJoined} 或 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 时获得远端用户 user_id。  <br>
+     *       + 这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 OnUserJoined{@link #OnUserJoined} 回调；
+     *       + 而不会收到 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 回调。你不应给录制的亚客户端绑定视图（因为它不会发送视频流）。
+     * @param [in] user_id 视频来源的远端用户 ID。
+     * @param [in] index 视频流属性, 参看 StreamIndex{@link #StreamIndex}
+     * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}
+     * @return  <br>
+     *        + 0：成功  <br>
+     *        + !0：失败  <br>
      */
-    virtual void SetupRemoteVideo(const VideoCanvas& canvas) = 0;
+    virtual void SetRemoteVideoCanvas(const char* user_id, StreamIndex index, const VideoCanvas& canvas) = 0;
 
     /**
      * @type api
@@ -437,16 +402,6 @@ public:
      * @brief 去除所有远端视频。
      */
     virtual void RemoveAllRemoteVideo() = 0;
-
-    /**
-     * @type api
-     * @region 视频管理
-     * @brief 设置屏幕共享远端视图。
-     * @param [in] canvas
-     *        远端视图信息，详见：VideoCanvas{@link #VideoCanvas}
-     * @notes 该方法绑定远端视图，即设定用户ID的视图显示。调用该接口时需要指定远端屏幕共享用户ID。
-     */
-    virtual void SetupRemoteScreen(const VideoCanvas& canvas) = 0;
 
     /**
      * @type api
@@ -496,38 +451,25 @@ public:
     /**
      * @type api
      * @region 视频管理
-     * @brief 关闭所有远端视频流
-     * @notes 本方法只控制收到的远端流视频播放属性，并不能控制远端视频设备
+     * @brief 设置是否播放所有远端视频流
+     * @param  [in] muteState 参看 MuteState{@link #MuteState}   <br>
+     *       + true：停止播放  <br>
+     *       + false：开启播放  <br>
+     * @notes 本方法不影响远端视频采集和发送状态
      */
-    virtual void MuteAllRemoteVideoStreams() = 0;
+    virtual void MuteAllRemoteVideo(MuteState muteState) = 0;
 
     /**
      * @type api
      * @region 视频管理
-     * @brief 开启所有远端视频流
-     * @notes 本方法只控制收到的远端流视频播放属性，并不能控制远端视频设备
+     * @brief 设置是否播放远端视频流
+     * @param [in] userid 视频来源的远端用户 ID
+     * @param  [in] muteState 参看 MuteState{@link #MuteState}   <br>
+     *       + true：停止播放  <br>
+     *       + false：开启播放  <br>
+     * @notes 本方法不影响远端视频采集和发送状态
      */
-    virtual void UnmuteAllRemoteVideoStreams() = 0;
-
-    /**
-     * @type api
-     * @region 视频管理
-     * @brief 关闭远端视频流
-     * @param [in] userid
-     *        要操控的远端用户ID
-     * @notes 本方法只控制收到的远端流视频播放属性，并不能控制远端视频设备
-     */
-    virtual void MuteRemoteVideoStream(const char* userid) = 0;
-
-    /**
-     * @type api
-     * @region 视频管理
-     * @brief 开启远端视频流
-     * @param [in] userid
-     *        要操控的远端用户ID
-     * @notes 本方法只控制收到的远端流视频播放属性，并不能控制远端视频设备
-     */
-    virtual void UnmuteRemoteVideoStream(const char* userid) = 0;
+    virtual void MuteRemoteVideo(const char* userid, MuteState muteState) = 0;
 #endif
 
     /**

@@ -13,7 +13,7 @@
 #include "BDGDI.h"
 #include "BDCtrl.h"
 #include "EngineWrapper.h"
-#include "BDLoginWnd.h"
+#include "BDMeetingLoginWnd.h"
 #include "BDUserWnd.h"
 #include "BDControlWnd.h"
 #include "BDUserVideoViewWnd.h"
@@ -48,7 +48,7 @@ class User;
 
 #define TOPBAR_WND_HEIGHT 50
 
-#define KICKOFF_WND_WIDTH 350
+#define KICKOFF_WND_WIDTH 250
 #define KICKOFF_WND_HEIGHT 40
 
 #define CONTROL_WND_WIDTH 401
@@ -99,7 +99,8 @@ enum ViewLayoutStyle
     GALLERY_ONER_STYLE = 0, // Layout of a room with only one person, gallery Mode
     GALLERY_TWO_STYLE,      // Layout of a room with two persons, gallery Mode
     GALLERY_FOUR_STYLE,     // Layout when there are 3-4 people in the room, gallery Mode
-    GALLERY_NINE_STYLE,     // Layout of a room with 5 persons or more, gallery Mode
+    GALLERY_SIX_STYLE,     // Layout when there are 5-6 people in the room, gallery Mode
+    GALLERY_NINE_STYLE,     // Layout of a room with 7 persons or more, gallery Mode
     SPEAKER_STYLE,          // Layout for remote screen sharing, speaker mode
     LOCAL_SHARE_STYLE,      // Layout for local screen sharing
     LOGIN_STYLE             // Layout at login
@@ -112,10 +113,13 @@ public:
     BDMainContainerFrame():m_main_view_container(true), m_login_local_view(true) {
         BDWndClassInfo& wci = GetWndClassInfo();
         wci.m_wc.hbrBackground = CreateSolidBrush(RGB(0x1D, 0x21, 0x29));
-        if (!wci.m_atom)
-        {
+        if (!wci.m_atom) {
             wci.m_wc.hIcon = LoadIcon(BDWinApp::GetResInstance(), MAKEINTRESOURCE(IDI_APP_LOGO));
         }
+    }
+
+    void SetVerifySms(const VerifySms& sms) {
+        m_sms = sms;
     }
 
     BEGIN_MSG_MAP(BDMainFrame)
@@ -127,6 +131,7 @@ public:
         MSG_WM_CLOSE(OnClose)
         MESSAGE_HANDLER(WM_PAINT, OnPaint)
         MSG_WM_TIMER(OnTimer)
+        MESSAGE_HANDLER(WM_NOTIFY_MODIFY_NICKNAME_ERROR, ModifyUserNicknameError)
         MESSAGE_HANDLER(WM_NOTIFY_VIEW_ATTACH, OnViewAttach)
         MESSAGE_HANDLER(WM_NOTIFY_VIEEW_RELAYOUT, OnRemoteViewRelayout)
         MESSAGE_HANDLER(WM_NOTIFY_INVALID_TOKEN, OnInvalidToken)
@@ -192,6 +197,7 @@ public:
         m_login_local_view.SetHeader(LOCAL_VIDEO_MUTE_MAIN, 36);
 
         BDRect rLogin(0, TOPBAR_WND_HEIGHT, LOGIN_WND_WIDTH, TOPBAR_WND_HEIGHT + LOGIN_WND_HEIGHT);
+        m_loginWnd.SetUserNickname(m_sms.user_name);
         m_loginWnd.Create(m_login_local_view.m_hWnd, &rLogin, m, 0, WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN);
         HRGN hLoginRgn = ::CreateRoundRectRgn(0, 0, LOGIN_WND_WIDTH, LOGIN_WND_HEIGHT, LOGIN_WND_HEIGHT, LOGIN_WND_HEIGHT);
         m_loginWnd.SetWindowRgn(hLoginRgn);
@@ -216,8 +222,7 @@ public:
         m_main_mask.SetMessageHander(m_hWnd);
 
         BDRect rUser(0, TOPBAR_WND_HEIGHT, USER_WND_WIDTH, TOPBAR_WND_HEIGHT + USER_WND_HEIGHT);
-        m_userWnd.Create(m_hWnd, &rUser, m, 0, WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN);
-        m_userWnd.ShowWindow(SW_HIDE);
+        m_userWnd.Create(m_hWnd, &rUser, m, 0, WS_CHILD | WS_CLIPCHILDREN);
 
         BDRect rSetting(0, TOPBAR_WND_HEIGHT, SETTING_WND_WIDTH, TOPBAR_WND_HEIGHT + SETTING_WND_HEIGHT);
         m_settingWnd.Create(m_main_mask.m_hWnd, &rSetting, m, 0, WS_POPUP);
@@ -226,13 +231,13 @@ public:
         m_settingWnd.SetMessageHander(m_hWnd);
 
         BDRect rMessage(0, TOPBAR_WND_HEIGHT, MESSAGE_WND_WIDTH, TOPBAR_WND_HEIGHT + MESSAGE_WND_HEIGHT);
-        m_messageWnd.Create(m_hWnd, &rMessage, m, 0, WS_POPUP);
+        m_messageWnd.Create(m_main_mask.m_hWnd, &rMessage, m, 0, WS_POPUP);
         HRGN hMessageRgn = ::CreateRoundRectRgn(0, 0, MESSAGE_WND_WIDTH, MESSAGE_WND_HEIGHT, 4, 4);
         m_messageWnd.SetWindowRgn(hMessageRgn);
 
-        BDRect rKickoff(0, 0, KICKOFF_WND_WIDTH, KICKOFF_WND_HEIGHT);
+        BDRect rKickoff(0, 0, KICKOFF_WND_WIDTH + 100, KICKOFF_WND_HEIGHT);
         m_bubbleTipWnd.Create(m_hWnd, &rKickoff, m, 0, WS_POPUP);
-        HRGN bubbleRgn = ::CreateRoundRectRgn(0, 0, KICKOFF_WND_WIDTH, KICKOFF_WND_HEIGHT, 10, 10);
+        HRGN bubbleRgn = ::CreateRoundRectRgn(0, 0, KICKOFF_WND_WIDTH + 100, KICKOFF_WND_HEIGHT, 10, 10);
         m_bubbleTipWnd.SetWindowRgn(bubbleRgn);
 
         BDRect rleave(0, HOST_LEAVE_WND_HEIGHT, HOST_LEAVE_WND_WIDTH, TOPBAR_WND_HEIGHT + HOST_LEAVE_WND_HEIGHT);
@@ -264,51 +269,75 @@ public:
         m_avInfoWnd.Create(m_hWnd, &rAVinfo, m, 0, WS_POPUP);
 
         MeetingManager::GetInstance()->registerNotification(this);
-        MeetingManager::GetInstance()->startConnect();
+        //MeetingManager::GetInstance()->startConnect();
         return 0;
     }
 
     void OnMinMaxInfo(LPMINMAXINFO info) {
-        info->ptMinTrackSize.x = 960 + 20;
-        info->ptMinTrackSize.y = 700 + 10;
+        RECT r = {0, 0, 960, 720};
+        AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+
+        info->ptMinTrackSize.x = r.right - r.left;
+        info->ptMinTrackSize.y = r.bottom - r.top;
     }
 
+    // 深度优化
     void OnSize(UINT nType, BDSize size) {
         if (size.cx <= 0 || size.cy <= 0) {
             return;
         }
 
+        bool change = m_width != size.cx || m_height != size.cy;
         m_width = size.cx;
         m_height = size.cy;
 
         int userViewWidth = 0;
         if (m_userWnd.IsWindowVisible()) {
             userViewWidth = USER_WND_WIDTH;
-            m_userWnd.MoveWindow(m_width - USER_WND_WIDTH, 0, USER_WND_WIDTH, m_height);
-            m_userWnd.Invalidate();
+            m_userWnd.MoveWindowEx(m_width - USER_WND_WIDTH, 0, USER_WND_WIDTH, m_height);
         }
 
-        m_topbarWnd.MoveWindow(0, 0, m_width - userViewWidth, TOPBAR_WND_HEIGHT);
+        m_topbarWnd.MoveWindowEx(0, 0, m_width, TOPBAR_WND_HEIGHT);
+        HRGN rgn = ::CreateRoundRectRgn(0, 0, m_width - userViewWidth, TOPBAR_WND_HEIGHT, 0, 0);
+        m_topbarWnd.SetWindowRgn(rgn);
 
-        RECT rc;
         m_main_view_container.Highlight(false);
-        m_main_view_container.MoveWindow(0, TOPBAR_WND_HEIGHT, m_width - userViewWidth, m_height - TOPBAR_WND_HEIGHT);
-        m_main_view_container.GetClientRect(&rc);
-        m_login_local_view.MoveWindow(0, 0, rc.right, rc.bottom);
+        m_main_view_container.MoveWindowEx(0, TOPBAR_WND_HEIGHT, m_width, m_height - TOPBAR_WND_HEIGHT);
+        rgn = ::CreateRoundRectRgn(0, 0, m_width - userViewWidth, m_height - TOPBAR_WND_HEIGHT, 0, 0);
+        m_main_view_container.SetWindowRgn(rgn);
 
-        m_loginWnd.MoveWindow(rc.left + (m_width - LOGIN_WND_WIDTH) / 2, rc.bottom - LOGIN_WND_HEIGHT - 80,
-            LOGIN_WND_WIDTH, LOGIN_WND_HEIGHT);
+        if (!change && !userViewWidth) {
+            for (auto& user : m_users) {
+                if (!user.m_view) continue;
 
-        m_login_warning.MoveWindow((size.cx - WARNING_WND_WIDTH) / 2, (size.cy - WARNING_WND_HEIGHT) / 2,
-            WARNING_WND_WIDTH, WARNING_WND_HEIGHT, FALSE);
+                if ( user.m_view->IsWindowVisible()) {
+                    user.m_view->TitleFresh();
+                } else {
+                    break;
+                }
+            }
 
-        SetViewLayout(m_view_style);
-        OnMove(0, 0);
+            m_topbarWnd.Invalidate();
+        }
+
+        if (change) {
+            SetViewLayout(m_view_style);
+            OnMove(0, 0);
+        }
+
+        m_main_view_container.Invalidate();
     }
 
     void OnMove(int x, int y) {
         RECT rc;
         ::GetWindowRect(m_hWnd, &rc);
+
+        if (m_main_mask.IsWindowVisible()) {
+            m_main_mask.MoveWindow(rc.left + 10,
+                rc.top,
+                rc.right - rc.left - 20,
+                rc.bottom - rc.top - 10);
+        }
 
         if (m_settingWnd.IsWindowVisible()) {
             m_settingWnd.MoveWindow((rc.right + rc.left) / 2 - SETTING_WND_WIDTH / 2,
@@ -336,7 +365,7 @@ public:
 
         if (m_snapshotWnd.IsWindowVisible()) {
             m_snapshotWnd.MoveWindow(rc.left + m_width / 2 - SNAPSHOT_WND_WIDTH / 2,
-                rc.bottom - SNAPSHOT_WND_HEIGHT - 76,
+                rc.bottom - SNAPSHOT_WND_HEIGHT - 96,
                 SNAPSHOT_WND_WIDTH,
                 SNAPSHOT_WND_HEIGHT);
             m_snapshotWnd.BringWindowToTop();
@@ -346,10 +375,6 @@ public:
             m_avInfoWnd.MoveWindow(rc.left + 12, rc.bottom - AVINFO_WND_HEIGHT - 12,
                 AVINFO_WND_WIDTH, AVINFO_WND_HEIGHT);
         }
-
-        //m_controlWnd.MoveWindow(rc.left +  (m_width - CONTROL_WND_WIDTH) / 2, rc.bottom - 18 - CONTROL_WND_HEIGHT,
-        //    CONTROL_WND_WIDTH, CONTROL_WND_HEIGHT);
-        //m_controlWnd.SetWindowPos(HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 
         if (m_rateWnd.IsWindowVisible()) {
             m_rateWnd.MoveWindow(rc.left + (rc.right - rc.left - RATE_WND_WIDTH) / 2, rc.top + (rc.bottom - rc.top - RATE_WND_HEIGHT) / 2,
@@ -361,16 +386,9 @@ public:
                 FEEDBACK_WND_WIDTH, FEEDBACK_WND_HEIGHT);
         }
 
-        if (m_main_mask.IsWindowVisible()) {
-            m_main_mask.MoveWindow(rc.left + 10,
-                rc.top,
-                rc.right - rc.left - 20,
-                rc.bottom - rc.top - 10);
-        }
-
         if (!m_users.empty() && m_leaveWnd.IsWindowVisible()) {
             auto host = m_users.begin();
-            if (host->m_isHost && host->m_name == m_user_id) {
+            if (host->m_isHost && host->m_type == UserType::LOCAL_USER) {
                 m_leaveWnd.MoveWindow(rc.left + (m_width - HOST_LEAVE_WND_WIDTH) / 2, rc.top + (m_height - HOST_LEAVE_WND_HEIGHT) / 2,
                     HOST_LEAVE_WND_WIDTH, HOST_LEAVE_WND_HEIGHT, FALSE);
             }
@@ -382,10 +400,11 @@ public:
     }
 
     void OnFrameShow(BOOL show, int lParam) {
+        CheckUpdateApp(show);
+
         if (show) {
             SetViewLayout(m_view_style);
-        }
-        else {
+        } else {
             for (auto& user : m_users) {
                 if (user.m_view) {
                     user.m_view->ShowWindow(SW_HIDE);
@@ -406,14 +425,14 @@ public:
         }
     }
 
-    void SetViewLayout(ViewLayoutStyle style, bool updata_position = true) {
+    void SetViewLayout(ViewLayoutStyle style) {
         if (style != LOCAL_SHARE_STYLE  && m_view_style != style) { // when m_view_style == LOCAL_SHARE_STYLE, it need special treatment
             DestroyControl();
         }
 
+        bool change = m_view_style != style;
         m_view_style = style;
-        switch (m_view_style)
-        {
+        switch (m_view_style) {
         case GALLERY_ONER_STYLE:
             ViewLayoutOner();
             break;
@@ -423,14 +442,17 @@ public:
         case GALLERY_FOUR_STYLE:
             ViewLayoutFour();
             break;
+        case GALLERY_SIX_STYLE:
+            ViewLayoutSix();
+            break;
         case GALLERY_NINE_STYLE:
             ViewLayoutNine();
             break;
         case SPEAKER_STYLE:
-            ViewLayoutSpeaker(updata_position);
+            ViewLayoutSpeaker(change);
             break;
         case LOCAL_SHARE_STYLE:
-            ViewLayoutLocalShare();
+            ViewLayoutLocalShare(change);
             break;
         case LOGIN_STYLE:
             ViewLayoutLogin();
@@ -439,13 +461,15 @@ public:
             break;
         }
 
-        UpdateRecordVideoLayout([this](int code) {
-            if (code != 200) {
-                BDString inf;
-                inf.Format(L"更新录制布局失败，错误码: %d", code);
-                ShowBubbleTip(inf);
-            }
-        });
+        if (change) {
+            UpdateRecordVideoLayout([this](int code) {
+                if (code != 200) {
+                    BDString inf;
+                    inf.Format(L"更新录制布局失败，错误码: %d", code);
+                    ShowBubbleTip(inf);
+                }
+            });
+        }
     }
 
     void ViewLayoutOner() {
@@ -485,7 +509,9 @@ public:
         if (m_controlWnd) {
             m_controlWnd->MoveWindow((view_rc.right - CONTROL_WND_WIDTH) / 2, view_rc.bottom - 18 - CONTROL_WND_HEIGHT, CONTROL_WND_WIDTH, CONTROL_WND_HEIGHT);
             m_controlWnd->SetMobile(false);
-            m_controlWnd->ShowWindow(SW_SHOW);
+            if (!m_controlWnd->IsWindowVisible()) {
+                m_controlWnd->ShowWindow(SW_SHOW);
+            }
         }
     }
 
@@ -517,8 +543,22 @@ public:
         LayoutGallery(row, column, HEAD_2_4, 36);
     }
 
+    void ViewLayoutSix() {
+        assert(m_users.size() >= 5 && m_users.size() <= 6);
+
+        m_topbarWnd.ListShow(false, IDB_LISTHIDEN);
+        if (m_show_av_info && m_settingWnd.IsAVInfoShow()) {
+            AVInfoShow(true);
+        }
+        m_main_view_container.Highlight(false);
+
+        const int row = 2;
+        const int column = 3;
+        LayoutGallery(row, column, HEAD_2_4, 36);
+    }
+
     void ViewLayoutNine() {
-        assert(m_users.size() >= 5);
+        assert(m_users.size() >= 7);
 
         m_topbarWnd.ListShow(false, IDB_LISTHIDEN);
         if (m_show_av_info && m_settingWnd.IsAVInfoShow()) {
@@ -578,13 +618,17 @@ public:
                     view->SetHeader(HEAD_SHARE, 20);
                 }
 
-                view->ShowWindow(i < count ? SW_SHOW : SW_HIDE);
-                view->BringWindowToTop();
+                if (view->IsWindowVisible() != (i < count)) {
+                    view->ShowWindow(i < count ? SW_SHOW : SW_HIDE);
+                    view->BringWindowToTop();
+                }
             }
 
             if (posUser->m_shared && posUser->m_screen_view) { // Shared screen window
-                posUser->m_screen_view->MoveWindow(0, delta_y, rc.right, rc.bottom - delta_y);
-                posUser->m_screen_view->ShowWindow(SW_SHOW);
+                posUser->m_screen_view->MoveWindowEx(0, delta_y, rc.right, rc.bottom - delta_y);
+                if (!posUser->m_screen_view->IsWindowVisible()) {
+                    posUser->m_screen_view->ShowWindow(SW_SHOW);
+                }
 
                 posUser->m_screen_view->GetClientRect(&screen_rc);
                 if (!m_controlWnd) {
@@ -604,7 +648,7 @@ public:
     }
 
     // Layout when sharing screens locally
-    void ViewLayoutLocalShare() {
+    void ViewLayoutLocalShare(bool updata_position) {
         m_main_mask.ShowWindow(SW_HIDE);
         m_snapshotWnd.ShowWindow(SW_HIDE);
         AVInfoShow(false);
@@ -632,7 +676,9 @@ public:
         //    ReCreateControl(m_hWnd, true);
         //}
         if (m_controlWnd) {
-            m_controlWnd->SetWindowPos(HWND_TOPMOST, rControl.left, rControl.top, rControl.right - rControl.left, rControl.bottom - rControl.top, SWP_SHOWWINDOW);
+            if (updata_position) {
+                m_controlWnd->SetWindowPos(HWND_TOPMOST, rControl.left, rControl.top, rControl.right - rControl.left, rControl.bottom - rControl.top, SWP_SHOWWINDOW);
+            }
             m_controlWnd->ResetScreenSharedState(true);
             m_controlWnd->SetMobile(true);
         }
@@ -673,8 +719,10 @@ public:
                             view->SetHeader(icon, font_size);
                         }
 
-                        view->ShowWindow(SW_SHOW);
-                        view->BringWindowToTop();
+                        if (!view->IsWindowVisible()) {
+                            view->ShowWindow(SW_SHOW);
+                            view->BringWindowToTop();
+                        }
                     }
                     else {
                         break;
@@ -685,7 +733,7 @@ public:
 
         // Others have to hide
         for (;  posUser != m_users.end(); ++posUser) {
-            if (posUser->m_view) {
+            if (posUser->m_view && posUser->m_view->IsWindowVisible()) {
                 posUser->m_view->ShowWindow(SW_HIDE);
             }
         }
@@ -697,7 +745,9 @@ public:
         if (m_controlWnd) {
             m_controlWnd->MoveWindow((rc.right - CONTROL_WND_WIDTH) / 2, rc.bottom - 18 - CONTROL_WND_HEIGHT, CONTROL_WND_WIDTH, CONTROL_WND_HEIGHT);
             m_controlWnd->SetMobile(false);
-            m_controlWnd->ShowWindow(SW_SHOW);
+            if (!m_controlWnd->IsWindowVisible()) {
+                m_controlWnd->ShowWindow(SW_SHOW);
+            }
         }
     }
 
@@ -713,87 +763,120 @@ public:
         m_show_av_info = false;
 
         RECT rc;
-        m_main_view_container.MoveWindow(0, TOPBAR_WND_HEIGHT, m_width, m_height - TOPBAR_WND_HEIGHT);
+        m_main_view_container.MoveWindowEx(0, TOPBAR_WND_HEIGHT, m_width, m_height - TOPBAR_WND_HEIGHT);
         m_main_view_container.GetClientRect(&rc);
         m_login_local_view.MoveWindow(0, 0, rc.right, rc.bottom);
         m_login_local_view.ShowWindow(SW_SHOW);
         m_login_local_view.BringWindowToTop();
         m_login_local_view.SetupLocal(true);
 
+        m_loginWnd.MoveWindow(rc.left + (m_width - LOGIN_WND_WIDTH) / 2, rc.bottom - LOGIN_WND_HEIGHT - 80,
+            LOGIN_WND_WIDTH, LOGIN_WND_HEIGHT);
+
+        m_login_warning.MoveWindow((m_width - WARNING_WND_WIDTH) / 2, (m_height - WARNING_WND_HEIGHT) / 2,
+            WARNING_WND_WIDTH, WARNING_WND_HEIGHT, FALSE);
+
         m_main_view_container.Highlight(false);
         DestroyControl();
     }
 
-    void UserLayoutFresh() {
-        std::list<UserAttr> users;
-        // Host, self may also be the host
-        auto pos = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& user)->bool {
-            return user.m_isHost;
+    void ResortUsersList() {
+        // save old view layout
+        std::vector<std::string> old_view_laytou;
+        std::string old_screen_uid;
+        GetRecordUsersInfo(old_view_laytou, old_screen_uid);
+
+        auto pos = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& user) {
+            return !user.m_isHost && user.m_type == UserType::REMOTE_USER;
         });
 
-        if (pos != m_users.end()) {
-            users.push_back(*pos);
-            m_users.erase(pos);
+        auto max_audio_pos = pos;
+        for (; pos != m_users.end(); ++pos) {
+            if (pos->m_audioLevel > max_audio_pos->m_audioLevel + 5) {
+                max_audio_pos = pos;
+            }
         }
 
-        //// Screen sharer
-        //if (m_view_style == SPEAKER_STYLE) {
-        //    pos = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& user)->bool {
-        //        return user.m_shared;
-        //    });
-        //
-        //    if (pos != m_users.end()) {
-        //        users.push_back(*pos);
-        //        m_users.erase(pos);
-        //    }
-        //}
-
-        // self
-        pos = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& user)->bool {
-            return user.m_type == LOCAL_USER;
-        });
-
-        if (pos != m_users.end()) {
-            users.push_back(*pos);
-            m_users.erase(pos);
+        UserAttr max_audio_user;
+        if (max_audio_pos != m_users.end()) {
+            max_audio_user = *max_audio_pos;
+            m_users.erase(max_audio_pos);
         }
 
-        // Sort by volume from high to low
         m_users.sort([](const UserAttr& left, const UserAttr& right)->bool {
-            return left.m_audioLevel > right.m_audioLevel;
+            if (left.m_isHost != right.m_isHost) {
+                return left.m_isHost;
+            }
+
+            if (left.m_type == UserType::LOCAL_USER || right.m_type == UserType::LOCAL_USER) {
+                return left.m_type == UserType::LOCAL_USER;
+            }
+
+            if (left.m_bAudio && right.m_bAudio) { // both have audio
+                if (left.m_bVideo != right.m_bVideo) {
+                    return left.m_bVideo;
+                }
+                else {
+                    return left.m_user_uniform_id < right.m_user_uniform_id;
+                }
+            }else if (left.m_bAudio || right.m_bAudio) { // one has audio
+                return left.m_bAudio;
+            } else { // Neither has audio
+                if (left.m_bVideo != right.m_bVideo) {
+                    return left.m_bVideo;
+                }
+                else {
+                    return left.m_user_uniform_id < right.m_user_uniform_id;
+                }
+            }
         });
 
-        // Put sorted users back to m_users
-        for (auto rpos = users.rbegin(); rpos != users.rend(); ++rpos) {
-            m_users.push_front(*rpos);
+        if (!max_audio_user.m_user_id.empty()) {
+            pos = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& user) {
+                return !user.m_isHost && user.m_type == UserType::REMOTE_USER;
+            });
+            m_users.insert(pos, max_audio_user);
         }
 
+        m_userWnd.UpdateAllUsers(m_users);
+
+        std::vector<std::string> view_laytou;
+        std::string screen_uid;
+        GetRecordUsersInfo(view_laytou, screen_uid);
+        if (old_view_laytou != view_laytou || old_screen_uid != screen_uid) {
+            UpdateRecordVideoLayout([this](int code) {
+                if (code != 200) {
+                    BDString inf;
+                    inf.Format(L"更新录制布局失败，错误码: %d", code);
+                    ShowBubbleTip(inf);
+                }
+            });
+        }
+    }
+
+    void UserLayoutFresh() {
+        ResortUsersList();
         // Refresh layout
-        SetViewLayout(m_view_style, false);
+        SetViewLayout(m_view_style);
 
         // Highest volume highlight
         const int max_search = 4;
-        pos = m_users.begin();
+        auto pos = m_users.begin();
         auto pos_max = pos;
         for (int i = 0; i < max_search && pos != m_users.end(); ++i, ++pos) {
             if (pos->m_audioLevel > pos_max->m_audioLevel) {
                 pos_max = pos;
             }
-
-            if (pos->m_view) {
-                pos->m_view->Highlight(false);
-            }
-            pos->m_highlight = false;
         }
 
         if (pos_max->m_view) {
             pos_max->m_view->Highlight(pos_max->m_audioLevel > 5);
         }
-        pos_max->m_highlight = pos_max->m_audioLevel > 5;
-        bool showBackground = pos_max->m_bVideo && pos_max->m_audioLevel > 5;
 
-        RECT rect;
-        if (pos_max->m_view) {
+        if (pos_max->m_bVideo && pos_max->m_view) {
+            bool showBackground = pos_max->m_bVideo && pos_max->m_audioLevel > 5;
+            RECT rect;
+
             pos_max->m_view->GetWindowRect(&rect);
             int w = rect.right - rect.left;
             int h = rect.bottom - rect.top;
@@ -811,14 +894,12 @@ public:
         }
     }
 
-    LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-    {
+    LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
         BDPaintDC dc(m_hWnd);
         return 0;
     }
 
-    virtual void OnFinalMessage(HWND /*hWnd*/)
-    {
+    virtual void OnFinalMessage(HWND /*hWnd*/) {
         PostQuitMessage(0);
     }
 
@@ -853,6 +934,7 @@ public:
             view->ShowWindow(SW_HIDE);
         }
 
+        view->SetUserId(user.m_user_id);
         view->SetName(user.m_name);
         view->MuteVideo(!user.m_bVideo);
         view->SetHost(user.m_isHost);
@@ -870,7 +952,7 @@ public:
         BDUserVideoViewWnd *view = nullptr;
 
         auto pos = std::find_if(m_prue_views.begin(), m_prue_views.end(), [&user, &isScreenTag](const BDUserVideoViewWnd* view)-> bool {
-            return view && view->GetName() == user.m_name && view->GetScreenViewTag() == isScreenTag;
+            return view && view->GetUserId() == user.m_user_id && view->GetScreenViewTag() == isScreenTag;
         });
 
         if (pos != m_prue_views.end()) {
@@ -895,11 +977,27 @@ public:
         }
     }
 
+    LRESULT ModifyUserNicknameError(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        int code = (int)wParam;
+        BDString inf;
+        if (code == 430) {
+            inf.Format(L"输入内容包含敏感词，请重新输入");
+        }
+        else if (code == 500) {
+            inf.Format(L"系统繁忙，请稍后重试");
+        }
+        else {
+            inf.Format(L"修改昵称失败, 请换个昵称重试");
+        }
+
+        ShowBubbleTip(inf);
+        return 0;
+    }
+
     LRESULT OnLoginClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
         auto roomID = m_loginWnd.GetRoomId();
-        auto userID = m_loginWnd.GetUserId();
+        auto nickname = m_loginWnd.GetUserNickname();
         auto room_id = rtcutil::ConvertBDStringToUTF8(roomID);
-        m_user_id = rtcutil::ConvertBDStringToUTF8(userID);
 
         // Reclaim last login data
         for (const auto& user : m_users) {
@@ -910,7 +1008,8 @@ public:
 
         //Join myself
         UserAttr usLocal;
-        usLocal.m_name = m_user_id;
+        usLocal.m_user_id = m_sms.user_id;
+        usLocal.m_name = nickname;
         usLocal.m_bAudio = !EngineWrapper::GetInstance()->m_bMuteAudio;
         usLocal.m_bVideo = !EngineWrapper::GetInstance()->m_bMuteVideo;
         usLocal.m_isHost = true;
@@ -918,7 +1017,8 @@ public:
         usLocal.m_view = AllocVideoView(usLocal, false);
 
         m_users.push_back(usLocal);
-        m_userWnd.AddUser(usLocal);
+        UserLayoutFresh();
+
         m_userWnd.SetAudioMuteHanlder(std::bind(&BDMainContainerFrame::HostMuteRemoteUserAudio, this, std::placeholders::_1));
         m_userWnd.SetHostTranferHanlder(std::bind(&BDMainContainerFrame::HostTransferHost, this, std::placeholders::_1));
         m_userWnd.SetMuteAllRemoteUsers(std::bind(&BDMainContainerFrame::MuteAllRemoteUsers, this));
@@ -929,7 +1029,7 @@ public:
         m_feedbackWnd.ShowWindow(SW_HIDE);
         m_settingWnd.ShowWindow(SW_HIDE);
 
-        JoinMeeting(room_id, m_user_id);
+        JoinMeeting(room_id, rtcutil::ConvertBDStringToUTF8(nickname), m_sms.user_id);
         return 0;
     }
 
@@ -945,11 +1045,10 @@ public:
         m_login_warning.ShowWindow(SW_HIDE);
    
         auto roomID = m_loginWnd.GetRoomId();
-        auto userID = m_loginWnd.GetUserId();
+        auto nickname = m_loginWnd.GetUserNickname();
         m_room_id = rtcutil::ConvertBDStringToUTF8(roomID);
-        m_user_id = rtcutil::ConvertBDStringToUTF8(userID);
 
-        m_topbarWnd.ShowRoomInfo(roomID, userID);
+        m_topbarWnd.ShowRoomInfo(roomID, nickname);
         m_feedbackWnd.Reset();
 
         if (m_settingWnd.IsAVInfoShow()) {
@@ -958,7 +1057,7 @@ public:
         }
 
         auto token = (const char*)wParam;
-        EngineWrapper::GetInstance()->login(m_room_id.c_str(), m_user_id.c_str(), token);
+        EngineWrapper::GetInstance()->login(m_room_id.c_str(), m_sms.user_id.c_str(), token);
         EngineWrapper::GetInstance()->EnableAudioVolumeIndication(1000, 8);
 
         m_view_style = GALLERY_ONER_STYLE;
@@ -992,11 +1091,11 @@ public:
         for (int i = 0; i < size; ++i) {
             auto& stream = streams[i];
             auto pos = std::find_if(m_users.begin(), m_users.end(), [&stream](const UserAttr& user) {
-                return stream.user_id == user.m_name;
+                return stream.user_id == user.m_user_id;
             });
 
             if (stream.is_screen) {
-                if (stream.user_id != m_user_id) {
+                if (stream.user_id != m_sms.user_id) {
                     m_remoteStream = stream;
                     if (pos != m_users.end() && pos->m_screen_view) {
                         pos->m_screen_view->OnStreamAdd();
@@ -1021,7 +1120,7 @@ public:
         for (int i = 0; i < size; ++i) {
             auto& stream = streams[i];
             auto pos = std::find_if(m_users.begin(), m_users.end(), [&stream](const UserAttr& user) {
-                return stream.user_id == user.m_name;
+                return stream.user_id == user.m_user_id;
             });
 
             if (stream.is_screen) {
@@ -1053,7 +1152,7 @@ public:
             if (!user.m_view) {
                 user.m_view = AllocVideoView(user, false);
 
-                auto pos = m_remoteStreams.find(user.m_name);
+                auto pos = m_remoteStreams.find(user.m_user_id);
                 if (pos != m_remoteStreams.end()) {
                     user.m_view->OnStreamAdd();
                 }
@@ -1063,12 +1162,14 @@ public:
                 if (!user.m_screen_view) {
                     user.m_screen_view = AllocVideoView(user, true);
 
-                    if (m_remoteStream.user_id == user.m_name) {
+                    if (m_remoteStream.user_id == user.m_user_id) {
                         user.m_screen_view->OnStreamAdd();
                     }
                 }
             }
         }
+
+        ResortUsersList();
         // Update layout
         ::SendMessage(m_hWnd, WM_NOTIFY_VIEEW_RELAYOUT, wParam, lParam);
         return 0;
@@ -1078,7 +1179,7 @@ public:
         //std::string uid((char const*)wParam);
         //if (uid != m_user_id) {
         //    auto pos = std::find_if(m_users.begin(), m_users.end(), [&uid](const UserAttr& attr)->bool {
-        //          return attr.m_name == uid;
+        //          return attr.m_user_id == uid;
         //    });
 
         //    if (pos != m_users.end() && pos->m_screen_view) {
@@ -1091,7 +1192,7 @@ public:
     LRESULT OnFirstRemoteVideo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
         //std::string user((const char*)wParam);
         //auto pos = std::find_if(m_users.begin(), m_users.end(), [&](const UserAttr& attr)->bool {
-        //    return attr.m_name == user;
+        //    return attr.m_user_id == user;
         //});
 
         //if (pos != m_users.end() && pos->m_view) {
@@ -1123,6 +1224,12 @@ public:
                     SetViewLayout(GALLERY_FOUR_STYLE);
                 }
                 break;
+            case 5:
+            case 6:
+                if (forceRelayout || m_view_style != GALLERY_SIX_STYLE) {
+                    SetViewLayout(GALLERY_SIX_STYLE);
+                }
+                break;
             default: // 9-grid layout when there are more than 3 remote users
                 if (forceRelayout || m_view_style != GALLERY_NINE_STYLE) {
                     SetViewLayout(GALLERY_NINE_STYLE);
@@ -1145,6 +1252,7 @@ public:
         // Clearing
         for (auto& user : m_users) {
             user.m_audioLevel = 0;
+            user.m_view->Highlight(false);
         }
 
         AudioVolumeInfo* AudioVolumeInfos = (AudioVolumeInfo*)wParam;
@@ -1153,16 +1261,15 @@ public:
         for (int i = 0; i < size; ++i) {
             auto& audioVolumeInfo = AudioVolumeInfos[i];
             auto iter = std::find_if(m_users.begin(), m_users.end(), [&](const UserAttr& userAttr)->bool {
-                return audioVolumeInfo.uid == userAttr.m_name; // This search algorithm may be the bottleneck
+                return audioVolumeInfo.uid == userAttr.m_user_id; // This search algorithm may be the bottleneck
             });
         
             if (iter != m_users.end()) {
-                iter->m_audioLevel = audioVolumeInfo.volume;
+                iter->m_audioLevel = audioVolumeInfo.volume > 5 ? audioVolumeInfo.volume : 0;
             }
         }
 
-        m_userWnd.UpdateAllAudioLevel(m_users);
-        UserLayoutFresh();
+        UserLayoutFresh(); // view attach
         return 0;
     }
 
@@ -1176,8 +1283,23 @@ public:
 
         if (m_userWnd.IsWindowVisible()) {
             m_userWnd.ShowWindow(SW_HIDE);
-            if(m_controlWnd) m_controlWnd->ResetUserListState(false);
+            if(m_controlWnd)
+                m_controlWnd->ResetUserListState(false);
+
+            for (auto& user : m_users) {
+                if (!user.m_view) continue;
+                if (user.m_view->IsWindowVisible()) {
+                    if (!user.m_bVideo) {
+                        user.m_view->Invalidate();
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+
         } else {
+            m_userWnd.MoveWindowEx(m_width - USER_WND_WIDTH, 0, USER_WND_WIDTH, m_height);
             m_userWnd.ShowWindow(SW_SHOW);
             if(m_controlWnd) m_controlWnd->ResetUserListState(true);
         }
@@ -1208,14 +1330,28 @@ public:
             rc.bottom - rc.top - 10);
         m_main_mask.ShowWindow(SW_SHOW);
 
-        if(m_controlWnd) m_controlWnd->ResetSettingState(true);
+        if(m_controlWnd)
+            m_controlWnd->ResetSettingState(true);
 
         return 0;
     }
 
     LRESULT OnCloseUser(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-        if (m_controlWnd) m_controlWnd->ResetUserListState(false);
         OnSize(0, BDSize(m_width, m_height));
+        if (m_controlWnd)
+            m_controlWnd->ResetUserListState(false);
+
+        for (auto& user : m_users) {
+            if (!user.m_view) continue;
+            if (user.m_view->IsWindowVisible()) {
+                if (!user.m_bVideo) {
+                    user.m_view->Invalidate();
+                }
+            }
+            else {
+                break;
+            }
+        }
         return 0;
     }
 
@@ -1279,6 +1415,7 @@ public:
             }
         }
 
+        Invalidate();
         return 0;
     }
 
@@ -1359,20 +1496,21 @@ public:
     }
 
     LRESULT OnFirstLocalVideo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        //m_login_local_view.OnFirstVideoFrame();
         return 0;
     }
 
     LRESULT OnLoginWarning(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-        BDLoginWnd::EditStatus state = (BDLoginWnd::EditStatus)wParam;
+        BDMeetingLoginWnd::EditStatus state = (BDMeetingLoginWnd::EditStatus)wParam;
         switch (state)
         {
-        case BDLoginWnd::ES_MAXTEXT: {
+        case BDMeetingLoginWnd::ES_MAXTEXT: {
             BDString inf;
             inf.Format(L"输入长度超过18位字符");
             ShowBubbleTip(inf);
             break;
         }
-        case BDLoginWnd::ES_INVALID: {
+        case BDMeetingLoginWnd::ES_INVALID: {
             BOOL show = (BOOL)lParam;
             m_login_warning.ShowWindow(show ? SW_SHOW : SW_HIDE);
             break;
@@ -1388,7 +1526,7 @@ public:
         RECT rc;
         ::GetWindowRect(m_hWnd, &rc);
         auto host = m_users.begin();
-        bool is_host = host->m_isHost && host->m_name == m_user_id;
+        bool is_host = host->m_isHost && host->m_type == UserType::LOCAL_USER;
         m_leaveWnd.SetHost(is_host);
         if (is_host) {
             m_leaveWnd.MoveWindow(rc.left +  (m_width - HOST_LEAVE_WND_WIDTH) / 2, rc.top + (m_height - HOST_LEAVE_WND_HEIGHT) / 2,
@@ -1419,10 +1557,11 @@ public:
     }
 
     LRESULT OnLeaveSucceed(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        bool silence = (bool)lParam;
         KillTimer(0);
         KillTimer(2);
 
-        ShowWindow(SW_SHOW);
+        ShowWindow(silence ? SW_HIDE : SW_SHOW);
         for (auto it = m_users.begin(); it != m_users.end(); it++) {
             FreeVideoView(it->m_view);
             FreeVideoView(it->m_screen_view);
@@ -1436,22 +1575,30 @@ public:
 
         m_view_style = LOGIN_STYLE;
         ViewLayoutLogin();
-
-        m_messageWnd.ShowWindow(SW_HIDE);
-        m_settingWnd.ShowWindow(SW_HIDE);
-        m_rateWnd.ShowWindow(SW_SHOW);
-        m_loginWnd.Reset();
-        m_loginWnd.ShowWindow(SW_SHOW);
+        OnSize(0, BDSize(m_width, m_height));
 
         RECT rc;
         ::GetWindowRect(m_hWnd, &rc);
-        m_rateWnd.MoveWindow(rc.left + (rc.right - rc.left - RATE_WND_WIDTH) / 2, rc.top + (rc.bottom - rc.top - RATE_WND_HEIGHT) / 2,
-            RATE_WND_WIDTH, RATE_WND_HEIGHT);
         m_main_mask.MoveWindow(rc.left + 10,
             rc.top,
             rc.right - rc.left - 20,
             rc.bottom - rc.top - 10);
-        m_main_mask.ShowWindow(SW_SHOW);
+        m_main_mask.ShowWindow(silence ? SW_HIDE : SW_SHOW);
+
+        m_leaveWnd.ShowWindow(SW_HIDE);
+        m_messageWnd.ShowWindow(SW_HIDE);
+        m_settingWnd.ShowWindow(SW_HIDE);
+
+        m_rateWnd.ShowWindow(silence ? SW_HIDE : SW_SHOW);
+        m_loginWnd.Reset();
+        m_loginWnd.ShowWindow(silence ? SW_HIDE : SW_SHOW);
+
+        if (m_snapshotWnd.IsWindowVisible()) {
+            onStartShareScreen(0, 0, 0, bHandled);
+        }
+        if (m_controlWnd) m_controlWnd->ResetSettingState(false);
+        m_rateWnd.MoveWindow(rc.left + (rc.right - rc.left - RATE_WND_WIDTH) / 2, rc.top + (rc.bottom - rc.top - RATE_WND_HEIGHT) / 2,
+            RATE_WND_WIDTH, RATE_WND_HEIGHT);
 
         UserOfflineType type = (UserOfflineType)wParam;
         if (type == USER_OFFLINE_REPEAT_LOGIN) {
@@ -1535,7 +1682,6 @@ public:
             break;
         }
 
-
         return 0;
     }
 
@@ -1594,7 +1740,8 @@ public:
 
         if (state == bytertc::kLocalVideoStreamStateFailed
             && (error == bytertc::kLocalVideoStreamErrorDeviceNoPermission  // SDK Forbidden authority before entering the room，Call back the event after entering the room, localVideoState=3, error=2
-                || error == bytertc::kLocalVideoStreamErrorRecordFailure)) {    // Equipment is occupied, when state = 3, error=4
+                || error == bytertc::kLocalVideoStreamErrorCaptureFailure
+                || error == bytertc::kLocalVideoStreamErrorDeviceBusy)) {    // Equipment is occupied, when state = 3, error=4
 
             if (!EngineWrapper::GetInstance()->m_bMuteVideo) {
                 EngineWrapper::GetInstance()->m_bMuteVideo = true;
@@ -1670,7 +1817,7 @@ public:
         std::string uid((const char*)wParam);
 
         for (auto pos = m_prue_views.begin(); pos != m_prue_views.end(); ) {
-            if ((*pos) && (*pos)->GetName() == uid) {
+            if ((*pos) && (*pos)->GetUserId() == uid) {
                 RealFreeVideoView(*pos);
                 pos = m_prue_views.erase(pos);
             }
@@ -1683,7 +1830,7 @@ public:
         }
 
         for (auto it = m_users.begin(); it != m_users.end(); it++) {
-            if (it->m_name == uid) {
+            if (it->m_user_id == uid) {
                 RealFreeVideoView(it->m_view);
                 it->m_view = nullptr;
 
@@ -1704,14 +1851,17 @@ public:
             m_avInfoWnd.MoveWindowEx(rc.left + 12, rc.bottom - AVINFO_WND_HEIGHT - 12,
                 AVINFO_WND_WIDTH, AVINFO_WND_HEIGHT);
         }
-        m_avInfoWnd.ShowWindow(show ? SW_SHOW : SW_HIDE);
+
+        if (m_avInfoWnd.IsWindowVisible() != show) {
+            m_avInfoWnd.ShowWindow(show ? SW_SHOW : SW_HIDE);
+        }
     }
 
 protected:
     LRESULT OnFunctionExec(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
 protected:
-    void JoinMeeting(const std::string& room_id, const std::string& user_id);
+    void JoinMeeting(const std::string& room_id, const std::string& user_name, const std::string& user_id);
     LRESULT OnMeetingEnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnMeetingLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnMeetingCancel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -1730,7 +1880,7 @@ protected:
     void HostTransferHost(const UserAttr& user);
 
     void OnClose();
-    void Logout();
+    void Logout(bool silence);
     void RejoinMeeting();
 
     void ReCreateControl(HWND parent, bool popup = false) {
@@ -1760,7 +1910,9 @@ protected:
         }
     }
 
+    void CheckUpdateApp(bool show);
 protected:
+
     void onUserMicStateChange(const std::string& userId, bool on) override;
     void onUserCameraStateChange(const std::string& userId, bool on) override;
     void onHostChange(const std::string& formerHostId, const std::string& hostId) override;
@@ -1773,18 +1925,22 @@ protected:
     void onMuteUser(const std::string& userId) override;
     void onAskingMicOn(const std::string& userId) override;
     void onAskingCameraOn(const std::string& userId) override;
-    void onWebsocketConnected() override;
-    void onWebsocketConnecting() override;
     void onUserKickedOff() override;
     void onJoinMeetingsuccessfully(int code, const std::string& token);
+    void onInvaildToken(int code) override;
 
+public:
+    void onWebsocketConnected() override;
+    void onWebsocketConnecting() override;
+
+protected:
     bool OnLocalScreenFrame(bytertc::IByteVideoFrame* videoFrame) override;
     bool OnLocalVideoFrame(bytertc::IByteVideoFrame* videoFrame) override;
     bool OnRemoteScreenFrame(const char* roomid, const char* uid, bytertc::IByteVideoFrame* videoFrame) override;
     bool OnRemoteVideoFrame(const char* roomid, const char* uid, bytertc::IByteVideoFrame* videoFrame) override;
 
 private:
-    BDLoginWnd m_loginWnd;       // login ui window
+    BDMeetingLoginWnd m_loginWnd;       // login ui window
     BDTopBarWnd m_topbarWnd;     // Toolbar
     BDControlWnd* m_controlWnd = nullptr;   // Control bar
     BDUserWnd   m_userWnd;       // User list window
@@ -1814,7 +1970,8 @@ private:
     bool m_websocket_connection = false; // Whether websocket is in the connection state
 
     std::string m_room_id;  // room id
-    std::string m_user_id;  // local user id
+    VerifySms m_sms;
+    //std::string m_user_id;  // local user name
 
     std::map<std::string, RemoteStream> m_remoteStreams; // Remote video streams information
     RemoteStream m_remoteStream; // Remote screen sharing stream info

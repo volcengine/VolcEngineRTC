@@ -2,6 +2,8 @@
 #include "json/json.h"
 #include "Utils.h"
 
+#define INVALID_TOKEN 450
+#define NULL_TOKEN 451
 MeetingManager* g_meetingEngine = NULL;
 
 MeetingManager* MeetingManager::GetInstance() {
@@ -20,7 +22,7 @@ MeetingManager::~MeetingManager() {
 }
 
 void MeetingManager::registerNotification(IMeetingNotification* notification) {
-    m_notification = notification;
+    m_notifications.push_back(notification);
 }
 
 void MeetingManager::startConnect() {
@@ -39,6 +41,7 @@ void MeetingManager::disconnect() {
 
 void MeetingManager::getAppId(std::function<void(int, const std::string&)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
 
     if (m_connectionManager) {
         m_connectionManager->SendSignallingMessage("getAppID", request, [callback, this](const Json::Value& response) {
@@ -53,6 +56,10 @@ void MeetingManager::getAppId(std::function<void(int, const std::string&)> callb
                 m_appId = response["response"]["app_id"].asString();
                 res = m_appId;
             }
+            else if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+                return;
+            }
             else {
                 res = response["message"].asString();
             }
@@ -61,15 +68,18 @@ void MeetingManager::getAppId(std::function<void(int, const std::string&)> callb
     }
 }
 
-void MeetingManager::joinMeeting(const std::string& userId,
+void MeetingManager::joinMeeting(const std::string& userName,
+    const std::string& userId,
     const std::string& roomId,
     bool micOn,
     bool cameraOn,
     std::function<void(int, const std::string&)> callback) {
 
     Json::Value request;
+    request["login_token"] = m_token;
     request["app_id"] = m_appId;
     request["user_id"] = userId;
+    request["user_name"] = userName;
     request["room_id"] = roomId;
     request["mic"] = micOn;
     request["camera"] = cameraOn;
@@ -78,7 +88,7 @@ void MeetingManager::joinMeeting(const std::string& userId,
     m_user_id = userId;
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("joinMeeting", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("joinMeeting", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
@@ -87,6 +97,10 @@ void MeetingManager::joinMeeting(const std::string& userId,
             std::string res;
             if (code == 200) {
                 res = response["response"]["token"].asString();
+            }
+            else if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+                return;
             }
             else {
                 res = response["message"].asString();;
@@ -99,82 +113,118 @@ void MeetingManager::joinMeeting(const std::string& userId,
 
 void MeetingManager::leaveMeeting(std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("leaveMeeting", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("leaveMeeting", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::userReconnect(std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("userReconnect", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("userReconnect", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::toggleMicState(bool on, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage(on ? "turnOnMic" : "turnOffMic", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage(on ? "turnOnMic" : "turnOffMic", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::toggleCameraState(bool on, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage(on ? "turnOnCamera" : "turnOffCamera", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage(on ? "turnOnCamera" : "turnOffCamera", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::getMeetingParticipantsInfoInternal(const std::string& userId, std::function<void(int, const std::list<User>&)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (!userId.empty()) {
         request["user_id"] = userId;
     }
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("getMeetingUserInfo", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("getMeetingUserInfo", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
 
             int code = response["code"].asInt();
-            const Json::Value& jUsers = response["response"];
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+                return;
+            }
 
+            const Json::Value& jUsers = response["response"];
             std::list<User> users;
             int size = jUsers.size();
             for (int i = 0; i < size; ++i) {
                 const Json::Value& item = jUsers[i];
                 User user;
                 user.uid = item["user_id"].asString();
+                user.user_name = item["user_name"].asString();
+                user.user_uniform_id = item["user_uniform_id"].asString();
                 user.time_of_joining = item["created_at"].asInt64();
                 user.is_host = item["is_host"].asBool();
                 user.is_screen_shared = item["is_sharing"].asBool();
@@ -205,14 +255,21 @@ void MeetingManager::getMeetingParticipantInfo(const std::string& userId,
 }
 
 void MeetingManager::getMeetingInfo(std::function<void(int, const Room&)> callback) {
+    Json::Value request;
+    request["login_token"] = m_token;
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("getMeetingInfo", Json::Value(), [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("getMeetingInfo", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             int code = response["code"].asInt();
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+                return;
+            }
+
             auto jValue = response["response"];
             Room room;
             if (code == 200) {
@@ -231,16 +288,22 @@ void MeetingManager::getMeetingInfo(std::function<void(int, const Room&)> callba
 
 int MeetingManager::changeHost(const std::string& userId, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
     request["user_id"] = userId;
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("changeHost", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("changeHost", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
     return 0;
@@ -248,18 +311,25 @@ int MeetingManager::changeHost(const std::string& userId, std::function<void(int
 
 void MeetingManager::muteUserMic(const std::string& userId, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (!userId.empty()) {
         request["user_id"] = userId;
     }
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("muteUser", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("muteUser", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
@@ -270,84 +340,120 @@ void MeetingManager::muteAllUserMic(std::function<void(int)> callback) {
 
 void MeetingManager::askUserMacOn(const std::string& userId, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (!userId.empty()) {
         request["user_id"] = userId;
     }
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("askMicOn", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("askMicOn", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::askUserCameraOn(const std::string& userId, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (!userId.empty()) {
         request["user_id"] = userId;
     }
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("askCameraOn", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("askCameraOn", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::closeMeeting(std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("endMeeting", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("endMeeting", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::startScreenShare(std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("startShareScreen", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("startShareScreen", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::stopScreenShare(std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("endShareScreen", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("endShareScreen", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::startMeetingRecord(const std::vector<std::string>& users, const std::string& screen_uid, std::function<void(int)> callback) {
     Json::Value request;
+    request["login_token"] = m_token;
     Json::Value jUsers(Json::arrayValue);
     for (auto& user : users) {
         jUsers.append(user);
@@ -359,21 +465,25 @@ void MeetingManager::startMeetingRecord(const std::vector<std::string>& users, c
     }
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("recordMeeting", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("recordMeeting", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::updateRecordLayout(const std::vector<std::string>& users, const std::string& screen_uid, std::function<void(int)> callback) {
-    return;
-
     Json::Value request;
+    request["login_token"] = m_token;
     Json::Value jUsers(Json::arrayValue);
     for (auto& user : users) {
         jUsers.append(user);
@@ -385,26 +495,39 @@ void MeetingManager::updateRecordLayout(const std::vector<std::string>& users, c
     }
 
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("updateRecordLayout", request, [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("updateRecordLayout", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             auto code = response["code"].asInt();
-            callback(code);
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
         });
     }
 }
 
 void MeetingManager::getHistoryMeetingRecord(std::function<void(int, const std::list<RecordInfo>&)> callback) {
+    Json::Value request;
+    request["login_token"] = m_token;
+
     if (m_connectionManager) {
-        m_connectionManager->SendSignallingMessage("getHistoryVideoRecord", Json::Value(), [callback](const Json::Value& response) {
+        m_connectionManager->SendSignallingMessage("getHistoryVideoRecord", request, [this, callback](const Json::Value& response) {
 #ifdef _DEBUG
             Json::StreamWriterBuilder builder;
             const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
             std::list<RecordInfo> RecordInfos;
             auto code = response["code"].asInt();
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+                return;
+            }
+
             if (code == 200) {
                 auto records = response["response"];
                 int size = records.size();
@@ -413,6 +536,8 @@ void MeetingManager::getHistoryMeetingRecord(std::function<void(int, const std::
                     RecordInfo record;
                     record.room_id = item["room_id"].asString();
                     record.url = item["download_url"].asString();
+                    record.vid = item["vid"].asString();
+                    record.video_holder = item["video_holder"].asBool();
                     record.meeting_start_time = item["created_at"].asInt64();
                     RecordInfos.push_back(record);
                 }
@@ -422,19 +547,143 @@ void MeetingManager::getHistoryMeetingRecord(std::function<void(int, const std::
     }
 }
 
+void MeetingManager::deleteVideoRecord(const std::string& vid, std::function<void(int)> callback) {
+    Json::Value request;
+    request["vid"] = vid;
+    request["login_token"] = m_token;
+
+    if (m_connectionManager) {
+        m_connectionManager->SendSignallingMessage("deleteVideoRecord", request, [this, callback](const Json::Value& response) {
+#ifdef _DEBUG
+            Json::StreamWriterBuilder builder;
+            const std::string json_file = Json::writeString(builder, response);
+#endif // _DEBUG
+            auto code = response["code"].asInt();
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
+        });
+    }
+}
+
+void MeetingManager::getAuditState(const std::string& version, std::function<void(int, const AuditState&)> callback) {
+    Json::Value request;
+    request["device_type"] = "win";
+    request["app_version"] = version;
+
+    if (m_connectionManager) {
+        m_connectionManager->SendSignallingMessage("getAuditState", request, [this, callback](const Json::Value& response) {
+#ifdef _DEBUG
+            Json::StreamWriterBuilder builder;
+            const std::string json_file = Json::writeString(builder, response);
+#endif // _DEBUG
+            int code = response["code"].asInt();
+            auto jValue = response["response"];
+            AuditState state;
+            if (code == 200) {
+                state.state = jValue["state"].asInt();
+                state.url = jValue["url"].asString();
+            }
+
+            callback(code, state);
+        });
+    }
+}
+
+void MeetingManager::passwordFreeLogin(const std::string& user_name, std::function<void(int, const VerifySms&)> callback) {
+    Json::Value request;
+    request["user_name"] = user_name;
+
+    if (m_connectionManager) {
+        m_connectionManager->SendSignallingMessage("passwordFreeLogin", request, [this, callback](const Json::Value& response) {
+#ifdef _DEBUG
+            Json::StreamWriterBuilder builder;
+            const std::string json_file = Json::writeString(builder, response);
+#endif // _DEBUG
+            int code = response["code"].asInt();
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+                return;
+            }
+
+            auto jValue = response["response"];
+            VerifySms state;
+            if (code == 200) {
+                state.create_at = jValue["create_at"].asInt64();
+                state.user_id = jValue["user_id"].asString();
+                std::string name = jValue["user_name"].asString();
+                state.user_name = rtcutil::ConvertUTF8ToBDString(name);
+                state.login_token = jValue["login_token"].asString();
+            }
+
+            callback(code, state);
+        });
+    }
+}
+
+void MeetingManager::changeUserName(const std::string& nickname, std::function<void(int)> callback) {
+    Json::Value request;
+    request["login_token"] = m_token;
+    request["user_name"] = nickname;
+
+    if (m_connectionManager) {
+        m_connectionManager->SendSignallingMessage("changeUserName", request, [this, callback](const Json::Value& response) {
+#ifdef _DEBUG
+            Json::StreamWriterBuilder builder;
+            const std::string json_file = Json::writeString(builder, response);
+#endif // _DEBUG
+            int code = response["code"].asInt();
+            if (code == INVALID_TOKEN || code == NULL_TOKEN) {
+                onInvalidToken(code);
+            }
+            else {
+                callback(code);
+            }
+        });
+    }
+}
+
+void MeetingManager::verifyLoginToken(const std::string& token, std::function<void(int)> callback) {
+    Json::Value request;
+    request["login_token"] = token;
+
+    if (m_connectionManager) {
+        m_connectionManager->SendSignallingMessage("verifyLoginToken", request, [this, callback](const Json::Value& response) {
+#ifdef _DEBUG
+            Json::StreamWriterBuilder builder;
+            const std::string json_file = Json::writeString(builder, response);
+#endif // _DEBUG
+            int code = response["code"].asInt();
+            callback(code);
+        });
+    }
+}
 //================================================================
+void MeetingManager::onInvalidToken(int code) {
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onInvaildToken(code);
+        }
+    }
+}
+
 void MeetingManager::onWebsocketConnected() {
     registerEevent();
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onWebsocketConnected();
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onWebsocketConnected();
+        }
     }
 }
 
 void MeetingManager::onWebsocketConnecting() {
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onWebsocketConnecting();
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onWebsocketConnecting();
+        }
     }
 }
 
@@ -465,9 +714,10 @@ void MeetingManager::onUserMicStateChange(const Json::Value& response) {
     std::string userId = response["data"]["user_id"].asString();
     bool status = response["data"]["status"].asBool();
 
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onUserMicStateChange(userId, status);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onUserMicStateChange(userId, status);
+        }
     }
 }
 
@@ -479,9 +729,10 @@ void MeetingManager::onUserCameraStateChange(const Json::Value& response) {
     std::string userId = response["data"]["user_id"].asString();
     bool status = response["data"]["status"].asBool();
 
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onUserCameraStateChange(userId, status);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onUserCameraStateChange(userId, status);
+        }
     }
 }
 
@@ -492,9 +743,11 @@ void MeetingManager::onHostChange(const Json::Value& response) {
 #endif // _DEBUG
     std::string formerHostId = response["data"]["former_host_id"].asString();
     std::string hostId = response["data"]["host_id"].asString();
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onHostChange(formerHostId, hostId);
+
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onHostChange(formerHostId, hostId);
+        }
     }
 }
 
@@ -505,15 +758,18 @@ void MeetingManager::onUserJoinMeeting(const Json::Value& response) {
 #endif // _DEBUG
     User user;
     user.uid = response["data"]["user_id"].asString();
+    user.user_name = response["data"]["user_name"].asString();
     user.time_of_joining = response["data"]["created_at"].asInt64();
     user.is_host = response["data"]["is_host"].asBool();
     user.is_screen_shared = response["data"]["is_sharing"].asBool();
     user.is_mic_on = response["data"]["is_mic_on"].asBool();
     user.is_camera_on = response["data"]["is_camera_on"].asBool();
+    user.user_uniform_id = response["data"]["user_uniform_id"].asString();
 
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onUserJoinMeeting(user);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onUserJoinMeeting(user);
+        }
     }
 }
 
@@ -524,9 +780,10 @@ void MeetingManager::onUserLeaveMeeting(const Json::Value& response) {
 #endif // _DEBUG
     std::string userId = response["data"]["user_id"].asString();
 
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onUserLeaveMeeting(userId);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onUserLeaveMeeting(userId);
+        }
     }
 }
 
@@ -537,9 +794,11 @@ void MeetingManager::onScreenShareStateChanged(const Json::Value& response) {
 #endif // _DEBUG
     std::string userId = response["data"]["user_id"].asString();
     bool status = response["data"]["status"].asBool();
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onScreenShareStateChanged(userId, status);
+
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onScreenShareStateChanged(userId, status);
+        }
     }
 }
 
@@ -548,9 +807,11 @@ void MeetingManager::onStartMeetingRecord(const Json::Value& response) {
     Json::StreamWriterBuilder builder;
     const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onStartMeetingRecord();
+
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onStartMeetingRecord();
+        }
     }
 }
 
@@ -559,9 +820,11 @@ void MeetingManager::onMeetingClose(const Json::Value& response) {
     Json::StreamWriterBuilder builder;
     const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onMeetingClose();
+
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onMeetingClose();
+        }
     }
 }
 
@@ -571,9 +834,10 @@ void MeetingManager::onMuteAllMic(const Json::Value& response) {
     const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
 
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onMuteAllMic();
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onMuteAllMic();
+        }
     }
 }
 
@@ -584,9 +848,10 @@ void MeetingManager::onMuteUser(const Json::Value& response) {
 #endif // _DEBUG
 
     std::string userId = response["data"]["user_id"].asString();
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onMuteUser(userId);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onMuteUser(userId);
+        }
     }
 }
 
@@ -597,9 +862,10 @@ void MeetingManager::onAskingMicOn(const Json::Value& response) {
 #endif // _DEBUG
 
     std::string userId = response["data"]["user_id"].asString();
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onAskingMicOn(userId);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onAskingMicOn(userId);
+        }
     }
 }
 
@@ -610,9 +876,10 @@ void MeetingManager::onAskingCameraOn(const Json::Value& response) {
 #endif // _DEBUG
 
     std::string userId = response["data"]["user_id"].asString();
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onAskingCameraOn(userId);
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onAskingCameraOn(userId);
+        }
     }
 }
 
@@ -622,8 +889,9 @@ void MeetingManager::onUserKickedOff(const Json::Value& response) {
     const std::string json_file = Json::writeString(builder, response);
 #endif // _DEBUG
 
-    assert(m_notification);
-    if (m_notification) {
-        m_notification->onUserKickedOff();
+    for (auto& notification : m_notifications) {
+        if (notification) {
+            notification->onUserKickedOff();
+        }
     }
 }

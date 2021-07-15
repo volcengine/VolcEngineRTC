@@ -43,8 +43,8 @@ public:
         COMMAND_ID_HANDLER(DUID_ALL_MUTE_USER, OnClickMuteAllRemoteUsers)
     END_MSG_MAP()
 
-    int OnCreate(LPCREATESTRUCT lpCreateStruct)
-    {
+    int OnCreate(LPCREATESTRUCT lpCreateStruct) {
+        memset(&m_rect, 0x00, sizeof(m_rect));
         allBk.CreateSolidBrush(RGB(0x10, 0x13, 0x19));
 
         m_muteAllFont = CreateFont(12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"PingFang SC");
@@ -94,8 +94,7 @@ public:
         return 0;
     }
 
-    void OnSize(UINT nType, BDSize size)
-    {
+    void OnSize(UINT nType, BDSize size) {
         m_title.MoveWindow(16, 16, 300, 40);
         m_close.MoveWindow(size.cx - 20 - 16, 16, 20, 20);
         m_vscrollWnd.MoveWindow(0, 50, size.cx, size.cy - 50 - 32 - 16);
@@ -142,49 +141,23 @@ public:
     {
         return 0;
     }
-
-    void AddUser(const UserAttr& user) {
-        if (!m_vscrollWnd.IsMember(user.m_name)) {
-            m_vscrollWnd.AddItem(user);
-        }
-
-        if (user.m_isHost) {
-            m_allMute.ShowWindow(user.m_type == UserType::LOCAL_USER ? SW_SHOW : SW_HIDE);
-        }
-
-        BDString des;
-        des.Format(L"  参会人（%d）", m_vscrollWnd.GetUserCount());
-        m_title.SetWindowTextW(des);
-    }
-
-    void RemoveUser(const UserAttr& user) {
-        if (m_vscrollWnd.IsMember(user.m_name)) {
-            m_vscrollWnd.RemoveItem(user);
-        }
-
-        BDString des;
-        des.Format(L"  参会人（%d）", m_vscrollWnd.GetUserCount());
-        m_title.SetWindowTextW(des);
-    }
-
+    // only update share attribute
     void UpdateUser(const UserAttr& user) {
-        if (m_vscrollWnd.IsMember(user.m_name)) {
+        if (m_vscrollWnd.IsMember(user.m_user_id)) {
             m_vscrollWnd.UpdateItem(user);
         }
+        m_close.Invalidate();
+    }
 
-        if (user.m_isHost) {
-            m_allMute.ShowWindow(user.m_type == UserType::LOCAL_USER ? SW_SHOW : SW_HIDE);
+    void UpdateAllUsers(const std::list<UserAttr>& users) {
+        m_vscrollWnd.UpdateAllUsers(users);
+        if (!users.empty() && users.begin()->m_isHost) {
+            m_allMute.ShowWindow(users.begin()->m_type == UserType::LOCAL_USER ? SW_SHOW : SW_HIDE);
         }
-    }
-
-    void UpdateAllAudioLevel(const std::list<UserAttr>& users) {
-        m_vscrollWnd.UpdateAllAudioLevel(users);
         m_close.Invalidate();
-    }
-
-    void OnAudioMuteAll() {
-        m_vscrollWnd.OnAudioMuteAll();
-        m_close.Invalidate();
+        BDString des;
+        des.Format(L"  参会人（%d）", m_vscrollWnd.GetUserCount());
+        m_title.SetWindowTextW(des);
     }
 
     void Clear() {
@@ -206,6 +179,20 @@ public:
         m_muteAllRemoteUsers = callback;
     }
 
+    BOOL MoveWindowEx(int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE) {
+        if (m_rect.left == x && m_rect.top == y
+            && m_rect.right == nWidth && m_rect.bottom == nHeight) {
+            return false;
+        }
+
+        m_rect.left = x;
+        m_rect.top = y;
+        m_rect.right = nWidth;
+        m_rect.bottom = nHeight;
+
+        return MoveWindow(x, y, nWidth, nHeight, bRepaint);
+    }
+
 private:
     BDUsersVScrollWnd m_vscrollWnd;
 
@@ -214,6 +201,7 @@ private:
     BDStatic m_title;
     BDBmpButton m_close;
     BDBmpButton m_allMute;
+    RECT m_rect;
 
     BDBrush allBk;
     std::function<void()> m_muteAllRemoteUsers;

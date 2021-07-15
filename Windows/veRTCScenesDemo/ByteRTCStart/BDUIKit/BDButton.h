@@ -200,6 +200,7 @@ public:
         {
             wci.m_wc.hIcon = LoadIcon(BDWinApp::GetResInstance(), MAKEINTRESOURCE(IDI_BYTERTCSTART));
         }
+        wci.m_wc.hbrBackground = nullptr;
         m_state = BUTTON_STATE_DEFAULT;
     }
 
@@ -207,6 +208,9 @@ public:
         MSG_WM_CREATE(OnCreate)
         MSG_WM_SIZE(OnSize)
         MESSAGE_HANDLER(WM_PAINT, OnPaint)
+        MESSAGE_HANDLER(WM_SETFOCUS, OnFocus)
+        MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
+        MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
         MSG_WM_MOUSEMOVE(OnMouseMove)
         MSG_WM_MOUSELEAVE(OnMouseLeave)
         MSG_WM_LBUTTONUP(OnLButtonUp)
@@ -215,6 +219,7 @@ public:
 
     int OnCreate(LPCREATESTRUCT lpCreateStruct)
     {
+        m_backgroundBrush = CreateSolidBrush(RGB(0xFF, 0xFF, 0xFF));
         m_defaultBrush = CreateSolidBrush(RGB(47, 136, 255));
         m_hoverBrush = CreateSolidBrush(RGB(47, 136, 255));
         m_disableBrush = CreateSolidBrush(RGB(200, 200, 200));
@@ -268,7 +273,30 @@ public:
         }
     }
 
+    LRESULT OnFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        if (m_state != BUTTON_STATE_DISABLE && m_state != BUTTON_STATE_ACTIVE) {
+            SetState(BUTTON_STATE_HOVER);
+        }
+        return 0;
+    }
+
+    LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        if (m_state != BUTTON_STATE_DISABLE) {
+            SetState(BUTTON_STATE_HOVER);
+            SetState(BUTTON_STATE_DEFAULT);
+        }
+        return 0;
+    }
+
+    LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
+        if (wParam == VK_RETURN) {
+            OnLButtonUp(0, BDPoint());
+        }
+        return 0;
+    }
+
     void SetBackgroundColor(HFONT font,
+        COLORREF backgroundColor,
         COLORREF defaultBrushColor, COLORREF defaultTextColor,
         COLORREF hoverBrushColor, COLORREF hoverTextColor,
         COLORREF activeBrushColor, COLORREF activeTextColor,
@@ -283,6 +311,11 @@ public:
         m_disableTextColor = disableTextColor;
 
         m_txtfont = font;
+        if (!m_backgroundBrush.IsNull()) {
+            m_backgroundBrush.DeleteObject();
+        }
+
+        m_backgroundBrush = CreateSolidBrush(backgroundColor);
     }
 
     void ShowHandCursor() {
@@ -302,6 +335,11 @@ public:
         GetClientRect(&rect);
 
         auto drawBackground = [this](BDPaintDC& dc, BDBrush& bkBrush, COLORREF textColor, RECT& rect) {
+            //if (m_last_brush == &bkBrush) return;
+            //m_last_brush = &bkBrush;
+
+            dc.FillRect(&rect, m_backgroundBrush);
+
             dc.SelectPen((HPEN)GetStockObject(NULL_PEN));
             dc.SelectBrush((HBRUSH)bkBrush);
             dc.RoundRect(0, 0, rect.right - rect.left, rect.bottom - rect.top, 4, 4);
@@ -313,22 +351,27 @@ public:
             dc.DrawText((LPTSTR)(LPCTSTR)title, title.GetLength(), &rect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
         };
 
-        switch (m_state)
-        {
-        case BDTxtButton::BUTTON_STATE_DEFAULT:
-            drawBackground(dc, m_defaultBrush, m_defaultTextColor, rect);
-            break;
-        case BDTxtButton::BUTTON_STATE_HOVER:
+        if (m_state != BDTxtButton::BUTTON_STATE_DISABLE && GetFocus() == m_hWnd) {
             drawBackground(dc, m_hoverBrush, m_hoverTextColor, rect);
-            break;
-        case BDTxtButton::BUTTON_STATE_ACTIVE:
-            drawBackground(dc, m_activeBrush, m_hoverTextColor, rect);
-            break;
-        case BDTxtButton::BUTTON_STATE_DISABLE:
-            drawBackground(dc, m_disableBrush, m_disableTextColor, rect);
-            break;
-        default:
-            break;
+        }
+        else {
+            switch (m_state)
+            {
+            case BDTxtButton::BUTTON_STATE_DEFAULT:
+                drawBackground(dc, m_defaultBrush, m_defaultTextColor, rect);
+                break;
+            case BDTxtButton::BUTTON_STATE_HOVER:
+                drawBackground(dc, m_hoverBrush, m_hoverTextColor, rect);
+                break;
+            case BDTxtButton::BUTTON_STATE_ACTIVE:
+                drawBackground(dc, m_activeBrush, m_hoverTextColor, rect);
+                break;
+            case BDTxtButton::BUTTON_STATE_DISABLE:
+                drawBackground(dc, m_disableBrush, m_disableTextColor, rect);
+                break;
+            default:
+                break;
+            }
         }
 
         return 0;
@@ -356,10 +399,13 @@ public:
 
     int m_id;
 
+    BDBrush m_backgroundBrush;
     BDBrush m_defaultBrush;
     BDBrush m_hoverBrush;
     BDBrush m_activeBrush;
     BDBrush m_disableBrush;
+
+
     COLORREF m_defaultTextColor;
     COLORREF m_hoverTextColor;
     COLORREF m_activeTextColor;
@@ -368,6 +414,7 @@ public:
     BDFont m_txtfont;
 
     State m_state = BUTTON_STATE_DEFAULT;
+    BDBrush* m_last_brush = nullptr;
 };
 
 class BDTxtBorderButton : public BDWndImpl<BDTxtBorderButton>

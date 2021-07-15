@@ -20,8 +20,7 @@ class BDTopBarWnd : public BDWndImpl<BDTopBarWnd>
 {
 public:
     DECLARE_BDWND_CLASS(L"BDTopBarWnd")
-    BDTopBarWnd()
-    {
+    BDTopBarWnd() {
         BDWndClassInfo& wci = GetWndClassInfo();
         wci.m_wc.hbrBackground = CreateSolidBrush(RGB(0x1D, 0x21, 0x29));
         if (!wci.m_atom)
@@ -39,8 +38,8 @@ public:
         MSG_WM_CTLCOLORSTATIC(onStaticColor)
     END_MSG_MAP()
 
-    int OnCreate(LPCREATESTRUCT lpCreateStruct)
-    {
+    int OnCreate(LPCREATESTRUCT lpCreateStruct) {
+        memset(&m_rect, 0x00, sizeof(m_rect));
         auto font = CreateFont(12, 0, 0, 0, 0, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"PingFang SC");
         m_shotfont = CreateFont(14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, L"PingFang SC");
         m_bkBrush = CreateSolidBrush(RGB(0x1D, 0x21, 0x29));
@@ -48,7 +47,8 @@ public:
 
         BDHMenu m;
         BDRect r(300, 20, 550, 60);
-        m_version.Create(m_hWnd, r, m, L"SDK版本 v1.0.1", WS_CHILD | WS_VISIBLE | SS_RIGHT);
+        BDString version = BDString(L"SDK版本 v") + rtcutil::ConvertUTF8ToBDString(VERSION);
+        m_version.Create(m_hWnd, r, m, version, WS_CHILD | WS_VISIBLE | SS_RIGHT);
         m_version.SetFont(font);
 
         m_room.Create(m_hWnd, r, m, L"", WS_CHILD | SS_RIGHT);
@@ -144,7 +144,9 @@ public:
 
         const char* version = EngineWrapper::GetInstance()->getVersion();
         BDString str;
-        str.Format(L"Demo版本 v1.0.0 / SDK版本 %s", rtcutil::ConvertUTF8ToBDString(version));
+        str.Format(L"Demo版本 v%s / SDK版本 %s",
+            rtcutil::ConvertUTF8ToBDString(VERSION),
+            rtcutil::ConvertUTF8ToBDString(version));
         m_version.SetWindowText(str);
 
         KillTimer(0);
@@ -159,9 +161,11 @@ public:
     }
 
     void ListShow(bool show, int icon) {
-        m_list_show.SetNormal(icon);
-        m_list_show.SetHover(icon);
-        m_list_show.ShowWindow(show ? SW_SHOW : SW_HIDE);
+        if (m_list_show.IsWindowVisible() != show) {
+            m_list_show.SetNormal(icon);
+            m_list_show.SetHover(icon);
+            m_list_show.ShowWindow(show ? SW_SHOW : SW_HIDE);
+        }
     }
 
     void RecordShow(bool show) {
@@ -254,9 +258,23 @@ public:
             }
         }
 
+        m_user.Invalidate();
         return 0;
     }
 
+    BOOL MoveWindowEx(int x, int y, int nWidth, int nHeight, BOOL bRepaint = TRUE) {
+        if (m_rect.left == x && m_rect.top == y
+            && m_rect.right == nWidth && m_rect.bottom == nHeight) {
+            return false;
+        }
+
+        m_rect.left = x;
+        m_rect.top = y;
+        m_rect.right = nWidth;
+        m_rect.bottom = nHeight;
+
+        return MoveWindow(x, y, nWidth, nHeight, bRepaint);
+    }
 
     LRESULT OnExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled) 
     {
@@ -287,5 +305,6 @@ public:
 
     std::function<void()> m_list_Show_click;
     int m_time_syn_delta = 0;
+    RECT m_rect;
 };
 

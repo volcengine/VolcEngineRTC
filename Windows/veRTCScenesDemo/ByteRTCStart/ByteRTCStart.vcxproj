@@ -131,6 +131,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>ByteRTCSDK_x86/RTCSDK.lib;gdiplus.lib;libcrypto.lib;libssl.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>third_party\openssl_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -171,6 +172,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>ByteRTCSDK_x64/RTCSDK.lib;gdiplus.lib;libcrypto_x64.lib;libssl_x64.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>third_party\openssl_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,7 +181,9 @@
     <ClInclude Include="BDFeedbackWnd.h" />
     <ClInclude Include="BDBubbleTipWnd.h" />
     <ClInclude Include="BDLeaveWnd.h" />
-    <ClInclude Include="BDLoginWnd.h" />
+    <ClInclude Include="BDUIKit\BDComboxEx.h" />
+    <ClInclude Include="BDUserLoginWnd.h" />
+    <ClInclude Include="BDMeetingLoginWnd.h" />
     <ClInclude Include="BDMainContainerFrame.h" />
     <ClInclude Include="BDMaskWnd.h" />
     <ClInclude Include="BDMessageWnd.h" />
@@ -249,6 +253,7 @@
     <ClCompile Include="bus\byte_basic_message_bus.cc" />
     <ClCompile Include="bus\byte_basic_task_queue.cc" />
     <ClCompile Include="bus\byte_basic_task_queue_pool.cc" />
+    <ClCompile Include="ByteAppConfig.cpp" />
     <ClCompile Include="EngineWrapper.cpp" />
     <ClCompile Include="jsoncpp\src\lib_json\json_reader.cpp" />
     <ClCompile Include="jsoncpp\src\lib_json\json_value.cpp" />

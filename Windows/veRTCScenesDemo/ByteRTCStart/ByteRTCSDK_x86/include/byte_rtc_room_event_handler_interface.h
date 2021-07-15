@@ -7,7 +7,6 @@
 
 #pragma once
 namespace bytertc {
-
 /**
  * @type callback
  * @brief 音视频房间事件回调接口
@@ -126,22 +125,17 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @brief 提示房间内谁正在说话以及说话者音量的回调
+     * @brief 提示房间内所有用户发送音量的回调。
      * @param [in] speakers
-     *        房间内所有用户ID, 以及每个用户对应的音量，包括发送流和接收流。详见：AudioVolumeInfo{@link #AudioVolumeInfo}。
-     * @param [in] speaker_number
-     *        音频源数量，包括发送流与接收流
-     * @param [in] total_volume
-     *        音频源总音量，只包含接收流
-     * @notes  <br>
-     *       + 该回调提示房间内所有用户的用户ID及他们的音量。默认禁用。  <br>
-     *       + 可以通过启用说话者音量提示 EnableAudioVolumeIndication{@link #IRtcRoom#EnableAudioVolumeIndication} 方法开启。  <br>
-     *       + 开启后，无论房间内是否有人说话，都会按方法中设置的时间间隔返回提示音量。  <br>
+     *        房间内所有用户 ID, 以及对应的发送音量。参见：AudioVolumeInfo{@link #AudioVolumeInfo}。
+     * @param [in] speaker_number 房间内用户数量
+     * @param [in] total_remote_volume 房间内所有音频流的总音量，取值范围是：[0,255]
+     * @notes 本回调默认不开启。你可以通过调用 SetAudioVolumeIndicationInterval{@link #IRtcRoom#SetAudioVolumeIndicationInterval} 开启。  <br>
      */
-    virtual void OnAudioVolumeIndication(const AudioVolumeInfo* speakers, unsigned int speaker_number, int total_volume) {
+    virtual void OnAudioVolumeIndication(const AudioVolumeInfo* speakers, unsigned int speaker_number, int total_remote_volume) {
         (void)speakers;
         (void)speaker_number;
-        (void)total_volume;
+        (void)total_remote_volume;
     }
 
     /**
@@ -245,48 +239,41 @@ public:
     }
 
     /**
-     * @hidden
      * @type callback
      * @region 音频事件回调
-     * @brief 当某个用户静音远端所有用户音频时, 房间内其他人收到这个回调。
-     *        该回调由远端用户调用 MuteAllRemoteAudioStreams{@link #IRtcRoom#MuteAllRemoteAudioStreams} 或 UnmuteAllRemoteAudioStreams{@link #IRtcRoom#UnmuteAllRemoteAudioStreams} 触发。
-     * @param [in] uid 远端用户ID
-     * @param [in] muted  是否静音所有远端音频流  <br>
-     *            + true: 该用户静音所有远端音频流  <br>
-     *            + false: 该用户取消静音了所有远端音频流  <br>
+     * @brief 当房间内用户调用 MuteAllRemoteAudio{@link #IRtcRoom#MuteAllRemoteAudio}，
+     *        改变接收所有远端音频流的状态时, 房间内其他用户收到这个回调。
+     * @param [in] user_id 改变接收状态的用户 ID
+     * @param [in] mute_state 接收状态，详见：MuteState{@link #MuteState}
      */
-    virtual void OnMuteAllRemoteAudio(const char* uid, bool muted) {
-        (void)uid;
-        (void)muted;
+    virtual void OnMuteAllRemoteAudio(const char* user_id, MuteState mute_state) {
+        (void)user_id;
+        (void)mute_state;
     }
 
     /**
      * @type callback
      * @region 视频管理
-     * @brief 当某个用户开启/关闭远端所有用户视频时回调该事件。
-     * @param [in] uid 远端用户标识。
-     * @param  [in] muted 是否被关闭视频。  <br>
-     *       + true: 远端用户关闭所有用户视频数据；  <br>
-     *       + false: 远端用户开启所有用户视频数据。  <br>
+     * @brief 房间内用户暂停/恢复接收所有视频流时，房间内其他用户收到此回调。参看 MuteAllRemoteVideo{@link #MuteAllRemoteVideo}。
+     * @param [in] uid 暂停/恢复接收视频流的用户 ID。
+     * @param  [in] mute 暂停/恢复接收视频流。参看 MuteState{@link #MuteState}。
      */
-    virtual void OnMuteAllRemoteVideo(const char* uid, bool muted) {
+    virtual void OnMuteAllRemoteVideo(const char* uid, MuteState mute) {
         (void)uid;
-        (void)muted;
+        (void)mute;
     }
 
     /**
      * @type callback
      * @region 音频事件回调
-     * @brief 远端用户将其本地音频流静音时，房间内其他人会收到这个回调。
-     *        该回调由远端用户调用 MuteLocalAudioStream{@link #IRtcEngineLite#MuteLocalAudioStream} 方法触发。
-     * @param [in] uid 远端用户ID
-     * @param [in] muted 该用户是否已将其本地音频流静音  <br>
-     *       + true: 该用户已将其本地音频流静音  <br>
-     *       + false: 该用户已将其本地音频流取消了静音  <br>
+     * @brief 房间内某用户调用 MuteLocalAudio{@link #MuteLocalAudio}
+     *        改变本地音频发送状态时，房间内其他用户会收到此回调。
+     * @param [in] user_id 改变本地音频发送状态的用户 ID
+     * @param [in] mute_state 发送状态，参看 MuteState{@link #MuteState}
      */
-    virtual void OnUserMuteAudio(const char* uid, bool muted) {
-        (void)uid;
-        (void)muted;
+    virtual void OnUserMuteAudio(const char* user_id, MuteState mute_state) {
+        (void)user_id;
+        (void)mute_state;
     }
 
     /**
@@ -327,56 +314,32 @@ public:
 
     /**
      * @type callback
-     * @region 引擎管理
-     * @brief SDK 与信令服务器连接断开回调。当 SDK 与信令服务器的网络连接断开超过 10 秒时回调该事件。
-     * @notes  <br>
-     *        + 除非主动调用 LeaveChannel{@link #LeaveChannel} ，否则 SDK 会一直尝试重连。
+     * @region 音频事件回调
+     * @brief 本地采集到第一帧音频帧时，收到该回调
+     * @param [in] index 音频流属性, 参看 StreamIndex{@link #StreamIndex}
      */
-    virtual void OnConnectionLost() {
+    virtual void OnFirstLocalAudioFrame(StreamIndex index) {
+        (void)index;
     }
 
-    /**
-     * @type callback
-     * @region 引擎管理
-     * @brief SDK 与信令服务器连接中断回调。当 SDK 检测到与信令服务器的网络连接中断时回调该事件。
-     * @notes  <br>
-     *        + 除非主动调用 LeaveChannel{@link #LeaveChannel} ，否则 SDK 会一直尝试重连。
-     */
-    virtual void OnConnectionInterrupted() {
-    }
 
     /**
      * @type callback
      * @region 音频事件回调
-     * @brief 当收到本地第一帧音频的时候上报该事件
-     * @param [in] elapsed
-     *        从开始发布音频流到收到该事件经历的时间（毫秒单位）
+     * @brief 接收到来自远端某音频流的第一帧时，收到该回调。
+     * @param [in] key 远端音频流信息, 详见 RemoteStreamKey{@link #RemoteStreamKey}
+     * @notes 用户刚收到房间内每一路音频流时，都会收到该回调。
      */
-    virtual void OnFirstLocalAudioFrame(int elapsed) {
-        (void)elapsed;
-    }
-
-    /**
-     * @type callback
-     * @region 音频事件回调
-     * @brief 当收到远端流的第一帧音频的时候上报该事件
-     * @param [in] uid
-     *        远端用户ID
-     * @param [in] elapsed
-     *        从开始订阅音频流到收到该事件经历的时间（毫秒单位）
-     */
-    virtual void OnFirstRemoteAudioFrame(const char* uid, int elapsed) {
-        (void)uid;
-        (void)elapsed;
+    virtual void OnFirstRemoteAudioFrame(const RemoteStreamKey& key) {
+        (void)key;
     }
 
     /**
      * @type callback
      * @region 房间管理
-     * @brief 房间内远端流移除回调。  <br>
-     *        房间内的远端用户停止发布音视频流时，本地用户会收到此回调通知。  <br>
-     * @param [in] stream 流的属性，详见数据结构 ByteStream{@link #ByteStream} 。  <br>
-     * @param [in] reason 远端流移除的原因，详见枚举类型 RtcStreamRemoveReason{@link #RtcStreamRemoveReason} 。  <br>
+     * @brief 房间内的远端用户停止发布音视频流时，本地用户会收到此回调。
+     * @param [in] stream 流的属性。参看 ByteStream{@link #ByteStream} 。
+     * @param [in] reason 远端流移除的原因。参看 RtcStreamRemoveReason{@link #RtcStreamRemoveReason} 。
      */
     virtual void OnStreamRemove(const ByteStream& stream, RtcStreamRemoveReason reason) {
         (void)stream;
@@ -385,9 +348,9 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @brief 房间内新流发布回调。  <br>
-     *        房间内的远端用户发布新的音视频流时，本地用户会收到此回调通知。  <br>
-     * @param [in] stream 流的属性，详见数据结构 ByteStream{@link #ByteStream} 。  <br>
+     * @brief 用户加入房间时，会收到此回调，包含房间中所有已发布的流。 <br>
+     *        房间内的用户发布新的音视频流时，房间内的其他用户会收到此回调。  <br>
+     * @param [in] stream 流属性，参看 ByteStream{@link #ByteStream} 。  <br>
      */
     virtual void OnStreamAdd(const ByteStream& stream) {
         (void)stream;
@@ -439,24 +402,28 @@ public:
      * @type callback
      * @region 流消息
      * @brief 接收到房间内广播消息的回调。
+     * @param [in] uid 消息发送者 ID
      * @param [in] message 收到的消息内容
      * @notes
      *        1.同一房间内其他用户调用 SendRoomMessage{@link #IRtcRoom#SendRoomMessage} 发送广播消息时会收到该回调。
      */
-    virtual void OnRoomMessageReceived(const char* user_id, const char* message) {
+    virtual void OnRoomMessageReceived(const char* uid, const char* message) {
+        (void)uid;
         (void)message;
     }
-    
+
     /**
      * @type callback
      * @region 流消息
      * @brief 接收到房间内二进制广播消息的回调。
+     * @param [in] uid 消息发送者 ID
      * @param [in] size 收到的二进制消息长度
      * @param [in] message 收到的二进制消息内容
      * @notes
      *        1.同一房间内其他用户调用 SendRoomBinaryMessage{@link #IRtcRoom#SendRoomBinaryMessage} 发送二进制广播消息时会收到该回调。
      */
-    virtual void OnRoomBinaryMessageReceived(const char* user_id, int size, const uint8_t* message) {
+    virtual void OnRoomBinaryMessageReceived(const char* uid, int size, const uint8_t* message) {
+        (void)uid;
         (void)size;
         (void)message;
     }
@@ -476,7 +443,7 @@ public:
         (void)uid;
         (void)message;
     }
-    
+
     /**
      * @type callback
      * @region 流消息
@@ -504,7 +471,7 @@ public:
         (void)msgid;
         (void)error;
     }
-    
+
     /**
      * @type callback
      * @region 流消息
@@ -538,112 +505,61 @@ public:
     /**
      * @type callback
      * @region 视频管理
-     * @brief 收到第一帧本地视频画面时回调该事件。
-     * @param [in] width 视频流宽（像素）。
-     * @param [in] height 视频流高（像素）。
-     * @param [in] elapsed 从调用 JoinChannel{@link #IRtcEngine#JoinChannel} 方法直至该回调被触发的延迟（毫秒），如果在 JoinChannel{@link #IRtcEngine#JoinChannel} 之前调用了 StartPreview{@link #IRtcEngineLite#StartPreview}，则返回的是从调用 StartPreview{@link #IRtcEngineLite#StartPreview} 直至该回调被触发的延迟（毫秒）。
-     * @notes 第一帧本地视频显示在视图上时，触发此回调。
+     * @brief 第一帧本地采集的视频/屏幕共享画面在本地视图渲染完成时，收到此回调。
+     * @param [in] index 流属性。参看 StreamIndex{@link #StreamIndex}。
+     * @param [in] info 视频信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
      */
-    virtual void OnFirstLocalVideoFrame(int width, int height, int elapsed) {
-        (void)width;
-        (void)height;
-        (void)elapsed;
+    virtual void OnFirstLocalVideoFrameCaptured(StreamIndex index, VideoFrameInfo info) {
+        (void)index;
+        (void)info;
     }
 
     /**
      * @type callback
      * @region 视频管理
-     * @brief 当收到本地屏幕共享流第一帧时回调该事件。
-     * @param [in] width 视频流宽（像素）。
-     * @param [in] height 视频流高（像素）。
-     * @param [in] elapsed 从加入频道开始到现在经历的时间(毫秒单位)。
-     * @notes 第一帧本地视频显示在视图上时，触发此回调。
+     * @brief 本地视频大小或旋转配置发生改变时，收到此回调。
+     * @param [in] index 流属性。参看 StreamIndex{@link #StreamIndex}。
+     * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
      */
-    virtual void OnFirstLocalScreenFrame(int width, int height, int elapsed) {
-        (void)width;
-        (void)height;
-        (void)elapsed;
+    virtual void OnLocalVideoSizeChanged(StreamIndex index, const VideoFrameInfo& info) {
+        (void)index;
+        (void)info;
     }
 
     /**
      * @type callback
      * @region 视频管理
-     * @brief 当远端视频第一帧视频被解码时回调该事件。
-     * @param [in] uid 远端用户 UserId。
-     * @param [in] width 视频流宽（像素）。
-     * @param [in] height 视频流高（像素）。
-     * @param [in] elapsed 从调用 JoinChannel{@link #IRtcEngine#JoinChannel} 方法直至该回调被触发的延迟（毫秒）。
-     * @notes 收到第一帧远端视频流并解码成功时，触发此调用。应用可以在此回调中设置该用户的 View。
+     * @brief 远端视频大小或旋转配置发生改变时，房间内订阅此视频流的用户会收到此回调。
+     * @param [in] key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
      */
-    virtual void OnFirstRemoteVideoDecoded(const char* uid, int width, int height, int elapsed) {
+    virtual void OnRemoteVideoSizeChanged(RemoteStreamKey key, const VideoFrameInfo& info) {
+        (void)key;
+        (void)info;
+    }
+
+    /**
+     * @type callback
+     * @region 视频管理
+     * @brief 第一帧远端视频流在视图上渲染成功后，收到此回调。
+     * @param [in] key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
+     */
+    virtual void OnFirstRemoteVideoFrameRendered(const RemoteStreamKey key, const VideoFrameInfo& info) {
+        (void)key;
+        (void)info;
+    }
+
+    /**
+     * @type callback
+     * @region 视频管理
+     * @brief 房间内用户暂停/恢复发送视频流时，房间内其他用户()收到此回调。参看 MuteLocalVideoStream{@link #MuteLocalVideoStream}。
+     * @param [in] uid 暂停/恢复发送视频流的用户 ID。
+     * @param  [in] mute 暂停/恢复发送视频流。参看 MuteState{@link #MuteState}。
+     */
+    virtual void OnUserMuteVideo(const char* uid, MuteState mute) {
         (void)uid;
-        (void)width;
-        (void)height;
-        (void)elapsed;
-    }
-
-    /**
-     * @type callback
-     * @region 视频管理
-     * @brief 本地或远端视频大小或旋转信息发生改变回调。
-     * @param [in] uid 图像尺寸和旋转信息发生变化的用户ID。如果返回的 uid 为空，则表示本地用户。
-     * @param [in] width 视频流的宽度（像素）。
-     * @param [in] height 视频流的高度（像素）。
-     * @param [in] rotation 旋转角度[0，360]。
-     */
-    virtual void OnVideoSizeChanged(const char* uid, int width, int height, int rotation) {
-        (void)uid;
-        (void)width;
-        (void)height;
-        (void)rotation;
-    }
-
-    /**
-     * @type callback
-     * @region 视频管理
-     * @brief 收到远端流后解码第一帧时回调该事件。
-     * @param [in] uid 远端用户 UserId。
-     * @param [in] width 视频流宽（像素）。
-     * @param [in] height 视频流高（像素）。
-     * @param [in] elapsed 从调用 JoinChannel{@link #IRtcEngine#JoinChannel} 加入频道开始到发生此事件过去的时间（毫秒）。
-     * @notes 第一帧远端视频显示在视图上时，触发此调用。应用可在此调用中获知出图时间（elapsed）。出图时间指从订阅视频流到第一个视频帧刷出来的间隔。
-     */
-    virtual void OnFirstRemoteVideoFrame(const char* uid, int width, int height, int elapsed) {
-        (void)uid;
-        (void)width;
-        (void)height;
-        (void)elapsed;
-    }
-
-    /**
-     * @type callback
-     * @region 视频管理
-     * @brief 收到远端屏幕共享流后解码第一帧时回调该事件。
-     * @param [in] uid 用户ID，指定是哪个用户的屏幕共享流。
-     * @param [in] width 视频流宽（像素）。
-     * @param [in] height 视频流高（像素）。
-     * @param [in] elapsed 从调用 JoinChannel{@link #IRtcEngine#JoinChannel} 加入频道开始到发生此事件过去的时间（毫秒）。
-     */
-    virtual void OnFirstRemoteScreenFrame(const char* uid, int width, int height, int elapsed) {
-        (void)uid;
-        (void)width;
-        (void)height;
-        (void)elapsed;
-    }
-
-    /**
-     * @type callback
-     * @region 视频管理
-     * @brief 远端用户暂停/恢复发送视频流时回调该事件，当远端用户调用 MuteLocalVideoStream{@link #MuteLocalVideoStream} 时，其他用户会触发此回调。
-     * @param [in] uid 用户ID，提示是哪个用户的视频流。
-     * @param  [in] muted 是否发送视频流。  <br>
-     *       + true：该用户已暂停发送视频流。  <br>
-     *       + false：该用户已恢复发送视频流。  <br>
-     * @notes 提示有其他用户暂停/恢复了视频流的发送。
-     */
-    virtual void OnUserMuteVideo(const char* uid, bool muted) {
-        (void)uid;
-        (void)muted;
+        (void)mute;
     }
 
     /**
@@ -699,28 +615,28 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @brief 远端用户音频状态发生改变时，该回调通知当前的远端音频流状态。
-     * @param [in] uid 该远端流的用户ID
-     * @param [in] state 远端音频流状态，详见：RemoteAudioState{@link #RemoteAudioState}
-     * @param [in] reason 远端音频流状态改变的原因，详见：RemoteAudioStateReason{@link #RemoteAudioStateReason}
-     * @param [in] elapsed 耗时，从加入房间到该事件发生经历的时间（毫秒单位）
+     * @brief 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。
+     * @param [in] key 远端流信息, 参看 RemoteStreamKey{@link #RemoteStreamKey}
+     * @param [in] state 远端音频流状态，参看 RemoteAudioState{@link #RemoteAudioState}
+     * @param [in] reason 远端音频流状态改变的原因，参看 RemoteAudioStateReason{@link #RemoteAudioStateReason}
      */
     virtual void OnRemoteAudioStateChanged(
-            const char* uid, RemoteAudioState state, RemoteAudioStateReason reason, int elapsed) {
-        (void)uid;
+            const RemoteStreamKey& key, RemoteAudioState state, RemoteAudioStateReason reason) {
+        (void)key;
         (void)state;
         (void)reason;
-        (void)elapsed;
     }
-    
+
     /**
      * @type callback
      * @region 视频管理
-     * @brief 本地视频的状态发生改变时，该回调返回当前的本地视频状态。
-     * @param [in] state 本地视频状态，详见 LocalVideoStreamState{@link #LocalVideoStreamState}。
-     * @param [in] error 本地视频状态改变时的错误码，详见 LocalVideoStreamError{@link #LocalVideoStreamError}。
+     * @brief 本地视频流的状态发生改变时，收到该事件。
+     * @param [in] index 音视频属性, 参看 StreamIndex{@link #StreamIndex}
+     * @param [in] state 本地视频流状态，详见 LocalVideoStreamState{@link #LocalVideoStreamState}
+     * @param [in] error 本地视频状态改变时的错误码，详见 LocalVideoStreamError{@link #LocalVideoStreamError}
      */
-    virtual void OnLocalVideoStateChanged(LocalVideoStreamState state, LocalVideoStreamError error) {
+    virtual void OnLocalVideoStateChanged(StreamIndex index, LocalVideoStreamState state, LocalVideoStreamError error) {
+        (void)index;
         (void)state;
         (void)error;
     }
@@ -728,18 +644,16 @@ public:
     /**
      * @type callback
      * @region 视频管理
-     * @brief 远端用户视频状态发生改变时，该回调报告当前的远端视频流状态。
-     * @param [in] uid 该远端流的用户 id。
-     * @param [in] state 远端视频流状态，详见 RemoteVideoState{@link #RemoteVideoState}。
-     * @param [in] reason 远端视频流状态改变的原因，详见 RemoteVideoStateReason{@link #RemoteVideoStateReason}。
-     * @param [in] elapsed 耗时，暂未实现。
+     * @brief 远端视频流的状态发生改变时，房间内的用户会收到该事件。
+     * @param [in] key 远端视频流的信息，房间，用户 ID，流属性等。参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] state 远端视频流状态，参看 RemoteVideoState{@link #RemoteVideoState}。
+     * @param [in] reason 远端视频流状态改变的原因，参看 RemoteVideoStateReason{@link #RemoteVideoStateReason}。
      */
     virtual void OnRemoteVideoStateChanged(
-            const char* uid, RemoteVideoState state, RemoteVideoStateReason reason, int elapsed) {
-        (void)uid;
+            RemoteStreamKey key, RemoteVideoState state, RemoteVideoStateReason reason) {
+        (void)key;
         (void)state;
         (void)reason;
-        (void)elapsed;
     }
 
     /**

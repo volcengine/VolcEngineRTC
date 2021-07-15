@@ -110,7 +110,8 @@ public:
 
     LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
         BDPaintDC dc(m_hWnd);
-        if (!m_mask && !m_showHeader && !m_show_fresh) {
+        if ((m_mask && (!m_showHeader && !m_highlight) && m_first_video_frame)
+            || (!m_mask && !m_showHeader && !m_show_fresh)) {
             return 0;
         }
 
@@ -118,8 +119,8 @@ public:
 
         RECT rc;
         GetClientRect(&rc);
-        BDDC localDc = ::CreateCompatibleDC(dc);
-        auto hBitmap = ::CreateCompatibleBitmap(dc, rc.right, rc.bottom);//rt为RECT变量
+        BDDC localDc = ::CreateCompatibleDC(dc); // Double buffering
+        auto hBitmap = ::CreateCompatibleBitmap(dc, rc.right, rc.bottom);
         ::SelectObject(localDc, hBitmap);
 
         localDc.FillRect(&rc, m_bkBrush);
@@ -134,14 +135,14 @@ public:
             localDc.SelectFont(m_namefont);
 
             SIZE text_size;
-            ::GetTextExtentPoint32A(localDc.m_hDC, m_name.c_str(), m_name.size(), &text_size);
+            ::GetTextExtentPoint(localDc.m_hDC, m_name, m_name.GetLength(), &text_size);
             RECT rText = { (rc.right - text_size.cx) / 2,
                 (rc.bottom - size.cy) / 2 + size.cy - 4,
                 (rc.right + text_size.cx) / 2,
                 rc.bottom };
 
             BDDC mydc = ::CreateCompatibleDC(localDc);
-            if (m_share && !m_name.empty()) {
+            if (m_share && m_name.GetLength()) {
                 SIZE image;
                 m_share_image.GetSize(image);
                 rText.left = max(8 + image.cx + 8, rText.left);
@@ -150,7 +151,7 @@ public:
                 localDc.BitBlt(rText.left - 8 - image.cx, rText.top, image.cx, image.cy, mydc, 0, 0, SRCCOPY);
             }
 
-            if (m_host && !m_name.empty()) {
+            if (m_host && m_name.GetLength()) {
                 SIZE image;
                 m_host_image.GetSize(image);
                 rText.right = min(rc.right - 8 - image.cx - 8, rText.right);
@@ -159,7 +160,7 @@ public:
                 localDc.BitBlt(rText.right + 8, rText.top, image.cx, image.cy, mydc, 0, 0, SRCCOPY);
             }
 
-            ::DrawTextA(localDc.m_hDC, m_name.c_str(), m_name.size(), &rText, DT_LEFT | DT_TOP);
+            ::DrawText(localDc.m_hDC, m_name, m_name.GetLength(), &rText, DT_LEFT | DT_TOP);
 
             int delta = 0;
             if (m_highlight) {
@@ -177,25 +178,25 @@ public:
                 size.cx - 2 * delta,
                 size.cy - 2 * delta);
 
-            if (!m_name.empty()) {
+            if (m_name.GetLength()) {
                 localDc.SetBkMode(TRANSPARENT);
                 localDc.SetTextColor(RGB(0xFF, 0xFF, 0xFF));
                 localDc.SetBkColor(RGB(0x4E, 0x59, 0x69));
                 localDc.SelectFont(m_shotfont);
 
-                char c = m_name[0];
-                if (isalpha(c)) {
-                    c = toupper(c);
+                wchar_t c = m_name[0];
+                if (iswalpha(c)) {
+                    c = towupper(c);
                 }
 
                 SIZE t_size;
-                ::GetTextExtentPoint32A(localDc.m_hDC, &c, 1, &t_size);
+                ::GetTextExtentPoint(localDc.m_hDC, &c, 1, &t_size);
 
-                RECT rText = { (rc.right - size.cx) / 2,
-                (rc.bottom - size.cy) / 2 - size.cy / 3 + (size.cy - t_size.cy) / 2,
+                RECT rText = { (rc.right - size.cx) / 2 + (size.cx - t_size.cx )/ 2,
+                (rc.bottom - size.cy) / 2 - size.cy / 3 + (size.cy - t_size.cy) / 2 + 4,
                 (rc.right - size.cx) / 2 + size.cx,
-                (rc.bottom - size.cy) / 2 - size.cy / 3 + size.cy };
-                ::DrawTextA(localDc.m_hDC, &c, 1, &rText, DT_CENTER | DT_TOP);
+                (rc.bottom - size.cy) / 2 + size.cy * 2 / 3 };
+                ::DrawText(localDc.m_hDC, &c, 1, &rText, DT_LEFT | DT_TOP);
             }
         }
         else if (m_highlight) {
@@ -257,7 +258,7 @@ public:
         }
     }
 
-    void SetName(const std::string& name) {
+    void SetName(const BDString& name) {
         if (m_name != name) {
             m_name = name;
             bool show = IsWindowVisible();
@@ -266,8 +267,16 @@ public:
         }
     }
 
-    const std::string& GetName() const {
-        return m_name;
+    void SetUserId(const std::string& id) {
+        m_user_id = id;
+    }
+
+    const std::string& GetUserId() const {
+        return m_user_id;
+    }
+
+    void TitleFresh() {
+        m_userTitleWnd.Invalidate();
     }
 
     void SetUserType(UserType type) {
@@ -304,18 +313,18 @@ public:
         m_have_stream = true;
         bool show = IsWindowVisible();
         SubScribeStream(show);
+        FreshFirstVideoFrameTimer(show);
     }
 
     void OnStreamRemove() {
         m_have_stream = false;
-        m_frist_video_frame = false;
+        m_first_video_frame = false;
         bool show = IsWindowVisible();
         SubScribeStream(show);
-        FreshFirstVideoFrameTimer(show);
     }
 
     void SetupLocal(bool show) {
-         EngineWrapper::GetInstance()->setupLocal(show ? m_hWnd : nullptr, m_name.c_str());
+         EngineWrapper::GetInstance()->setupLocal(show ? m_hWnd : nullptr, m_user_id.c_str());
     }
 
     void SetScreenViewTag() {
@@ -330,19 +339,19 @@ public:
         m_showHeader = false;
         m_have_stream = false;
         m_highlight = false;
-        m_frist_video_frame = false;
+        m_first_video_frame = false;
         FreshFirstVideoFrameTimer(false);
     }
 
 private:
     void SubScribeStream(bool show) {
-        if (!m_name.empty() && m_type == REMOTE_USER) {
+        if (!m_user_id.empty() && m_type == REMOTE_USER) {
             bool subVideo = (m_screen_view || !m_showHeader) && m_have_stream && show;
             if (subVideo) {
-                EngineWrapper::GetInstance()->SubscribeVideoStream(m_name.c_str(), { m_screen_view, subVideo });
+                EngineWrapper::GetInstance()->SubscribeVideoStream(m_user_id.c_str(), { m_screen_view, subVideo });
             } else {
-                EngineWrapper::GetInstance()->UnsubscribeVideoStream(m_name.c_str(), m_screen_view);
-                m_frist_video_frame = false;
+                EngineWrapper::GetInstance()->UnsubscribeVideoStream(m_user_id.c_str(), m_screen_view);
+                m_first_video_frame = false;
                 FreshFirstVideoFrameTimer(show);
             }
         }
@@ -350,17 +359,17 @@ private:
 
     // The first frame event cannot be received after reconnection
     LRESULT OnVideoFrame(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
-        if (!m_frist_video_frame) {
-            m_frist_video_frame = true;
+        if (!m_first_video_frame) {
+            m_first_video_frame = true;
             bool show = IsWindowVisible();
             FreshFirstVideoFrameTimer(show);
 
-            if (!m_name.empty() && m_type == REMOTE_USER) {
+            if (!m_user_id.empty() && m_type == REMOTE_USER) {
                 if (m_screen_view) {
-                    EngineWrapper::GetInstance()->setupRemoteScreenRender(m_name, m_hWnd);
+                    EngineWrapper::GetInstance()->setupRemoteScreenRender(m_user_id, m_hWnd);
                 }
                 else {
-                    EngineWrapper::GetInstance()->setupRemote(m_hWnd, m_name.c_str());
+                    EngineWrapper::GetInstance()->setupRemote(m_hWnd, m_user_id.c_str());
                 }
             }
         }
@@ -370,17 +379,17 @@ private:
     }
 
     void UnboundView() {
-        if (!m_name.empty()) {
+        if (!m_user_id.empty()) {
             if (m_type == REMOTE_USER) {
                 if (m_screen_view) {
-                    EngineWrapper::GetInstance()->setupRemoteScreenRender(m_name, nullptr);
+                    EngineWrapper::GetInstance()->setupRemoteScreenRender(m_user_id, nullptr);
                 }
                 else {
-                    EngineWrapper::GetInstance()->setupRemote(nullptr, m_name.c_str());
+                    EngineWrapper::GetInstance()->setupRemote(nullptr, m_user_id.c_str());
                 }
             }
             else {
-                //EngineWrapper::GetInstance()->setupLocal(nullptr, m_name.c_str());
+                //EngineWrapper::GetInstance()->setupLocal(nullptr, m_user_id.c_str());
             }
         }
     }
@@ -393,7 +402,7 @@ private:
         dc.SelectFont(namefont);
 
         SIZE text_size;
-        ::GetTextExtentPoint32A(dc.m_hDC, m_name.c_str(), m_name.size(), &text_size);
+        ::GetTextExtentPoint(dc.m_hDC, m_name, m_name.GetLength(), &text_size);
 
         RECT rect;
         GetClientRect(&rect);
@@ -423,7 +432,7 @@ private:
         m_userTitleWnd.SetShare(m_share);
         m_userTitleWnd.SetName(m_name);
 
-        m_userTitleWnd.ShowWindow(!m_name.empty() && !m_screen_view && !m_showHeader && show ? SW_SHOW : SW_HIDE);
+        m_userTitleWnd.ShowWindow(m_name.GetLength() && !m_screen_view && !m_showHeader && show ? SW_SHOW : SW_HIDE);
         m_userTitleWnd.Invalidate();
     }
 
@@ -436,7 +445,7 @@ private:
     }
 
     void FreshFirstVideoFrameTimer(bool show) {
-        if (!m_mask && show && !m_showHeader && !m_frist_video_frame) {
+        if (!m_mask && show && !m_showHeader && !m_first_video_frame) {
             m_show_fresh = true;
             Invalidate();
             SetTimer(1, 500);
@@ -464,7 +473,8 @@ private:
         }
     }
 
-    std::string m_name;
+    std::string m_user_id;
+    BDString m_name;
     bool m_showHeader = false;
     bool m_highlight = false;
     bool m_host = false;
@@ -489,6 +499,6 @@ private:
 
     RECT m_rect;
     bool m_show_fresh = false;
-    bool m_frist_video_frame = false;
+    bool m_first_video_frame = false;
 };
 

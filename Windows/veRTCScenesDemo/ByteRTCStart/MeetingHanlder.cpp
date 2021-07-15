@@ -16,7 +16,7 @@ public:
         delete this;
     }
 
-    void operator()() {
+    void execute() {
         m_func();
     }
 
@@ -39,7 +39,7 @@ void PostFunction(HWND handler, std::function<void()>&& func) {
 LRESULT BDMainContainerFrame::OnFunctionExec(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) {
     auto func = (PrivateFunction*)wParam;
     if (func) {
-        (*func)();
+        func->execute();
         func->Release();
         func = nullptr;
     }
@@ -50,12 +50,12 @@ LRESULT BDMainContainerFrame::OnFunctionExec(UINT uMsg, WPARAM wParam, LPARAM lP
 void BDMainContainerFrame::onUserMicStateChange(const std::string& userId, bool on) {
     auto func = [this, &userId, &on]() {
         auto pos = std::find_if(m_users.begin(), m_users.end(), [&userId](const UserAttr& ua)->bool {
-            return ua.m_name == userId;
+            return ua.m_user_id == userId;
         });
 
         if (pos != m_users.end()) {
             pos->m_bAudio = on;
-            m_userWnd.UpdateUser(*pos);
+            UserLayoutFresh();
         }
     };
 
@@ -65,7 +65,7 @@ void BDMainContainerFrame::onUserMicStateChange(const std::string& userId, bool 
 void BDMainContainerFrame::onUserCameraStateChange(const std::string& userId, bool on) {
     auto func = [this, &userId, &on]() {
         auto pos = std::find_if(m_users.begin(), m_users.end(), [&userId](const UserAttr& ua)->bool {
-            return ua.m_name == userId;
+            return ua.m_user_id == userId;
         });
 
         if (pos != m_users.end()) {
@@ -73,7 +73,8 @@ void BDMainContainerFrame::onUserCameraStateChange(const std::string& userId, bo
             if (pos->m_view) {
                 pos->m_view->MuteVideo(!on);
             }
-            m_userWnd.UpdateUser(*pos);
+
+            UserLayoutFresh();
         }
     };
 
@@ -83,21 +84,21 @@ void BDMainContainerFrame::onUserCameraStateChange(const std::string& userId, bo
 
 void BDMainContainerFrame::HostMuteRemoteUserAudio(const UserAttr& user) {
     if (user.m_bAudio) {
-        MeetingManager::GetInstance()->muteUserMic(user.m_name, [](int code) {
+        MeetingManager::GetInstance()->muteUserMic(user.m_user_id, [](int code) {
             assert(code == 200);
         });
     }
     else {
-        MeetingManager::GetInstance()->askUserMacOn(user.m_name, [this, user](int code) {
+        MeetingManager::GetInstance()->askUserMacOn(user.m_user_id, [this, user](int code) {
             if (code == 200) {
                 BDString inf;
-                inf.Format(L"请求%s打开麦克风已发送", rtcutil::ConvertUTF8ToBDString(user.m_name));
+                inf.Format(L"请求%s打开麦克风已发送", user.m_name);
                 ShowBubbleTip(inf);
             }
             else {
                 // Abnormal prompt
                 BDString inf;
-                inf.Format(L"请求%s打开麦克风失败，错误码：%d", rtcutil::ConvertUTF8ToBDString(user.m_name), code);
+                inf.Format(L"请求%s打开麦克风失败，错误码：%d", user.m_name, code);
                 ShowBubbleTip(inf);
             }
         });
@@ -128,10 +129,10 @@ void BDMainContainerFrame::HostTransferHost(const UserAttr& user) {
         MESSAGE_WND_WIDTH,
         MESSAGE_WND_HEIGHT);
 
-    m_messageWnd.SetMessage(L"是否将主持人移交给：" + rtcutil::ConvertUTF8ToBDString(user.m_name));
+    m_messageWnd.SetMessage(L"是否将主持人移交给：" + user.m_name);
     m_messageWnd.SetMessageHander("确定", [this, user]() {
         m_messageWnd.ShowWindow(SW_HIDE);
-        MeetingManager::GetInstance()->changeHost(user.m_name, [this](int code) {
+        MeetingManager::GetInstance()->changeHost(user.m_user_id, [this](int code) {
             assert(code == 200);
             if (code != 200) {
                 //Abnormal prompt
@@ -165,11 +166,10 @@ void BDMainContainerFrame::onHostChange(const std::string& formerHostId, const s
             if (formerHostPos->m_view) {
                 formerHostPos->m_view->SetHost(false);
             }
-            m_userWnd.UpdateUser(*formerHostPos);
         }
 
         auto hostPos = std::find_if(m_users.begin(), m_users.end(), [&hostId](const UserAttr& ua)->bool {
-            return ua.m_name == hostId;
+            return ua.m_user_id == hostId;
         });
 
         if (hostPos != m_users.end()) {
@@ -177,23 +177,14 @@ void BDMainContainerFrame::onHostChange(const std::string& formerHostId, const s
             if (hostPos->m_view) {
                 hostPos->m_view->SetHost(true);
             }
-            m_userWnd.UpdateUser(*hostPos);
 
             UserLayoutFresh();
         }
 
-        if (hostId == m_user_id) {
+        if (hostId == m_sms.user_id) {
             BDString inf;
             inf.Format(L"您已经被指定为新的主持人！");
             ShowBubbleTip(inf);
-
-            UpdateRecordVideoLayout([this](int code) {
-                if (code != 200) {
-                    BDString inf;
-                    inf.Format(L"更新录制布局失败，错误码: %d", code);
-                    ShowBubbleTip(inf);
-                }
-            });
         }
     };
 
@@ -203,12 +194,19 @@ void BDMainContainerFrame::onHostChange(const std::string& formerHostId, const s
 // New users join
 void BDMainContainerFrame::onUserJoinMeeting(const User& userId) {
     auto func = [this, &userId]() {
-        if (userId.uid == m_user_id) { // self, return
+        if (userId.uid == m_sms.user_id) { // self, return
+            auto pos = std::find_if(m_users.begin(), m_users.end(), [](const UserAttr& ua)->bool {
+                return ua.m_type == UserType::LOCAL_USER;
+            });
+
+            if (pos != m_users.end()) {
+                pos->m_user_uniform_id = userId.user_uniform_id;
+            }
             return;
         }
 
         auto pos = std::find_if(m_users.begin(), m_users.end(), [&userId](const UserAttr& ua)->bool {
-            return ua.m_name == userId.uid;
+            return ua.m_user_id == userId.uid;
         });
 
         if (pos != m_users.end()) {
@@ -216,7 +214,9 @@ void BDMainContainerFrame::onUserJoinMeeting(const User& userId) {
         }
 
         UserAttr ua;
-        ua.m_name = userId.uid;
+        ua.m_user_id = userId.uid;
+        ua.m_user_uniform_id = userId.user_uniform_id;
+        ua.m_name = rtcutil::ConvertUTF8ToBDString(userId.user_name);
         ua.m_type = UserType::REMOTE_USER;
 
         ua.timeOfJoining = userId.time_of_joining;
@@ -231,13 +231,12 @@ void BDMainContainerFrame::onUserJoinMeeting(const User& userId) {
             if (local->m_view) {
                 local->m_view->SetHost(false);
             }
-            m_userWnd.UpdateUser(*local);
+
             m_users.push_front(ua);
         }
         else {
             m_users.push_back(ua);
         }
-        m_userWnd.AddUser(ua);
 
         auto layout = m_view_style == SPEAKER_STYLE || m_view_style == LOCAL_SHARE_STYLE ? m_view_style : VIEW_UNKNOW_STYLE;
         if (userId.is_screen_shared && m_view_style != SPEAKER_STYLE) {
@@ -252,12 +251,12 @@ void BDMainContainerFrame::onUserJoinMeeting(const User& userId) {
 
 void BDMainContainerFrame::onUserLeaveMeeting(const std::string& userId) {
     auto func = [this, &userId]() {
-        if (userId == m_user_id) {
+        if (userId == m_sms.user_id) {
             return;
         }
 
         auto pos = std::find_if(m_users.begin(), m_users.end(), [&userId](const UserAttr& ua)->bool {
-            return ua.m_name == userId;
+            return ua.m_user_id == userId;
         });
 
         if (pos != m_users.end()) {
@@ -267,8 +266,6 @@ void BDMainContainerFrame::onUserLeaveMeeting(const std::string& userId) {
             FreeVideoView(pos->m_screen_view);
             pos->m_screen_view = nullptr;
 
-            // Remove user information
-            m_userWnd.RemoveUser(*pos);
             bool shared = pos->m_shared;
             m_users.erase(pos);
 
@@ -280,8 +277,9 @@ void BDMainContainerFrame::onUserLeaveMeeting(const std::string& userId) {
     ::SendFunction(m_hWnd, func);
 }
 
-void BDMainContainerFrame::JoinMeeting(const std::string& room_id, const std::string& user_id) {
-    MeetingManager::GetInstance()->joinMeeting(user_id,
+void BDMainContainerFrame::JoinMeeting(const std::string& room_id, const std::string& user_name, const std::string& user_id) {
+    MeetingManager::GetInstance()->joinMeeting(user_name,
+        user_id,
         room_id,
         !EngineWrapper::GetInstance()->m_bMuteAudio,
         !EngineWrapper::GetInstance()->m_bMuteVideo,
@@ -419,7 +417,7 @@ void BDMainContainerFrame::StopScreenShare() {
 void BDMainContainerFrame::onScreenShareStateChanged(const std::string& userId, bool state) {
     auto func = [this, &userId, &state]() {
         auto pos = std::find_if(m_users.begin(), m_users.end(), [&](const UserAttr& userAttr)->bool {
-            return userAttr.m_name == userId;
+            return userAttr.m_user_id == userId;
         });
 
         if (pos == m_users.end()) {
@@ -428,15 +426,17 @@ void BDMainContainerFrame::onScreenShareStateChanged(const std::string& userId, 
 
         pos->m_shared = state;
         m_userWnd.UpdateUser(*pos);
+
         if (pos->m_view) {
             pos->m_view->SetShare(state);
         }
+
         if (state) {
             if (!pos->m_screen_view) {
                 pos->m_screen_view = AllocVideoView(*pos, true);
             }
 
-            if (m_remoteStream.user_id == pos->m_name) {
+            if (m_remoteStream.user_id == pos->m_user_id) {
                 pos->m_screen_view->OnStreamAdd();
             }
 
@@ -491,7 +491,7 @@ LRESULT BDMainContainerFrame::onStartShareScreen(UINT uMsg, WPARAM wParam, LPARA
         m_main_mask.ShowWindow(SW_SHOW);
 
         m_snapshotWnd.MoveWindow(rc.left + m_width / 2 - SNAPSHOT_WND_WIDTH / 2,
-            rc.bottom - SNAPSHOT_WND_HEIGHT - 76,
+            rc.bottom - SNAPSHOT_WND_HEIGHT - 96,
             SNAPSHOT_WND_WIDTH,
             SNAPSHOT_WND_HEIGHT);
         m_snapshotWnd.ShowWindow(SW_SHOW);
@@ -551,7 +551,7 @@ void BDMainContainerFrame::onMuteAllMic() {
             }
         }
 
-        m_userWnd.OnAudioMuteAll();
+        UserLayoutFresh();
 
         if (m_users.begin()->m_type == UserType::REMOTE_USER) {
             onMuteUser("");
@@ -620,13 +620,14 @@ void BDMainContainerFrame::onAskingCameraOn(const std::string& userId) {
 // Network reconnection or socket connected event
 void BDMainContainerFrame::onWebsocketConnected() {
     ::SendFunction(m_hWnd, [this]() {
+        KillTimer(2);
         m_websocket_connection = true;
 
         if (m_bubbleTipWnd.IsWindowVisible()) {
             m_bubbleTipWnd.ShowWindow(SW_HIDE);
         }
         m_loginWnd.OnConnection();
-        KillTimer(2);
+        CheckUpdateApp(IsWindowVisible());
     });
 
     if (m_room_id.empty()) {
@@ -681,7 +682,8 @@ void BDMainContainerFrame::RejoinMeeting() { // when rejoin, There will be no st
 
                 // self join
                 UserAttr usLocal;
-                usLocal.m_name = m_user_id;
+                usLocal.m_user_id = m_sms.user_id;
+                usLocal.m_name = m_sms.user_name;
                 usLocal.m_bAudio = !EngineWrapper::GetInstance()->m_bMuteAudio;
                 usLocal.m_bVideo = !EngineWrapper::GetInstance()->m_bMuteVideo;
                 usLocal.m_isHost = true;
@@ -690,7 +692,7 @@ void BDMainContainerFrame::RejoinMeeting() { // when rejoin, There will be no st
                 usLocal.m_view->SetupLocal(true);
 
                 m_users.push_back(usLocal);
-                m_userWnd.AddUser(usLocal);
+                UserLayoutFresh();
 
                 ::SendMessage(m_hWnd, WM_NOTIFY_VIEEW_RELAYOUT, false, m_view_style == LOCAL_SHARE_STYLE ? LOCAL_SHARE_STYLE : VIEW_UNKNOW_STYLE);
 
@@ -769,14 +771,14 @@ void BDMainContainerFrame::onWebsocketConnecting() {
     });
 }
 
-void BDMainContainerFrame::Logout() {
+void BDMainContainerFrame::Logout(bool silence) {
     if (!m_room_id.empty()) {
         if (m_view_style == LOCAL_SHARE_STYLE) {
             StopScreenShare();
         }
 
         EngineWrapper::GetInstance()->logout();
-        ::SendMessage(this->m_hWnd, WM_NOTIFY_LEAVE_SUCCEED, USER_OFFLINE_NORMAL, 0);
+        ::SendMessage(this->m_hWnd, WM_NOTIFY_LEAVE_SUCCEED, USER_OFFLINE_NORMAL, silence);
         Invalidate();
     }
 }
@@ -784,7 +786,7 @@ void BDMainContainerFrame::Logout() {
 // Receive the notice from the meeting control system that the meeting is over
 void BDMainContainerFrame::onMeetingClose() {
     auto func = [this]() {
-        Logout();
+        Logout(false);
     };
 
     ::SendFunction(m_hWnd, func);
@@ -800,7 +802,7 @@ LRESULT BDMainContainerFrame::OnMeetingEnd(UINT uMsg, WPARAM wParam, LPARAM lPar
         }
     });
 
-    Logout();
+    Logout(false);
     return 0;
 }
 
@@ -812,7 +814,7 @@ LRESULT BDMainContainerFrame::OnMeetingLeave(UINT uMsg, WPARAM wParam, LPARAM lP
         assert(code == 200);
     });
 
-    Logout();
+    Logout(false);
     return 0;
 }
 
@@ -825,7 +827,8 @@ LRESULT BDMainContainerFrame::OnMeetingCancel(UINT uMsg, WPARAM wParam, LPARAM l
 // When the window is closed
 void BDMainContainerFrame::OnClose() {
     if (m_room_id.empty()) {
-        exit(0);
+        PostQuitMessage(0);
+        return;
     }
 
     BOOL res = false;
@@ -897,8 +900,8 @@ bool BDMainContainerFrame::GetRecordUsersInfo(std::vector<std::string>& users, s
     }
 
     for (auto& user : m_users) {
-        if (user.m_view) {
-            users.push_back(user.m_name);
+        if (user.m_view && user.m_view->IsWindowVisible()) {
+            users.push_back(user.m_user_id);
         }
         else {
             break;
@@ -911,13 +914,13 @@ bool BDMainContainerFrame::GetRecordUsersInfo(std::vector<std::string>& users, s
         });
 
         if (pos != m_users.end()) {
-            screen_uid = pos->m_name;
+            screen_uid = pos->m_user_id;
         }
     }
 
     return true;
 }
-
+// Repeated optimization
 void BDMainContainerFrame::UpdateRecordVideoLayout(std::function<void(int)> callback) {
     if (m_topbarWnd.IsVideoRecording()) {
         std::vector<std::string> users;
@@ -955,7 +958,7 @@ bool BDMainContainerFrame::OnLocalVideoFrame(bytertc::IByteVideoFrame* videoFram
 bool BDMainContainerFrame::OnRemoteScreenFrame(const char* roomid, const char* uid, bytertc::IByteVideoFrame* videoFrame) {
     auto func = [this, uid, videoFrame]() {
         for (auto& user : m_users) {
-            if (user.m_name == uid && user.m_screen_view
+            if (user.m_user_id == uid && user.m_screen_view
                 && user.m_screen_view->IsWindowVisible()) {
                 ::PostMessage(user.m_screen_view->m_hWnd, WM_NOTIFY_VIDEO, 0, 0);
                 break;
@@ -970,7 +973,7 @@ bool BDMainContainerFrame::OnRemoteScreenFrame(const char* roomid, const char* u
 bool BDMainContainerFrame::OnRemoteVideoFrame(const char* roomid, const char* uid, bytertc::IByteVideoFrame* videoFrame) {
     auto func = [this, uid, videoFrame]() {
         for (auto& user : m_users) {
-            if (user.m_name == uid && user.m_view
+            if (user.m_user_id == uid && user.m_view
                 && user.m_view->IsWindowVisible()) {
                 ::PostMessage(user.m_view->m_hWnd, WM_NOTIFY_VIDEO, 0, 0);
                 break;
@@ -980,4 +983,59 @@ bool BDMainContainerFrame::OnRemoteVideoFrame(const char* roomid, const char* ui
 
     ::PostFunction(m_hWnd, func);
     return true;
+}
+
+void BDMainContainerFrame::onInvaildToken(int code) {
+    auto func = [this]() {
+        ShowWindow(SW_HIDE);
+        Logout(true);
+        m_loginWnd.ResetRoomEdit();
+        EngineWrapper::GetInstance()->m_bMuteAudio = false;
+        EngineWrapper::GetInstance()->m_bMuteVideo = false;
+        m_loginWnd.Reset();
+        ShowWindow(SW_HIDE);
+    };
+
+    ::PostFunction(m_hWnd, func);
+}
+
+void BDMainContainerFrame::CheckUpdateApp(bool show) {
+    bool check = APPConfig::Instance()->IsCheckUpdate();
+    if (show && !check && m_websocket_connection) {
+        MeetingManager::GetInstance()->getAuditState(VERSION, [this](int code, const AuditState& state) {
+            if (code != 200 || !state.state) return;
+            ::SendFunction(m_hWnd, [this, code, state]() {
+                APPConfig::Instance()->SetCheckUpdate();
+
+                RECT rc;
+                ::GetWindowRect(m_hWnd, &rc);
+                m_main_mask.MoveWindow(rc.left + 10,
+                    rc.top,
+                    rc.right - rc.left - 20,
+                    rc.bottom - rc.top - 10);
+                m_main_mask.ShowWindow(SW_SHOW);
+
+                m_main_mask.ShowWindow(SW_SHOW);
+                m_messageWnd.SetMessage(L"应用有更新，立刻下载最新版本？");
+                m_messageWnd.SetMessageHander("确定", [this, state]() {
+                        m_messageWnd.ShowWindow(SW_HIDE);
+                        m_main_mask.ShowWindow(SW_HIDE);
+
+                        BDString address = rtcutil::ConvertUTF8ToBDString(state.url);
+                        ShellExecute(0, L"open", address, L"", L"", 0);
+                    },
+                    "取消", [this]() {
+                        m_messageWnd.ShowWindow(SW_HIDE);
+                        m_main_mask.ShowWindow(SW_HIDE);
+                });
+
+                m_messageWnd.MoveWindow(rc.left + m_width / 2 - MESSAGE_WND_WIDTH / 2,
+                    rc.top + m_height / 2 - MESSAGE_WND_HEIGHT / 2,
+                    MESSAGE_WND_WIDTH,
+                    MESSAGE_WND_HEIGHT);
+                m_messageWnd.ShowWindow(SW_SHOW);
+            });
+        });
+    }
+    Invalidate();
 }
