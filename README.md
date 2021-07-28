@@ -9,6 +9,8 @@
 | Win(C++)| [DOC](https://www.volcengine.com/docs/6348/70530)|
 | Mac| [DOC](https://www.volcengine.com/docs/6348/70529)|
 
+如果查看页面时显示页面不存在，可能是因为你没有权限。请联系技术支持人员添加相关权限。
+
 ## Demo 2.1.0 @ 2021.07.15
 
 功能新增
@@ -17,4 +19,4 @@
 
 ## Demo 体验地址
 
-> [Demo 体验地址](https://bytedance.feishu.cn/docs/doccnWQA4zNSCvWqVhrrJIUukkf)
+> [Demo 体验地址](https://www.volcengine.com/docs/6348/70451)
