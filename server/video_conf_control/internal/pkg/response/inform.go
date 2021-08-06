@@ -2,6 +2,7 @@ package response
 
 import (
 	"encoding/json"
+	"log"
 	"time"
 )
 
@@ -20,7 +21,7 @@ func NewInformToClient(event string, data interface{}) string {
 
 	infoByte, err := json.Marshal(info)
 	if err != nil {
-		logs.Warnf("json marshal error, input: %v, err: %v", info, err)
+		log.Printf("json marshal error, input: %v, err: %v", info, err)
 	}
 
 	return string(infoByte)

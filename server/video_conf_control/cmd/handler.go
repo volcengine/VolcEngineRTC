@@ -2,13 +2,15 @@ package main
 
 import (
 	"context"
-	"time"
 
+	logs "github.com/sirupsen/logrus"
 	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/pkg/record"
-	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/service"
+	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/service/conn_service"
+	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/service/cs_service"
+	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/service/vc_service"
 	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/kitex_gen/base"
 	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/kitex_gen/vc_control"
-	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/pkg/metrics"
+	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/pkg/public"
 )
 
 const (
@@ -19,14 +21,7 @@ const (
 // VCControlImpl implements the last service interface defined in the IDL.
 type VCControlImpl struct{}
 
-// NewVCControlImpl returns a new *VCControlImpl.
 func NewVCControlImpl() *VCControlImpl {
-	// upload metrics
-	go func() {
-		for range time.Tick(15 * time.Second) {
-			service.Upload(context.Background())
-		}
-	}()
 	return &VCControlImpl{}
 }
 
@@ -36,24 +31,40 @@ func (s *VCControlImpl) HandleMeetingEvent(ctx context.Context, param *vc_contro
 	resp.BaseResp = base.NewBaseResp()
 	resp.BaseResp.StatusCode = 200
 
-	ctx = logs.CtxAddKVs(ctx, ConnID, param.ConnId, Event, param.EventName)
-	logs.CtxInfo(ctx, "handle event: %s, content: %s", param.EventName, param.Content)
+	logs.Infof("handle event: %s, content: %s", param.EventName, param.Content)
 
-	if eventHandler, ok := service.GetHandlerByEventName(param.EventName); ok {
+	if eventHandler, ok := conn_service.GetHandlerByEventName(param.EventName); ok {
 		go func() {
-			defer func(start time.Time) {
-				eventTag := metrics.T{Name: "event", Value: param.EventName}
-				metrics.EmitRateCounter(metrics.EventQPS, 1, eventTag)
-				metrics.EmitTimer(metrics.EventLatency, start.UnixNano(), eventTag)
-			}(time.Now())
+			defer public.CheckPanic()
 			eventHandler(ctx, param)
 		}()
+
+		return
 	}
+
+	if eventHandler, ok := vc_service.GetHandlerByEventName(param.EventName); ok {
+		go func() {
+			defer public.CheckPanic()
+			eventHandler(ctx, param)
+		}()
+
+		return
+	}
+
+	if eventHandler, ok := cs_service.GetHandlerByEventName(param.EventName); ok {
+		go func() {
+			defer public.CheckPanic()
+			eventHandler(ctx, param)
+		}()
+
+		return
+	}
+
 	return
 }
 
 // HandleRecordCallback implements the VCControlImpl interface.
 func (s *VCControlImpl) HandleRecordCallback(ctx context.Context, param *vc_control.TRecordCallbackParam) (resp *vc_control.THTTPResp, err error) {
-	logs.CtxInfo(ctx, "record call back return: %v", param)
+	logs.Infof("record call back return: %v", param)
 	return record.HandleRecordCallback(ctx, param)
 }

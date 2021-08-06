@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-RUN_NAME="bytertc.server.vc_control"
+RUN_NAME="video_conf_control"
 
 set -e
 if [ -d "output" ]; then
@@ -13,14 +13,8 @@ else
     go test -c -covermode=set -o output/bin/${RUN_NAME} -coverpkg=./...
 fi
 
-list="test prod"
-for env in $list;
-do
-mkdir -p output/$env/conf
-cp conf/$env/* output/$env/conf
-cp script/$env/* output/$env/
-chmod +x output/$env/bootstrap.sh
-cp -r output/bin output/$env/
-done
+mkdir -p output/conf
+cp conf/* output/conf
+cp script/* output/
+chmod +x output/bootstrap.sh
 
-rm -r output/bin

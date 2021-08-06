@@ -17,9 +17,15 @@ const (
 	DefaultConfFile = "config.yaml"
 )
 
+type HowardConfig struct {
+	PSM       string `json:"psm" default:""`
+	AccessKey string `json:"access_key" default:""`
+	SecretKey string `json:"secret_key" default:""`
+}
+
 type Configuration struct {
-	MysqlPSM           string   `yaml:"MysqlPSM"`
-	MysqlDBName        string   `yaml:"MysqlDBName"`
+	PSM 			   string   `yaml:"PSM"`
+	MysqlDSN           string   `yaml:"MysqlDSN"`
 	RedisAddr          string   `yaml:"RedisAddr"`
 	FrontierPSM        string   `yaml:"FrontierPSM"`
 	AppID              string   `yaml:"AppID"`
@@ -37,6 +43,7 @@ type Configuration struct {
 	RoomDurationMinute int      `yaml:"RoomDurationMinute"`
 	RoomWhiteList      []string `yaml:"RoomWhiteList"`
 	VideoObtainingURL  string   `yaml:"VideoObtainingURL"`
+	HowardConfig       HowardConfig `yaml:"howard_config"`
 }
 
 var Config Configuration

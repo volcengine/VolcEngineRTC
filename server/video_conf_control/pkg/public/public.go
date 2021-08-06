@@ -1,28 +1,9 @@
 package public
 
 import (
-	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/config"
-	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/pkg/metrics"
+	"errors"
+	"os"
 )
-
-func ChooseAddr(addr, addr6 string) (string, error) {
-	useAddr := addr
-	var err error
-	if config.Config.EnableIPv6 {
-		useAddr, err = tce_utils.ChooseAddr(addr, addr6)
-		if err != nil {
-			logs.Errorf("choose address error:%s, addr:%s, addr6:%s", err, addr, addr6)
-			metrics.EmitRateCounter(metrics.ChooseAddrError, 1)
-			return "", err
-		}
-	}
-	if useAddr == addr {
-		metrics.EmitRateCounter(metrics.ChooseFrontierIPQPS, 1, metrics.T{Name: "ip", Value: "ipv4"})
-	} else {
-		metrics.EmitRateCounter(metrics.ChooseFrontierIPQPS, 1, metrics.T{Name: "ip", Value: "ipv6"})
-	}
-	return useAddr, nil
-}
 
 func StringInSlice(a string, list []string) bool {
 	for _, b := range list {
@@ -31,4 +12,63 @@ func StringInSlice(a string, list []string) bool {
 		}
 	}
 	return false
+}
+
+// GetInstanceIPV4 get instance ipv4 address
+func GetInstanceIPV4() string {
+	return GetEnvSeq("MY_HOST_IP")
+}
+
+// GetInstanceIPV6 get instance ipv6 address
+func GetInstanceIPV6() string {
+	return GetEnvSeq("MY_HOST_IPV6")
+}
+
+// IsDualStack env is dual-stack
+func IsDualStack() bool {
+	return GetInstanceIPV4() != "" && GetInstanceIPV6() != ""
+}
+
+// IsIPV4Only env is ipv4-only
+func IsIPV4Only() bool {
+	return GetInstanceIPV4() != "" && GetInstanceIPV6() == ""
+}
+
+// IsIPV6Only env is ipv6-only
+func IsIPV6Only() bool {
+	return GetInstanceIPV4() == "" && GetInstanceIPV6() != ""
+}
+
+// ChooseAddr dual-stack choose v6 first
+func ChooseAddr(v4, v6 string) (string, error) {
+	if IsIPV4Only() {
+		if v4 != "" {
+
+			return v4, nil
+		}
+		return "", errors.New("host is ipv4only, ipv4 addr not exist")
+	}
+	if IsIPV6Only() {
+		if v6 != "" {
+			return v6, nil
+		}
+		return "", errors.New("host is ipv6only, ipv6 addr not exist")
+	}
+	if v6 != "" {
+		return v6, nil
+	}
+	if v4 != "" {
+		return v4, nil
+	}
+	return "", errors.New("host is dual-stack, ipv4/ipv6 addr not exist")
+}
+
+func GetEnvSeq(keyArr ...string) string {
+	for _, key := range keyArr {
+		value := os.Getenv(key)
+		if value != "" {
+			return value
+		}
+	}
+	return ""
 }

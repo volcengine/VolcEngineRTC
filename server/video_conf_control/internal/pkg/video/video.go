@@ -30,18 +30,15 @@ type playInfo struct {
 
 func GetVideoURL(ctx context.Context, vids []string) map[string]string {
 	tokenURL := t.get()
-	logs.CtxInfo(ctx, "token is: %v", tokenURL)
 	res := make(map[string]string)
 
 	for _, vid := range vids {
 		code, body, err := httpclient.DoRequest(config.Config.VideoObtainingURL+"?"+tokenURL+"&video_id="+vid, http.MethodGet, nil)
-		logs.CtxInfo(ctx, "code %v body: %v, err: %v", code, string(body), err)
 		if err != nil || code != http.StatusOK {
 			continue
 		}
 
 		url := parseURL(body)
-		logs.CtxInfo(ctx, "url: %v", url)
 		if url != "" {
 			res[vid] = url
 		}
@@ -52,7 +49,6 @@ func GetVideoURL(ctx context.Context, vids []string) map[string]string {
 func parseURL(data []byte) string {
 	var res response
 	if err := json.Unmarshal(data, &res); err != nil {
-		logs.Warnf("unmarshal video info error: %v", err)
 		return ""
 	}
 

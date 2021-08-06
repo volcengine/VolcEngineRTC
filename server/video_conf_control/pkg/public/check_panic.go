@@ -2,6 +2,7 @@
 package public
 
 import (
+	logs "github.com/sirupsen/logrus"
 	"runtime"
 )
 
@@ -16,9 +17,9 @@ func CheckPanic() {
 		for i := 0; i <= MaxStack; i++ {
 			if pc, file, line, ok := runtime.Caller(i); ok {
 				f := runtime.FuncForPC(pc)
-				logs.Error("panic error happened, stack:%d, med:%s, file:%s, line:%d, error:%s", i, f.Name(), file, line, err)
+				logs.Errorf("panic error happened, stack:%d, med:%s, file:%s, line:%d, error:%s", i, f.Name(), file, line, err)
 			}
 		}
-		logs.Error("panic error happened, error:%s", err)
+		logs.Errorf("panic error happened, error:%s", err)
 	}
 }

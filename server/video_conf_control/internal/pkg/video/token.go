@@ -1,6 +1,7 @@
 package video
 
 import (
+	"code.byted.org/gopkg/logs"
 	"encoding/base64"
 	"encoding/json"
 	"net/url"

@@ -2,36 +2,33 @@ package redis
 
 import (
 	"time"
+
+	goredis "github.com/go-redis/redis/v8"
 )
 
 var (
-	REDIS_DIAL_TIMEOUT  = 500 * time.Millisecond
-	REDIS_READ_TIMEOUT  = 500 * time.Millisecond
-	REDIS_WRITE_TIMEOUT = 500 * time.Millisecond
-	REDIS_POOL_TIMEOUT  = 500 * time.Millisecond
-	REDIS_IDLE_TIMEOUT  = 60 * time.Minute
-	REDIS_LIVE_TIMEOUT  = 60 * time.Minute
+	DialTimeout     = 500 * time.Millisecond
+	ReadTimeout     = 500 * time.Millisecond
+	WriteTimeout    = 500 * time.Millisecond
+	PoolTimeout     = 500 * time.Millisecond
+	IdleTimeout     = 60 * time.Minute
+	MinRetryBackoff = 8 * time.Millisecond
+	MaxRetryBackoff = 128 * time.Millisecond
 )
 
-var rc *goredis.Client
+var Client *goredis.Client
 
-// NewRedis creates a new client with addr use the default timeout settings.
 func NewRedis(addr string) {
-	var err error
-	opt := goredis.NewOptionWithTimeout(
-		REDIS_DIAL_TIMEOUT,
-		REDIS_READ_TIMEOUT,
-		REDIS_WRITE_TIMEOUT,
-		REDIS_POOL_TIMEOUT,
-		REDIS_IDLE_TIMEOUT,
-		REDIS_LIVE_TIMEOUT,
-		2000)
-	opt.MaxRetries = 3
-	opt.MinRetryBackoff = -1
-	opt.MaxRetryBackoff = -1
-	opt.PoolInitSize = 100
-	rc, err = goredis.NewClientWithOption(addr, opt)
-	if err != nil {
-		panic(err)
-	}
+	Client = goredis.NewClient(&goredis.Options{
+		Addr:            addr,
+		MaxRetries:      3,
+		MinRetryBackoff: MinRetryBackoff,
+		MaxRetryBackoff: MaxRetryBackoff,
+		PoolSize:        100,
+		DialTimeout:     DialTimeout,
+		ReadTimeout:     ReadTimeout,
+		WriteTimeout:    WriteTimeout,
+		PoolTimeout:     PoolTimeout,
+		IdleTimeout:     IdleTimeout,
+	})
 }

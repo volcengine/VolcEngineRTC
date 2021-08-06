@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/TTvcloud/vcloud-sdk-golang/base"
@@ -64,23 +63,10 @@ func Init() {
 }
 
 func getActionPath(action string) string {
-	if strings.Contains(env.PSM(), "_test") {
-		return "/media_adapter/openapi/v20201201/record/" + action
-	}
 	return "/"
 }
 
 func getHTTPHeader() http.Header {
-	if strings.Contains(env.PSM(), "_test") {
-		return http.Header{
-			"Accept": []string{"application/json"},
-			// For testing use only
-			"X-Top-Account-Id": []string{"test"},
-			"X-Top-Request-Id": []string{"test"},
-			"X-Top-Service":    []string{"test"},
-			"X-Top-Region":     []string{"test"},
-		}
-	}
 	return http.Header{
 		"Accept": []string{"application/json"},
 	}
@@ -89,21 +75,17 @@ func getHTTPHeader() http.Header {
 func StartRecord(ctx context.Context, users []string, screen, appID, roomID string) (string, error) {
 	taskID := getUUID()
 	param := genStartParam(users, screen, appID, roomID, taskID)
-	logs.CtxInfo(ctx, "roomID: %s StartRecord, param: %s", roomID, param)
 	res, code, err := client.Json(startRecord, nil, param)
 
 	if err != nil || code != 200 {
-		logs.CtxInfo(ctx, "start record error, roomID: %s, taskID: %s, res: %s", roomID, taskID, string(res))
 		return "", err
 	}
 
 	var r response
 	if err := json.Unmarshal(res, &r); err != nil {
-		logs.CtxInfo(ctx, "parse start record response error, err: %v, res: %v", err, string(res))
 		return "", err
 	}
 
-	logs.CtxInfo(ctx, "StartRecord response: %v", r)
 	// Post-processing return, whether it is successful without code flag
 	// A result field will be returned when successful, so result is not empty to express a successful request
 	if r.Result == nil {
@@ -115,26 +97,21 @@ func StartRecord(ctx context.Context, users []string, screen, appID, roomID stri
 
 func UpdateRecord(ctx context.Context, users []string, screen, appID, roomID, taskID string) error {
 	if taskID == "" {
-		logs.CtxWarn(ctx, "record not started yet, roomID: %s", roomID)
 		return errors.New("record not started yet")
 	}
 
 	param := genUpdateParam(users, screen, appID, roomID, taskID)
-	logs.CtxInfo(ctx, "roomID: %s UpdateRecord, param: %s", roomID, param)
 	res, code, err := client.Json(updateRecord, nil, param)
 
 	if err != nil || code != 200 {
-		logs.CtxInfo(ctx, "update record error, roomID: %s, taskID: %s, res: %s", roomID, taskID, string(res))
 		return err
 	}
 
 	var r response
 	if err := json.Unmarshal(res, &r); err != nil {
-		logs.CtxInfo(ctx, "parse update record response error, err: %v, res: %v", err, res)
 		return err
 	}
 
-	logs.CtxInfo(ctx, "UpdateRecord response: %v", r)
 	// Post-processing return, whether it is successful without code flag
 	// A result field will be returned when successful, so result is not empty to express a successful request
 	if r.Result == nil {
@@ -145,25 +122,18 @@ func UpdateRecord(ctx context.Context, users []string, screen, appID, roomID, ta
 
 func StopRecord(ctx context.Context, appID, roomID, taskID string) error {
 	if taskID == "" {
-		logs.CtxWarn(ctx, "record not started yet, roomID: %s", roomID)
 		return errors.New("record not started yet")
 	}
 
 	param := genStopParam(appID, roomID, taskID)
-	logs.CtxInfo(ctx, "roomID: %s StopRecord, param: %s", roomID, param)
 	res, code, err := client.Json(stopRecord, nil, param)
 
 	if err != nil || code != 200 {
-		logs.CtxInfo(ctx, "stop record error, roomID: %s, taskID: %s, res: %s", roomID, taskID, string(res))
 		return err
 	}
 
 	var r response
-	if err := json.Unmarshal(res, &r); err != nil {
-		logs.CtxInfo(ctx, "parse stop record response error, err: %v, res: %v", err, res)
-	}
-
-	logs.CtxInfo(ctx, "StopRecord response: %v", r)
+	json.Unmarshal(res, &r)
 	// Post-processing return, whether it is successful without code flag
 	// A result field will be returned when successful, so result is not empty to express a successful request
 	if r.Result == nil {

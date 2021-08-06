@@ -19,9 +19,6 @@ func NewCommonResponse(code int, message string, response interface{}) string {
 		Timestamp: time.Now().UnixNano(),
 		Response:  response,
 	}
-	resByte, err := json.Marshal(c)
-	if err != nil {
-		logs.Warnf("json marshal error, err: %v", err)
-	}
+	resByte, _ := json.Marshal(c)
 	return string(resByte)
 }
