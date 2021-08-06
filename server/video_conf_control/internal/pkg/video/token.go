@@ -1,7 +1,6 @@
 package video
 
 import (
-	"code.byted.org/gopkg/logs"
 	"encoding/base64"
 	"encoding/json"
 	"net/url"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/TTvcloud/vcloud-sdk-golang/base"
 	"github.com/TTvcloud/vcloud-sdk-golang/service/vod"
+	logs "github.com/sirupsen/logrus"
 	"github.com/volcengine/VolcEngineRTC/server/video_conf_control/internal/config"
 )
 
