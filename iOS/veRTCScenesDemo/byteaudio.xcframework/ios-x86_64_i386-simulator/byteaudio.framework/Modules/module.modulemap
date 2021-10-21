@@ -1,6 +1,0 @@
-framework module byteaudio {
-  umbrella header "byteaudio.h"
-
-  export *
-  module * { export * }
-}
