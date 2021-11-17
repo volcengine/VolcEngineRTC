@@ -7,7 +7,7 @@
 
 /**
  * @type api
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设备集合类
  *      主要用于系统设备播放与采集设备管理
  */
@@ -15,7 +15,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
 /**
  * @type api
  * @region 引擎管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取当前设备的数量
  * @return 返回当前系统的设备数量
  */
@@ -23,7 +23,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
 /**
  * @type api
  * @region 引擎管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 返回当前系统设备信息
  * @param index
  *       系统设备索引
@@ -41,7 +41,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
 /**
  * @type api
  * @region 视频设备管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 主要用于枚举、设置视频采集设备
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
@@ -49,7 +49,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
 /**
  * @type api
  * @region 视频设备管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 获取当前系统视频设备列表
  * @return 一个包含系统中所有视频设备列表的对象，详见 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}
  * @notes 该方法返回一个 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}对象，可以通过该对象枚举系统中视频设备
@@ -59,7 +59,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
 /**
  * @type api
  * @region 视频设备管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 获取当前SDK正在使用的设备信息
  * @param deviceID
  *       视频设备ID
@@ -72,7 +72,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
 /**
  * @type api
  * @region 视频设备管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 设置当前视频采集设备
  * @param  deviceID
  *       视频设备ID，从GetVideoCaptureDevice{@link #ByteRTCDeviceCollection#GetVideoCaptureDevice}获得的有效ID
@@ -109,7 +109,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 创建播放设备集合
  * @return 返回音频播放集合，详见，{@link #ByteRTCDeviceCollection}
  */
@@ -117,7 +117,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 创建音频采集设备集合
  * @return 返回音频采集集合，详见，{@link #ByteRTCDeviceCollection}
  * @notes 如果没有音频采集设备操作权限，设备集合列表中仍然会有所有音频采集设备
@@ -127,7 +127,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设置音频播放设备
  * @param deviceID
  *       音频播放设备 id, 可通过 {@link #enumerateAudioPlaybackDevices} 获取。插拔设备不会影响 deviceID
@@ -139,7 +139,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取当前音频播放设备 id
  * @param deviceID
  *       音频设备 id
@@ -151,7 +151,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设置音频采集设备
  * @param deviceID
  *       音频采集设备 id, 可通过 {@link #enumerateAudioCaptureDevices} 获取。插拔设备不会影响 deviceID
@@ -163,7 +163,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取当前音频采集设备 id
  * @param deviceID
  *       音频设备 id,
@@ -175,7 +175,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设置音频播放设备静音信息
  * @param mute
  *       true：设备静音
@@ -188,7 +188,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取音频播放设备静音信息
  * @param mute
  *       true：设备静音
@@ -201,7 +201,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设置音频采集设备静音信息
  * @param mute
  *       true：设备静音
@@ -214,7 +214,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取音频采集设备静音信息
  * @param mute
  *       true：设备静音
@@ -227,7 +227,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设置音频播放设备音量
  * @param volume
  *       音频播放设备音量, 取值范围 [0,255], 超出此范围返回错误 -2
@@ -239,7 +239,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取音频播放设备音量
  * @param volume
  *       音频播放设备音量, 取值范围 [0,255]
@@ -251,7 +251,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 设置音频采集设备音量
  * @param volume
  *       音频采集设备音量, 取值范围 [0,255], 超出此范围返回错误 -2
@@ -263,7 +263,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 获取音频采集设备音量
  * @param volume
  *       音频采集设备音量, 取值范围 [0,255]
@@ -276,7 +276,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 启动播放设备测试
  *       该方法测试播放设备是否能正常工作。SDK 播放指定的音频文件，测试者如果能听到声音，说明播放设备能正常工作
  * @param testAudioFilePath
@@ -290,7 +290,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 停止播放设备测试。
  * @return
  *      0：成功
@@ -300,7 +300,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 启动录音设备测试。
  *       该方法测试录音设备是否能正常工作。启动测试后，SDK 通过 {@link #ByteRTCEngineDelegate#reportAudioVolumeIndicationOfSpeakers} 回调方法向应用上报音量信息
  * @param indicationInterval
@@ -314,7 +314,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 停止录音设备测试。
  *       该方法停止录音设备测试。调用 {@link #startAudioCaptureDeviceTest} 后，必须调用该方法停止测试。
  * @return
@@ -325,7 +325,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 开始音频设备回路测试。
  *       该方法测试麦克风和播放设备是否能正常工作。一旦测试开始，麦克风会采集本地讲话声音
  *       然后使用扬声器播放出来，同时 SDK 会通过 {@link #ByteRTCEngineDelegate#reportAudioVolumeIndicationOfSpeakers} 回调向应用程序上报音量信息。
@@ -343,7 +343,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @type api
  * @region 音频设备管理
- * @author liyi.000
+ * @author wangjunzheng
  * @brief 停止音频设备回路测试。
  *       该方法停止录音设备测试。调用 {@link #startAudioDeviceLoopbackTest} 后，必须调用该方法停止测试。
  * @return
@@ -381,6 +381,8 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoFrameObserver<NSObject>
  *           NO：方法调用失败；
  */
 - (bool)OnScreenFrame:(ByteRTCVideoFrame * _Null_unspecified) frame Uid:(NSString * _Nonnull)uid;
+
+- (bool)OnMergeFrame:(ByteRTCVideoFrame * _Null_unspecified) frame Uid:(NSString * _Nonnull)uid;
 @end
 
 /**
@@ -454,10 +456,10 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
  *        2.本函数必须在创建 RtcEngine 实例 sharedEngineWithAppId{@link #sharedEngineWithAppId} 前调用。
  */
 
-+ (int)setEnv:(ByteRTCEnv)env;
-    __attribute((deprecated("Will be removed in new version")));
++ (int)setEnv:(ByteRTCEnv)env __attribute((deprecated("Will be removed in new version")));
 
 /**
+ * @hidden
  * @type api
  * @deprecated
  * @region 频道管理
@@ -467,12 +469,12 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
             <0： 方法调用失败
  * @notes 需要在引擎初始化之前调用
  */
-+ (int)setParameters:(NSString* _Nullable)parameters;
-    __attribute((deprecated("Will be removed in new version")));
++ (int)setParameters:(NSString* _Nullable)parameters __attribute((deprecated("Will be removed in new version")));
 
 /**
  * @type api
- * @region 视频管理
+ * @region 视频设备管理
+ * @author zhangzhenyu.samuel
  * @brief 设备视频管理接口创建
  * @return 视频设备管理接口，详见：{@link #ByteRTCVideoDeviceManager}
  */
@@ -480,7 +482,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
 
 /**
  * @type api
- * @region 音频管理
+ * @region 音频设备管理
  * @author wangjunzheng
  * @brief 设备音频管理接口创建
  * @return 音频设备管理接口，详见：{@link #ByteRTCAudioDeviceManager}

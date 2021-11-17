@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2B1856D025C2FC5E00B2DD6C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B1856CF25C2FC5E00B2DD6C /* CoreFoundation.framework */; };
-		2B6C730926D3D02B0061DF28 /* VolcEngineRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6C730726D3D0260061DF28 /* VolcEngineRTC.framework */; };
-		2B6C730A26D3D02B0061DF28 /* VolcEngineRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6C730726D3D0260061DF28 /* VolcEngineRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2B8F965026F1CBD60050D7D8 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8F963826F1CBD60050D7D8 /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		2B8F965126F1CBD60050D7D8 /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8F964126F1CBD60050D7D8 /* ViewController+MASAdditions.m */; };
 		2B8F965226F1CBD60050D7D8 /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8F964526F1CBD60050D7D8 /* MASCompositeConstraint.m */; };
@@ -31,6 +29,8 @@
 		2BAF493C26CCFD5A0020C84C /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BAF493A26CCFD5A0020C84C /* RoomViewController.xib */; };
 		2BAF494726CD01820020C84C /* BottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF494626CD01820020C84C /* BottomView.m */; };
 		2BAF494E26CD018D0020C84C /* RenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF494D26CD018D0020C84C /* RenderView.m */; };
+		2BCE460E2743A3E900E14D14 /* VolcEngineRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6C730726D3D0260061DF28 /* VolcEngineRTC.framework */; };
+		2BCE460F2743A3E900E14D14 /* VolcEngineRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6C730726D3D0260061DF28 /* VolcEngineRTC.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2BECB70226CD0E7900A1600D /* UserRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BECB70126CD0E7900A1600D /* UserRenderView.m */; };
 		9F193DB42497A477003202CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193DB32497A477003202CC /* AppDelegate.m */; };
 		9F193DB92497A47A003202CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F193DB82497A47A003202CC /* Assets.xcassets */; };
@@ -58,13 +58,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9F4EC6D124B8485A00988C24 /* Embed Frameworks */ = {
+		2BCE46102743A3E900E14D14 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2B6C730A26D3D02B0061DF28 /* VolcEngineRTC.framework in Embed Frameworks */,
+				2BCE460F2743A3E900E14D14 /* VolcEngineRTC.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,7 +142,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B6C730926D3D02B0061DF28 /* VolcEngineRTC.framework in Frameworks */,
+				2BCE460E2743A3E900E14D14 /* VolcEngineRTC.framework in Frameworks */,
 				2B1856D025C2FC5E00B2DD6C /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,7 +411,7 @@
 				9F193DAB2497A477003202CC /* Sources */,
 				9F193DAC2497A477003202CC /* Frameworks */,
 				9F193DAD2497A477003202CC /* Resources */,
-				9F4EC6D124B8485A00988C24 /* Embed Frameworks */,
+				2BCE46102743A3E900E14D14 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -15,17 +15,17 @@
 /**
  * @type keytype
  * @brief 音频场景类型。  <br>
- *        选择音频场景后，RTC 会自动根据客户端音频路由和发布订阅状态，适用通话音量/媒体音量。  <br>
- *        你可以调用 setAudioScenario:{@link #ByteRTCEngineKit #setAudioScenario:} 设置音频场景。  <br>
+ *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。  <br>
+ *        你可以调用 setAudioScenario:{@link #GameRTCEngineKit#setAudioScenario:} 设置音频场景。  <br>
  *        如果以下音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
  */
 typedef NS_ENUM(NSInteger, GameRTCAudioScenarioType) {
     /**
      * @brief 音乐场景。默认为此场景。  <br>
      *        此场景适用于对音乐表现力有要求的场景，如音乐直播等。  <br>
-     *        音频路由和发布订阅状态，到音量类型的映射如下：  <br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：  <br>
      *        <table>
-     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th><th>备注</th></tr>
+     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
@@ -36,9 +36,9 @@ typedef NS_ENUM(NSInteger, GameRTCAudioScenarioType) {
      * @brief 高质量通话场景。  <br>
      *        此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。  <br>
      *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验，并避免使用蓝牙耳机时音量类型切换导致的听感突变。  <br>
-     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th> <th>备注</th> </tr>
+     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th> <th>备注</th> </tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
@@ -47,7 +47,7 @@ typedef NS_ENUM(NSInteger, GameRTCAudioScenarioType) {
     GameRTCAudioScenarioHighqualityCommunication = 1,
     /**
      * @brief 纯通话音量场景。<br>
-     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用通话音量。
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量。
      *        适用于需要频繁上下麦的通话或会议场景。  <br>
      *        此场景可以保持统一的音频模式，不会有音量突变的听感；
      *        最大程度地消除回声，使通话清晰度达到最优；
@@ -57,10 +57,16 @@ typedef NS_ENUM(NSInteger, GameRTCAudioScenarioType) {
     GameRTCAudioScenarioCommunication = 2,
     /**
      * @brief 纯媒体场景。一般不建议使用。  <br>
-     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用媒体音量。  <br>
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。  <br>
      *        外放通话时，极易出现回声和啸叫。
      */
     GameRTCAudioScenarioMedia = 3,
+    /**
+     * @brief 游戏媒体场景。需配合游戏音效消除的优化一起使用。  <br>
+     *        此场景下，蓝牙耳机时使用通话音量，其它设备使用媒体音量。
+     *        外放通话且无游戏音效消除优化时，极易出现回声和啸叫。
+     */
+    GameRTCAudioScenarioGameStreaming = 4,
 };
 
 /**
@@ -125,9 +131,15 @@ GAME_RTC_EXPORT @interface GameRTCRoomConfig : NSObject
  * @brief 设置是否开启范围语音<br>
  *        + true：开启<br>
  *        + false: 关闭  <br>
- *        + 开启范围语音时，非同一小队玩家的声音会根据距离衰减，对于不需要这种衰减效果的应用，设置为 false。
+ *        + 开启范围语音时，非同一小队玩家的声音会根据距离衰减，如果不需要设置为 false 即可。
  */
 @property (nonatomic, assign) BOOL enableRangeAudio;
+/**
+ * @brief 设置是否开启空间语音<br>
+ *        + true：开启<br>
+ *        + false: 关闭（默认设置）  <br>
+ *        + 开启空间语音后，非同一小队的队友之间收听的声音会根据设置的坐标和方位不同而产生空间音效，如果不需要设置为 false 即可。
+ */
 @property (nonatomic, assign) BOOL enableSpatialAudio;
 /**
  * @brief 收到 rtcEngine:onAudioVolumeIndication:speakers:totalVolume:{@link #GameRTCEngineDelegate#rtcEngine:onAudioVolumeIndication:speakers:totalVolume:} 音量提示回调的时间间隔：  <br>
@@ -183,24 +195,46 @@ GAME_RTC_EXPORT @interface GameRTCPositionInfo : NSObject
 
 @end
 
+/**
+ * @type keytype
+ * @brief 描述空间语音中玩家的方位
+ */
 GAME_RTC_EXPORT @interface GameRTCOrientationInfo : NSObject
-
+/**
+ * @brief 前向方位，在 x 轴的投影
+ */
 @property (nonatomic, assign) float x_axis_0;
-
+/**
+ * @brief 前向方位，在 y 轴的投影
+ */
 @property (nonatomic, assign) float y_axis_0;
-
+/**
+ * @brief 前向方位，在 z 轴的投影
+ */
 @property (nonatomic, assign) float z_axis_0;
-
+/**
+ * @brief 右手方位，在 x 轴的投影
+ */
 @property (nonatomic, assign) float x_axis_1;
-
+/**
+ * @brief 右手方位，在 y 轴的投影
+ */
 @property (nonatomic, assign) float y_axis_1;
-
+/**
+ * @brief 右手方位，在 z 轴的投影
+ */
 @property (nonatomic, assign) float z_axis_1;
-
+/**
+ * @brief 头顶方位，在 x 轴的投影
+ */
 @property (nonatomic, assign) float x_axis_2;
-
+/**
+ * @brief 头顶方位，在 y 轴的投影
+ */
 @property (nonatomic, assign) float y_axis_2;
-
+/**
+ * @brief 头顶方位，在 z 轴的投影
+ */
 @property (nonatomic, assign) float z_axis_2;
 
 @end
@@ -315,9 +349,9 @@ typedef NS_ENUM(NSUInteger, GameRTCNetworkQuality) {
 };
 
 /**
- * @type callback
+ * @type errorcode
  * @brief 加入房间错误码
- */ 
+ */
 typedef NS_ENUM(NSInteger, GameRTCJoinRoomErrorCode) {
     /**
      * @brief 加入房间成功
@@ -341,7 +375,7 @@ typedef NS_ENUM(NSInteger, GameRTCJoinRoomErrorCode) {
 };
 
 /**
- * @type keytype
+ * @type errorcode
  * @brief 房间警告码
  */
 typedef NS_ENUM(NSInteger, GameRTCRoomWarningCode) {
@@ -368,7 +402,7 @@ typedef NS_ENUM(NSInteger, GameRTCRoomWarningCode) {
 };
 
 /**
- * @type keytype
+ * @type errorcode
  * @brief 引擎相关警告码
  */
 typedef NS_ENUM(NSInteger, GameRTCEngineWarningCode) {
@@ -395,7 +429,7 @@ typedef NS_ENUM(NSInteger, GameRTCEngineWarningCode) {
 };
 
 /**
- * @type keytype
+ * @type errorcode
  * @brief 房间相关错误码
  */
 typedef NS_ENUM(NSInteger, GameRTCRoomErrorCode) {
@@ -476,7 +510,7 @@ typedef NS_ENUM(NSInteger, GameRTCAudioChannel) {
 /**
  * @type keytype
  * @brief 音频参数格式
- */ 
+ */
 GAME_RTC_EXPORT @interface GameRTCAudioFormat : NSObject
 /**
  * @brief 音频采样率，详见 GameRTCAudioSampleRate{@link #GameRTCAudioSampleRate}

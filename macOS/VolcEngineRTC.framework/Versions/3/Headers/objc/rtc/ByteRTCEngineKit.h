@@ -177,7 +177,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 本地首帧视频数据渲染事件回调。调用  joinRoomByToken: roomId: userInfo:roomProfile:{@link # joinRoomByToken: roomId:
  * userInfo:roomProfile:}后，渲染本地首帧视频数据前的事件。
  * @param engine ByteRTCEngineKit 对象
@@ -190,7 +190,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author sunhang.io
  * @brief 远端首帧视频数据渲染事件回调。
  * @param engine ByteRTCEngineKit 对象
  * @param uid 发送当前帧的远端用户的用户ID
@@ -202,7 +202,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 本地首帧屏幕数据渲染事件回调。调用  joinRoomByToken: roomId: userInfo:roomProfile:{@link # joinRoomByToken: roomId: userInfo:roomProfile:}
  * 后，渲染本地首帧屏幕数据前的事件。
  * @param engine RtcEngine 实例，参考: ByteRTCEngineKit{@link #ByteRTCEngineKit}
@@ -215,7 +215,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author sunhang.io
  * @brief 远端首帧屏幕数据渲染事件回调。
  * @param engine RtcEngine 实例，参考: ByteRTCEngineKit{@link #ByteRTCEngineKit}
  * @param uid 发送当前帧的远端用户的用户 id
@@ -227,7 +227,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author panjian.fishing
  * @brief 远端用户暂停/重新发送视频回调。房间中远端用户调用muteLocalVideoStream:YES或muteLocalVideoStream:NO时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param muted YES:远端用户恢复发送视频流；NO:远端用户暂停发送视频流
@@ -260,9 +260,10 @@
                sourceWantedData:(ByteRTCSourceWantedData *_Nonnull)data;
 
 /**
+ * @deprecated
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 远端用户启用/关闭视频回调。房间中远端用户调用enableVideo/disableVideo时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param enabled YES:远端用户启动了视频功能；NO:远端用户关闭了视频功能
@@ -271,9 +272,10 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine didVideoEnabled:(BOOL)enabled byUid:(NSString * _Nonnull)uid;
 
 /**
+ * @deprecated
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 远端用户启用/关闭本地视频回调。房间中远端用户调用enableLocalVideo时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param enabled YES:远端用户启动了本地视频；NO:远端用户关闭了本地视频
@@ -286,7 +288,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author liyi.000
+ * @author sunhang.io
  * @brief 远端首帧视频数据解码事件回调。
  * @param engine ByteRTCEngineKit 对象
  * @param uid 发送当前帧的远端用户的用户ID
@@ -295,6 +297,93 @@
  */
 - (void)rtcEngine:(ByteRTCEngineKit  * _Nonnull)engine firstRemoteVideoDecodedOfUid:( NSString* _Nonnull )uid size:(CGSize)size elapsed:(NSInteger)elapsed;
 #endif
+
+#pragma mark - Rtm
+/**
+ * @type callback
+ * @region 登录管理
+ * @author hanchenchen.c
+ * @brief 登录结果回调
+ * @param  uid 登录用户名
+ * @param  error_code 登录的结果，详见LoginErrorCode{@link #LoginErrorCode}
+ * @param  elapsed 从调用login开始到登录成功所经历的时间
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onLoginResult:(NSString * _Nonnull)uid errorCode:(ByteRTCLoginErrorCode)errorCode elapsed:(NSInteger)elapsed;
+
+/**
+ * @type callback
+ * @region 登录管理
+ * @author hanchenchen.c
+ * @brief 登出结果回调
+ */
+- (void)rtcEngineOnLogout:(ByteRTCEngineKit * _Nonnull)engine;
+
+/**
+ * @type callback
+ * @region 流消息
+ * @author hanchenchen.c
+ * @brief 设置服务器参数返回结果
+ * @param  error_code 设置业务服务器参数成功会返回200
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onServerParamsSetResult:(NSInteger)errorCode;
+
+/**
+ * @type callback
+ * @region 登录管理
+ * @author hanchenchen.c
+ * @brief 获取对端登录状态的返回结果
+ * @param  peerUserId 查询的对端用户 ID
+ * @param  status 查询的对端用户登录状态，详见USER_ONLINE_STATUS{@link #USER_ONLINE_STATUS}
+ * @notes
+ *        1.也可以调用该接口查询本端用户的在线情况
+ *        2.该接口只用来查询用户是否Login，并不能用来查询用户是否与服务器有网络连接或者是否joinRoom
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onGetPeerOnlineStatus:(NSString * _Nonnull)peerUserId status:(ByteRTCUserOnlineStatus)status;
+
+/**
+ * @type callback
+ * @region 流消息
+ * @author hanchenchen.c
+ * @brief 接收到房间外 uid 所属用户发来消息的回调。
+ * @param  uid 消息发送者 ID
+ * @param  message 收到的消息内容
+ * @notes
+ *        1.房间外其他用户调用 SendUserMessageOutsideRoom{@link #ByteRTCEngineKit#SendUserMessageOutsideRoom} 发送用户消息时会收到该回调。
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onUserMessageReceivedOutsideRoom:(NSString * _Nonnull)uid message:(NSString * _Nonnull)message;
+
+/**
+ * @type callback
+ * @region 流消息
+ * @author hanchenchen.c
+ * @brief 接收到房间外 uid 所属用户发来二进制消息的回调。
+ * @param  uid 消息发送者 ID
+ * @param  size 二进制消息长度
+ * @param  message 收到的二进制消息内容
+ * @notes
+ *        1.房间外其他用户调用 SendUserBinaryMessageOutsideRoom{@link #ByteRTCEngineKit#SendUserBinaryMessageOutsideRoom} 发送二进制用户消息时会收到该回调。
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onUserBinaryMessageReceivedOutsideRoom:(NSString * _Nonnull)uid message:(NSData * _Nonnull)message;
+
+/**
+ * @type callback
+ * @region 流消息
+ * @author hanchenchen.c
+ * @brief 当调用 SendUserMessageOutsideRoom{@link #ByteRTCEngineKit#SendUserMessageOutsideRoom} 函数发送消息后，回调此条消息的发送结果（反馈）。
+ * @param  msgid 本条消息的 ID
+ * @param  error 消息发送结果，详见MESSAGE_SEND_RESULT_CODE{@link #MESSAGE_SEND_RESULT_CODE}
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onUserMessageSendResultOutsideRoom:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error;
+
+/**
+ * @type callback
+ * @region 流消息
+ * @author hanchenchen.c
+ * @brief 当调用 SendServerMessage{@link #ByteRTCEngineKit#SendServerMessage} 函数发送消息后，回调此条消息的发送结果（反馈）。
+ * @param  msgid 本条消息的 ID
+ * @param  error 消息发送结果，详见MESSAGE_SEND_RESULT_CODE{@link #MESSAGE_SEND_RESULT_CODE}
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onServerMessageSendResult:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error;
 
 #pragma mark audio delegates
 /**
@@ -348,6 +437,7 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onUserMuteAudio:(NSString * _Nonnull)uid muteState:(ByteRTCMuteState)muteState;
 
 /**
+ * @hidden
  * @deprecated
  * @type callback
  * @region 音频管理
@@ -492,7 +582,7 @@
 /**
  * @type callback
  * @region 视频数据回调
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief metadata 观察者，可以接收媒体流中的 metadata， 或者向媒体流中添加 metadata
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
@@ -500,7 +590,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 /**
  * @type callback
  * @region 视频数据回调
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 当SDK准备发送一个视频帧时，会回调该接口，向你询问是否需要在该视频帧中添加 metadata
  * @param timestamp 待添加 metadata 视频帧的时间戳， 单位微秒
  * @return 待发送的数据，大小不能超过1024bytes
@@ -513,7 +603,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 /**
  * @type callback
  * @region 视频数据回调
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 当SDK收到的视频帧包含 medatada 时，会回调该接口
  * @param uid 当前帧所属的用户ID
  * @param extendedData metadata
@@ -527,7 +617,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 /**
  * @type callback
  * @region 加密
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 自定义加密接口
  */
 @protocol ByteRTCEncryptHandler <NSObject>
@@ -536,7 +626,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 /**
  * @type callback
  * @region 加密
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 自定义加密的方法接口，通过继承并实现该方法，可以扩展传输过程中的加密方法，
  *      详见 setCustomizeEncryptHandler:{@link #setCustomizeEncryptHandler:}
  * @param rawData 原始音视频桢数据
@@ -549,7 +639,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 /**
  * @type callback
  * @region 加密
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 自定义解密的方法接口，通过继承并实现该方法，可以扩展传输过程中的解密方法，
  *      详见 setCustomizeEncryptHandler:{@link #setCustomizeEncryptHandler:}
  * @param rawData 原始音视频桢数据
@@ -694,7 +784,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @deprecated
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author sunhang.io
  * @brief 用于生成一个用于渲染的View， 已经废弃，不需要也不推荐使用
  * @param frame View的宽高
  */
@@ -705,7 +795,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @deprecated
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author sunhang.io
  * @brief 用于生成一个用于渲染的View， 已经废弃，不需要也不推荐使用
  * @param frame View的宽高
  */
@@ -728,7 +818,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author zhangzhenyu.samuel
+ * @author sunhang.io
  * @brief 设置本地视频镜像.该方法用于开启或关闭本地视频镜像，默认值为关闭（ByteRTCVideoMirrorModeDisabled）。
  * @param mode 视频镜像模式，类型为枚举类型 ByteRTCMirrorMode{@link #ByteRTCMirrorMode}
  * @return 0：方法调用成功；
@@ -739,7 +829,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author sunhang.io
  * @brief 获得当前本地镜像状态
  * @return
  *      true：是镜像模式；
@@ -762,6 +852,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setupRemoteVideo:(ByteRTCVideoCanvas * _Nonnull)remote;
 
 /**
+ * @deprecated
  * @type api
  * @region 视频管理
  * @author sunhang.io
@@ -782,6 +873,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setupRemoteScreen:(ByteRTCVideoCanvas * _Nonnull)remote;
 
 /**
+ * @deprecated
  * @type api
  * @region 视频管理
  * @author sunhang.io
@@ -797,7 +889,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *         用户调用此方法加入房间，在一个房间内的用户可以相互通话。如果房间还未创建，将会自动为用户创建对应的房间。如果已在房间中，用户必
  *         须调用  leaveRoom:{@link #leaveRoom:} 退出当前房间后，才能加入下一个房间。
  * @param token
- *         动态密钥，用于对登录用户进行鉴权验证。进入频道需要携带 Token。可以在控制台生成临时 Token 进行测试，正式上线需要使用密钥 SDK 在您的服务端生成并下发
+ *         动态密钥，用于对登录用户进行鉴权验证。进入频道需要携带 Token。可以在控制台生成临时 Token 进行测试，正式上线需要使用密钥 SDK 在你的服务端生成并下发
  * Token 。
  * @param roomId
  *         标识通话房间的房间 ID，最大长度为128字节的非空字符串。支持的字符集范围为:
@@ -836,7 +928,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author panjian.fishing
  * @brief 该方法设置SimulCast发布的一组视频属性，每个属性对应一套视频参数，如分辨率、帧率、码率等。
  * @param profiles 视频属性
  * @return   0：方法调用成功；
@@ -882,9 +974,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)leaveRoom:(void (^_Nullable)(ByteRTCRoomStats *_Nonnull stat))leaveRoomBlock;
 
 /**
+ * @deprecated
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author panjian.fishing
  * @brief 该方法用于打开视频模块。
  * @return   0：方法调用成功；
  *             <0： 方法调用失败
@@ -894,9 +987,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)enableVideo;
 
 /**
+ * @deprecated
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author panjian.fishing
  * @brief 该方法用于关闭视频模块。
  * @return   0：方法调用成功；
  *             <0： 方法调用失败
@@ -910,7 +1004,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 该方法开启本地视频采集。默认为关闭状态。  <br>
  *        调用该方法后，房间中的其他用户会收到 rtcEngine:onUserStartVideoCapture:{@link #rtcEngine:onUserStartVideoCapture:} 的回调。
  * @notes  <br>
@@ -924,7 +1018,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author zhangzhenyu.samuel
  * @brief 该方法关闭本地视频采集。默认为关闭状态。  <br>
  *        调用该方法后，房间中的其他用户会收到 rtcEngine:onUserStopVideoCapture:{@link #rtcEngine:onUserStopVideoCapture:} 的回调。
  * @notes  <br>
@@ -1014,7 +1108,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author panjian.fishing
  * @brief 停止/开启本地视频流发送。调用该方法后，房间中的其他用户会收到didVideoMuted的回调。
  * @param mute YES:开启本地视频发送；NO:关闭本地视频发送
  * @return   0：方法调用成功；
@@ -1026,7 +1120,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author shenpengliang
  * @brief 停止/开启接收所有远端用户的视频流。
  * @param mute YES:停止接收远端视频流；NO:开启接收远端视频流
  * @return   0：方法调用成功；
@@ -1037,7 +1131,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author shenpengliang
  * @brief 停止/开启接收指定远端用户的视频流。
  * @param uid 指定用户的用户Id
  * @param mute YES:停止指定的远端视频流；NO:开启指定的远端视频流
@@ -1051,7 +1145,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 发布本地共享屏幕流， 调用该方法后需要周期性调用 pushScreenFrame{@link #pushScreenFrame:} ，将要发送的屏幕数据送到 SDK 。
  * @param maxKbitrete 共享屏幕的码率，单位 kbps
@@ -1066,7 +1160,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 取消共享本地屏幕流。
  * @return   0 :方法调用成功；
@@ -1077,7 +1171,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 推送共享桌面的视频帧。
  * @param frame 视频帧数据，详见： ByteRTCVideoFrame{@link #ByteRTCVideoFrame}
@@ -1088,7 +1182,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 该方法共享一个窗口或该窗口的部分区域。用户需要在该方法中指定想要共享的窗口 id 。
  * @param [in] windowId
@@ -1108,7 +1202,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @hidden
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 通过指定区域共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
  * @param [in] screenRect
@@ -1127,7 +1221,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 通过屏幕 id 共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕 id 。
  * @param [in] displayId
@@ -1147,7 +1241,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 更新屏幕共享区域。
  * @param  [in] regionRect  <br>
@@ -1161,7 +1255,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 更新屏幕共享的编码参数配置。
  * @param [in] captureParameters
@@ -1174,7 +1268,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 停止屏幕或者窗口共享。
  * @notes  <br>
@@ -1185,7 +1279,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 获取共享对象(应用窗口和桌面)列表
  * @return 共享对象(应用窗口和桌面)列表
@@ -1194,7 +1288,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
+ * @region 屏幕共享
  * @author liyi.000
  * @brief 获取共享对象缩略图
  * @param sourceType 共享对象类型(窗口或显示器)
@@ -1733,9 +1827,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setBusinessId:(NSString*_Nullable)businessId;
 
 /**
+ * @hidden
  * @type api
- * @region 视频管理
- * @author liyi.000
+ * @region 视频特效
+ * @author zhushufan.ref
  * @brief 视频图像分割，替换背景
  * @param mode 背景模式，用于设置预制背景，是否虚化等 详见 ByteRTCBackgroundMode{@link #ByteRTCBackgroundMode}
  * @param divideModel 选择使用哪种分割模型， 分割模型类型详见 ByteRTCDivideModel{@link #ByteRTCDivideModel}
@@ -1747,8 +1842,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @type api
- * @region 视频管理
- * @author liyi.000
+ * @region 视频特效
+ * @author zhushufan.ref
  * @brief 禁用视频图像分割，替换背景
  */
 - (void) disableBackground;
@@ -1773,7 +1868,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 加密
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 设置AES加密算法和加密密钥，有四种内置的加密算法
  * @param encrypt_type 加密类型，详见 ByteRTCEncryptType{@link #ByteRTCEncryptType}
  * @param key 加密密钥，长度限制为36位，超出部分将会被截断
@@ -1789,7 +1884,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 加密
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 设置自定义加密，需要实现对应的加密/解密方法，详情参考
  *      ByteRTCEncryptHandler{@link #ByteRTCEncryptHandler}
  * @param handler 自定义加密handler，需要实现里面的加密和解密方法

@@ -26,14 +26,12 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 首次加入房间/重连加入房间的回调。此回调表示用户调用 JoinRoom{@link #JoinRoom} 的结果，根据错误码判断成功/失败以及区别是否为重连。  <br>
      * @param [in] room_id 房间 ID。  <br>
      * @param [in] uid 用户 ID。  <br>
-     * @param [in] error_code 用户加入房间回调的状态码，参看 ErrorCode{@link #ErrorCode} 以及 WarningCode{@link #WarningCode}。  <br>
-     * @return  <br>
-     *        + 0: 成功  <br>
-     *        + <0: 失败  <br>
+     * @param [in] error_code 用户加入房间回调的状态码。  <br>
+     *        + 0: 加入房间成功；  <br>
+     *        + 非 0: 加入房间失败，具体原因参看 ErrorCode{@link #ErrorCode} 以及 WarningCode{@link #WarningCode}。  <br>
      * @param [in] join_type 用户加入房间的类型，标识用户第一次加入或断网重连加入。参看 JoinRoomType{@link #JoinRoomType}。  <br>
      * @param [in] elapsed  重连耗时。本地用户从连接断开到重连成功所经历的时间间隔，单位为 ms，加入房间失败为 -1  <br>
      */
@@ -48,7 +46,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 离开房间回调。  <br>
      *        用户调用 LeaveRoom{@link #LeaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
      *        离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
@@ -63,7 +60,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief SDK 发生警告回调。  <br>
      *        SDK 内部遇到可恢复错误时，在尝试自动恢复的同时，会通过此回调通知用户。此回调事件仅用作通知。  <br>
      * @param [in] warn 警告码，参看 WarningCode{@link #WarningCode}。  <br>
@@ -75,7 +71,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief SDK 发生错误回调。  <br>
      *        SDK 内部遇到不可恢复错误时，会通过此回调通知 App，需要 App 根据错误码进行操作或提示用户。  <br>
      * @param [in] err 错误码，参看 ErrorCode{@link #ErrorCode}。  <br>
@@ -87,7 +82,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 提示房间内所有用户发送音量的回调。
      * @param [in] speakers 本地用户和订阅的远端用户的 ID 和音量。
      *                      参见：AudioVolumeInfo{@link #AudioVolumeInfo}。
@@ -117,7 +111,6 @@ public:
     /**
      * @type callback
      * @region 数据统计
-     * @author liuzhiqiang.avcoder
      * @brief 反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调，每 2s 触发一次。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 LocalStreamStats{@link #LocalStreamStats}
      */
@@ -127,7 +120,6 @@ public:
     /**
      * @type callback
      * @region 数据统计
-     * @author liuzhiqiang.avcoder
      * @brief 通话中本地设备接收订阅的远端音/视频流的统计信息以及网络状况，每 2s 触发一次。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 RemoteStreamStats{@link #RemoteStreamStats}
      */
@@ -138,15 +130,12 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
-     * @brief 远端主播角色用户加入房间回调。  <br>
-     *        1.远端主播角色用户调用 JoinRoom{@link #JoinRoom} 方法加入房间时，房间内其他用户将收到该事件。  <br>
-     *        2.远端主播角色用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br>
-     *        3.远端静默观众角色用户调用 SetUserRole{@link #SetUserRole} 方法将角色切换至主播时，房间内其他用户将收到该事件。  <br>
-     *        4.新进房用户会收到进房前已在房内的主播角色用户的进房回调通知。  <br>
+     * @brief 远端可见用户加入房间，或房内隐身用户切换为可见的回调。<br>
+     *        1. 远端用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br>
+     *        2. 远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br>
+     *        3. 房间内隐身远端用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法切换至可见时，房间内其他用户将收到该事件。  <br>
+     *        4. 新进房用户会收到进房前已在房内的可见用户的进房回调通知。  <br>
      * @param [in] user_info 用户信息，详见 UserInfo{@link #UserInfo}  <br>
-     *                     + 已在房间中的用户会收到新进房的远端主播角色用户 ID 以及在房间内需要透传的信息；  <br>
-     *                     + 新进房用户会收到已在房间中的远端主播角色用户 ID 以及在房间内需要透传的信息
      * @param [in] elapsed 此参数无意义
      */
     virtual void OnUserJoined(const UserInfo& user_info, int elapsed) {
@@ -157,13 +146,12 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
-     * @brief 远端主播角色用户离开房间回调。  <br>
+     * @brief 远端可见用户离开房间，或从可见切换为隐身的回调。  <br>
      *        发生以下情形时，房间内其他用户会收到此事件：  <br>
-     *        1.远端主播角色用户调用 LeaveRoom{@link #LeaveRoom} 方法离开房间时。  <br>
-     *        2.远端主播角色用户调用 SetUserRole{@link #SetUserRole} 方法将角色切换至静默观众。  <br>
-     *        3.远端主播角色用户断网，且一直未恢复。  <br>
-     * @param [in] uid 离开房间的远端用户 ID。  <br>
+     *        1. 远端可见用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法离开房间时；  <br>
+     *        2. 远端可见用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法切换至隐身；  <br>
+     *        3. 远端可见用户断网，且一直未恢复。  <br>
+     * @param [in] uid 离开房间，或切至隐身的远端用户 ID。  <br>
      * @param [in] reason 用户离开房间的原因，参看 UserOfflineReason{@link #UserOfflineReason} 。  <br>
      */
     virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
@@ -172,9 +160,9 @@ public:
     }
 
     /**
+     * @hidden
      * @type callback
-     * @region 音频事件回调
-     * @author wangjunzheng
+     * @region 媒体流管理
      * @brief 当房间内用户调用 MuteAllRemoteAudio{@link #IRtcRoom#MuteAllRemoteAudio}，
      *        改变接收所有远端音频流的状态时, 房间内其他用户收到这个回调。
      * @param [in] user_id 改变接收状态的用户 ID
@@ -187,8 +175,9 @@ public:
 
 
     /**
+     * @hidden
      * @type callback
-     * @region 视频管理
+     * @region 媒体流管理
      * @brief 房间内用户暂停/恢复接收所有视频流时，房间内其他用户收到此回调。参看 MuteAllRemoteVideo{@link #MuteAllRemoteVideo}。
      * @param [in] uid 暂停/恢复接收视频流的用户 ID。
      * @param  [in] mute 暂停/恢复接收视频流的状态。参看 MuteState{@link #MuteState}。
@@ -201,8 +190,7 @@ public:
 
     /**
      * @type callback
-     * @region 音频事件回调
-     * @author wangjunzheng
+     * @region 媒体流管理
      * @brief 房间内某用户调用 MuteLocalAudio{@link #MuteLocalAudio}
      *        改变本地音频发送状态时，房间内其他用户会收到此回调。
      * @param [in] user_id 改变本地音频发送状态的用户 ID
@@ -215,10 +203,10 @@ public:
 
 
     /**
+     * @hidden
      * @deprecated
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 远端用户开启/关闭音频设备采集时，房间内其他人会收到这个回调。
      *        该回调由远端用户调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 方法触发。
      * @param [in] uid 远端用户ID
@@ -235,7 +223,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 房间内的用户调用 StartAudioCapture{@link #StartAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 开启音频采集的远端用户 ID
      */
@@ -246,7 +233,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 房间内的用户调用 StopAudioCapture{@link #StopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 关闭音频采集的远端用户 ID
      */
@@ -257,7 +243,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 本地采集到第一帧音频帧时，收到该回调
      * @param [in] index 音频流属性, 参看 StreamIndex{@link #StreamIndex}
      */
@@ -269,7 +254,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 接收到来自远端某音频流的第一帧时，收到该回调。
      * @param [in] key 远端音频流信息, 详见 RemoteStreamKey{@link #RemoteStreamKey}
      * @notes 用户刚收到房间内每一路音频流时，都会收到该回调。
@@ -282,7 +266,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 房间内的远端用户停止发布音视频流时，本地用户会收到此回调。
      * @param [in] stream 流的属性。参看 MediaStreamInfo{@link #MediaStreamInfo} 。
      * @param [in] reason 远端流移除的原因。参看 StreamRemoveReason{@link #StreamRemoveReason} 。
@@ -295,7 +278,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 房间内的用户发布新的音视频流时，房间内的其他用户会收到此回调。包括移除后又重新发布的流。  <br>
      * @param [in] stream 流属性，参看 MediaStreamInfo{@link #MediaStreamInfo} 。  <br>
      */
@@ -308,7 +290,6 @@ public:
      * @hidden
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 当订阅一个流成功的时候回调该事件
      *        当成功更新流的内容时，如增加或者减少音视频流时，也会回调该事件。
      * @param [in] state_code 订阅流的结果。参看 SubscribeState{@link #SubscribeState}。  <br>
@@ -324,7 +305,6 @@ public:
     /**
      * @type callback
      * @region 音视频回退
-     * @author panjian.fishing
      * @brief 因发布/订阅性能回退或退出回退状态，订阅的音视频流，发生流的切换时，收到该回调。
      * @param [in] event 流切换信息。详见 RemoteStreamSwitch{@link #RemoteStreamSwitch}。
      * @notes  <br>
@@ -338,7 +318,6 @@ public:
      * @hidden
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 当发布流成功的时候回调该事件。
      * @param [in] user_id 发布流的用户 ID。
      * @param [in] is_screen 该流是否为屏幕流。  <br>
@@ -351,18 +330,18 @@ public:
 
     /**
      * @type callback
-     * @region 流消息
+     * @region 实时消息通信
      * @brief 接收到房间内广播消息的回调。
-     * @param [in] uid 消息发送者 ID
-     * @param [in] message 收到的消息内容
-     * @notes
-     *        1.同一房间内其他用户调用 SendRoomMessage{@link #IRtcRoom#SendRoomMessage} 发送广播消息时会收到该回调。
+     * @param [in] uid  <br>
+     *        消息发送者 ID
+     * @param [in] message  <br>
+     *        收到的消息内容
+     * @notes 同一房间内其他用户调用 SendRoomMessage{@link #IRtcRoom#SendRoomMessage} 发送广播消息时会收到该回调。
      */
     virtual void OnRoomMessageReceived(const char* uid, const char* message) {
         (void)uid;
         (void)message;
     }
-
     /**
      * @hidden
      * @type callback
@@ -382,20 +361,21 @@ public:
 
     /**
      * @type callback
-     * @region 流消息
+     * @region 实时消息通信
      * @brief 接收到房间内二进制广播消息的回调。
-     * @param [in] uid 消息发送者 ID
-     * @param [in] size 收到的二进制消息长度
-     * @param [in] message 收到的二进制消息内容
-     * @notes
-     *        1.同一房间内其他用户调用 SendRoomBinaryMessage{@link #IRtcRoom#SendRoomBinaryMessage} 发送二进制广播消息时会收到该回调。
+     * @param [in] uid  <br>
+     *        消息发送者 ID
+     * @param [in] size <br>
+     *        收到的二进制消息长度
+     * @param [in] message <br>
+     *        收到的二进制消息内容
+     * @notes 同一房间内其他用户调用 SendRoomBinaryMessage{@link #IRtcRoom#SendRoomBinaryMessage} 发送二进制广播消息时会收到该回调。
      */
     virtual void OnRoomBinaryMessageReceived(const char* uid, int size, const uint8_t* message) {
         (void)uid;
         (void)size;
         (void)message;
     }
-
     /**
      * @type callback
      * @region 实时消息通信
@@ -447,16 +427,18 @@ public:
 
     /**
      * @type callback
-     * @region 流消息
+     * @region 实时消息通信
      * @brief 当调用 SendRoomMessage{@link #IRtcRoom#SendRoomMessage} 函数发送消息后，回调此条消息的发送结果（反馈）。
-     * @param [in] msgid 本条消息的 ID
-     * @param [in] error 消息发送结果，详见 RoomMessageSendResult{@link #RoomMessageSendResult}
+     * @param [in] msgid  <br> 
+     *        本条消息的 ID
+     * @param [in] error  <br> 
+     *        消息发送结果  <br> 
+     *        详见 RoomMessageSendResult{@link #RoomMessageSendResult}
      */
     virtual void OnRoomMessageSendResult(int64_t msgid, int error) {
         (void)msgid;
         (void)error;
     }
-
 #ifndef ByteRTC_AUDIO_ONLY
     /**
      * @type callback
@@ -512,7 +494,7 @@ public:
 
     /**
      * @type callback
-     * @region 视频管理
+     * @region 媒体流管理
      * @brief 房间内用户暂停/恢复发送视频流时，房间内其他用户会收到此回调。参看 MuteLocalVideo{@link #MuteLocalVideo}。
      * @param [in] uid 暂停/恢复发送视频流的用户 ID。
      * @param  [in] mute 暂停/恢复发送视频流的状态。参看 MuteState{@link #MuteState}。
@@ -524,6 +506,7 @@ public:
 
 
     /**
+     * @hidden
      * @deprecated
      * @type callback
      * @region 视频管理
@@ -543,7 +526,6 @@ public:
     /**
      * @type callback
      * @region 视频事件回调
-     * @author liyi.000
      * @brief 房间内的用户调用 StartVideoCapture{@link #StartVideoCapture} 开启视频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 开启视频采集的远端用户 ID
      */
@@ -554,9 +536,8 @@ public:
     /**
      * @type callback
      * @region 视频事件回调
-     * @author liyi.000
      * @brief 房间内的用户调用 StopVideoCapture{@link #StopVideoCapture} 关闭视频采集时，房间内其他用户会收到此回调。
-     * @param [in] user_id 关闭视频采集的远端用户ID
+     * @param [in] user_id 关闭视频采集的远端用户 ID
      */
     virtual void OnUserStopVideoCapture(const char* user_id) {
         (void)user_id;
@@ -565,7 +546,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 本地音频的状态发生改变时，该回调通知当前的本地音频状态。
      * @param [in] state 本地音频设备的状态，详见： LocalAudioStreamState{@link #LocalAudioStreamState}
      * @param [in] error 本地音频状态改变时的错误码，详见：LocalAudioStreamError{@link #LocalAudioStreamError}
@@ -578,7 +558,6 @@ public:
     /**
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。
      * @param [in] key 远端流信息, 参看 RemoteStreamKey{@link #RemoteStreamKey}
      * @param [in] state 远端音频流状态，参看 RemoteAudioState{@link #RemoteAudioState}
@@ -651,7 +630,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 音频首帧发送状态改变回调
      * @param [in] user 本地用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧发送状态，详见 FirstFrameSendState{@link #FirstFrameSendState}
@@ -664,7 +642,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 视频首帧发送状态改变回调
      * @param [in] user 本地用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧发送状态，详见 FirstFrameSendState{@link #FirstFrameSendState}
@@ -677,7 +654,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 屏幕共享流视频首帧发送状态改变回调
      * @param [in] user 本地用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧发送状态，详见 FirstFrameSendState{@link #FirstFrameSendState}
@@ -690,7 +666,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 音频首帧播放状态改变回调
      * @param [in] user 远端用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧播放状态，详见 FirstFramePlayState{@link #FirstFramePlayState}
@@ -703,7 +678,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 视频首帧播放状态改变回调
      * @param [in] user 远端用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧播放状态，详见 FirstFramePlayState{@link #FirstFramePlayState}
@@ -716,7 +690,6 @@ public:
     /**
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 屏幕共享流视频首帧播放状态改变回调
      * @param [in] user 远端用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧播放状态，详见 FirstFramePlayState{@link #FirstFramePlayState}
@@ -724,6 +697,38 @@ public:
     virtual void OnScreenVideoFramePlayStateChanged(const RtcUser& user, FirstFramePlayState state) {
         (void)user;
         (void)state;
+    }
+
+    /*
+     * @hidden
+     * @brief callback when the maximum screen share fps is changed
+     * @param [in] fps
+     *           maximum screen share fps
+     */
+    virtual void OnMaximumScreenShareFpsUpdated(int fps) {
+        (void)fps;
+    }
+
+    /*
+     * @hidden
+     * @brief callback when the maximum screen share pixels(resolution) is chang
+     * @param [in] screenPixels
+     *        为了保持帧率而推荐的最大视频宽度*高度的值
+     *
+     */
+    virtual void OnMaximumScreenSharePixelsUpdated(int screenPixels) {
+        (void)screenPixels;
+    }
+
+    /**
+     * @hidden
+     * @type callback
+     * @region 视频管理
+     * @brief 拼接视图用户请求头像回调
+     * @param [in] uid 用户ID
+     */
+    virtual void OnNeedAvatar(const char* uid) {
+        (void)uid;
     }
 
 #endif  // ByteRTC_AUDIO_ONLY

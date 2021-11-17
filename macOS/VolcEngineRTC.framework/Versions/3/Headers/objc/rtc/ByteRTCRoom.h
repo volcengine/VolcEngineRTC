@@ -146,7 +146,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject @property(nonatomic, weak
 
 - (int)leaveRoom;
 
-- (int)updateToken:(NSString *_Nullable)token;
+- (int)updateToken:(NSString *_Nonnull)token;
 
 - (int)publish;
 
@@ -172,7 +172,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject @property(nonatomic, weak
 
 - (int)unMuteRemoteVideoStream:(NSString *_Nonnull)userId;
 
-- (int)startLiveTranscoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
+- (int)startLiveTranscoding:(ByteRTCLiveTranscoding *_Nullable)transcoding;
 
 - (int)stopLiveTranscoding;
 

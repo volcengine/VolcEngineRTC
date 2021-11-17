@@ -126,6 +126,21 @@ enum JoinRoomType {
      */
     kJoinRoomTypeReconnected = 1,
 };
+
+/**
+ * @type keytype
+ * @brief 用户登录的类型
+ */
+enum LoginType {
+    /**
+     * @brief 首次登录。用户手动调用 Login{@link #IRtcEngineLite#Login}，收到登录成功。
+     */
+    kLoginTypeFirst = 0,
+    /**
+     * @brief 重连。用户网络较差，失去与服务器的连接，SDK 自动重连登录成功。
+     */
+    kLoginTypeReconnected = 1,
+};
 /**
  * @type errorcode
  * @brief 向房间内单个用户发送消息（P2P）的结果
@@ -171,6 +186,14 @@ enum UserMessageSendResult {
      * @brief 接收消息的单个用户 id 为空
      */
     kUserMessageSendResultEmptyUser = 104,
+    /**
+     * @brief 房间外或业务服务器消息发送方没有登录
+     */
+    kUserMessageSendResultNotLogin = 105,
+    /**
+     * @brief 发送消息给业务方服务器之前没有设置参数
+     */
+    kUserMessageSendResultServerParamsNotSet = 106,
     /**
      * @brief 未知错误
      */
@@ -339,30 +362,84 @@ struct ScreenParameters {
  */
 enum RoomProfileType {
     /**
-     * @brief 通信模式。  <br>
+     * @brief 普通音视频通话模式。<br>
+     *        你应在 1V1 音视频通话时，使用此设置。<br>
+     *        此设置下，弱网抗性较好。
      */
     kRoomProfileTypeCommunication = 0,
     /**
-     * @brief 直播模式。  <br>
+     * @brief 直播模式。<br>
+     *        当你对音视频通话的音质和画质要求较高时，应使用此设置。<br>
+     *        此设置下，当用户使用蓝牙耳机收听时，蓝牙耳机使用媒体模式。
      */
     kRoomProfileTypeLiveBroadcasting = 1,
     /**
-     * @brief 游戏模式。SDK 会使用低延时设置。  <br>
+     * @brief 游戏语音模式。此模式下延时较低。<br>
+     *        低端机在此模式下运行时，进行了额外的性能优化：<br>
+     *            + 采集播放采用 16kHz 单通道采样 <br>
+     *            + 部分低端机型配置编码帧长 40/60 <br>
+     *            + 部分低端机型关闭软件 3A 音频处理 <br>
+     *        增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。
      */
     kRoomProfileTypeGame = 2,
     /**
-     * @author shazhou
-     * @brief 云游戏模式。SDK 会使用低延时设置。  <br>
+     * @brief 云游戏模式。<br>
+     *        如果你需要低延迟、高码率的设置时，你可以使用此设置。<br>
+     *        此设置下，弱网抗性较差。
      */
     kRoomProfileTypeCloudGame = 3,
     /**
-     * @author wuxinyu.mrx
      * @brief 低时延模式。SDK 会使用低延时设置。  <br>
      *        当你的场景非游戏或云游戏场景，又需要极低延时的体验时，可以使用该模式。 <br>
      *        该模式下，音视频通话延时会明显降低，但同时弱网抗性、通话音质等均会受到一定影响。  <br>
      *        在使用此模式前，强烈建议咨询技术支持同学。
      */
     kRoomProfileTypeLowLatency = 4,
+};
+
+/**
+ * @type keytype
+ * @brief 房间参数配置
+ */
+struct RTCRoomConfig {
+    /**
+     * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为普通音视频通话模式，进房后不可更改。
+     */    
+    RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
+    /**
+     * @brief 是否自动发布音视频流，默认为自动发布。 <br>
+     *        若调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+     */ 
+    bool is_auto_publish = true;
+    /**
+     * @brief 是否自动订阅音频流，默认为自动订阅。  <br>
+     *        进房后，你可以调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 修改订阅设置。
+     */ 
+    bool is_auto_subscribe_audio = true;
+    /**
+     * @brief 是否自动订阅主视频流，默认为自动订阅。  <br>
+     *        进房后，你可以调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 修改订阅设置。  <br>
+     *        屏幕流始终自动订阅，不受该方法影响。
+     */ 
+    bool is_auto_subscribe_video = true;
+};
+/**
+ * @type keytype
+ * @brief 多房间参数配置
+ */
+struct MultiRoomConfig {
+    /**
+     * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为普通音视频通话模式，进房后不可更改。
+     */    
+    RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
+    /**
+     * @brief 是否自动订阅音频流，默认为自动订阅
+     */     
+    bool is_auto_subscribe_audio = true;
+    /**
+     * @brief 是否自动订阅视频流，默认为自动订阅
+     */     
+    bool is_auto_subscribe_video = true;
 };
 
 /**
@@ -489,7 +566,7 @@ enum AudioPlaybackDevice {
  * @hidden(macOS,Windows)
  * @type keytype
  * @brief 音频场景类型。<br>
- *        选择音频场景后，RTC 会自动根据客户端音频路由和发布订阅状态，适用通话音量/媒体音量。<br>
+ *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。<br>
  *        你可以调用 SetAudioScenario{@link #SetAudioScenario} 设置音频场景。<br>
  *        如果预设的音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
  */
@@ -497,9 +574,9 @@ enum AudioScenarioType {
     /**
      * @brief 音乐场景。默认为此场景。<br>
      *        此场景适用于对音乐表现力有要求的场景。如音乐直播等。<br>
-     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th><th>备注</th></tr>
+     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
@@ -510,9 +587,9 @@ enum AudioScenarioType {
      * @brief 高质量通话场景。<br>
      *        此场景适用于对音乐表现力有要求的场景。但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。
      *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验；并尽可能避免使用蓝牙耳机时音量类型切换导致的听感突变。<br>
-     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th> <th>备注</th> </tr>
+     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th> <th>备注</th> </tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
@@ -521,7 +598,7 @@ enum AudioScenarioType {
     kAudioScenarioTypeHighQualityCommunication = 1,
     /**
      * @brief 纯通话音量场景。<br>
-     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用通话音量。
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量。
      *        适用于需要频繁上下麦的通话或会议场景。<br>
      *        此场景可以保持统一的音频模式，不会有音量突变的听感；
      *        最大程度上的消除回声，使通话清晰度达到最优；
@@ -531,10 +608,16 @@ enum AudioScenarioType {
     kAudioScenarioTypeCommunication = 2,
     /**
      * @brief 纯媒体场景。一般不建议使用。<br>
-     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用媒体音量。
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。
      *        外放通话时，极易出现回声和啸叫。
      */
     kAudioScenarioTypeMedia = 3,
+    /**
+     * @brief 游戏媒体场景。仅适合游戏场景。  <br>
+     *        此场景下，蓝牙耳机时使用通话音量，其它设备使用媒体音量。
+     *        外放通话且无游戏音效消除优化时，极易出现回声和啸叫。
+     */
+    kAudioScenarioTypeGameStreaming = 4,
 };
 
 /**
@@ -590,9 +673,51 @@ enum SubscribeMode {
      */
     kSubscribeModeAuto = 0,
     /**
-     * @brief 手动订阅模式。SDK 不会自动订阅房间内的音视频流，你应根据根据需要调用 SubscribeStream{@link #SubscribeStream} 方法手动订阅其他用户发布的音视频流。  <br>
+     * @brief 手动订阅模式。SDK 不会自动订阅房间内的音视频流，你应根据根据需要调用 SubscribeUserStream{@link #SubscribeUserStream} 方法手动订阅其他用户发布的音视频流。  <br>
      */
     kSubscribeModeManual = 1
+};
+
+/**
+ * @type keytype
+ * @brief 订阅媒体的类型
+ */
+enum SubscribeMediaType {
+    /**
+     * @brief 既不订阅音频，也不订阅视频
+     */
+    kRTCSubscribeMediaTypeNone = 0,
+    /**
+     * @brief 只订阅音频，不订阅视频
+     */
+    kRTCSubscribeMediaTypeAudioOnly,
+    /**
+     * @brief 只订阅视频，不订阅音频
+     */
+    kRTCSubscribeMediaTypeVideoOnly,
+    /**
+     * @brief 同时订阅音频和视频
+     */
+    kRTCSubscribeMediaTypeVideoAndAudio
+};
+
+/**
+ * @type keytype
+ * @brief 暂停/恢复接收远端的媒体流类型。
+ */
+enum PauseResumeControlMediaType {
+    /**
+     * @brief 只控制音频，不影响视频
+     */
+    kRTCPauseResumeControlMediaTypeAudio = 0,
+    /**
+     * @brief 只控制视频，不影响音频
+     */
+    kRTCPauseResumeControlMediaTypeVideo = 1,
+    /**
+     * @brief 同时控制音频和视频
+     */
+    kRTCPauseResumeControlMediaTypeVideoAndAudio = 2
 };
 
 /**
@@ -694,8 +819,57 @@ struct RemoteStreamSwitch {
 
 /**
  * @type errorcode
+ * @brief 登录结果  <br>
+ *        调用 Login{@link #IRtcEngineLite#Login} 登录的结果，会通过 OnLoginResult{@link #IRtcEngineLiteEventHandler#OnLoginResult} 回调通知用户。
+ */
+enum LoginErrorCode {
+    /**
+     * @brief 调用 Login{@link #IRtcEngineLite#Login} 方法登录成功
+     */
+    kLoginErrorCodeSuccess = 0,
+    /**
+     * @brief 调用 Login{@link #IRtcEngineLite#Login} 方法时使用的 Token 无效或过期失效，需要用户重新获取 Token。
+     */
+    kLoginErrorCodeInvalidToken = -1000,
+    /**
+     * @brief 登录错误  <br>
+     *        调用 Login{@link #IRtcEngineLite#Login} 方法时发生未知错误导致登录失败，需要重新登录。
+     */
+    kLoginErrorCodeLoginFailed = -1001,
+    /**
+     * @brief 调用 Login{@link #IRtcEngineLite#Login} 方法时传入的用户 ID 有问题。
+     */
+    kLoginErrorCodeInvalidUserId = -1002,
+    /**
+     * @brief 调用 Login{@link #IRtcEngineLite#Login} 登录时服务端出错。
+     */
+    kLoginErrorCodeServerError = -1003,
+};
+/**
+ * @type keytype
+ * @brief 用户在线状态。
+ */
+enum USER_ONLINE_STATUS {
+    /**
+     * @brief 对端用户离线  <br>
+     *        对端用户已调用 Logout{@link #IRtcEngineLite#Logout}，或者没有调用 Login{@link #IRtcEngineLite#Login} 进行登录。
+     */
+    kUserOnlineStatusOffline = 0,
+    /**
+     * @brief 对端用户在线  <br>
+     *        对端用户调用 Login{@link #IRtcEngineLite#Login} 登录，并且连接状态正常。
+     */
+    kUserOnlineStatusOnline = 1,
+    /**
+     * @brief 无法获取对端用户在线状态  <br>
+     *        发生级联错误、对端用户在线状态异常时返回。
+     */
+    kUserOnlineStatusUnreachable = 2,
+};
+/**
+ * @type errorcode
  * @brief 回调错误码。  <br>
- *        SDK 内部遇到不可恢复的错误时，会通过 OnError{@link #OnError} 回调通知用户。
+ *        SDK 内部遇到不可恢复的错误时，会通过 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知用户。
  */
 enum ErrorCode {
     /**
@@ -723,6 +897,13 @@ enum ErrorCode {
      *        本地用户所在房间中有相同用户 ID 的用户加入房间，导致本地用户被踢出房间。
      */
     kErrorCodeDuplicateLogin = -1004,
+
+    /*
+     * @brief 用户被踢出房间。
+     *        本端用户被主动踢出所在房间时，回调此错误。
+     */
+    kBrerrKickedOut = -1006,
+
     /**
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
@@ -757,7 +938,7 @@ enum WarningCode {
     kWarningCodeGetRoomFailed = -2000,
     /**
      * @brief 进房失败。  <br>
-     *        当你调用 JoinRoom{@link #JoinRoom} 初次进房或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。
+     *        当你调用初次加入房间或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。
      */
     kWarningCodeJoinRoomFailed = -2001,
     /**
@@ -786,14 +967,23 @@ enum WarningCode {
      */
     kWarningCodeInvalidExpectMediaServerAddress = -2007,
     /**
+     * @brief 当调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身可见性设置为 false 后，再尝试发布流会触发此警告。  <br>
+     */
+    kWarningCodePublishStreamForbiden = -2009,
+    /**
+     * @hidden
      * @brief 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br>
-     *        你需在进房前调用 EnableAutoSubscribe{@link #EnableAutoSubscribe} 方法关闭自动订阅模式，再调用 SubscribeStream{@link #SubscribeStream} 方法手动订阅音视频流。
-     */             
+     *        你需在进房前调用 EnableAutoSubscribe{@link #IRtcRoom#EnableAutoSubscribe} 方法关闭自动订阅模式，再调用 SubscribeStream{@link #IRtcRoom#SubscribeStream} 方法手动订阅音视频流。
+     */
     kWarningCodeSubscribeStreamForbiden = -2010,
     /**
      * @brief 发送自定义广播消息失败，当前你未在房间中。
      */
     kWarningCodeSendCustomMessage = -2011,
+    /**
+     * @brief 当房间内人数超过 500 人时，停止向房间内已有用户发送 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调，并通过广播提示房间内所有用户。
+     */
+    kWarningCodeUserNotifyStop = -2013,
     /**
      * @brief 摄像头权限异常，当前应用没有获取摄像头权限。
      */
@@ -829,10 +1019,9 @@ enum WarningCode {
     kWarningCodeMediaDeviceOperationDenied = -5008,
     /**
      * @brief 指定的内部渲染画布句柄无效。  <br>
-     *        当你调用 SetLocalVideoCanvas{@link #SetLocalVideoCanvas} 或 SetRemoteVideoCanvas{@link #SetRemoteVideoCanvas} 时指定了无效的画布句柄，触发此回调。
+     *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetRemoteVideoCanvas{@link #IRtcRoom#SetRemoteVideoCanvas} 时指定了无效的画布句柄，触发此回调。
      */
     kWarningCodeInvalidCanvasHandle = -6001
-
 };
 
 /**
@@ -1177,6 +1366,7 @@ enum RemoteVideoStateChangeReason {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 背景模式
  */
@@ -1200,6 +1390,7 @@ enum BackgroundMode {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 分割模型
  */
@@ -1295,10 +1486,10 @@ struct SourceWantedData {
  */
 struct UserInfo {
     /**
-     * @brief 用户 ID，长度在 128 字节以内的非空字符串。支持以下字符集范围:
-     *            1. 26 个大写字母 A ~ Z
-     *            2. 26 个小写字母 a ~ z
-     *            3. 10 个数字 0 ~ 9
+     * @brief 用户 ID，长度在 128 字节以内的非空字符串。支持以下字符集范围:  <br>
+     *            1. 26 个大写字母 A ~ Z  <br>
+     *            2. 26 个小写字母 a ~ z  <br>
+     *            3. 10 个数字 0 ~ 9  <br>
      *            4. 下划线 "_"，at 符 "@"，减 号 "-"
      */
     const char* uid = nullptr;
@@ -1527,6 +1718,45 @@ struct MediaStreamInfo {
      *        当远端用户调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
      */
     int profile_count;
+};
+
+/**
+ * @type keytype
+ * @brief 视频订阅配置信息
+ */
+struct SubscribeVideoConfig {
+    /**
+     * @brief 订阅的视频流分辨率下标。  <br>
+     *        当远端用户通过调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+     *        默认值为 0，即订阅第一路流。  <br> 
+     *        如果不想更改之前的设置，可以输入 -1。  <br>
+     */
+    int video_index = 0;
+    /**
+     * @brief 远端用户优先级，参看 RemoteUserPriority{@link #RemoteUserPriority}，默认值为 0。
+     */
+    int priority = 0;
+    /**
+     * @hidden
+     * @brief 构造函数
+     */
+    SubscribeVideoConfig() : video_index(0), priority(0) {
+    }
+    /**
+     * @hidden
+     */
+    bool operator==(const SubscribeVideoConfig& config) const {
+        bool result = video_index == config.video_index && priority == config.priority;
+        ;
+        return result;
+    }
+    /**
+     * @hidden
+     */
+    bool operator!=(const SubscribeVideoConfig& config) const {
+        bool result = (*this == config);
+        return !result;
+    }
 };
 
 /**
@@ -2141,21 +2371,29 @@ public:
  */
 enum AudioMixingState {
     /**
-     * @brief 混音播放状态，混音开始
+     * @brief 混音已加载
      */
-    kAudioMixingStatePlaying = 710,
+    kAudioMixingStatePreloaded = 0,
     /**
-     * @brief 混音播放状态，混音暂停
+     * @brief 混音正在播放
      */
-    kAudioMixingStatePaused = 711,
+    kAudioMixingStatePlaying,
     /**
-     * @brief 混音播放状态，混音停止/播放结束
+     * @brief 混音暂停
      */
-    kAudioMixingStateStoped = 713,
+    kAudioMixingStatePaused,
     /**
-     * @brief 混音播放状态，混音播放失败
+     * @brief 混音停止
      */
-    kAudioMixingStateFailed = 714
+    kAudioMixingStateStopped,
+    /**
+     * @brief 混音播放失败
+     */
+    kAudioMixingStateFailed,
+    /**
+     * @brief 混音播放结束
+     */
+    kAudioMixingStateFinished
 };
 
 /**
@@ -2168,50 +2406,71 @@ enum AudioMixingError {
      */
     kAudioMixingErrorOk = 0,
     /**
-     * @brief 混音错误码，失败
+     * @brief 预加载失败，找不到混音文件或者文件长度超出 20s
+     */
+    kAudioMixingErrorPreloadFailed,
+    /**
+     * @brief 混音开启失败，找不到混音文件或者混音文件打开失败
+     */
+    kAudioMixingErrorStartFailed,
+    /**
+     * @brief 混音 ID 异常
+     */
+    kAudioMixingErrorIdNotFound,
+    /**
+     * @brief 设置混音文件的播放位置出错
+     */
+    kAudioMixingErrorSetPositionFailed,
+    /**
+     * @brief 音量参数不合法，仅支持设置的音量值为[0 400]
+     */
+    kAudioMixingErrorInValidVolume,
+    /**
+     * @brief 播放的文件与预加载的文件不一致，请先使用 UnloadAudioMixing{@link #UnloadAudioMixing} 卸载文件
+     */
+    kAudioMixingErrorLoadConflict,
+    /**
+     * @hidden
+     * @deprecated
+     * @brief 混音错误码，失败，已废弃
      */
     kAudioMixingErrorCanNotOpen = 701,
 };
 
 /**
- * @type callback
- * @region 视频管理
- * @brief 视频数据回调接口
+ * @type keytype
+ * @brief 自定义视频渲染器
  */
 class IVideoSink {
 public:
+/**
+ * @type keytype
+ * @brief 视频帧编码格式
+ */
+enum PixelFormat {
     /**
-     * @type callback
-     * @region 频道管理
-     * @brief 启动渲染器。
-     * @notes 在开启渲染功能的时候会回调这个方法。开发者可以在这个方法中启动渲染器。
+     * @brief YUV I420 格式
      */
-    virtual void OnStart() = 0;
+    kI420 = VideoPixelFormat::kVideoPixelFormatI420,
+    /**
+     * @brief 原始视频帧格式
+     */
+    kOriginal = VideoPixelFormat::kVideoPixelFormatUnknown,
+};
     /**
      * @type callback
-     * @region 视频管理
      * @brief 视频帧回调
-     * @param IVideoFrame
-     *        视频帧结构类，详见 IVideoFrame{@link #IVideoFrame}
+     * @param [out] videoFrame 视频帧结构类，参看 IVideoFrame{@link #IVideoFrame}
      * @return 返回值暂未使用
      */
     virtual bool OnFrame(IVideoFrame* videoFrame) = 0;
     /**
      * @type callback
-     * @region 频道管理
-     * @brief 停止渲染器。
-     * @notes 在停止渲染功能的时候会回调这个方法。开发者可以在这个方法中停止渲染。
-     */
-    virtual void OnStop() = 0;
-    /**
-     * @type callback
-     * @region 频道管理
      * @brief 释放渲染器。
-     * @notes 通知开发者渲染器即将被废弃。在Release()返回之后，开发者就可以释放掉资源了。
+     * @notes 通知开发者渲染器即将被废弃。收到该返回通知后即可释放资源。
      */
     virtual void Release() {
     }
-
     /**
      * @hidden
      * @brief 析构函数
@@ -2293,7 +2552,7 @@ enum MirrorMode {
 /**
  * @hidden
  * @type keytype
- * @brief 合流转推包含内容。
+ * @brief 转推直播包含内容。
  */
 enum LiveTranscodingContentControl {
     /**
@@ -2313,7 +2572,7 @@ enum LiveTranscodingContentControl {
 /**
  * @hidden
  * @type keytype
- * @brief 合流转推视频编码器格式。
+ * @brief 转推直播视频编码器格式。
  */
 enum LiveTranscodingVideoCodec {
     /**
@@ -2328,7 +2587,7 @@ enum LiveTranscodingVideoCodec {
 /**
  * @hidden
  * @type keytype
- * @brief 合流转推音频编码格式。
+ * @brief 转推直播音频编码格式。
  */
 enum LiveTranscodingAudioCodec {
     /**
@@ -2366,7 +2625,7 @@ enum LiveTranscodingAudioProfile {
  */
 struct LiveTranscodingVideoConfig {
     /**
-     * @brief 合流转推视频编码器格式。详见 LiveTranscodingVideoCodec{@link #LiveTranscodingVideoCodec}
+     * @brief 转推直播视频编码器格式。详见 LiveTranscodingVideoCodec{@link #LiveTranscodingVideoCodec}
      */
     LiveTranscodingVideoCodec codec;
     /**
@@ -2403,7 +2662,7 @@ struct LiveTranscodingVideoConfig {
  */
 struct LiveTranscodingAudioConfig {
     /**
-     * @brief 合流转推音频编码器格式。详见 LiveTranscodingAudioCodec{@link #LiveTranscodingAudioCodec}
+     * @brief 转推直播音频编码器格式。详见 LiveTranscodingAudioCodec{@link #LiveTranscodingAudioCodec}
      */
     LiveTranscodingAudioCodec codec = kLiveTranscodingAAC;
     /**
@@ -2458,7 +2717,7 @@ struct LiveTranscodingRegion {
      */
     double alpha;
     /**
-     * @brief 合流转推包含内容。详见 LiveTranscodingContentControl{@link #LiveTranscodingContentControl}
+     * @brief 转推直播包含内容。详见 LiveTranscodingContentControl{@link #LiveTranscodingContentControl}
      */
     LiveTranscodingContentControl content_control = kVideoAndAudio;
     /**
@@ -2481,7 +2740,7 @@ struct LiveTranscodingLayout {
      */
     const char* background_color = nullptr;
     /**
-     * @brief 合流转推布局信息。详见 LiveTranscodingRegion{@link #LiveTranscodingRegion}
+     * @brief 转推直播布局信息。详见 LiveTranscodingRegion{@link #LiveTranscodingRegion}
      */
     LiveTranscodingRegion* regions = nullptr;
     /**
@@ -2492,7 +2751,7 @@ struct LiveTranscodingLayout {
 /**
  * @hidden
  * @type keytype
- * @brief 合流转推配置信息。
+ * @brief 转推直播配置信息。
  */
 struct LiveTranscodingConfig {
     /**
@@ -2722,6 +2981,263 @@ enum Socks5ProxyState {
      * @brief 未知状态
      */
     kSocks5Unknown
+};
+
+/**
+ * @type keytype
+ * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务服务相关同学
+ */
+enum ASRAuthorizationType {
+    /**
+     * @brief Token 鉴权
+     */
+    kASRAuthorizationTypeToken = 0,
+    /**
+     * @brief Signature 鉴权
+     */
+    kASRAuthorizationTypeSignature = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 使用自动语音识别服务所需校验信息
+ */
+struct RTCASRConfig {
+    /**
+     * @brief 应用 ID
+     */
+    const char* app_id;
+    /**
+     * @brief 用户 ID
+     */
+    const char* user_id;
+    /**
+     * @brief 鉴权方式，参看 ASRAuthorizationType{@link #ASRAuthorizationType}
+     */
+    ASRAuthorizationType authorization_type;
+    /**
+     * @brief 访问令牌
+     */
+    const char* access_token;
+    /**
+     * @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#uh8x72)
+     */
+    const char* secret_key;
+    /**
+     * @brief 场景信息，参看[业务集群](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#aI4WCt)
+     */
+    const char* cluster;
+};
+
+/**
+ * @type keytype
+ * @brief 语音识别服务错误码。  <br>
+ *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 StartASR{@link #StartASR} 重启语音识别功能。
+ */
+enum RTCASRErrorCode {
+    /**
+     * @brief 网络连接中断，服务不可用，内部会进行重连
+     */
+    kRTCASRErrorNetworkInterrupted = -1,
+    /**
+     * @brief 重复调用 StartASR{@link #StartASR}。开启语音识别服务后，你需要先调用 StopASR{@link #StopASR} 停止语音识别服务，才能二次调用 StartASR{@link #StartASR} 再次开启服务。
+     */
+    kRTCASRErrorAlreadyStarted = -2,
+    /**
+     * @brief 语音识别服务所需 token 为空
+     */
+    kRTCASRErrorTokenEmpty = -3,
+    /**
+     * @brief Signature 鉴权模式下 secret_key 为空
+     */
+    kRTCErrorSignatureKeyEmpty = -4,
+    /**
+     * @brief 用户 ID 为空
+     */
+    kRTCASRErrorUserIdNull = -5,
+    /**
+     * @brief 应用 ID 为空
+     */
+    kRTCASRErrorAPPIDNull = -6,
+    /**
+     * @brief 语音识别服务 cluster 为空
+     */
+    kRTCASRErrorClusterNull = -7,
+    /**
+     * @brief 语音识别服务连接失败，该版本没有语音识别功能，请联系 RTC 技术支持。
+     */
+    kRTCASRErrorOperationDenied = -8
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制的媒体类型
+ */
+enum RecordingType {
+    /**
+     * @brief 只录制音频
+     */
+    kRecordAudioOnly = 0,
+    /**
+     * @brief 只录制视频
+     */
+    kRecordVideoOnly = 1,
+    /**
+     * @brief 同时录制音频和视频
+     */
+    kRecordVideoAndAudio = 2,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制文件的存储格式
+ */
+enum RecordingFileType {
+    /**
+     * @brief aac 格式文件
+     */
+    kRecordingFileTypeAAC = 0,
+    /**
+     * @brief mp4 格式文件
+     */
+    kRecordingFileTypeMP4 = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制的状态
+ */
+enum RecordingState {
+    /**
+     * @brief 录制异常
+     */
+    kRecordingStateError = 0,
+    /**
+     * @brief 录制进行中
+     */
+    kRecordingStateProcessing = 1,
+    /**
+     * @brief 录制文件保存成功，调用 StopFileRecording{@link #StopFileRecording} 结束录制之后才会收到该状态码。
+     */
+    kRecordingStateSuccess = 2,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制的错误码
+ */
+enum RecordingErrorCode {
+    /**
+     * @brief 录制正常
+     */
+    kRecordingErrorCodeOk = 0,
+    /**
+     * @brief 没有文件写权限
+     */
+    kRecordingErrorCodeNoPermission = -1,
+    /**
+     * @brief 当前版本 SDK 不支持本地录制功能，请联系技术支持人员
+     */
+    kRecordingErrorCodeNotSupport = -2,
+    /**
+     * @brief 其他异常
+     */
+    kRecordingErrorCodeOther = -3,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制进度
+ */
+struct RecordingProgress {
+    /**
+     * @brief 当前文件的累计录制时长，单位：毫秒
+     */
+    unsigned long long duration;
+    /**
+     * @brief 当前录制文件的大小，单位：byte
+     */
+    unsigned long long file_size;
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制的详细信息
+ */
+struct RecordingInfo {
+    /**
+     * @brief 录制文件的绝对路径，包含文件名和文件后缀
+     */
+    const char* file_path;
+    /**
+     * @brief 录制文件的视频编码类型，参看 VideoCodecType{@link #VideoCodecType}
+     */
+    VideoCodecType video_codec_type;
+    /**
+     * @brief 录制视频的宽，单位：像素。纯音频录制请忽略该字段
+     */
+    int width;
+    /**
+     * @brief 录制视频的高，单位：像素。纯音频录制请忽略该字段
+     */
+    int height;
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制参数配置
+ */
+struct RecordingConfig {
+    /**
+     * @brief 录制文件保存的绝对路径。你需要指定一个有读写权限的合法路径。
+     */
+    const char* dir_path;
+    /**
+     * @brief 录制存储文件格式，参看 RecordingFileType{@link #RecordingFileType}
+     */
+    RecordingFileType file_type;
+    /**
+     * @brief 录制媒体类型，参看 RecordingType{@link #RecordingType}
+     */
+    RecordingType recording_type;
+};
+
+/**
+ * @type keytype
+ * @brief 混音播放类型
+ */
+enum AudioMixingType {
+    /**
+     * @brief 仅本地播放
+     */
+    kAudioMixingTypePlayout,
+    /**
+     * @brief 仅远端播放
+     */
+    kAudioMixingTypePublish,
+    /**
+     * @brief 本地和远端同时播放
+     */
+    kAudioMixingTypePlayoutAndPublish
+};
+
+/**
+ * @type keytype
+ * @brief 混音配置
+ */
+struct AudioMixingConfig {
+    /**
+     * @brief 混音播放类型，详见 AudioMixingType{@link #AudioMixingType}
+     */
+    AudioMixingType type;
+    /**
+     * @brief 混音播放次数，
+     * @notes  <br>
+     *       + play_count <= 0: 无限循环  <br>
+     *       + play_count == 1: 播放一次（默认）  <br>
+     *       + play_count > 1: 播放 play_count 次
+     */
+    int play_count;
 };
 
 }  // namespace bytertc

@@ -237,22 +237,14 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  */
 + (NSString *)getSdkVersion;
 
-/**
- * @hidden
- */
-+ (void)setTTMonitorCallBack:(void (^)(NSDictionary *data, NSString *logType))callBack;
 
-/**
- * @hidden
- */
-+ (void)setByteLog:(BOOL)isConsole callBack:(void (^)(GameRTCLogLevel level, NSString *filename, NSString *tag, int line, NSString * funcName, NSString * format))callBack;
 
  /**
  * @type api
  * @region 房间管理
  * @brief 加入实时语音房间。<br>
  *        在使用实时语音的通话功能时，必须先加入实时语音房间。  <br>
- *        调用该方法后，会收到 rtcEngine:onJoinRoomSuccess:uid:isRejoined:elapsed:{@link #GameRTCEngineDelegate#rtcEngine:onJoinRoomSuccess:uid:isRejoined:elapsed:} 回调。
+ *        调用该方法后，会收到 rtcEngine:onJoinRoomResult:uid:errorCode:isRejoined:elapsed:{@link #GameRTCEngineDelegate#rtcEngine:onJoinRoomResult:uid:errorCode:isRejoined:elapsed:} 回调。
  * @param roomId
  *        房间 ID，用户调用此接口加入的房间的房间 ID。<br>
  *        房间 ID 为最大长度为 128 字节的非空字符串，支持的字符集范围为: <br>
@@ -269,7 +261,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  *             4. 下划线 "_", at 符 "@", 减号 "-"。<br>
  * @param token
  *        动态密钥，用于对登录用户进行鉴权验证。<br>
- *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token ，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token
+ *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token ，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token
  * @param config
  *        房间配置参数，参看 GameRTCRoomConfig{@link #GameRTCRoomConfig}
  * @return 方法调用结果<br>
@@ -280,7 +272,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  * @notes <br>
  *        + 使用不同 App ID 的 App 是不能互通的。<br>
  *        + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。<br>
- *        + 用户加入房间成功后，在本端网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本端会收到 rtcEngine:onJoinRoomSuccess:uid:isRejoined:elapsed:{@link #GameRTCEngineDelegate#rtcEngine:onJoinRoomSuccess:uid:isRejoined:elapsed:} 回调。<br>
+ *        + 用户加入房间成功后，在本端网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本端会收到 rtcEngine:onJoinRoomResult:uid:errorCode:isRejoined:elapsed:{@link #GameRTCEngineDelegate#rtcEngine:onJoinRoomResult:uid:errorCode:isRejoined:elapsed:} 回调。<br>
  *        + 同一个 App ID 的同一个房间内，每个用户的用户ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onRoomError:room:{@link #GameRTCEngineDelegate#rtcEngine:onRoomError:room:} 回调通知。
 */
 - (int)joinRoom:(NSString *)roomId uid:(NSString *)uid token:(NSString *)token config:(GameRTCRoomConfig *)config;
@@ -320,7 +312,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  *             4. 下划线 "_", at 符 "@", 减号 "-"。<br>
  * @param token
  *        动态密钥，用于对登录用户进行鉴权验证。<br>
- *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token ，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token
+ *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token ，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token
  * @return 方法调用结果<br>
  *         +  0：成功<br>
  *         + -1：引擎已经被销毁或者未创建，或者是房间 ID 为空
@@ -358,7 +350,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  * @type api
  * @region 空间语音
  * @brief 使用空间语音功能时，设置玩家的方位。
- * @param position 玩家方位值，参看 GameRTCOrientationInfo{@link #GameRTCOrientationInfo}
+ * @param orientation 玩家方位值，参看 GameRTCOrientationInfo{@link #GameRTCOrientationInfo}
  * @param roomId 房间 ID
  * @return 方法调用结果 <br>
  *         +  0：成功 <br>
@@ -477,6 +469,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 - (int)setRemoteAudioPlaybackVolume:(int)volume room:(NSString *)roomId uid:(NSString *)uid;
 
 /**
+ * @hidden
  * @type api
  * @region 自定义音频采集渲染
  * @brief 启用外部音频采集渲染。
@@ -490,6 +483,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 - (void)enableExternalAudioDevice:(GameRTCAudioFormat * _Nonnull) recordingFormat playbackFormat:(GameRTCAudioFormat * _Nonnull) playbackFormat;
 
 /**
+ * @hidden
  * @type api
  * @region 自定义音频采集渲染
  * @brief 禁用已开启的自定义音频采集渲染，将音频采集渲染由自定义模块切换至内部模块。
@@ -501,6 +495,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 - (void)disableExternalAudioDevice;
 
 /**
+ * @hidden
  * @type api
  * @region 自定义音频采集渲染
  * @brief 推送外部音频数据。
@@ -510,7 +505,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  *          + <0: 设置失败  <br>
  * @notes  <br>
  *       + 推送外部音频数据前，必须开启自定义采集。  <br>
- *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 enableExternalAudioDevice:playbackFormat:{@link #GameRTCEngineDelegate#enableExternalAudioDevice:playbackFormat:} 中设置的 sampleRate 和 channel 保持一致。  <br>
+ *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 enableExternalAudioDevice:playbackFormat:{@link #GameRTCEngineKit#enableExternalAudioDevice:playbackFormat:} 中设置的 sampleRate 和 channel 保持一致。  <br>
  *       + 此方法推送音频数据的间隔为 10 毫秒。 samples (音频采样点个数）应该为 audioFrame.sampleRate / 100，如设置采样率为 48000 时，每次应该推送 480 个采样点。  <br>
  *       + 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 audioFrame.samples * audioFrame.channel * 2。  <br>
  *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
@@ -518,6 +513,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 - (int)pushExternalAudioFrame:(GameRTCAudioFrame * _Nonnull) audioFrame;
 
 /**
+ * @hidden
  * @type api
  * @region 自定义音频采集渲染
  * @brief 拉取外部音频数据。
@@ -527,7 +523,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  *        + <0: 设置失败  <br>
  * @notes  <br>
  *       + 拉取外部音频数据前，必须开启自定义采集。  <br>
- *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 enableExternalAudioDevice:playbackFormat:{@link #GameRTCEngineDelegate#enableExternalAudioDevice:playbackFormat:} 中设置的 sampleRate 和 channel 保持一致。  <br>
+ *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 enableExternalAudioDevice:playbackFormat:{@link #GameRTCEngineKit#enableExternalAudioDevice:playbackFormat:} 中设置的 sampleRate 和 channel 保持一致。  <br>
  *       + 此方法拉取音频数据的间隔为 10 毫秒，音频采样格式为 S16。 samples (音频采样点个数）应该为 audioFrame.sampleRate / 100，如设置采样率为 48000 时， 每次应该拉取 480 个采样点。  <br>
  *       + 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 audioFrame.samples * audioFrame.channel * 2。  <br>
  *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>

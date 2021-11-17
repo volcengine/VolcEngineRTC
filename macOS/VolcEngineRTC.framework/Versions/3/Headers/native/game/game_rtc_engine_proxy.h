@@ -10,7 +10,7 @@ namespace bytertc {
 namespace gamertc {
 class IGameRTCEngineProxy {
 public:
-    virtual int IsTeammate(const std::string& user_id) const = 0;
+    virtual bool IsTeammate(const std::string& user_id) const = 0;
     virtual std::string GetTeamId() const = 0;
     virtual std::string GetAppId() const = 0;
     virtual void EnableAudioSpatialRender(bool enable) = 0;

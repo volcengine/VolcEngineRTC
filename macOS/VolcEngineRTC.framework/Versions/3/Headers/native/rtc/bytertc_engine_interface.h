@@ -38,15 +38,16 @@ public:
     }
 
     /**
+     * @hidden
+     * @deprecated
      * @type api
      * @region 房间管理
-     * @author shenpengliang
-     * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。
+     * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
      *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
      *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #OnJoinRoomResult} 回调通知，远端用户会收到 OnUserJoined{@link #OnUserJoined} 回调通知。  <br>
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
-     *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
+     *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。  <br>
      * @param [in] room_id 加入的房间 ID。  <br>
      *        房间 ID 为长度在 128 字节以内的非空字符串，支持以下字符集范围:  <br>
      *            1. 26 个大写字母 A ~ Z 。  <br>
@@ -66,20 +67,60 @@ public:
      *       + 使用不同 App ID 的 App 是不能互通的。  <br>
      *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #OnJoinRoomResult} 回调通知。  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #OnError} 回调通知，错误类型详见 ErrorCode.kErrorCodeDuplicateLogin{@link #ErrorCode}。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode}。  <br>
      */
     virtual int JoinRoom(
             const char* token, const char* room_id, const UserInfo& user_info, RoomProfileType profile_type) = 0;
-
+    /**
+     * @type api
+     * @region 房间管理
+     * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
+     *        同一房间内的用户间可以相互通话。  <br>
+     *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
+     *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *        本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。
+     * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
+     *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
+     * @param [in] room_id 加入的房间 ID。  <br>
+     *        房间 ID 为长度在 128 字节以内的非空字符串，支持以下字符集范围:  <br>
+     *            1. 26 个大写字母 A ~ Z 。  <br>
+     *            2. 26 个小写字母 a ~ z 。  <br>
+     *            3. 10 个数字 0 ~ 9 。  <br>
+     *            4. 下划线 "_"，at 符 "@"，减号 "-"。  <br>
+     * @param [in] user_info 用户信息，参看 UserInfo{@link #UserInfo}。  <br>
+     * @param [in] room_config 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 RTCRoomConfig{@link #RTCRoomConfig}。  <br>
+     * @return  <br>
+     *        +  0: 成功  <br>
+     *        + -1: room_id 为空，失败  <br>
+     *        + -2: user_info 为空，失败  <br>
+     * @notes  <br>
+     *       + 使用不同 App ID 的 App 是不能互通的。  <br>
+     *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     */
+    virtual int JoinRoom(const char* token, const char* room_id, const UserInfo& user_info, const RTCRoomConfig& room_config) = 0;
+/**
+ * @hidden
+ */
 private:
-    void JoinRoom(const char* token, const UserInfo& userInfo, RoomProfileType profile_type) override{};
+    /**
+     * @hidden
+     */
+    void JoinRoom(const char* token, const UserInfo& user_info, RoomProfileType profile_type) override{};
+    /**
+     * @hidden
+     */
+    void JoinRoom(const char* token, const UserInfo& user_info, const MultiRoomConfig& config) override{};
+    /**
+     * @hidden
+     */
     void SetRtcRoomEventHandler(IRTCRoomEventHandler* room_event_handler) override {};
 };
 
 /**
  * @type api
  * @region 引擎管理
- * @author chenweiming.push
  * @brief 创建 RTCEngine 实例。  <br>
  *        如果当前线程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br>
  *        如果当前线程中已创建了引擎实例，再次调用此方法时，会创建另一个独立的引擎实例。
@@ -99,7 +140,6 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngine(const char* app_id,
 /**
  * @hidden
  * @region 引擎管理
- * @author shazhou
  * @brief 创建游戏 RTCEngine 实例。
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
@@ -118,7 +158,6 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id,
 /**
  * @hidden
  * @region 引擎管理
- * @author chenweiming.push
  * @brief 创建 RTCEngine 实例。
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
@@ -138,7 +177,6 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngineWithPtr(
 /**
  * @hidden
  * @region 引擎管理
- * @author shazhou
  * @brief 创建游戏 RTCEngine 实例。
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
@@ -158,7 +196,6 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
 /**
  * @type api
  * @region 引擎管理
- * @author chenweiming.push
  * @brief 销毁由 CreateRtcEngine{@link #CreateRtcEngine} 创建的 RTCEngine 实例，并释放所有相关资源。
  * @param [in] engine  <br>
  *        CreateRtcEngine{@link #CreateRtcEngine} 时，返回的实例。
@@ -172,7 +209,6 @@ BYTERTC_API void DestroyRtcEngine(bytertc::IRtcEngine* engine);
 /**
  * @hidden
  * @region 引擎管理
- * @author shazhou
  * @brief 销毁由 CreateGameRtcEngine{@link #CreateGameRtcEngine} 创建的游戏 RTCEngine 实例，并释放所有相关资源。
  * @param [in] engine  <br>
  *        由 CreateGameRtcEngine{@link #CreateGameRtcEngine} 返回的实例。
@@ -200,7 +236,6 @@ BYTERTC_API const char* GetErrorDescription(int code);
 /**
  * @type api
  * @region 引擎管理
- * @author chenweiming.push
  * @brief 获取当前 SDK 版本信息。
  * @return 当前 SDK 版本信息。
  */
@@ -209,7 +244,6 @@ BYTERTC_API const char* GetSDKVersion();
 /**
  * @type api
  * @region 引擎管理
- * @author chenweiming.push
  * @brief 本次通话质量打分评价
  * @param [in] data
  *        上报的数据，JSON格式，必须包含以下5个字段:

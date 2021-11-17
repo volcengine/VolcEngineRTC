@@ -31,6 +31,9 @@ enum TranscoderRoomStatus {
  *@brief 合流事件事件类型
  */
 enum StreamMixingEvent {
+    /**
+     * @hidden
+     */ 
     kStreamMixingBase = 0,
     /**
      * @brief 合流开始
@@ -72,6 +75,9 @@ enum StreamMixingEvent {
      * @brief 更新合流超时
      */
     kStreamMixingUpdateTimeout = 10,
+    /**
+     * @hidden
+     */
     kStreamMixingMax = 15,
 };
 
@@ -182,15 +188,15 @@ typedef struct TranscoderVideoParam {
 
 /**
  * @type api
- * @region 合流转推
+ * @region 转推直播
  * @brief 合流参数
  */
 class ITranscoderParam {
 public:
     /**
      * @type api
-     * @region 合流转推
-     * @brief 合流转推房间ID
+     * @region 转推直播
+     * @brief 转推直播房间ID
      * @return 房间ID
      */
     virtual const char* RoomID() = 0;

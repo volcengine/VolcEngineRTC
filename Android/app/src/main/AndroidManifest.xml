@@ -19,9 +19,7 @@
         android:roundIcon="@drawable/launcher_quick_start"
         android:supportsRtl="true"
         android:theme="@style/Theme.MinimRTCDemo">
-        <activity
-            android:name="com.ss.video.rtc.demo.quickstart.RTCRoomActivity"
-            android:launchMode="singleTop"></activity>
+        <activity android:name="com.ss.video.rtc.demo.quickstart.RTCRoomActivity"></activity>
         <activity android:name="com.ss.video.rtc.demo.quickstart.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

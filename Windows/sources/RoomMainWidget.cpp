@@ -135,10 +135,16 @@ void RoomMainWidget::slotOnEnterRoom(const QString &roomID, const QString &userI
     bytertc::UserInfo userInfo;
     userInfo.uid = m_uid.c_str();
     userInfo.extra_info = nullptr;
+
+    bytertc:RTCRoomConfig roomConfig;
+    roomConfig.is_auto_publish = true;
+    roomConfig.is_auto_subscribe_audio = true;
+    roomConfig.is_auto_subscribe_video = true;
+    roomConfig.room_profile_type = bytertc:kRoomProfileTypeCommunication;
     // 加入房间
     m_byteEngine->JoinRoom(Constants::TOKEN.c_str(),
                            m_roomId.c_str(), userInfo,
-                           bytertc::kRoomProfileTypeCommunication);
+                           roomConfig);
 }
 
 void RoomMainWidget::toggleShowFloatWidget(bool isEnterRoom) {

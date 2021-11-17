@@ -4,6 +4,7 @@
  */
 
 #import <VolcEngineRTC/objc/live/LiveRtc.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCAudioMixingManager.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCHttpClientProtocol.h>

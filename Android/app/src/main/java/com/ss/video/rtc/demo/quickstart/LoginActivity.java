@@ -50,10 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         versionTv.setText(String.format("VolcEngineRTC v%s", SDKVersion));
 
         ActivityCompat.requestPermissions(this,
-                new String[]{
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.RECORD_AUDIO,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
                 1000);
     }
 

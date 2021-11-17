@@ -8,8 +8,53 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <memory>
+#include "bytertc_defines.h"
 
 namespace bytertc {
+
+/**
+ * @type keytype
+ * @region 音频管理
+ * @brief 音频帧类型
+ */
+enum AudioFrameType {
+    /**
+     * @brief PCM 16bit
+     */
+    kFrameTypePCM16 = 0
+};
+
+/**
+ * @type keytype
+ * @region 音频管理
+ * @brief 音频帧构建类
+ */
+typedef struct AudioFrameBuilder {
+    /**
+     * @brief 音频采样率
+     */
+    AudioSampleRate sample_rate;
+    
+    /**
+     * @brief 音频通道数
+     */
+    AudioChannel channel;
+    
+    /**
+     * @brief 音频帧时间戳，单位：微秒
+     */
+    int64_t timestamp_us = 0;
+    
+    /**
+     * @brief 音频帧数据
+     */
+    uint8_t* data;
+    
+    /**
+     * @brief 音频帧数据大小
+     */
+    int64_t data_size = 0;
+} AudioFrameBuilder;
 
 /**
  * @type keytype
@@ -18,74 +63,77 @@ namespace bytertc {
 class IAudioFrame {
 public:
     /**
-     * @hidden
-     * @brief 析构函数
-     */
-    virtual ~IAudioFrame() {
-    } 
-    /**
      * @type api
      * @region 音频管理    
      * @brief 获取音频帧时间戳。
      * @return 音频帧时间戳，单位：微秒
      */     
     virtual int64_t timestamp_us() const = 0;
-    /**
-     * @type api
-     * @region 音频管理    
-     * @brief 设置音频帧时间戳。
-     * @param [in] timestamp_us 音频帧时间戳，单位：微秒
-     */    
-    virtual void set_timestamp_us(int64_t timestamp_us) = 0;
+    
     /**
      * @type api
      * @region 音频管理    
      * @brief 获取音频采样率
      * @return 音频采样率
      */     
-    virtual int sample_rate() const = 0;
-    /**
-     * @type api
-     * @region 音频管理    
-     * @brief 设置音频采样率
-     * @param [in] sample_rate 音频采样率
-     */    
-    virtual void set_sample_rate(int sample_rate) = 0;
-    /**
-     * @type api
-     * @region 音频管理    
-     * @brief 获取音频通道数
-     * @return 音频通道数
-     */     
-    virtual int channels_num() const = 0;
-    /**
-     * @type api
-     * @region 音频管理    
-     * @brief 设置音频通道数
-     * @param [in] channels_num 音频通道数
-     */    
-    virtual void set_channels_num(int channels_num) = 0;
+    virtual AudioSampleRate sample_rate() const = 0;
+
     /**
      * @type api
      * @region 音频管理
-     * @brief 设置音频帧内存管理信息
-     * @param [in] memory 音频帧内存管理信息，详见 ManagedMemory{@link #ManagedMemory}
-     */
-    virtual void set_frame_memory(const ManagedMemory& memory) = 0;
+     * @brief 获取音频通道数
+     * @return 音频通道数
+     */     
+    virtual AudioChannel channel() const = 0;
+
     /**
      * @type api
-     * @region 音频管理    
+     * @region 音频管理
      * @brief 获取音频帧内存块地址
      * @return  音频帧内存块地址
      */ 
     virtual uint8_t* data() const = 0;
+    
     /**
      * @type api
-     * @region 音频管理    
+     * @region 音频管理
      * @brief 获取音频帧数据大小
      * @return  音频帧数据大小
      */
     virtual int data_size() const = 0;
+    
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 获取音频帧类型，目前只支持 PCM，详见 AudioFrameType:{@link #AudioFrameType}
+     * @return  音频帧类型
+     */
+    virtual AudioFrameType frame_type() const = 0;
+    
+    /**
+     * @brief 释放音频帧
+     * @type api
+     * @region 音频管理
+     * @brief 释放音频帧
+     */
+    virtual void release() = 0;
+    
+    /**
+     * @hidden
+     */
+protected:
+    /**
+     * @brief 析构函数
+     */
+    virtual ~IAudioFrame() = default;
 };
+
+/**
+ * @type api
+ * @region 音频管理
+ * @brief 创建 IAudioFrame
+ * @param [in] builder 音频帧构建实例，参看 AudioFrameBuilder{@link #AudioFrameBuilder}
+ */
+BYTERTC_API IAudioFrame* BuildAudioFrame(const AudioFrameBuilder& builder);
 
 }  // namespace bytertc

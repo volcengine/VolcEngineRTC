@@ -13,7 +13,7 @@ namespace bytertc {
 
 /**
  * @type callback
- * @region 合流转推
+ * @region 转推直播
  * @brief 推流 Observer
  */
 class ITranscoderObserver {
@@ -26,7 +26,7 @@ public:
     }
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 通知 Transcoding 关键事件
      * @param [in] event 事件类型
      * @param [in] event_data 事件参数
@@ -38,7 +38,7 @@ public:
 
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 合流视频回调，运行在视频回调线程
      * @param videoFrame 视频帧
      */
@@ -46,7 +46,7 @@ public:
 
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 合流音频回调，运行在音频回调线程
      * @param audioFrame 音频帧
      */
@@ -54,7 +54,7 @@ public:
 
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 视频SEI帧回调，运行在视频回调线程
      * @param dataFrame SEI 数据
      */

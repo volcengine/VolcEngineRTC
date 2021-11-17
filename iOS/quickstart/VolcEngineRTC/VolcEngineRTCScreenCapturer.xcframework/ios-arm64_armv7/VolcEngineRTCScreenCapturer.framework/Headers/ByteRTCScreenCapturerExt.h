@@ -28,6 +28,42 @@ BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
  */
 - (void)quit;
 
+/**
+ * @type api
+ * @region 视频管理
+ * @brief Socket 收到 App 侧发来的信息
+ * @notes
+ *        1.屏幕采集分为内部采集和外部采集，本方法属于内部采集。
+ */
+- (void)onReceiveMessageFromApp:(NSData *)message;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @brief Socket 断开连接的回调
+ * @notes
+ *        1.屏幕采集分为内部采集和外部采集，本方法属于内部采集。
+ */
+- (void)onSocketDesconnect;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @brief Socket 连接成功连接的回调
+ * @notes
+ *        1.屏幕采集分为内部采集和外部采集，本方法属于内部采集。
+ */
+- (void)onSocketConnect;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @brief 如果检测到 RtcSDK 正在会议中，会收到这个回调。
+ * @notes
+ *        1.屏幕采集分为内部采集和外部采集，本方法属于内部采集。
+ */
+- (void)onNotifyAppRunning;
+
 @end
 
 /**

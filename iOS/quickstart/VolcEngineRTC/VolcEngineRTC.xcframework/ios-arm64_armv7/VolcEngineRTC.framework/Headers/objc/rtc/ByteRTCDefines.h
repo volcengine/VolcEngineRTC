@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCRenderMode) {
  */
 typedef NS_ENUM(NSUInteger, ByteRTCUserOfflineReason) {
     /**
-     * @brief 远端用户调用 leaveRoom:{@link #ByteRTCEngineKit#leaveRoom:} 方法主动退出房间，或将身份切换至静默观众。  <br>
+     * @brief 远端用户调用 leaveRoom:{@link #leaveRoom:} 方法主动退出房间，或将身份切换至静默观众。  <br>
      */
     ByteRTCUserOfflineReasonQuit = 0,
     /**
@@ -85,20 +85,31 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamRemoveReason) {
  * @brief 房间模式
  */
 typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
-    /**
-     * @brief 通信模式。  <br>
-     */
+  /**
+    * @brief 普通音视频通话模式。<br>
+    *        你应在 1V1 音视频通话时，使用此设置。<br>
+    *        此设置下，弱网抗性较好。
+    */
     ByteRTCRoomProfileCommunication = 0,
     /**
-     * @brief 直播模式。  <br>
+     * @brief 直播模式。<br>
+     *        当你对音视频通话的音质和画质要求较高时，应使用此设置。<br>
+     *        此设置下，当用户使用蓝牙耳机收听时，蓝牙耳机使用媒体模式。
      */
     ByteRTCRoomProfileLiveBroadcasting = 1,
     /**
-     * @brief 游戏模式。SDK 会使用低延时设置。  <br>
+     * @brief 游戏语音模式。<br>
+     *        低端机在此模式下运行时，进行了额外的性能优化：<br>
+     *            + 采集播放采用 16kHz 单通道采样 <br>
+     *            + 部分低端机型配置编码帧长 40/60 <br>
+     *            + 部分低端机型关闭软件 3A 音频处理 <br>
+     *        增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。
      */
     ByteRTCRoomProfileGame = 2,
     /**
-     * @brief 云游戏模式。SDK 会使用低延时设置。  <br>
+     * @brief 云游戏模式。<br>
+     *        如果你需要低延迟、高码率的设置时，你可以使用此设置。<br>
+     *        此设置下，弱网抗性较差。
      */
     ByteRTCRoomProfileCloudGame = 3,
     /**
@@ -129,7 +140,7 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
 /**
  * @type keytype
  * @brief 音频场景类型。  <br>
- *        选择音频场景后，RTC 会自动根据客户端音频路由和发布订阅状态，适用通话音量/媒体音量。  <br>
+ *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。  <br>
  *        你可以调用 setAudioScenario:{@link #ByteRTCEngineKit #setAudioScenario:} 设置音频场景。  <br>
  *        如果以下音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
  */
@@ -137,9 +148,9 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
     /**
      * @brief 音乐场景。默认为此场景。  <br>
      *        此场景适用于对音乐表现力有要求的场景，如音乐直播等。  <br>
-     *        音频路由和发布订阅状态，到音量类型的映射如下：  <br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：  <br>
      *        <table>
-     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th><th>备注</th></tr>
+     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
@@ -150,9 +161,9 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
      * @brief 高质量通话场景。  <br>
      *        此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。  <br>
      *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验，并避免使用蓝牙耳机时音量类型切换导致的听感突变。  <br>
-     *        音频路由和发布订阅状态，到音量类型的映射如下：<br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅发布音视频流</th><th>仅订阅音视频流</th><th>发布并订阅音视频流</th> <th>备注</th> </tr>
+     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th> <th>备注</th> </tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
@@ -171,10 +182,16 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
     ByteRTCAudioScenarioCommunication = 2,
     /**
      * @brief 纯媒体场景。一般不建议使用。  <br>
-     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用媒体音量。  <br>
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。  <br>
      *        外放通话时，极易出现回声和啸叫。
      */
     ByteRTCAudioScenarioMedia = 3,
+    /**
+     * @brief 游戏媒体场景。仅适合游戏场景。  <br>
+     *        此场景下，蓝牙耳机时使用通话音量，其它设备使用媒体音量。
+     *        外放通话且无游戏音效消除优化时，极易出现回声和啸叫。
+     */
+    ByteRTCAudioScenarioGameStreaming = 4,
 };
 
 /**
@@ -302,13 +319,13 @@ typedef NS_ENUM(NSUInteger, ByteRTCNetworkQuality) {
 typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
     /**
      * @brief Token 无效。
-     *        调用 joinRoomByKey:roomId:roomProfile:userInfo:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:roomProfile:userInfo:} 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用
-     *        updateToken:{@link #ByteRTCEngineKit#updateToken:} 方法更新 Token。
+     *        调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用
+     *        updateToken:{@link #updateToken:} 方法更新 Token。
      */
     ByteRTCErrorCodeInvalidToken               = -1000,
     /**
      * @brief 加入房间错误。
-     *        调用 joinRoomByKey:roomId:roomProfile:userInfo:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:roomProfile:userInfo:} 方法时发生未知错误导致加入房间失败。需要用户重新加入房间。
+     *        调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法时发生未知错误导致加入房间失败。需要用户重新加入房间。
      */
     ByteRTCErrorCodeJoinRoom             = -1001,
     /**
@@ -397,18 +414,17 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
     ByteRTCWarningCodeGetRoomFailed              = -2000,
     /**
      * @brief 进房失败。  <br>
-     *        当你调用 joinRoomByKey:roomId:roomProfile:userInfo:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:roomProfile:userInfo:}
      *        初次进房或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。
      */
     ByteRTCWarningCodeJoinRoomFailed             = -2001,
     /**
      * @brief 发布音视频流失败。
-     *         当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。
+     *        当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。
      */
     ByteRTCWarningCodePublishStreamFailed        = -2002,
     /**
      * @brief 订阅音视频流失败。
-     *         当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。
+     *        当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。
      */
     ByteRTCWarningCodeSubscribeStreamFailed404  = -2003,
     /**
@@ -427,15 +443,23 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeInvalidExpectMediaServerAddress = -2007,
     /**
+     * @brief 当调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 将自身可见性设置为 false 后，再尝试发布流会触发此警告。  <br>
+     */
+    ByteRTCWarningCodePublishStreamForbiden = -2009,
+    /**
+     * @hidden
      * @brief 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br>
-     *        你需在进房前调用 enableAutoSubscribe:videoMode:{@link #ByteRTCEngineKit#enableAutoSubscribe:videoMode:} 方法关闭自动订阅模式，
-     *        再调用 subscribeStream:subscribeConfig:{@link #ByteRTCEngineKit#subscribeStream:subscribeConfig:} 方法手动订阅音视频流。
+     *        你需在进房前调用 enableAutoSubscribe:videoMode:{@link #ByteRTCEngineKit#enableAutoSubscribe:videoMode:} 方法关闭自动订阅模式，再调用 subscribeStream:subscribeConfig:{@link #ByteRTCEngineKit#subscribeStream:subscribeConfig:} 方法手动订阅音视频流。
      */
     ByteRTCWarningCodeSubscribeStreamForbiden = -2010,
     /**
      * @brief 发送自定义广播消息失败，当前你未在房间中。
      */
     ByteRTCWarningCodeSendCustomMessage = -2011,
+    /**
+     * @brief 当房间内人数超过 500 人时，停止向房间内已有用户发送 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:} 和 rtcEngine:onUserLeave:reason:{@link #ByteRTCEngineDelegate#rtcEngine:onUserLeave:reason:} 回调，并通过广播提示房间内所有用户。
+     */
+    ByteRTCWarningCodeCodeUserNotifyStop = -2013,
     /**
      * @brief 摄像头权限异常，当前应用没有获取摄像头权限
      */
@@ -482,7 +506,7 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
 
 /**
  * @type errorcode
- * @brief 合流转推功能错误码。
+ * @brief 转推直播功能错误码。
  */
 typedef NS_ENUM(NSInteger, ByteRTCTranscodingError) {
     /**
@@ -615,29 +639,6 @@ typedef NS_ENUM(NSUInteger, ByteRTCLogLevel) {
 };
 
 /**
- * @hidden
- * @type keytype
- * @brief 视频帧类型
- */
-typedef NS_ENUM(NSInteger, ByteRTCVideoSinkPixelFormat) {
-    /**
-     * @hidden
-     * @brief YUV image with i420 layout, also known as yuv420p
-     */
-    ByteRTCVideoSinkPixelFormatI420 = 1,
-    /**
-     * @hidden
-     * @brief BGRA image
-     */
-    ByteRTCVideoSinkPixelFormatBGRA = 2,
-    /**
-     * @hidden
-     * @brief YUV image with NV21 layout
-     */
-    ByteRTCVideoSinkPixelFormatNV12 = 8,
-};
-
-/**
  * @type keytype
  * @brief 视频旋转信息，枚举类型，定义了以 90 度为间隔的四种旋转模式。
  */
@@ -688,9 +689,10 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoStreamScaleMode) {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 视频编码模式
-*/
+ */
 typedef NS_ENUM(NSInteger, ByteRTCVideoCodecMode) {
     /**
      * @brief 自动选择
@@ -771,6 +773,35 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoEncoderPreference) {
     ByteRTCVideoEncoderPreferenceBalance           = 3,
 };
 
+
+/**
+ * @type errorcode
+ * @brief 登录结果  <br>
+ *        调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 登录的结果，会通过 rtcEngine:onLoginResult:errorCode:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onLoginResult:errorCode:elapsed:} 回调通知用户。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCLoginErrorCode) {
+    /**
+     * @brief 调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 方法登录成功。
+     */
+    ByteRTCLoginErrorCodeSuccess = 0,
+    /**
+     * @brief 调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token。
+     */
+    ByteRTCLoginErrorCodeInvalidToken = -1000,
+    /**
+     * @brief 登录错误  <br>
+     *        调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 方法时发生未知错误导致登录失败。需要用户重新登录。
+     */
+    ByteRTCLoginErrorCodeLoginFailed = -1001,
+    /**
+     * @brief 调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 方法时传入的用户 ID 有问题。
+     */
+    ByteRTCLoginErrorCodeInvalidUserId = -1002,
+    /**
+     * @brief 调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 登录时服务器错误。
+     */
+    ByteRTCLoginErrorCodeServerError = -1003,
+};
 /**
  * @type keytype
  * @brief 消息发送结果。
@@ -817,11 +848,40 @@ typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult) {
      */
     ByteRTCUserMessageSendResultEmptyUser = 104,
     /**
+     * @brief 房间外或业务服务器消息发送方没有登录
+     */
+    ByteRTCUserMessageSendResultNotLogin = 105,
+    /**
+     * @brief 发送消息给业务方服务器之前没有设置参数
+     */
+    ByteRTCUserMessageSendResultServerParamsNotSet = 106,
+    /**
      * @brief 失败，未知错误。
      */
     ByteRTCUserMessageSendResultUnknown = 1000,
 };
 
+/**
+ * @type keytype
+ * @brief 用户在线状态
+ */
+typedef NS_ENUM(NSInteger, ByteRTCUserOnlineStatus) {
+    /**
+     * @brief 对端用户离线
+     *        对端用户已经调用 logout{@link #ByteRTCEngineKit#logout}，或者没有调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 进行登录
+     */
+    ByteRTCUserOnlineStatusOffline = 0,
+    /**
+     * @brief 对端用户在线
+     *        对端用户调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 登录，并且连接状态正常
+     */
+    ByteRTCUserOnlineStatusOnline = 1,
+    /**
+     * @brief 无法获取对端用户在线状态
+     *        发生级联错误、对端用户在线状态异常时返回
+     */
+    ByteRTCUserOnlineStatusUnreachable = 2,
+};
 /**
  * @type keytype
  * @brief 广播消息发送结果。
@@ -929,7 +989,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCPublishFallbackOption) {
 
 /*
  * @type keytype
- * @brief 订阅模式选项。业务方在加入房间前，调用 enableAutoSubscribe:videoMode:{@link #ByteRTCEngineKit#enableAutoSubscribe:videoMode:} 接口设置订阅模式。  <br>
+ * @brief 订阅模式选项。
  */
 typedef NS_ENUM(NSUInteger, ByteRTCSubscribeMode) {
     /**
@@ -937,7 +997,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCSubscribeMode) {
      */
     ByteRTCSubscribeModeAuto = 0,
     /**
-     * @brief 手动订阅模式。SDK 不自动订阅房间内的音视频流。你应根据需要调用 subscribeStream:subscribeConfig:{@link #subscribeStream:subscribeConfig:} 方法手动订阅其他用户发布的音视频流。
+     * @brief 手动订阅模式。SDK 不自动订阅房间内的音视频流。你应根据需要调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCEngineKit#subscribeUserStream:streamType:mediaType:videoConfig:} 方法手动订阅其他用户发布的音视频流。
      */
     ByteRTCSubscribeModeManual = 1
 };
@@ -1462,6 +1522,7 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 背景模式设置。
  */
@@ -1485,6 +1546,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCBackgroundMode) {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 分割模型设置。
  */
@@ -1678,7 +1740,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 @property (nonatomic, assign, readonly) BOOL hasAudio;
 /**
  * @brief 视频流的分辨率信息。  <br>
- *         当远端用户调用 setVideoEncoderConfig:{@link #ByteRTCEngineKit#setVideoEncoderConfig:} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
+ *         当远端用户调用 setVideoEncoderConfig:{@link #setVideoEncoderConfig:} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
  *         参看 ByteRTCVideoSolution{@link #ByteRTCVideoSolution}。  <br>
  */
 @property (nonatomic, copy, readonly) NSArray<ByteRTCVideoSolution *> * videoStreamDescriptions;
@@ -1687,7 +1749,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 /**
  * @type keytype
  * @brief 订阅流的参数配置。用户手动订阅一路音视频流所使用的订阅配置参数。  <br>
- *         用户关闭自动订阅功能，使用手动订阅模式时，通过调用 subscribeStream:subscribeConfig:{@link #ByteRTCEngineKit#subscribeStream:subscribeConfig:} 方法订阅音视频流，调用时传入的参数即为此数据类型。  <br>
+ *         用户关闭自动订阅功能，使用手动订阅模式时，通过调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCEngineKit#subscribeUserStream:streamType:mediaType:videoConfig:} 方法订阅音视频流，调用时传入的参数即为此数据类型。  <br>
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
 /**
@@ -1707,7 +1769,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
 @property (nonatomic, assign) BOOL subscribeAudio;
 /**
  * @brief 订阅的视频流分辨率下标。  <br>
- *         用户可以通过调用 setVideoProfiles{@link #ByteRTCEngineKit#setVideoProfiles:} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+ *         用户可以通过调用 setVideoProfiles{@link #setVideoProfiles:} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
  */
 @property (nonatomic, assign) NSInteger videoIndex;
 @end
@@ -1777,6 +1839,29 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoPixelFormat) {
      * @brief CVPixelBuffer
      */
     ByteRTCVideoPixelFormatCVPixelBuffer = 12
+};
+
+/**
+ * @type keytype
+ * @brief 视频帧编码格式
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVideoSinkPixelFormat) {
+    /**
+     * @brief 原始视频帧格式
+     */
+    ByteRTCVideoSinkPixelFormatOriginal = 0,
+    /**
+     * @brief YUV I420 格式
+     */
+    ByteRTCVideoSinkPixelFormatI420 = 1,
+    /**
+     * @brief BGRA 格式
+     */
+    ByteRTCVideoSinkPixelFormatBGRA = 2,
+    /**
+     * @brief YUV NV21 格式
+     */
+    ByteRTCVideoSinkPixelFormatNV12 = 8
 };
 
 /**
@@ -1899,6 +1984,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrame : NSObject
  */
 @property (assign, nonatomic) ByteRTCVideoRotation rotation;
 /**
+ * @hidden
+ * @brief 视频镜像信息
+ */
+@property (assign, nonatomic) int flip;
+/**
  * @brief 视频帧附加的数据
  */
 @property (strong, nonatomic) ByteRTCFrameExtendedData * _Nullable extendedData;
@@ -1958,7 +2048,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEncodedVideoFrame : NSObject
 /**
  * @type keytype
  * @brief 单个视频流在合流中的布局信息。  <br>
- *        开启合流转推功能后，在多路视频流合流时，你可以设置其中一路视频流在合流中的预设布局信息。
+ *        开启转推直播功能后，在多路视频流合流时，你可以设置其中一路视频流在合流中的预设布局信息。
  * @notes  <br>
  *         + 视频流对应区域左上角的实际坐标是通过画面尺寸和归一化比例相乘，并四舍五入取整得到的。假如：Canvas.Width = 1920, Region.LocationX = 0.33，那么该画布左上角的横坐标为 634（1920*0.33=633.6，四舍五入取整）。  <br>
  *         + 视频流对应区域宽度和高度的像素值是通过画面尺寸和归一化比例相乘，四舍五入取整，并向上转换为偶数得到的。假如：Canvas.Width = 1920, Region.WidthProportion = 0.21，那么该画布横向宽度为 404px（1920*0.21=403.2，四舍五入取整后，再向上转换为偶数）。
@@ -2012,7 +2102,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 /**
  * @type keytype
  * @brief 视频流合流整体布局信息。  <br>
- *        开启合流转推功能后，你可以设置参与合流的每路视频流的预设布局信息和合流背景信息等。
+ *        开启转推直播功能后，你可以设置参与合流的每路视频流的预设布局信息和合流背景信息等。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingLayout : NSObject
 /**
@@ -2120,7 +2210,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
 
 /**
  * @type keytype
- * @brief 合流转推配置参数。
+ * @brief 转推直播配置参数。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 
@@ -2130,7 +2220,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 @property (assign, nonatomic) ByteRTCStreamMixingType expectedMixingType;
 /**
  * @brief 视频流合流整体布局信息。  <br>
- *        开启合流转推功能后，你可以设置参与合流的每路视频流的预设布局信息和合流背景信息等。详见 ByteRTCVideoCompositingLayout{@link #ByteRTCVideoCompositingLayout} 数据类型。
+ *        开启转推直播功能后，你可以设置参与合流的每路视频流的预设布局信息和合流背景信息等。详见 ByteRTCVideoCompositingLayout{@link #ByteRTCVideoCompositingLayout} 数据类型。
  */
 @property (strong, nonatomic) ByteRTCVideoCompositingLayout * _Nonnull layout;
 /**
@@ -2162,10 +2252,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCUserInfo : NSObject
 /**
- * @brief 用户 ID，长度在 128 字节以内的非空字符串。支持以下字符集范围:
- *            1. 26 个大写字母 A ~ Z
- *            2. 26 个小写字母 a ~ z
- *            3. 10 个数字 0 ~ 9
+ * @brief 用户 ID，长度在 128 字节以内的非空字符串。支持以下字符集范围:  <br>
+ *            1. 26 个大写字母 A ~ Z  <br>
+ *            2. 26 个小写字母 a ~ z  <br>
+ *            3. 10 个数字 0 ~ 9  <br>
  *            4. 下划线 "_"，at 符 "@"，减 号 "-"
  */
 @property (copy, nonatomic) NSString *_Nonnull userId;
@@ -2175,6 +2265,74 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCUserInfo : NSObject
 @property (copy, nonatomic) NSString *_Nonnull extraInfo;
 @end
 
+/**
+ * @type keytype
+ * @author shenpengliang
+ * @brief 房间参数配置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
+/**
+ * @brief 房间模式，参看 ByteRTCRoomProfile{@link #ByteRTCRoomProfile}，默认为普通音视频通话模式，进房后不可更改。
+ */
+@property(nonatomic) ByteRTCRoomProfile profile;
+/**
+ * @brief 是否自动发布音视频流。 <br>
+ *        若调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+ */ 
+@property (assign, nonatomic) BOOL isAutoPublish;
+/**
+ * @brief 是否自动订阅音频流。  <br>
+ *        进房后，你可以调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCEngineKit#subscribeUserStream:streamType:mediaType:videoConfig:} 修改订阅设置。
+ */  
+@property (assign, nonatomic) BOOL isAutoSubscribeAudio;
+/**
+ * @brief 是否自动订阅主视频流。  <br>
+ *        进房后，你可以调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCEngineKit#subscribeUserStream:streamType:mediaType:videoConfig:} 修改订阅设置。  <br>
+ *        屏幕流始终自动订阅，不受该方法影响。
+ */
+@property (assign, nonatomic) BOOL isAutoSubscribeVideo;
+@end
+
+/**
+ * @type keytype
+ * @author shenpengliang
+ * @brief 多房间参数配置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCMultiRoomConfig : NSObject
+/**
+ * @brief 房间模式，参看 ByteRTCRoomProfile{@link #ByteRTCRoomProfile}，默认为普通音视频通话模式，进房后不可更改。
+ */
+@property(nonatomic) ByteRTCRoomProfile profile;
+/**
+ * @brief 是否自动订阅音频流。  <br>
+ *        进房后，你可以调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCRoom#subscribeUserStream:streamType:mediaType:videoConfig:} 修改订阅设置。
+ */
+@property (assign, nonatomic) BOOL isAutoSubscribeAudio;
+/**
+ * @brief 是否自动订阅主视频流。  <br>
+ *        进房后，你可以调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCRoom#subscribeUserStream:streamType:mediaType:videoConfig:} 修改订阅设置。  <br>
+ *        屏幕流始终自动订阅，不受该方法影响。
+ */
+@property (assign, nonatomic) BOOL isAutoSubscribeVideo;
+@end
+
+/**
+ * @type keytype
+ * @brief 视频订阅配置信息
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoConfig : NSObject
+/**
+ * @brief 订阅的视频流分辨率下标。  <br>
+ *        当远端用户通过调用 setVideoEncoderConfig:{@link #ByteRTCEngineKit#setVideoEncoderConfig:} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+ *        默认值为 0，即订阅第一路流。  <br> 
+ *        如果不想更改之前的设置，可以输入 -1。  <br>
+ */
+@property (assign, nonatomic) NSInteger videoIndex;
+/**
+ * @brief 远端用户优先级，参看 ByteRTCRemoteUserPriority{@link #ByteRTCRemoteUserPriority}，默认值为 0。
+ */
+@property (assign, nonatomic) NSInteger priority;
+@end
 /**
  * @type keytype
  * @brief 房间通话统计数据，统计周期为 2s 。  <br>
@@ -2613,51 +2771,84 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamSwitchEvent : NSObject
 @end
 
 /**
+ * @hidden
+ * @deprecated Please use ByteVideoSinkDelegate
  * @type callback
  * @brief 自定义的视频渲染
  */
+DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate")
 BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkProtocol <NSObject>
 @required
 /**
+ * @hidden
+ * @type callback
  * @brief 初始化渲染器
  * @return  <br>
  *         + YES: 自定义的渲染器初始化完成  <br>
  *         + NO: 自定义的渲染器初始化失败，不继续往下运行  <br>
  * @notes 初始化渲染器的时候会回调这个方法
  */
-- (BOOL)shouldInitialize;
+- (BOOL)shouldInitialize DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");;
 
 /**
+ * @hidden
+ * @type callback
  * @brief 启动渲染器
  * @notes 在开启渲染功能的时候会回调这个方法
  */
-- (void)shouldStart;
+- (void)shouldStart DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");
 
 /**
+ * @hidden
+ * @type callback
  * @brief 停止渲染器
  * @notes 在停止渲染功能的时候会回调这个方法
  */
-- (void)shouldStop;
+- (void)shouldStop DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");
 
 /**
+ * @hidden
+ * @type callback
  * @brief 释放渲染器
  * @notes 渲染器即将被废弃的时候会回调这个方法
  */
-- (void)shouldDispose;
+- (void)shouldDispose DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");
 
 /**
+ * @hidden
+ * @type callback
  * @brief 获取PixelFormat格式
  * @return Buffer 类型，{@link #ByteRTCVideoSinkPixelFormat}
  * @notes 通过该方法的返回值，告知 SDK PixelFormat 的格式
  */
-- (ByteRTCVideoSinkPixelFormat)pixelFormat;
+- (ByteRTCVideoSinkPixelFormat)pixelFormat DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");
 
 /**
+ * @hidden
+ * @type callback
  * @brief 输出视频的 PixelBuffer
  * @param pixelBuffer 视频的 PixelBuffer
  * @param rotation 视频旋转角度，{@link #ByteRTCVideoRotation}
  * @param extendedData 视频帧附加的数据,视频解码后获得的附加数据
  * @notes 通过该方法获取视频的 PixelBuffer
+ */
+- (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
+                 rotation:(ByteRTCVideoRotation)rotation
+             extendedData:(NSData * _Nullable)extendedData DEPRECATED_MSG_ATTRIBUTE("Please use ByteVideoSinkDelegate");
+@end
+
+/**
+ * @type keytype
+ * @brief 自定义视频渲染器
+ */
+BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
+@required
+/**
+ * @type api
+ * @brief 输出视频的 PixelBuffer
+ * @param pixelBuffer 视频的 PixelBuffer
+ * @param rotation 视频旋转角度，参看 ByteRTCVideoRotation{@link #ByteRTCVideoRotation}
+ * @param extendedData 视频解码后获得的附加数据
  */
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
@@ -2718,6 +2909,11 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoFrameObserver <NSObject>
  * @param room 对应流的房间 id
  */
 - (void)onRemoteVideoFrame:(ByteRTCVideoFrame * _Nonnull)frame user:(NSString * _Nullable)uid room:(NSString * _Nullable)room;
+
+/**
+ * @hidden
+ */
+- (void)OnMergeFrame:(ByteRTCVideoFrame * _Nonnull)frame user:(NSString * _Nullable)uid room:(NSString * _Nullable)room;
 
 @end
 
@@ -2889,6 +3085,47 @@ typedef NS_ENUM(NSInteger, ByteRTCMuteState) {
 
 /**
  * @type keytype
+ * @brief 订阅媒体的类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCSubscribeMediaType) {
+    /**
+     * @brief 既不订阅音频，也不订阅视频
+     */
+    ByteRTCSubscribeMediaTypeNone = 0,
+    /**
+     * @brief 只订阅音频，不订阅视频
+     */
+    ByteRTCSubscribeMediaTypeAudioOnly = 1,
+    /**
+     * @brief 只订阅视频，不订阅音频
+     */
+    ByteRTCSubscribeMediaTypeVideoOnly = 2,
+    /**
+     * @brief 同时订阅音频和视频
+     */
+    ByteRTCSubscribeMediaTypeAudioAndVideo = 3,
+};
+
+/**
+ * @type keytype
+ * @brief 暂停/恢复接收远端的媒体流类型。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCPauseResumControlMediaType) {
+    /**
+     * @brief 只控制音频，不影响视频
+     */
+    ByteRTCControlMediaTypeAudio = 0,
+    /**
+     * @brief 只控制视频，不影响音频
+     */
+    ByteRtcControlMediaTypeVideo = 1,
+    /**
+     * @brief 同时控制音频和视频
+     */
+    ByteRtcControlMediaTypeAudioAndVideo = 2,
+};
+/**
+ * @type keytype
  * @brief 流属性
  */
 typedef NS_ENUM(NSInteger, ByteRTCStreamIndex) {
@@ -2907,6 +3144,7 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamIndex) {
 };
 
 /**
+ * @hidden
  * @deprecated
  * @type keytype
  * @brief 视频输入类型
@@ -2919,7 +3157,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaInputType) {
     ByteRTCMediaInputTypeExternal = 0,
     /**
      * @brief 内部 SDK 采集。  <br>
-     *        此设置仅切换至内部采集，你需继续调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 开启内部采集。       
+     *        此设置仅切换至内部采集，你需继续调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 开启内部采集。
      */
     ByteRTCMediaInputTypeInternal = 1
 };
@@ -3115,11 +3353,99 @@ typedef NS_ENUM(NSInteger, ByteRTCCameraID) {
     ByteRTCCameraIDBack = 1,
 };
 
+/**
+ * @type keytype
+ * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务服务相关同学
+ */
+typedef NS_ENUM(NSInteger, ByteRTCASRAuthorizationType) {
+    /**
+     *  @brief 使用 token 不设置加密形式。  <br>
+     */
+    ByteRTCASRAuthorizationTypeToken = 0,
+    /**
+     *  @brief 带有 token 额外使用 signature 加密，此种加密形式需要额外传递 secret token 。  <br>
+     */
+    ByteRTCASRAuthorizationTypeSignature = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 语音识别服务错误码。  <br>
+ *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 startASR:handler:{@link #ByteRTCEngineKit#startASR:handler:} 重启语音识别功能。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCASRErrorCode) {
+    /**
+     * @brief 网络连接中断，服务不可用，内部会进行重连
+     */
+    ByteRTCASRErrorNetworkInterrupted = -1,
+    /**
+     * @brief 用户已经调用过 startASR:handler:{@link #ByteRTCEngineKit#startASR:handler:}。  <br>
+     *        开启语音识别服务后，你需要先调用 stopASR{@link #ByteRTCEngineKit#stopASR} 停止语音识别服务，才能二次调用 startASR:handler:{@link #ByteRTCEngineKit#startASR:handler:} 再次开启服务。
+     */
+    ByteRTCASRErrorAlreadyStarted = -2,
+    /**
+     * @brief 语音识别服务所需 token 为空
+     */
+    ByteRTCASRErrorTokenEmpty = -3,
+    /**
+     * @brief Signature 鉴权模式下 secretKey 为空
+     */
+    ByteRTCErrorSignatureKeyEmpty = -4,
+    /**
+     * @brief 用户 ID 为空
+     */
+    ByteRTCASRErrorUserIdNull = -5,
+    /**
+     * @brief 应用 ID 为空
+     */
+    ByteRTCASRErrorAPPIDNull = -6,
+    /**
+     * @brief 语音识别服务 cluster 为空
+     */
+    ByteRTCASRErrorClusterNull = -7,
+    /**
+     * @brief 语音识别服务连接失败，该版本没有语音识别功能，请联系 RTC 技术支持。
+     */
+    ByteRTCASRErrorOperationDenied = -8
+};
+
+/**
+ * @type keytype
+ * @brief 使用自动语音识别服务所需校验信息
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
+/**
+ *  @brief 应用 ID
+ */
+@property (copy, nonatomic) NSString *_Nonnull appId;
+/**
+ *  @brief 用户 ID
+ */
+@property (copy, nonatomic) NSString *_Nonnull userId;
+/**
+ *  @brief 访问令牌
+ */
+@property (copy, nonatomic) NSString *_Nonnull accessToken;
+/**
+ *  @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#uh8x72)
+ */
+@property (copy, nonatomic) NSString *_Nonnull secretKey;
+/**
+ *  @brief 场景信息，参看[业务集群](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#aI4WCt)
+ */
+@property (copy, nonatomic) NSString *_Nonnull cluster;
+/**
+ *  @brief 鉴权模式，参看 ByteRTCASRAuthorizationType{@link #ByteRTCASRAuthorizationType}
+ */
+@property (assign, nonatomic) ByteRTCASRAuthorizationType authorizationType;
+
+@end
+
 
 #pragma mark - LiveTranscodingDelegate
 /**
  * @type errorcode
- * @brief 合流转推功能错误码。
+ * @brief 转推直播功能错误码。
  */
 typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
     /**
@@ -3154,26 +3480,26 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
 
 /**
  * @type callback
- * @region CDN 推流
- * @brief 合流转推观察者。  <br>
+ * @region 转推直播
+ * @brief 转推直播观察者。  <br>
  */
 @protocol LiveTranscodingDelegate <NSObject>
 /**
  * @type callback
- * @region CDN 推流
+ * @region 转推直播
  * @brief 是否具有推流能力。  <br>
  *       + false：不具备推流能力（默认值）  <br>
  *       + true：具备推流能力
  * @notes  <br>
- *         + 如果需要开启端云一体合流转推功能，你必须确保你的 App 包含 librtmp，具有推流能力。此时，设置该回调为 true。
+ *         + 如果需要开启端云一体转推直播功能，你必须确保你的 App 包含 librtmp，具有推流能力。此时，设置该回调为 true。
  */
  - (BOOL)isSupportClientPushStream;
 /**
  * @type keytype
- * @brief 合流转推状态回调
+ * @brief 转推直播状态回调
  * @param event 合流状态，详见 ByteRTCStreamMixingEvent {@link #ByteRTCStreamMixingEvent}。
  * @param msg 事件参数，包含事件的状态信息
- * @param Code 合流转推错误码，详见枚举类 ByteRtcTranscoderErrorCode {@link #ByteRtcTranscoderErrorCode}
+ * @param Code 转推直播错误码，详见枚举类 ByteRtcTranscoderErrorCode {@link #ByteRtcTranscoderErrorCode}
  * @param mixType 合流类型，详见 ByteRTCStreamMixingType {@link #ByteRTCStreamMixingType}
  */
  - (void)onStreamMixingEvent:(ByteRTCStreamMixingEvent)event
@@ -3184,7 +3510,7 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
 @optional
 /**
  * @type callback
- * @region CDN 推流
+ * @region 转推直播
  * @brief 端云一体合流音频 PCM 回调
  * @param audioFrame PCM 合流音频数据帧，详见 ByteRTCAudioFrame {@link #ByteRTCAudioFrame}
  * @notes  <br>
@@ -3193,7 +3519,7 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
 - (void)onMixingAudioFrame:(ByteRTCAudioFrame *_Nonnull)audioFrame;
 /**
  * @type callback
- * @region CDN 推流
+ * @region 转推直播
  * @brief 端云一体合流视频 YUV 回调
  * @param videoFrame YUV 合流视频数据帧，详见 ByteRTCVideoFrame {@link #ByteRTCVideoFrame}
  * @notes  <br>
@@ -3202,10 +3528,249 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
 - (void)onMixingVideoFrame:(ByteRTCVideoFrame *_Nonnull)videoFrame;
 /**
  * @type callback
- * @region CDN 推流
+ * @region 转推直播
  * @brief 端云一体合流视频 SEI 数据
  * @param dataFrame SEI 数据，详见 ByteRTCFrameExtendedData {@link #ByteRTCFrameExtendedData}
  */
 - (void)onMixingDataFrame:(ByteRTCFrameExtendedData *_Nonnull)dataFrame;
+
+@end
+
+#pragma mark - FileRecording
+/**
+ * @type keytype
+ * @brief 本地录制的状态
+ */
+typedef NS_ENUM(NSInteger, ByteRTCRecordingState) {
+    /**
+     * @brief 录制异常
+     */
+    RecordingStateError = 0,
+    /**
+     * @brief 录制进行中
+     */
+    RecordingStateProcessing = 1,
+    /**
+     * @brief 录制文件保存成功，调用 stopFileRecording:{@link #ByteRTCEngineKit#stopFileRecording:} 结束录制之后才会收到该状态码。
+     */
+    RecordingStateSuccess = 2,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制错误码
+ */
+typedef NS_ENUM(NSInteger, ByteRTCRecordingErrorCode) {
+    /**
+     * @brief 录制正常
+     */
+    RecordingErrorCodeOk = 0,
+    /**
+     * @brief 没有文件写权限
+     */
+    RecordingErrorCodeNoPermission = -1,
+    /**
+     * @brief 当前版本 SDK 不支持本地录制功能，请联系技术支持人员
+     */
+    RecordingErrorCodeNotSupport = -2,
+    /**
+     * @brief 其他异常
+     */
+    RecordingErrorCodeOther = -3,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制文件的存储格式
+ */
+typedef NS_ENUM(NSInteger, ByteRTCRecordingFileType) {
+    /**
+     * @brief aac 格式文件
+     */
+    RecordingFileTypeAAC = 0,
+    /**
+     * @brief mp4 格式文件
+     */
+    RecordingFileTypeMP4 = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制的媒体类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCRecordingType) {
+    /**
+     * @brief 只录制音频
+     */
+    RecordAudioOnly = 0,
+    /**
+     * @brief 只录制视频
+     */
+    RecordVideoOnly = 1,
+    /**
+     * @brief 同时录制音频和视频
+     */
+    RecordVideoAndAudio = 2,
+};
+
+/**
+ * @type keytype
+ * @brief 本地录制进度
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingProgress : NSObject
+/**
+ * @brief 当前文件的累计录制时长，单位：毫秒
+ */
+@property (assign, nonatomic) unsigned long long duration;
+/**
+ * @brief 当前录制文件的大小，单位：byte
+ */
+@property (assign, nonatomic) unsigned long long fileSize;
+@end
+
+/**
+ * @type keytype
+ * @brief 本地录制的详细信息
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingInfo : NSObject
+/**
+ * @brief 录制文件的绝对路径，包含文件名和文件后缀
+ */
+@property (strong, nonatomic) NSString* _Nullable filePath;
+/**
+ * @brief 录制文件的视频编码类型，参看 ByteRTCVideoCodecType{@link #ByteRTCVideoCodecType}
+*/
+@property (assign, nonatomic) ByteRTCVideoCodecType codecType;
+/**
+ * @brief 录制视频的宽，单位：像素。纯音频录制请忽略该字段
+ */
+@property (nonatomic, assign) NSInteger width;
+/**
+ * @brief 录制视频的高，单位：像素。纯音频录制请忽略该字段
+ */
+@property (nonatomic, assign) NSInteger height;
+@end
+
+/**
+ * @type keytype
+ * @brief 本地录制参数配置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingConfig : NSObject
+/**
+ * @brief 录制文件保存的绝对路径。你需要指定一个有读写权限的合法路径。
+ */
+@property (strong, nonatomic) NSString* _Nullable dirPath;
+/**
+ * @brief 录制存储文件格式，参看 ByteRTCRecordingFileType{@link #ByteRTCRecordingFileType}
+ */
+@property (assign, nonatomic) ByteRTCRecordingFileType recordingFileType;
+/**
+ * @brief 录制媒体类型，参看 ByteRTCRecordingType{@link #ByteRTCRecordingType}
+ */
+@property (assign, nonatomic) ByteRTCRecordingType recordingType;
+@end
+
+/**
+ * @type keytype
+ * @brief 混音播放类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioMixingType) {
+    /**
+     * @brief 仅本地播放
+     */
+    ByteRTCAudioMixingTypePlayout = 0,
+    /**
+     * @brief 仅远端播放
+     */
+    ByteRTCAudioMixingTypePublish = 1,
+    /**
+     * @brief 本地和远端同时播放
+     */
+    ByteRTCAudioMixingTypePlayoutAndPublish = 2
+};
+
+/**
+ * @type keytype
+ * @brief 音频混音文件播放状态。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioMixingState) {
+    /**
+     * @brief 混音已加载
+     */
+    ByteRTCAudioMixingStatePreloaded = 0,
+    /**
+     * @brief 混音正在播放
+     */
+    ByteRTCAudioMixingStatePlaying,
+    /**
+     * @brief 混音暂停
+     */
+    ByteRTCAudioMixingStatePaused,
+    /**
+     * @brief 混音停止
+     */
+    ByteRTCAudioMixingStateStopped,
+    /**
+     * @brief 混音播放失败
+     */
+    ByteRTCAudioMixingStateFailed,
+    /**
+     * @brief 混音播放结束
+     */
+    ByteRTCAudioMixingStateFinished,
+};
+
+/**
+ * @type keytype
+ * @brief 音频混音文件播放错误码。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
+    /**
+     * @brief 混音错误码，正常
+     */
+    ByteRTCAudioMixingErrorOk = 0,
+    /**
+     * @brief 预加载失败，找不到混音文件或者文件长度超出 20s
+     */
+    ByteRTCAudioMixingErrorPreloadFailed,
+    /**
+     * @brief 混音开启失败，找不到混音文件或者混音文件打开失败
+     */
+    ByteRTCAudioMixingErrorStartFailed,
+    /**
+     * @brief 混音 ID 异常
+     */
+    ByteRTCAudioMixingErrorIdNotFound,
+    /**
+     * @brief 设置混音文件的播放位置出错
+     */
+    ByteRTCAudioMixingErrorSetPositionFailed,
+    /**
+     * @brief 音量参数不合法，仅支持设置的音量值为[0 400]
+     */
+    ByteRTCAudioMixingErrorInValidVolume,
+    /**
+     * @brief 播放的文件与预加载的文件不一致，请先使用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载文件。
+     */
+    ByteRTCAudioMixingErrorLoadConflict,
+};
+
+/**
+ * @type keytype
+ * @brief 混音配置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
+/**
+ * @brief 混音播放类型，详见 ByteRTCAudioMixingType{@link #ByteRTCAudioMixingType}
+ */
+@property (assign, nonatomic) ByteRTCAudioMixingType type;
+/**
+ * @brief 混音播放次数，
+ * @notes  <br>
+ *       + play_count <= 0: 无限循环  <br>
+ *       + play_count == 1: 播放一次（默认）  <br>
+ *       + play_count > 1: 播放 play_count 次
+ */
+@property (assign, nonatomic) NSInteger playCount;
 
 @end

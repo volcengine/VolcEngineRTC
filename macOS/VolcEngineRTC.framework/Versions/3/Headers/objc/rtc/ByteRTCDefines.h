@@ -558,6 +558,38 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoEncoderPreference) {
 
 /**
  * @type errorcode
+ * @brief 登录结果
+ */
+typedef NS_ENUM(NSInteger, ByteRTCLoginErrorCode) {
+    /**
+     * @brief 登录成功。
+     *        调用 Login{@link #Login} 方法登录成功。
+     */
+    ByteRTCLoginErrorCodeSuccess = 0,
+    /**
+     * @brief Token 无效。
+     *        调用 Login{@link #Login} 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token。
+     */
+    ByteRTCLoginErrorCodeInvalidToken = -1000,
+    /**
+     * @brief 加入房间错误。
+     *        调用 Login{@link #Login} 方法时发生未知错误导致登录失败。需要用户重新登录。
+     */
+    ByteRTCLoginErrorCodeLoginFailed = -1001,
+    /**
+     * @brief UserId非法。
+     *        调用 Login{@link #Login} 方法时传入的UserId有问题。
+     */
+    ByteRTCLoginErrorCodeInvalidUserId = -1002,
+    /**
+     * @brief 服务端错误。
+     *        调用 Login{@link #Login} 登录时服务器错误。
+     */
+    ByteRTCLoginErrorCodeServerError = -1003,
+};
+
+/**
+ * @type errorcode
  * @brief 消息发送结果
  */
 typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult) {
@@ -602,10 +634,41 @@ typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult) {
      */
     ByteRTCUserMessageSendResultEmptyUser = 104,
     /**
+     * @brief 房间外或业务服务器消息发送方没有登录
+     */
+    ByteRTCUserMessageSendResultNotLogin = 105,
+    /**
+     * @brief 发送消息给业务方服务器之前没有设置参数
+     */
+    ByteRTCUserMessageSendResultServerParamsNotSet = 106,
+    /**
      * @brief 未知错误
     */
     ByteRTCUserMessageSendResultUnknown = 1000,
 };
+
+/**
+ * @type keytype
+ * @brief 用户在线状态
+ */
+typedef NS_ENUM(NSInteger, ByteRTCUserOnlineStatus) {
+    /**
+     * @brief 对端用户离线
+     *        对端用户已经调用Logout，或者没有调用Login进行登录
+     */
+    ByteRTCUserOnlineStatusOffline = 0,
+    /**
+     * @brief 对端用户在线
+     *        对端用户调用Login登录，并且连接状态正常
+     */
+    ByteRTCUserOnlineStatusOnline = 1,
+    /**
+     * @brief 无法获取对端用户在线状态
+     *        发生级联错误、对端用户在线状态异常时返回
+     */
+    ByteRTCUserOnlineStatusUnreachable = 2,
+};
+
 
 /**
  * @type keytype
@@ -696,6 +759,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCSubscribeFallbackOption) {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 背景模式
  *      开启背景替换功能时生效，详见 replaceBackground:withDivideModel:{@link #replaceBackground:withDivideModel:}。
@@ -720,6 +784,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCBackgroundMode) {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 分割模型
  *      开启背景替换功能时生效，详见 replaceBackground:withDivideModel:{@link #replaceBackground:withDivideModel:}。
@@ -1057,7 +1122,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
 /**
  * @hidden
  * @type keytype
- * @brief 合流转推参数
+ * @brief 转推直播参数
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 /**
@@ -1077,7 +1142,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
  */
 @property (strong, nonatomic) NSMutableDictionary *  _Nullable advancedConfig;
 /**
- * @brief 合流转推地址
+ * @brief 转推直播地址
  */
 @property (copy, nonatomic) NSString * _Nullable url;
 /**
@@ -2360,13 +2425,13 @@ typedef NS_ENUM(NSInteger, ByteRTCRemoteAudioState) {
     ByteRTCRemoteAudioStateDecoding = 2,
 
     /**
-     * @brief 远端音频流卡顿。
+     * @brief 远端视频流卡顿。
      *        网络阻塞、丢包率大于40%时回调该状态，对应错误码 ByteRTCRemoteAudioReasonNetworkCongestion{@link #ByteRTCRemoteAudioReasonNetworkCongestion}
      */
     ByteRTCRemoteAudioStateFrozen = 3,
 
     /**
-     * @brief 远端音频流播放失败
+     * @brief 远端视频流播放失败
      * @notes 该错误码暂未使用
      */
     ByteRTCRemoteAudioStateFailed = 4,

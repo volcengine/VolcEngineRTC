@@ -190,7 +190,11 @@
     ByteRTCUserInfo *userInfo = [[ByteRTCUserInfo alloc] init];
     userInfo.userId = self.userID;
     /// 加入房间
-    [self.rtcKit joinRoomByKey:TOKEN roomId:self.roomID roomProfile:ByteRTCRoomProfileCommunication userInfo:userInfo];
+    ByteRTCRoomConfig *roomConfig = [[ByteRTCRoomConfig alloc] init];
+    roomConfig.isAutoPublish = true;
+    roomConfig.isAutoSubscribeAudio = true;
+    roomConfig.isAutoSubscribeVideo = true;
+    [self.rtcKit joinRoomByKey:TOKEN roomId:self.roomID userInfo:userInfo rtcRoomConfig:roomConfig];
 }
 
 - (void)setLocalRenderView{

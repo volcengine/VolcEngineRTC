@@ -416,6 +416,11 @@ typedef struct VideoFrameBuilder {
      */
     VideoRotation rotation = kVideoRotation0;
     /**
+     * @hidden
+     * @brief 镜像参数
+     */
+    bool flip = false;
+    /**
      * @brief 硬件加速缓冲区指针
      */
     void* hwaccel_buffer = nullptr;
@@ -434,7 +439,7 @@ typedef struct VideoFrameBuilder {
 } VideoFrameBuilder;
 
 /**
- * @type api
+ * @type keytype
  * @brief 设置视频帧
  */
 class IVideoFrame {
@@ -463,6 +468,12 @@ public:
      * @brief 获取视频帧旋转角度
      */
     virtual int rotation() const = 0;
+    /**
+     * @hidden
+     * @brief 获取镜像信息
+     * @return 是否需要镜像
+     */
+    virtual bool flip() const = 0;
     /**
      * @brief 获取视频帧颜色空间
      */

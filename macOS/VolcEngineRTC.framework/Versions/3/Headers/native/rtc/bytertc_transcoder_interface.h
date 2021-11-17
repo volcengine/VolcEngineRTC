@@ -13,9 +13,8 @@ namespace bytertc {
 
 /**
  * @type callback
- * @region 合流转推
+ * @region 转推直播
  * @brief 推流 Observer
- * @author wanghaoxu
  */
 class ITranscoderObserver {
 public:
@@ -27,9 +26,8 @@ public:
     }
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 通知 Transcoding 关键事件
-     * @author wanghaoxu
      * @param [in] event 事件类型
      * @param [in] event_data 事件参数
      * @param [in] error 错误类型
@@ -40,27 +38,24 @@ public:
 
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 合流视频回调，运行在视频回调线程
-     * @author wanghaoxu
      * @param videoFrame 视频帧
      */
     virtual void OnStreamMixingVideoFrame(IVideoFrame* video_frame) = 0;
 
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 合流音频回调，运行在音频回调线程
-     * @author wanghaoxu
      * @param audioFrame 音频帧
      */
     virtual void OnStreamMixingAudioFrame(IAudioFrame* audio_frame) = 0;
 
     /**
      * @type callback
-     * @region 合流转推
+     * @region 转推直播
      * @brief 视频SEI帧回调，运行在视频回调线程
-     * @author wanghaoxu
      * @param dataFrame SEI 数据
      */
     virtual void OnStreamMixingDataFrame(IDataFrame* data_frame) = 0;

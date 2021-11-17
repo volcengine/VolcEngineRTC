@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ss.bytertc.engine.RTCEngine;
+import com.ss.bytertc.engine.RTCRoomConfig;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.VideoStreamDescription;
@@ -203,8 +204,10 @@ public class RTCRoomActivity extends AppCompatActivity {
         // 开启本地音频采集
         mInstance.startAudioCapture();
         // 加入房间
-        int joinRoom_res = mInstance.joinRoom(Constants.TOKEN, roomId, UserInfo.create(userId, ""),
-                RTCEngine.ChannelProfile.CHANNEL_PROFILE_COMMUNICATION);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(RTCEngine.ChannelProfile.CHANNEL_PROFILE_COMMUNICATION,
+                true, true, true);
+        int joinRoom_res = mInstance.joinRoom(Constants.TOKEN, roomId,
+                UserInfo.create(userId, ""), roomConfig);
         Log.i("TAG", "initEngineAndJoinRoom: " + joinRoom_res);
     }
 

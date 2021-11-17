@@ -145,7 +145,7 @@ color: #333333;
      <property name="styleSheet">
       <string notr="true">QPushButton
 {
-	background: #C8C8C8;
+	background: #007AFF;
 	border-radius: 4px;
 	color:#FFFFFF;
 	font-family: PingFang SC;

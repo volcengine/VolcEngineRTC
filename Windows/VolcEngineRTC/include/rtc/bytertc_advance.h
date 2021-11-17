@@ -55,7 +55,6 @@ attribute_deprecated
  * @deprecated
  * @type api
  * @region 引擎管理
- * @author hanchenchen.c
  * @brief 设置 SDK 当前使用的环境。
  * @param [in] env SDK 使用的环境参数，详见：Env{@link #Env} 。
  * @return
@@ -90,7 +89,6 @@ attribute_deprecated
  * @deprecated
  * @type api
  * @region 频道管理
- * @author chenweiming.push
  * @brief 私有接口
  * @param [in] parameters JSON字符串
  */
@@ -100,14 +98,48 @@ BYTERTC_API int SetParameters(const char* parameters);
 /**
  * @type api
  * @region 视频管理
- * @brief 用于给编码器设置opengl context
- * @param [in] hardware_encoder
- *      java的Opengl Context对象
+ * @brief 用于给编码器设置共享的EGLContext，该接口需要传入一个 android.opengl.EGLContext 类型的EGLContext
+ * 如果只有C++的EGLContext，则需要在绑定了EGLContext的线程环境下执行 SetHardWareEncodeContext() 方法设置。
+ * 设置后，RTC的编码器即可和当前的EGLContext共享资源。
+ * 如果Android使用纯C++接口，则该方法必须在引擎创建前设置，用于初始化EGLContext，如果没有共享的EGLContext，参数传递nullptr即可
+ * 引擎销毁后，应该调用 ClearHardWareEncodeContext() 来进行资源释放
+ * @param [in] j_egl_context
+ *      传入Java的 android.opengl.EGLContext 类型的EGLContext
  * @return
  *      true: 设置成功
  *      false：设置失败
  */
-BYTERTC_API bool SetHardWareEncodeContext(jobject j_hardware_encoder);
+BYTERTC_API bool SetHardWareEncodeContext(jobject j_egl_context);
+
+/**
+ * @type api
+ * @region 视频管理
+ * @brief 用于给编码器设置共享的EGLContext，该接口需要在绑定了EGLContext的接口下执行方法设置。
+ * 设置后，RTC的编码器即可和当前的EGLContext共享资源。
+ * 如果Android使用纯C++接口，则该方法必须在引擎创建前设置，如果没有绑定了EGLContext的线程环境，可以使用参数为jobject的接口替代
+ * 引擎销毁后，应该调用 ClearHardWareEncodeContext() 来进行资源释放
+ * @return
+ *      true: 设置成功
+ *      false：设置失败
+ */
+BYTERTC_API bool SetHardWareEncodeContext();
+
+/**
+ * @type api
+ * @region 视频管理
+ * @brief 用于清除共享的EGLContext，在引擎销毁后，如果确定之后不会再使用 则应该调用本接口在进行EGLContext的资源释放
+ */
+BYTERTC_API void ClearHardWareEncodeContext();
+
+/**
+ * @type api
+ * @region 引擎管理
+ * @brief 用于设置Android的ApplicationContext给Engine使用，
+ * 如果Android使用纯C++接口，则该方法必须在引擎创建前设置
+ * @param [in] j_egl_context
+ *      传入Java的 android.content.Context 类型的EGLContext
+ */
+BYTERTC_API void SetApplicationContext(jobject j_application_context);
 #endif
 
 /**
@@ -337,7 +369,7 @@ enum VideoPictureType {
 /**
  * @hidden
  */
-BYTERTC_API IAudioFrame* CreateAudioFrame();
+BYTERTC_API IAudioFrame* BuildAudioFrame(const AudioFrameBuilder& builder);
 
 /**
  * @hidden
@@ -564,7 +596,6 @@ BYTERTC_API IEncodedVideoFrame* CreateEncodedVideoFrame();
  * @hidden
  * @type callback
  * @region 音频数据回调
- * @author wangjunzheng
  * @brief 本地音频帧监测器
  */
 class ILocalEncodedAudioFrameObserver  {
@@ -580,7 +611,6 @@ public:
      * @hidden
      * @type callback
      * @region 音频数据回调
-     * @author wangjunzheng
      * @brief 调用 RegisterLocalEncodedAudioFrameObserver{@link #RegisterLocalEncodedAudioFrameObserver} 后，SDK 收到本地音频帧信息时，回调该事件
      * @param [in] type 本地音频帧类型，参看 StreamIndex{@link #StreamIndex}
      * @param [in] audio_stream 本地音频帧信息，参看 IEncodedAudioFrame{@link #IEncodedAudioFrame}
@@ -592,7 +622,6 @@ public:
  * @hidden
  * @type callback
  * @region 音频数据回调
- * @author wangjunzheng
  * @brief 远端音频帧监测器
  */
 class IRemoteEncodedAudioFrameObserver  {
@@ -608,7 +637,6 @@ public:
      * @hidden
      * @type callback
      * @region 音频数据回调
-     * @author wangjunzheng
      * @brief 调用 RegisterRemoteEncodedAudioFrameObserver{@link #RegisterRemoteEncodedAudioFrameObserver} 后，SDK 收到远端音频帧信息时，回调该事件
      * @param [in] stream_id 收到的远端音频流的 ID
      * @param [in] audio_stream 远端音频帧信息，参看 IEncodedAudioFrame{@link #IEncodedAudioFrame}

@@ -39,7 +39,6 @@ BYTERTC_API void SetDefaultEnableKcpGetAccess();
 BYTERTC_API void SetDefaultEnableKcpDataChannel();
 
 struct VideoStreamDescription {
-public:
     unsigned int width;
     unsigned int height;
     unsigned int frame_rate;
@@ -59,6 +58,14 @@ enum class NetworkFamily {
     kNetworkFamilyIPv4 = 1,
     kNetworkFamilyIPv6 = 2,
     kNetworkFamilyBoth = 3,
+};
+
+enum StreamFlag {
+    kStreamFlagNone = 0,
+    kStreamFlagNormal = 1 << 0,
+    kStreamFlagDocShare = 1 << 1,
+    kStreamFlagMCU = 1 << 2,
+    kStreamFlagMeetTogether = 1 << 3
 };
 
 class IEngineInternalEventHandler {
