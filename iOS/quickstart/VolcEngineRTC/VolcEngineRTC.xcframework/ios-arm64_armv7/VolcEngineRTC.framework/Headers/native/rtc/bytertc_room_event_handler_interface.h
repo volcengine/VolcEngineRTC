@@ -429,10 +429,10 @@ public:
      * @type callback
      * @region 实时消息通信
      * @brief 当调用 SendRoomMessage{@link #IRtcRoom#SendRoomMessage} 函数发送消息后，回调此条消息的发送结果（反馈）。
-     * @param [in] msgid  <br> 
+     * @param [in] msgid  <br>
      *        本条消息的 ID
-     * @param [in] error  <br> 
-     *        消息发送结果  <br> 
+     * @param [in] error  <br>
+     *        消息发送结果  <br>
      *        详见 RoomMessageSendResult{@link #RoomMessageSendResult}
      */
     virtual void OnRoomMessageSendResult(int64_t msgid, int error) {
@@ -443,9 +443,10 @@ public:
     /**
      * @type callback
      * @region 视频管理
-     * @brief 第一帧本地采集的视频/屏幕共享画面在本地视图渲染完成时，收到此回调。
+     * @brief RTC SDK 在本地完成第一帧视频帧或屏幕视频帧采集时，收到此回调。
      * @param [in] index 流属性。参看 StreamIndex{@link #StreamIndex}。
      * @param [in] info 视频信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
+     * @notes 对于采集到的本地视频帧，你可以调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetLocalVideoSink{@link #SetLocalVideoSink} 在本地渲染。
      */
     virtual void OnFirstLocalVideoFrameCaptured(StreamIndex index, VideoFrameInfo info) {
         (void)index;

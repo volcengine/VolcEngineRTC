@@ -60,17 +60,17 @@
  * @region 房间管理
  * @author shenpengliang
  * @brief 加入房间时回调该事件
- * @param [in] engine
+ * @param engine
  *        ByteRTCEngineKit 对象
- * @param [in] roomId
+ * @param roomId
  *        加入的房间名
- * @param [in] uid
+ * @param uid
  *        用户加入房间的用户标识
- * @param [in] errorCode
+ * @param errorCode
  *        加入房间成功失败的状态，0 表示成功 [-1000,-2000) 表示失败需要退出房间重进 [-2000,-3000) 表示失败，但是内部会进行重试
- * @param [in] joinType
+ * @param joinType
  *        0 表示用户手动调用加入房间，1表示断网内部进行重连
- * @param [in] elapsed
+ * @param elapsed
  *        从调用joinRoom开始到加入房间成功所经历的时间
  */
 
@@ -242,12 +242,12 @@
  * @author panjian.fishing
  * @brief 当检测到设备性能不足时，回调性能告警。可通过调整 effect 等级等，降低性能消耗。
  * @param engine 当前RTCEngine 实例
- * @param [in] mode 告警产生的模式。kPerformanceAlarmModeNormal 表示正常模式下，性能原因产生的降级或者恢复，
+ * @param mode 告警产生的模式。kPerformanceAlarmModeNormal 表示正常模式下，性能原因产生的降级或者恢复，
  *         kPerformanceAlarmModeSimulcast 表示大小流模式，因为性能或者网络原因降级或者恢复，详见 ByteRTCPerformanceAlarmMode{@link ByteRTCPerformanceAlarmMode}
- * @param [in] roomId
+ * @param roomId
  * 告警影响的房间，为空字符串时表示影响所有房间(ByteRTCPerformanceAlarmModeNormal)，不为空时，表示影响的具体房间(ByteRTCPerformanceAlarmModeSimulcast)
- * @param [in] reason 告警原因。当前普通模式只包含性能原因，大小流模式包含性能以及网络原因，详见 ByteRTCPerformanceAlarmReason{@link ByteRTCPerformanceAlarmReason}
- * @param [in] data 性能回退相关数据，详见 ByteRTCSourceWantedData{@link #ByteRTCSourceWantedData}。
+ * @param reason 告警原因。当前普通模式只包含性能原因，大小流模式包含性能以及网络原因，详见 ByteRTCPerformanceAlarmReason{@link ByteRTCPerformanceAlarmReason}
+ * @param data 性能回退相关数据，详见 ByteRTCSourceWantedData{@link #ByteRTCSourceWantedData}。
  *
  * @param level 告警等级。目前可能无法区分告警的等级。
  *         初期 level 值可以只包含 0 和 1，1 为性能告警，0 则为解除告警。
@@ -392,7 +392,7 @@
  * @author wangjunzheng
  * @brief 当收到本地第一帧音频的时候上报该事件
  * @param engine ByteRTCEngineKit 对象
- * @param streamIndex 流类型索引, 详见 StreamIndex{@link #StreamIndex}
+ * @param streamIndex 流类型索引, 详见 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onFirstLocalAudioFrame:(ByteRTCStreamIndex) streamIndex;
 
@@ -1185,11 +1185,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 屏幕共享
  * @author liyi.000
  * @brief 该方法共享一个窗口或该窗口的部分区域。用户需要在该方法中指定想要共享的窗口 id 。
- * @param [in] windowId
+ * @param windowId
  *        指定待共享的窗口 id
- * @param [in] regionRect
+ * @param regionRect
  *        指定共享区域相对于整个窗口的位置，当值都为0时共享整个窗口
- * @param [in] captureParameters
+ * @param captureParameters
  *        屏幕共享的编码参数配置，详见： ByteRTCScreenCaptureParameters{@link #ByteRTCScreenCaptureParameters}
  * @return  <br>
  *        + 0: 成功；  <br>
@@ -1205,11 +1205,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 屏幕共享
  * @author liyi.000
  * @brief 通过指定区域共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
- * @param [in] screenRect
+ * @param screenRect
  *        指定待共享的屏幕相对于虚拟屏的位置，虚拟屏指所有屏幕组成的图像区域
- * @param [in] regionRect
+ * @param regionRect
  *        指定待共享区域相对于screen_rect的位置
- * @param [in] captureParameters
+ * @param captureParameters
  *        屏幕共享的编码参数配置，详见： ByteRTCScreenCaptureParameters{@link #ByteRTCScreenCaptureParameters}
  * @return  <br>
  *        + 0: 成功；  <br>
@@ -1224,11 +1224,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 屏幕共享
  * @author liyi.000
  * @brief 通过屏幕 id 共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕 id 。
- * @param [in] displayId
+ * @param displayId
  *        指定待共享的屏幕 id 。
- * @param [in] regionRect
+ * @param regionRect
  *        指定待共享区域相对于整个屏幕的位置
- * @param [in] captureParameters
+ * @param captureParameters
  *        屏幕共享的编码参数配置，详见： ByteRTCScreenCaptureParameters{@link #ByteRTCScreenCaptureParameters}
  * @return  <br>
  *        + 0: 成功；  <br>
@@ -1244,7 +1244,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 屏幕共享
  * @author liyi.000
  * @brief 更新屏幕共享区域。
- * @param  [in] regionRect  <br>
+ * @param  regionRect  <br>
  *       + 当共享屏幕时，指定待共享区域相对于虚拟屏幕的位置
  *       + 当共享窗口时，指定待共享区域相对于整个窗口的位置
  * @return  <br>
@@ -1258,7 +1258,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 屏幕共享
  * @author liyi.000
  * @brief 更新屏幕共享的编码参数配置。
- * @param [in] captureParameters
+ * @param captureParameters
  *        屏幕共享的编码参数配置，详见： ByteRTCScreenCaptureParameters{@link #ByteRTCScreenCaptureParameters}
  * @return  <br>
  *        + 0: 成功；  <br>
@@ -1335,8 +1335,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 房间管理
  * @author shenpengliang
  * @brief 订阅指定的房间内远端音视频流。
- * @param [in] userId 指定订阅的远端音视频流的发布用户的用户ID
- * @param [in] info
+ * @param userId 指定订阅的远端音视频流的发布用户的用户ID
+ * @param info
  *         选择订阅配置，详见类 ByteRTCSubscribeConfig{@link #ByteRTCSubscribeConfig}
  * @notes
  *         1.用户调用  joinRoomByToken: roomId: userInfo:roomProfile:{@link #j joinRoomByToken: roomId: userInfo:roomProfile:}
@@ -1753,7 +1753,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 房间管理
  * @author shenpengliang
  * @brief 创建并获取一个 ByteRTCRoom{@link #ByteRTCRoom} 对象
- * @param [in] roomId
+ * @param roomId
  *         标识通话房间的房间 ID，最大长度为128字节的非空字符串。支持的字符集范围为:
  *             1. 26个大写字母 A ~ Z
  *             2. 26个小写字母 a ~ z
@@ -1940,7 +1940,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 引擎管理
  * @author chenweiming.push
  * @brief 设置运行时的参数
- * @param [in] parameters 保留参数
+ * @param parameters 保留参数
  * @notes
  */
 - (void)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
@@ -2003,6 +2003,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *         -3: 字段缺失  <br>
  *         -4: grade不合法  <br>
  */
-+ (int)feedbackGrade:(NSInteger)grade type:(NSInteger)type desc:(NSString* _Nullable)desc;
+- (int)feedbackGrade:(NSInteger)grade type:(NSInteger)type desc:(NSString* _Nullable)desc;
 
 @end

@@ -212,7 +212,7 @@ public:
      *       + <0: 设置失败
      * @notes
      *      + 调用该方法前，须通过 EnableAudioMixingFrame{@link #EnableAudioMixingFrame} 启动外部音频流混音。  <br>
-     *      + 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 200 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。
+     *      + 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 100 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。
      */  
     virtual int PushAudioMixingFrame(IAudioFrame* audio_frame) = 0;
 

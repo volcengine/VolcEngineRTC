@@ -498,6 +498,16 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeMediaDeviceOperationDennied = -5008,
     /**
+     * @brief 不支持在 publishScreen{@link #publishScreen} 之后，通过 setScreenAudioSourceType:{@link #setScreenAudioSourceType:} 设置屏幕音频采集类型
+     */
+    ByteRTCWarningSetScreenAudioSourceTypeFailed = -5009,
+
+    /**
+     * @brief 不支持在 publishScreen{@link #publishScreen} 之后，通过 setScreenAudioStreamIndex:{@link #setScreenAudioStreamIndex:} 设置屏幕音频混流类型
+     */
+    ByteRTCWarningSetScreenAudioStreamIndexFailed = -5010,
+
+    /**
      * @brief 指定的内部渲染画布句柄无效。  <br>
      *        当你调用 setLocalVideoCanvas:withCanvas:{@link #ByteRTCEngineKit#setLocalVideoCanvas:withCanvas:} 或 setRemoteVideoCanvas:withIndex:withCanvas:{@link #ByteRTCEngineKit#setRemoteVideoCanvas:withIndex:withCanvas:} 时指定了无效的画布句柄，触发此回调。
      */
@@ -1488,37 +1498,29 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
      */
     ByteRTCProblemFeedbackOptionVideoLagging = (1 << 5),
     /**
-     * @brief 无法连接
-     */
-    ByteRTCProblemFeedbackOptionConnectionFailed = (1 << 6),
-    /**
-     * @brief 音频延迟
-     */
-    ByteRTCProblemFeedbackOptionAudioDelay = (1 << 7),
-    /**
-     * @brief 视频延迟
-     */
-    ByteRTCProblemFeedbackOptionVideoDelay = (1 << 8),
-    /**
      * @brief 连接断开
      */
-    ByteRTCProblemFeedbackOptionDisconnected = (1 << 9),
+    ByteRTCProblemFeedbackOptionDisconnected = (1 << 6),
     /**
      * @brief 无声音
      */
-    ByteRTCProblemFeedbackOptionNoAudio = (1 << 10),
+    ByteRTCProblemFeedbackOptionNoAudio = (1 << 7),
     /**
      * @brief 无画面
      */
-    ByteRTCProblemFeedbackOptionNoVideo = (1 << 11),
+    ByteRTCProblemFeedbackOptionNoVideo = (1 << 8),
     /**
      * @brief 声音过大或过小
      */
-    ByteRTCProblemFeedbackOptionAudioStrength = (1 << 12),
+    ByteRTCProblemFeedbackOptionAudioStrength = (1 << 9),
     /**
      * @brief 回声噪音
      */
-    ByteRTCProblemFeedbackOptionEcho = (1 << 13),
+    ByteRTCProblemFeedbackOptionEcho = (1 << 10),
+    /**
+     * @brief 耳返延迟大
+     */
+    ByteRTCFeedBackProblemTypeEarBackDelay = (1 << 11),
 };
 
 /**
@@ -1789,7 +1791,6 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoFrameType) {
      */
     ByteRTCVideoFrameTypePixelBuffer,
 };
-
 /**
  * @type keytype
  * @brief 视频帧格式
@@ -2059,6 +2060,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  */
 @property (copy, nonatomic) NSString * _Nonnull uid;
 /**
+ * @brief 视频流发布用户的房间 ID 。
+ */
+@property (copy, nonatomic) NSString * _Nonnull roomId;
+/**
  * @brief 视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。
  */
 @property (assign, nonatomic) CGFloat x;
@@ -2082,6 +2087,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  *  @brief 是否为本地用户
  */
  @property (assign, nonatomic) BOOL localUser;
+/**
+ *  @brief 是否为屏幕流，默认为NO
+ */
+ @property (assign, nonatomic) BOOL screenStream;
 /**
  * @brief 透明度。范围为[0 - 255]。
  */
@@ -2241,6 +2250,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
  */
 @property (copy, nonatomic) NSString * _Nullable url;
 /**
+ * @brief 推流 房间ID。
+ */
+@property (copy, nonatomic) NSString * _Nullable roomId;
+/**
+ * @brief 推流 用户ID。
+ */
+@property (copy, nonatomic) NSString * _Nullable userId;
+/**
  * @brief 获取默认合流参数。
  */
 + (instancetype _Nonnull)defaultTranscoding;
@@ -2278,12 +2295,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
 /**
  * @brief 是否自动发布音视频流。 <br>
  *        若调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
- */ 
+ */
 @property (assign, nonatomic) BOOL isAutoPublish;
 /**
  * @brief 是否自动订阅音频流。  <br>
  *        进房后，你可以调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCEngineKit#subscribeUserStream:streamType:mediaType:videoConfig:} 修改订阅设置。
- */  
+ */
 @property (assign, nonatomic) BOOL isAutoSubscribeAudio;
 /**
  * @brief 是否自动订阅主视频流。  <br>
@@ -2324,7 +2341,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoConfig : NSObject
 /**
  * @brief 订阅的视频流分辨率下标。  <br>
  *        当远端用户通过调用 setVideoEncoderConfig:{@link #ByteRTCEngineKit#setVideoEncoderConfig:} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
- *        默认值为 0，即订阅第一路流。  <br> 
+ *        默认值为 0，即订阅第一路流。  <br>
  *        如果不想更改之前的设置，可以输入 -1。  <br>
  */
 @property (assign, nonatomic) NSInteger videoIndex;
@@ -2821,7 +2838,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkProtocol <NSObject>
  * @return Buffer 类型，{@link #ByteRTCVideoSinkPixelFormat}
  * @notes 通过该方法的返回值，告知 SDK PixelFormat 的格式
  */
-- (ByteRTCVideoSinkPixelFormat)pixelFormat DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");
+- (ByteRTCVideoPixelFormat)pixelFormat DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCVideoSinkDelegate");
 
 /**
  * @hidden
@@ -2835,6 +2852,11 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkProtocol <NSObject>
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
              extendedData:(NSData * _Nullable)extendedData DEPRECATED_MSG_ATTRIBUTE("Please use ByteVideoSinkDelegate");
+
+/**
+ * @hidden
+ */
+- (int)getRenderElapse;
 @end
 
 /**
@@ -2853,6 +2875,10 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
              extendedData:(NSData * _Nullable)extendedData;
+/**
+ * @hidden
+ */
+- (int)getRenderElapse;
 @end
 
 /**
@@ -2914,6 +2940,39 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoFrameObserver <NSObject>
  * @hidden
  */
 - (void)OnMergeFrame:(ByteRTCVideoFrame * _Nonnull)frame user:(NSString * _Nullable)uid room:(NSString * _Nullable)room;
+
+@end
+
+
+/**
+ * @type keytype
+ * @brief 视频处理配置参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVideoPreprocessorConfig : NSObject
+/**
+ * @brief 视频帧的像素格式，参看 ByteRTCVideoPixelFormat{@link #ByteRTCVideoPixelFormat}。
+ */
+@property (nonatomic, assign) ByteRTCVideoPixelFormat required_pixel_format;
+
+@end
+
+
+/**
+  * @type callback
+  * @region 视频管理
+  */
+BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoProcessorDelegate <NSObject>
+
+/**
+ * @type api
+ * @region 视频管理
+ * @author zhushufan.ref
+ * @brief 获取 RTC SDK 采集得到的视频帧，根据 registerLocalVideoProcessor:withConfig:{@link #ByteRTCEngineKit#registerLocalVideoProcessor:withConfig:} 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。
+ * @param src_frame RTC SDK 采集得到的视频帧，参考: ByteRTCVideoFrame{@link #ByteRTCVideoFrame}
+ * @return 经过视频前处理后的视频帧，返回给 RTC SDK 供编码和传输，参考: ByteRTCVideoFrame{@link #ByteRTCVideoFrame}
+ * @notes 如果需要取消视频前处理，可以将视频前处理器设置为 nullptr。
+ */
+- (ByteRTCVideoFrame* _Nullable) processVideoFrame:(ByteRTCVideoFrame* _Nonnull)src_frame;
 
 @end
 
@@ -3130,15 +3189,13 @@ typedef NS_ENUM(NSInteger, ByteRTCPauseResumControlMediaType) {
  */
 typedef NS_ENUM(NSInteger, ByteRTCStreamIndex) {
     /**
-     * @brief 主流。<br>
-     *        包括：<br>
+     * @brief 主流。包括：<br>
      *        + 通过默认摄像头/麦克风采集到的视频/音频; <br>
      *        + 通过自定义设备采集到的视频/音频。
      */
     ByteRTCStreamIndexMain = 0,
     /**
-     * @brief 屏幕流。 <br>
-     *        屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
+     * @brief 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
      */
     ByteRTCStreamIndexScreen = 1
 };
@@ -3757,6 +3814,21 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
 
 /**
  * @type keytype
+ * @brief 音频输入源类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioSourceType) {
+    /**
+     * @brief 自定义采集音频源
+     */
+    ByteRTCAudioSourceTypeExternal = 0,
+    /**
+     * @brief RTC SDK 内部采集音频源
+     */
+    ByteRTCAudioSourceTypeInternal,
+};
+
+/**
+ * @type keytype
  * @brief 混音配置
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
@@ -3765,7 +3837,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
  */
 @property (assign, nonatomic) ByteRTCAudioMixingType type;
 /**
- * @brief 混音播放次数，
+ * @brief 混音播放次数
  * @notes  <br>
  *       + play_count <= 0: 无限循环  <br>
  *       + play_count == 1: 播放一次（默认）  <br>

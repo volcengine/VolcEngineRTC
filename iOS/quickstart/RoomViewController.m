@@ -98,12 +98,14 @@
     [self.headerView addSubview:self.switchCameraBtn];
     [self.switchCameraBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(22);
+        make.size.mas_equalTo(26);
         make.centerY.equalTo(self.headerView);
     }];
     
     [self.headerView addSubview:self.roomIdLabel];
     [self.roomIdLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self.headerView);
+        make.left.greaterThanOrEqualTo(self.switchCameraBtn.mas_right).mas_offset(22);
     }];
     self.roomIdLabel.text = [NSString stringWithFormat:@"RoomID: %@",self.roomID];
     

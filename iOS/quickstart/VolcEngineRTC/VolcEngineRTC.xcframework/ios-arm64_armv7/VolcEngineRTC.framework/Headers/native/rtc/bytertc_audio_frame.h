@@ -34,22 +34,22 @@ typedef struct AudioFrameBuilder {
      * @brief 音频采样率
      */
     AudioSampleRate sample_rate;
-    
+
     /**
      * @brief 音频通道数
      */
     AudioChannel channel;
-    
+
     /**
      * @brief 音频帧时间戳，单位：微秒
      */
     int64_t timestamp_us = 0;
-    
+
     /**
      * @brief 音频帧数据
      */
     uint8_t* data;
-    
+
     /**
      * @brief 音频帧数据大小
      */
@@ -64,18 +64,18 @@ class IAudioFrame {
 public:
     /**
      * @type api
-     * @region 音频管理    
+     * @region 音频管理
      * @brief 获取音频帧时间戳。
      * @return 音频帧时间戳，单位：微秒
-     */     
+     */
     virtual int64_t timestamp_us() const = 0;
-    
+
     /**
      * @type api
-     * @region 音频管理    
+     * @region 音频管理
      * @brief 获取音频采样率
-     * @return 音频采样率
-     */     
+     * @return 音频采样率，单位：Hz
+     */
     virtual AudioSampleRate sample_rate() const = 0;
 
     /**
@@ -83,33 +83,33 @@ public:
      * @region 音频管理
      * @brief 获取音频通道数
      * @return 音频通道数
-     */     
+     */
     virtual AudioChannel channel() const = 0;
 
     /**
      * @type api
      * @region 音频管理
      * @brief 获取音频帧内存块地址
-     * @return  音频帧内存块地址
-     */ 
+     * @return 音频帧内存块地址
+     */
     virtual uint8_t* data() const = 0;
-    
+
     /**
      * @type api
      * @region 音频管理
      * @brief 获取音频帧数据大小
-     * @return  音频帧数据大小
+     * @return 音频帧数据大小
      */
     virtual int data_size() const = 0;
-    
+
     /**
      * @type api
      * @region 音频管理
-     * @brief 获取音频帧类型，目前只支持 PCM，详见 AudioFrameType:{@link #AudioFrameType}
-     * @return  音频帧类型
+     * @brief 获取音频帧类型
+     * @return 音频帧类型，目前只支持 PCM，详见 AudioFrameType:{@link #AudioFrameType}
      */
     virtual AudioFrameType frame_type() const = 0;
-    
+
     /**
      * @brief 释放音频帧
      * @type api
@@ -117,7 +117,7 @@ public:
      * @brief 释放音频帧
      */
     virtual void release() = 0;
-    
+
     /**
      * @hidden
      */

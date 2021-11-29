@@ -1825,8 +1825,8 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoFrameType) {
 };
 
 /**
- * @type keytype
- * @brief 问题反馈列表
+ *  @type keytype
+ *  @brief 音视频质量反馈问题类型
  */
 typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
     /**
@@ -1858,37 +1858,29 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
      */
     ByteRTCProblemFeedbackOptionVideoLagging = (1 << 5),
     /**
-     * @brief 无法连接
-     */
-    ByteRTCProblemFeedbackOptionConnectionFailed = (1 << 6),
-    /**
-     * @brief 音频延迟
-     */
-    ByteRTCProblemFeedbackOptionAudioDelay = (1 << 7),
-    /**
-     * @brief 视频延迟
-     */
-    ByteRTCProblemFeedbackOptionVideoDelay = (1 << 8),
-    /**
      * @brief 连接断开
      */
-    ByteRTCProblemFeedbackOptionDisconnected = (1 << 9),
+    ByteRTCProblemFeedbackOptionDisconnected = (1 << 6),
     /**
      * @brief 无声音
      */
-    ByteRTCProblemFeedbackOptionNoAudio = (1 << 10),
+    ByteRTCProblemFeedbackOptionNoAudio = (1 << 7),
     /**
      * @brief 无画面
      */
-    ByteRTCProblemFeedbackOptionNoVideo = (1 << 11),
+    ByteRTCProblemFeedbackOptionNoVideo = (1 << 8),
     /**
      * @brief 声音过大或过小
      */
-    ByteRTCProblemFeedbackOptionAudioStrength = (1 << 12),
+    ByteRTCProblemFeedbackOptionAudioStrength = (1 << 9),
     /**
      * @brief 回声噪音
      */
-    ByteRTCProblemFeedbackOptionEcho = (1 << 13),
+    ByteRTCProblemFeedbackOptionEcho = (1 << 10),
+    /**
+     * @brief 耳返延迟大
+     */
+    ByteRTCFeedBackProblemTypeEarBackDelay = (1 << 11)
 };
 
 /**
@@ -1896,7 +1888,7 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
  * @region 加密
  * @brief 加密类型
 */
-typedef NS_OPTIONS(NSUInteger, ByteRTCEncryptType) {
+typedef NS_ENUM(NSUInteger, ByteRTCEncryptType) {
     /**
      * @brief 使用自定义加密或不加密  <br>
      */

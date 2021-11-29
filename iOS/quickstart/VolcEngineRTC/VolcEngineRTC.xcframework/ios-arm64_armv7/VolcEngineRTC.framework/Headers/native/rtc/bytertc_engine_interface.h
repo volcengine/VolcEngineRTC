@@ -241,26 +241,6 @@ BYTERTC_API const char* GetErrorDescription(int code);
  */
 BYTERTC_API const char* GetSDKVersion();
 
-/**
- * @type api
- * @region 引擎管理
- * @brief 本次通话质量打分评价
- * @param [in] data
- *        上报的数据，JSON格式，必须包含以下5个字段:
- *        grade: 打分 1～5  <br>
- *        type: 反馈问题集合可多选，参考 ProblemFeedbackOption{@link #ProblemFeedbackOption}  <br>
- *        problem_desc: 其他问题描述  <br>
- *        os_version: 系统版本  <br>
- *        network_type: 网络类型, WiFi, 2g, 3g, 4g, 5g, 台式机填pc  <br>
- * @return
- *        +  0: 成功  <br>
- *        + -1: 上报失败，可能原因JoinChannel失败  <br>
- *        + -2: 传入json解析失败  <br>
- *        + -3: 传入json字段缺失  <br>
- *        + -4: grade取值不合法
- */
-BYTERTC_API int Feedback(const char* data);
-
 }    // namespace bytertc
 
 #endif  // BYTE_RTC_INTERFACE_H__

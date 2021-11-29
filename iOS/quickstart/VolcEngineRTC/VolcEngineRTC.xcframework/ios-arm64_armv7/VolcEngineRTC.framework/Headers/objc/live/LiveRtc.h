@@ -92,7 +92,7 @@ LIVE_RTC_EXPORT @interface LiveRtcSingleWrapper : NSObject
 
 + (NSString *_Nullable)getAppId:(NSString *_Nullable)params;
 + (LIVERTC_MIX_TYPE)getMixType:(NSString *_Nullable)rtcExtInfo;
-+ (LiveRtc *_Nullable)sharedLiveRtcInstance:(NSString *_Nonnull)liveRtcExtInfo delegate:(id<ByteRTCEngineDelegate> _Nullable)delegate;
++ (LiveRtc *_Nullable)sharedLiveRtcInstance:(NSString *_Nonnull)liveRtcExtInfo delegate:(id<ByteRTCEngineDelegate> _Nullable)delegate parameters:(NSDictionary *_Nullable)parameters ;
 + (void)destroyLiveRtc;
 + (void)setTTMonitorCallBack:(void (^_Nullable)(NSDictionary *_Nonnull data, NSString *_Nullable logType))callBack;
 + (void)setByteLog:(BOOL)isConsole

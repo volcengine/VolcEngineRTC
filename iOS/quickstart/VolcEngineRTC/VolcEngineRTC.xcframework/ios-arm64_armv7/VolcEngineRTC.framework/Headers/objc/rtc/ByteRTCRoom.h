@@ -86,7 +86,7 @@
   * @brief 提示本地采集的音量信息和在房间内订阅的远端用户的音量信息。<br>
   *        本回调默认不开启。你可以通过调用 setAudioVolumeIndicationInterval:{@link #setAudioVolumeIndicationInterval:} 开启。  <br>
   * @param rtcRoom  ByteRTCRoom 对象。
-  * @param [in] speakers 本地用户和订阅的远端用户的 ID 和音量。
+  * @param speakers 本地用户和订阅的远端用户的 ID 和音量。
   *                      参看 ByteRTCAudioVolumeInfo{@link #ByteRTCAudioVolumeInfo}。
   * @param totalRemoteVolume speakers 中包含的所有音频音量之和，取值范围是 [0,255]。
   * @notes <br>
@@ -195,8 +195,8 @@
  * @brief 房间内某用户调用 muteLocalAudio:{@link #muteLocalAudio:}
  *        改变本地音频发送状态时，房间内其他用户会收到此回调。
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
- * @param [in] uid 改变本地音频发送状态的用户 ID
- * @param [in] muteState 发送状态，参看 ByteRTCMuteState{@link #ByteRTCMuteState}
+ * @param uid 改变本地音频发送状态的用户 ID
+ * @param muteState 发送状态，参看 ByteRTCMuteState{@link #ByteRTCMuteState}
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserMuteAudio:(NSString *_Nonnull)uid muteState:(ByteRTCMuteState)muteState;
 
@@ -744,7 +744,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *        + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
  *             - 从 false 切换至 true 时，房间内其他用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知；  <br>
  *             - 从 true 切换至 false 时，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。 <br>
- *         + 若调用该方法将可见性设为 false，此时尝试发布流会收到 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:} 警告，具体原因参看 ByteRTCWarningCode{@link #ByteRTCWarningCode} 中的 ByteRTCWarningCodePublishStreamForbiden 警告码。 
+ *         + 若调用该方法将可见性设为 false，此时尝试发布流会收到 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:} 警告，具体原因参看 ByteRTCWarningCode{@link #ByteRTCWarningCode} 中的 ByteRTCWarningCodePublishStreamForbiden 警告码。
  */
 - (BOOL)setUserVisibility:(BOOL)enable;
 
@@ -817,16 +817,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 /**
  * @type api
  * @region 多房间
- * @author zhangzhenyu.samuel
+ * @author liyi.000
  * @brief 发布本地屏幕视频流到此房间。（外部采集）<br>
  *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #pushScreenCaptureFrame:time:rotation:} 方法，
  *        将需要发送的屏幕数据推送给 SDK。
  * @param param 屏幕视频流编码参数，详见 ByteRTCScreenParam{@link #ByteRTCScreenParam}
  * @notes <br>
- *       + 仅房间内可见的用户可以进行手动发布。调用 setUserVisibility:{@link #setUserVisibility:} 可以设置用户可见性。<br>
- *       + 调用此方法后，房间内的远端用户会收到 rtcRoom:onStreamAdd:{@link #rtcRoom:onStreamAdd:} 事件。
+ *       + 仅房间内可见的用户可以进行手动发布。调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 可以设置用户可见性。<br>
+ *       + 调用此方法后，房间内的远端用户会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 事件。
  *       + 如果你需要由外部屏幕采集切换为内部采集，你必须调用 unpublishScreen{@link #unpublishScreen} 关闭外部采集后，
- *         通过调用 startScreenSharingWithParam:preferredExtension:groupId:{@link #startScreenSharingWithParam:preferredExtension:groupId:} 开启内部采集。
+ *         通过调用 startScreenSharingWithPreferredExtension:groupId:{@link #startScreenSharingWithPreferredExtension:groupId:} 开启内部采集。
  *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。  <br>
  *       + 也可通过注册 setVideoFrameObserver:{@link #setVideoFrameObserver:} 视频回调对象，监听
  * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
@@ -834,13 +834,35 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
 - (int)publishScreen:(ByteRTCScreenParam * _Nonnull)param;
 
+
+/**
+ * @hidden
+ * @type api
+ * @region 多房间
+ * @author liyi.000
+ * @brief 发布本地屏幕视频流到此房间。（外部采集）<br>
+ *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #pushScreenCaptureFrame:time:rotation:} 方法，
+ *        将需要发送的屏幕数据推送给 SDK。
+ * @notes <br>
+ *       + 仅房间内可见的用户可以进行手动发布。调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 可以设置用户可见性。<br>
+ *       + 调用此方法后，房间内的远端用户会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 事件。
+ *       + 如果你需要由外部屏幕采集切换为内部采集，你必须调用 unpublishScreen{@link #unpublishScreen} 关闭外部采集后，
+ *         通过调用 startScreenSharingWithPreferredExtension:groupId:{@link #startScreenSharingWithPreferredExtension:groupId:} 开启内部采集。
+ *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。  <br>
+ *       + 也可通过注册 setVideoFrameObserver:{@link #setVideoFrameObserver:} 视频回调对象，监听
+ * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link
+ * #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
+ */
+
+- (int)publishScreen;
+
 /**
  * @type api
  * @region 多房间
  * @author liyi.000
  * @brief 停止发布本地屏幕共享流到房间。
  * @notes <br>
- *        + 调用此方法后，远端会收到 rtcRoom:didStreamRemoved:stream:reason:{@link #rtcRoom:didStreamRemoved:stream:reason:} 回调。<br>
+ *        + 调用此方法后，远端会收到 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 回调。<br>
  *        + 要发布本地屏幕视频流到指定房间，可以调用 publishScreen:{@link #publishScreen:}
  */
 - (int)unpublishScreen;
@@ -863,8 +885,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @notes  <br>
  *       + 此方法仅支持订阅当前房间中的远端音视频流。如果指定的流在当前房间内不曾存在，则 SDK 不会订阅。  <br>
  *       + 用户调用 JoinRoom{@link #JoinRoom} 方法加入房间后：1.当房间内有新的音视频流发布时，本地会收到
- * OnStreamAdd{@link #OnStreamAdd} 回调通知；2.当房间内音视频流停止发布时，本地会收到 didStreamRemoved{@link
- * #didStreamRemoved}
+ * rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 回调通知；2.当房间内音视频流停止发布时，本地会收到 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:}
  * 回调通知。通过这两个回调用户可以获得当前房间中的音视频流信息，并在需要时调用此方法订阅该音视频流。  <br>
  */
 
@@ -884,7 +905,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @param videoConfig 视频订阅配置，参看 ByteRTCSubscribeVideoConfig{@link #ByteRTCSubscribeVideoConfig}。<br>
  * @notes <br>
  *        + 此方法仅支持订阅当前房间中的远端音视频流。如果指定的流在当前房间内不曾存在，则 SDK 不会订阅。  <br>
- *        + 你可以通过 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 和 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 两个回调获取当前房间你的音视频流信息，并调用本方法按需订阅流或修改订阅配置。  <br> 
+ *        + 你可以通过 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 和 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 两个回调获取当前房间你的音视频流信息，并调用本方法按需订阅流或修改订阅配置。  <br>
  *        + 若订阅失败，你会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  *        + 若调用 pauseAllSubscribedStream:{@link #ByteRTCRoom#pauseAllSubscribedStream:} 暂停接收远端音视频流，此时仍可使用该方法对暂停接收的流进行设置，你会在调用 resumeAllSubscribedStream:{@link #ByteRTCRoom#resumeAllSubscribedStream:} 恢复接收流后收到修改设置后的流。  <br>
  */
@@ -919,7 +940,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @param audioMode 音频流的订阅模式。详见枚举类型 ByteRTCSubscribeMode{@link #ByteRTCSubscribeMode}。  <br>
  * @param videoMode 视频流的订阅模式。详见枚举类型 ByteRTCSubscribeMode{@link #ByteRTCSubscribeMode}。  <br>
  * @notes  <br>
- *       + SDK 提供两种订阅模式：1.自动订阅模式，开启自动订阅功能时，SDK 自动帮助用户订阅房间中所有其他用户发布的音视频流；2.手动订阅模式，关闭自动订阅功能时，SDK不会自动订阅房间内的音视频流，只通过 OnStreamAdd{@link #OnStreamAdd} 和 didStreamRemoved{@link #didStreamRemoved} 回调通知用户当前所在房间中有哪些音视频流，由用户根据自己的需要调用 subscribeStream{@link #subscribeStream} 方法手动订阅其他用户发布的音视频流。  <br>
+ *       + SDK 提供两种订阅模式：1.自动订阅模式，开启自动订阅功能时，SDK 自动帮助用户订阅房间中所有其他用户发布的音视频流；2.手动订阅模式，关闭自动订阅功能时，SDK不会自动订阅房间内的音视频流，只通过 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 和 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 回调通知用户当前所在房间中有哪些音视频流，由用户根据自己的需要调用 subscribeStream{@link #subscribeStream} 方法手动订阅其他用户发布的音视频流。  <br>
  *       + SDK 可以分别对音频/视频设置订阅模式。  <br>
  */
 
@@ -974,7 +995,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @notes <br>
  *        + 该方法仅恢复远端流的接收，并不影响远端流的采集和发送；  <br>
  *        + 该方法不改变用户的订阅状态以及订阅流的属性。
- */ 
+ */
 - (void)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 
 /**
@@ -1068,7 +1089,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *       + 实际使用时，你可以在收到回调 rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 或 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 时获得远端用户 uid。
   *         这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 回调；
   *         而不会收到 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 回调。你不应给录制的哑客户端绑定视图（因为它不会发送视频流）。
-  *       + 你应在加入房间后，绑定视图。退出房间后，此设置失效。
+  *       + 你应在加入房间后，绑定视图。退出房间后，此设置不失效。
   * @param uid 视频来源的远端用户 ID
   * @param streamIndex 视频流属性，参看 ByteRTCStreamIndex:{@link #ByteRTCStreamIndex}
   * @param canvas 视图信息和渲染模式，参看 ByteRTCVideoCanvas:{@link #ByteRTCVideoCanvas}
@@ -1085,12 +1106,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @region 多房间
   * @author hanchenchen.c
   * @brief 给房间内指定的用户发送文本消息（P2P）。
-  * @param userId 接收消息的用户 ID 。
-  * @param message 发送的文本消息内容。
+  * @param userId  <br>
+  *        消息接收用户的 ID
+  * @param message  <br>
+  *        发送的文本消息内容。  <br>
+  *        消息不超过 62KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 调用该函数后会收到一次 rtcEngine:onUserMessageSendResult:error:{@link #rtcEngine:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
-  *      + 若文本消息发送成功，则 uid 所指定的用户会收到 rtcEngine:onUserMessageReceived:message:{@link #ByteRTCEngineDelegate#rtcEngine:onUserMessageReceived:message:} 回调。
+  *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>   
+  *      + 调用该函数后会收到一次 rtcRoom:onUserMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败。  <br>
+  *      + 若文本消息发送成功，则 uid 所指定的用户会收到 rtcRoom:onUserMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageReceived:message:} 回调。
   */
 - (int64_t)sendUserMessage:(NSString *_Nonnull)userId message:(NSString *_Nonnull)message;
 
@@ -1099,12 +1124,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @region 多房间
   * @author hanchenchen.c
   * @brief 给房间内指定的用户发送二进制消息（P2P）。
-  * @param uid 接收消息的用户 ID 。
-  * @param message 发送的二进制消息内容。
+  * @param uid  <br>
+  *        消息接收用户的 ID
+  * @param message  <br>
+  *        发送的二进制消息内容  <br>
+  *        消息不超过 46KB。 
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 调用该函数后会收到一次 rtcEngine:onUserMessageSendResult:error:{@link #rtcEngine:onUserMessageSendResult:error:}回调，通知消息发送方发送成功或失败；  <br>
-  *      + 若二进制消息发送成功，则 uid 所指定的用户会收到 rtcEngine: onUserBinaryMessageReceived:message:{@link #rtcEngine:onUserBinaryMessageReceived:message:}回调。
+  *      + 在发送房间内二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>   
+  *      + 调用该函数后会收到一次 rtcRoom:onUserMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
+  *      + 若二进制消息发送成功，则 uid 所指定的用户会收到 rtcRoom:onUserBinaryMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onUserBinaryMessageReceived:message:} 回调。
   */
 - (int64_t)sendUserBinaryMessage:(NSString * _Nonnull)uid message:(NSData * _Nonnull)message;
 
@@ -1113,11 +1142,14 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @region 多房间
   * @author hanchenchen.c
   * @brief 给房间内的所有其他用户发送文本消息。
-  * @param message 用户发送的文本消息内容
+  * @param message  <br>
+  *        发送的文本消息内容。  <br>
+  *        消息不超过 62KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
-  *      + 若文本消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomMessageReceived:message:{@link #rtcRoom:onRoomMessageReceived:message:} 回调。
+  *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br> 
+  *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
+  *      + 若文本消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageReceived:message:} 回调。
   */
 - (int64_t)sendRoomMessage:(NSString *_Nonnull)message;
 
@@ -1126,11 +1158,14 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @region 多房间
   * @author hanchenchen.c
   * @brief 给房间内的所有其他用户发送二进制消息。
-  * @param message 二进制消息的内容。
+  * @param message  <br> 
+  *        用户发送的二进制广播消息  <br> 
+  *        消息不超过 46KB。 
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
-  *      + 若二进制消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomBinaryMessageReceived:message:{@link #rtcRoom:onRoomBinaryMessageReceived:message:} 回调。
+  *      + 在房间内广播二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br> 
+  *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
+  *      + 若二进制消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomBinaryMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomBinaryMessageReceived:message:} 回调。
   */
 - (int64_t)sendRoomBinaryMessage:(NSData *  _Nonnull)message;
 

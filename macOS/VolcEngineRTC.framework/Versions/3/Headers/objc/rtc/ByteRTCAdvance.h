@@ -502,7 +502,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
  * @type api
  * @region 视频管理
  * @brief 注册回调视频数据
- * @param [in] observer 数据回调函数，详见：{@link #ByteRTCVideoFrameObserver}
+ * @param observer 数据回调函数，详见：{@link #ByteRTCVideoFrameObserver}
  * @notes 设置引擎服务地址，必须在joinChannel前调用
  */
 - (void)registerVideoFrameObserver:(id<ByteRTCVideoFrameObserver> _Nonnull)observer;
@@ -511,7 +511,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
  * @type api
  * @region 视频管理
  * @brief 注册回调压缩视频数据
- * @param [in] observer 数据回调函数，详见：{@link #ByteRTCLocalEncodedVideoFrameObserver}
+ * @param observer 数据回调函数，详见：{@link #ByteRTCLocalEncodedVideoFrameObserver}
  */
 - (void)registerLocalEncodedVideoFrameObserver:(id<ByteRTCLocalEncodedVideoFrameObserver> _Nonnull)observer;
 

@@ -341,8 +341,10 @@ enum PublishFallbackOption {
      */
     kPublishFallbackOptionSimulcast = 1,
 };
+
 /**
  * @type keytype
+ * @deprecated
  * @brief 屏幕共享参数
  */
 struct ScreenParameters {
@@ -404,23 +406,23 @@ enum RoomProfileType {
 struct RTCRoomConfig {
     /**
      * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为普通音视频通话模式，进房后不可更改。
-     */    
+     */
     RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /**
      * @brief 是否自动发布音视频流，默认为自动发布。 <br>
      *        若调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
-     */ 
+     */
     bool is_auto_publish = true;
     /**
      * @brief 是否自动订阅音频流，默认为自动订阅。  <br>
      *        进房后，你可以调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 修改订阅设置。
-     */ 
+     */
     bool is_auto_subscribe_audio = true;
     /**
      * @brief 是否自动订阅主视频流，默认为自动订阅。  <br>
      *        进房后，你可以调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 修改订阅设置。  <br>
      *        屏幕流始终自动订阅，不受该方法影响。
-     */ 
+     */
     bool is_auto_subscribe_video = true;
 };
 /**
@@ -430,15 +432,15 @@ struct RTCRoomConfig {
 struct MultiRoomConfig {
     /**
      * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为普通音视频通话模式，进房后不可更改。
-     */    
+     */
     RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /**
      * @brief 是否自动订阅音频流，默认为自动订阅
-     */     
+     */
     bool is_auto_subscribe_audio = true;
     /**
      * @brief 是否自动订阅视频流，默认为自动订阅
-     */     
+     */
     bool is_auto_subscribe_video = true;
 };
 
@@ -1017,6 +1019,20 @@ enum WarningCode {
      *        使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。
      */
     kWarningCodeMediaDeviceOperationDenied = -5008,
+
+    /**
+     * @brief 不支持在 PublishScreen{@link #PublishScreen} 之后设置屏幕音频采集类型
+     *        SetScreenAudioSourceType{@link #SetScreenAudioSourceType}，请在 PublishScreen 之前设置
+     */
+    kWarningCodeSetScreenAudioSourceTypeFailed = -5009,
+
+    /**
+     * @brief 不支持在 PublishScreen{@link #IRtcRoom#PublishScreen} 之后，
+     *        通过 SetScreenAudioStreamIndex{@link #IRtcEngineLite#SetScreenAudioStreamIndex} 设置屏幕共享时的音频采集方式。
+     */
+    kWarningCodeSetScreenAudioStreamIndexFailed = -5010,
+
+
     /**
      * @brief 指定的内部渲染画布句柄无效。  <br>
      *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetRemoteVideoCanvas{@link #IRtcRoom#SetRemoteVideoCanvas} 时指定了无效的画布句柄，触发此回调。
@@ -1413,7 +1429,7 @@ struct AudioVolumeInfo {
     /**
      * @brief 音量，取值范围为：[0,255]
      */
-    unsigned int volume;
+    int volume;
     /**
      * @brief 音频流来源的用户 ID
      */
@@ -1728,7 +1744,7 @@ struct SubscribeVideoConfig {
     /**
      * @brief 订阅的视频流分辨率下标。  <br>
      *        当远端用户通过调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
-     *        默认值为 0，即订阅第一路流。  <br> 
+     *        默认值为 0，即订阅第一路流。  <br>
      *        如果不想更改之前的设置，可以输入 -1。  <br>
      */
     int video_index = 0;
@@ -1868,37 +1884,29 @@ enum ProblemFeedbackOption {
      */
     kProblemFeedbackOptionVideoLagging = (1 << 5),
     /**
-     * @brief 无法连接
+     * @brief 连接失败
      */
-    kProblemFeedbackOptionConnectionFailed = (1 << 6),
-    /**
-     * @brief 音频延迟
-     */
-    kProblemFeedbackOptionAudioDelay = (1 << 7),
-    /**
-     * @brief 视频延迟
-     */
-    kProblemFeedbackOptionVideoDelay = (1 << 8),
-    /**
-     * @brief 连接断开
-     */
-    kProblemFeedbackOptionDisconnected = (1 << 9),
+    kProblemFeedbackOptionDisconnected = (1 << 6),
     /**
      * @brief 无声音
      */
-    kProblemFeedbackOptionNoAudio = (1 << 10),
+    kProblemFeedbackOptionNoAudio = (1 << 7),
     /**
      * @brief 无画面
      */
-    kProblemFeedbackOptionNoVideo = (1 << 11),
+    kProblemFeedbackOptionNoVideo = (1 << 8),
     /**
      * @brief 声音过大或过小
      */
-    kProblemFeedbackOptionAudioStrength = (1 << 12),
+    kProblemFeedbackOptionAudioStrength = (1 << 9),
     /**
      * @brief 回声噪音
      */
-    kProblemFeedbackOptionEcho = (1 << 13),
+    kProblemFeedbackOptionEcho = (1 << 10),
+    /**
+     * @brief 耳返延迟大
+     */
+    KFeedbackOptionEarBackDelay = (1 << 11),
 };
 
 /**
@@ -2207,15 +2215,15 @@ typedef void* view_t;
 
 /**
  * @type keytype
- * @brief 矩形，用于屏幕共享指定区域
+ * @brief 矩形，用于屏幕共享指定区域, 默认值表示抓取整个屏幕
  */
 struct Rectangle {
     /**
-     * @brief 矩形左上角x坐标
+     * @brief 矩形区域左上角的 x 坐标
      */
     int x = 0;
     /**
-     * @brief 矩形左上角y坐标
+     * @brief 矩形区域左上角的 y 坐标
      */
     int y = 0;
     /**
@@ -2230,7 +2238,7 @@ struct Rectangle {
 
 /**
  * @type keytype
- * @brief 高亮边框标识屏幕共享指定区域
+ * @brief 屏幕共享时的边框高亮设置
  */
 struct HighlightConfig {
     /**
@@ -2242,9 +2250,63 @@ struct HighlightConfig {
      */
     uint32_t border_color = 0xFF29CCA3;
     /**
-     * @brief 边框的宽度
+     * @brief 边框的宽度，单位：像素
      */
     int border_width = 4;
+};
+
+/**
+ * @type keytype
+ * @brief 抓取屏幕时排除指定窗口，默认不排除任何窗体
+ */
+struct ScreenFilterConfig {
+    /**
+     * @brief 抓取屏幕时排除窗口列表。这个参数仅在抓取屏幕时生效。
+     */
+    view_t* excluded_window_list = nullptr;
+    /**
+     * @brief 排除窗口的数量。
+     */
+    int excluded_window_num = 0;
+};
+
+/**
+ * @type keytype
+ * @region 屏幕共享
+ * @brief 内部采集屏幕视频流时，是否采集鼠标信息
+ */
+enum MouseCursorCaptureState {
+    /**
+     * @brief 采集鼠标信息
+     */
+    kMouseCursorCaptureStateOn,
+    /**
+     * @brief 不采集鼠标信息
+     */
+    kMouseCursorCaptureStateOff,
+};
+
+/**
+ * @type keytype
+ * @brief 屏幕共享时，内部采集参数配置
+ */
+struct ScreenCaptureParameters {
+    /**
+     * @brief 采集区域，参看 Rectangle{@link #Rectangle}
+     */
+    Rectangle region_rect;
+    /**
+     * @brief 是否采集鼠标状态，参看 MouseCursorCaptureState{@link #MouseCursorCaptureState}
+     */
+    MouseCursorCaptureState capture_mouse_cursor;
+    /**
+     * @brief 屏幕过滤设置，参看 ScreenFilterConfig{@link #ScreenFilterConfig}
+     */
+    ScreenFilterConfig filter_config;
+    /**
+     * @brief 采集区域的边框高亮设置，参看 HighlightConfig{@link #HighlightConfig}
+     */
+    HighlightConfig highlight_config;
 };
 
 /**
@@ -2464,6 +2526,13 @@ enum PixelFormat {
      * @return 返回值暂未使用
      */
     virtual bool OnFrame(IVideoFrame* videoFrame) = 0;
+    /**
+     * @type callback
+     * @region 频道管理
+     * @brief 获取外部渲染耗时。
+     * @notes 获取外部渲染耗时进行上报。开发者需要自己计算平均渲染耗时。
+     */
+    virtual int GetRenderElapse() = 0;
     /**
      * @type callback
      * @brief 释放渲染器。
@@ -2693,6 +2762,10 @@ struct LiveTranscodingRegion {
      */
     const char* uid = nullptr;
     /**
+     * @brief 视频流发布用户的房间 ID 。
+     */
+    const char* roomId = nullptr;
+    /**
      * @brief 用户视频布局相对画布左侧的偏移量。相对值，范围为[0.0 - 1.0]。
      */
     double x;
@@ -2798,15 +2871,13 @@ enum MuteState {
  */
 enum StreamIndex {
     /**
-     * @brief 主流。<br>
-     *        包括：<br>
+     * @brief 主流。包括：<br>
      *        + 通过默认摄像头/麦克风采集到的视频/音频; <br>
      *        + 通过自定义设备采集到的视频/音频。
      */
     kStreamIndexMain = 0,
     /**
-     * @brief 屏幕流。 <br>
-     *        屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
+     * @brief 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
      */
     kStreamIndexScreen = 1,
 };
@@ -2832,15 +2903,30 @@ struct RemoteStreamKey {
 
 /**
  * @type keytype
+ * @brief 音频输入源类型
+ */
+enum AudioSourceType {
+    /**
+     *  自定义采集音频源
+     */
+    kAudioSourceTypeExternal = 0,
+    /**
+     *  RTC SDK 内部采集音频源
+     */
+    kAudioSourceTypeInternal ,
+};
+
+/**
+ * @type keytype
  * @brief 视频输入源类型
  */
 enum VideoSourceType {
     /**
-     *  自定义采集视频源
+     *  自定义外部采集视频源
      */
     VideoSourceTypeExternal = 0,
     /**
-     *  SDK 内部采集视频源
+     *  SDK内部采集视频源
      */
     VideoSourceTypeInternal = 1,
 };
@@ -3238,6 +3324,40 @@ struct AudioMixingConfig {
      *       + play_count > 1: 播放 play_count 次
      */
     int play_count;
+};
+
+/**
+ * @type keytype
+ * @brief 定义linux用户的用户功能  <br>
+ */
+enum UserWorkerType {
+    /**
+     * @brief 正常用户，没有任何特殊属性  <br>
+     */
+    UserWorkerNormal = 0,
+    /**
+     * @brief 用户支持SIP流，信令只下发SIP流  <br>
+     */
+    UserWorkerSupportSip = (1 << 0),
+    /**
+     * @brief 用户支持屏幕流的bytevc1到H264转码  <br>
+     */
+    UserWorkerByteVc1Transcoder = (1 << 1),
+    /**
+     * @brief 用户需要信令服务器下发全量的用户列表和回调函数  <br>
+     */
+    UserWorkerNeedUserListAndCb = (1 << 2),
+};
+
+/**
+ * @type keytype
+ * @brief 视频前处理配置参数。<br>
+ */
+struct VideoPreprocessorConfig {
+    /**
+     * @brief 视频帧像素格式，参看 VideoPixelFormat{@link #VideoPixelFormat}
+     */
+    VideoPixelFormat required_pixel_format = kVideoPixelFormatUnknown;
 };
 
 }  // namespace bytertc

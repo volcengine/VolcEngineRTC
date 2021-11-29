@@ -75,6 +75,10 @@ enum StreamMixingEvent {
      * @brief 更新合流超时
      */
     kStreamMixingUpdateTimeout = 10,
+    /*
+    * @brief 合流布局参数错误
+    */
+    kStreamMixingRequestParamError = 11,
     /**
      * @hidden
      */
@@ -157,6 +161,7 @@ typedef struct IDataFrame {
 
 typedef struct TranscoderLayoutRegion {
     const char* region_id;
+    const char* room_id;
     float x;
     float y;
     float width;
@@ -164,6 +169,7 @@ typedef struct TranscoderLayoutRegion {
     float alpha;
     int32_t i32_z_order;
     bool local_user;
+    bool screen_stream = false;
     TranscoderContentControlType content_control;
     TranscoderRenderMode render_mode;
 
@@ -201,6 +207,8 @@ public:
      */
     virtual const char* RoomID() = 0;
 
+    virtual const char* UserID() = 0;
+
     virtual StreamMixingType ExpectedMixingType() = 0;
 
     virtual const char* Uri() = 0;
@@ -222,6 +230,8 @@ public:
     virtual const char* AppData() = 0;
 
     virtual void SetRoomID(const char* room_id) = 0;
+
+    virtual void SetUserID(const char* user_id) = 0;
 
     virtual void SetExpectedMixingType(StreamMixingType expected_mix_type) = 0;
 

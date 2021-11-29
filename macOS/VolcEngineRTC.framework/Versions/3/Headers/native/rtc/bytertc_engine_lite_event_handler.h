@@ -39,6 +39,8 @@ public:
     }
 
    /**
+     * @deprecated
+     * @hidden
      * @type callback
      * @region 混音
      * @brief 本地音乐文件播放已结束回调。
@@ -57,13 +59,13 @@ public:
      * @param [in] state  <br>
      *        混音状态  <br>
      *        其混音状态可参考： AudioMixingState{@link #AudioMixingState}。
-     * @param [in] error  
+     * @param [in] error
      *        错误码  <br>
-     *        详见 AudioMixingError{@link #AudioMixingError} 
+     *        详见 AudioMixingError{@link #AudioMixingError}
      * @notes  <br>
      *       + 此回调会被触发的时机汇总如下：  <br>
      *       + 当调用 StartAudioMixing{@link #StartAudioMixing} 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
-     *       + 当使用相同的 ID 重复调用 StartAudioMixing{@link #StartAudioMixing} 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。  <br>     
+     *       + 当使用相同的 ID 重复调用 StartAudioMixing{@link #StartAudioMixing} 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。  <br>
      *       + 当调用 PauseAudioMixing{@link #PauseAudioMixing} 方法暂停播放成功后，会触发 state 值为 kAudioMixingStatePaused 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
      *       + 当调用 ResumeAudioMixing{@link #ResumeAudioMixing} 方法恢复播放成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
      *       + 当调用 StopAudioMixing{@link #StopAudioMixing} 方法暂停止播放成功后，会触发 state 值为 kAudioMixingStateStopped 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
@@ -73,6 +75,8 @@ public:
     }
 
     /**
+     * @hidden
+     * @deprecated
      * @type callback
      * @region 混音
      * @brief 本地音效文件播放已结束回调。
@@ -239,7 +243,7 @@ public:
      */
     virtual void OnRecordingProgressUpdate(StreamIndex type, RecordingProgress process, RecordingInfo info) {
     }
-    
+
     /**
      * @type callback
      * @region 实时消息通信
@@ -271,10 +275,10 @@ public:
      * @type callback
      * @region 实时消息通信
      * @brief 设置业务服务器参数的返回结果
-     * @param [in] error <br> 
+     * @param [in] error <br>
      *        设置结果  <br>
      *        + 返回 200，设置成功  <br>
-     *        + 返回其他，设置失败   
+     *        + 返回其他，设置失败
      * @notes 调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 后，会收到此回调。
      */
     virtual void OnServerParamsSetResult(int error) {
@@ -283,7 +287,7 @@ public:
     /**
      * @type callback
      * @region 实时消息通信
-     * @brief 查询对端或本端用户登录状态的返回结果 
+     * @brief 查询对端或本端用户登录状态的返回结果
      * @param [in] peer_user_id  <br>
      *        需要查询的用户 ID
      * @param [in] status  <br>
@@ -301,7 +305,7 @@ public:
      * @brief 收到房间外用户调用 SendUserMessageOutsideRoom{@link #IRtcEngineLite#SendUserMessageOutsideRoom} 发来的文本消息时，会收到此回调
      * @param [in] uid  <br>
      *        消息发送者 ID
-     * @param [in] message  <br> 
+     * @param [in] message  <br>
      *        收到的文本消息内容
      */
     virtual void OnUserMessageReceivedOutsideRoom(const char* uid, const char* message) {
@@ -312,11 +316,11 @@ public:
      * @type callback
      * @region 实时消息通信
      * @brief 收到房间外用户调用 SendUserBinaryMessageOutsideRoom{@link #IRtcEngineLite#SendUserBinaryMessageOutsideRoom} 发来的二进制消息时，会收到此回调
-     * @param [in] uid  <br> 
+     * @param [in] uid  <br>
      *        消息发送者 ID
-     * @param [in] size  <br> 
+     * @param [in] size  <br>
      *        二进制消息长度
-     * @param [in] message  <br> 
+     * @param [in] message  <br>
      *        收到的二进制消息内容
      */
     virtual void OnUserBinaryMessageReceivedOutsideRoom(const char* uid, int size, const uint8_t* message) {
@@ -330,7 +334,7 @@ public:
      * @brief 给房间外指定的用户发送消息的回调
      * @param [in] msgid  <br>
      *        本条消息的 ID  <br>
-     *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。 
+     *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
      * @param [in] error  <br>
      *        消息发送结果  <br>
      *        详见 UserMessageSendResult{@link #UserMessageSendResult}。
@@ -347,7 +351,7 @@ public:
      * @brief 给业务服务器发送消息的回调
      * @param [in] msgid  <br>
      *        本条消息的 ID  <br>
-     *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。 
+     *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
      * @param [in] error  <br>
      *        消息发送结果  <br>
      *        详见 UserMessageSendResult{@link #UserMessageSendResult}。
@@ -356,6 +360,20 @@ public:
     virtual void OnServerMessageSendResult(int64_t msgid, int error) {
         (void)msgid;
         (void)error;
+    }
+
+    /**
+     * @type callback
+     * @region 视频管理
+     * @brief 收到通过 SendSEIMessage{@link #IRtcEngineLite#SendSEIMessage} 发送的带有 SEI 消息的视频帧时，收到此回调
+     * @param [in] stream_key 包含 SEI 发送者的用户名，所在的房间名和媒体流，参看 RemoteStreamKey{@link #RemoteStreamKey}
+     * @param [in] message 收到的 SEI 消息内容
+     * @param [in] length 收到的 SEI 消息长度
+    */
+    virtual void OnSEIMessageReceived(RemoteStreamKey stream_key, const uint8_t* message, int length){
+        (void)stream_key;
+        (void)message;
+        (void)length;
     }
 };
 

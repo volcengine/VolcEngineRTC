@@ -71,7 +71,7 @@ public:
      *        + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
      *            - 从 false 切换至 true 时，房间内其他用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调通知；  <br>
      *            - 从 true 切换至 false 时，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。 <br>
-     *        + 若调用该方法将可见性设为 false，此时尝试发布流会收到 OnWarning{@link #OnWarning} 警告，具体原因参看 WarningCode{@link #WarningCode} 中的 kWarningCodePublishStreamForbiden 警告码。 
+     *        + 若调用该方法将可见性设为 false，此时尝试发布流会收到 OnWarning{@link #IRtcEngineLiteEventHandler#OnWarning} 警告，具体原因参看 WarningCode{@link #WarningCode} 中的 kWarningCodePublishStreamForbiden 警告码。
      */
     virtual void SetUserVisibility(bool enable) = 0;
 
@@ -169,34 +169,36 @@ public:
     /**
      * @type api
      * @region 多房间
-     * @brief 给房间内指定的用户发送文本消息（P2P），返回这次发送消息的编号。
+     * @brief 给房间内指定的用户发送文本消息（P2P）
      * @param [in] uid  <br>
-     *        指定用户 ID 。
+     *        消息接收用户的 ID
      * @param [in] message  <br>
-     *        发送的文本消息内容。
+     *        发送的文本消息内容。  <br>
+     *        消息不超过 62KB。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
-     *      1. 调用该函数后会收到一次 OnUserMessageSendResult{@link #OnUserMessageSendResult} 回调，通知消息发送方发送成功或失败；  <br>
-     *      2. 若文本消息发送成功，则 uid 所指定的用户会收到
-     * OnUserMessageReceived{@link #OnUserMessageReceived} 回调。
+     *       + 在发送房间内文本消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
+     *       + 调用该函数后会收到一次 OnUserMessageSendResult{@link #IRTCRoomEventHandler#OnUserMessageSendResult} 回调，通知消息发送方发送成功或失败；  <br>
+     *       + 若文本消息发送成功，则 uid 所指定的用户会收到 OnUserMessageReceived{@link #IRTCRoomEventHandler#OnUserMessageReceived} 回调。
      */
     virtual int64_t SendUserMessage(const char* uid, const char* message) = 0;
 
     /**
      * @type api
      * @region 多房间
-     * @brief 给房间内指定的用户发送二进制消息（P2P），返回这次发送消息的编号。
+     * @brief 给房间内指定的用户发送二进制消息（P2P）
      * @param [in] uid  <br>
-     *        指定用户 ID。
+     *        消息接收用户的 ID
      * @param [in] length   <br>
      *        二进制字符串的长度。
      * @param [in] message   <br>
      *        二进制消息的内容。
+     *        消息不超过 46KB。 
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
-     *      1. 调用该函数后会收到一次 OnUserMessageSendResult{@link #OnUserMessageSendResult} 回调，通知消息发送方发送成功或失败；  <br>
-     *      2. 若二进制消息发送成功，则 uid 所指定的用户会收到
-     * OnUserBinaryMessageReceived{@link #OnUserBinaryMessageReceived} 回调。
+     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
+     *       + 调用该函数后会收到一次 OnUserMessageSendResult{@link #IRTCRoomEventHandler#OnUserMessageSendResult} 回调，通知消息发送方发送成功或失败；  <br>
+     *       + 若二进制消息发送成功，则 uid 所指定的用户会收到 OnUserBinaryMessageReceived{@link #IRTCRoomEventHandler#OnUserBinaryMessageReceived} 回调。
      */
     virtual int64_t SendUserBinaryMessage(const char* uid, int length, const uint8_t* message) = 0;
 
@@ -205,8 +207,10 @@ public:
      * @region 多房间
      * @brief 给房间内的所有其他用户发送广播消息。
      * @param [in] message  <br>
-     *        用户发送的广播消息
+     *        用户发送的广播消息  <br>
+     *        消息不超过 62KB。
      * @notes  <br>
+     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
      *       + 调用该函数后，会收到一次 OnRoomMessageSendResult{@link #IRTCRoomEventHandler#OnRoomMessageSendResult} 回调。  <br>
      *       + 同一房间内的其他用户会收到 OnRoomMessageReceived{@link #IRTCRoomEventHandler#OnRoomMessageReceived} 回调。
      */
@@ -215,11 +219,13 @@ public:
      * @type api
      * @region 多房间
      * @brief 给房间内的所有其他用户发送广播消息。
-     * @param [in] size  <br> 
+     * @param [in] size  <br>
      *        发送的二进制消息长度
      * @param [in] message  <br> 
-     *        用户发送的二进制广播消息
+     *        用户发送的二进制广播消息  <br> 
+     *        消息不超过 46KB。 
      * @notes  <br>
+     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
      *       + 调用该函数后，会收到一次 OnRoomMessageSendResult{@link #IRTCRoomEventHandler#OnRoomMessageSendResult} 回调。  <br>
      *       + 同一房间内的其他用户会收到 OnRoomBinaryMessageReceived{@link #IRTCRoomEventHandler#OnRoomBinaryMessageReceived} 回调。
      */
@@ -246,8 +252,11 @@ public:
      */
     virtual void Unpublish() = 0;
 
+
     /**
+     * @hidden
      * @type api
+     * @deprecated
      * @region 多房间
      * @brief 发布本地屏幕共享流到房间。
      * @param [in] paramters
@@ -258,11 +267,10 @@ public:
      * #IRtcEngineLite#PushScreenFrame} 方法，将需要发送的屏幕数据推送给 SDK。  <br>
      *       + 远端会收到 OnFirstRemoteVideoFrameRendered{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameRendered}
      * 、OnStreamAdd{@link#IRTCRoomEventHandler#OnStreamAdd} 事件。  <br>
-     *       + 该函数和 StartScreenCaptureByWindowId{@link#IRtcEngineLite#StartScreenCaptureByWindowId}
-     * 、StartScreenCaptureByScreenRect{@link#IRtcEngineLite#StartScreenCaptureByScreenRect} 函数是互斥调用的，可在调用
+     *       + 该函数和 StartScreenVideoCapture{@link#IRtcEngineLite#StartScreenVideoCapture} 函数是互斥调用的，可在调用
      * UnpublishScreen{@link#IUnpublishScreen} 函数后调用上述函数。  <br>
-     *       + 在收到 OnFirstRemoteVideoFrameRendered{@link#IRTCRoomEventHandler#OnFirstRemoteVideoFrameRendered} 事件后通过调用
-     * SetRemoteVideoCanvas{@link #SetRemoteVideoCanvas} 或 SetRemoteVideoSink{@link #SetRemoteVideoSink}
+     *       + 在收到 OnFirstRemoteVideoFrameRendered{@link#IRTCRoomEventHandler#OnFirstRemoteVideoFrameRendered}
+     * 事件后通过调用 SetRemoteVideoCanvas{@link #SetRemoteVideoCanvas} 或 SetRemoteVideoSink{@link #SetRemoteVideoSink}
      * 函数来设置远端屏幕共享视图。  <br>
      *       + 本地可调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或
      * SetLocalVideoSink{@link #SetLocalVideoSink} 函数设置本地屏幕共享视图。  <br>
@@ -271,13 +279,31 @@ public:
      * #IVideoFrameObserver#OnRemoteScreenFrame}远端屏幕共享视频回调事件来获取原始数据。  <br>
      *       + 该方法在 JoinRoom{@link #JoinRoom} 后才能调用。  <br>
      */
-    virtual void PublishScreen(const ScreenParameters& paramters = ScreenParameters()) = 0;
+    virtual void PublishScreen(const ScreenParameters& paramters) = 0;
 
     /**
      * @type api
-     * @region 多房间
+     * @region 屏幕共享
+     * @brief 发布本地屏幕共享流到房间。
+     * @notes  <br>
+     *       + 你必须先加入房间，才能调用此方法。<br>
+     *       + 直播、游戏、云游戏房间模式下，仅可见的用户可以调用此方法。你可以调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法设置用户在房间中的可见性。  <br>
+     *       + 此方法只影响屏幕共享视频流的发布状态，并不影响屏幕视频流的采集情况。你可以通过两种方式进行采集：<br>
+     *              - RTC SDK 内部采集：参看 StartScreenVideoCapture{@link#IRtcEngineLite#StartScreenVideoCapture} 和 StartScreenAudioCapture{@link#IRtcEngineLite#StartScreenAudioCapture} <br>
+     *              - RTC SDK 外部采集：你可以自行采集屏幕音视频流，并周期性调用 PushScreenFrame{@link#IRtcEngineLite#PushScreenFrame} 和 PushScreenAudioFrame{@link#IRtcEngineLite#PushScreenAudioFrame} 将采集得到的音视频帧推送到 RTC SDK 用于编码传输。<br>
+     *       + 发布成功后，远端会收到 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 回调；如果调用 RegisterVideoFrameObserver{@link#RegisterVideoFrameObserver} 注册了视频帧回调观察者，那么也会收到 OnRemoteScreenFrame{@link #IVideoFrameObserver#OnRemoteScreenFrame} 回调。
+     *       + 调用 UnpublishScreen{@link #IRtcRoom#UnpublishScreen} 取消发布。
+     */
+    virtual void PublishScreen() = 0;
+
+    /**
+     * @type api
+     * @region 屏幕共享
      * @brief 停止发布本地屏幕共享流到房间。
      * @notes 远端会收到 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 事件。
+     * @notes  <br>
+     *       + 此方法只影响屏幕共享视频流的发布状态，并不影响屏幕视频流的采集情况。<br>
+     *       + 调用 PublishScreen{@link #IRtcRoom#PublishScreen} 启动发布。
      */
     virtual void UnpublishScreen() = 0;
 
@@ -409,7 +435,7 @@ public:
      * @notes <br>
      *        + 该方法仅恢复远端流的接收，并不影响远端流的采集和发送；  <br>
      *        + 该方法不改变用户的订阅状态以及订阅流的属性。
-     */    
+     */
     virtual void ResumeAllSubscribedStream(PauseResumeControlMediaType media_type) = 0;
 
     /**
@@ -482,7 +508,7 @@ public:
      * @return  <br>
      *        + 0：成功  <br>
      *        + !0：失败  <br>
-     * @notes 你应在加入房间后，绑定视图。退出房间后，此设置失效。
+     * @notes 你应在加入房间后，绑定视图。退出房间后，此设置不失效。
      */
     virtual void SetRemoteVideoCanvas(const char* user_id, StreamIndex index, const VideoCanvas& canvas) = 0;
 
