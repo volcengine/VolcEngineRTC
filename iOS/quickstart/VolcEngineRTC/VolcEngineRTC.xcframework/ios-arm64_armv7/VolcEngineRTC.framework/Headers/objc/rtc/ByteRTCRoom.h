@@ -415,8 +415,8 @@
   * @author liyi.000
   * @brief 第一帧本地采集的视频/屏幕共享画面在本地视图渲染完成时，收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。  <br>
-  * @param streamIndex 流属性，参看 ByteRTCStreamIndex:{@link #ByteRTCStreamIndex}
-  * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo: {@link #ByteRTCVideoFrameInfo}
+  * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
+  * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo{@link #ByteRTCVideoFrameInfo}
   */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstLocalVideoFrameCaptured:(ByteRTCStreamIndex)streamIndex withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
 
@@ -426,8 +426,8 @@
   * @author liyi.000
   * @brief 本地视频大小或旋转信息发生变化时，收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。
-  * @param streamIndex 流属性，参看 ByteRTCStreamIndex:{@link #ByteRTCStreamIndex}
-  * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo:{@link #ByteRTCStreamIndex}
+  * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
+  * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo{@link #ByteRTCVideoFrameInfo}
   */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onLocalVideoSizeChanged:(ByteRTCStreamIndex)streamIndex
@@ -438,8 +438,8 @@
  * @region 多房间
  * @brief 远端视频大小或旋转配置发生改变时，房间内订阅此视频流的用户会收到此回调。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
- * @param streamKey 远端流信息。参看 ByteRTCRemoteStreamKey:{@link #ByteRTCRemoteStreamKey}
- * @param frameInfo 视频帧信息。参看 ByteRTCVideoFrameInfo:{@link #ByteRTCVideoFrameInfo}
+ * @param streamKey 远端流信息。参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
+ * @param frameInfo 视频帧信息。参看 ByteRTCVideoFrameInfo{@link #ByteRTCVideoFrameInfo}
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onRemoteVideoSizeChanged:(ByteRTCRemoteStreamKey *_Nonnull)streamKey
@@ -451,8 +451,8 @@
  * @author liyi.000
  * @brief 第一帧远端视频流在视图上渲染成功后，收到此回调。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
- * @param streamKey 远端流信息，参看 ByteRTCRemoteStreamKey:{@link #ByteRTCRemoteStreamKey}
- * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo:{@link #ByteRTCVideoFrameInfo}
+ * @param streamKey 远端流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
+ * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo{@link #ByteRTCVideoFrameInfo}
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onFirstRemoteVideoFrameRendered:(ByteRTCRemoteStreamKey *_Nonnull)streamKey
@@ -534,9 +534,9 @@
  * @region 多房间
  * @brief 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
- * @param streamKey 远端视频流信息，房间、用户 ID、流属性等，参看 ByteRTCRemoteStreamKey:{@link #ByteRTCRemoteStreamKey}
- * @param state 远端视频流的当前状态，参看 ByteRTCRemoteVideoState:{@link #ByteRTCRemoteStreamKey}
- * @param reason 远端视频流状态改变的原因，参看 ByteRTCRemoteVideoStateChangeReason:{@link #ByteRTCRemoteVideoStateChangeReason}
+ * @param streamKey 远端视频流信息，房间、用户 ID、流属性等，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
+ * @param state 远端视频流的当前状态，参看 ByteRTCRemoteVideoState{@link #ByteRTCRemoteVideoState}
+ * @param reason 远端视频流状态改变的原因，参看 ByteRTCRemoteVideoStateChangeReason{@link #ByteRTCRemoteVideoStateChangeReason}
  */
 - (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom
     onRemoteVideoStateChanged:(ByteRTCRemoteStreamKey * _Nonnull)streamKey
@@ -609,6 +609,40 @@
  * @param state 首帧播放状态，详见 ByteRTCFirstFramePlayState{@link #ByteRTCFirstFramePlayState}
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onScreenVideoFramePlayStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFramePlayState)state;
+
+/**
+ * @type callback
+ * @region 视频管理
+ * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
+ * @param uid 被禁用/解禁的视频流用户 ID
+ * @param banned 视频流发送状态 <br>
+ *        + true: 视频流发送被禁用 <br>
+ *        + false: 视频流发送被解禁
+ * @notes  <br>
+ *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
+ *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
+ *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>    
+ *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+ */
+- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onVideoStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
+
+/**
+ * @type callback
+ * @region 音频事件回调
+ * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视音频流的发送时，触发此回调。
+ * @param uid 被禁用/解禁的音频流用户 ID
+ * @param banned 音频流发送状态 <br>
+ *        + true: 音频流发送被禁用 <br>
+ *        + false: 音频流发送被解禁
+ * @notes  <br>
+ *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
+ *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
+ *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+ *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+ */
+- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAudioStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
 @end
 
@@ -768,7 +802,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *        +  0: 方法调用成功  <br>
  *        + <0: 方法调用失败  <br>
  * @notes  <br>
- *       + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设为可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
+ *       + 可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
  */
 - (int)leaveRoom;
 
@@ -1086,13 +1120,13 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @brief 渲染来自指定远端用户 uid 的视频流时，设置使用的视图和渲染模式。  <br>
   *        如果需要解除视频的绑定视图，把 canvas 设置为空。
   * @notes  <br>
-  *       + 实际使用时，你可以在收到回调 rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 或 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 时获得远端用户 uid。
-  *         这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 回调；
-  *         而不会收到 onFirstRemoteVideoFrame{@link #onfirstremotevideoframe} 回调。你不应给录制的哑客户端绑定视图（因为它不会发送视频流）。
-  *       + 你应在加入房间后，绑定视图。退出房间后，此设置不失效。
+  *       + 实际使用时，你可以在收到回调 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 或 rtcRoom:onFirstRemoteVideoFrameRendered:withFrameInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onFirstRemoteVideoFrameRendered:withFrameInfo:} 时获得远端用户 uid。
+  *         这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调；
+  *         而不会收到 rtcRoom:onFirstRemoteVideoFrameRendered:withFrameInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onFirstRemoteVideoFrameRendered:withFrameInfo:} 回调。你不应给录制的哑客户端绑定视图（因为它不会发送视频流）。
+  *       + 你应在加入房间后，绑定视图。退出房间后，此设置失效。
   * @param uid 视频来源的远端用户 ID
-  * @param streamIndex 视频流属性，参看 ByteRTCStreamIndex:{@link #ByteRTCStreamIndex}
-  * @param canvas 视图信息和渲染模式，参看 ByteRTCVideoCanvas:{@link #ByteRTCVideoCanvas}
+  * @param streamIndex 视频流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
+  * @param canvas 视图信息和渲染模式，参看 ByteRTCVideoCanvas{@link #ByteRTCVideoCanvas}
   * @return  <br>
   *         + 0：方法调用成功  <br>
   *         + <0：方法调用失败  <br>
@@ -1113,7 +1147,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *        消息不超过 62KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>   
+  *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>
   *      + 调用该函数后会收到一次 rtcRoom:onUserMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败。  <br>
   *      + 若文本消息发送成功，则 uid 所指定的用户会收到 rtcRoom:onUserMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageReceived:message:} 回调。
   */
@@ -1128,10 +1162,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *        消息接收用户的 ID
   * @param message  <br>
   *        发送的二进制消息内容  <br>
-  *        消息不超过 46KB。 
+  *        消息不超过 46KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 在发送房间内二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>   
+  *      + 在发送房间内二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>
   *      + 调用该函数后会收到一次 rtcRoom:onUserMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
   *      + 若二进制消息发送成功，则 uid 所指定的用户会收到 rtcRoom:onUserBinaryMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onUserBinaryMessageReceived:message:} 回调。
   */
@@ -1147,7 +1181,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *        消息不超过 62KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br> 
+  *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>
   *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
   *      + 若文本消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageReceived:message:} 回调。
   */
@@ -1158,12 +1192,12 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @region 多房间
   * @author hanchenchen.c
   * @brief 给房间内的所有其他用户发送二进制消息。
-  * @param message  <br> 
-  *        用户发送的二进制广播消息  <br> 
-  *        消息不超过 46KB。 
+  * @param message  <br>
+  *        用户发送的二进制广播消息  <br>
+  *        消息不超过 46KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
-  *      + 在房间内广播二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br> 
+  *      + 在房间内广播二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>
   *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
   *      + 若二进制消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomBinaryMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomBinaryMessageReceived:message:} 回调。
   */

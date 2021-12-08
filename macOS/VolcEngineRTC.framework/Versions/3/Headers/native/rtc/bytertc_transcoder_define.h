@@ -18,13 +18,21 @@ namespace bytertc {
 
 enum TranscoderRoomStatus {
     /**
+     * @brief join room status
+     */
+    kRoomStatusJoinRoom,
+    /**
+     * @brief leave room status
+     */
+    kRoomStatusLeaveRoom,
+    /**
      * @brief room status was offline
      */
     kRoomStatusOffline,
     /**
      * @brief room status was online
      */
-    kRoomStatusOnline
+    kRoomStatusOnline,
 };
 
 /**

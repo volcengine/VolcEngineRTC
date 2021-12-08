@@ -37,8 +37,8 @@ struct VideoMetadataBuffer {
 };
 
 /**
- * @deprecated
  * @hidden
+ * @deprecated
  * @type callback
  * @region 视频数据回调
  * @brief metadata 观察者，可以接收媒体流中的 metadata， 或者向媒体流中添加 metadata
@@ -145,7 +145,7 @@ public:
      * @type callback
      * @region 音频数据回调
      * @brief 返回麦克风录制的音频数据
-     * @param [in] audio_frame 麦克风录制的音频数据, 详见：{@link #AudioFrame}
+     * @param [in] audio_frame 麦克风录制的音频数据, 详见：AudioFrame{@link #AudioFrame}
      */
     virtual void OnRecordAudioFrame(const AudioFrame& audio_frame) = 0;
 
@@ -153,7 +153,7 @@ public:
      * @type callback
      * @region 音频数据回调
      * @brief 返回远端所有用户混音后的音频数据
-     * @param [in] audio_frame 远端所有用户混音后的音频数据, 详见：{@link #AudioFrame}
+     * @param [in] audio_frame 远端所有用户混音后的音频数据, 详见：AudioFrame{@link #AudioFrame}
      */
     virtual void OnPlaybackAudioFrame(const AudioFrame& audio_frame) = 0;
 
@@ -168,7 +168,7 @@ public:
      * @type callback
      * @region 音频数据回调
      * @brief 返回本地麦克风录制和远端所有用户混音后的音频数据
-     * @param [in] audio_frame 本地麦克风录制和远端所有用户混音后的音频数据, 详见：{@link #AudioFrame}
+     * @param [in] audio_frame 本地麦克风录制和远端所有用户混音后的音频数据, 详见：AudioFrame{@link #AudioFrame}
      */
     virtual void OnMixedAudioFrame(const AudioFrame& audio_frame) = 0;
 
@@ -181,6 +181,27 @@ public:
      */
     virtual void OnRecordScreenAudioFrame(const AudioFrame& audio_frame) {
     }
+};
+
+/**
+ * @type keytype
+ * @region 音频处理
+ * @brief 自定义音频处理器
+ */
+class IAudioProcessor{
+public:
+    /**
+     * @type callback
+     * @region 音频处理
+     * @brief 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
+     * @param [in] audioFrame RTC SDK 采集到的音频帧，自定义处理可直接对音频 data 中的数据进行修改。参看 IAudioFrame{@link #IAudioFrame}。
+     * @return  <br>
+     *        0: 未处理  <br>
+     *        >0: 处理成功  <br>
+     *        <0: 处理失败
+     * @notes 在进行音频自定义处理前，你需要调用 RegisterLocalAudioProcessor{@link #IRtcEngineLite#RegisterLocalAudioProcessor} 设置音频自定义处理器。
+     */
+    virtual int ProcessAudioFrame(const IAudioFrame& audioFrame) = 0;
 };
 
 /**
@@ -266,6 +287,7 @@ public:
 };
 
 /**
+ * @hidden
  * @type callback
  * @region 音频数据回调
  * @brief 音频数据回调观察者
@@ -292,7 +314,6 @@ public:
 };
 
 /**
- * @hidden(android,ios)
  * @type keytype
  * @brief 屏幕采集对象的类型
  */
@@ -314,7 +335,6 @@ enum ScreenCaptureSourceType {
 };
 
 /**
- * @hidden(android,ios)
  * @type keytype
  * @brief 屏幕采集对象的具体信息
  */
@@ -381,6 +401,7 @@ public:
 class IRtcEngineLite {
 public:
     /**
+     * @hidden
      * @deprecated
      * @type api
      * @region 音频管理
@@ -418,6 +439,7 @@ public:
     virtual void SetPlaybackVolume(const int volume) = 0;
 
     /**
+     * @hidden
      * @deprecated
      * @type api
      * @region 屏幕共享
@@ -431,6 +453,7 @@ public:
     virtual void StartMixScreenAudioToMainStream() = 0;
 
     /**
+     * @hidden
      * @deprecated
      * @type api
      * @region 屏幕共享
@@ -440,6 +463,7 @@ public:
     virtual void StopMixScreenAudioToMainStream() = 0;
 
     /**
+     * @hidden
      * @deprecated
      * @type api
      * @region 屏幕共享
@@ -1105,7 +1129,8 @@ public:
     virtual int SetVideoEncoderConfig(StreamIndex index, const VideoSolution* solutions, int solution_num) = 0;
 
     /**
-     * @deprecated 使用
+     * @hidden
+     * @deprecated
      * @type api
      * @region 视频管理
      * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，
@@ -1147,9 +1172,9 @@ public:
      * @param [in] video_sink 自定义视频渲染器，参看 IVideoSink{@link #IVideoSink}。
      * @param [in] required_format video_sink 适用的视频帧编码格式，参看 PixelFormat{@link #PixelFormat}
      * @notes  <br>
-     *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
-     *        + 如果需要解除绑定，必须将 video_sink 设置为 null。进退房操作不会影响绑定状态。
-     *        + 一般在收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
+     *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。<br>
+     *        + 如果需要解除绑定，必须将 video_sink 设置为 null。<br>
+     *        + 进退房操作不会影响绑定状态。在开始采集前，即可调用此方法进行绑定。<br>
      */
     virtual void SetLocalVideoSink(
             StreamIndex index, IVideoSink* video_sink, IVideoSink::PixelFormat required_format) = 0;
@@ -1373,9 +1398,9 @@ public:
     virtual void UpdateScreenCaptureRegion(const Rectangle& region_rect) = 0;
 
     /**
-     * @type api
-     * @deprecated
      * @hidden
+     * @deprecated
+     * @type api
      * @region 屏幕共享
      * @brief 更新屏幕共享的编码参数配置。
      * @param [in] capture_params
@@ -1387,8 +1412,9 @@ public:
     virtual int UpdateScreenCaptureParameters(const DesktopCaptureParameters& capture_params) = 0;
 
     /**
-     * @type api
+     
      * @deprecated
+     * @type api
      * @region 屏幕共享
      * @brief 停止屏幕或者窗口共享。
      * @notes  <br>
@@ -1512,7 +1538,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated 使用SetVideoSourceType替代
+     * @deprecated 使用 SetVideoSourceType 替代
      * @type api
      * @region 视频管理
      * @brief 设置是否启用自定义视频采集
@@ -1580,10 +1606,9 @@ public:
     virtual int SetAudioPlaybackDevice(AudioPlaybackDevice device) = 0;
 
     /**
-     * @hidden
      * @type api
      * @region 房间管理
-     * @brief 创建并获取一个 IRTCRoom{@link #IRTCRoom} 对象
+     * @brief 创建并获取一个 IRTCRoom{@link #IRtcRoom} 对象
      * @param [in] room_id
      *        标识通话房间的房间 ID，最大长度为128字节的非空字符串。支持的字符集范围为:
      *            1. 26个大写字母 A ~ Z
@@ -1593,7 +1618,7 @@ public:
      * @notes
      *        1.参数 room_id 没有默认值，请确保对该参数正确赋值。
      *        2.请勿给参数 room_id 赋空字符串""或者空指针，否则将无法正确的创建房间对象。
-     *        3.用户可以多次调用此方法创建多个 IRTCRoom{@link #IRTCRoom} 对象，再分别调用各 IRTCRoom{@link #IRTCRoom}
+     *        3.用户可以多次调用此方法创建多个 IRTCRoom{@link #IRtcRoom} 对象，再分别调用各 IRTCRoom{@link #IRtcRoom}
      * 对象的 JoinRoom{@link #JoinRoom} 方法，实现同时加入多个房间。
      *        4.加入多个房间后，用户可以同时订阅各房间的音视频流，但是目前仅支持同一时间在一个房间内发布一路音视频流。
      */
@@ -1786,12 +1811,27 @@ public:
      * @region 音频数据回调
      * @brief 注册音频数据回调观察者
      * @param [in] observer 音频数据观察者，详见：IAudioFrameObserver{@link #IAudioFrameObserver}
-     * @notes 本方法需要与下面3个方法配合使用：
+     * @notes <br>
+     *        + 本方法需要与下面3个方法配合使用：
      *        SetRecordingAudioFrameParameters{@link #SetRecordingAudioFrameParameters}、
      *        SetPlaybackAudioFrameParameters{@link #SetPlaybackAudioFrameParameters}、
-     *        SetMixedAudioFrameParameters{@link #SetMixedAudioFrameParameters}
+     *        SetMixedAudioFrameParameters{@link #SetMixedAudioFrameParameters} <br>
+     *        + 在销毁引擎前，你必须调用此接口，将 `observer` 设置为 `null`。
      */
     virtual void RegisterAudioFrameObserver(IAudioFrameObserver* observer) = 0;
+
+
+    /**
+     * @type api
+     * @region 音频处理
+     * @brief 设置自定义音频处理器。  <br>
+     *        使用该处理器，你可以调用 ProcessAudioFrame{@link #IAudioProcessor#ProcessAudioFrame} 对 RTC SDK 采集得到的音频帧进行自定义处理，并将处理后的音频帧用于 RTC 音视频通信。  <br>
+     *        SDK 只持有 processor 的弱引用，你应保证其生命周期。
+     * @param [in] processor 自定义音频处理器，参看 IAudioProcessor{@link #IAudioProcessor}。如果传入 null，则不对 RTC SDK 采集得到的音频帧进行自定义处理。
+     * @param [in] audioFormat 自定义音频参数格式，参看 AudioFormat{@link #AudioFormat}，SDK 将按指定设置给出音频帧。
+     * @notes 重复调用此接口时，仅最后一次调用生效。效果不会叠加。
+     */
+    virtual void RegisterLocalAudioProcessor(IAudioProcessor* processor, AudioFormat audioFormat) = 0;
 
     /**
      * @type api
@@ -1806,9 +1846,9 @@ public:
 
     /**
       * @type api
-      * @region 视频管理
+      * @region 视频处理
       * @brief 设置自定义视频前处理器。<br>
-      *        使用这个视频前处理器，你可以调用 ProcessFrame{@link #IVideoProcessor#ProcessFrame} 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。
+      *        使用这个视频前处理器，你可以调用 ProcessVideoFrame{@link #IVideoProcessor#ProcessVideoFrame} 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。
       * @param [in] processor 自定义视频处理器，详见 IVideoProcessor{@link #IVideoProcessor}。如果传入 null，则不对 RTC SDK 采集得到的视频帧进行前处理。<br>
       *        SDK 只持有 processor 的弱引用，你应保证其生命周期。
       * @param [in] config 自定义视频前处理器适用的设置，详见 VideoPreprocessorConfig{@link #VideoPreprocessorConfig}。<br>
@@ -1828,9 +1868,9 @@ public:
     virtual int RegisterLocalVideoProcessor(IVideoProcessor* processor, VideoPreprocessorConfig config) = 0;
 
     /**
-     * @type api
-     * @deprecated
      * @hidden
+     * @deprecated
+     * @type api
      * @region 视频数据回调
      * @brief 注册 metadata 观察者，用于接收或发送 metadata，底层通过在视频帧中添加 SEI 数据实现该功能。  <br>
      *        注册观察者后，发送的视频帧里面没有 SEI 信息， 会触发 OnReadyToSendMetadata{@link
@@ -1856,13 +1896,15 @@ public:
      *        + >=0: 将被添加到视频帧中的 SEI 的数量  <br>
      *        + < 0: 发送失败
      * @notes <br>
-     *        + 如果同时调用了 `RegisterMetadataObserver` 注册了 metadata 观察者，并通过其添加了 SEI 信息，将无法通过此接口发送 SEI 信息。<br>
+     *        + 你可以通过此接口对 RTC SDK 内部采集的视频帧添加 SEI。对于采用自定义采集获得的视频帧：如果原视频帧中没有添加 SEI 数据，那么你可以调用此接口为其中添加 SEI 信息后，进行编码传输；如果原视频帧中已添加了 SEI 数据，那么，调用此接口不生效。<br>
      *        + 如果调用此接口之后的 2s 内，没有可带 SEI 的视频帧（比如没有开启视频采集和传输），那么，SEI 数据不会被加进视频帧中。
      *        + 消息发送成功后，远端会收到 OnSEIMessageReceived{@link #IRtcEngineLiteEventHandler#OnSEIMessageReceived} 回调。
      */
     virtual int SendSEIMessage(StreamIndex stream_index, const uint8_t* message, int length, int repeat_count) = 0;
 
     /**
+     * @hidden
+     * @deprecated
      * @type api
      * @region 房间管理
      * @brief 设置引擎自动发布属性

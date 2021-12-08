@@ -83,6 +83,10 @@ public:
 
     virtual void OnUserEnableLocalVideo(const char* uid, bool enabled) override;
 
+    virtual void OnVideoStreamBanned(const char* uid, bool banned) override;
+
+    virtual void OnAudioStreamBanned(const char* uid, bool banned) override;
+
 private:
     __weak id<ByteRTCRoomDelegate> _delegate;
     __weak ByteRTCRoom * _rtcRoom;

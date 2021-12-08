@@ -250,7 +250,7 @@ typedef NS_ENUM(NSUInteger, GameRTCUserLeaveType) {
      */
     GameRTCUserLeaveTypeQuit = 0,
     /**
-     * @brief 用户掉线。用户因为网络等原因掉线
+     * @brief 用户掉线。用户因为网络等原因掉线，或切换为隐身状态。
      */
     GameRTCUserLeaveTypeDropped = 1,
 };

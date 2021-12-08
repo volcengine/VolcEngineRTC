@@ -28,6 +28,79 @@ namespace bytertc {
 
 /**
  * @hidden
+ * @type
+ * @brief RTC Audio Dump 节点配置。
+ * 要与bae_audio_sample_interface中
+ * 的AudioSampleType枚举和AudioSampleConfigure保持一致。
+ */
+struct RTCAudioSampleConfigure {
+    bool aec_near_in_enable = false;
+    bool aec_far_in_enable = false;
+    bool aec_far_in_ref_enable = false;
+    bool aec_out_enable = false;
+    bool agc_out_enable = false;
+    bool ns_out_enable = false;
+    bool ainr_out_enable = false;
+    bool mix_out_enable = false;
+    bool send2encoder_enable = false;
+    bool audio_share_in_enable = false;
+    bool audio_share_win_ref_enable = false;
+    bool audio_share_out_enable = false;
+    bool external_audio_in_enable = false;
+    bool pitchfilter_out_enable = false;
+    bool decoder_out_enable = false;
+    /**
+     * @hidden
+     */
+    void reset() {
+        aec_near_in_enable = false;
+        aec_far_in_enable = false;
+        aec_far_in_ref_enable = false;
+        aec_out_enable = false;
+        agc_out_enable = false;
+        ns_out_enable = false;
+        ainr_out_enable = false;
+        mix_out_enable = false;
+        send2encoder_enable = false;
+        audio_share_in_enable = false;
+        audio_share_win_ref_enable = false;
+        audio_share_out_enable = false;
+        external_audio_in_enable = false;
+        pitchfilter_out_enable = false;
+        decoder_out_enable = false;
+    }
+    /**
+     * @hidden
+     */
+    void NormalMode() {
+        aec_near_in_enable = true;
+        aec_far_in_ref_enable = true;
+        mix_out_enable = true;
+    }
+    /**
+     * @hidden
+     */
+    void AllMode() {
+        aec_near_in_enable = true;
+        aec_far_in_enable = true;
+        aec_far_in_ref_enable = true;
+        aec_out_enable = true;
+        agc_out_enable = true;
+        ns_out_enable = true;
+        ainr_out_enable = true;
+        mix_out_enable = true;
+        send2encoder_enable = true;
+        audio_share_in_enable = true;
+        audio_share_win_ref_enable = true;
+        audio_share_out_enable = true;
+        external_audio_in_enable = true;
+        pitchfilter_out_enable = true;
+        decoder_out_enable = true;
+    }
+};
+
+/**
+ * @hidden
  * @type keytype
  * @brief SDK 的服务器环境。
  */
@@ -88,7 +161,7 @@ attribute_deprecated
  * @hidden
  * @deprecated
  * @type api
- * @region 频道管理
+ * @region 房间管理
  * @brief 私有接口
  * @param [in] parameters JSON字符串
  */

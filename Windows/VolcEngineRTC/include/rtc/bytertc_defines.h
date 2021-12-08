@@ -53,11 +53,11 @@ enum RenderMode {
  */
 enum UserOfflineReason {
     /**
-     * @brief 远端用户调用 LeaveRoom{@link #LeaveRoom} 方法主动退出房间，或将身份切换至静默观众。  <br>
+     * @brief 远端用户调用 LeaveRoom{@link #LeaveRoom} 方法主动退出房间。  <br>
      */
     kUserOfflineReasonQuit = 0,
     /**
-     * @brief 远端用户因网络等原因掉线。  <br>
+     * @brief 远端用户因网络等原因掉线，或切换至隐身状态。  <br>
      */
     kUserOfflineReasonDropped = 1,
     /**
@@ -118,7 +118,7 @@ enum UserRoleType {
  */
 enum JoinRoomType {
     /**
-     * @brief 首次加入房间。用户手动调用 JoinRoom{@link #JoinRoom}，收到加入成功。  <br>
+     * @brief 首次加入房间。用户手动调用 JoinRoom{@link #IRtcRoom#JoinRoom}，收到加入成功。  <br>
      */
     kJoinRoomTypeFirst = 0,
     /**
@@ -343,8 +343,9 @@ enum PublishFallbackOption {
 };
 
 /**
- * @type keytype
+ * @hidden
  * @deprecated
+ * @type keytype
  * @brief 屏幕共享参数
  */
 struct ScreenParameters {
@@ -666,8 +667,9 @@ enum SubscribeFallbackOption {
 };
 
 /*
+ * @hidden
  * @type keytype
- * @brief 订阅模式选项。业务方在加入房间前，调用 EnableAutoSubscribe{@link #EnableAutoSubscribe} 接口设置订阅模式。 <br>
+ * @brief 订阅模式选项。业务方在加入房间前，调用 EnableAutoSubscribe{@link #IRtcRoom#EnableAutoSubscribe} 接口设置订阅模式。 <br>
  */
 enum SubscribeMode {
     /**
@@ -675,7 +677,7 @@ enum SubscribeMode {
      */
     kSubscribeModeAuto = 0,
     /**
-     * @brief 手动订阅模式。SDK 不会自动订阅房间内的音视频流，你应根据根据需要调用 SubscribeUserStream{@link #SubscribeUserStream} 方法手动订阅其他用户发布的音视频流。  <br>
+     * @brief 手动订阅模式。SDK 不会自动订阅房间内的音视频流，你应根据根据需要调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 方法手动订阅其他用户发布的音视频流。  <br>
      */
     kSubscribeModeManual = 1
 };
@@ -739,6 +741,29 @@ enum RemoteUserPriority {
      * @brief 用户优先级为高
      */
     kRemoteUserPriorityHigh = 200,
+};
+
+/**
+ * @type keytype
+ * @brief 时域分层定义
+ */
+enum SVCLayer {
+    /**
+    * @brief 不指定分层(默认值）
+    */
+    kSVCLayerDefault = 0,
+    /**
+     * @brief T0层
+     */
+    kSVCLayerBase = 1,
+    /**
+     * @brief T0+T1层
+     */
+    kSVCLayerMain = 2,
+    /**
+     * @brief T0+T1+T2层
+     */
+    kSVCLayerHigh = 3,
 };
 
 /**
@@ -1073,7 +1098,7 @@ enum TransCodingError {
 /**
  * @type keytype
  * @brief 事务检查码。  <br>
- *        用户调用 SetBusinessId{@link #SetBusinessId} 方法设置业务标识参数的返回错误码。  <br>
+ *        用户调用 SetBusinessId{@link #IRtcEngineLite#SetBusinessId} 方法设置业务标识参数的返回错误码。  <br>
  */
 enum BusinessCheckCode {
     /**
@@ -1084,7 +1109,7 @@ enum BusinessCheckCode {
 
     /**
      * @brief 输入参数非法。  <br>
-     *        用户传入的业务标识参数非法，参数合法性参考 SetBusinessId{@link #SetBusinessId} 方法的参数说明。  <br>
+     *        用户传入的业务标识参数非法，参数合法性参考 SetBusinessId{@link #IRtcEngineLite#SetBusinessId} 方法的参数说明。  <br>
      */
     ERROR_INPUT_INVALIDATE = -6002,
 };
@@ -1092,7 +1117,7 @@ enum BusinessCheckCode {
 /**
  * @type keytype
  * @brief 本地音频流状态。
- *        SDK 通过 OnLocalAudioStateChanged{@link #OnLocalAudioStateChanged} 回调本地音频流状态
+ *        SDK 通过 OnLocalAudioStateChanged{@link #IRTCRoomEventHandler#OnLocalAudioStateChanged} 回调本地音频流状态
  */
 enum LocalAudioStreamState {
     /**
@@ -1123,12 +1148,24 @@ enum LocalAudioStreamState {
      * <br>
      */
     kLocalAudioStreamStateFailed,
+
+    /**
+     * @brief 本地音频静音成功后回调该状态。
+     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     */
+    kLocalAudioStreamMute,
+
+    /**
+     * @brief 本地音频解除静音成功后回调该状态。
+     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     */
+    kLocalAudioStreamUnmute
 };
 
 /**
  * @type keytype
  * @brief 本地音频流状态改变时的错误码。
- *        SDK 通过 OnLocalAudioStateChanged{@link #OnLocalAudioStateChanged} 回调该错误码。
+ *        SDK 通过 OnLocalAudioStateChanged{@link #IRTCRoomEventHandler#OnLocalAudioStateChanged} 回调该错误码。
  */
 enum LocalAudioStreamError {
     /**
@@ -1227,12 +1264,12 @@ enum LocalVideoStreamError {
 /**
  * @type keytype
  * @brief 远端音频流状态。<br>
- *        用户可以通过 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged} 了解该状态。
+ *        用户可以通过 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged} 了解该状态。
  */
 enum RemoteAudioState {
     /**
      * @brief  不接收远端音频流。 <br>
-     *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}：  <br>
+     *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}：  <br>
      *       + 本地用户停止接收远端音频流，对应原因是：kRemoteAudioStateChangeReasonLocalMuted{@link
      * #RemoteAudioStateChangeReason}  <br>
      *       + 远端用户停止发送音频流，对应原因是：kRemoteAudioStateChangeReasonRemoteMuted{@link
@@ -1243,13 +1280,13 @@ enum RemoteAudioState {
     kRemoteAudioStateStopped = 0,
     /**
      * @brief 开始接收远端音频流首包。<br>
-     *        刚收到远端音频流首包会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}，
+     *        刚收到远端音频流首包会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}，
      *        对应原因是： kRemoteAudioStateChangeReasonLocalUnmuted{@link #RemoteAudioStateChangeReason}。
      */
     kRemoteAudioStateStarting,
     /**
      * @brief  远端音频流正在解码，正常播放。 <br>
-     *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}：  <br>
+     *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}：  <br>
      *       + 成功解码远端音频首帧，对应原因是：kRemoteAudioStateChangeReasonLocalUnmuted{@link
      * #RemoteAudioStateChangeReason}  <br>
      *       + 网络由阻塞恢复正常，对应原因是：kRemoteAudioStateChangeReasonNetworkRecovery{@link
@@ -1262,7 +1299,7 @@ enum RemoteAudioState {
     kRemoteAudioStateDecoding,
     /**
      * @brief 远端音频流卡顿。<br>
-     *        网络阻塞、丢包率大于 40% 时，会触发回调 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged}，
+     *        网络阻塞、丢包率大于 40% 时，会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}，
      *        对应原因是：kRemoteAudioStateChangeReasonNetworkCongestion{@link #RemoteAudioStateChangeReason}
      */
     kRemoteAudioStateFrozen,
@@ -1277,7 +1314,7 @@ enum RemoteAudioState {
 /**
  * @type keytype
  * @brief 接收远端音频流状态改变的原因。  <br>
- *        用户可以通过 OnRemoteAudioStateChanged{@link #OnRemoteAudioStateChanged} 了解该原因。
+ *        用户可以通过 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged} 了解该原因。
  */
 enum RemoteAudioStateChangeReason {
     /**
@@ -1316,7 +1353,7 @@ enum RemoteAudioStateChangeReason {
 
 /**
  * @type keytype
- * @brief 远端视频流状态。状态改变时，会收到回调：OnRemoteVideoStateChanged{@link #OnRemoteVideoStateChanged}
+ * @brief 远端视频流状态。状态改变时，会收到回调：OnRemoteVideoStateChanged{@link #IRTCRoomEventHandler#OnRemoteVideoStateChanged}
  */
 enum RemoteVideoState {
     /**
@@ -1376,7 +1413,7 @@ enum RemoteVideoStateChangeReason {
     kRemoteVideoStateChangeReasonRemoteUnmuted,
     /**
      * @brief 远端用户离开频道。
-     *        状态转换参考 OnStreamRemove{@link #OnStreamRemove}
+     *        状态转换参考 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove}
      */
     kRemoteVideoStateChangeReasonRemoteOffline,
 };
@@ -1437,7 +1474,7 @@ struct AudioVolumeInfo {
 };
 /**
  * @type keytype
- * @brief OnPerformanceAlarms{@link #OnPerformanceAlarms} 告警的原因
+ * @brief OnPerformanceAlarms{@link #IRtcEngineLiteEventHandler#OnPerformanceAlarms} 告警的原因
  */
 enum PerformanceAlarmReason {
     /**
@@ -1587,7 +1624,7 @@ struct RtcRoomStats {
 /**
  * @type keytype
  * @brief 远端音频流统计信息，统计周期为 2s。  <br>
- *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 OnRemoteStreamStats{@link #OnRemoteStreamStats} 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
+ *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 OnRemoteStreamStats{@link #IRTCRoomEventHandler#OnRemoteStreamStats} 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteAudioStats {
     /**
@@ -1667,7 +1704,7 @@ struct RemoteAudioStats {
 /**
  * @type keytype
  * @brief 本地音频流统计信息，统计周期为 2s 。  <br>
- *        本地用户发布音频流成功后，SDK 会周期性地通过 OnLocalStreamStats{@link #OnLocalStreamStats}
+ *        本地用户发布音频流成功后，SDK 会周期性地通过 OnLocalStreamStats{@link #IRTCRoomEventHandler#OnLocalStreamStats}
  *        通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct LocalAudioStats {
@@ -1725,13 +1762,13 @@ struct MediaStreamInfo {
     bool has_audio;
     /**
      * @brief 视频流的属性。  <br>
-     *        当远端用户调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
+     *        当远端用户调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
      *        参看 VideoSolutionDescription{@link #VideoSolutionDescription}。
      */
     VideoSolutionDescription* profiles;
     /**
      * @brief 不同配置流的个数。  <br>
-     *        当远端用户调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
+     *        当远端用户调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
      */
     int profile_count;
 };
@@ -1794,14 +1831,20 @@ struct SubscribeConfig {
     bool sub_audio;
     /**
      * @brief 订阅的视频流分辨率下标。  <br>
-     *        用户可以通过调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+     *        用户可以通过调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
      */
     int video_index;
     /**
      * @brief 远端用户的需求优先级，参看 RemoteUserPriority{@link #RemoteUserPriority}，默认值为 0 。  <br>
-     *        当开启了订阅流回退选项功能（详见 SetSubscribeFallbackOption{@link #SetSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
+     *        当开启了订阅流回退选项功能（详见 SetSubscribeFallbackOption{@link #IRtcEngineLite#SetSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
      */
     int priority = 0;
+
+    /**
+     * @brief 远端用户的时域分层，参看 SVCLayer{@link #SVCLayer}，默认值为 0 。  <br>
+     *        仅码流支持SVC特性时可以生效。  <br>
+     */
+    int svc_layer = 0;
 
 public:
     /**
@@ -1836,7 +1879,7 @@ public:
      */
     bool operator==(const SubscribeConfig& config) const {
         bool result = is_screen == config.is_screen && sub_video == config.sub_video && sub_audio == config.sub_audio &&
-                      video_index == config.video_index && priority == config.priority;
+                      video_index == config.video_index && priority == config.priority && svc_layer == config.svc_layer;
         ;
         return result;
     }
@@ -1896,7 +1939,7 @@ enum ProblemFeedbackOption {
      */
     kProblemFeedbackOptionNoVideo = (1 << 8),
     /**
-     * @brief 声音过大或过小
+     * @brief 声音过小
      */
     kProblemFeedbackOptionAudioStrength = (1 << 9),
     /**
@@ -1928,7 +1971,7 @@ enum VideoStreamType {
 /**
  * @type keytype
  * @brief 画布信息和渲染模式。<br>
- *        你应使用 SetLocalVideoCanvas{@link #SetLocalVideoCanvas} 将视频流绑定到本地视图。
+ *        你应使用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 将视频流绑定到本地视图。
  */
 struct VideoCanvas {
     /**
@@ -1964,7 +2007,7 @@ struct VideoCanvas {
 /**
  * @type keytype
  * @brief 远端音频流统计信息，统计周期为 2s 。  <br>
- *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 OnRemoteStreamStats{@link #OnRemoteStreamStats}
+ *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 OnRemoteStreamStats{@link #IRTCRoomEventHandler#OnRemoteStreamStats}
  *        通知本地用户订阅的远端视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteVideoStats {
@@ -2030,7 +2073,7 @@ struct RemoteVideoStats {
 /**
  * @type keytype
  * @brief 本地视频流统计信息，统计周期为 2s 。  <br>
- *        本地用户发布视频流成功后，SDK 会周期性地通过 OnLocalStreamStats{@link #OnLocalStreamStats}
+ *        本地用户发布视频流成功后，SDK 会周期性地通过 OnLocalStreamStats{@link #IRTCRoomEventHandler#OnLocalStreamStats}
  *        通知用户发布的视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct LocalVideoStats {
@@ -2104,7 +2147,7 @@ struct LocalVideoStats {
 /**
  * @type keytype
  * @brief 本地音/视频流统计信息以及网络状况，统计周期为 2s 。  <br>
- *        本地用户发布音/视频流成功后，SDK 会周期性地通过 OnLocalStreamStats{@link #OnLocalStreamStats}
+ *        本地用户发布音/视频流成功后，SDK 会周期性地通过 OnLocalStreamStats{@link #IRTCRoomEventHandler#OnLocalStreamStats}
  *        通知本地用户发布的音/视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct LocalStreamStats {
@@ -2133,7 +2176,7 @@ struct LocalStreamStats {
 /**
  * @type keytype
  * @brief 用户订阅的远端音/视频流统计信息以及网络状况，统计周期为 2s 。  <br>
- *        订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 OnRemoteStreamStats{@link #OnRemoteStreamStats}
+ *        订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 OnRemoteStreamStats{@link #IRTCRoomEventHandler#OnRemoteStreamStats}
  *        通知本地用户订阅的远端音/视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteStreamStats {
@@ -2166,7 +2209,7 @@ struct RemoteStreamStats {
 /**
  * @type keytype
  * @brief App 使用的 cpu 和内存信息。  <br>
- *        信息由 SDK 周期性（2s）地通过 OnSysStats{@link #OnSysStats} 回调通知给用户。
+ *        信息由 SDK 周期性（2s）地通过 OnSysStats{@link #IRtcEngineLiteEventHandler#OnSysStats} 回调通知给用户。
  */
 struct SysStats {
     /**
@@ -2488,7 +2531,7 @@ enum AudioMixingError {
      */
     kAudioMixingErrorInValidVolume,
     /**
-     * @brief 播放的文件与预加载的文件不一致，请先使用 UnloadAudioMixing{@link #UnloadAudioMixing} 卸载文件
+     * @brief 播放的文件与预加载的文件不一致，请先使用 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载文件
      */
     kAudioMixingErrorLoadConflict,
     /**
@@ -2527,8 +2570,9 @@ enum PixelFormat {
      */
     virtual bool OnFrame(IVideoFrame* videoFrame) = 0;
     /**
+     * @hidden
      * @type callback
-     * @region 频道管理
+     * @region 房间管理
      * @brief 获取外部渲染耗时。
      * @notes 获取外部渲染耗时进行上报。开发者需要自己计算平均渲染耗时。
      */
@@ -2952,9 +2996,14 @@ struct VideoFrameInfo {
 
 /**
  * @type keytype
- * @brief 音频采样率，单位为 HZ。
+ * @brief 音频采样率，单位为 HZ。 <br>
+ *        若对采样率没有强依赖，建议使用 kAudioSampleRateAuto，可以通过避免 resample 带来一些性能优化。
  */
 enum AudioSampleRate {
+    /**
+     * @brief 自动采样率，使用 SDK 内部处理的采样率，不经过 resample
+     */
+    kAudioSampleRateAuto = -1,
     /**
      * @brief 8000 采样率
      */
@@ -2979,9 +3028,13 @@ enum AudioSampleRate {
 
 /**
  * @type keytype
- * @brief 音频声道
+ * @brief 音频声道。若对声道没有强依赖，建议使用 kAudioChannelAuto，可以通过避免 resample 带来一些性能优化。
  */
 enum AudioChannel {
+    /**
+     * @brief 自动声道，使用 SDK 内部处理的声道，不经过 resample
+     */
+    kAudioChannelAuto = -1,
     /**
      * @brief 单声道
      */
@@ -3118,7 +3171,7 @@ struct RTCASRConfig {
 /**
  * @type keytype
  * @brief 语音识别服务错误码。  <br>
- *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 StartASR{@link #StartASR} 重启语音识别功能。
+ *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 StartASR{@link #IRtcEngineLite#StartASR} 重启语音识别功能。
  */
 enum RTCASRErrorCode {
     /**
@@ -3126,7 +3179,7 @@ enum RTCASRErrorCode {
      */
     kRTCASRErrorNetworkInterrupted = -1,
     /**
-     * @brief 重复调用 StartASR{@link #StartASR}。开启语音识别服务后，你需要先调用 StopASR{@link #StopASR} 停止语音识别服务，才能二次调用 StartASR{@link #StartASR} 再次开启服务。
+     * @brief 重复调用 StartASR{@link #IRtcEngineLite#StartASR}。开启语音识别服务后，你需要先调用 StopASR{@link #IRtcEngineLite#StopASR} 停止语音识别服务，才能二次调用 StartASR{@link #IRtcEngineLite#StartASR} 再次开启服务。
      */
     kRTCASRErrorAlreadyStarted = -2,
     /**
@@ -3203,7 +3256,7 @@ enum RecordingState {
      */
     kRecordingStateProcessing = 1,
     /**
-     * @brief 录制文件保存成功，调用 StopFileRecording{@link #StopFileRecording} 结束录制之后才会收到该状态码。
+     * @brief 录制文件保存成功，调用 StopFileRecording{@link #IRtcEngineLite#StopFileRecording} 结束录制之后才会收到该状态码。
      */
     kRecordingStateSuccess = 2,
 };

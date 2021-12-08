@@ -30,7 +30,10 @@
 
 #保持webrtc、RtcEngine中的类不被混淆
 -keep class org.webrtc.**{*;}
--keep class com.bytedance.**{*;}
+-keep class com.bytedance.services.** {*;}
+-keep class com.bytedance.webrtc.** {*;}
+-keep class com.bytedance.realx.** {*;}
+-keep class com.bytedance.bae.** {*;}
 -keep class com.ss.bytertc.**{*;}
 
 

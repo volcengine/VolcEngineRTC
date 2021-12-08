@@ -81,8 +81,8 @@ public:
      * @hidden
      * @type api
      * @region 多房间
-     * @brief 设置 IRTCRoom{@link #IRTCRoom} 对象的事件句柄。
-     *        通过设置事件句柄可以监听此 IRTCRoom{@link #IRTCRoom} 对象对应的房间的回调事件。
+     * @brief 设置 IRTCRoom{@link #IRtcRoom} 对象的事件句柄。
+     *        通过设置事件句柄可以监听此 IRTCRoom{@link #IRtcRoom} 对象对应的房间的回调事件。
      * @param [in] room_event_handler
      *        回调处理器，详见 IRTCRoomEventHandler{@link #IRTCRoomEventHandler}
      */
@@ -93,9 +93,9 @@ public:
      * @type api
      * @region 多房间
      * @brief 加入房间。
-     *        用户调用此方法加入此 IRTCRoom{@link #IRTCRoom}
+     *        用户调用此方法加入此 IRTCRoom{@link #IRtcRoom}
      * 对应的房间。在一个房间内的用户可以相互通话。调用加入房间前，需要调用 CreateRtcRoom{@link #CreateRtcRoom} 方法
-     *        创建房间对应的 IRTCRoom{@link #IRTCRoom} 对象。
+     *        创建房间对应的 IRTCRoom{@link #IRtcRoom} 对象。
      * @param [in] token
      *        动态密钥，用于对登录用户进行鉴权验证。进入房间需要携带 Token。可以在控制台生成临时 Token
      * 进行测试，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token 。
@@ -115,8 +115,8 @@ public:
      *          房间的用户踢出房间，并且先加入房间的用户会收到 OnRoomError{@link #OnRoomError}回调通知，
      *          错误类型为重复登录 kErrorCodeDuplicateLogin{@link #kErrorCodeDuplicateLogin} 。
      *        5.请务必保证生成 Token 使用的App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。
-     *        6.该方法仅能加入此 IRTCRoom{@link #IRTCRoom}
-     *        对应的房间，如果需要加入其它房间需要创建对应房间的 IRTCRoom{@link #IRTCRoom} 对象。
+     *        6.该方法仅能加入此 IRTCRoom{@link #IRtcRoom}
+     *        对应的房间，如果需要加入其它房间需要创建对应房间的 IRTCRoom{@link #IRtcRoom} 对象。
      */
     virtual void JoinRoom(const char* token, const UserInfo& user_info, RoomProfileType profile_type) = 0;
 
@@ -148,7 +148,7 @@ public:
      *        加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
      *        此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调通知。  <br>
      * @notes  <br>
-     *       + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见的用户离开房间后，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。  <br>
+     *       + 可见的用户离开房间后，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。  <br>
      *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调。  <br>
      */
     virtual void LeaveRoom() = 0;
@@ -177,7 +177,7 @@ public:
      *        消息不超过 62KB。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
-     *       + 在发送房间内文本消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
+     *       + 在发送房间内文本消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br>
      *       + 调用该函数后会收到一次 OnUserMessageSendResult{@link #IRTCRoomEventHandler#OnUserMessageSendResult} 回调，通知消息发送方发送成功或失败；  <br>
      *       + 若文本消息发送成功，则 uid 所指定的用户会收到 OnUserMessageReceived{@link #IRTCRoomEventHandler#OnUserMessageReceived} 回调。
      */
@@ -193,10 +193,10 @@ public:
      *        二进制字符串的长度。
      * @param [in] message   <br>
      *        二进制消息的内容。
-     *        消息不超过 46KB。 
+     *        消息不超过 46KB。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
-     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
+     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br>
      *       + 调用该函数后会收到一次 OnUserMessageSendResult{@link #IRTCRoomEventHandler#OnUserMessageSendResult} 回调，通知消息发送方发送成功或失败；  <br>
      *       + 若二进制消息发送成功，则 uid 所指定的用户会收到 OnUserBinaryMessageReceived{@link #IRTCRoomEventHandler#OnUserBinaryMessageReceived} 回调。
      */
@@ -210,7 +210,7 @@ public:
      *        用户发送的广播消息  <br>
      *        消息不超过 62KB。
      * @notes  <br>
-     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
+     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br>
      *       + 调用该函数后，会收到一次 OnRoomMessageSendResult{@link #IRTCRoomEventHandler#OnRoomMessageSendResult} 回调。  <br>
      *       + 同一房间内的其他用户会收到 OnRoomMessageReceived{@link #IRTCRoomEventHandler#OnRoomMessageReceived} 回调。
      */
@@ -221,11 +221,11 @@ public:
      * @brief 给房间内的所有其他用户发送广播消息。
      * @param [in] size  <br>
      *        发送的二进制消息长度
-     * @param [in] message  <br> 
-     *        用户发送的二进制广播消息  <br> 
-     *        消息不超过 46KB。 
+     * @param [in] message  <br>
+     *        用户发送的二进制广播消息  <br>
+     *        消息不超过 46KB。
      * @notes  <br>
-     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br> 
+     *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br>
      *       + 调用该函数后，会收到一次 OnRoomMessageSendResult{@link #IRTCRoomEventHandler#OnRoomMessageSendResult} 回调。  <br>
      *       + 同一房间内的其他用户会收到 OnRoomBinaryMessageReceived{@link #IRTCRoomEventHandler#OnRoomBinaryMessageReceived} 回调。
      */
@@ -255,8 +255,8 @@ public:
 
     /**
      * @hidden
-     * @type api
      * @deprecated
+     * @type api
      * @region 多房间
      * @brief 发布本地屏幕共享流到房间。
      * @param [in] paramters
@@ -352,7 +352,7 @@ public:
      * @region 多房间
      * @brief 停止订阅指定的房间内远端音视频流。  <br>
      *        关闭自动订阅功能，使用手动订阅模式时用户调用此方法停止订阅已订阅的音视频流。  <br>
-     *        此方法仅在关闭自动订阅功能时生效。用户需在加入房间前调用 EnableAutoSubscribe{@link #EnableAutoSubscribe} 方法关闭自动订阅功能以使用手动订阅模式。  <br>
+     *        此方法仅在关闭自动订阅功能时生效。用户需在加入房间时设置 config 关闭自动订阅功能以使用手动订阅模式。  <br>
      * @param [in] user_id 指定停止订阅的远端音视频流的用户的ID。  <br>
      * @param [in] is_screen 指定停止的流是不是屏幕流。  <br>
      * @notes  <br>
@@ -406,6 +406,7 @@ public:
     virtual void SetRemoteAudioDirection(const char* user_id, float distance, float theta, float phi) = 0;
 
     /**
+     * @hidden
      * @deprecated
      * @type api
      * @region 多房间
@@ -531,6 +532,7 @@ public:
     virtual void RemoveAllRemoteScreen() = 0;
 
     /**
+     * @hidden
      * @deprecated
      * @type api
      * @region 多房间
@@ -565,6 +567,8 @@ public:
     virtual void SetCustomUserRole(const char* role) = 0;
 
     /**
+     * @hidden
+     * @deprecated
      * @type api
      * @region 多房间
      * @brief 设置订阅模式。  <br>

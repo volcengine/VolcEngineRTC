@@ -1870,7 +1870,7 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
      */
     ByteRTCProblemFeedbackOptionNoVideo = (1 << 8),
     /**
-     * @brief 声音过大或过小
+     * @brief 声音过小
      */
     ByteRTCProblemFeedbackOptionAudioStrength = (1 << 9),
     /**

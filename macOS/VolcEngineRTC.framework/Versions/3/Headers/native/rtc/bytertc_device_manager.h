@@ -93,7 +93,7 @@ public:
      * @type api
      * @region 视频设备管理
      * @brief 设置当前视频采集设备
-     * @param [in] device_id 视频设备 ID，可以通过 EnumerateVideoCaptureDevices{@link #EnumerateVideoCaptureDevice} 获取
+     * @param [in] device_id 视频设备 ID，可以通过 EnumerateVideoCaptureDevices{@link #IVideoDeviceManager#EnumerateVideoCaptureDevices} 获取
      * @return  <br>
      *        + 0：方法调用成功  <br>
      *        + !0：方法调用失败  <br>

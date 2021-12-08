@@ -39,8 +39,8 @@ public:
     }
 
    /**
-     * @deprecated
      * @hidden
+     * @deprecated
      * @type callback
      * @region 混音
      * @brief 本地音乐文件播放已结束回调。

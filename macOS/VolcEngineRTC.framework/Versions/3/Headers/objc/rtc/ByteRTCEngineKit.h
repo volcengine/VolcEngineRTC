@@ -575,6 +575,28 @@
          proxy_address:(NSString *_Nonnull)proxy_address
          local_address:(NSString *_Nonnull)local_address
         remote_address:(NSString *_Nonnull)remote_address;
+
+/**
+ * @type callback
+ * @region 视频状态回调
+ * @brief 房间内用户因 RTC 服务端控制，视频流发送被禁用/解禁时，房间内其他用户收到此回调。
+ * @param uid 发生视频流发送状态变化的用户 ID
+ * @param banned 当前视频流发送禁用状态
+ */
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine
+onVideoStreamBanned:(NSString *_Nonnull)uid
+         isBanned:(BOOL)banned;
+
+/**
+ * @type callback
+ * @region 音频状态回调
+ * @brief 房间内用户因 RTC 服务端控制，视频流发送被禁用/解禁时，房间内其他用户收到此回调。
+ * @param uid 发生视频流发送状态变化的用户 ID
+ * @param banned 当前视频流发送禁用状态
+ */
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine
+onAudioStreamBanned:(NSString *_Nonnull)uid
+         isBanned:(BOOL)banned;
 @end
 
 #pragma mark - ByteRTCEngineMediaMetadataObserver

@@ -124,6 +124,10 @@
 
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom didLocalVideoEnabled:(BOOL)enabled byUid:(NSString *_Nonnull)uid;
 
+- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onVideoStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
+
+- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAudioStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
+
 @end
 
 BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject @property(nonatomic, weak) id<ByteRTCRoomDelegate> _Nullable delegate;

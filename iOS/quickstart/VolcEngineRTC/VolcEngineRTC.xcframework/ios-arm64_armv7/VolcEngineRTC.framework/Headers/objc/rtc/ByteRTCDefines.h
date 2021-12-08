@@ -36,11 +36,11 @@ typedef NS_ENUM(NSUInteger, ByteRTCRenderMode) {
  */
 typedef NS_ENUM(NSUInteger, ByteRTCUserOfflineReason) {
     /**
-     * @brief 远端用户调用 leaveRoom:{@link #leaveRoom:} 方法主动退出房间，或将身份切换至静默观众。  <br>
+     * @brief 远端用户调用 leaveRoom:{@link #leaveRoom:} 方法主动退出房间。  <br>
      */
     ByteRTCUserOfflineReasonQuit = 0,
     /**
-     * @brief 远端用户因网络等原因掉线。  <br>
+     * @brief 远端用户因网络等原因掉线，或切换至隐身状态。  <br>
      */
     ByteRTCUserOfflineReasonDropped = 1,
     /**
@@ -998,6 +998,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCPublishFallbackOption) {
 };
 
 /*
+ * @hidden
  * @type keytype
  * @brief 订阅模式选项。
  */
@@ -1101,17 +1102,17 @@ typedef NS_ENUM(NSInteger, ByteRTCFallbackOrRecoverReason) {
 typedef NS_ENUM(NSInteger, ByteRTCLocalAudioStreamState) {
     /**
      * @brief 本地音频默认初始状态。
-     *        麦克风停止工作时回调该状态，对应错误码 ByteRTCLocalAudioStreamError.ByteRTCLocalAudioStreamErrorOk{@link #ByteRTCLocalAudioStreamError}
+     *        麦克风停止工作时回调该状态，对应错误码 ByteRTCLocalAudioStreamError{@link #ByteRTCLocalAudioStreamError} 中的 ByteRTCLocalAudioStreamErrorOk
      */
     ByteRTCLocalAudioStreamStateStopped = 0,
     /**
      * @brief 本地音频录制设备启动成功。
-     *        采集到音频首帧时回调该状态，对应错误码 ByteRTCLocalAudioStreamError.ByteRTCLocalAudioStreamErrorOk{@link #ByteRTCLocalAudioStreamErrorOk}
+     *        采集到音频首帧时回调该状态，对应错误码 ByteRTCLocalAudioStreamError{@link #ByteRTCLocalAudioStreamError} 中的 ByteRTCLocalAudioStreamErrorOk
      */
     ByteRTCLocalAudioStreamStateRecording = 1,
     /**
      * @brief 本地音频首帧编码成功。
-     *        音频首帧编码成功时回调该状态，对应错误码 ByteRTCLocalAudioStreamError.ByteRTCLocalAudioStreamErrorOk{@link #ByteRTCLocalAudioStreamError}
+     *        音频首帧编码成功时回调该状态，对应错误码 ByteRTCLocalAudioStreamError{@link #ByteRTCLocalAudioStreamError} 中的 ByteRTCLocalAudioStreamErrorOk
      */
     ByteRTCLocalAudioStreamStateEncoding = 2,
     /**
@@ -1168,17 +1169,17 @@ typedef NS_ENUM(NSInteger, ByteRTCLocalAudioStreamError) {
 typedef NS_ENUM(NSInteger, ByteRTCLocalVideoStreamState) {
     /**
      * @brief 本地视频默认初始状态
-     *        摄像头停止工作时回调该状态，对应错误码 ByteRTCLocalVideoStreamErrorOk{@link #ByteRTCLocalVideoStreamErrorOk}
+     *        摄像头停止工作时回调该状态，对应错误码 ByteRTCLocalVideoStreamError{@link #ByteRTCLocalVideoStreamError} 中的 ByteRTCLocalVideoStreamErrorOk
      */
     ByteRTCLocalVideoStreamStateStopped = 0,
     /**
      * @brief 本地视频录制设备启动成功
-     *        采集到视频首帧时回调该状态，对应错误码 ByteRTCLocalVideoStreamErrorOk{@link #ByteRTCLocalVideoStreamErrorOk}
+     *        采集到视频首帧时回调该状态，对应错误码 ByteRTCLocalVideoStreamError{@link #ByteRTCLocalVideoStreamError} 中的 ByteRTCLocalVideoStreamErrorOk
      */
     ByteRTCLocalVideoStreamStateRecording = 1,
     /**
      * @brief 本地视频首帧编码成功
-     *        本地视频首帧编码成功时回调该状态，对应错误码 ByteRTCLocalVideoStreamErrorOk{@link #ByteRTCLocalVideoStreamErrorOk}
+     *        本地视频首帧编码成功时回调该状态，对应错误码 ByteRTCLocalVideoStreamError{@link #ByteRTCLocalVideoStreamError} 中的 ByteRTCLocalVideoStreamErrorOk
      */
     ByteRTCLocalVideoStreamStateEncoding = 2,
     /**
@@ -1377,7 +1378,7 @@ typedef NS_ENUM(NSInteger, ByteRTCRemoteVideoStateChangeReason) {
      */
     ByteRTCRemoteVideoStateChangeReasonRemoteUnmuted = 6,
     /**
-     * @brief 远端用户离开频道
+     * @brief 远端用户离开房间
      */
     ByteRTCRemoteVideoStateChangeReasonRemoteOffline = 7,
 };
@@ -1510,7 +1511,7 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
      */
     ByteRTCProblemFeedbackOptionNoVideo = (1 << 8),
     /**
-     * @brief 声音过大或过小
+     * @brief 声音过小
      */
     ByteRTCProblemFeedbackOptionAudioStrength = (1 << 9),
     /**
@@ -1742,7 +1743,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 @property (nonatomic, assign, readonly) BOOL hasAudio;
 /**
  * @brief 视频流的分辨率信息。  <br>
- *         当远端用户调用 setVideoEncoderConfig:{@link #setVideoEncoderConfig:} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
+ *         当远端用户调用 setVideoEncoderConfig:config:{@link #setVideoEncoderConfig:config:} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
  *         参看 ByteRTCVideoSolution{@link #ByteRTCVideoSolution}。  <br>
  */
 @property (nonatomic, copy, readonly) NSArray<ByteRTCVideoSolution *> * videoStreamDescriptions;
@@ -1771,7 +1772,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
 @property (nonatomic, assign) BOOL subscribeAudio;
 /**
  * @brief 订阅的视频流分辨率下标。  <br>
- *         用户可以通过调用 setVideoProfiles{@link #setVideoProfiles:} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+ *         用户可以通过调用 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
  */
 @property (nonatomic, assign) NSInteger videoIndex;
 @end
@@ -2340,7 +2341,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMultiRoomConfig : NSObject
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoConfig : NSObject
 /**
  * @brief 订阅的视频流分辨率下标。  <br>
- *        当远端用户通过调用 setVideoEncoderConfig:{@link #ByteRTCEngineKit#setVideoEncoderConfig:} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+ *        当远端用户通过调用 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
  *        默认值为 0，即订阅第一路流。  <br>
  *        如果不想更改之前的设置，可以输入 -1。  <br>
  */
@@ -2959,13 +2960,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoPreprocessorConfig : NSObject
 
 /**
   * @type callback
-  * @region 视频管理
+  * @region 视频处理
   */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoProcessorDelegate <NSObject>
 
 /**
  * @type api
- * @region 视频管理
+ * @region 视频处理
  * @author zhushufan.ref
  * @brief 获取 RTC SDK 采集得到的视频帧，根据 registerLocalVideoProcessor:withConfig:{@link #ByteRTCEngineKit#registerLocalVideoProcessor:withConfig:} 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。
  * @param src_frame RTC SDK 采集得到的视频帧，参考: ByteRTCVideoFrame{@link #ByteRTCVideoFrame}
@@ -2999,7 +3000,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoProcessorDelegate <NSObject>
 @property (nonatomic, assign) BOOL hasAudio;
 /**
  * @brief 视频流的分辨率信息，详见 ByteRTCVideoSolution{@link #ByteRTCVideoSolution} 类。
- *         用户可以通过调用 setVideoProfiles{@link #setVideoProfiles:} 方法在一路流中发布多个不同的视频分辨率。此参数即为流中所有分辨率的相关信息。
+ *         用户可以通过调用 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 方法在一路流中发布多个不同的视频分辨率。此参数即为流中所有分辨率的相关信息。
  */
 @property (nonatomic, copy, nullable) NSArray<ByteRTCVideoSolution *> *videoStreamDescriptions;
 @end
@@ -3259,8 +3260,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamKey : NSObject
 /**
  * @type keytype
  * @brief 音频采样率，单位为 Hz。
+ *        若对采样率没有强依赖，建议使用 ByteRTCAudioSampleRateAuto，可以通过避免 resample 带来一些性能优化。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioSampleRate) {
+    /**
+     * @brief 自动采样率，使用 SDK 内部处理的采样率，不经过 resample
+     */
+    ByteRTCAudioSampleRateAuto = -1,
     /**
      * @brief 8000 采样率
      */
@@ -3285,9 +3291,13 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioSampleRate) {
 
 /**
  * @type keytype
- * @brief 音频声道
+ * @brief 音频声道。若对音频声道没有强依赖，建议使用 ByteRTCAudioChannelAuto，可以通过避免 resample 带来一些性能优化。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioChannel) {
+    /**
+     * @brief 自动声道，使用 SDK 内部处理的声道，不经过 resample
+     */
+    ByteRTCAudioChannelAuto = -1,
     /**
      * @brief 单声道
      */
@@ -3331,7 +3341,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCLocalEncodedVideoFrameObserver<NSObject>
 /**
  * @type callback
  * @region 视频数据回调
- * @brief 调用 RegisterLocalEncodedVideoFrameObserver:{@link #ByteRTCEngineKit@RegisterLocalEncodedVideoFrameObserver:} 后，SDK 收到本地视频帧信息时，回调该事件
+ * @brief 调用 registerLocalEncodedVideoFrameObserver:{@link #ByteRTCEngineKit#registerLocalEncodedVideoFrameObserver:} 后，SDK 收到本地视频帧信息时，回调该事件
  * @param streamIndex 本地视频帧类型，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
  * @param frame 本地视频帧信息，参看 ByteRTCEncodedVideoFrame{@link #ByteRTCEncodedVideoFrame}
  */

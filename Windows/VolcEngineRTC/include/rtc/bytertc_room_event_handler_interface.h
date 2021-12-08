@@ -111,7 +111,7 @@ public:
     /**
      * @type callback
      * @region 数据统计
-     * @brief 反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调，每 2s 触发一次。
+     * @brief 本地用户发布流成功后，SDK 会周期性（2s）的通过此回调事件通知用户发布的流在此次统计周期内的质量统计信息。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 LocalStreamStats{@link #LocalStreamStats}
      */
     virtual void OnLocalStreamStats(const LocalStreamStats& stats) {
@@ -732,7 +732,46 @@ public:
         (void)uid;
     }
 
+    /**
+     * @type callback
+     * @region 视频管理
+     * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
+     * @param [in] uid 被禁用/解禁的视频流用户 ID
+     * @param [in] banned 视频流发送状态 <br>
+     *        + true: 视频流发送被禁用 <br>
+     *        + false: 视频流发送被解禁
+     * @notes  <br>
+     *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
+     *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
+     *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+     *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
+     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+     */
+    virtual void OnVideoStreamBanned(const char* uid, bool banned) {
+        (void)uid;
+        (void)banned;
+    }
+
 #endif  // ByteRTC_AUDIO_ONLY
+    /**
+     * @type callback
+     * @region 音频事件回调
+     * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视音频流的发送时，触发此回调。
+     * @param [in] uid 被禁用/解禁的音频流用户 ID
+     * @param [in] banned 音频流发送状态 <br>
+     *        + true: 音频流发送被禁用 <br>
+     *        + false: 音频流发送被解禁
+     * @notes  <br>
+     *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
+     *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
+     *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+     *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
+     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+     */
+    virtual void OnAudioStreamBanned(const char* uid, bool banned) {
+        (void)uid;
+        (void)banned;
+    }
 };
 
 } // namespace bytertc
