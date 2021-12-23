@@ -380,7 +380,9 @@ enum RoomErrorCode {
      */
     kRoomErrorNoSubscribePermission = -1003,
     /**
-     * @brief 本端用户所在房间中有相同用户ID的用户登录，导致本端用户被踢出房间
+     * @brief 用户被踢出房间：<br>
+     *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
      */
     kRoomErrorDuplicateLogin = -1004
 };

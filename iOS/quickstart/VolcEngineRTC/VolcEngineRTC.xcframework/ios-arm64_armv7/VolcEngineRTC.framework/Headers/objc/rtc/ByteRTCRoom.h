@@ -45,15 +45,12 @@
  * @region 多房间
  * @author shenpengliang
  * @brief 离开房间成功回调。  <br>
- *        用户调用 LeaveChannel{@link #LeaveChannel} 方法后，SDK
- * 会停止所有的发布订阅流，并释放所有通话相关的音视频资源。SDK 完成所有的资源释放后通过此回调通知用户。  <br>
- *        离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于
- * SDK 占用了导致 App 初始化音视频设备失败。  <br>
+ *        用户调用 leaveRoom{@link #leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并释放所有通话相关的音视频资源。SDK 完成所有的资源释放后通过此回调通知用户。  <br>
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
  * @param stats 本次通话的统计数据，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats} 。  <br>
  * @notes  <br>
- *       + 用户调用 LeaveRoom{@link #LeaveRoom} 方法离开房间后，如果立即调用 DestroyRtcEngine{@link
- * #DestroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyRtcEngine{@link #destroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLeaveRoomWithStats:(ByteRTCRoomStats *_Nonnull)stats;
 
@@ -80,6 +77,7 @@
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode;
 
  /**
+  * @deprecated from 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
   * @type callback
   * @region 多房间
   * @author wangjunzheng
@@ -125,8 +123,7 @@
  * @region 多房间
  * @author liuzhiqiang.avcoder
  * @brief 本地订阅的远端音/视频流数据统计以及网络质量回调。  <br>
- *        本地用户订阅流成功后，SDK 会周期性（2s）的通过此回调事件通知用户订阅的流在此次统计周期内的质量统计信息。  <br>
- *        统计信息通过 ByteRTCLocalStreamStats{@link #ByteRTCLocalStreamStats} 类型的回调参数传递给用户，其中包括发送音视频比特率、发送帧率、编码帧率，网络质量等。
+ *        本地用户订阅流成功后，SDK 会周期性（2s）的通过此回调事件通知用户订阅的流在此次统计周期内的质量统计信息，包括：发送音视频比特率、发送帧率、编码帧率，网络质量等。
  * @param rtcRoom  ByteRTCRoom 对象。
  * @param stats  当前房间本地流数据统计。 详见：ByteRTCRemoteStreamStats{@link #ByteRTCRemoteStreamStats}
  */
@@ -202,7 +199,7 @@
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 323.1, use onUserStartAudioCapture instead
  * @type callback
  * @region 多房间
  * @author wangjunzheng
@@ -412,7 +409,7 @@
  /**
   * @type callback
   * @region 多房间
-  * @author liyi.000
+  * @author zhushufan.ref
   * @brief 第一帧本地采集的视频/屏幕共享画面在本地视图渲染完成时，收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。  <br>
   * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
@@ -423,7 +420,7 @@
  /**
   * @type callback
   * @region 多房间
-  * @author liyi.000
+  * @author zhushufan.ref
   * @brief 本地视频大小或旋转信息发生变化时，收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。
   * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
@@ -436,6 +433,7 @@
 /**
  * @type callback
  * @region 多房间
+ * @author zhushufan.ref
  * @brief 远端视频大小或旋转配置发生改变时，房间内订阅此视频流的用户会收到此回调。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
  * @param streamKey 远端流信息。参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
@@ -448,7 +446,7 @@
 /**
  * @type callback
  * @region 多房间
- * @author liyi.000
+ * @author zhushufan.ref
  * @brief 第一帧远端视频流在视图上渲染成功后，收到此回调。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
  * @param streamKey 远端流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
@@ -613,6 +611,7 @@
 /**
  * @type callback
  * @region 视频管理
+ * @author qipengxiang
  * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
  * @param uid 被禁用/解禁的视频流用户 ID
  * @param banned 视频流发送状态 <br>
@@ -630,6 +629,7 @@
 /**
  * @type callback
  * @region 音频事件回调
+ * @author qipengxiang
  * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视音频流的发送时，触发此回调。
  * @param uid 被禁用/解禁的音频流用户 ID
  * @param banned 音频流发送状态 <br>
@@ -685,6 +685,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 
 /**
  * @hidden
+ * @deprecated from 326.1, use joinRoomByToken with MultiRoomConfig instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -720,23 +721,29 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @region 多房间
  * @author shenpengliang
  * @brief 加入房间。<br>
- *        调用 createRtcRoom:{@link #ByteRTCEngineKit#createRtcRoom:} 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。<br>
- *        本地用户调用此方法加入房间成功后，会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知。  <br>
- *        本地用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
+ *        调用 createRtcRoom:{@link #ByteRTCEngineKit#createRtcRoom:} 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br>
  * @param token 动态密钥，用于对进房用户进行鉴权验证。  <br>
  *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。  <br>
- * @param userInfo 用户 ID。参看 ByteRTCUserInfo{@link #ByteRTCUserInfo}。
- * @param roomConfig 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 ByteRTCMultiRoomConfig{@link #ByteRTCMultiRoomConfig}。
+ *        使用不同 AppID 的 App 是不能互通的。  <br>
+ *        请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。  <br>
+ * @param userInfo 用户 ID。参看 ByteRTCUserInfo{@link #ByteRTCUserInfo}。  <br>
+ * @param roomConfig 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 ByteRTCMultiRoomConfig{@link #ByteRTCMultiRoomConfig}。  <br>
+ * @return 方法调用结果。  <br>
+ *        +  0: 成功  <br>
+ *        + -1: 参数无效  <br>
+ *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #leaveRoom:} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
+ *        + -3: room 为空 <br>
  * @notes  <br>
- *        + 使用不同 App ID 的 App 是不能互通的。  <br>
- *        + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
+ *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
+ *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知。  <br>
+ *        + 本地用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
  *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
  */
 - (int)joinRoomByToken:(NSString *_Nullable)token userInfo:(ByteRTCUserInfo *_Nonnull)userInfo roomConfig:(ByteRTCMultiRoomConfig *_Nonnull)roomConfig;
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 328.1, use setUserVisibility instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -792,17 +799,18 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 - (ByteRTCUserRoleType)clientRole;
 
 /**
- * @type api
- * @region 多房间
- * @author shenpengliang
- * @brief 离开房间。  <br>
- *        用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
- *        调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
- * @return 方法调用结果：  <br>
- *        +  0: 方法调用成功  <br>
- *        + <0: 方法调用失败  <br>
- * @notes  <br>
- *       + 可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
+ *  @type api
+ *  @region 房间管理
+ *  @author shenpengliang
+ *  @brief 离开房间。  <br>
+ *         用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
+ *  @return 方法调用结果。  <br>
+ *         +  0: 方法调用成功  <br>
+ *         + <0: 方法调用失败  <br>
+ *  @notes  <br>
+ *        + 用户离开房间后，本地会收到 onLeaveRoomWithStats:{@link #ByteRTCRoomDelegate#rtcRoom:onLeaveRoomWithStats:} 的回调；  <br>
+ *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设为可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
+ *        + 调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
  */
 - (int)leaveRoom;
 
@@ -861,8 +869,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *       + 调用此方法后，房间内的远端用户会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 事件。
  *       + 如果你需要由外部屏幕采集切换为内部采集，你必须调用 unpublishScreen{@link #unpublishScreen} 关闭外部采集后，
  *         通过调用 startScreenSharingWithPreferredExtension:groupId:{@link #startScreenSharingWithPreferredExtension:groupId:} 开启内部采集。
- *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。  <br>
- *       + 也可通过注册 setVideoFrameObserver:{@link #setVideoFrameObserver:} 视频回调对象，监听
+ *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。 
  * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
  */
 
@@ -903,6 +910,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -947,7 +955,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
  /**
   * @hidden
-  * @deprecated
+  * @deprecated from 326.1, use subscribeUserStream instead
   * @type api
   * @region 多房间
   * @author shenpengliang
@@ -965,6 +973,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use joinRoomBytoken with MultiRoomConfig instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -982,6 +991,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
  /**
+  * @deprecated from 323.1, use enableAudioPropertiesReport instead
   * @type api
   * @region 多房间
   * @author wangjunzheng
@@ -997,6 +1007,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 多房间
  * @author wangjunzheng
@@ -1034,6 +1045,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 
 /**
  * @hidden
+ * @deprecated from 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
  * @author wangjunzheng
@@ -1047,6 +1059,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 多房间
  * @author liyi.000
@@ -1061,6 +1074,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 
 /**
  * @hidden
+ * @deprecated from 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
  * @author liyi.000
@@ -1114,6 +1128,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 - (int)updateLiveTranscoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
 
  /**
+ * @deprecated from 326.1, use setRemoteVideoCanvas in engine instead
   * @type api
   * @region 多房间
   * @author sunhang.io

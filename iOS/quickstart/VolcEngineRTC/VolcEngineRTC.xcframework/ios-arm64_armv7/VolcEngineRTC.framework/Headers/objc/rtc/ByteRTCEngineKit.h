@@ -95,6 +95,20 @@
             joinType:(NSInteger)joinType
              elapsed:(NSInteger)elapsed;
 
+
+/**
+ * @type callback
+ * @author shenpengliang
+ * @brief 离开房间成功回调。  <br>
+ *        用户调用 leaveRoom{@link #leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并释放所有通话相关的音视频资源。SDK 完成所有的资源释放后通过此回调通知用户。  <br>
+ * @param engine  ByteRTCRoom 对象。  <br>
+ * @param stats 本次通话的统计数据，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats} 。  <br>
+ * @notes  <br>
+ *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyRtcEngine{@link #destroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
+ */
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onLeaveRoomWithStats:(ByteRTCRoomStats *_Nonnull)stats;
+
 /**
  * @type callback
  * @region 房间管理
@@ -178,7 +192,7 @@
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 323.1, use onUserStartAudioCapture instead
  * @type callback
  * @region 音频事件回调
  * @author wangjunzheng
@@ -223,6 +237,7 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onFirstRemoteAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
 
 /**
+ * @deprecated from 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
  * @type callback
  * @region 音频事件回调
  * @author wangjunzheng
@@ -237,6 +252,34 @@
  *        + 对于远端用户：本地必须订阅某远端用户的音频流，回调内才会包含其发送的音频流的音量信息。
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onAudioVolumeIndication:(NSArray<ByteRTCAudioVolumeInfo *> * _Nonnull)speakers totalRemoteVolume:(NSInteger)totalRemoteVolume;
+
+/**
+ * @type callback
+ * @region 音频管理
+ * @author wangjunzheng
+ * @brief 调用 enableAudioPropertiesReport:{@link #ByteRTCEngineKit#enableAudioPropertiesReport:} 后，可能会周期性收到此回调，获取本地音量信息。<br>
+ * @param engine
+ * @param audioPropertiesInfos 本地音频信息，详见 ByteRTCLocalAudioPropertiesInfo{@link #ByteRTCLocalAudioPropertiesInfo} 。
+ * @notes <br>
+ *       1. 使用 RTC SDK 内部机制采集麦克风音频时，回调麦克风的音量；  <br>
+ *       2. 使用 RTC SDK 内部机制采集屏幕音频时，回调屏幕音频的音量。  <br>
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onLocalAudioPropertiesReport:(NSArray<ByteRTCLocalAudioPropertiesInfo *> * _Nonnull)audioPropertiesInfos;
+
+/**
+ * @type callback
+ * @region 音频管理
+ * @author wangjunzheng
+ * @brief 调用 enableAudioPropertiesReport:{@link #ByteRTCEngineKit#enableAudioPropertiesReport:} 后，可能会周期性收到此回调，获取订阅的远端用户的音量信息。  <br>
+ * @param audioPropertiesInfos 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 ByteRTCRemoteAudioPropertiesInfo{@link #ByteRTCRemoteAudioPropertiesInfo}。  <br>
+ * @param totalRemoteVolume 所有订阅的远端流的总音量，范围是 [0,255]。  <br>
+ *       + [0,25] 接近无声；  <br>
+ *       + [25,75] 为低音量；  <br>
+ *       + [76,204] 为中音量；  <br>
+ *       + [205,255] 为高音量。  <br>
+ * @notes 要获取接收的来自远端的音频音量信息时，不限定音频采集方式，RTC SDK 内部采集机制和自定义采集都可以。
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onRemoteAudioPropertiesReport:(NSArray<ByteRTCRemoteAudioPropertiesInfo *> * _Nonnull)audioPropertiesInfos totalRemoteVolume:(NSInteger)totalRemoteVolume;
 
 
 #pragma mark - Core Video Delegate Methods
@@ -260,7 +303,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 房间中用户调用 startVideoCapture{@link #startVideoCapture} 时，房间中其他用户会收到此回调。
  * @param engine ByteRTCEngineKit 对象
  * @param userId 调用 startVideoCapture{@link #startVideoCapture} 接口的远端用户 ID
@@ -270,7 +313,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 房间中远端用户调用 stopVideoCapture{@link #stopVideoCapture} 时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param userId 调用 stopVideoCapture{@link #stopVideoCapture} 接口的远端用户 ID
@@ -291,7 +334,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author sunhang.io
+ * @author zhushufan.ref
  * @brief 第一帧远端视频流在视图上渲染成功后，收到此回调。
  * @param engine ByteRTCEngineKit 对象
  * @param streamKey 远端流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
@@ -302,7 +345,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author sunhang.io
+ * @author zhushufan.ref
  * @brief 远端视频大小或旋转信息发生变化时，房间内订阅此视频流的用户会收到此回调。
  * @param engine ByteRTCEngineKit 对象
  * @param streamKey 流属性，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
@@ -313,7 +356,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 本地视频大小或旋转信息发生变化时，收到此回调。
  * @param engine ByteRTCEngineKit 对象
  * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
@@ -324,25 +367,13 @@
 /**
  * @type callback
  * @region 视频管理
- * @author sunhang.io
+ * @author zhushufan.ref
  * @brief 远端视频流状态发生改变回调。
  * @param engine ByteRTCEngineKit 对象，参考: ByteRTCEngineKit{@link #ByteRTCEngineKit}
  * @param uid 发生视频流状态改变的远端用户的用户ID
  * @param state 变更后的远端视频流状态，详见类型 ByteRTCRemoteVideoState{@link #ByteRTCRemoteVideoState}
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine remoteVideoStateChangedOfUid:(NSString * _Nonnull)uid state:(ByteRTCRemoteVideoState)state;
-
-/**
- * @type callback
- * @region 视频管理
- * @author sunhang.io
- * @brief 本地视频镜像状态发生改变回调。
- * @param engine ByteRTCEngineKit 对象
- * @param  mirrored 当前是否开启镜像 <br>
- *        + true：当前本地视频状态为开启镜像  <br>
- *        + false：当前本地视频状态为关闭镜像  <br>
- */
-- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine didMirrorStateChanged:(BOOL)mirrored;
 
 /**
  * @type callback
@@ -517,8 +548,10 @@
  * @notes  <br>
  *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
- *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>    *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+ *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>    
+ *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br> 
+ *        + 同一房间解散后再次创建，房间内状态清空。 
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onVideoStreamBanned:(NSString* _Nonnull)uid isBanned:(BOOL)banned;
 /**
@@ -534,7 +567,8 @@
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br> 
+ *        + 同一房间解散后再次创建，房间内状态清空。 
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onAudioStreamBanned:(NSString* _Nonnull)uid isBanned:(BOOL)banned;
 
@@ -641,8 +675,7 @@
  * @region 数据统计
  * @author liuzhiqiang.avcoder
  * @brief 本地订阅的远端音/视频流数据统计以及网络质量回调。  <br>
- *        本地用户订阅流成功后，SDK 会周期性（2s）的通过此回调事件通知用户订阅的流在此次统计周期内的质量统计信息。  <br>
- *        统计信息通过 ByteRTCLocalStreamStats{@link #ByteRTCLocalStreamStats} 类型的回调参数传递给用户，其中包括发送音视频比特率、发送帧率、编码帧率，网络质量等。  <br>
+ *        本地用户订阅流成功后，SDK 会周期性（2s）的通过此回调事件通知用户订阅的流在此次统计周期内的质量统计信息，包括：发送音视频比特率、发送帧率、编码帧率，网络质量等。
  * @param engine ByteRTCEngineKit 对象
  * @param stats 当前 RtcEngine 统计数据，详见 ByteRTCRemoteStreamStats{@link #ByteRTCRemoteStreamStats}
  */
@@ -903,6 +936,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
  */
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type callback
  * @region 混音
  * @author wangjunzheng
@@ -912,6 +946,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 - (void)rtcEngineLocalAudioMixingDidFinish:(ByteRTCEngineKit *_Nonnull)engine;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type callback
  * @region 混音
  * @author wangjunzheng
@@ -956,7 +991,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 /**
  * @type callback
  * @region 转推直播
- * @author shenpengliang
+ * @author liyunlong.zx
  * @brief 转推直播错误回调。  <br>
  *        调用 startLiveTranscoding:observer:{@link #ByteRTCEngineKit#startLiveTranscoding:observer:} 接口或直接在服务端启动转推直播功能后，你会通过此回调收到启动结果和推流过程中的错误。
  * @param engine engine 实例
@@ -1545,7 +1580,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 326.1，use setUserVisiblity instead
  * @type api
  * @region 房间管理
  * @author shenpengliang
@@ -1615,16 +1650,18 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (BOOL)unpublish;
 /**
  * @type api
+ * @deprecated from 329.1, no use
  * @region 房间管理
  * @author shenpengliang
  * @brief 获取当前用户角色。  <br>
  * @return 当前用户角色，详见 ByteRTCUserRoleType{@link #ByteRTCUserRoleType} 枚举类型。  <br>
  */
-- (ByteRTCUserRoleType)clientRole;
+- (ByteRTCUserRoleType)clientRole DEPRECATED_MSG_ATTRIBUTE("no useful");
 
 /**
  * @hidden
  * @type api
+ * @deprecated from 326.1, use joinRoom with RoomConfig instead
  * @region 房间管理
  * @author shenpengliang
  * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
@@ -1664,13 +1701,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @type api
  * @region 房间管理
  * @author shenpengliang
- * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
+ * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
  *        同一个房间内的用户间可以相互通话。  <br>
- *        进房后重复调用无效败，用户必须调用 leaveRoom:{@link #ByteRTCEngineKit#leaveRoom:} 退出当前房间后，才能加入下一个房间。  <br>
- *        本地用户调用此方法加入房间成功后，会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知。  <br>
- *        本地用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
+ *        进房后重复调用无效，用户必须调用 leaveRoom:{@link #ByteRTCEngineKit#leaveRoom:} 退出当前房间后，才能加入下一个房间。  <br>
  * @param token 动态密钥，用于对登录用户进行鉴权验证。  <br>
  *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token ，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token 。  <br>
+ *        使用不同 AppID 的 App 是不能互通的。  <br>
+ *        请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。  <br>
  * @param roomId 加入的房间 ID。  <br>
  *        房间 ID 为长度在 128 字节以内的非空字符串，支持以下字符集范围:  <br>
  *             1. 26 个大写字母 A ~ Z 。  <br>
@@ -1680,14 +1717,15 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @param userInfo 用户信息，参看 ByteRTCUserInfo{@link #ByteRTCUserInfo}。  <br>
  * @param rtcRoomConfig 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 ByteRTCRoomConfig{@link #ByteRTCRoomConfig}。
  * @return 方法调用结果。  <br>
- *         +  0: 成功  <br>
- *         + -1: roomId 为空，失败  <br>
- *         + -2: userId 为空，失败  <br>
+ *        +  0: 成功  <br>
+ *        + -1: 参数无效  <br>
+ *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #ByteRTCEngineKit#leaveRoom:} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
+ *        + -3: engine 为空 <br>
  * @notes  <br>
- *        + 使用不同 App ID 的 App 是不能互通的。  <br>
- *        + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
- *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
- *        + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
+ *       + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
+ *       + 本地用户调用此方法加入房间成功后，会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知。  <br>
+ *       + 本地用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
+ *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
  */
 - (int)joinRoomByKey:(NSString *_Nullable)token
               roomId:(NSString *_Nonnull)roomId
@@ -1697,6 +1735,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  *  @type api
+ *  @deprecated from 328.1, use leaveRoom without block instead
  *  @region 房间管理
  *  @author shenpengliang
  *  @brief 离开房间。  <br>
@@ -1711,7 +1750,25 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        + 可见的用户离开房间后，房间内其他用户会收到 rtcEngine:onUserLeave:reason:{@link #ByteRTCEngineDelegate#rtcEngine:onUserLeave:reason:} 回调通知。  <br>
  *        + 如果调用此方法后立即销毁引擎，SDK 将无法执行作为参数传入的 Block 块。  <br>
  */
-- (int)leaveRoom:(void (^_Nullable)(ByteRTCRoomStats *_Nonnull stat))leaveRoomBlock;
+- (int)leaveRoom:(void (^_Nullable)(ByteRTCRoomStats *_Nonnull stat))leaveRoomBlock
+DEPRECATED_MSG_ATTRIBUTE("Please use leaveRoom");
+
+
+/**
+ * @type api
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 离开房间。 <br>
+ *        用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。 <br>
+ * @return 方法调用结果。 <br>
+ *        + 0: 方法调用成功 <br>
+ *        + <0: 方法调用失败 <br>
+ * @notes <br>
+ *       + 用户离开房间后，本地会收到 rtcEngine:onLeaveRoomWithStats:{@link #ByteRTCEngineDelegate#rtcEngine:onLeaveRoomWithStats:} 的回调；  <br>
+ *       + 可见的用户离开房间后，房间内其他用户会收到 rtcEngine:onUserLeave:reason:{@link #ByteRTCEngineDelegate#rtcEngine:onUserLeave:reason:} 回调通知；  <br>
+ *       + 调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
+ */
+- (int)leaveRoom;
 
 /**
  * @type api
@@ -1757,7 +1814,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        进房前调用该方法，本地用户会收到 rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:} 的回调。  <br>
  *        进房后调用该方法，房间中的其他用户会收到 rtcEngine:onUserStartAudioCapture:{@link #ByteRTCEngineDelegate#rtcEngine:onUserStartAudioCapture:} 的回调。
  * @notes  <br>
- *       + 若未取得当前设备的摄像头权限，调用该方法后会触发 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:} 回调。  <br>
+ *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:} 回调。  <br>
  *       + 调用 stopAudioCapture{@link #stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
  *       + 无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
  *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
@@ -1810,6 +1867,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 /**
  * @hidden
+ * @deprecated from 326.1, use SubscribeUserStream instead
  * @type api
  * @region 媒体流管理
  * @author shenpengliang
@@ -1822,6 +1880,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use  pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 媒体流管理
  * @author shenpengliang
@@ -1858,6 +1917,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 - (void)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 
 /**
+ * @deprecated from 325.1, use enableAudioPropertiesReport instead
  * @type api
  * @region 音频管理
  * @author wangjunzheng
@@ -1873,7 +1933,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 323.1, use setCaptureVolume instead
  * @type api
  * @region 音频管理
  * @author wangjunzheng
@@ -1913,6 +1973,43 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setCaptureVolume");
  */
 - (void)setPlaybackVolume:(NSInteger)volume;
 
+/**
+ * @type api
+ * @region 音频管理
+ * @author wangjunzheng
+ * @brief 启用音量提示。  <br>
+ * @param config 音频信息提示的相关配置，详见 ByteRTCAudioPropertiesConfig{@link #ByteRTCAudioPropertiesConfig}  <br>
+ * @notes 开启提示后，你可以：  <br>
+ *       + 通过 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCEngineDelegate#rtcEngine:onLocalAudioPropertiesReport:} 回调获取本地麦克风和屏幕音频流采集的音量信息；  <br>
+ *       + 通过 rtcEngine:onRemoteAudioPropertiesReport:totalRemoteVolume:{@link #ByteRTCEngineDelegate#rtcEngine:onRemoteAudioPropertiesReport:totalRemoteVolume:} 回调获取订阅的远端用户的音量信息。  <br>
+ */
+- (void)enableAudioPropertiesReport:(ByteRTCAudioPropertiesConfig* _Nonnull)config;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @author majun.lvhiei
+ * @brief 开启/关闭耳返功能
+ * @param mode 是否开启耳返功能，参看 ByteRTCEarMonitorMode{@link #ByteRTCEarMonitorMode}
+ * @notes <br>
+ *        + 你必须在使用 RTC SDK 提供的内部音频采集功能时，使用耳返功能。<br>
+ *        + 耳返功能仅在连接了有线耳机时有效。<br>
+ *        + 受 iOS 平台限制，RTC 仅支持软件耳返功能。
+ */
+- (void)SetEarMonitorMode:(ByteRTCEarMonitorMode)mode;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @author majun.lvhiei
+ * @brief 设置耳返的音量
+ * @param [in] volume 耳返的音量，取值范围：[0,100]，单位：%
+ * @notes <br>
+ *        + 设置耳返音量前，你必须先调用 SetEarMonitorMode:{@link #SetEarMonitorMode:} 打开耳返功能。<br>
+ *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
+ */
+- (void)SetEarMonitorVolume:(NSInteger)volume;
+
 #pragma mark Core Video Methods
 /**-----------------------------------------------------------------------------
  * @name 视频核心方法
@@ -1928,9 +2025,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setCaptureVolume");
  * @param videoSink 自定义视频渲染器，参看 ByteRTCVideoSinkDelegate{@link #ByteRTCVideoSinkDelegate}
  * @param requiredFormat video_sink 适用的视频帧编码格式，参看 ByteRTCVideoSinkPixelFormat{@link #ByteRTCVideoSinkPixelFormat}
  * @notes  <br>
- *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。<br>
- *        + 如果需要解除绑定，必须将 videoSink 设置为 null。<br>
- *        + 进退房操作不会影响绑定状态。在开始采集前，即可调用此方法进行绑定。<br>
+ *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
+ *        + 如果需要解除绑定，必须将 videoSink 设置为 null。进退房操作不会影响绑定状态。
+ *        + 一般在收到 rtcEngine:onFirstLocalVideoFrameCaptured:withFrameInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstLocalVideoFrameCaptured:withFrameInfo:} 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
  */
 - (void)setLocalVideoSink:(ByteRTCStreamIndex)index
                 withSink:(id<ByteRTCVideoSinkDelegate> _Nullable)videoSink
@@ -1946,7 +2043,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setCaptureVolume");
  * @param requiredFormat videoSink 适用的视频帧编码格式，参看 ByteRTCVideoSinkPixelFormat{@link #ByteRTCVideoSinkPixelFormat}
  * @notes  <br>
  *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
- *        + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 或 rtcEngine:onFirstRemoteVideoFrameRendered:withFrameInfo:{@link #rtcEngine:onFirstRemoteVideoFrameRendered:withFrameInfo:} 回调获取到远端流信息之后，再调用该方法。
+ *        + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 rtcEngine:onStreamAdd:{@link #ByteRTCEngineDelegate#rtcEngine:onStreamAdd:} 回调获取到远端流信息之后，再调用该方法。
  *        + 如果需要解除绑定，必须将 videoSink 设置为 null。进退房操作不会影响绑定状态。
  */
 - (void)setRemoteVideoSink:(ByteRTCRemoteStreamKey* _Nonnull)streamKey
@@ -1972,7 +2069,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setLocalVideoSink");
  * @hidden
  * @deprecated
  * @type api
- * @region 自定义视频采集渲染
+ * @region 自定义视频采集渲染f
  * @author sunhang.io
  * @brief 设置本地视频外部渲染器。
  * @param videoRenderer 外部渲染器，具体参照 ByteRTCVideoSinkDelegate{@link #ByteRTCVideoSinkDelegate}
@@ -2028,6 +2125,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
  * @hidden
  * @deprecated
  * @type api
+ * @hidden
  * @region 视频管理
  * @author panjian.fishing
  * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，
@@ -2049,19 +2147,20 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
 /**
  * @type api
  * @region 视频管理
- * @author panjian.fishing
- * @brief 设置视频编码传输时的视频参数。<br>
- *        可用于启动推送多路视频流和设置视频参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
- * @param videoSolutions 视频参数数组首地址，参看 ByteRTCVideoSolution{@link #ByteRTCVideoSolution}。  <br>
- *        + 若选取的帧率为 5 FPS，则推算码率为<视频属性 (Profile) 参考表>推荐码率除以 2  <br>
- *        + 若选取的帧率为 15 FPS，则推算码率为<视频属性 (Profile) 参考表>推荐码率
- *        + 若选取的帧率为 30 FPS，则推算码率为<视频属性 (Profile) 参考表>码率乘以 1.5  <br>
- *        + 若选取其余帧率，等比例推算即可  <br>
- *        + 若设置的视频码率超出合理范围，SDK 会自动按照合理区间处理码率  <br>
- *        + 屏幕流只取视频参数数组的第一组参数
+ * @author wangzhanqiang
+ * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+ * @param streamIndex 视频流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}。
+ * @param videoSolutions 要推送的多路视频流参数，参看 ByteRTCVideoSolution{@link #ByteRTCVideoSolution}。 <br>
+ *                       最多支持 4 路参数。当设置了多路参数时，分辨率必须是从大到小排列。 <br>
+ *                       最大分辨率为 4096px * 4096px，超过或设置的分辨率无法编码时，会导致编码推流失败。
  * @return  <br>
- *         + 0：方法调用成功  <br>
- *         + <0：方法调用失败  <br>
+ *        + 0：成功  <br>
+ *        + !0：失败  <br>
+ * @notes  <br>
+ *       + 当使用内部采集时，视频采集的分辨率、帧率会根据最大的编码分辨率、帧率进行适配<br>
+ *       + 默认的视频编码参数为：分辨率 640px * 360px，帧率 15fps。<br>
+ *       + 变更编码分辨率后马上生效，可能会引发相机重启。<br>
+ *       + 屏幕流只取视频参数数组的第一组数据。
  */
 - (int)setVideoEncoderConfig:(ByteRTCStreamIndex)streamIndex config:(NSArray <ByteRTCVideoSolution *> * _Nullable)videoSolutions;
 
@@ -2135,7 +2234,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
 /**
  * @type api
  * @region 视频管理
- * @author liyi.000
+ * @author zhushufan.ref
  * @brief 停止/启动发送本地视频流，默认不发送。<br>
  *        无论你使用内部视频采集，还是自定义视频采集，你都应使用此接口启动发送本地视频流。<br>
  *        调用该方法后，房间中的其他用户会收到 rtcEngine:onUserMuteVideo:withMuteState:{@link #ByteRTCEngineDelegate#rtcEngine:onUserMuteVideo:withMuteState:} 的回调。
@@ -2148,6 +2247,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use  subscribeUserStream instead
  * @type api
  * @region 媒体流管理
  * @author shenpengliang
@@ -2163,6 +2263,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use  pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 媒体流管理
  * @author shenpengliang
@@ -2176,11 +2277,11 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
 DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscribedStream");
 
 /**
+ * @deprecated from 329.1, use setLocalVideoMirrorType instead
  * @type api
  * @region 视频管理
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 设置采用前置摄像头采集时，是否开启镜像模式。默认为关闭状态。 <br>
- *        调用后，你会收到回调：rtcEngine:didMirrorStateChanged:{@link #ByteRTCEngineDelegate#rtcEngine:didMirrorStateChanged:}
  * @param mode 是否开启镜像模式，参看 ByteRTCMirrorMode{@link #ByteRTCMirrorMode}
  * @return  <br>
  *         + 0：成功  <br>
@@ -2191,13 +2292,20 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 视频管理
- * @author sunhang.io
- * @brief 获取本地视频镜像状态
- * @return  当前镜像状态  <br>
- *         + true：镜像为打开状态  <br>
- *         + false：镜像为关闭状态  <br>
+ * @author wangjunlin.3182
+ * @brief 为本地采集到的视频流开启镜像
+ * @param mirrorType 设置镜像类型，参看 ByteRTCMirrorType{@link #ByteRTCMirrorType}
+ * @notes <br> 
+ *        + 该接口调用前，各视频源的初始状态如下：<br>
+ *        <table>
+ *           <tr><th></th><th>前置摄像头</th><th>后置摄像头</th><th>自定义采集视频源</th> <th>桌面端摄像头</th> </tr>
+ *           <tr><td>移动端</td><td>本地渲染镜像，编码传输不镜像</td><td> 本地渲染不镜像，编码传输不镜像 </td><td> 本地渲染不镜像，编码传输不镜像 </td><td>/</td></tr>
+ *           <tr><td>桌面端</td><td>/</td><td>/</td><td> 本地渲染不镜像，编码传输不镜像 </td><td> 本地渲染镜像，编码传输不镜像 </td></tr>
+ *        </table>
+ *        + 切换视频源不影响镜像设置。<br>
+ *        + 屏幕视频流始终不受镜像设置影响。<br>
  */
-- (bool)isLocalVideoMirrorOn;
+- (int)setLocalVideoMirrorType:(ByteRTCMirrorType) mirrorType;
 
 /**
  * @type api
@@ -2247,7 +2355,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 视频特效
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 创建/销毁视频特效引擎
  * @param enabled  <br>
  *        是否创建视频特效引擎  <br>
@@ -2276,7 +2384,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 视频特效
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 设置视频特效素材包，支持同时设置多个素材包
  * @param effectNodePaths 特效素材包路径数组
  * @return  <br>
@@ -2323,7 +2431,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 视频特效
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 设置已启用的颜色滤镜强度
  * @param intensity 滤镜强度。取值范围 [0,1]，超出范围时设置无效
  * @return  <br>
@@ -2377,6 +2485,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 #pragma mark - VideoFrameObserver InnerVideoSource
 
 /**
+ * @hidden
  * @type api
  * @region 视频数据回调
  * @author sunhang.io
@@ -2419,7 +2528,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 视频数据回调
- * @author sunhang.io
+ * @author wangzhanqiang
  * @brief 注册本地视频帧监测器。  <br>
  *        无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 onLocalEncodedVideoFrame:Frame:{@link #ByteRTCLocalEncodedVideoFrameObserver#onLocalEncodedVideoFrame:Frame:} 回调给用户
  * @param frameObserver 本地视频帧监测器，参看 ByteRTCLocalEncodedVideoFrameObserver{@link #ByteRTCLocalEncodedVideoFrameObserver}。将参数设置为 nullptr 则取消注册。
@@ -2435,6 +2544,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 
 /**
  * @hidden
+ * @deprecated from 326.1, use joinRoom with MultiRoomConfig instead
  * @type api
  * @region 房间管理
  * @author shenpengliang
@@ -2454,6 +2564,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomBykey with roomConfig");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use subscribeUserStream instead
  * @type api
  * @region 房间管理
  * @author shenpengliang
@@ -2493,6 +2604,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /**
  * @hidden
+ * @deprecated from 326.1, use subscribeUserStream instead
  * @type api
  * @region 房间管理
  * @author shenpengliang
@@ -2620,6 +2732,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @deprecated 使用 setVideoSourceType 替代
  * @type api
  * @region 视频管理
+ * @author zhushufan.ref
  * @brief 配置视频采集源。
  * @param type 视频输入类型，参看 ByteRTCMediaInputType{@link #ByteRTCMediaInputType}。
  * @notes  <br>
@@ -2630,17 +2743,19 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 - (void)setVideoInputType:(ByteRTCMediaInputType)type;
 
 /**
-* @type api
-* @region 视频管理
-* @author liyi.000
-* @brief 切换视频采集方式（内部采集/自定义采集）
-* @param type 视频采集方式，参看 ByteRTCVideoSourceType{@link #ByteRTCVideoSourceType}
-* @notes  <br>
-*       + 默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br>
-*       + 该方法进房前后均可调用。  <br>
-*       + 当你已调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。  <br>
-*       + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用此方法关闭自定义采集，然后调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 手动开启内部采集。
-*/
+ * @hidden
+ * @deprecated
+ * @type api
+ * @region 视频管理
+ * @author zhushufan.ref
+ * @brief 切换视频采集方式（内部采集/自定义采集）
+ * @param type 视频采集方式，参看 ByteRTCVideoSourceType{@link #ByteRTCVideoSourceType}
+ * @notes  <br>
+ *       + 默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br>
+ *       + 该方法进房前后均可调用。  <br>
+ *       + 当你已调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。  <br>
+ *       + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用此方法关闭自定义采集，然后调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 手动开启内部采集。
+ */
 - (void)setVideoSourceType:(ByteRTCVideoSourceType)type;
 
 /**
@@ -2653,7 +2768,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts;
 
@@ -2668,7 +2783,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts rotation:(ByteRTCVideoRotation)rotation;
 
@@ -2685,7 +2800,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts
                                                              rotation:(ByteRTCVideoRotation)rotation
@@ -2702,7 +2817,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalByteVideoFrame:(ByteRTCVideoFrame * _Nonnull)frame;
 
@@ -2741,6 +2856,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  */
 - (void)disableExternalAudioDevice;
  /**
+  * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
   * @hidden
   * @type api
   * @region 混音
@@ -2768,6 +2884,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @hidden
  * @type api
  * @region 混音
@@ -2784,6 +2901,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
  /**
+  * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
   * @hidden
   * @type api
   * @region 混音
@@ -3245,7 +3363,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 #pragma mark audio mix related
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3261,7 +3379,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3278,7 +3396,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3295,7 +3413,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3313,7 +3431,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3330,7 +3448,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3352,7 +3470,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3387,7 +3505,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3405,7 +3523,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3426,7 +3544,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3447,7 +3565,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3469,7 +3587,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3487,7 +3605,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3522,7 +3640,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3544,7 +3662,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3563,7 +3681,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3581,7 +3699,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3600,7 +3718,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3637,7 +3755,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3655,7 +3773,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -3687,7 +3805,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
  /**
   * @hidden
-  * @deprecated
+  * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
   * @type api
   * @region 混音
   * @author wangjunzheng
@@ -3796,18 +3914,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @type api
  * @region 房间管理
  * @author shenpengliang
- * @brief 创建并获取一个 ByteRTCRoom 对象
- * @param roomId
- *         标识通话房间的房间 ID，最大长度为128字节的非空字符串。支持的字符集范围为:
- *             1. 26个大写字母 A ~ Z
- *             2. 26个小写字母 a ~ z
- *             3. 10个数字 0 ~ 9
- *             4. 下划线"_", at符"@", 减号"-"
- * @notes
- *         1.参数roomId没有默认值，请确保对该参数正确赋值。
- *         2.请勿给参数roomId赋空字符串""或者空指针，否则将无法正确的创建房间对象。
- *         3.用户可以多次调用此方法创建多个 ByteRTCRoom 对象，再分别调用各 ByteRTCRoom 对象的 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法，实现同时加入多个房间。
- *         4.加入多个房间后，用户可以同时订阅各房间的音视频流，但是目前仅支持同一时间在一个房间内发布一路音视频流。
+ * @brief 创建并获取一个 ByteRTCRoom 对象  <br>
+ * @param roomId 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
+ *       + 26 个大写字母 A ~ Z  <br>
+ *       + 26 个小写字母 a ~ z  <br>
+ *       + 10 个数字 0 ~ 9  <br>
+ *       + 下划线 "_", at 符 "@", 减号 "-"  <br>
+ *        多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则会导致创建房间失败。  <br>
+ * @notes <br>
+ *       + 用户可以多次调用此方法创建多个 ByteRTCRoom 对象，再分别调用各 ByteRTCRoom 对象的 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法，实现同时加入多个房间；  <br>
+ *       + 加入多个房间后，用户可以同时订阅各房间的音视频流，但是目前仅支持同一时间在一个房间内发布一路音视频流。  <br>
  */
 - (ByteRTCRoom * _Nullable)createRtcRoom:(NSString * _Nonnull)roomId;
 
@@ -4188,5 +4304,90 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        + 调用此接口将自定义采集的音频帧推送到 RTC SDK 后，你必须调用 publishScreen{@link #publishScreen} 将采集到的屏幕音频推送到远端。在调用 publishScreen{@link #publishScreen} 前，推送到 RTC SDK 的音频帧信息会丢失。
  */
 - (int) pushScreenAudioFrame:(ByteRTCAudioFrame* _Nonnull)audioFrame;
+
+#pragma mark EncodedVideo
+/**
+ * @type api
+ * @region 视频管理
+ * @author wangzhanqiang
+ * @brief 设置向 SDK 输入的视频源
+ * @param type 视频输入源类型，参看 ByteRTCVideoSourceType{@link #ByteRTCVideoSourceType}
+ * @param streamIndex 视频流的属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
+ * @notes  <br>
+ *        + 默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br>
+ *        + 该方法进房前后均可调用。  <br>
+ *        + 当你已调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。  <br>
+ *        + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用此方法关闭自定义采集，然后调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 手动开启内部采集。
+ *        + 当你需要向 SDK 推送自定义编码后的视频帧，你需调用该方法将视频源切换至自定义编码视频源。
+ */
+- (void)setVideoSourceType:(ByteRTCVideoSourceType)type WithStreamIndex:(ByteRTCStreamIndex)streamIndex;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @author wangzhanqiang
+ * @brief 注册自定义编码帧推送事件回调
+ * @param handler 自定义编码帧回调类，参看 ByteRTCExternalVideoEncoderEventHandler{@link #ByteRTCExternalVideoEncoderEventHandler}
+ * @notes  <br>
+ *       + 该方法需在进房前调用。 <br>
+ *       + 引擎销毁前需取消注册，调用该方法将参数设置为 nullptr 即可。
+ */
+- (void)setExternalVideoEncoderEventHandler:(id<ByteRTCExternalVideoEncoderEventHandler> _Nullable)handler;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @author wangzhanqiang
+ * @brief 推送自定义编码后的视频流
+ * @param streamIndex 需要推送的编码流的属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
+ * @param videoIndex 对应的编码流下标，从 0 开始，如果调用 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 设置了多路流，此处数量须与之保持一致
+ * @param videoFrame 编码流视频帧信息，参看 ByteRTCEncodedVideoFrame{@link #ByteRTCEncodedVideoFrame}。  <br>
+ * @notes  <br>
+ *        + 目前仅支持推送 H264 和 ByteVC1 格式的视频帧。  <br>
+ *        + 该函数运行在用户调用线程内  <br>
+ *        + 推送自定义编码视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 将视频输入源切换至自定义编码视频源。
+ */
+- (BOOL)pushExternalEncodedVideoFrame:(ByteRTCStreamIndex)streamIndex
+                       withVideoIndex:(NSInteger)videoIndex
+                withEncodedVideoFrame:(ByteRTCEncodedVideoFrame* _Nonnull)videoFrame;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @author wangzhanqiang
+ * @brief 在订阅远端视频流之前，设置远端视频数据解码方式
+ * @param key 远端流信息，指定对哪一路视频流进行解码方式设置，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
+ * @param config 视频解码方式，参看 ByteRTCVideoDecoderConfig{@link #ByteRTCVideoDecoderConfig}。
+ * @notes  <br>
+ *        + 该方法近适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
+ *        + 当你想要对远端流进行自定义解码时，你需要先调用 registerRemoteEncodedVideoFrameObserver:{@link #ByteRTCEngineKit#registerRemoteEncodedVideoFrameObserver:} 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 onRemoteEncodedVideoFrame:withEncodedVideoFrame:{@link #ByteRTCRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame:withEncodedVideoFrame:} 回调出来。
+ */
+- (void)setVideoDecoderConfig:(ByteRTCRemoteStreamKey * _Nonnull)key
+       withVideoDecoderConfig:(ByteRTCVideoDecoderConfig)config;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @author wangzhanqiang
+ * @brief 在订阅远端视频流之后，向远端请求关键帧
+ * @param key 远端流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
+ * @notes  <br>
+ *        + 该方法仅适用于手动订阅模式，并且在成功订阅远端流之后使用。  <br>
+ *        + 该方法适用于调用 setVideoDecoderConfig:withVideoDecoderConfig:{@link #ByteRTCEngineKit#setVideoDecoderConfig:withVideoDecoderConfig:} 开启自定义解码功能后，并且自定义解码失败的情况下使用
+ */
+- (void)requestRemoteVideoKeyFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
+
+/**
+ * @type api
+ * @region 视频管理
+ * @author wangzhanqiang
+ * @brief 注册远端编码后视频数据回調。  <br>
+ *        完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 onRemoteEncodedVideoFrame:withEncodedVideoFrame:{@link #ByteRTCRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame:withEncodedVideoFrame:} 回调
+ * @param observer 远端编码后视频数据监测器，参看 ByteRTCRemoteEncodedVideoFrameObserver{@link #ByteRTCRemoteEncodedVideoFrameObserver}
+ * @notes  <br>
+ *       + 该方法需在进房前调用。 <br>
+ *       + 引擎销毁前需取消注册，调用该方法将参数设置为 nullptr 即可。
+ */
+- (void)registerRemoteEncodedVideoFrameObserver:(id<ByteRTCRemoteEncodedVideoFrameObserver> _Nullable)observer;
 
 @end

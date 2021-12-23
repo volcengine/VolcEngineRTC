@@ -38,9 +38,9 @@ public:
         (void)err;
     }
 
-   /**
+    /**
      * @hidden
-     * @deprecated
+     * @deprecated from 325.1, use IAudioMixingManager instead
      * @type callback
      * @region 混音
      * @brief 本地音乐文件播放已结束回调。
@@ -79,6 +79,7 @@ public:
      * @deprecated
      * @type callback
      * @region 混音
+     * @deprecated from 325.1, use IAudioMixingManager instead
      * @brief 本地音效文件播放已结束回调。
      *        当调用 StartAudioMixing{@link #StartAudioMixing}  方法开始播放指定音效文件， 音效文件播放结束后， 应用会收到该回调。
      * @param [in] sound_id
@@ -374,6 +375,40 @@ public:
         (void)stream_key;
         (void)message;
         (void)length;
+    }
+    
+    /**
+     * @type callback
+     * @region 音频管理
+     * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，可能会周期性收到此回调，获取订阅的远端用户的音量信息。  <br>
+     * @param audio_properties_infos 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 RemoteAudioPropertiesInfo{@link #RemoteAudioPropertiesInfo}。  <br>
+     * @param audio_properties_info_number
+     * @param total_remote_volume 所有订阅的远端流的总音量，范围是 [0,255]。  <br>
+     *       + [0,25] 接近无声；  <br>
+     *       + [25,75] 为低音量；  <br>
+     *       + [76,204] 为中音量；  <br>
+     *       + [205,255] 为高音量。  <br>
+     * @notes 要获取接收的来自远端的音频音量信息时，不限定音频采集方式，RTC SDK 内部采集机制和自定义采集都可以。
+     */
+    virtual void OnRemoteAudioPropertiesReport(const RemoteAudioPropertiesInfo* audio_properties_infos, int audio_properties_info_number, int total_remote_volume) {
+        (void)audio_properties_infos;
+        (void)audio_properties_info_number;
+        (void)total_remote_volume;
+    }
+    
+    /**
+     * @type callback
+     * @region 视频管理
+     * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，可能会周期性收到此回调，获取本地音量信息。  <br>
+     * @param audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #localAudioPropertiesInfo} 。
+     * @param audio_properties_info_number
+     * @notes <br>
+     *       + 使用 RTC SDK 内部机制采集麦克风音频时，回调麦克风的音量；  <br>
+     *       + 使用 RTC SDK 内部机制采集屏幕音频时，回调屏幕音频的音量。  <br>
+     */
+    virtual void OnLocalAudioPropertiesReport(const LocalAudioPropertiesInfo * audio_properties_infos, int audio_properties_info_number) {
+        (void)audio_properties_infos;
+        (void)audio_properties_info_number;
     }
 };
 

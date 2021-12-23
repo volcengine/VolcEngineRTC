@@ -38,7 +38,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use SetUserVisibility instead
      * @type api
      * @region 多房间
      * @brief 设置用户角色。默认角色为主播。  <br>
@@ -90,6 +90,7 @@ public:
 
     /**
      * @hidden
+     * @deprecated from 326.1, use function joinRoom with MultiRoomConfig parameter instead
      * @type api
      * @region 多房间
      * @brief 加入房间。
@@ -122,23 +123,33 @@ public:
 
     /**
      * @type api
-     * @region 多房间
-     * @brief 加入房间。  <br>
+     * @region 房间管理
+     * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
      *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
-     *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
-     *        本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
-     *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。
-     * @param [in] user_info 用户信息，参看 UserInfo{@link #UserInfo}。  <br>
-     * @param [in] config 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 MultiRoomConfig{@link #MultiRoomConfig}。
-     * @notes  <br>
+     *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
      *       + 使用不同 App ID 的 App 是不能互通的。  <br>
      *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     * @param [in] room_id 加入的房间 ID。  <br>
+     *        房间 ID 为长度在 128 字节以内的非空字符串，支持以下字符集范围:  <br>
+     *            1. 26 个大写字母 A ~ Z 。  <br>
+     *            2. 26 个小写字母 a ~ z 。  <br>
+     *            3. 10 个数字 0 ~ 9 。  <br>
+     *            4. 下划线 "_"，at 符 "@"，减号 "-"。  <br>
+     * @param [in] user_info 用户信息，参看 UserInfo{@link #UserInfo}。  <br>
+     * @param [in] room_config 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 RTCRoomConfig{@link #RTCRoomConfig}。  <br>
+     * @return  <br>
+     *        +  0: 成功  <br>
+     *        + -1：room_id / user_info.uid 包含了无效的参数。  <br>
+     *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 LeaveRoom:{@link #IRtcRoom#LeaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
+     * @notes  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
      */
-    virtual void JoinRoom(const char* token, const UserInfo& user_info, const MultiRoomConfig& config) = 0;
+    virtual int JoinRoom(const char* token, const UserInfo& user_info, const MultiRoomConfig& config) = 0;
 
     /**
      * @type api
@@ -146,10 +157,11 @@ public:
      * @brief 离开房间。  <br>
      *        用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
      *        加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
-     *        此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调通知。  <br>
      * @notes  <br>
+     *       + 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调通知。  <br>
      *       + 可见的用户离开房间后，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。  <br>
      *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调。  <br>
+     *       + 调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
      */
     virtual void LeaveRoom() = 0;
 
@@ -309,6 +321,7 @@ public:
 
     /**
      * @hidden
+     * @deprecated from 326.1, use SubscribeUserStream instead
      * @type api
      * @region 多房间
      * @brief 订阅指定的房间内远端音视频流。  <br>
@@ -366,6 +379,7 @@ public:
     virtual void EnableSubscribeLocalStream(bool enable) = 0;
 
     /**
+     * @deprecated from 323.1, use OnUserStartAudioCapture instead
      * @type api
      * @region 多房间
      * @brief 开启/关闭音量提示。默认关闭。<br>
@@ -407,7 +421,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
      * @type api
      * @region 多房间
      * @brief 设置对来自远端的所有音频流的接收状态。默认为接收。
@@ -441,7 +455,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 326.1, use SubscribeUserStream instead
      * @type api
      * @region 多房间
      * @brief 设置对来自远端指定用户的音频流的接收状态。默认为接收。
@@ -495,6 +509,8 @@ public:
     virtual void UpdateLiveTranscoding(ITranscoderParam* param) = 0;
 
     /**
+     * @hidden
+     * @deprecated frpm 325, use SetRemoteVideoCanvas in rtcengine instead
      * @type api
      * @region 多房间
      * @brief 设置来自指定远端用户 user_id 的视频渲染时，使用的视图，并设置渲染模式。 <br>
@@ -514,8 +530,8 @@ public:
     virtual void SetRemoteVideoCanvas(const char* user_id, StreamIndex index, const VideoCanvas& canvas) = 0;
 
     /**
+     * @deprecated frpm 325.1
      * @hidden
-     * @deprecated
      * @type api
      * @region 多房间
      * @brief 去除所有远端视频。
@@ -523,8 +539,8 @@ public:
     virtual void RemoveAllRemoteVideo() = 0;
 
     /**
+     * @deprecated frpm 325.1
      * @hidden
-     * @deprecated
      * @type api
      * @region 多房间
      * @brief 去除屏幕共享所有远端视图。
@@ -533,7 +549,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
      * @type api
      * @region 多房间
      * @brief 设置是否播放所有远端视频流
@@ -547,7 +563,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 326.1, use SubscribeUserStream instead
      * @type api
      * @region 多房间
      * @brief 设置是否播放远端视频流
@@ -568,7 +584,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 326.1, use JoinRoom instead
      * @type api
      * @region 多房间
      * @brief 设置订阅模式。  <br>

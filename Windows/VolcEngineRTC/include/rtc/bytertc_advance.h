@@ -34,20 +34,65 @@ namespace bytertc {
  * 的AudioSampleType枚举和AudioSampleConfigure保持一致。
  */
 struct RTCAudioSampleConfigure {
+    /**
+     * @hidden
+     */
     bool aec_near_in_enable = false;
+    /**
+     * @hidden
+     */
     bool aec_far_in_enable = false;
+    /**
+     * @hidden
+     */
     bool aec_far_in_ref_enable = false;
+    /**
+     * @hidden
+     */
     bool aec_out_enable = false;
+    /**
+     * @hidden
+     */
     bool agc_out_enable = false;
+    /**
+     * @hidden
+     */
     bool ns_out_enable = false;
+    /**
+     * @hidden
+     */
     bool ainr_out_enable = false;
+    /**
+     * @hidden
+     */
     bool mix_out_enable = false;
+    /**
+     * @hidden
+     */
     bool send2encoder_enable = false;
+    /**
+     * @hidden
+     */
     bool audio_share_in_enable = false;
+    /**
+     * @hidden
+     */
     bool audio_share_win_ref_enable = false;
+    /**
+     * @hidden
+     */
     bool audio_share_out_enable = false;
+    /**
+     * @hidden
+     */
     bool external_audio_in_enable = false;
+    /**
+     * @hidden
+     */
     bool pitchfilter_out_enable = false;
+    /**
+     * @hidden
+     */
     bool decoder_out_enable = false;
     /**
      * @hidden
@@ -417,29 +462,6 @@ enum AudioCodecType {
 };
 
 /**
- * @type keytype
- * @brief 编码帧类型
- */
-enum VideoPictureType {
-    /**
-     * @brief 未知类型
-     */
-    kVideoPictureTypeUnknown = 0,
-    /**
-     * @brief I帧，关键帧，编解码不需要参考其他视频帧
-     */
-    kVideoPictureTypeI,
-    /**
-     * @brief P帧，向前参考帧，编解码需要参考前一帧视频帧
-     */
-    kVideoPictureTypeP,
-    /**
-     * @brief B帧，前后参考帧，编解码需要参考前后两帧视频帧
-     */
-    kVideoPictureTypeB
-};
-
-/**
  * @hidden
  */
 BYTERTC_API IAudioFrame* BuildAudioFrame(const AudioFrameBuilder& builder);
@@ -533,137 +555,9 @@ public:
 BYTERTC_API IEncodedAudioFrame* CreateEncodedAudioFrame();
 
 /**
- * @type keytype
- * @brief 视频帧信息
- */
-class IEncodedVideoFrame {
-public:
-    /**
-     * @brief 析构函数
-     */
-    virtual ~IEncodedVideoFrame() {
-    }
-    /**
-     * @brief 获取视频编码类型
-     * @return VideoCodecType 视频编码类型，参看 VideoCodecType{@link #VideoCodecType}
-     */
-    virtual VideoCodecType codec_type() const = 0;
-    /**
-     * @brief 设置视频编码类型
-     * @param [in] codec_type 视频编码类型，参看 VideoCodecType{@link #VideoCodecType}
-     */
-    virtual void set_codec_type(VideoCodecType codec_type) = 0;
-    /**
-     * @brief 获取视频采集时间戳
-     * @return 视频采集时间戳，单位：微秒
-     */
-    virtual int64_t timestamp_us() const = 0;
-    /**
-     * @brief 设置视频帧采集时间戳
-     * @param [in] timestamp_us 视频采集时间戳，单位：微秒
-     */
-    virtual void set_timestamp_us(int64_t timestamp_us) = 0;
-    /**
-     * @brief 获取视频渲染时间戳
-     * @return 视频渲染时间戳，单位：微秒
-     */
-    virtual int64_t timestamp_pts() const = 0;
-    /**
-     * @brief 设置视频渲染时间戳
-     * @param [in] timestamp_pts 视频渲染时间戳，单位：微秒
-     */
-    virtual void set_timestamp_pts(int64_t timestamp_pts) = 0;
-    /**
-     * @brief 获取视频解码时间戳
-     * @return 视频解码时间戳，单位：微秒
-     */
-    virtual int64_t timestamp_dts() const = 0;
-    /**
-     * @brief 设置视频解码时间戳
-     * @param [in] timestamp_dts 视频解码时间戳，单位：微秒
-     */
-    virtual void set_timestamp_dts(int64_t timestamp_dts) = 0;
-    /**
-     * @brief 获取时间基分子
-     * @return 时间基分子
-     */
-    virtual int timebase_num() const = 0;
-    /**
-     * @brief 设置时间基分子
-     * @param [in] timebase_num 时间基分子
-     */
-    virtual void set_timestamp_num(int timebase_num) = 0;
-    /**
-     * @brief 获取时间基分母
-     * @return 时间基分母
-     */
-    virtual int timebase_den() const = 0;
-    /**
-     * @brief 设置时间基分母
-     * @param [in] timebase_den 时间基分母
-     */
-    virtual void set_timestamp_den(int timebase_den) = 0;
-    /**
-     * @brief 获取视频帧宽度
-     * @return 视频帧宽度，单位：px
-     */
-    virtual int width() const = 0;
-    /**
-     * @brief 设置视频帧宽度
-     * @param [in] width 视频帧宽度，单位：px
-     */
-    virtual void set_width(int width) = 0;
-    /**
-     * @brief 获取视频帧高度
-     * @return 视频帧高度，单位：px
-     */
-    virtual int height() const = 0;
-    /**
-     * @brief 设置视频帧高度
-     * @param [in] height 视频帧高度，单位：px
-     */
-    virtual void set_height(int height) = 0;
-    /**
-     * @brief 获取视频编码帧类型
-     * @return 视频编码格式，参看 VideoPictureType{@link #VideoPictureType}
-     */
-    virtual VideoPictureType picture_type() const = 0;
-    /**
-     * @brief 设置视频编码帧类型
-     * @param [in] type 视频编码格式，参看 VideoPictureType{@link #VideoPictureType}
-     */
-    virtual void set_picture_type(VideoPictureType type) = 0;
-    /**
-     * @brief 获取视频帧旋转角度
-     * @return 视频帧旋转角度，参看 VideoRotation{@link #VideoRotation}
-     */
-    virtual VideoRotation rotation() const = 0;
-    /**
-     * @brief 设置视频帧旋转角度
-     * @param [in] rotation 视频帧旋转角度，参看 VideoRotation{@link #VideoRotation}
-     */
-    virtual void set_rotation(VideoRotation rotation) = 0;
-    /**
-     * @brief 设置视频帧内存管理方式
-     * @param [in] memory 视频帧内存管理信息，详见 ManagedMemory{@link #ManagedMemory}
-     */
-    virtual void set_stream_memory(const ManagedMemory& memory) = 0;
-    /**
-     * @brief 获取视频帧数据指针地址
-     * @return 视频帧数据指针地址
-     */
-    virtual uint8_t* data() const = 0;
-    /**
-     * @brief 获取视频帧数据大小
-     * @return 视频帧数据大小
-     */
-    virtual int data_size() const = 0;
-};
-
-/**
  * @hidden
  */
-BYTERTC_API IEncodedVideoFrame* CreateEncodedVideoFrame();
+BYTERTC_API IEncodedVideoFrame* BuildEncodedVideoFrame(const EncodedVideoFrameBuilder& builder);
 
 /**
  * @hidden
@@ -719,6 +613,7 @@ public:
             const char* stream_id, const IEncodedAudioFrame& audio_stream, const RemoteStreamKey& stream_info) = 0;
 };
 
+
 /**
  * @hidden
  * @type api
@@ -747,94 +642,11 @@ BYTERTC_API void RegisterRemoteEncodedAudioFrameObserver(IRtcEngine* engine, IRe
  */
 BYTERTC_API void RegisterLocalEncodedAudioFrameObserver(IRtcEngine* engine, ILocalEncodedAudioFrameObserver* observer);
 
-/**
- * @type callback
- * @region 视频数据回调
- * @brief 本地视频帧监测器
- */
-class ILocalEncodedVideoFrameObserver {
-public:
-    /**
-     * @brief 析构函数
-     */
-    virtual ~ILocalEncodedVideoFrameObserver() {
-    }
-    /**
-     * @type callback
-     * @region 视频数据回调
-     * @brief 调用 RegisterLocalEncodedVideoFrameObserver{@link #RegisterLocalEncodedVideoFrameObserver} 后，SDK 收到本地视频帧信息时，回调该事件
-     * @param [in] type 本地视频帧类型，参看 StreamIndex{@link #StreamIndex}
-     * @param [in] video_stream 本地视频帧信息，参看 IEncodedVideoFrame{@link #IEncodedVideoFrame}
-     */
-    virtual void OnLocalEncodedVideoFrame(StreamIndex type, const IEncodedVideoFrame& video_stream) = 0;
-};
-
-/**
- * @hidden
- * @type callback
- * @region 视频管理
- * @brief 远端音频帧监测器
- */
-class IRemoteEncodedVideoFrameObserver {
-public:
-    /**
-     * @hidden
-     * @brief 析构函数
-     */
-    virtual ~IRemoteEncodedVideoFrameObserver() {
-    }
-    /**
-     * @hidden
-     * @type callback
-     * @region 视频数据回调
-     * @brief 调用 RegisterRemoteEncodedVideoFrameObserver{@link #RegisterRemoteEncodedVideoFrameObserver} 后，SDK 收到远端视频帧信息时，回调该事件
-     * @param [in] stream_id 收到的远端视频流的 ID
-     * @param [in] video_stream 远端视频帧信息，参看 IEncodedVideoFrame{@link #IEncodedVideoFrame}
-     * @param [in] stream_info 收到的远端视频流的信息，参看 RemoteStreamKey{@link #RemoteStreamKey}
-     */
-    virtual void OnRemoteEncodedVideoFrame(
-            const char* stream_id, const IEncodedVideoFrame& video_stream, const RemoteStreamKey& stream_info) = 0;
-};
-
-/**
- * @hidden
- * @type api
- * @region 视频数据回调
- * @brief 注册远端视频帧监测器。  <br>
- *        调用该方法后，SDK 每监测到一帧远端视频帧时，都会将视频帧信息通过 OnRemoteEncodedVideoFrame{@link #OnRemoteEncodedVideoFrame} 回调给用户
- * @param [in] engine 需设置的引擎，参看 IRtcEngine{@link #IRtcEngine}
- * @param [in] observer 远端视频帧监测器，参看 IRemoteEncodedVideoFrameObserver{@link #IRemoteEncodedVideoFrameObserver}
- * @notes  <br>
- *       + 该方法建议在进房前调用。 <br>
- *       + 将参数设置为 nullptr 则取消注册。
- */
-BYTERTC_API void RegisterRemoteEncodedVideoFrameObserver(IRtcEngine* engine, IRemoteEncodedVideoFrameObserver* observer);
-
-/**
- * @type api
- * @region 视频数据回调
- * @brief 注册本地视频帧监测器。  <br>
- *        无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 OnLocalEncodedVideoFrame{@link #OnLocalEncodedVideoFrame} 回调给用户
- * @param [in] engine 需设置的引擎，参看 IRtcEngine{@link #IRtcEngine}
- * @param [in] observer 本地视频帧监测器，参看 ILocalEncodedVideoFrameObserver{@link #ILocalEncodedVideoFrameObserver}。将参数设置为 nullptr 则取消注册。
- * @notes 该方法可在进房前后的任意时间调用，调用越早，对视频帧的监测越早
- */
-BYTERTC_API void RegisterLocalEncodedVideoFrameObserver(IRtcEngine* engine, ILocalEncodedVideoFrameObserver* observer);
 
 /**
  * @hidden
  */
 BYTERTC_API bool PushExternalEncodedAudioFrame(IRtcEngine* engine, const IEncodedAudioFrame* audio_stream);
-
-/**
- * @hidden
- * @type api
- * @region 视频管理
- * @brief 推送外部视频源采集和编码后的视频帧
- * @param engine 引擎实例指针，参看 IRtcEngine{@link #IRtcEngine}
- * @param video_stream 视频帧信息，详见 IEncodedVideoFrame{@link #IEncodedVideoFrame}
- */
-BYTERTC_API bool PushExternalEncodedVideoFrame(IRtcEngine* engine, const IEncodedVideoFrame* video_stream);
 
 /**
  * @hidden

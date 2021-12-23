@@ -48,10 +48,10 @@ public:
      * @region 房间管理
      * @brief 离开房间回调。  <br>
      *        用户调用 LeaveRoom{@link #LeaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
-     *        离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
      * @param [in] stats 本次通话的统计数据，参看 RtcRoomStats{@link #RtcRoomStats} 。  <br>
      * @notes  <br>
      *       + 用户调用 LeaveRoom{@link #LeaveRoom} 方法离开房间后，若立即调用 DestroyRtcEngine{@link #DestroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+     *       + 离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
      */
     virtual void OnLeaveRoom(const RtcRoomStats& stats) {
         (void)stats;
@@ -80,6 +80,7 @@ public:
     }
 
     /**
+     * @deprecated from 329.1, use OnLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
      * @type callback
      * @region 音频事件回调
      * @brief 提示房间内所有用户发送音量的回调。
@@ -111,7 +112,7 @@ public:
     /**
      * @type callback
      * @region 数据统计
-     * @brief 本地用户发布流成功后，SDK 会周期性（2s）的通过此回调事件通知用户发布的流在此次统计周期内的质量统计信息。
+     * @brief 反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调，每 2s 触发一次。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 LocalStreamStats{@link #LocalStreamStats}
      */
     virtual void OnLocalStreamStats(const LocalStreamStats& stats) {
@@ -204,7 +205,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 323.1, use OnUserStartAudioCapture instead
      * @type callback
      * @region 音频事件回调
      * @brief 远端用户开启/关闭音频设备采集时，房间内其他人会收到这个回调。
@@ -439,6 +440,15 @@ public:
         (void)msgid;
         (void)error;
     }
+
+    /*
+     * @hidden
+     * @deprecated
+     */
+    virtual void OnRoomModeChanged(RtcRoomMode mode) {
+        (void)mode;
+    }
+
 #ifndef ByteRTC_AUDIO_ONLY
     /**
      * @type callback
@@ -745,7 +755,8 @@ public:
      *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
+     *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void OnVideoStreamBanned(const char* uid, bool banned) {
         (void)uid;
@@ -766,7 +777,8 @@ public:
      *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。   <br>
+     *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void OnAudioStreamBanned(const char* uid, bool banned) {
         (void)uid;

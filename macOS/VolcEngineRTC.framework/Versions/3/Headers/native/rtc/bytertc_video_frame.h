@@ -15,6 +15,29 @@
 namespace bytertc {
 
 /**
+ * @type keytype
+ * @brief 编码帧类型
+ */
+enum VideoPictureType {
+    /**
+     * @brief 未知类型
+     */
+    kVideoPictureTypeUnknown = 0,
+    /**
+     * @brief I帧，关键帧，编解码不需要参考其他视频帧
+     */
+    kVideoPictureTypeI,
+    /**
+     * @brief P帧，向前参考帧，编解码需要参考前一帧视频帧
+     */
+    kVideoPictureTypeP,
+    /**
+     * @brief B帧，前后参考帧，编解码需要参考前后两帧视频帧
+     */
+    kVideoPictureTypeB
+};
+
+/**
 * @type keytype
 * @brief 视频帧旋转角度
 */
@@ -532,6 +555,142 @@ protected:
      * @brief 析构函数
      */
     virtual ~IVideoFrame() = default;
+};
+
+/**
+ * @type keytype
+ * @region 视频管理
+ * @brief 视频帧参数
+ */
+typedef struct EncodedVideoFrameBuilder {
+    /**
+     * @brief 视频帧编码格式，参看 VideoCodecType{@link #VideoCodecType}
+     */
+    VideoCodecType codec_type = kVideoCodecTypeUnknown;
+    /**
+     * @brief 视频帧编码类型，参看 VideoPictureType{@link #VideoPictureType}
+     */
+    VideoPictureType picture_type = kVideoPictureTypeUnknown;
+    /**
+     * @brief 视频帧旋转角度，参看 VideoRotation{@link #VideoRotation}
+     */
+    VideoRotation rotation = kVideoRotation0;
+    /**
+     * @brief 视频帧数据指针
+     * @notes IEncodedVideoFrame 会获取数据的所有权
+     */
+    uint8_t* data;
+    /**
+     * @brief 视频帧数据大小
+     */
+    int size = 0;
+    /**
+     * @brief 视频帧宽度，单位：px
+     */
+    int width = 0;
+    /**
+     * @brief 视频帧高度，单位：px
+     */
+    int height = 0;
+    /**
+     * @brief 视频采集时间戳，单位：微秒
+     */
+    int64_t timestamp_us = 0;
+    /**
+     * @brief 视频编码时间戳，单位：微秒
+     */
+    int64_t timestamp_dts_us = 0;
+    /**
+     * @brief 用户定义的视频帧释放回调函数指针，如果指针不为空，方法会被调用用来释放内存空间
+     */
+    int (*memory_deleter)(uint8_t* data, int size, void* user_opaque) = nullptr;
+} EncodedVideoFrameBuilder;
+/**
+ * @type keytype
+ * @brief 视频帧信息
+ */
+class IEncodedVideoFrame {
+public:
+    /**
+     * @type api
+     * @brief 获取视频编码类型
+     * @return 视频编码类型，参看 VideoCodecType{@link #VideoCodecType}
+     */
+    virtual VideoCodecType codec_type() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频采集时间戳
+     * @return 视频采集时间戳，单位：微秒
+     */
+    virtual int64_t timestamp_us() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频编码时间戳
+     * @return 视频编码时间戳，单位：微秒
+     */
+    virtual int64_t timestamp_dts_us() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频帧宽度
+     * @return 视频帧宽度，单位：px
+     */
+    virtual int width() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频帧高度
+     * @return 视频帧高度，单位：px
+     */
+    virtual int height() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频编码帧类型
+     * @return 视频编码帧类型，参看 VideoPictureType{@link #VideoPictureType}
+     */
+    virtual VideoPictureType picture_type() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频帧旋转角度
+     * @return 视频帧旋转角度，参看 VideoRotation{@link #VideoRotation}
+     */
+    virtual VideoRotation rotation() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频帧数据指针地址
+     * @return 视频帧数据指针地址
+     */
+    virtual uint8_t* data() const = 0;
+    /**
+     * @type api
+     * @brief 获取视频帧数据大小
+     * @return 视频帧数据大小
+     */
+    virtual int data_size() const = 0;
+    /**
+     * @type api
+     * @brief 浅拷贝视频帧并返回指针
+     */
+    virtual IEncodedVideoFrame* shallow_copy() const = 0;
+    /**
+     * @type api
+     * @brief 释放视频帧
+     */
+    virtual void release() = 0;
+    /**
+     * @type api
+     * @brief 根据视频帧参数创建视频帧并返回指针
+     * @param [in] builder 视频帧参数，参看 EncodedVideoFrameBuilder{@link #EncodedVideoFrameBuilder}
+     * @return IEncodedVideoFrame 创建的视频帧的指针
+     */
+    static IEncodedVideoFrame* build_encoded_video_frame(const EncodedVideoFrameBuilder& builder);
+    /**
+     * @hidden
+     */
+protected:
+    /**
+     * @hidden
+     * @brief 析构函数
+     */
+    virtual ~IEncodedVideoFrame() = default;
 };
 
 }  // namespace bytertc

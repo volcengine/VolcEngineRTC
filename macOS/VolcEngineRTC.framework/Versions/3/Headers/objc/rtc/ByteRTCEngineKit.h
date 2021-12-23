@@ -190,7 +190,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author sunhang.io
+ * @author zhushufan.ref
  * @brief 远端首帧视频数据渲染事件回调。
  * @param engine ByteRTCEngineKit 对象
  * @param uid 发送当前帧的远端用户的用户ID
@@ -215,7 +215,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author sunhang.io
+ * @author zhushufan.ref
  * @brief 远端首帧屏幕数据渲染事件回调。
  * @param engine RtcEngine 实例，参考: ByteRTCEngineKit{@link #ByteRTCEngineKit}
  * @param uid 发送当前帧的远端用户的用户 id
@@ -227,7 +227,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author panjian.fishing
+ * @author zhushufan.ref
  * @brief 远端用户暂停/重新发送视频回调。房间中远端用户调用muteLocalVideoStream:YES或muteLocalVideoStream:NO时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param muted YES:远端用户恢复发送视频流；NO:远端用户暂停发送视频流
@@ -263,7 +263,7 @@
  * @deprecated
  * @type callback
  * @region 视频管理
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 远端用户启用/关闭视频回调。房间中远端用户调用enableVideo/disableVideo时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param enabled YES:远端用户启动了视频功能；NO:远端用户关闭了视频功能
@@ -275,7 +275,7 @@
  * @deprecated
  * @type callback
  * @region 视频管理
- * @author zhangzhenyu.samuel
+ * @author zhushufan.ref
  * @brief 远端用户启用/关闭本地视频回调。房间中远端用户调用enableLocalVideo时，本地用户将会收到该回调。
  * @param engine ByteRTCEngineKit 对象
  * @param enabled YES:远端用户启动了本地视频；NO:远端用户关闭了本地视频
@@ -288,7 +288,7 @@
 /**
  * @type callback
  * @region 视频管理
- * @author sunhang.io
+ * @author zhushufan.ref
  * @brief 远端首帧视频数据解码事件回调。
  * @param engine ByteRTCEngineKit 对象
  * @param uid 发送当前帧的远端用户的用户ID
@@ -438,7 +438,7 @@
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 323.1, use onUserStartAudioCapture instead
  * @type callback
  * @region 音频管理
  * @author wangjunzheng
@@ -451,6 +451,7 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine didLocalAudioEnabled:(BOOL)enabled byUid:(NSString * _Nonnull)uid;
 
 /**
+ * @deprecated from 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
  * @type callback
  * @region 音频事件回调
  * @author wangjunzheng
@@ -838,9 +839,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setupLocalVideo:(ByteRTCVideoCanvas * _Nullable)local;
 
 /**
+ * @deprecated from 329.1
  * @type api
  * @region 视频管理
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 设置本地视频镜像.该方法用于开启或关闭本地视频镜像，默认值为关闭（ByteRTCVideoMirrorModeDisabled）。
  * @param mode 视频镜像模式，类型为枚举类型 ByteRTCMirrorMode{@link #ByteRTCMirrorMode}
  * @return 0：方法调用成功；
@@ -849,9 +851,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setLocalVideoMirrorMode:(ByteRTCMirrorMode) mode;
 
 /**
+ * @deprecated from 329.1
  * @type api
  * @region 视频管理
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 获得当前本地镜像状态
  * @return
  *      true：是镜像模式；
@@ -1406,6 +1409,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1418,6 +1422,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)getAudioMixingDuration;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1430,6 +1435,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)getAudioMixingCurrentPosition;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1444,6 +1450,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)stopAudioMixing;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1459,6 +1466,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)pauseAudioMixing;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1473,6 +1481,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)resumeAudioMixing;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1490,6 +1499,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)adjustAudioMixingVolume:(NSInteger)volume;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1522,6 +1532,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
                   cycle:(NSInteger)cycle;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1536,6 +1547,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setAudioMixingPosition:(NSInteger)pos;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1552,6 +1564,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)adjustAudioMixingPlayoutVolume:(NSInteger)volume;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1676,6 +1689,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)pauseEffect:(NSInteger)soundId;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1705,6 +1719,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)stopEffect:(NSInteger)soundId;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1721,6 +1736,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setEffectsVolume:(NSInteger)volume;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1735,6 +1751,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)unloadAllEffects;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1744,6 +1761,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)pauseAllEffects;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1758,6 +1776,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)resumeAllEffects;
 
 /**
+ * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1801,6 +1820,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (void)destroyRtcRoom:(NSString *_Nonnull)roomId;
 
 /**
+ * @deprecated from 325.1, use enableAudioPropertiesReport instead
  * @type api
  * @region 音频管理
  * @author wangjunzheng
@@ -1875,7 +1895,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @type api
  * @region 视频数据回调
- * @author sunhang.io
+ * @author wangjunlin.3182
  * @brief 注册 metadata 观察者，用于接收或发送 metadata。
  *        底层通过视频帧中添加 SEI 数据实现该功能。
  * @param metadataObserver  metadata 观察者，详见： ByteRTCMediaMetadataObserver{@link #ByteRTCMediaMetadataObserver}

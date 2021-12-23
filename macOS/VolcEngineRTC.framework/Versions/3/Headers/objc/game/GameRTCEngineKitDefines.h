@@ -444,7 +444,9 @@ typedef NS_ENUM(NSInteger, GameRTCRoomErrorCode) {
      */
     GameRTCRoomErrorCodeNoSubscribePermission       = -1003,
     /**
-     * @brief 有新用户加入房间，且用户 ID 和本地用户一致，导致本地用户被踢出房间。
+     * @brief 用户被踢出房间：<br>
+     *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
      */
     GameRTCRoomErrorCodeDuplicateLogin              = -1004,
 };

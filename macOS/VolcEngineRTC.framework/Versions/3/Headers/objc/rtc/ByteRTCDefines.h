@@ -252,8 +252,9 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      */
     ByteRTCErrorCodeNoSubscribePermission     = -1003,
     /**
-     * @brief 用户重复登录。
-     *         本端用户所在房间中有相同用户 ID 的用户登录，导致本端用户被踢出房间。
+     * @brief 用户被踢出房间：<br>
+     *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
      */
     ByteRTCErrorCodeDuplicateLogin             = -1004,
     /**
@@ -389,7 +390,7 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      *        当前音频设备采集静音，请检查更换音频设备
      */
     ByteRTCWarningCodeRecordingSilence = -5007,
-    
+
     /**
      * @brief 媒体设备误操作警告
      *        不支持外部源场景下，通过 SDK 进行媒体设备的开启、停止操作
@@ -1632,17 +1633,17 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoScaleMode){
      * @brief 自动缩放模式，当前等价于FitWithCropping
     */
     ByteRTCVideoScaleModeAuto = 0,
-    
+
     /**
      * @brief 缩放以适配宽高比
     */
     ByteRTCVideoScaleModeStretch = 1,
-    
+
     /**
      * @brief 保持纵横比来缩放图像，裁剪长边
     */
     ByteRTCVideoScaleModeFitWithCropping = 2,
-    
+
     /**
      * @brief 保持纵横比来缩放图像，填充短边
     */
@@ -2013,21 +2014,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEncodedVideoFrame : NSObject
 */
 @property (assign, nonatomic) SInt64 timestampUs; // time for this frame.
 /**
- * @brief 视频显示时间戳
- */
-@property (assign, nonatomic) SInt64 timestampPts; // pts time for this frame.
-/**
  * @brief 视频解码时间戳
  */
 @property (assign, nonatomic) SInt64 timestampDts; // dts time for this frame.
-/**
- * @brief 时间基分子
- */
-@property (assign, nonatomic) int timebaseNum;
-/**
- * @brief 时间基分母
- */
-@property (assign, nonatomic) int timebaseDen;
 /**
  * @brief 视频帧宽
 */

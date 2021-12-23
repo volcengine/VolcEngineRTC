@@ -53,7 +53,7 @@ enum RenderMode {
  */
 enum UserOfflineReason {
     /**
-     * @brief 远端用户调用 LeaveRoom{@link #LeaveRoom} 方法主动退出房间。  <br>
+     * @brief 远端用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法主动退出房间，或切换为不可见。  <br>
      */
     kUserOfflineReasonQuit = 0,
     /**
@@ -843,7 +843,6 @@ struct RemoteStreamSwitch {
      */
     FallbackOrRecoverReason reason;
 };
-
 /**
  * @type errorcode
  * @brief 登录结果  <br>
@@ -920,8 +919,9 @@ enum ErrorCode {
      */
     kErrorCodeNoSubscribePermission = -1003,
     /**
-     * @brief 用户重复登录。
-     *        本地用户所在房间中有相同用户 ID 的用户加入房间，导致本地用户被踢出房间。
+     * @brief 用户被踢出房间：<br>
+     *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
      */
     kErrorCodeDuplicateLogin = -1004,
 
@@ -930,6 +930,18 @@ enum ErrorCode {
      *        本端用户被主动踢出所在房间时，回调此错误。
      */
     kBrerrKickedOut = -1006,
+
+
+    /**
+     * @brief 当调用CreateRtcRoom{@link #IRtcEngineLite#CreateRtcRoom} ，如果roomid 非法，会返回null，并抛出该error
+     */
+    kRoomErrorCodeRoomIdIllegal = -1007,
+
+    /**
+     * @brief 当调用CreateRtcRoom{@link #IRtcEngineLite#CreateRtcRoom} ，如果已经存在了相同的房间，会返回null，并抛出该error
+     */
+    kRoomErrorCodeUserIsInRoom = -1008,
+
 
     /**
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
@@ -1011,6 +1023,7 @@ enum WarningCode {
      * @brief 当房间内人数超过 500 人时，停止向房间内已有用户发送 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调，并通过广播提示房间内所有用户。
      */
     kWarningCodeUserNotifyStop = -2013,
+
     /**
      * @brief 摄像头权限异常，当前应用没有获取摄像头权限。
      */
@@ -2649,6 +2662,7 @@ enum FirstFramePlayState {
 
 /**
  * @type keytype
+ * @deprecated from 329.1, use MirrorType instead
  * @brief 是否开启镜像模式
  */
 enum MirrorMode {
@@ -2660,6 +2674,41 @@ enum MirrorMode {
      * @brief 开启
      */
     kMirrorModeOn = 1,
+};
+
+/**
+ * @type keytype
+ * @hidden(Windows)
+ * @brief 是否开启耳返功能
+ */
+enum EarMonitorMode{
+    /**
+     * @brief 不开启
+     */
+    kEarMonitorModeOff = 0,
+    /**
+     * @brief 开启
+     */
+    kEarMonitorModeOn = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 镜像类型
+ */
+enum MirrorType {
+    /**
+     * @brief 本地渲染和编码传输时均无镜像效果
+     */
+    kMirrorTypeNone = 0,
+    /**
+     * @brief 本地渲染时有镜像效果，编码传输时无镜像效果
+     */
+    kMirrorTypeRender = 1,
+    /**
+     * @brief 本地渲染和编码传输时均有镜像效果
+     */
+    kMirrorTypeRenderAndEncoder = 3,
 };
 
 /**
@@ -2810,27 +2859,27 @@ struct LiveTranscodingRegion {
      */
     const char* roomId = nullptr;
     /**
-     * @brief 用户视频布局相对画布左侧的偏移量。相对值，范围为[0.0 - 1.0]。
+     * @brief 用户视频布局相对画布左侧的偏移量。相对值，范围为[0.0, 1.0]。
      */
     double x;
     /**
-     * @brief 用户视频布局相对画布顶端的偏移量。相对值，范围为[0.0 - 1.0]。
+     * @brief 用户视频布局相对画布顶端的偏移量。相对值，范围为[0.0, 1.0]。
      */
     double y;
     /**
-     * @brief 用户视频宽度相对用户原始视频宽度的比例。相对值，范围为[0.0 - 1.0]。
+     * @brief 用户视频宽度相对用户原始视频宽度的比例。相对值，范围为[0.0, 1.0]。
      */
     double w;
     /**
-     * @brief 用户视频高度相对用户原始视频高度的比例。相对值，范围为[0.0 - 1.0]。
+     * @brief 用户视频高度相对用户原始视频高度的比例。相对值，范围为[0.0, 1.0]。
      */
     double h;
     /**
-     * @brief 用户视频布局在画布中的层级。0为底层，值越大越上层，范围为[0 - 100]。
+     * @brief 用户视频布局在画布中的层级。0为底层，值越大越上层，范围为[0, 100]。
      */
     int zorder;
     /**
-     * @brief 透明度。范围为[0 - 255]。
+     * @brief 透明度。范围为[0, 255]。
      */
     double alpha;
     /**
@@ -2966,13 +3015,23 @@ enum AudioSourceType {
  */
 enum VideoSourceType {
     /**
-     *  自定义外部采集视频源
+     * @brief 自定义采集视频源
      */
     VideoSourceTypeExternal = 0,
     /**
-     *  SDK内部采集视频源
+     * @brief SDK 内部采集视频源
      */
     VideoSourceTypeInternal = 1,
+    /**
+     * @brief 自定义编码视频源。  <br>
+     *        你仅需推送分辨率最大的一路编码后视频流，SDK 将自动转码生成多路小流
+     */
+    VideoSourceTypeEncodedWithAutoSimulcast = 2,
+    /**
+     * @brief 自定义编码视频源。  <br>
+     *        SDK 不会自动生成多路流，你需要自行生成并推送多路流
+     */
+    VideoSourceTypeEncodedWithoutAutoSimulcast = 3,
 };
 
 /**
@@ -2997,11 +3056,11 @@ struct VideoFrameInfo {
 /**
  * @type keytype
  * @brief 音频采样率，单位为 HZ。 <br>
- *        若对采样率没有强依赖，建议使用 kAudioSampleRateAuto，可以通过避免 resample 带来一些性能优化。
  */
 enum AudioSampleRate {
     /**
-     * @brief 自动采样率，使用 SDK 内部处理的采样率，不经过 resample
+     * @brief 自动采样率，适用于从 SDK 获取音频数据，使用 SDK 内部处理的采样率，不经过 resample。  <br>
+     *        当你需要从 SDK 获取音频数据时，若对采样率没有强依赖，建议设置成该值，可以通过避免 resample 带来一些性能优化。
      */
     kAudioSampleRateAuto = -1,
     /**
@@ -3028,11 +3087,12 @@ enum AudioSampleRate {
 
 /**
  * @type keytype
- * @brief 音频声道。若对声道没有强依赖，建议使用 kAudioChannelAuto，可以通过避免 resample 带来一些性能优化。
+ * @brief 音频声道。
  */
 enum AudioChannel {
     /**
-     * @brief 自动声道，使用 SDK 内部处理的声道，不经过 resample
+     * @brief 自动声道，适用于从 SDK 获取音频数据，使用 SDK 内部处理的声道，不经过 resample。  <br>
+     *        当你需要从 SDK 获取音频数据时，若对声道没有强依赖，建议设置成该值，可以通过避免 resample 带来一些性能优化。
      */
     kAudioChannelAuto = -1,
     /**
@@ -3411,6 +3471,108 @@ struct VideoPreprocessorConfig {
      * @brief 视频帧像素格式，参看 VideoPixelFormat{@link #VideoPixelFormat}
      */
     VideoPixelFormat required_pixel_format = kVideoPixelFormatUnknown;
+};
+
+/**
+ * @type keytype
+ * @brief 自定义编码流信息
+ */
+struct VideoRateInfo {
+    /**
+     * @brief 帧率，单位 fps
+     */
+    int fps;
+    /**
+     * @brief 码率，单位 kbps
+     */
+    int bitrate_kbps;
+};
+
+/**
+ * @type keytype
+ * @brief 视频解码方式
+ */
+enum VideoDecoderConfig {
+    /**
+     * @brief 开启 SDK 内部解码，只回调解码后的数据
+     */    
+    kVideoDecoderConfigRaw,
+    /**
+     * @brief 开启自定义解码，只回调解码前数据
+     */ 
+    kVideoDecoderConfigEncode,
+    /**
+     * @brief 开启 SDK 内部解码，同时回调解码前和解码后的数据
+     */ 
+    kVideoDecoderConfigBoth,
+};
+
+/**
+ * @hidden
+ * @deprecated
+ */
+enum RtcRoomMode {
+    kRtcRoomNormalMode = 0,
+    kRtcRoomAudioSelectionMode = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 音频属性信息提示的相关配置  <br>
+ */
+struct AudioPropertiesConfig {
+    /**
+     * @brief 信息提示间隔；
+     * @notes  <br>
+     *       + <= 0: 关闭信息提示  <br>
+     *       + >0 && <=100: 不合法的 interval 值，SDK 自动设置为 100ms  <br>
+     *       + > 100: 信息提示间隔为 interval 实际值
+     */
+    int interval;
+};
+
+/**
+ * @type keytype
+ * @brief 音频属性信息  <br>
+ */
+struct AudioPropertiesInfo {
+    /**
+     * @brief 音量，取值范围为：[0, 255]
+     */
+    int volume;
+};
+
+/**
+ * @type keytype
+ * @brief 远端音频属性信息
+ */
+struct RemoteAudioPropertiesInfo {
+    /**
+     * @type keytype
+     * @brief 远端流信息，详见 RemoteStreamKey{@link #RemoteStreamKey}
+     */
+    RemoteStreamKey stream_key;
+    /**
+     * @type keytype
+     * @brief 音频属性信息，详见 AudioPropertiesInfo{@link #AudioPropertiesInfo}
+     */
+    AudioPropertiesInfo audio_properties_info;
+};
+
+/**
+ * @type keytype
+ * @brief 本地音频属性信息
+ */
+struct LocalAudioPropertiesInfo {
+    /**
+     * @brief 流属性，主流或屏幕流。参看 StreamIndex{@link #StreamIndex}
+     */
+    StreamIndex stream_index;
+    /**
+     * @type keytype
+     * @brief 音频属性信息，详见 AudioPropertiesInfo{@link #AudioPropertiesInfo}
+     */
+    AudioPropertiesInfo audio_properties_info;
 };
 
 }  // namespace bytertc
