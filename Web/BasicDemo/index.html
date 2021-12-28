@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>快速开始简易demo</title>
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+  <!-- header -->
+  <div class="header">
+    <div class="header-logo">
+      <img src="./assets/headerLogo.png" class="header-img"/>
+      <div id="header-version"></div>
+    </div>
+  </div>
+
+  <!-- player -->
+  <div class="player">
+    <div id="player-list">
+        <div id="local-player" class="player-wrapper">
+        <div id="local-player-name" class="player-name"></div>
+    </div>
+  </div>
+
+   <!-- control panel -->
+  <div class="control" id="control">
+    <div class="control-left">
+      <div class="control-voice__open control-wrapper" id="control-mic">
+        <img src="./assets/micOnIcon.png" alt="" class="control-img">
+      </div>
+      <div class="control-video__open control-wrapper" id="control-video">
+        <img src="./assets/videoOnIcon.png" alt="" class="control-img">
+      </div>
+    </div>
+    <div class="control-right">
+      <div class="control-line">
+        <div class="control-line__line"></div>
+      </div>
+      <div class="control-close control-wrapper">
+        <img src="./assets/leaveIcon.png" alt="" class="control-img" id="leave">
+      </div>
+    </div>
+  </div>
+
+  <!-- login panel -->
+  <div class="pannel" id="pannel">
+    <div class="pannel-bg"></div>
+    <div class="pannel-wrapper">
+      <div class="pannel-title">登录</div>
+      <div class="pannel-body">
+        <div class="pannel-input">
+          <input id="room-id" type="text" placeholder="房间ID" class="pannel-input__input">
+          <div id="room-id-text" class="pannel-error"></div>
+        </div>
+        <div class="pannel-input">
+          <input id="user-id" type="text" placeholder="用户ID" class="pannel-input__input">
+          <div id="user-id-text" class="pannel-error"></div>
+        </div>
+        <div class="pannel-text" id="submit">进入房间</div>
+      </div>
+    </div>
+  </div>
+  
+  <!--
+    Import the RTC SDK for Web and local calls to it.
+  -->
+  <script src="./lib/jquery-3.4.1.min.js"></script>
+  <script src="./lib/VRTC.min.js" type="text/javascript"></script>
+  <script src="./index.js"></script>
+</body>
+</html>
