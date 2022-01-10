@@ -951,7 +951,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  */
 @property (assign, nonatomic) NSInteger zOrder;
 /**
- * @brief 透明度，范围[0 - 255]
+ * @brief 透明度，范围 [0.0, 1.0]
  */
 @property (assign, nonatomic) CGFloat alpha;
 /**

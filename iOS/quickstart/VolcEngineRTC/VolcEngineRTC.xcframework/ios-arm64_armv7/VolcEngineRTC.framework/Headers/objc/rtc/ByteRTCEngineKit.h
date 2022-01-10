@@ -8,6 +8,7 @@
 #import "ByteRTCDefines.h"
 #import "ByteRTCHttpClientProtocol.h"
 #import "ByteRTCAudioMixingManager.h"
+#import "ByteRTCPositionAudioRender.h"
 
 @class ByteRTCEngineKit;
 @class ByteRTCRoom;
@@ -104,7 +105,7 @@
  * @param engine  ByteRTCRoom 对象。  <br>
  * @param stats 本次通话的统计数据，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats} 。  <br>
  * @notes  <br>
- *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyRtcEngine{@link #destroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyEngine{@link #destroyEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
  *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onLeaveRoomWithStats:(ByteRTCRoomStats *_Nonnull)stats;
@@ -548,10 +549,10 @@
  * @notes  <br>
  *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
- *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>    
+ *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br> 
- *        + 同一房间解散后再次创建，房间内状态清空。 
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
+ *        + 同一房间解散后再次创建，房间内状态清空。
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onVideoStreamBanned:(NSString* _Nonnull)uid isBanned:(BOOL)banned;
 /**
@@ -567,8 +568,8 @@
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br> 
- *        + 同一房间解散后再次创建，房间内状态清空。 
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
+ *        + 同一房间解散后再次创建，房间内状态清空。
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onAudioStreamBanned:(NSString* _Nonnull)uid isBanned:(BOOL)banned;
 
@@ -629,6 +630,18 @@
  * @param message 收到的 SEI 消息内容
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onSEIMessageReceived:(ByteRTCRemoteStreamKey* _Nonnull)remoteStreamKey andMessage:(NSData* _Nonnull)message;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @author wangjunzheng
+ * @brief 音频流同步信息回调。可以通过此回调，在远端用户调用 sendStreamSyncInfo:config:{@link #ByteRTCEngineKit#sendStreamSyncInfo:config:} 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
+ * @param engine 当前 RTCEngine 实例。
+ * @param remoteStreamKey 远端流信息，详见 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey} 。
+ * @param streamType 媒体流类型，目前仅支持用麦克风采集到的音频流，详见 ByteRTCSyncInfoStreamType{@link #ByteRTCSyncInfoStreamType} 。
+ * @param data 消息内容。
+ */  
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onStreamSyncInfoReceived:(ByteRTCRemoteStreamKey* _Nonnull)remoteStreamKey streamType:(ByteRTCSyncInfoStreamType)streamType data:(NSData* _Nonnull)data;
 
 #pragma mark - Statistics Delegate Methods
 /**
@@ -1852,6 +1865,18 @@ DEPRECATED_MSG_ATTRIBUTE("Please use leaveRoom");
 
 /**
  * @type api
+ * @region 音频管理
+ * @author dixing
+ * @brief 设置音质档位。你应根据业务场景需要选择适合的音质档位。  <br>
+ * @param audioProfile 音质档位，参看 ByteRTCAudioProfileType{@link #ByteRTCAudioProfileType}
+ * @notes  <br>
+ *        + 该方法在进房前后均可调用；  <br>
+ *        + 支持通话过程中动态切换音质档位。
+ */
+- (void)setAudioProfile:(ByteRTCAudioProfileType)audioProfile;
+
+/**
+ * @type api
  * @region 媒体流管理
  * @author shenpengliang
  * @brief 控制本地音频流的发送状态：发送/不发送。  <br>
@@ -1949,7 +1974,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setCaptureVolume");
 
 /**
  * @type api
- * @region 音量管理
+ * @region 音频管理
  * @author wangjunzheng
  * @brief 调节音频采集音量
  * @param index 流索引，指定调节主流还是调节屏幕流的音量，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
@@ -1996,7 +2021,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setCaptureVolume");
  *        + 耳返功能仅在连接了有线耳机时有效。<br>
  *        + 受 iOS 平台限制，RTC 仅支持软件耳返功能。
  */
-- (void)SetEarMonitorMode:(ByteRTCEarMonitorMode)mode;
+- (void)setEarMonitorMode:(ByteRTCEarMonitorMode)mode;
 
 /**
  * @type api
@@ -2005,10 +2030,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setCaptureVolume");
  * @brief 设置耳返的音量
  * @param [in] volume 耳返的音量，取值范围：[0,100]，单位：%
  * @notes <br>
- *        + 设置耳返音量前，你必须先调用 SetEarMonitorMode:{@link #SetEarMonitorMode:} 打开耳返功能。<br>
+ *        + 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。<br>
  *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
  */
-- (void)SetEarMonitorVolume:(NSInteger)volume;
+- (void)setEarMonitorVolume:(NSInteger)volume;
 
 #pragma mark Core Video Methods
 /**-----------------------------------------------------------------------------
@@ -2167,6 +2192,23 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
 /**
  * @type api
  * @region 视频管理
+ * @author wangcheng.leo
+ * @brief 设置 RTC SDK 内部采集时的视频采集参数。<br>
+ *        如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数包括分辨率、帧率。
+ * @param captureConfig 视频采集参数。参看: ByteRTCVideoCaptureConfig{@link #ByteRTCVideoCaptureConfig}。
+ * @return  <br>
+ *        + 0: 成功；  <br>
+ *        + <0: 失败；  <br>
+ * @notes  <br>
+ * + 本接口在引擎创建后可调用，调用后立即生效。建议在调用 startVideoCapture{@link #startVideoCapture} 前调用本接口。
+ * + 建议同一设备上的不同 Engine 使用相同的视频采集参数。
+ * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 中设置的参数。
+ */
+- (int)setVideoCaptureConfig:(ByteRTCVideoCaptureConfig * _Nullable)captureConfig;
+
+/**
+ * @type api
+ * @region 视频管理
  * @author sunhang.io
  * @brief 设置本地视频渲染时，使用的视图，并设置渲染模式。  <br>
  *        你应在加入房间前，绑定本地视图。退出房间后，此设置仍然有效。
@@ -2295,7 +2337,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @author wangjunlin.3182
  * @brief 为本地采集到的视频流开启镜像
  * @param mirrorType 设置镜像类型，参看 ByteRTCMirrorType{@link #ByteRTCMirrorType}
- * @notes <br> 
+ * @notes <br>
  *        + 该接口调用前，各视频源的初始状态如下：<br>
  *        <table>
  *           <tr><th></th><th>前置摄像头</th><th>后置摄像头</th><th>自定义采集视频源</th> <th>桌面端摄像头</th> </tr>
@@ -2768,7 +2810,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts;
 
@@ -2783,7 +2825,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts rotation:(ByteRTCVideoRotation)rotation;
 
@@ -2800,7 +2842,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts
                                                              rotation:(ByteRTCVideoRotation)rotation
@@ -2817,7 +2859,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:{@link #ByteRTCEngineKit#setVideoSourceType:} 开启外部视频源采集。
+ * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalByteVideoFrame:(ByteRTCVideoFrame * _Nonnull)frame;
 
@@ -3912,7 +3954,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 
 /**
  * @type api
- * @region 房间管理
+ * @region 多房间
  * @author shenpengliang
  * @brief 创建并获取一个 ByteRTCRoom 对象  <br>
  * @param roomId 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
@@ -3931,7 +3973,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
 #pragma mark - ScreenCapture
 /**
  * @hidden
- * @deprecated
+ * @deprecated from 327.1, use startScreenSharingWithPreferredExtension instead
  * @type api
  * @region 屏幕共享
  * @author liyi.000
@@ -4087,6 +4129,20 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
   * @return 混音管理实例，详见ByteRTCAudioMixingManager{@link #ByteRTCAudioMixingManager}
   */
 - (ByteRTCAudioMixingManager *_Nullable)getAudioMixingManager;
+
+/**
+ * @type api
+ * @region 音频管理
+ * @author majun.lvhiei
+ * @brief 获取位置音频接口实例，包括范围语音、空间语音等和位置相关的音频接口。  <br>
+ * @return 位置音频管理接口实例。如果返回 NULL，则表示不支持空间音频，详见 ByteRTCPositionAudioRender{@link #ByteRTCPositionAudioRender} 。  <br>
+ * @notes  <br>
+ *       + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
+ *       + 在网络状况不佳的情况下，即使开启了这一功能，也不会产生空间音频效果；  <br>
+ *       + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
+ *       + 空间音频效果在启用服务端选路功能时，不生效。  <br> 
+ */
+- (ByteRTCPositionAudioRender *_Nullable)getPositionAudioRender;
 
 #pragma mark - Rtm
 /**
@@ -4390,4 +4446,20 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  */
 - (void)registerRemoteEncodedVideoFrameObserver:(id<ByteRTCRemoteEncodedVideoFrameObserver> _Nullable)observer;
 
+/**
+ * @type api
+ * @region 音频管理
+ * @author wangjunzheng
+ * @brief 发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 onStreamSyncInfoReceived:streamType:data:{@link #ByteRTCEngineDelegate#onStreamSyncInfoReceived:streamType:data:} 回调。
+ * @param data 消息内容。
+ * @param config 媒体流信息同步的相关配置，详见 ByteRTCStreamSycnInfoConfig{@link #ByteRTCStreamSycnInfoConfig} 。
+ * @return  <br>
+ *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
+ *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
+ *        + -2: 消息发送失败。传入的消息内容为空。  <br>
+ *        + -3: 消息发送失败。不支持通过屏幕流进行消息同步。  <br>
+ *        + -4: 消息发送失败。通过用麦克风采集到的音频流进行消息同步时，此音频流还未发布；请在发布麦克风流，并收到 onStreamPublishSuccess:{@link #ByteRTCRoom#onStreamPublishSuccess:} 之后，再调用该接口。  <br>
+ */
+#pragma mark StreamSyncInfo
+- (int)sendStreamSyncInfo:(NSData* _Nonnull)data config:(ByteRTCStreamSycnInfoConfig * _Nonnull)config;
 @end

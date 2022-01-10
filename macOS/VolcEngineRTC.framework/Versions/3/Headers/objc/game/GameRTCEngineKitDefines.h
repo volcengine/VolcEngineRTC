@@ -70,6 +70,34 @@ typedef NS_ENUM(NSInteger, GameRTCAudioScenarioType) {
 };
 
 /**
+ * @type keytype
+ * @brief 音质档位
+ */
+typedef NS_ENUM(NSInteger, GameRTCAudioProfileType) {
+    /**
+     * @brief 默认音质
+     */
+    GameRTCAudioProfileDefault = 0,
+    /**
+     * @brief 流畅音质。  <br>
+     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS 等游戏中的小队语音、组队语音、国战语音等。
+     */
+    GameRTCAudioProfileFluent = 1,
+    /**
+     * @brief 标准音质。  <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合 Sirius 等狼人杀类游戏。
+     */
+    GameRTCAudioProfileStandard = 2,
+    /**
+     * @brief 高清音质  <br>
+     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK、在线教育等场景。 <br>
+     *        游戏场景不建议使用。
+     */
+    GameRTCAudioProfileHD = 3,
+};
+
+
+/**
  * @hidden
  * @type keytype
  * @brief SDK 的服务器环境。
@@ -446,7 +474,8 @@ typedef NS_ENUM(NSInteger, GameRTCRoomErrorCode) {
     /**
      * @brief 用户被踢出房间：<br>
      *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
-     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间；<br>
+     *        + 因调用解散房间的 OpenAPI，离开房间。
      */
     GameRTCRoomErrorCodeDuplicateLogin              = -1004,
 };

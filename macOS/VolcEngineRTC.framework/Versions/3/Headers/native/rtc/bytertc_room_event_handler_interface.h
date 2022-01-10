@@ -112,7 +112,7 @@ public:
     /**
      * @type callback
      * @region 数据统计
-     * @brief 反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调，每 2s 触发一次。
+     * @brief 发布流成功后，每隔 2s 收到此回调，了解发布的流在此周期内的网络质量信息。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 LocalStreamStats{@link #LocalStreamStats}
      */
     virtual void OnLocalStreamStats(const LocalStreamStats& stats) {
@@ -121,7 +121,7 @@ public:
     /**
      * @type callback
      * @region 数据统计
-     * @brief 通话中本地设备接收订阅的远端音/视频流的统计信息以及网络状况，每 2s 触发一次。
+     * @brief 每隔 2s 收到此回调，了解订阅的远端用户发布的流在此周期内的网络质量信息。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 RemoteStreamStats{@link #RemoteStreamStats}
      */
     virtual void OnRemoteStreamStats(const RemoteStreamStats& stats) {
@@ -343,17 +343,14 @@ public:
         (void)uid;
         (void)message;
     }
+
     /**
-     * @hidden
      * @type callback
      * @region 房间管理
      * @brief 直播推流转码错误回调。
-     *        用户调用 EnableLiveTranscoding{@link #EnableLiveTranscoding}
-     * 接口启动直播推流转码功能后，启动结果和推流过程中 的错误均会通过此回调方法通知用户。
-     * @param [in] url
-     *        推流地址的 URL。
-     * @param [in] error
-     *        直播推流转码功能错误码，详见枚举类型 TransCodingError{@link #TransCodingError}。
+     *        用户调用 StartLiveTranscoding{@link #StartLiveTranscoding} 接口启动直播推流转码功能后，启动结果和推流过程中 的错误均会通过此回调方法通知用户。
+     * @param [in] url 推流地址的 URL。
+     * @param [in] error 直播推流转码功能错误码，详见枚举类型 TransCodingError{@link #TransCodingError}。
      */
     virtual void OnLiveTranscodingResult(const char* url, int error) {
         (void)url;

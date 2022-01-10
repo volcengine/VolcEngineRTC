@@ -123,7 +123,7 @@ public:
 
     /**
      * @type api
-     * @region 房间管理
+     * @region 多房间
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
      *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
@@ -170,10 +170,10 @@ public:
      * @region 多房间
      * @brief 更新 Token。  <br>
      *        Token 有一定的有效期，当 Token 过期时，用户需调用此方法更新房间的 Token 信息。  <br>
-     *        用户调用 JoinRoom{@link #JoinRoom} 方法加入房间时，如果使用了过期的 Token 将导致加入房间失败，并会收到 OnJoinRoomResult{@link #OnJoinRoomResult} 回调通知，错误码为 ErrorCode.kErrorCodeInvalidToken{@link #ErrorCode}。此时需要重新获取 Token，并调用此方法更新 Token。  <br>
+     *        用户调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间时，如果使用了过期的 Token 将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，错误码为 ErrorCode{@link #ErrorCode} 中的 kErrorCodeInvalidToken 。此时需要重新获取 Token，并调用此方法更新 Token。  <br>
      * @param [in] token 更新的动态密钥。  <br>
      * @notes  <br>
-     *       + 如果用户因 Token 过期导致加入房间失败，则调用此方法更新 Token 后，SDK 会自动重新加入房间，而不需要用户自己调用 JoinRoom{@link #JoinRoom} 方法。  <br>
+     *       + 如果用户因 Token 过期导致加入房间失败，则调用此方法更新 Token 后，SDK 会自动重新加入房间，而不需要用户自己调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法。  <br>
      *       + Token 过期时，如果已经加入房间成功，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 加入房间时，或因本地网络状况不佳导致断网重新连入房间时通知给用户。  <br>
      */
     virtual void UpdateToken(const char* token) = 0;
@@ -267,7 +267,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use PublishScreen without params instead
      * @type api
      * @region 多房间
      * @brief 发布本地屏幕共享流到房间。
@@ -406,20 +406,6 @@ public:
     virtual void SetRemoteAudioPlaybackVolume(const char* user_id, int volume) = 0;
 
     /**
-     * @type api
-     * @region 多房间
-     * @brief 设置远端玩家音频源的距离、方位和仰角
-     * @param [in] user_id 音频来源的远端用户 ID
-     * @param [in] distance 声源的距离
-     * @param [in] theta 在球坐标系下，声源相对音频收听者的水平方向角，单位：弧度
-     * @param [in] phi 在球坐标系下，声源相对音频收听者的仰角，单位：弧度
-     * @notes <br>
-     *        + 该方法目前仅支持在游戏引擎的世界房间模式下调用  <br>
-     *        + 你需在调用 EnableAudioSpatialRender{@link #EnableAudioSpatialRender} 开启空间音频渲染器后方可调用该方法
-     */
-    virtual void SetRemoteAudioDirection(const char* user_id, float distance, float theta, float phi) = 0;
-
-    /**
      * @hidden
      * @deprecated from 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
      * @type api
@@ -474,7 +460,6 @@ public:
     virtual void UpdateCloudRending(const char* cloudrenderJsonString) = 0;
 
     /**
-     * @hidden(macOS,Windows)
      * @type api
      * @region 多房间
      * @brief 开启转推直播，并设置合流的视频视图布局和音频属性。
@@ -490,7 +475,6 @@ public:
     virtual void StartLiveTranscoding(ITranscoderParam* param, ITranscoderObserver* observer) = 0;
 
     /**
-     * @hidden(macOS,Windows)
      * @type api
      * @region 多房间
      * @brief 停止转推直播。<br>
@@ -499,7 +483,6 @@ public:
     virtual void StopLiveTranscoding() = 0;
 
     /**
-     * @hidden(macOS,Windows)
      * @type api
      * @region 多房间
      * @brief 更新转推直播参数。  <br>

@@ -129,7 +129,7 @@ private:
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。只有使用相同的 app_id 生成的实例，才能够进行音视频通信。
  * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 。
+ *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
  * @param [in] parameters 用以覆盖默认参数的本引擎实例参数。JSON 字符串格式。
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>

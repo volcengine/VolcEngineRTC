@@ -196,6 +196,33 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
 
 /**
  * @type keytype
+ * @brief 音质档位
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
+    /**
+     * @brief 默认音质
+     */
+    ByteRTCAudioProfileDefault = 0,
+    /**
+     * @brief 流畅音质。  <br>
+     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS 等游戏中的小队语音、组队语音、国战语音等。
+     */
+    ByteRTCAudioProfileFluent = 1,
+    /**
+     * @brief 标准音质。  <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合 Sirius 等狼人杀类游戏。
+     */
+    ByteRTCAudioProfileStandard = 2,
+    /**
+     * @brief 高清音质  <br>
+     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK、在线教育等场景。 <br>
+     *        游戏场景不建议使用。
+     */
+    ByteRTCAudioProfileHD = 3,
+};
+
+/**
+ * @type keytype
  * @brief SDK 与信令服务器连接状态。
  */
 typedef NS_ENUM(NSInteger, ByteRTCConnectionState) {
@@ -341,7 +368,8 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
     /**
      * @brief 用户被踢出房间：<br>
      *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
-     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间；<br>
+     *        + 因调用解散房间的 OpenAPI，离开房间。
      */
     ByteRTCErrorCodeDuplicateLogin             = -1004,
     /**
@@ -1741,6 +1769,22 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoSolution: NSObject
 @property (nonatomic, assign) ByteRTCVideoEncoderPreference encoderPreference;
 @end
 
+
+/**
+ * @type keytype
+ * @brief 视频采集参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCaptureConfig: NSObject
+/**
+ * @brief 视频采集分辨率。
+ */
+@property (nonatomic, assign) CGSize videoSize;
+/**
+ * @brief 视频采集帧率，单位：fps。
+ */
+@property (nonatomic, assign) NSInteger frameRate;
+@end
+
 /**
  * @type keytype
  * @brief 流属性。
@@ -1764,8 +1808,8 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 @property (nonatomic, assign, readonly) BOOL hasAudio;
 /**
  * @brief 视频流的分辨率信息。  <br>
- *        当远端用户发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
- *        参看 ByteRTCVideoSolution{@link #ByteRTCVideoSolution}。  <br>
+ *         当远端用户调用 setVideoEncoderConfig:config:{@link #setVideoEncoderConfig:config:} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
+ *         参看 ByteRTCVideoSolution{@link #ByteRTCVideoSolution}。  <br>
  */
 @property (nonatomic, copy, readonly) NSArray<ByteRTCVideoSolution *> * videoStreamDescriptions;
 @end
@@ -2102,7 +2146,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  */
  @property (assign, nonatomic) BOOL screenStream;
 /**
- * @brief 透明度。范围为[0 - 255]。
+ * @brief 透明度。范围为 [0.0, 1.0]。
  */
 @property (assign, nonatomic) CGFloat alpha;
 /**
@@ -2354,7 +2398,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMultiRoomConfig : NSObject
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoConfig : NSObject
 /**
  * @brief 订阅的视频流分辨率下标。  <br>
- *        当远端用户通过发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+ *        当远端用户通过调用 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
  *        默认值为 0，即订阅第一路流。  <br>
  *        如果不想更改之前的设置，可以输入 -1。  <br>
  */
@@ -2541,6 +2585,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
  * @brief 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
  */
 @property (assign, nonatomic) BOOL isScreen;
+/**
+ * @brief 视频上行网络抖动，单位为 ms。  <br>
+ */
+@property(assign, nonatomic) NSInteger jitter;
 @end
 
 /**
@@ -2611,6 +2659,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
  * @brief SDK 订阅的远端视频流的分辨率下标。  <br>
  */
 @property (assign, nonatomic) NSInteger videoIndex;
+/**
+ * @brief 视频下行网络抖动，单位为 ms。  <br>
+ */
+@property(assign, nonatomic) NSInteger jitter;
 @end
 
 /**
@@ -2649,6 +2701,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioStats : NSObject
  * @brief 音频发送采样率。此次统计周期内的音频发送采样率信息，单位为 Hz 。  <br>
  */
 @property(assign, nonatomic) NSInteger sentSampleRate;
+/**
+ * @brief 音频上行网络抖动，单位为 ms。  <br>
+ */
+@property(assign, nonatomic) NSInteger jitter;
 @end
 
 /**
@@ -2730,6 +2786,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
  * @brief 解码时长。对此次统计周期内接收的远端音频流进行解码的总耗时，单位为 s 。  <br>
  */
 @property(assign, nonatomic) NSInteger decDuration;
+/**
+ * @brief 视频下行网络抖动，单位为 ms。  <br>
+ */
+@property(assign, nonatomic) NSInteger jitter;
 @end
 
 /**
@@ -4047,5 +4107,120 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioPropertiesInfo : NSObject
  * @brief 音频属性信息，详见 ByteRTCAudioPropertiesInfo{@link #ByteRTCAudioPropertiesInfo}
  */
 @property (strong, nonatomic) ByteRTCAudioPropertiesInfo *_Nonnull audioPropertiesInfo;
+
+@end
+
+
+
+/**
+ * @type keytype
+ * @brief 使用范围语音功能时，语音的接收范围
+ */
+BYTERTC_APPLE_EXPORT @interface ReceiveRange : NSObject
+/**
+ * @brief 收听声音无衰减的最小范围值。<br>
+ *        当收听者和声源距离小于 min 的时候，收听到的声音完全无衰减。
+ */
+@property (nonatomic, assign) int min;
+/**
+ *  @brief 能够收听到声音的最大范围。<br>
+ *        当收听者和声源距离大于 max 的时候，无法收听到声音。<br>
+ *        当收听者和声源距离处于 [min, max) 之间时，收听到的音量根据距离有衰减。
+ */
+@property (nonatomic, assign) int max;
+
+@end
+
+/**
+ * @type keytype
+ * @brief 用户的位置信息
+ */
+BYTERTC_APPLE_EXPORT @interface Position : NSObject
+/**
+ * @brief x 坐标
+ */
+@property (nonatomic, assign) int x;
+/**
+ * @brief y 坐标
+ */
+@property (nonatomic, assign) int y;
+/**
+ * @brief z 坐标
+ */
+@property (nonatomic, assign) int z;
+
+@end
+
+
+/**
+ * @type keytype
+ * @brief 方向朝向信息
+ */
+BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
+/**
+ * @brief x 方向向量
+ */
+@property (nonatomic, assign) float x;
+/**
+ * @brief y 方向向量
+ */
+@property (nonatomic, assign) float y;
+/**
+ * @brief z 方向向量
+ */
+@property (nonatomic, assign) float z;
+
+@end
+
+
+/**
+ * @type keytype
+ * @brief 用户的三维方向朝向信息，三个向量需要两两垂直
+ */
+BYTERTC_APPLE_EXPORT @interface HumanOrientation : NSObject
+/**
+ * @brief 正前方朝向向量
+ */
+@property (nonatomic, strong) Orientation* _Nonnull forward;
+/**
+ * @brief 正右方朝向向量
+ */
+@property (nonatomic, strong) Orientation* _Nonnull right;
+/**
+ * @brief 正上方朝向向量
+ */
+@property (nonatomic, strong) Orientation* _Nonnull up;
+
+@end
+
+/**
+ * @type keytype
+ * @brief 媒体流信息同步的流类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCSyncInfoStreamType) {
+    /**
+     * @brief 音频流
+     */
+    ByteRTCSyncInfoStreamTypeAudio = 0
+};
+
+/**
+ * @type keytype
+ * @brief 媒体流信息同步的相关配置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCStreamSycnInfoConfig : NSObject
+
+/**
+ * @brief 流属性，主流或屏幕流。见 ByteRTCStreamIndex{@link #ByteRTCStreamIndex} 。
+ */
+@property (assign, nonatomic) ByteRTCStreamIndex streamIndex;
+/**
+ * @brief 消息发送的重复次数，取值范围是 [0,25]，建议设置为 [3,5]。
+ */
+@property (assign, nonatomic) int repeatCount;
+/**
+ * @brief 媒体流信息同步的流类型，见 ByteRTCSyncInfoStreamType{@link #ByteRTCSyncInfoStreamType} 。
+ */
+@property (assign, nonatomic) ByteRTCSyncInfoStreamType streamType;
 
 @end

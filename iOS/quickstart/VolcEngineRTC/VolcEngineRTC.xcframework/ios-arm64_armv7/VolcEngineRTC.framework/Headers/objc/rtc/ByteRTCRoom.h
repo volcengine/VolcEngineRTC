@@ -49,7 +49,7 @@
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
  * @param stats 本次通话的统计数据，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats} 。  <br>
  * @notes  <br>
- *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyRtcEngine{@link #destroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyEngine{@link #destroyEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
  *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLeaveRoomWithStats:(ByteRTCRoomStats *_Nonnull)stats;
@@ -620,9 +620,9 @@
  * @notes  <br>
  *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
- *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>    
+ *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onVideoStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
@@ -640,7 +640,7 @@
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。 
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAudioStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
@@ -869,7 +869,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *       + 调用此方法后，房间内的远端用户会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 事件。
  *       + 如果你需要由外部屏幕采集切换为内部采集，你必须调用 unpublishScreen{@link #unpublishScreen} 关闭外部采集后，
  *         通过调用 startScreenSharingWithPreferredExtension:groupId:{@link #startScreenSharingWithPreferredExtension:groupId:} 开启内部采集。
- *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。 
+ *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。
  * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
  */
 
@@ -1062,7 +1062,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @deprecated from 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 多房间
- * @author liyi.000
+ * @author shenpengliang
  * @brief 设置是否接收所有远端视频流
  * @param  muteState 参看 ByteRTCMuteState{@link #ByteRTCMuteState}   <br>
  *       + true：停止播放  <br>
@@ -1077,7 +1077,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @deprecated from 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
- * @author liyi.000
+ * @author shenpengliang
  * @brief 设置是否播放远端视频流
  * @param uid 视频来源的远端用户 ID
  * @param  muteState 参看 ByteRTCMuteState{@link #ByteRTCMuteState}   <br>

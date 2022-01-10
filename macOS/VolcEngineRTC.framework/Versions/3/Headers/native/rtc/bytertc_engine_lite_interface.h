@@ -14,6 +14,7 @@
 #include "byte_rtc_asr_engine_event_handler.h"
 #include "bytertc_audio_mixing_manager.h"
 #include "bytertc_video_processor_interface.h"
+#include "bytertc_position_audio_render_interface.h"
 
 namespace bytertc {
 
@@ -554,7 +555,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use SetScreenAudioStreamIndex instead
      * @type api
      * @region 屏幕共享
      * @brief 开启声卡采集，将声卡播放的音频流合到本地采集的音频流中。<br>
@@ -568,7 +569,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use SetScreenAudioStreamIndex instead
      * @type api
      * @region 屏幕共享
      * @brief 关闭声卡采集，声卡播放的音频流不再合到本地采集的音频流中。
@@ -578,7 +579,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use SetCaptureVolume instead
      * @type api
      * @region 屏幕共享
      * @brief 调节本地声卡采集音量。<br>
@@ -590,19 +591,6 @@ public:
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
      */
     virtual void SetScreenAudioVolumeBeforeMixing(int volume) = 0;
-
-    /**
-     * @hidden(Linux)
-     * @type api
-     * @region 音频管理
-     * @brief 开启/关闭空间音频渲染器。<br>
-     *        开启后可以实现 3D 语音效果。
-     * @param [in] enable 空间音频渲染器开关 <br>
-     *       + true: 开启  <br>
-     *       + false: 关闭
-     * @notes 该方法目前仅支持在游戏引擎的世界房间模式下调用
-     */
-    virtual void EnableAudioSpatialRender(bool enable) = 0;
 
     /**
      * @hidden(Linux)
@@ -649,6 +637,17 @@ public:
      *        + 媒体音量更适合娱乐场景，因其声音的表现力会更强。媒体音量下，音量最低可以降低到 0。
      */
     virtual void SetAudioScenario(AudioScenarioType scenario) = 0;
+
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 设置音质档位。你应根据业务场景需要选择适合的音质档位。  <br>
+     * @param [in] audio_profile 音质档位，参看 AudioProfileType{@link #AudioProfileType}
+     * @notes  <br>
+     *        + 该方法在进房前后均可调用；  <br>
+     *        + 支持通话过程中动态切换音质档位。
+     */
+    virtual void SetAudioProfile(AudioProfileType audio_profile) = 0;
 
     /**
      * @type api
@@ -1226,6 +1225,22 @@ public:
     virtual void StopVideoCapture() = 0;
 
     /**
+    * @type api
+    * @region 视频管理
+    * @brief 设置 RTC SDK 内部采集时的视频采集参数。<br>
+    *        如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数包括分辨率、帧率。
+    * @param videoCaptureConfig 视频采集参数。参看: VideoCaptureConfig{@link #VideoCaptureConfig}。
+    * @return  <br>
+    *        + 0: 成功；  <br>
+    *        + <0: 失败；  <br>
+    * @notes  <br>
+    * + 本接口在引擎创建后可调用，调用后立即生效。建议在调用 StartVideoCapture{@link #StartVideoCapture} 前调用本接口。
+    * + 建议同一设备上的不同 Engine 使用相同的视频采集参数。
+    * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 中设置的参数。
+    */
+    virtual int SetVideoCaptureConfig(const VideoCaptureConfig& videoCaptureConfig) = 0;
+
+    /**
      * @type api
      * @region 视频管理
      * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
@@ -1407,7 +1422,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 该方法共享一个窗口或该窗口的部分区域。用户需要在该方法中指定想要共享的窗口 id 。
@@ -1438,7 +1453,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 通过指定区域共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
@@ -1470,7 +1485,7 @@ public:
 
     /**
      * @hidden(iOS,Android)
-     * @deprecated
+     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 通过屏幕 id 共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕 id 。
@@ -1490,7 +1505,7 @@ public:
 
     /**
      * @hidden(macOS,Windows)
-     * @deprecated
+     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 通过传入的Context开启屏幕共享。
@@ -1521,7 +1536,8 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated from 327.1, use SetVideoEncoderConfig、UpdateScreenCaptureHighlightConfig、
+     *                  UpdateScreenCaptureFilterConfig、UpdateScreenCaptureMouseCursor instead
      * @type api
      * @region 屏幕共享
      * @brief 更新屏幕共享的编码参数配置。
@@ -1534,8 +1550,8 @@ public:
     virtual int UpdateScreenCaptureParameters(const DesktopCaptureParameters& capture_params) = 0;
 
     /**
-     * @deprecated
      * @type api
+     * @deprecated from 327.1, use StopScreenVideoCapture instead
      * @region 屏幕共享
      * @brief 停止屏幕或者窗口共享。
      * @notes  <br>
@@ -1633,7 +1649,7 @@ public:
      * @type api
      * @region 屏幕共享
      * @brief 通过 RTC SDK 提供的采集模块采集屏幕视频流时，设置需要过滤的窗口。
-     * @param [in] ScreenFilterConfig 窗口过来设置，参看 ScreenFilterConfig{@link #ScreenFilterConfig}  <br>
+     * @param [in] ScreenFilterConfig 窗口过滤设置，参看 ScreenFilterConfig{@link #ScreenFilterConfig}  <br>
      * @notes <br>
      *       + 调用此接口前，必须已通过调用 StartScreenVideoCapture{@link #StartScreenVideoCapture} 开启了内部屏幕流采集。<br>
      *       + 本函数在屏幕源类别是屏幕而非应用窗体时才起作用。详见：ScreenCaptureSourceType{@link #ScreenCaptureSourceType}
@@ -1662,7 +1678,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated 使用 SetVideoSourceType 替代
+     * @deprecated from 324.1, use SetVideoSourceType instead
      * @type api
      * @region 视频管理
      * @brief 设置是否启用自定义视频采集
@@ -1748,7 +1764,7 @@ public:
 
     /**
      * @type api
-     * @region 房间管理
+     * @region 多房间
      * @brief 创建并获取一个 IRTCRoom{@link #IRtcRoom} 对象  <br>
      * @param [in] room_id 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
      *       + 26个大写字母 A ~ Z  <br>
@@ -1757,7 +1773,7 @@ public:
      *       + 下划线 "_", at 符 "@", 减号 "-"  <br>
      *        多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则会导致创建房间失败。  <br>
      * @notes  <br>
-     *       + 用户可以多次调用此方法创建多个 IRTCRoom{@link #IRtcRoom} 对象，再分别调用各 IRTCRoom 对象的 JoinRoom{@link #JoinRoom} 方法，实现同时加入多个房间；  <br>
+     *       + 用户可以多次调用此方法创建多个 IRtcRoom{@link #IRtcRoom} 对象，再分别调用各 IRTCRoom 对象的 JoinRoom{@link #IRtcRoom#JoinRoom} 方法，实现同时加入多个房间；  <br>
      *       + 加入多个房间后，用户可以同时订阅各房间的音视频流，但是目前仅支持同一时间在一个房间内发布一路音视频流。  <br>
      */
     virtual IRtcRoom* CreateRtcRoom(const char* room_id) = 0;
@@ -2079,8 +2095,6 @@ public:
      * @type api
      * @region 视频设备管理
      * @brief 创建视频设备管理实例
-     * @param [in] engine
-     *        用于创建视频设备管理实例的引擎，详见IRtcEngine{@link #IRtcEngine}
      * @return 视频设备管理实例，详见IVideoDeviceManager{@link #IVideoDeviceManager}
      * @notes 当不再使用IVideoDeviceManager实例时，调用该实例的 Release{@link #Release}
      * 接口，以免资源泄露
@@ -2092,11 +2106,23 @@ public:
      * @type api
      * @region 音频管理
      * @brief 设备音频管理接口创建
-     * @param [in] engine
-     *       要设置的引擎，详见：{@link #IRtcEngine}
      * @return 音频设备管理接口
      */
     virtual IAudioDeviceManager* GetAudioDeviceManager() = 0;
+
+
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 获取位置音频接口实例，包括范围语音、空间语音等和位置相关的音频接口。  <br>
+     * @return 位置音频管理接口实例。如果返回 NULL，则表示不支持空间音频，详见 IPositionAudioRenderInterface{@link #IPositionAudioRenderInterface} 。  <br>
+     * @notes  <br>
+     *       + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
+     *       + 在网络状况不佳的情况下，即使开启了这一功能，也不会产生空间音频效果；  <br>
+     *       + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
+     *       + 空间音频效果在启用服务端选路功能时，不生效。  <br>
+     */
+    virtual IPositionAudioRenderInterface* GetPositionAudioRender() = 0;
 
     /**
      * @hidden
@@ -2474,6 +2500,22 @@ public:
      *        + 该方法适用于调用 SetVideoDecoderConfig{@link #IRtcEngineLite#SetVideoDecoderConfig} 开启自定义解码功能后，并且自定义解码失败的情况下使用
      */
     virtual void RequestRemoteVideoKeyFrame(const RemoteStreamKey& stream_info) = 0;
+
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 OnStreamSyncInfoReceived{@link #IRtcEngineLiteEventHandler#OnStreamSyncInfoReceived} 回调。
+     * @param [in] data 消息内容。
+     * @param [in] length 消息长度。消息长度必须是 [1,16] 字节。
+     * @param [in] config 媒体流信息同步的相关配置，详见 StreamSycnInfoConfig{@link #StreamSycnInfoConfig} 。
+     * @return  <br>
+     *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
+     *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
+     *        + -2: 消息发送失败。传入的消息内容为空。  <br>
+     *        + -3: 消息发送失败。不支持通过屏幕流进行消息同步。  <br>
+     *        + -4: 消息发送失败。通过用麦克风采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
+     */
+    virtual int SendStreamSyncInfo(const uint8_t* data, int32_t length, const StreamSycnInfoConfig& config) = 0;
 };
 
 }  // namespace bytertc

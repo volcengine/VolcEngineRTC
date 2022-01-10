@@ -1791,7 +1791,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 /**
  * @hidden
  * @type api
- * @region 房间管理
+ * @region 多房间
  * @author shenpengliang
  * @brief 创建并获取一个 ByteRTCRoom{@link #ByteRTCRoom} 对象
  * @param roomId

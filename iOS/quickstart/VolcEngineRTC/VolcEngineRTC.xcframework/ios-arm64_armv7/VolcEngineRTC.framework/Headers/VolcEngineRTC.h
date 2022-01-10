@@ -8,4 +8,5 @@
 #import <VolcEngineRTC/objc/rtc/ByteRTCDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCHttpClientProtocol.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCPositionAudioRender.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRoom.h>

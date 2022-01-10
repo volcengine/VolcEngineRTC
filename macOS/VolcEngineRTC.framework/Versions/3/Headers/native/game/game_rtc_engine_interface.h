@@ -461,6 +461,18 @@ public:
     virtual void SetAudioScenario(AudioScenarioType scenario) = 0;
 
     /**
+     * @type api
+     * @region 音频管理
+     * @author dixing
+     * @brief 设置音质档位。你应根据业务场景需要选择适合的音质档位。  <br>
+     * @param [in] audioProfile 音质档位，参看 AudioProfileType{@link #AudioProfileType}
+     * @notes  <br>
+     *        + 该方法在进房前后均可调用；  <br>
+     *        + 支持通话过程中动态切换音质档位。
+     */
+    virtual void SetAudioProfile(AudioProfileType audioProfile) = 0;
+
+    /**
      * @brief 析构函数
      */
     virtual ~IGameRTCEngine() {}

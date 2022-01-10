@@ -178,8 +178,8 @@ public:
     /**
      * @type callback
      * @region 引擎管理
-     * @brief 周期性地发出回调，报告当前cpu与memory使用率
-     * @param  [out] stats 返回包含当前系统状态信息的结构体，详见 SysStats{@link #SysStats}
+     * @brief 周期性（2s）地发出回调，报告当前cpu与memory使用率
+     * @param [in] stats 返回包含当前系统状态信息的结构体，详见 SysStats{@link #SysStats}
      */
     virtual void OnSysStats(const bytertc::SysStats& stats) {
     }
@@ -188,7 +188,7 @@ public:
      * @type callback
      * @region 代理回调
      * @brief HTTP 代理连接状态改变时，收到该回调。
-     * @param  [out] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
+     * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
      */
         virtual void OnHttpProxyState(int state) {
     }
@@ -409,6 +409,24 @@ public:
     virtual void OnLocalAudioPropertiesReport(const LocalAudioPropertiesInfo * audio_properties_infos, int audio_properties_info_number) {
         (void)audio_properties_infos;
         (void)audio_properties_info_number;
+    }
+
+    /**
+     * @type api
+     * @region 音频管理
+     * @brief 音频流同步信息回调。可以通过此回调，在远端用户调用 SendStreamSyncInfo{@link #IRtcEngineLite#SendStreamSyncInfo} 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
+     * @param [in] stream_key 远端流信息，详见 RemoteStreamKey{@link #RemoteStreamKey} 。
+     * @param [in] stream_type 媒体流类型，目前仅支持用麦克风采集到的音频流，详见 SyncInfoStreamType{@link #SyncInfoStreamType} 。
+     * @param [in] data 消息内容。
+     * @param [in] length 消息长度。
+     */      
+    virtual void OnStreamSyncInfoReceived(RemoteStreamKey stream_key, SyncInfoStreamType stream_type,
+                                         const uint8_t* data,
+                                         int32_t length) {
+        (void)stream_key;
+        (void)stream_type;
+        (void)data;
+        (void)length;
     }
 };
 

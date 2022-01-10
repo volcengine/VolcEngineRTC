@@ -291,6 +291,39 @@ enum NetworkQuality {
 
 /**
  * @type keytype
+ * @brief 用户维度媒体流网络质量。
+ */
+struct UserNetworkQualityMsg {
+    /**
+     * @brief 自己或者远端用户的 uid。
+     */
+    const char* uid;
+    /**
+     * @brief 端到端的丢包，取值 （0~1）
+     */
+    double fraction_lost;
+    /**
+     * @brief 端到端的往返延时，单位：ms
+     */
+    int rtt;
+    /**
+     * @brief rtp包的传输总量，单位：bps
+     */
+    int total_bandwidth;
+    /**
+     * @brief 上行质量分，取值见 NetworkQuality
+     */
+    int tx_quality;
+    /**
+     * @brief 下行质量分，取值见 NetworkQuality
+     */
+    int rx_quality;
+    UserNetworkQualityMsg() : uid(""), fraction_lost(0.), rtt(0), total_bandwidth(0), tx_quality(0), rx_quality(0) {
+    }
+};
+
+/**
+ * @type keytype
  * @brief SDK 网络连接类型。
  */
 enum NetworkType {
@@ -921,7 +954,8 @@ enum ErrorCode {
     /**
      * @brief 用户被踢出房间：<br>
      *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
-     *        + 因调用踢出用户的 OpenAPI，被踢出房间。
+     *        + 因调用踢出用户的 OpenAPI，被踢出房间；<br>
+     *        + 因调用解散房间的 OpenAPI，离开房间。
      */
     kErrorCodeDuplicateLogin = -1004,
 
@@ -1073,17 +1107,15 @@ enum WarningCode {
 
     /**
      * @brief 指定的内部渲染画布句柄无效。  <br>
-     *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetRemoteVideoCanvas{@link #IRtcRoom#SetRemoteVideoCanvas} 时指定了无效的画布句柄，触发此回调。
+     *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
      */
     kWarningCodeInvalidCanvasHandle = -6001
 };
 
 /**
- * @hidden
  * @type keytype
  * @brief 直播推流转码功能错误码。
- *        用户调用 EnableLiveTranscoding{@link #EnableLiveTranscoding}
- * 方法启动直播推流转码功能后，服务端返回的执行结果。
+ *        用户调用 StartLiveTranscoding{@link #StartLiveTranscoding} 方法启动直播推流转码功能后，服务端返回的执行结果。
  */
 enum TransCodingError {
     /**
@@ -1135,42 +1167,40 @@ enum BusinessCheckCode {
 enum LocalAudioStreamState {
     /**
      * @brief 本地音频默认初始状态。
-     *        麦克风停止工作时回调该状态，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     *        麦克风停止工作时回调该状态，对应错误码 kLocalAudioStreamErrorOk
      */
     kLocalAudioStreamStateStopped = 0,
 
     /**
      * @brief 本地音频录制设备启动成功。
-     *        采集到音频首帧时回调该状态，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     *        采集到音频首帧时回调该状态，对应错误码 kLocalAudioStreamErrorOk
      */
     kLocalAudioStreamStateRecording,
 
     /**
      * @brief 本地音频首帧编码成功。
-     *        音频首帧编码成功时回调该状态，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     *        音频首帧编码成功时回调该状态，对应错误码 kLocalAudioStreamErrorOk
      */
     kLocalAudioStreamStateEncoding,
 
     /**
      * @brief  本地音频启动失败，在以下时机回调该状态：  <br>
-     *       + 本地录音设备启动失败，对应错误码 kLocalAudioStreamErrorRecordFailure{@link
-     * #kLocalAudioStreamErrorRecordFailure}  <br>
-     *       + 检测到没有录音设备权限，对应错误码 kLocalAudioStreamErrorDeviceNoPermission{@link
-     * #kLocalAudioStreamErrorDeviceNoPermission}  <br>
-     *       + 音频编码失败，对应错误码 kLocalAudioStreamErrorEncodeFailure{@link #kLocalAudioStreamErrorEncodeFailure}
+     *       + 本地录音设备启动失败，对应错误码 kLocalAudioStreamErrorRecordFailure <br>
+     *       + 检测到没有录音设备权限，对应错误码 kLocalAudioStreamErrorDeviceNoPermission <br>
+     *       + 音频编码失败，对应错误码 kLocalAudioStreamErrorEncodeFailure
      * <br>
      */
     kLocalAudioStreamStateFailed,
 
     /**
      * @brief 本地音频静音成功后回调该状态。
-     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamMute,
 
     /**
      * @brief 本地音频解除静音成功后回调该状态。
-     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 kLocalAudioStreamErrorOk{@link #kLocalAudioStreamErrorOk}
+     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamUnmute
 };
@@ -1712,6 +1742,10 @@ struct RemoteAudioStats {
      * @brief 解码时长。对此次统计周期内接收的远端音频流进行解码的总耗时，单位为 s 。  <br>
      */
     int dec_duration;
+    /**
+     * @brief 音频下行网络抖动，单位为 ms 。  <br>
+     */
+    int jitter;
 };
 
 /**
@@ -1750,6 +1784,10 @@ struct LocalAudioStats {
      * @brief 音频发送采样率。此次统计周期内的音频发送采样率信息，单位为 Hz 。  <br>
      */
     int sent_sample_rate;
+    /**
+     * @brief 音频上行网络抖动，单位为 ms 。  <br>
+     */
+    int jitter;
 };
 
 /**
@@ -2081,6 +2119,10 @@ struct RemoteVideoStats {
      * @brief 对应多种分辨率的流的下标，详见 VideoSolutionDescription{@link #VideoSolutionDescription}
      */
     int video_index;
+    /**
+     * @brief 视频下行网络抖动，单位为 ms 。  <br>
+     */
+    int jitter;
 };
 
 /**
@@ -2155,6 +2197,10 @@ struct LocalVideoStats {
      * @brief 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
      */
     bool is_screen;
+    /**
+     * @brief 视频上行网络抖动，单位为 ms 。  <br>
+     */
+    int jitter;
 };
 
 /**
@@ -2879,7 +2925,7 @@ struct LiveTranscodingRegion {
      */
     int zorder;
     /**
-     * @brief 透明度。范围为[0, 255]。
+     * @brief 透明度。范围为 [0.0, 1.0]。
      */
     double alpha;
     /**
@@ -3495,25 +3541,47 @@ struct VideoRateInfo {
 enum VideoDecoderConfig {
     /**
      * @brief 开启 SDK 内部解码，只回调解码后的数据
-     */    
+     */
     kVideoDecoderConfigRaw,
     /**
      * @brief 开启自定义解码，只回调解码前数据
-     */ 
+     */
     kVideoDecoderConfigEncode,
     /**
      * @brief 开启 SDK 内部解码，同时回调解码前和解码后的数据
-     */ 
+     */
     kVideoDecoderConfigBoth,
 };
 
 /**
  * @hidden
  * @deprecated
+ * @type keytype
  */
 enum RtcRoomMode {
     kRtcRoomNormalMode = 0,
     kRtcRoomAudioSelectionMode = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 视频采集配置参数。<br>
+ */
+struct VideoCaptureConfig {
+
+    /**
+     * @brief 视频采集分辨率的宽度，单位：px。
+     */
+    int width = 0;
+    /**
+     * @brief 视频采集分辨率的高度，单位：px。
+     */
+    int height = 0;
+    /**
+     * @brief 视频采集帧率，单位：fps。
+    */
+    int frameRate = 0;
+
 };
 
 /**
@@ -3573,6 +3641,63 @@ struct LocalAudioPropertiesInfo {
      * @brief 音频属性信息，详见 AudioPropertiesInfo{@link #AudioPropertiesInfo}
      */
     AudioPropertiesInfo audio_properties_info;
+};
+
+/**
+ * @type keytype
+ * @brief 音质档位
+ */
+enum AudioProfileType {
+    /**
+     * @brief 默认音质
+     */
+    kAudioProfileTypeDefault = 0,
+    /**
+     * @brief 流畅音质。  <br>
+     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS等游戏中的小队语音、组队语音、国战语音等。
+     */
+    kAudioProfileTypeFluent = 1,
+    /**
+     * @brief 标准音质。  <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合 Sirius 等狼人杀类游戏。
+     */
+    kAudioProfileTypeStandard = 2,
+    /**
+     * @brief 高清音质  <br>
+     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK、在线教育等场景。 <br>
+     *        游戏场景不建议使用。
+     */
+    kAudioProfileTypeHD = 3,
+};
+
+/**
+ * @type keytype
+ * @brief 媒体流信息同步的流类型
+ */
+enum SyncInfoStreamType {
+    /**
+     * @brief 音频流
+     */
+    kSyncInfoStreamTypeAudio = 0
+};
+
+/**
+ * @type keytype
+ * @brief 媒体流信息同步的相关配置
+ */
+struct StreamSycnInfoConfig {
+    /**
+     * @brief 流属性，主流或屏幕流。见 StreamIndex{@link #StreamIndex}
+     */
+    StreamIndex stream_index;
+    /**
+     * @brief 消息发送的重复次数，取值范围是 [0,25]，建议设置为 [3,5]。
+     */
+    int repeat_count;
+    /**
+     * @brief 媒体流信息同步的流类型，见 SyncInfoStreamType{@link #SyncInfoStreamType}
+     */
+    SyncInfoStreamType stream_type;
 };
 
 }  // namespace bytertc
