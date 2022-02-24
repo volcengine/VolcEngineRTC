@@ -459,6 +459,34 @@ public:
      *        + 媒体音量更适合娱乐场景，因其声音的表现力会更强。媒体音量下，音量最低可以降低到 0。
      */
     virtual void SetAudioScenario(AudioScenarioType scenario) = 0;
+    
+    /**
+     * @type api
+     * @region 美声特效管理
+     * @author luomingkang
+     * @brief 设置变声特效类型。  <br>
+     *        你可以根据你的需要，选择合适的变声特效。  <br>
+     *        本方法只在单声道情况下生效，且与 SetVoiceChangerType 接口互斥，后设置的特效会覆盖先设置的特效。  <br>
+     *        本方法在进房前和进房后设置均可生效。  <br>
+     * @param [in] voice_changer 变声特效类型，
+     *        参见 VoiceChangerType{@link #VoiceChangerType}
+     * @notes  <br>
+     *        + 设置巨人特效后会进行基频检测，在确认男女之后选择对应的参数进行设置。  <br>
+     */
+    virtual int SetVoiceChangerType(VoiceChangerType voice_changer) = 0;
+    
+    /**
+     * @type api
+     * @region 美声特效管理
+     * @author luomingkang
+     * @brief 设置混响特效类型。  <br>
+     *        你可以根据你的需要，选择合适的混响特效。  <br>
+     *        本方法只在单声道情况下生效，且与 SetVoiceReverbType 接口互斥，后设置的特效会覆盖先设置的特效  <br>
+     *        本方法在进房前和进房后设置均可生效。  <br>
+     * @param [in] voice_reverb 混响特效类型，
+     *        参见 VoiceReverbType{@link #VoiceReverbType}
+     */
+    virtual int SetVoiceReverbType(VoiceReverbType voice_reverb) = 0;
 
     /**
      * @type api

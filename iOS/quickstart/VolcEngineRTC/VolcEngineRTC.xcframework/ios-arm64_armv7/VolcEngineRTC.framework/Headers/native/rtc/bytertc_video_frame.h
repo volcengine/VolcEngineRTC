@@ -175,7 +175,7 @@ struct VideoSolution {
     int fps;
     /**
      * @brief 最高编码码率（千比特每秒）<br>
-     *        建议使用预估值。
+     *        建议使用默认设置。
      */
     int max_send_kbps = SEND_KBPS_AUTO_CALCULATE;
     /**
@@ -358,7 +358,7 @@ struct ManagedMemory {
     VideoFrameType type = kVideoFrameTypeRawMemory;
     /**
      * @brief 内存数据地址
-     */    
+     */
     uint8_t* data = nullptr;
     /**
      * @brief 内存空间的大小

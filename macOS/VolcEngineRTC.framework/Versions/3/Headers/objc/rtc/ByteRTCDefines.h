@@ -105,8 +105,8 @@ typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
      */
     ByteRTCRoomProfileCommunication = 0,
     /**
-     * @brief 直播模式。该房间模式下，用户有主播、静默观众三种可选角色，可以通过调用方法 setUserRole:withKey:{@link #setUserRole:withKey:}
-     *         设置。主播可以发布和订阅流，静默观众只能订阅流。适用于直播、教育大班课等场景。
+     * @brief 直播模式。该房间模式下，用户有主播、隐身用户三种可选角色，可以通过调用方法 setUserRole:withKey:{@link #setUserRole:withKey:}
+     *         设置。主播可以发布和订阅流，隐身用户只能订阅流。适用于直播、教育大班课等场景。
      */
     ByteRTCRoomProfileLiveBroadcasting = 1,
     /**
@@ -133,7 +133,7 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
     ByteRTCUserRoleTypeBroadcaster = 1,
     /**
      * @brief
-     * 静默观众模式，除了满足观众角色限制外，房间中的其他用户无法感知到该用户在房间中，即该用户加入退出房间和更新用户属性等行为不会通知给房间中的其他用户。
+     * 隐身用户模式，除了满足观众角色限制外，房间中的其他用户无法感知到该用户在房间中，即该用户加入退出房间和更新用户属性等行为不会通知给房间中的其他用户。
      */
     ByteRTCUserRoleTypeAudience = 2,
 };
@@ -222,6 +222,48 @@ typedef NS_ENUM(NSUInteger, ByteRTCNetworkQuality) {
      * @brief 网络质量非常差
      */
     ByteRTCNetworkQualityVBad = 5,
+};
+
+/**
+ * @type keytype
+ * @brief 通话前探测的停止原因
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCNetworkDetectionStopReason) {
+    /**
+     * @brief 用户主动停止。
+     */
+    ByteRTCNetworkDetectionStopReasonUser = 0,
+    /**
+     * @brief 探测超过三分钟。
+     */
+    ByteRTCNetworkDetectionStopReasonTimeout = 1,
+    /**
+     * @brief 探测网络连接断开。
+     */
+    ByteRTCNetworkDetectionStopReasonConnectionLost = 2,
+    /**
+     * @brief 开始推拉流，停止探测。
+     */
+    ByteRTCNetworkDetectionStopReasonStreaming = 3,
+    /**
+     * @brief 网络探测失败，内部异常
+     */
+    ByteRTCNetworkDetectionStopReasonInnerErr = 4,
+};
+
+/**
+ * @type keytype
+ * @brief 通话前探测链接的类型。
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCNetworkDetectionLinkType) {
+    /**
+     * @brief 上行网络探测。
+     */
+    ByteRTCNetworkDetectionLinkTypeUp = 0,
+    /**
+     * @brief 下行网络探测。
+     */
+    ByteRTCNetworkDetectionLinkTypeDown = 1,
 };
 
 /**
@@ -1500,11 +1542,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
  */
 @property(assign, nonatomic) NSInteger frozenRate;
 /**
- * @brief 音频 PLC 样点总个数。  <br>
+ * @brief 音频丢包补偿(PLC) 样点总个数。  <br>
  */
 @property(assign, nonatomic) NSInteger concealedSamples;
 /**
- * @brief PLC 累计次数。  <br>
+ * @brief 音频丢包补偿(PLC) 累计次数。  <br>
  */
 @property(assign, nonatomic) NSInteger concealmentEvent;
 /**

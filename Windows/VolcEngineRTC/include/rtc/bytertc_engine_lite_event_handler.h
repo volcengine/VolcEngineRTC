@@ -16,6 +16,7 @@ namespace bytertc {
  * @brief 音视频引擎事件回调接口
  */
 class IRtcEngineLiteEventHandler {
+
 public:
     /**
      * @type callback
@@ -40,7 +41,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type callback
      * @region 混音
      * @brief 本地音乐文件播放已结束回调。
@@ -76,10 +77,9 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type callback
      * @region 混音
-     * @deprecated from 325.1, use IAudioMixingManager instead
      * @brief 本地音效文件播放已结束回调。
      *        当调用 StartAudioMixing{@link #StartAudioMixing}  方法开始播放指定音效文件， 音效文件播放结束后， 应用会收到该回调。
      * @param [in] sound_id
@@ -376,13 +376,13 @@ public:
         (void)message;
         (void)length;
     }
-    
+
     /**
      * @type callback
      * @region 音频管理
-     * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，可能会周期性收到此回调，获取订阅的远端用户的音量信息。  <br>
+     * @brief 远端用户进房后，本地调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} ，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。  <br>
      * @param audio_properties_infos 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 RemoteAudioPropertiesInfo{@link #RemoteAudioPropertiesInfo}。  <br>
-     * @param audio_properties_info_number
+     * @param audio_properties_info_number 远端音频信息的数量。  <br>
      * @param total_remote_volume 所有订阅的远端流的总音量，范围是 [0,255]。  <br>
      *       + [0,25] 接近无声；  <br>
      *       + [25,75] 为低音量；  <br>
@@ -395,13 +395,13 @@ public:
         (void)audio_properties_info_number;
         (void)total_remote_volume;
     }
-    
+
     /**
      * @type callback
-     * @region 视频管理
-     * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，可能会周期性收到此回调，获取本地音量信息。  <br>
-     * @param audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #localAudioPropertiesInfo} 。
-     * @param audio_properties_info_number
+     * @region 音频管理
+     * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
+     * @param audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #LocalAudioPropertiesInfo} 。
+     * @param audio_properties_info_number 本地音频信息的数量。  <br>
      * @notes <br>
      *       + 使用 RTC SDK 内部机制采集麦克风音频时，回调麦克风的音量；  <br>
      *       + 使用 RTC SDK 内部机制采集屏幕音频时，回调屏幕音频的音量。  <br>
@@ -416,10 +416,10 @@ public:
      * @region 音频管理
      * @brief 音频流同步信息回调。可以通过此回调，在远端用户调用 SendStreamSyncInfo{@link #IRtcEngineLite#SendStreamSyncInfo} 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
      * @param [in] stream_key 远端流信息，详见 RemoteStreamKey{@link #RemoteStreamKey} 。
-     * @param [in] stream_type 媒体流类型，目前仅支持用麦克风采集到的音频流，详见 SyncInfoStreamType{@link #SyncInfoStreamType} 。
+     * @param [in] stream_type 媒体流类型，详见 SyncInfoStreamType{@link #SyncInfoStreamType} 。
      * @param [in] data 消息内容。
      * @param [in] length 消息长度。
-     */      
+     */
     virtual void OnStreamSyncInfoReceived(RemoteStreamKey stream_key, SyncInfoStreamType stream_type,
                                          const uint8_t* data,
                                          int32_t length) {
@@ -427,6 +427,50 @@ public:
         (void)stream_type;
         (void)data;
         (void)length;
+    }
+
+    /**
+     * @type callback
+     * @region 通话前网络探测
+     * @brief 通话前网络探测结果
+     *        成功调用 StartNetworkDetection{@link #IRtcEngineLite#StartNetworkDetection} 接口开始探测后，会每 2s 收到一次此回调。
+     * @param type  <br>
+     *        探测网络类型为上行/下行  <br>
+     * @param quality  <br>
+     *        探测网络的质量，值含义参考 NetworkQuality{@link #NetworkQuality} <br>
+     * @param rtt  <br>
+     *        探测网络的 RTT，单位：ms  <br>
+     * @param lost_rate  <br>
+     *        探测网络的丢包率  <br>
+     * @param bitrate  <br>
+     *        探测网络的带宽，单位：kbps  <br>
+     * @param jitter  <br>
+     *        探测网络的抖动,单位：ms  <br>
+     */
+    virtual void OnNetworkDetectionResult(NetworkDetectionLinkType type, NetworkQuality quality, int rtt, double lost_rate,
+                                      int bitrate, int jitter){
+        (void)type;
+        (void)quality;
+        (void)rtt;
+        (void)lost_rate;
+        (void)bitrate;
+        (void)jitter;
+    }
+
+    /**
+     * @type callback
+     * @region 通话前网络探测
+     * @brief 通话前网络探测结束
+     *        以下情况将停止探测并收到本一次本回调：<br>
+     *        1. 当调用 StopNetworkDetection{@link #IRtcEngineLite#StopNetworkDetection} 接口停止探测后，会收到一次该回调；
+     *        2. 当收到远端/本端音频首帧后，停止探测；
+     *        3. 当探测超过3分钟后，停止探测；
+     *        4. 当探测链路断开一定时间之后，停止探测。
+     * @param reason  <br>
+     *        停止探测的原因类型,参考 NetworkDetectionStopReason{@link #NetworkDetectionStopReason}  <br>
+     */
+    virtual void OnNetworkDetectionStopped(NetworkDetectionStopReason reason){
+        (void)reason;
     }
 };
 

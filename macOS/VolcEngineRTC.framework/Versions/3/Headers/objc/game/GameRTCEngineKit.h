@@ -557,6 +557,34 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  */
 - (void)setAudioProfile:(GameRTCAudioProfileType)audioProfile;
 
+/**
+ * @type api
+ * @region 美声特效管理
+ * @author luomingkang
+ * @brief 设置变声特效类型。  <br>
+ *        你可以根据你的需要，选择合适的变声特效。  <br>
+ *        本方法只在单声道情况下生效，且与setAudioEffect接口互斥，后设置的特效会覆盖先设置的特效  <br>
+ *        本方法在进房前和进房后设置均可生效。
+ * @param voiceChanger 变声特效类型
+ *        详见 GameRTCVoiceChangerType{@link #GameRTCVoiceChangerType}
+ * @notes  <br>
+ *        + 设置巨人特效后会进行基频检测，在确认男女之后选择对应的参数进行设置。  <br>
+ */
+- (void)setVoiceChangerType:(GameRTCVoiceChangerType)voiceChanger;
+
+/**
+ * @type api
+ * @region 美声特效管理
+ * @author luomingkang
+ * @brief 设置混响特效类型。  <br>
+ *        你可以根据你的需要，选择合适的混响特效。  <br>
+ *        本方法只在单声道情况下生效，且与setVoiceType接口互斥，后设置的特效会覆盖先设置的特效  <br>
+ *        本方法在进房前和进房后设置均可生效。
+ * @param voiceReverb 变声特效类型
+ *        详见 GameRTCVoiceReverbType{@link #GameRTCVoiceReverbType}
+ */
+- (void)setVoiceReverbType:(GameRTCVoiceReverbType)voiceReverb;
+
 @end
 
 NS_ASSUME_NONNULL_END

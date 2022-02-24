@@ -11,10 +11,46 @@
 #include <stdint.h>
 
 namespace bytertc {
+/**
+ * @type keytype
+ * @brief 虚拟背景类型。
+ */
+enum VirtualBackgroundSourceType {
+    /**
+     * @brief 使用纯色背景替换。
+     */    
+    kVirtualBackgroundSourceColor = 0,
+    /**
+     * @brief 使用自定义图片背景替换。
+     */
+    kVirtualBackgroundSourceImage = 1,
+};
+
+/**
+ * @type keytype
+ * @brief 虚拟背景对象。
+ */
+struct VirtualBackgroundSource{
+    /**
+     * @brief 虚拟背景类型，详见 VirtualBackgroundSourceType{@link #VirtualBackgroundSourceType} 。
+     */
+    VirtualBackgroundSourceType source_type;
+    /**
+     * @brief 纯色背景。
+     * @notes 背景颜色格式为十六进制 ARGB8888，即 0xAARRGGBB 。  <br>
+     */
+    uint32_t source_color = 0xFFFFFFFF;
+    /**
+     * @brief 自定义图片背景。使用自定义图片进行背景替换时，表示图片的绝对路径。
+     * @notes  <br>
+     *       + 需确保图片格式为 jpg、jpeg、png，图像大小不超过 1080P (1920x1080) ；  <br>
+     *       + 当背景图片和采集的视频帧分辨率不一致时，SDK 会对背景图片做裁剪缩放，保证背景图内容不变形。  <br>
+     */
+    const char* source_path = nullptr;
+};
 
 /**
  * @type api
- * @region 视频特效
  * @brief 视频特效接口
  */
 class IVideoEffect {
@@ -153,6 +189,47 @@ public:
      *      + <0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     virtual int SetColorFilterIntensity(float intensity) = 0;
+
+    /**
+     * @type api
+     * @region 视频特效
+     * @brief 虚拟背景环境初始化。
+     * @param [in] licensePath CV 许可证文件的绝对路径
+     * @param [in] modelPath 模型参数文件的绝对路径
+     * @return  <br>
+     *        + 0: 调用成功。  <br>
+     *        + 1000: 调用失败，未集成 CV SDK 。  <br>
+     *        + 1001: 调用失败，本 RTC 版本不支持 CV 功能。  <br>
+     *        + >40000: 调用失败，CV SDK 授权错误，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
+     *        + <0: 调用失败，CV SDK 内部错误，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
+     */
+    virtual int InitVirtualBackground(const char* licensePath, const char* modelPath) = 0;
+    /**
+     * @type api
+     * @region 视频特效
+     * @brief 开启虚拟背景。
+     * @param [in] source 虚拟背景对象，详见 VirtualBackgroundSource{@link #VirtualBackgroundSource} 。
+     * @return  <br>
+     *        + 0: 调用成功，按照设置开启背景替换。  <br>
+     *        + <0: 调用失败，CV SDK 内部错误，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
+     *        + -1: 调用失败，未调用 InitVirtualBackground{@link #IVideoEffect#InitVirtualBackground} 或调用失败，导致 license 验证失败。  <br>
+     *        + -4: 调用失败，自定义背景图片打开失败。  <br>
+     *        + -37: 调用失败，自定义背景图片解码失败。  <br>
+     *        + -38: 调用失败，自定义背景图片后缀名不是 jpg、jpeg、png 。  <br>
+     * @notes  <br>
+     *       + 调用此接口前，需要先调用 InitVirtualBackground{@link #IVideoEffect#InitVirtualBackground} 初始化 CV 环境；  <br>
+     *       + 此接口主要应用于视频源，包括摄像头采集源和自定义采集的外部视频源。屏幕源状态下不支持背景分割。  <br>
+     */
+    virtual int EnableVirtualBackground(const VirtualBackgroundSource& source) = 0;
+    /**
+     * @type api
+     * @region 视频特效
+     * @brief 关闭虚拟背景。
+     * @return  <br>
+     *        + 0: 调用成功。  <br>
+     *        + <0: 调用失败，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
+     */
+    virtual int DisableVirtualBackground() = 0;
 };
 
 }  // namespace bytertc

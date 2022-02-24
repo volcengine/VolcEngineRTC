@@ -97,7 +97,7 @@
  * @notes 此回调会被触发的时机如下：
  *         1.通信模式下的用户或其他模式下用户角色为主播、观众的用户调用  joinRoomByToken: roomId: userInfo:roomProfile:{@link # joinRoomByToken: roomId:
  * userInfo:roomProfile:} 方法加入房间。 2.通信模式下的用户或其他模式下用户角色为主播的用户在断网后重连入房间。
- *         3.直播、游戏或云游戏模式下用户角色为静默观众的用户调用 setUserRole:withKey:{@link #setUserRole:withKey:} 方法将用户角色切换至主播。
+ *         3.直播、游戏或云游戏模式下用户角色为隐身用户的用户调用 setUserRole:withKey:{@link #setUserRole:withKey:} 方法将用户角色切换至主播。
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onUserJoined:(nonnull ByteRTCUserInfo *)userInfo elapsed:(NSInteger)elapsed;
 
@@ -106,14 +106,14 @@
  * @region 房间管理
  * @author shenpengliang
  * @brief 远端用户离开当前房间回调。
- *         提示本端用户有远端用户离开了房间。用户离开房间的原因有两个，即用户主动调用  leaveRoom:{@link #leaveRoom:} 方法离开
+ *         提示本端用户有远端用户离开了房间。用户离开房间的原因有两个，即用户主动调用  leaveRoom{@link #leaveRoom} 方法离开
  *         房间和超时掉线。
  * @param engine ByteRTCEngineKit 对象
  * @param uid 离开的远端用户 ID
  * @param reason 用户离开的原因，详见枚举类型 ByteRTCUserOfflineReason{@link #ByteRTCUserOfflineReason}
  * @notes 此回调会被触发的时机如下：
- *         1.通信模式下的用户或其他模式下用户角色为主播、观众的用户调用  leaveRoom:{@link #leaveRoom:} 方法离开房间。
- *         2.直播、游戏或云游戏模式下用户角色为主播或观众的用户调用 setUserRole:withKey:{@link #setUserRole:withKey:} 方法将用户角色切换s至静默观众。
+ *         1.通信模式下的用户或其他模式下用户角色为主播、观众的用户调用  leaveRoom{@link #leaveRoom} 方法离开房间。
+ *         2.直播、游戏或云游戏模式下用户角色为主播或观众的用户调用 setUserRole:withKey:{@link #setUserRole:withKey:} 方法将用户角色切换s至隐身用户。
  *         3.远端用户断网且一直未恢复。
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
@@ -260,7 +260,7 @@
                sourceWantedData:(ByteRTCSourceWantedData *_Nonnull)data;
 
 /**
- * @deprecated
+ * @deprecated since 325.1
  * @type callback
  * @region 视频管理
  * @author zhushufan.ref
@@ -272,7 +272,7 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine didVideoEnabled:(BOOL)enabled byUid:(NSString * _Nonnull)uid;
 
 /**
- * @deprecated
+ * @deprecated since 325.1
  * @type callback
  * @region 视频管理
  * @author zhushufan.ref
@@ -385,6 +385,43 @@
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onServerMessageSendResult:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error;
 
+#pragma mark - Network Probe Methods
+/**
+ * @type callback
+ * @region 通话前网络探测
+ * @author hanchenchen.c
+ * @brief 通话前网络探测结果
+ * @param type  <br>
+ *        上行/下行的类型  <br>
+ * @param quality  <br>
+ *        探测网络的质量  <br>
+ * @param rtt  <br>
+ *        探测网络的rtt  <br>
+ * @param lost_rate  <br>
+ *        探测网络的丢包率  <br>
+ * @param bitrate  <br>
+ *        探测网络的带宽(kbps)  <br>
+ * @param jitter  <br>
+ *        探测网络的抖动  <br>
+ * @notes 当调用 startNetworkDetection:{@link #ByteRTCEngineKit#startNetworkDetection:} 接口开始探测后，会每2s收到一次此回调。
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onNetworkDetectionResult:(ByteRTCNetworkDetectionLinkType)type quality:(ByteRTCNetworkQuality)quality rtt:(int)rtt
+                                                                           lostRate:(double)lostRate bitrate:(int)bitrate jitter:(int)jitter;
+
+/**
+ * @type callback
+ * @region 通话前网络探测
+ * @author hanchenchen.c
+ * @brief 通话前网络探测结束
+ * @param reason  <br>
+ *        停止探测的原因类型  <br>
+ * @notes 1. 当调用 stopNetworkDetection:{@link #ByteRTCEngineKit#stopNetworkDetection:} 接口停止探测后，会收到该回调；
+ *        2. 当收到远端/本端音频首帧后，停止探测；
+ *        3. 当探测超过3分钟后，停止探测；
+ *        4. 当探测链路断开一定时间之后，停止探测；
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onNetworkDetectionStopped:(ByteRTCNetworkDetectionStopReason)reason;
+
 #pragma mark audio delegates
 /**
  * @type callback
@@ -438,7 +475,7 @@
 
 /**
  * @hidden
- * @deprecated from 323.1, use onUserStartAudioCapture instead
+ * @deprecated since 323.1, use onUserStartAudioCapture instead
  * @type callback
  * @region 音频管理
  * @author wangjunzheng
@@ -451,7 +488,7 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine didLocalAudioEnabled:(BOOL)enabled byUid:(NSString * _Nonnull)uid;
 
 /**
- * @deprecated from 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
+ * @deprecated since 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
  * @type callback
  * @region 音频事件回调
  * @author wangjunzheng
@@ -804,7 +841,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 #if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
 /**
  * @hidden
- * @deprecated
+ * @deprecated since 325.1
  * @type api
  * @region 视频管理
  * @author sunhang.io
@@ -815,7 +852,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 #elif TARGET_OS_OSX
 /**
  * @hidden
- * @deprecated
+ * @deprecated since 325.1
  * @type api
  * @region 视频管理
  * @author sunhang.io
@@ -839,7 +876,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setupLocalVideo:(ByteRTCVideoCanvas * _Nullable)local;
 
 /**
- * @deprecated from 329.1
+ * @deprecated since 329.1
  * @type api
  * @region 视频管理
  * @author wangjunlin.3182
@@ -851,7 +888,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setLocalVideoMirrorMode:(ByteRTCMirrorMode) mode;
 
 /**
- * @deprecated from 329.1
+ * @deprecated since 329.1
  * @type api
  * @region 视频管理
  * @author wangjunlin.3182
@@ -877,7 +914,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setupRemoteVideo:(ByteRTCVideoCanvas * _Nonnull)remote;
 
 /**
- * @deprecated
+ * @deprecated since 325.1
  * @type api
  * @region 视频管理
  * @author sunhang.io
@@ -898,7 +935,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setupRemoteScreen:(ByteRTCVideoCanvas * _Nonnull)remote;
 
 /**
- * @deprecated
+ * @deprecated since 325.1
  * @type api
  * @region 视频管理
  * @author sunhang.io
@@ -912,7 +949,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author shenpengliang
  * @brief 加入房间。
  *         用户调用此方法加入房间，在一个房间内的用户可以相互通话。如果房间还未创建，将会自动为用户创建对应的房间。如果已在房间中，用户必
- *         须调用  leaveRoom:{@link #leaveRoom:} 退出当前房间后，才能加入下一个房间。
+ *         须调用  leaveRoom{@link #leaveRoom} 退出当前房间后，才能加入下一个房间。
  * @param token
  *         动态密钥，用于对登录用户进行鉴权验证。进入频道需要携带 Token。可以在控制台生成临时 Token 进行测试，正式上线需要使用密钥 SDK 在你的服务端生成并下发
  * Token 。
@@ -976,8 +1013,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *           NO: 方法调用失败
  * @notes
  *         1.设置用户角色在房间模式（频道模式参考 ByteRTCRoomProfile{@link #ByteRTCRoomProfile}）为直播模式、游戏模式、云游戏模式时生效。
- *         2.如果用户在加入房间成功后调用该方法切换用户角色，调用成功后，远端用户会收到相应的回调通知：用户角色从静默观众切换至观众或主播时会收到
- *           rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 回调通知；用户角色从观众或主播切换至静默观众时会收到
+ *         2.如果用户在加入房间成功后调用该方法切换用户角色，调用成功后，远端用户会收到相应的回调通知：用户角色从隐身用户切换至观众或主播时会收到
+ *           rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 回调通知；用户角色从观众或主播切换至隐身用户时会收到
  * rtcEngine:onUserLeave:reason:{@link #rtcEngine:onUserLeave:reason:} 回调通知。 3.通信模式下，调用此接口不生效。
  */
 - (int)setUserRole:(ByteRTCUserRoleType)role withKey:(NSString *_Nullable)permissionKey;
@@ -999,7 +1036,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)leaveRoom:(void (^_Nullable)(ByteRTCRoomStats *_Nonnull stat))leaveRoomBlock;
 
 /**
- * @deprecated
+ * @deprecated since 325.1
  * @type api
  * @region 视频管理
  * @author panjian.fishing
@@ -1012,7 +1049,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)enableVideo;
 
 /**
- * @deprecated
+ * @deprecated since 325.1
  * @type api
  * @region 视频管理
  * @author panjian.fishing
@@ -1409,7 +1446,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1422,7 +1459,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)getAudioMixingDuration;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1435,7 +1472,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)getAudioMixingCurrentPosition;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1450,7 +1487,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)stopAudioMixing;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1466,7 +1503,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)pauseAudioMixing;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1481,7 +1518,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)resumeAudioMixing;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1499,7 +1536,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)adjustAudioMixingVolume:(NSInteger)volume;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1532,7 +1569,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
                   cycle:(NSInteger)cycle;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1547,7 +1584,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setAudioMixingPosition:(NSInteger)pos;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1564,7 +1601,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)adjustAudioMixingPlayoutVolume:(NSInteger)volume;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1689,7 +1726,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)pauseEffect:(NSInteger)soundId;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1719,7 +1756,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)stopEffect:(NSInteger)soundId;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1736,7 +1773,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)setEffectsVolume:(NSInteger)volume;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1746,12 +1783,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *     < 0: 失败
  * @notes
  *      1. 该方法卸载所有音效文件。如果引擎被销毁时有音效文件没有被卸载，SDK会自动调用该方法卸载所有音效文件。
- *      2. 离开房间  leaveRoom:{@link #leaveRoom:} 后不会自动调用该方法卸载所有音效文件。如果需要在离开房间后卸载所有音效文件，需要应用主动调用该方法。
+ *      2. 离开房间  leaveRoom{@link #leaveRoom} 后不会自动调用该方法卸载所有音效文件。如果需要在离开房间后卸载所有音效文件，需要应用主动调用该方法。
  */
 - (int)unloadAllEffects;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1761,7 +1798,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)pauseAllEffects;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1776,7 +1813,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (int)resumeAllEffects;
 
 /**
- * @deprecated from 325.1, use ByteRTCAudioMixingManager instead
+ * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type api
  * @region 混音
  * @author wangjunzheng
@@ -1820,7 +1857,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
 - (void)destroyRtcRoom:(NSString *_Nonnull)roomId;
 
 /**
- * @deprecated from 325.1, use enableAudioPropertiesReport instead
+ * @deprecated since 325.1, use enableAudioPropertiesReport instead
  * @type api
  * @region 音频管理
  * @author wangjunzheng

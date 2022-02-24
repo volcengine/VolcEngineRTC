@@ -40,7 +40,7 @@ public:
      * @type api
      * @region 引擎管理
      * @brief 根据索引号，获取设备信息
-     * @param [in] index 设备索引号，从 0 开始，注意需小于 GetCount{@link #IDeviceCollection#GetCount} 返回值。  
+     * @param [in] index 设备索引号，从 0 开始，注意需小于 GetCount{@link #IDeviceCollection#GetCount} 返回值。
      * @param [out] device_name 设备名称
      * @param [out] device_id 设备 ID
      * @return  <br>
@@ -193,7 +193,7 @@ public:
      *       + [0,25] 接近无声；  <br>
      *       + [25,75] 为低音量；  <br>
      *       + [76,204] 为中音量；  <br>
-     *       + [205,255] 为高音量。  <br>     
+     *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + <0：方法调用失败  <br>
@@ -207,7 +207,7 @@ public:
      *       + [0,25] 接近无声；  <br>
      *       + [25,75] 为低音量；  <br>
      *       + [76,204] 为中音量；  <br>
-     *       + [205,255] 为高音量。  <br>     
+     *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + <0：方法调用失败  <br>
@@ -221,7 +221,7 @@ public:
      *       + [0,25] 接近无声；  <br>
      *       + [25,75] 为低音量；  <br>
      *       + [76,204] 为中音量；  <br>
-     *       + [205,255] 为高音量。  <br>     
+     *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + <0：方法调用失败  <br>
@@ -323,9 +323,9 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 启动音频采集设备测试。  <br>
-     *        该方法测试音频采集设备是否能正常工作。启动测试后，会收到 OnAudioVolumeIndication{@link #IRTCRoomEventHandler#OnAudioVolumeIndication} 回调上报的音量信息。
+     *        该方法测试音频采集设备是否能正常工作。启动测试后，会收到 OnLocalAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnLocalAudioPropertiesReport} 回调上报的音量信息。
      * @param [in] indication_interval
-     *        OnAudioVolumeIndication{@link #IRTCRoomEventHandler#OnAudioVolumeIndication}
+     *        OnLocalAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnLocalAudioPropertiesReport}
      *        回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。小于10 毫秒行为未定义。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
@@ -350,10 +350,10 @@ public:
      * @region 音频设备管理
      * @brief 开始音频设备回路测试。  <br>
      *        该方法测试音频采集设备和音频播放设备是否能正常工作。一旦测试开始，音频采集设备会采集本地声音
-     *        并通过音频播放设备播放出来，同时用户 App 会收到 OnAudioVolumeIndication{@link #IRTCRoomEventHandler#OnAudioVolumeIndication}
+     *        并通过音频播放设备播放出来，同时用户 App 会收到 OnLocalAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnLocalAudioPropertiesReport}
      *        回调上报的音量信息。
      * @param [in] indication_interval
-     *        OnAudioVolumeIndication{@link #IRTCRoomEventHandler#OnAudioVolumeIndication}
+     *        OnLocalAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnLocalAudioPropertiesReport}
      *        回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。小于 10 毫秒行为未定义。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
@@ -375,7 +375,7 @@ public:
      */
     virtual int StopAudioDeviceLoopbackTest() = 0;
     /**
-     * @type api    
+     * @type api
      * @region 音频设备管理
      * @brief 尝试初始化音频播放设备，可检测出设备不存在、权限被拒绝/禁用等异常问题。
      * @param [in] index 设备索引号

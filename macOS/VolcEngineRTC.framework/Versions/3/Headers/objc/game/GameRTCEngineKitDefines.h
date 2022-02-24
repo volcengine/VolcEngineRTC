@@ -69,6 +69,70 @@ typedef NS_ENUM(NSInteger, GameRTCAudioScenarioType) {
     GameRTCAudioScenarioGameStreaming = 4,
 };
 
+
+/**
+ * @type keytype
+ * @brief 变声特效。
+ */
+typedef NS_ENUM(NSInteger, GameRTCVoiceChangerType) {
+    /**
+     * @brief 原声
+     */
+    GameRTCVoiceChangerOriginal = 0,
+    /**
+     * @brief 巨人
+     */
+    GameRTCVoiceChangerGiant = 1,
+    /**
+     * @brief 花栗鼠
+     */
+    GameRTCVoiceChangerChipmunk = 2,
+    /**
+     * @brief 小黄人
+     */
+    GameRTCVoiceChangerMinionst = 3,
+    /**
+     * @brief 颤音
+     */
+    GameRTCVoiceChangerVibrato = 4,
+    /**
+     * @brief 机器人
+     */
+    GameRTCVoiceChangerRobot = 5,
+};
+
+/**
+ * @type keytype
+ * @brief 混响特效。
+ */
+typedef NS_ENUM(NSInteger, GameRTCVoiceReverbType) {
+    /**
+     * @brief 原声
+     */
+    GameRTCVoiceReverbOriginal = 0,
+    /**
+     * @brief 回声
+     */
+    GameRTCVoiceReverbEcho = 1,
+    /**
+     * @brief 演唱会
+     */
+    GameRTCVoiceReverbConcert = 2,
+    /**
+     * @brief 空灵
+     */
+    GameRTCVoiceReverbEthereal = 3,
+    /**
+     * @brief KTV
+     */
+    GameRTCVoiceReverbKTV = 4,
+    /**
+     * @brief 录音棚
+     */
+    GameRTCVoiceReverbStudio = 5,
+};
+
+
 /**
  * @type keytype
  * @brief 音质档位

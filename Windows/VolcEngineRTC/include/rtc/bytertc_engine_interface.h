@@ -39,7 +39,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 326.1, use function joinRoom with RTCRoomConfig parameter instead
      * @type api
      * @region 房间管理
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
@@ -146,13 +146,13 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngine(const char* app_id,
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
  * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 。
+ *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
  * @param [in] parameters 保留参数
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRTCEngineEventHandler{@link #IRtcEngineEventHandler}
- *          通知应用程序引擎运行时的事件。IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
+ *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id,
         bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
@@ -164,13 +164,13 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id,
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
  * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 。
+ *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
  * @param [in] parameters 保留参数
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRTCEngineEventHandler{@link #IRtcEngineEventHandler}
- *          通知应用程序引擎运行时的事件。IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
+ *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTERTC_API bytertc::IRtcEngine* CreateRtcEngineWithPtr(
         const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,
@@ -183,13 +183,13 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngineWithPtr(
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
  * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 。
+ *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
  * @param [in] parameters 保留参数
  * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
  * @notes  <br>
  *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRTCEngineEventHandler{@link #IRtcEngineEventHandler}
- *          通知应用程序引擎运行时的事件。IRTCEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
+ *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
+ *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
  */
 BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
         const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,

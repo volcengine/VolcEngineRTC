@@ -214,6 +214,7 @@ BYTERTC_API int SetParameters(const char* parameters);
 
 #ifdef __ANDROID__
 /**
+ * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 视频管理
  * @brief 用于给编码器设置共享的EGLContext，该接口需要传入一个 android.opengl.EGLContext 类型的EGLContext
@@ -230,6 +231,7 @@ BYTERTC_API int SetParameters(const char* parameters);
 BYTERTC_API bool SetHardWareEncodeContext(jobject j_egl_context);
 
 /**
+ * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 视频管理
  * @brief 用于给编码器设置共享的EGLContext，该接口需要在绑定了EGLContext的接口下执行方法设置。
@@ -243,6 +245,7 @@ BYTERTC_API bool SetHardWareEncodeContext(jobject j_egl_context);
 BYTERTC_API bool SetHardWareEncodeContext();
 
 /**
+ * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 视频管理
  * @brief 用于清除共享的EGLContext，在引擎销毁后，如果确定之后不会再使用 则应该调用本接口在进行EGLContext的资源释放
@@ -250,6 +253,7 @@ BYTERTC_API bool SetHardWareEncodeContext();
 BYTERTC_API void ClearHardWareEncodeContext();
 
 /**
+ * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 引擎管理
  * @brief 用于设置Android的ApplicationContext给Engine使用，

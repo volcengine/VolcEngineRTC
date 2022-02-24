@@ -15,6 +15,7 @@
 #include "bytertc_audio_mixing_manager.h"
 #include "bytertc_video_processor_interface.h"
 #include "bytertc_position_audio_render_interface.h"
+#include "bytertc_camera_control_interface.h"
 
 namespace bytertc {
 
@@ -129,7 +130,7 @@ struct VideoMetadataBuffer {
 
 /**
  * @hidden
- * @deprecated
+ * @deprecated since 326.1, use SendSEIMessage instead
  * @type callback
  * @region 视频数据回调
  * @brief metadata 观察者，可以接收媒体流中的 metadata， 或者向媒体流中添加 metadata
@@ -493,7 +494,7 @@ class IRtcEngineLite {
 public:
     /**
      * @hidden
-     * @deprecated from 327.1, use SetCaptureVolume instead
+     * @deprecated since 327.1, use SetCaptureVolume instead
      * @type api
      * @region 音频管理
      * @brief 调节音频采集音量
@@ -555,7 +556,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use SetScreenAudioStreamIndex instead
+     * @deprecated since 327.1, use SetScreenAudioStreamIndex instead
      * @type api
      * @region 屏幕共享
      * @brief 开启声卡采集，将声卡播放的音频流合到本地采集的音频流中。<br>
@@ -569,7 +570,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use SetScreenAudioStreamIndex instead
+     * @deprecated since 327.1, use SetScreenAudioStreamIndex instead
      * @type api
      * @region 屏幕共享
      * @brief 关闭声卡采集，声卡播放的音频流不再合到本地采集的音频流中。
@@ -579,7 +580,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use SetCaptureVolume instead
+     * @deprecated since 327.1, use SetCaptureVolume instead
      * @type api
      * @region 屏幕共享
      * @brief 调节本地声卡采集音量。<br>
@@ -597,7 +598,7 @@ public:
      * @type api
      * @region 音频管理
      * @brief 开启内部音频采集。默认为关闭状态。  <br>
-     *        进房前调用该方法，本地用户会收到 OnMediaDeviceStateChanged{@link #OnMediaDeviceStateChanged} 的回调。 <br>
+     *        调用后，本地用户会收到 OnMediaDeviceStateChanged{@link #OnMediaDeviceStateChanged} 的回调。 <br>
      *        进房后调用该方法，房间中的其他用户会收到 OnUserStartAudioCapture{@link #OnUserStartAudioCapture} 的回调。
      * @notes  <br>
      *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 OnWarning{@link #IRtcEngineLiteEventHandler#OnWarning} 回调。  <br>
@@ -637,6 +638,34 @@ public:
      *        + 媒体音量更适合娱乐场景，因其声音的表现力会更强。媒体音量下，音量最低可以降低到 0。
      */
     virtual void SetAudioScenario(AudioScenarioType scenario) = 0;
+
+    /**
+     * @type api
+     * @region 美声特效管理
+     * @brief 设置变声特效类型
+     * @param [in] voice_changer 变声特效类型，参看 VoiceChangerType{@link #VoiceChangerType}
+     * @notes  <br>
+     *        + 在进房前后都可设置。  <br>
+     *        + 对 RTC SDK 内部采集的音频和自定义采集的音频都生效。 <br>
+     *        + 只对单声道音频生效。<br>
+     *        + 只在包含美声特效能力的 SDK 中有效。<br>
+     *        + 与 SetVoiceReverbType{@link #SetVoiceReverbType} 互斥，后设置的特效会覆盖先设置的特效。 <br>
+     */
+    virtual int SetVoiceChangerType(VoiceChangerType voice_changer) = 0;
+
+    /**
+     * @type api
+     * @region 美声特效管理
+     * @brief 设置混响特效类型
+     * @param [in] voice_reverb 混响特效类型，参看 VoiceReverbType{@link #VoiceReverbType}
+     * @notes  <br>
+     *        + 在进房前后都可设置。  <br>
+     *        + 对 RTC SDK 内部采集的音频和自定义采集的音频都生效。 <br>
+     *        + 只对单声道音频生效。<br>
+     *        + 只在包含美声特效能力的 SDK 中有效。<br>
+     *        + 与 SetVoiceChangerType{@link #SetVoiceChangerType} 互斥，后设置的特效会覆盖先设置的特效。 <br>
+     */
+    virtual int SetVoiceReverbType(VoiceReverbType voice_reverb) = 0;
 
     /**
      * @type api
@@ -726,7 +755,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 开始播放音乐文件及混音。
@@ -758,7 +787,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 停止播放音乐文件及混音
@@ -771,7 +800,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 暂停播放音乐文件
@@ -788,7 +817,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 恢复播放音乐文件
@@ -803,7 +832,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 调节音乐文件的文件音量。为保证更好的音质，建议将 volume 值设为 [0,100]。
@@ -826,7 +855,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 调节音乐文件的本地播放音量。为保证更好的音质，建议将 volume 值设为 [0,100]。
@@ -846,7 +875,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 调节音乐文件的远端播放音量。为保证更好的音质，建议将 volume 值设为 [0,100]。
@@ -866,7 +895,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 获取音乐文件时长
@@ -880,7 +909,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 获取音乐文件播放进度
@@ -894,7 +923,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 设置音频文件的播放位置
@@ -910,7 +939,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 获取指定音效文件的文件音量
@@ -927,7 +956,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 调节指定音效文件的文件音量
@@ -947,7 +976,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 开始播放指定音效文件。你可以在该方法中设置音效文件的播放次数、音量大小，以及远端用户是否能听到该音效。
@@ -978,7 +1007,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 预加载指定音效文件。
@@ -1001,7 +1030,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 卸载指定音效文件
@@ -1018,7 +1047,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 停止播放指定音效文件
@@ -1036,7 +1065,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 暂停播放指定音效文件
@@ -1052,7 +1081,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 恢复播放指定音效文件
@@ -1070,7 +1099,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 调节所有音效文件的文件音量
@@ -1084,7 +1113,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 停止所有音效文件的播放
@@ -1095,7 +1124,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 暂停所有音效文件的播放。
@@ -1106,7 +1135,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 恢复所有音效文件的播放
@@ -1120,7 +1149,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 卸载所有音效文件
@@ -1134,7 +1163,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 启动/停止外部音频流混音， 并设置混音数据格式
@@ -1157,7 +1186,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 获取SDK当前缓冲数据
@@ -1171,7 +1200,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 325.1, use IAudioMixingManager instead
+     * @deprecated since 325.1, use IAudioMixingManager instead
      * @type api
      * @region 混音
      * @brief 向SDK推送混音的音频数据
@@ -1262,7 +1291,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 329.1, use SetVideoEncoderConfig instead
      * @type api
      * @region 视频管理
      * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，
@@ -1288,7 +1317,7 @@ public:
      * @region 视频管理
      * @brief 设置本地视频渲染时，使用的视图，并设置渲染模式。 <br>
      *        你应在加入房间前，绑定本地视图。退出房间后，此设置仍然有效。
-     *        如果需要解除绑定，你可以调用本方法绑定空视图。
+     *        如果需要解除绑定，你可以调用本方法传入空视图。
      * @param [in] index 视频流属性, 参看 StreamIndex{@link #StreamIndex}
      * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}
      * @return  <br>
@@ -1422,7 +1451,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
+     * @deprecated since 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 该方法共享一个窗口或该窗口的部分区域。用户需要在该方法中指定想要共享的窗口 id 。
@@ -1453,7 +1482,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
+     * @deprecated since 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 通过指定区域共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
@@ -1485,7 +1514,7 @@ public:
 
     /**
      * @hidden(iOS,Android)
-     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
+     * @deprecated since 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 通过屏幕 id 共享屏幕，共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕 id 。
@@ -1505,7 +1534,7 @@ public:
 
     /**
      * @hidden(macOS,Windows)
-     * @deprecated from 327.1, use StartScreenVideoCapture and PublishScreen instead
+     * @deprecated since 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
      * @brief 通过传入的Context开启屏幕共享。
@@ -1536,7 +1565,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use SetVideoEncoderConfig、UpdateScreenCaptureHighlightConfig、
+     * @deprecated since 327.1, use SetVideoEncoderConfig、UpdateScreenCaptureHighlightConfig、
      *                  UpdateScreenCaptureFilterConfig、UpdateScreenCaptureMouseCursor instead
      * @type api
      * @region 屏幕共享
@@ -1550,8 +1579,9 @@ public:
     virtual int UpdateScreenCaptureParameters(const DesktopCaptureParameters& capture_params) = 0;
 
     /**
+     * @hidden
      * @type api
-     * @deprecated from 327.1, use StopScreenVideoCapture instead
+     * @deprecated since 327.1, use StopScreenVideoCapture instead
      * @region 屏幕共享
      * @brief 停止屏幕或者窗口共享。
      * @notes  <br>
@@ -1678,7 +1708,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 324.1, use SetVideoSourceType instead
+     * @deprecated since 324.1, use SetVideoSourceType instead
      * @type api
      * @region 视频管理
      * @brief 设置是否启用自定义视频采集
@@ -1694,7 +1724,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 329.1, use SetVideoSourceType instead
      * @type api
      * @region 视频管理
      * @brief 切换视频采集方式（内部采集/自定义采集）
@@ -1765,7 +1795,7 @@ public:
     /**
      * @type api
      * @region 多房间
-     * @brief 创建并获取一个 IRTCRoom{@link #IRtcRoom} 对象  <br>
+     * @brief 创建并获取一个 IRtcRoom{@link #IRtcRoom} 对象  <br>
      * @param [in] room_id 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
      *       + 26个大写字母 A ~ Z  <br>
      *       + 26个小写字母 a ~ z  <br>
@@ -1856,6 +1886,7 @@ public:
 
     /**
      * @hidden
+     * @deprecated since 332.1, use EnableVirtualBackground instead
      * @type api
      * @region 视频特效
      * @brief 开启背景并设置背景模式与分割模式
@@ -1868,6 +1899,8 @@ public:
     virtual int ReplaceBackground(BackgroundMode mode, DivideMode divide_model) = 0;
 
     /**
+     * @hidden
+     * @deprecated since 332.1, use DisableVirtualBackground instead
      * @type api
      * @region 视频特效
      * @brief 关闭背景
@@ -1875,7 +1908,8 @@ public:
     virtual void DisableBackground() = 0;
 
     /**
-     * @deprecated from 329.1, use SetLocalVideoMirrorType instead
+     * @hidden
+     * @deprecated since 329.1, use SetLocalVideoMirrorType instead
      * @type api
      * @region 视频管理
      * @brief 设置采用前置摄像头采集时，是否开启镜像模式。 <br>
@@ -1908,6 +1942,15 @@ public:
      * @return 视频特效接口指针
      */
     virtual IVideoEffect* GetVideoEffectInterface() = 0;
+
+    /**
+     * @hidden
+     * @type api
+     * @region 视频管理
+     * @brief 获取相机控制接口
+     * @return 相机控制接口指针
+     */
+    virtual ICameraControl* GetCameraControl() = 0;
 
     /**
      * @type api
@@ -2041,7 +2084,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 326.1, use SendSEIMessage instead
      * @type api
      * @region 视频数据回调
      * @brief 注册 metadata 观察者，用于接收或发送 metadata，底层通过在视频帧中添加 SEI 数据实现该功能。  <br>
@@ -2357,6 +2400,35 @@ public:
     virtual int64_t SendServerBinaryMessage(int length, const uint8_t* message) = 0;
 
     /**
+     * @type api
+     * @region 通话前网络探测
+     * @brief 开启通话前网络探测
+     * @param [in] is_test_uplink  <br>
+     *        是否探测上行带宽
+     * @param [in] expected_uplink_bitrate  <br>
+     *        期望上行带宽，单位：kbps
+     * @param [in] is_test_downlink  <br>
+     *        是否探测下行带宽
+     * @param [in] expected_downlink_biterate  <br>
+     *        期望下行带宽，单位：kbps
+     * @return 开启通话前网络探测结果，详见 NetworkDetectionStartReturn{@link #NetworkDetectionStartReturn}
+     * @notes  <br>
+     *       + 成功调用本接口后，每 2s 会收到一次 OnNetworkDetectionResult{@link #IRtcEngineLiteEventHandler#OnNetworkDetectionResult} 回调，通知探测结果；  <br>
+     *       + 若探测停止，则会收到一次 OnNetworkDetectionStopped{@link #IRtcEngineLiteEventHandler#OnNetworkDetectionStopped} 通知探测停止。
+     */
+    virtual NetworkDetectionStartReturn StartNetworkDetection(bool is_test_uplink, int expected_uplink_bitrate,
+                                   bool is_test_downlink, int expected_downlink_biterate) = 0;
+
+    /**
+     * @type api
+     * @region 通话前网络探测
+     * @brief 停止通话前网络探测
+     * @notes  <br>
+     *       + 调用本接口后，会收到一次 OnNetworkDetectionStopped{@link #OnNetworkDetectionStopped} 回调通知探测停止。
+     */
+    virtual void StopNetworkDetection() = 0;
+
+    /**
      * @hidden(Android,iOS)
      * @type api
      * @region 屏幕共享
@@ -2512,8 +2584,8 @@ public:
      *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
      *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
      *        + -2: 消息发送失败。传入的消息内容为空。  <br>
-     *        + -3: 消息发送失败。不支持通过屏幕流进行消息同步。  <br>
-     *        + -4: 消息发送失败。通过用麦克风采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
+     *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
+     *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
      */
     virtual int SendStreamSyncInfo(const uint8_t* data, int32_t length, const StreamSycnInfoConfig& config) = 0;
 };

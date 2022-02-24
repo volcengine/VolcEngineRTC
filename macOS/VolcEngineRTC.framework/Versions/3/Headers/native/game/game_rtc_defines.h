@@ -79,6 +79,68 @@ enum AudioScenarioType {
 
 /**
  * @type keytype
+ * @brief 变声特效类型
+ */
+enum VoiceChangerType {
+    /**
+     * @brief 原声
+     */
+    kVoiceChangerTypeOriginal = 0,
+    /**
+     * @brief 巨人
+     */
+    kVoiceChangerTypeGiant = 1,
+    /**
+     * @brief 花栗鼠
+     */
+    kVoiceChangerTypeChipmunk = 2,
+    /**
+     * @brief 小黄人
+     */
+    kVoiceChangerTypeMinionst = 3,
+    /**
+     * @brief 颤音
+     */
+    kVoiceChangerTypeVibrato = 4,
+    /**
+     * @brief 机器人
+     */
+    kVoiceChangerTypeRobot = 5,
+};
+
+/**
+ * @type keytype
+ * @brief 混响特效类型
+ */
+enum VoiceReverbType {
+    /**
+     * @brief 原声
+     */
+    kVoiceReverbTypeOriginal = 0,
+    /**
+     * @brief 回声
+     */
+    kVoiceReverbTypeEcho = 1,
+    /**
+     * @brief 演唱会
+     */
+    kVoiceReverbTypeConcert = 2,
+    /**
+     * @brief 空灵
+     */
+    kVoiceReverbTypeEthereal = 3,
+    /**
+     * @brief KTV
+     */
+    kVoiceReverbTypeKTV = 4,
+    /**
+     * @brief 录音棚
+     */
+    kVoiceReverbTypeStudio = 5,
+};
+
+/**
+ * @type keytype
  * @brief 音质档位
  */
 enum AudioProfileType {

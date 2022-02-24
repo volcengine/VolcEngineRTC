@@ -107,7 +107,7 @@ enum UserRoleType {
      */
     kUserRoleTypeBroadcaster = 1,
     /**
-     * @brief 静默观众角色。该众角色用户只可在房间内订阅音视频流，房间中的其他用户无法感知到该用户的存在。  <br>
+     * @brief 隐身用户角色。此角色用户只可在房间内订阅音视频流，房间中的其他用户无法感知到该用户的存在。  <br>
      */
     kUserRoleTypeSilentAudience = 2,
 };
@@ -259,6 +259,78 @@ enum ConnectionState {
 };
 
 /**
+ * @type errorcode
+ * @brief 开始探测的返回值
+ *        StartNetworkDetection{@link #IRtcEngineLite#StartNetworkDetection} 返回对象类型
+ */
+enum NetworkDetectionStartReturn {
+    /**
+     * @brief 成功开启网络探测。
+     */
+    kNetworkDetectionStartReturnSuccess = 0,
+    /**
+     * @brief 开始探测失败。参数错误，上下行探测均为 `false`，或期望带宽超过了范围 [100,10000]
+     */
+    kNetworkDetectionStartReturnParamErr = 1,
+    /**
+     * @brief 开始探测失败。失败原因为，本地已经开始推拉流
+     */
+    kNetworkDetectionStartReturnStreaming = 2,
+    /**
+     * @brief 已经开始探测，无需重复开启
+     */
+    kNetworkDetectionStartReturnStarted = 3,
+    /**
+     * @brief 不支持该功能
+     */
+    kNetworkDetectionStartReturnNotSupport = 4,
+};
+
+/**
+ * @type keytype
+ * @brief 通话前探测的停止原因
+ *        OnNetworkDetectionStopped{@link #IRtcEngineLiteEventHandler#OnNetworkDetectionStopped} 回调的参数类型
+ */
+enum NetworkDetectionStopReason {
+    /**
+     * @brief 用户主动停止
+     */
+    kNetworkDetectionStopReasonUser,
+    /**
+     * @brief 探测超过三分钟
+     */
+    kNetworkDetectionStopReasonTimeout,
+    /**
+     * @brief 探测网络连接断开。<br>当超过 12s 没有收到回复，SDK 将断开网络连接，并且不再尝试重连。
+     */
+    kNetworkDetectionStopReasonConnectionLost,
+    /**
+     * @brief 本地开始推拉流，停止探测
+     */
+    kNetworkDetectionStopReasonStreaming,
+    /**
+     * @brief 网络探测失败，内部异常
+     */
+    kNetworkDetectionStopReasonInnerErr,
+};
+
+/**
+ * @type keytype
+ * @brief 通话前探测链接的类型。
+ *        OnNetworkDetectionResult{@link #IRtcEngineLiteEventHandler#OnNetworkDetectionResult} 回调的参数类型
+ */
+enum NetworkDetectionLinkType {
+    /**
+     * @brief 上行网络探测
+     */
+    kNetworkDetectionLinkTypeUp = 0,
+    /**
+     * @brief 下行网络探测
+     */
+    kNetworkDetectionLinkTypeDown,
+};
+
+/**
  * @type keytype
  * @brief 媒体流网络质量。
  */
@@ -311,13 +383,16 @@ struct UserNetworkQualityMsg {
      */
     int total_bandwidth;
     /**
-     * @brief 上行质量分，取值见 NetworkQuality
+     * @brief 上行质量分，取值见 NetworkQuality{@link #NetworkQuality}
      */
     int tx_quality;
     /**
-     * @brief 下行质量分，取值见 NetworkQuality
+     * @brief 下行质量分，取值见 NetworkQuality{@link #NetworkQuality}
      */
     int rx_quality;
+    /**
+     * @hidden
+     */
     UserNetworkQualityMsg() : uid(""), fraction_lost(0.), rtt(0), total_bandwidth(0), tx_quality(0), rx_quality(0) {
     }
 };
@@ -654,6 +729,70 @@ enum AudioScenarioType {
      *        外放通话且无游戏音效消除优化时，极易出现回声和啸叫。
      */
     kAudioScenarioTypeGameStreaming = 4,
+};
+
+/**
+ * @type keytype
+ * @brief 变声特效类型
+ */
+enum VoiceChangerType {
+    /**
+     * @brief 原声，不含特效
+     */
+    kVoiceChangerTypeOriginal = 0,
+    /**
+     * @brief 巨人
+     */
+    kVoiceChangerTypeGiant = 1,
+    /**
+     * @brief 花栗鼠
+     */
+    kVoiceChangerTypeChipmunk = 2,
+    /**
+     * @brief 小黄人
+     */
+    kVoiceChangerTypeMinionst = 3,
+    /**
+     * @brief 颤音
+     */
+    kVoiceChangerTypeVibrato = 4,
+    /**
+     * @brief 机器人
+     */
+    kVoiceChangerTypeRobot = 5,
+
+};
+
+/**
+ * @type keytype
+ * @brief 混响特效类型
+ */
+enum VoiceReverbType {
+    /**
+     * @brief 原声，不含特效
+     */
+    kVoiceReverbTypeOriginal = 0,
+    /**
+     * @brief 回声
+     */
+    kVoiceReverbTypeEcho = 1,
+    /**
+     * @brief 演唱会
+     */
+    kVoiceReverbTypeConcert = 2,
+    /**
+     * @brief 空灵
+     */
+    kVoiceReverbTypeEthereal = 3,
+    /**
+     * @brief KTV
+     */
+    kVoiceReverbTypeKTV = 4,
+    /**
+     * @brief 录音棚
+     */
+    kVoiceReverbTypeStudio = 5,
+
 };
 
 /**
@@ -1324,26 +1463,22 @@ enum RemoteAudioState {
     /**
      * @brief 开始接收远端音频流首包。<br>
      *        刚收到远端音频流首包会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}，
-     *        对应原因是： kRemoteAudioStateChangeReasonLocalUnmuted{@link #RemoteAudioStateChangeReason}。
+     *        对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonLocalUnmuted`
      */
     kRemoteAudioStateStarting,
     /**
      * @brief  远端音频流正在解码，正常播放。 <br>
      *         以下情况下会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}：  <br>
-     *       + 成功解码远端音频首帧，对应原因是：kRemoteAudioStateChangeReasonLocalUnmuted{@link
-     * #RemoteAudioStateChangeReason}  <br>
-     *       + 网络由阻塞恢复正常，对应原因是：kRemoteAudioStateChangeReasonNetworkRecovery{@link
-     * #RemoteAudioStateChangeReason}  <br>
-     *       + 本地用户恢复接收远端音频流，对应原因是：kRemoteAudioStateChangeReasonLocalUnmuted{@link
-     * #RemoteAudioStateChangeReason}  <br>
-     *       + 远端用户恢复发送音频流，对应原因是：kRemoteAudioStateChangeReasonRemoteUnmuted{@link
-     * #RemoteAudioStateChangeReason}  <br>
+     *       + 成功解码远端音频首帧，对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonLocalUnmuted` <br>
+     *       + 网络由阻塞恢复正常，对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonNetworkRecovery` <br>
+     *       + 本地用户恢复接收远端音频流，对应原因是：RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonLocalUnmuted` <br>
+     *       + 远端用户恢复发送音频流，对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonRemoteUnmuted` <br>
      */
     kRemoteAudioStateDecoding,
     /**
      * @brief 远端音频流卡顿。<br>
      *        网络阻塞、丢包率大于 40% 时，会触发回调 OnRemoteAudioStateChanged{@link #IRTCRoomEventHandler#OnRemoteAudioStateChanged}，
-     *        对应原因是：kRemoteAudioStateChangeReasonNetworkCongestion{@link #RemoteAudioStateChangeReason}
+     *        对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonNetworkCongestion`
      */
     kRemoteAudioStateFrozen,
     /**
@@ -1463,6 +1598,7 @@ enum RemoteVideoStateChangeReason {
 
 /**
  * @hidden
+ * @deprecated since 332.1, use VirtualBackgroundSourceType instead
  * @type keytype
  * @brief 背景模式
  */
@@ -1487,6 +1623,7 @@ enum BackgroundMode {
 
 /**
  * @hidden
+ * @deprecated since 332.1, use EnableVirtualBackground instead
  * @type keytype
  * @brief 分割模型
  */
@@ -1727,11 +1864,11 @@ struct RemoteAudioStats {
      */
     int frozen_rate;
     /**
-     * @brief 音频 PLC 样点总个数。  <br>
+     * @brief 音频丢包补偿(PLC) 样点总个数。  <br>
      */
     int concealed_samples;
     /**
-     * @brief PLC 累计次数。  <br>
+     * @brief 音频丢包补偿(PLC) 累计次数。  <br>
      */
     int concealment_event;
     /**
@@ -2595,7 +2732,7 @@ enum AudioMixingError {
     kAudioMixingErrorLoadConflict,
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 325.1
      * @brief 混音错误码，失败，已废弃
      */
     kAudioMixingErrorCanNotOpen = 701,
@@ -2707,8 +2844,9 @@ enum FirstFramePlayState {
 };
 
 /**
+ * @hidden
  * @type keytype
- * @deprecated from 329.1, use MirrorType instead
+ * @deprecated since 329.1, use MirrorType instead
  * @brief 是否开启镜像模式
  */
 enum MirrorMode {
@@ -3487,6 +3625,29 @@ struct AudioMixingConfig {
 
 /**
  * @type keytype
+ * @brief 混音播放声道类型
+ */
+enum AudioMixingDualMonoMode{
+    /**
+     * @brief 和音频文件一致
+     */
+    kAudioMixingDualMonoModeAuto,
+    /**
+     * @brief 只能听到音频文件中左声道的音频
+     */
+    kAudioMixingDualMonoModeL,
+    /**
+     * @brief 只能听到音频文件中右声道的音频
+     */
+    kAudioMixingDualMonoModeR,
+    /**
+     * @brief 能同时听到音频文件中左右声道的音频
+     */
+    kAudioMixingDualMonoModeMix
+};
+
+/**
+ * @type keytype
  * @brief 定义linux用户的用户功能  <br>
  */
 enum UserWorkerType {
@@ -3506,6 +3667,10 @@ enum UserWorkerType {
      * @brief 用户需要信令服务器下发全量的用户列表和回调函数  <br>
      */
     UserWorkerNeedUserListAndCb = (1 << 2),
+    /**
+     * @brief 用户需要在房间进入多人模式时获取房间内所有流的相关回调  <br>
+     */
+    UserWorkerNeedStreamCallBack = (1 << 3),
 };
 
 /**
@@ -3590,11 +3755,10 @@ struct VideoCaptureConfig {
  */
 struct AudioPropertiesConfig {
     /**
-     * @brief 信息提示间隔；
-     * @notes  <br>
+     * @brief 信息提示间隔：  <br>
      *       + <= 0: 关闭信息提示  <br>
-     *       + >0 && <=100: 不合法的 interval 值，SDK 自动设置为 100ms  <br>
-     *       + > 100: 信息提示间隔为 interval 实际值
+     *       + >0 && <=100: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
+     *       + > 100: 开启信息提示，并将信息提示间隔设置为此值  <br>
      */
     int interval;
 };
@@ -3633,7 +3797,7 @@ struct RemoteAudioPropertiesInfo {
  */
 struct LocalAudioPropertiesInfo {
     /**
-     * @brief 流属性，主流或屏幕流。参看 StreamIndex{@link #StreamIndex}
+     * @brief 流属性，详见 StreamIndex{@link #StreamIndex}
      */
     StreamIndex stream_index;
     /**
@@ -3646,25 +3810,30 @@ struct LocalAudioPropertiesInfo {
 /**
  * @type keytype
  * @brief 音质档位
+ *        调用 SetAudioProfile{@link #IRtcEngineLite#SetAudioProfile} 设置的音质档位
  */
 enum AudioProfileType {
     /**
      * @brief 默认音质
+     *        服务器下发或客户端已设置的 RoomProfileType{@link #RoomProfileType} 的音质配置
      */
     kAudioProfileTypeDefault = 0,
     /**
      * @brief 流畅音质。  <br>
-     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS等游戏中的小队语音、组队语音、国战语音等。
+     *        单声道，采样率为 16kHz，编码码率为 24kbps。 <br>
+     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS 等游戏中的小队语音、组队语音、国战语音等。
      */
     kAudioProfileTypeFluent = 1,
     /**
      * @brief 标准音质。  <br>
-     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合 Sirius 等狼人杀类游戏。
+     *        单声道，采样率为 48kHz，编码码率为 48kbps。 <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和 Sirius 等狼人杀类游戏。
      */
     kAudioProfileTypeStandard = 2,
     /**
      * @brief 高清音质  <br>
-     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK、在线教育等场景。 <br>
+     *        双声道，采样率为 48kHz，编码码率为 128kbps。 <br>
+     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。 <br>
      *        游戏场景不建议使用。
      */
     kAudioProfileTypeHD = 3,

@@ -82,13 +82,13 @@ enum StreamMixingEvent {
      */
     kStreamMixingFirstVideoFrameByClientMix = 8,
     /**
-     * @brief 停止服务端合流超时
-     */
-    kStreamMixingStopTimeoutByServer = 9,
-    /**
      * @brief 更新合流超时
      */
-    kStreamMixingUpdateTimeout = 10,
+    kStreamMixingUpdateTimeout = 9,
+    /**
+     * @brief 开始合流超时
+     */
+    kStreamMixingStartTimeout = 10,
     /*
     * @brief 合流布局参数错误
     */

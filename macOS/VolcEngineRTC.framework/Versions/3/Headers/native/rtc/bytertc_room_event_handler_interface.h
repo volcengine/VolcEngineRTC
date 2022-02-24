@@ -80,7 +80,8 @@ public:
     }
 
     /**
-     * @deprecated from 329.1, use OnLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
+     * @hidden
+     * @deprecated since 329.1, use OnLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
      * @type callback
      * @region 音频事件回调
      * @brief 提示房间内所有用户发送音量的回调。
@@ -205,7 +206,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 323.1, use OnUserStartAudioCapture instead
+     * @deprecated since 323.1, use OnUserStartAudioCapture instead
      * @type callback
      * @region 音频事件回调
      * @brief 远端用户开启/关闭音频设备采集时，房间内其他人会收到这个回调。
@@ -515,7 +516,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated
+     * @deprecated since 325.1, use OnUserStartVideoCapture instead
      * @type callback
      * @region 视频管理
      * @brief 远端用户开启/关闭本地视频采集时回调该事件，当远端用户调用 EnableLocalVideo 时，其他用户会触发此回调。

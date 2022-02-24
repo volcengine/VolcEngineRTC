@@ -77,7 +77,8 @@
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode;
 
  /**
-  * @deprecated from 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
+  * @hidden
+  * @deprecated since 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
   * @type callback
   * @region 多房间
   * @author wangjunzheng
@@ -163,7 +164,7 @@
  * @hidden
  * @type callback
  * @region 多房间
- * @author wangjunzheng
+ * @author shenpengliang
  * @brief 当房间内用户调用 MuteAllRemoteAudio{@link #MuteAllRemoteAudio}，
  *        改变接收所有远端音频流的状态时, 房间内其他用户收到这个回调。
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
@@ -199,10 +200,10 @@
 
 /**
  * @hidden
- * @deprecated from 323.1, use onUserStartAudioCapture instead
+ * @deprecated since 323.1, use onUserStartAudioCapture instead
  * @type callback
  * @region 多房间
- * @author wangjunzheng
+ * @author dixing
  * @brief 远端用户开启/关闭音频设备采集回调
  *         提示有远端用户已开启/关闭音频设备采集，该回调由远端用户调用 enableLocalAudio:{@link #enableLocalAudio:} 方法触发
  * @param rtcRoom ByteRTCRoom对象
@@ -215,7 +216,7 @@
  /**
   * @type callback
   * @region 多房间
-  * @author wangjunzheng
+  * @author dixing
   * @brief 房间内的用户调用 startAudioCapture{@link #startAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。
   * @param userId 开启音频采集的远端用户 ID
@@ -225,7 +226,7 @@
  /**
   * @type callback
   * @region 多房间
-  * @author wangjunzheng
+  * @author dixing
   * @brief 房间内的用户调用 stopAudioCapture{@link #stopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。
   * @param userId 关闭音频采集的远端用户 ID
@@ -685,7 +686,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 
 /**
  * @hidden
- * @deprecated from 326.1, use joinRoomByToken with MultiRoomConfig instead
+ * @deprecated since 326.1, use joinRoomByToken with MultiRoomConfig instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -731,7 +732,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @return 方法调用结果。  <br>
  *        +  0: 成功  <br>
  *        + -1: 参数无效  <br>
- *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #leaveRoom:} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
+ *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom{@link #leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
  *        + -3: room 为空 <br>
  * @notes  <br>
  *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
@@ -743,7 +744,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
 /**
  * @hidden
- * @deprecated from 328.1, use setUserVisibility instead
+ * @deprecated since 328.1, use setUserVisibility instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -758,9 +759,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *         +  NO: 方法调用失败  <br>
  * @notes  <br>
  *        + 在加入房间前，用户可调用此方法设置用户角色。加入房间后，用户也可通过此方法切换用户角色。  <br>
- *        + 用户在加入房间成功后调用该方法切换用户角色，调用成功后，远端用户会收到相应的回调通知：1.本地用户角色从静默观众切换至观众或主播时，远端用户会收到
+ *        + 用户在加入房间成功后调用该方法切换用户角色，调用成功后，远端用户会收到相应的回调通知：1.本地用户角色从隐身用户切换至观众或主播时，远端用户会收到
  * rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:}
- * 回调通知；2.本地用户角色从观众或主播切换至静默观众时，远端用户会收到 rtcRoom:didOfflineOfUid:reason:{@link
+ * 回调通知；2.本地用户角色从观众或主播切换至隐身用户时，远端用户会收到 rtcRoom:didOfflineOfUid:reason:{@link
  * #ByteRTCRoomDelegate#rtcRoom:didOfflineOfUid:reason:} 回调通知。  <br>
  */
 - (int)setUserRole:(ByteRTCUserRoleType)role
@@ -910,7 +911,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
 /**
  * @hidden
- * @deprecated from 326.1, use subscribeUserStream instead
+ * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -955,7 +956,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
  /**
   * @hidden
-  * @deprecated from 326.1, use subscribeUserStream instead
+  * @deprecated since 326.1, use subscribeUserStream instead
   * @type api
   * @region 多房间
   * @author shenpengliang
@@ -973,7 +974,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /**
  * @hidden
- * @deprecated from 326.1, use joinRoomBytoken with MultiRoomConfig instead
+ * @deprecated since 326.1, use joinRoomBytoken with MultiRoomConfig instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -991,7 +992,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
  /**
-  * @deprecated from 323.1, use enableAudioPropertiesReport instead
+  * @hidden
+  * @deprecated since 323.1, use enableAudioPropertiesReport instead
   * @type api
   * @region 多房间
   * @author wangjunzheng
@@ -1007,10 +1009,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
 /**
  * @hidden
- * @deprecated from 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
+ * @deprecated since 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 多房间
- * @author wangjunzheng
+ * @author shenpengliang
  * @brief 设置对来自远端的所有音频流的接收状态。默认为接收。
  * @param muteState 接收状态。参看：ByteRTCMuteState{@link #ByteRTCMuteState}
  * @notes 本方法只影响本地是否接收远端音频流，并不影响远端音频设备的采集发送功能。
@@ -1021,7 +1023,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 多房间
- * @author wangjunzheng
+ * @author shenpengliang
  * @brief 暂停接收来自远端的媒体流
  * @param mediaType 媒体流类型，指定需要暂停接收音频还是视频流，参看 ByteRTCPauseResumControlMediaType{@link #ByteRTCPauseResumControlMediaType}
  * @notes <br>
@@ -1034,7 +1036,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 /**
  * @type api
  * @region 多房间
- * @author wangjunzheng
+ * @author shenpengliang
  * @brief 恢复接收来自远端的媒体流
  * @param mediaType 媒体流类型，指定需要暂停接收音频还是视频流，参看 ByteRTCPauseResumControlMediaType{@link #ByteRTCPauseResumControlMediaType}
  * @notes <br>
@@ -1045,10 +1047,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 
 /**
  * @hidden
- * @deprecated from 326.1, use subscribeUserStream instead
+ * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
- * @author wangjunzheng
+ * @author shenpengliang
  * @brief 设置对来自远端指定用户的音频流的接收状态。默认为接收。
  * @param userId 指定远端用户的 ID
  * @param muteState 接收状态。参看：ByteRTCMuteState{@link #ByteRTCMuteState}
@@ -1059,7 +1061,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /**
  * @hidden
- * @deprecated from 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
+ * @deprecated since 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1074,7 +1076,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 
 /**
  * @hidden
- * @deprecated from 326.1, use subscribeUserStream instead
+ * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1128,7 +1130,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 - (int)updateLiveTranscoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
 
  /**
- * @deprecated from 326.1, use setRemoteVideoCanvas in engine instead
+  * @hidden
+  * @deprecated since 326.1, use setRemoteVideoCanvas in engine instead
   * @type api
   * @region 多房间
   * @author sunhang.io

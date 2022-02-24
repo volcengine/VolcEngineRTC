@@ -38,6 +38,7 @@ enum ReceiveRangeLimit {
 };
 
 /**
+ * @hidden
  * @type keytype
  * @brief 范围语音中用户的位置，坐标系需要自行建立。
  */
@@ -54,7 +55,9 @@ struct Position {
      * @brief z 坐标
      */
     int z;
-
+    /**
+     * @hidden
+     */
     bool isEqual(Position pos){
         return x == pos.x && y == pos.y && z == pos.z;
     }

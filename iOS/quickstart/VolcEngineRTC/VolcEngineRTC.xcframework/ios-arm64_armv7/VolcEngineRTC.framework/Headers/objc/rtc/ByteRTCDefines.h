@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCRenderMode) {
  */
 typedef NS_ENUM(NSUInteger, ByteRTCUserOfflineReason) {
     /**
-     * @brief 远端用户调用 leaveRoom:{@link #leaveRoom:} 方法主动退出房间。  <br>
+     * @brief 远端用户调用 leaveRoom{@link #leaveRoom} 方法主动退出房间。  <br>
      */
     ByteRTCUserOfflineReasonQuit = 0,
     /**
@@ -132,7 +132,7 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
      */
     ByteRTCUserRoleTypeBroadcaster = 1,
     /**
-     * @brief 静默观众角色。该众角色用户只可在房间内订阅音视频流，房间中的其他用户无法感知到该用户的存在。  <br>
+     * @brief 隐身用户角色。此角色用户只可在房间内订阅音视频流，房间中的其他用户无法感知到该用户的存在。  <br>
      */
     ByteRTCUserRoleTypeSilentAudience = 2,
 };
@@ -196,26 +196,93 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
 
 /**
  * @type keytype
+ * @brief 变声特效类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVoiceChangerType) {
+    /**
+     * @brief 原声，不含特效
+     */
+    ByteRTCVoiceChangerOriginal = 0,
+    /**
+     * @brief 巨人
+     */
+    ByteRTCVoiceChangerGiant = 1,
+    /**
+     * @brief 花栗鼠
+     */
+    ByteRTCVoiceChangerChipmunk = 2,
+    /**
+     * @brief 小黄人
+     */
+    ByteRTCVoiceChangerMinionst = 3,
+    /**
+     * @brief 颤音
+     */
+    ByteRTCVoiceChangerVibrato = 4,
+    /**
+     * @brief 机器人
+     */
+    ByteRTCVoiceChangerRobot = 5,
+};
+
+/**
+ * @type keytype
+ * @brief 混响特效类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVoiceReverbType) {
+    /**
+     * @brief 原声，不含特效
+     */
+    ByteRTCVoiceReverbOriginal = 0,
+    /**
+     * @brief 回声
+     */
+    ByteRTCVoiceReverbEcho = 1,
+    /**
+     * @brief 演唱会
+     */
+    ByteRTCVoiceReverbConcert = 2,
+    /**
+     * @brief 空灵
+     */
+    ByteRTCVoiceReverbEthereal = 3,
+    /**
+     * @brief KTV
+     */
+    ByteRTCVoiceReverbKTV = 4,
+    /**
+     * @brief 录音棚
+     */
+    ByteRTCVoiceReverbStudio = 5,
+};
+
+/**
+ * @type keytype
  * @brief 音质档位
+ *        调用 setAudioProfile:{@link #setAudioProfile:} 设置的音质档位
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
     /**
      * @brief 默认音质
+     *        服务器下发或客户端已设置的 ByteRTCRoomProfile{@link #ByteRTCRoomProfile} 的音质配置
      */
     ByteRTCAudioProfileDefault = 0,
     /**
      * @brief 流畅音质。  <br>
+     *        单声道，采样率为 16kHz，编码码率为 24kbps。 <br>
      *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS 等游戏中的小队语音、组队语音、国战语音等。
      */
     ByteRTCAudioProfileFluent = 1,
     /**
      * @brief 标准音质。  <br>
-     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合 Sirius 等狼人杀类游戏。
+     *        单声道，采样率为 48kHz，编码码率为 48kbps。 <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和 Sirius 等狼人杀类游戏。
      */
     ByteRTCAudioProfileStandard = 2,
     /**
      * @brief 高清音质  <br>
-     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK、在线教育等场景。 <br>
+     *        双声道，采样率为 48kHz，编码码率为 128kbps。 <br>
+     *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。 <br>
      *        游戏场景不建议使用。
      */
     ByteRTCAudioProfileHD = 3,
@@ -289,6 +356,78 @@ typedef NS_ENUM(NSInteger, ByteRTCNetworkType) {
      * @brief 网络连接类型为 5G 移动网络。
      */
     ByteRTCNetworkTypeMobile5G = 6,
+};
+
+/**
+ * @type keytype
+ * @brief 通话前探测的停止原因
+ *        rtcEngine:onNetworkDetectionStopped:{@link #rtcEngine:onNetworkDetectionStopped:} 回调的参数类型
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCNetworkDetectionStopReason) {
+    /**
+     * @brief 用户主动停止。
+     */
+    ByteRTCNetworkDetectionStopReasonUser = 0,
+    /**
+     * @brief 探测超过三分钟。
+     */
+    ByteRTCNetworkDetectionStopReasonTimeout = 1,
+    /**
+     * @brief 探测网络连接断开。<br>当超过 12s 没有收到回复，SDK 将断开网络连接，并且不再尝试重连。
+     */
+    ByteRTCNetworkDetectionStopReasonConnectionLost = 2,
+    /**
+     * @brief 本地开始推拉流，停止探测。
+     */
+    ByteRTCNetworkDetectionStopReasonStreaming = 3,
+    /**
+     * @brief 网络探测失败，内部异常
+     */
+    ByteRTCNetworkDetectionStopReasonInnerErr = 4,
+};
+
+/**
+ * @type errorcode
+ * @brief 开始探测的返回值
+ *        startNetworkDetection:uplinkBandwidth:downlink:downlinkBandwidth:{@link #ByteRTCEngineKit#startNetworkDetection:uplinkBandwidth:downlink:downlinkBandwidth:} 返回对象类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCNetworkDetectionStartReturn) {
+    /**
+     * @brief 成功开始探测。
+     */
+    ByteRTCNetworkDetectionStartReturnSuccess = 0,
+    /**
+     * @brief 开始探测失败。参数错误，上下行探测均为 `false`，或期望带宽超过了范围 [100,10000]
+     */
+    ByteRTCNetworkDetectionStartReturnParamErr = 1,
+    /**
+     * @brief 开始探测失败。失败原因为，本地已经开始推拉流
+     */
+    ByteRTCNetworkDetectionStartReturnStreaming = 2,
+    /**
+     * @brief 已经开始探测，无需重复开启
+     */
+    ByteRTCNetworkDetectionStartReturnStarted = 3,
+    /**
+     * @brief 不支持该功能
+     */
+    ByteRTCNNetworkDetectionStartReturnNotSupport = 4,
+};
+
+/**
+ * @type keytype
+ * @brief 通话前探测链接的类型
+ *        rtcEngine:onNetworkDetectionResult:quality:rtt:lostRate:bitrate:jitter:{@link #rtcEngine:onNetworkDetectionResult:quality:rtt:lostRate:bitrate:jitter:} 回调的参数类型
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCNetworkDetectionLinkType) {
+    /**
+     * @brief 上行网络探测。
+     */
+    ByteRTCNetworkDetectionLinkTypeUp = 0,
+    /**
+     * @brief 下行网络探测。
+     */
+    ByteRTCNetworkDetectionLinkTypeDown = 1,
 };
 
 /**
@@ -630,8 +769,9 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoOutputOrientationMode) {
 };
 
 /**
+ * @hidden
  * @type keytype
- * @deprecated from 329.1 use ByteRTCMirrorType instead
+ * @deprecated since 329.1 use ByteRTCMirrorType instead
  * @brief 是否开启镜像模式
  */
 typedef NS_ENUM(NSUInteger, ByteRTCMirrorMode) {
@@ -1283,29 +1423,29 @@ typedef NS_ENUM(NSInteger, ByteRTCLocalVideoStreamError) {
 typedef NS_ENUM(NSInteger, ByteRTCRemoteAudioState) {
     /**
      * @brief  远端音频流默认初始状态，在以下时机回调该状态：  <br>
-     *       + 本地用户停止接收远端音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonLocalMuted{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
-     *       + 远端用户停止发送音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonRemoteMuted{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
-     *       + 远端用户离开房间，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonRemoteOffline{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
+     *       + 本地用户停止接收远端音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonLocalMuted`  <br>
+     *       + 远端用户停止发送音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonRemoteMuted` <br>
+     *       + 远端用户离开房间，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonRemoteOffline` <br>
      */
     ByteRTCRemoteAudioStateStopped = 0,
     /**
      * @brief 开始接收远端音频流首包。  <br>
      *        刚收到远端音频流首包时，会触发回调 rtcEngine:onRemoteAudioStateChanged:state:reason:{@link #rtcEngine:onRemoteAudioStateChanged:state:reason:}，
-     *        对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonLocalUnmuted{@link #ByteRTCRemoteAudioStateChangeReason}。
+     *        对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonLocalUnmuted`
      */
     ByteRTCRemoteAudioStateStarting = 1,
     /**
      * @brief  远端音频流正在解码，正常播放，在以下时机回调该状态：  <br>
-     *       + 成功解码远端音频首帧，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonLocalUnmuted{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
-     *       + 网络由阻塞恢复正常，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonNetworkRecovery{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
-     *       + 本地用户恢复接收远端音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonLocalUnmuted{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
-     *       + 远端用户恢复发送音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonRemoteUnmuted{@link #ByteRTCRemoteAudioStateChangeReason}  <br>
+     *       + 成功解码远端音频首帧，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonLocalUnmuted` <br>
+     *       + 网络由阻塞恢复正常，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonNetworkRecovery` <br>
+     *       + 本地用户恢复接收远端音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonLocalUnmuted` <br>
+     *       + 远端用户恢复发送音频流，对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonRemoteUnmuted`<br>
      */
     ByteRTCRemoteAudioStateDecoding = 2,
     /**
      * @brief 远端音频流卡顿。<br>
      *        网络阻塞导致丢包率大于 40% 时，会触发回调 rtcEngine:onRemoteAudioStateChanged:state:reason:{@link #ByteRTCEngineDelegate#rtcEngine:onRemoteAudioStateChanged:state:reason:}，
-     *        对应原因是 ByteRTCRemoteAudioStateChangeReason.ByteRTCRemoteAudioStateChangeReasonNetworkCongestion{@link #ByteRTCRemoteAudioStateChangeReason}
+     *        对应原因是 ByteRTCRemoteAudioStateChangeReason{@link #ByteRTCRemoteAudioStateChangeReason} 中的 `ByteRTCRemoteAudioStateChangeReasonNetworkCongestion`
      */
     ByteRTCRemoteAudioStateFrozen = 3,
     /**
@@ -1984,13 +2124,13 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingEvent) {
      */
     StreamMixingFirstVideoFrameByClientMixer = 7,
     /**
-     * @brief 停止服务端合流超时
-     */
-    StreamMixingStopTimeOutByServer = 9,
-    /**
      * @brief 更新合流超时
      */
-    StreamMixingUpdateTimeOut = 10,
+    StreamMixingUpdateTimeout = 8,
+    /**
+     * @brief 开始合流超时
+     */
+    StreamMixingStartTimeout = 9,
 };
 
 /**
@@ -2356,7 +2496,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
  */
 @property (assign, nonatomic) BOOL isAutoPublish;
 /**
- * @brief 是否自动订阅音频流。  <br>
+ * @brief 是否自动订阅音频流，进房后不可更改。  <br>
  *        进房后，你可以调用 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCEngineKit#subscribeUserStream:streamType:mediaType:videoConfig:} 修改订阅设置。
  */
 @property (assign, nonatomic) BOOL isAutoSubscribeAudio;
@@ -2771,11 +2911,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
  */
 @property(assign, nonatomic) NSInteger frozenRate;
 /**
- * @brief 音频 PLC 样点总个数。  <br>
+ * @brief 音频丢包补偿(PLC) 样点总个数。  <br>
  */
 @property(assign, nonatomic) NSInteger concealedSamples;
 /**
- * @brief PLC 累计次数。  <br>
+ * @brief 音频丢包补偿(PLC) 累计次数。  <br>
  */
 @property(assign, nonatomic) NSInteger concealmentEvent;
 /**
@@ -3936,6 +4076,29 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingType) {
 
 /**
  * @type keytype
+ * @brief 混音播放声道类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioMixingDualMonoMode) {
+    /**
+     * @brief 和音频文件一致
+     */
+    ByteRTCAudioMixingDualMonoModeAuto = 0,
+    /**
+     * @brief 只能听到音频文件中左声道的音频
+     */
+    ByteRTCAudioMixingDualMonoModeL = 1,
+    /**
+     * @brief 只能听到音频文件中右声道的音频
+     */
+    ByteRTCAudioMixingDualMonoModeR = 2,
+    /**
+     * @brief 能同时听到音频文件中左右声道的音频
+     */
+    ByteRTCAudioMixingDualMonoModeMix = 3
+};
+
+/**
+ * @type keytype
  * @brief 音频混音文件播放状态。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioMixingState) {
@@ -4054,11 +4217,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 /**
- * @brief 信息提示间隔；
- * @notes <br>
+ * @brief 信息提示间隔：  <br>
  *       + <= 0: 关闭信息提示  <br>
- *       + >0 && <=100: 不合法的 interval 值，SDK 会自动设置为 100ms  <br>
- *       + > 100: 信息提示间隔为 interval 实际值
+ *       + >0 && <=100: 开启信息提示，不合法的 interval 值，SDK 会自动设置为 100ms  <br>
+ *       + > 100: 开启信息提示，并将信息提示间隔设置为此值  <br>
  */
 @property (assign, nonatomic) NSInteger interval;
 @end
@@ -4081,7 +4243,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioPropertiesInfo : NSObject
 
 /**
- * @brief 流属性，包括主流、屏幕流。参看 ByteRTCStreamIndex:{@link #ByteRTCStreamIndex}
+ * @brief 流属性，详见 ByteRTCStreamIndex:{@link #ByteRTCStreamIndex}
  */
 @property (assign, nonatomic) ByteRTCStreamIndex streamIndex;
 /**
@@ -4109,8 +4271,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioPropertiesInfo : NSObject
 @property (strong, nonatomic) ByteRTCAudioPropertiesInfo *_Nonnull audioPropertiesInfo;
 
 @end
-
-
 
 /**
  * @type keytype
@@ -4202,6 +4362,21 @@ typedef NS_ENUM(NSInteger, ByteRTCSyncInfoStreamType) {
      * @brief 音频流
      */
     ByteRTCSyncInfoStreamTypeAudio = 0
+};
+
+/**
+ * @type keytype
+ * @brief 相机补光灯状态
+ */
+typedef NS_ENUM(NSInteger, ByteRTCTorchState) {
+    /**
+     * @brief 相机补光灯关闭
+     */
+    ByteRTCTorchStateOff = 0,
+    /**
+     * @brief 相机补光灯打开
+     */
+    ByteRTCTorchStateOn = 1,
 };
 
 /**

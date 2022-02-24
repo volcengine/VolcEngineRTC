@@ -15,10 +15,13 @@ namespace bytertc {
  */
 class IRemotePositionInfoObserver{
 public:
+    /**
+     * @hidden
+     */
     virtual ~IRemotePositionInfoObserver() = default;
 
     /**
-     * @hidden(iOS, Android, Windows, macOS)    
+     * @hidden(iOS, Android, Windows, macOS)
      * @type callback
      * @region 音频管理
      * @brief 调用 RegisterRemoteInfoObserver{@link #IPositionAudioRenderInterface#RegisterRemoteInfoObserver} 后，每隔 3s 收到远端的位置信息；如果远端用户更新了位置，会在 500ms 内收到更新后的位置信息。  <br>
@@ -28,7 +31,7 @@ public:
     virtual void OnRemoteUserPositionInfo(const RemoteUserPositionInfo* user_infos, unsigned int len) = 0;
 
     /**
-     * @hidden(iOS, Android, Windows, macOS)    
+     * @hidden(iOS, Android, Windows, macOS)
      * @type callback
      * @region 音频管理
      * @brief 调用 RegisterRemoteInfoObserver{@link #IPositionAudioRenderInterface#RegisterRemoteInfoObserver} 后，如果远端调用 UpdatePosition{@link #IPositionAudioRenderInterface#UpdatePosition} 更新了位置，会在 500ms 内收到远端变更后的位置信息。  <br>
@@ -84,7 +87,7 @@ public:
     virtual int UpdateSelfOrientation(const HumanOrientation& orientation) = 0;
 
     /**
-     * @hidden(iOS, Android, Windows, macOS)    
+     * @hidden(iOS, Android, Windows, macOS)
      * @type api
      * @region 音频管理
      * @brief 注册远端用户位置信息回调

@@ -38,7 +38,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use SetUserVisibility instead
+     * @deprecated since 327.1, use SetUserVisibility instead
      * @type api
      * @region 多房间
      * @brief 设置用户角色。默认角色为主播。  <br>
@@ -49,8 +49,8 @@ public:
      * @notes  <br>
      *       + 在加入房间前后，用户均可调用此方法设置用户角色。 <br>
      *       + 在房间内，调用此方法成功切换角色后，房间内其他用户会收到相应的回调通知：<br>
-     *            - 从静默观众切换至主播时，房间内其他用户会收到 OnUserJoined{@link #OnUserJoined}；  <br>
-     *            - 从主播切换至静默观众时，房间内其他用户会收到 OnUserLeave{@link #OnUserLeave} 。
+     *            - 从隐身用户切换至主播时，房间内其他用户会收到 OnUserJoined{@link #OnUserJoined}；  <br>
+     *            - 从主播切换至隐身用户时，房间内其他用户会收到 OnUserLeave{@link #OnUserLeave} 。
      */
     virtual void SetUserRole(UserRoleType role) = 0;
 
@@ -81,8 +81,8 @@ public:
      * @hidden
      * @type api
      * @region 多房间
-     * @brief 设置 IRTCRoom{@link #IRtcRoom} 对象的事件句柄。
-     *        通过设置事件句柄可以监听此 IRTCRoom{@link #IRtcRoom} 对象对应的房间的回调事件。
+     * @brief 设置 IRtcRoom{@link #IRtcRoom} 对象的事件句柄。
+     *        通过设置事件句柄可以监听此 IRtcRoom{@link #IRtcRoom} 对象对应的房间的回调事件。
      * @param [in] room_event_handler
      *        回调处理器，详见 IRTCRoomEventHandler{@link #IRTCRoomEventHandler}
      */
@@ -90,13 +90,13 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use function joinRoom with MultiRoomConfig parameter instead
+     * @deprecated since 326.1, use function joinRoom with MultiRoomConfig parameter instead
      * @type api
      * @region 多房间
      * @brief 加入房间。
-     *        用户调用此方法加入此 IRTCRoom{@link #IRtcRoom}
+     *        用户调用此方法加入此 IRtcRoom{@link #IRtcRoom}
      * 对应的房间。在一个房间内的用户可以相互通话。调用加入房间前，需要调用 CreateRtcRoom{@link #CreateRtcRoom} 方法
-     *        创建房间对应的 IRTCRoom{@link #IRtcRoom} 对象。
+     *        创建房间对应的 IRtcRoom{@link #IRtcRoom} 对象。
      * @param [in] token
      *        动态密钥，用于对登录用户进行鉴权验证。进入房间需要携带 Token。可以在控制台生成临时 Token
      * 进行测试，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token 。
@@ -116,8 +116,8 @@ public:
      *          房间的用户踢出房间，并且先加入房间的用户会收到 OnRoomError{@link #OnRoomError}回调通知，
      *          错误类型为重复登录 kErrorCodeDuplicateLogin{@link #kErrorCodeDuplicateLogin} 。
      *        5.请务必保证生成 Token 使用的App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。
-     *        6.该方法仅能加入此 IRTCRoom{@link #IRtcRoom}
-     *        对应的房间，如果需要加入其它房间需要创建对应房间的 IRTCRoom{@link #IRtcRoom} 对象。
+     *        6.该方法仅能加入此 IRtcRoom{@link #IRtcRoom}
+     *        对应的房间，如果需要加入其它房间需要创建对应房间的 IRtcRoom{@link #IRtcRoom} 对象。
      */
     virtual void JoinRoom(const char* token, const UserInfo& user_info, RoomProfileType profile_type) = 0;
 
@@ -267,7 +267,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 327.1, use PublishScreen without params instead
+     * @deprecated since 327.1, use PublishScreen without params instead
      * @type api
      * @region 多房间
      * @brief 发布本地屏幕共享流到房间。
@@ -321,7 +321,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use SubscribeUserStream instead
+     * @deprecated since 326.1, use SubscribeUserStream instead
      * @type api
      * @region 多房间
      * @brief 订阅指定的房间内远端音视频流。  <br>
@@ -379,7 +379,8 @@ public:
     virtual void EnableSubscribeLocalStream(bool enable) = 0;
 
     /**
-     * @deprecated from 323.1, use OnUserStartAudioCapture instead
+     * @hidden
+     * @deprecated since 323.1, use OnUserStartAudioCapture instead
      * @type api
      * @region 多房间
      * @brief 开启/关闭音量提示。默认关闭。<br>
@@ -407,7 +408,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
+     * @deprecated since 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
      * @type api
      * @region 多房间
      * @brief 设置对来自远端的所有音频流的接收状态。默认为接收。
@@ -441,7 +442,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use SubscribeUserStream instead
+     * @deprecated since 326.1, use SubscribeUserStream instead
      * @type api
      * @region 多房间
      * @brief 设置对来自远端指定用户的音频流的接收状态。默认为接收。
@@ -513,7 +514,7 @@ public:
     virtual void SetRemoteVideoCanvas(const char* user_id, StreamIndex index, const VideoCanvas& canvas) = 0;
 
     /**
-     * @deprecated frpm 325.1
+     * @deprecated since 325.1
      * @hidden
      * @type api
      * @region 多房间
@@ -522,7 +523,7 @@ public:
     virtual void RemoveAllRemoteVideo() = 0;
 
     /**
-     * @deprecated frpm 325.1
+     * @deprecated since 325.1
      * @hidden
      * @type api
      * @region 多房间
@@ -532,7 +533,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
+     * @deprecated since 326.1, use PauseAllSubscribedStream/ResumeAllSubscribedStream instead
      * @type api
      * @region 多房间
      * @brief 设置是否播放所有远端视频流
@@ -546,7 +547,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use SubscribeUserStream instead
+     * @deprecated since 326.1, use SubscribeUserStream instead
      * @type api
      * @region 多房间
      * @brief 设置是否播放远端视频流
@@ -567,7 +568,7 @@ public:
 
     /**
      * @hidden
-     * @deprecated from 326.1, use JoinRoom instead
+     * @deprecated since 326.1, use JoinRoom instead
      * @type api
      * @region 多房间
      * @brief 设置订阅模式。  <br>

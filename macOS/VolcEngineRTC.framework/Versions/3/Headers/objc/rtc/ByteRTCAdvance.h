@@ -559,7 +559,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
 /**
  * @type api
  * @region 自定义音频采集渲染
- * @author wangjunzheng
+ * @author dixing
  * @brief 启用外部音频采集渲染。
  * @param recordingFormat 外部音频采集数据格式，详见 ByteRTCAudioFormat{@link #ByteRTCAudioFormat}
  * @param playoutChannelNum 外部音频渲染数据格式，详见 ByteRTCAudioFormat{@link #ByteRTCAudioFormat}
@@ -574,7 +574,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
 /**
  * @type api
  * @region 自定义音频采集渲染
- * @author wangjunzheng
+ * @author dixing
  * @brief 禁用外部音频采集渲染。
  * @notes  <br>
  *      + 该方法应该在 joinChannelByKey{@link #ByteRTCEngineKit#joinChannelByKey} 前使用。  <br>
@@ -585,7 +585,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
 /**
  * @type api
  * @region 自定义音频采集渲染
- * @author wangjunzheng
+ * @author dixing
  * @brief 推送外部音频数据。使用
  *        enableExternalAudioDevice:playbackFormat:{@link #enableExternalAudioDevice:playbackFormat:}
  *        启用自定义音频采集渲染后，可以使用本方法推送外部音频数据。
@@ -604,7 +604,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
 /**
  * @type api
  * @region 自定义音频采集渲染
- * @author wangjunzheng
+ * @author dixing
  * @brief 拉取远端音频数据。使用
  *        enableExternalAudioDevice:playbackFormat:{@link #enableExternalAudioDevice:playbackFormat:}
  *        启用自定义音频采集渲染后，可以使用本方法拉取外部音频数据。

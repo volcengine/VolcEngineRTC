@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
  * @brief VolcEngine Internal API
 */
@@ -31,6 +31,12 @@ BYTERTC_API void SetDefaultEnableQuicGetAccess();
 *@notes  一般在linux端SDK使用
 */
 BYTERTC_API void SetDefaultEnableKcpGetAccess();
+
+/**
+*@brief 设置 ByteRTC SDK 默认开启通话前网络探测
+*@notes  一般在linux端SDK使用
+*/
+BYTERTC_API void SetDefaultEnableNetworkDetect();
 
 /**
 *@brief 设置 ByteRTC SDK 默认开启使用KCP消息通道
