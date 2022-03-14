@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Event Handler Lite
+ * @brief VolcEngineRTC Event Handler Lite
 */
 
 #pragma once
@@ -11,14 +11,13 @@
 #include "bytertc_defines.h"
 
 namespace bytertc {
-/**
+/** 
  * @type callback
  * @brief 音视频引擎事件回调接口
  */
 class IRtcEngineLiteEventHandler {
-
 public:
-    /**
+    /** 
      * @type callback
      * @region 警告码
      * @brief 当内部发生警告事件时触发该回调
@@ -29,7 +28,7 @@ public:
         (void)warn;
     }
 
-    /**
+    /** 
      * @type callback
      * @region 错误码
      * @brief 当 SDK 内部发生不可逆转错误时触发该回调。
@@ -39,22 +38,22 @@ public:
         (void)err;
     }
 
-    /**
+    /** 
      * @hidden
      * @deprecated since 325.1, use IAudioMixingManager instead
      * @type callback
      * @region 混音
      * @brief 本地音乐文件播放已结束回调。
-     *        当调用 StartAudioMixing{@link #StartAudioMixing} 启动的混音文件播放结束后，会触发该回调。
+     *        当调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 启动的混音文件播放结束后，会触发该回调。
      */
     virtual void OnAudioMixingFinished() {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 混音
      * @brief  音频混音文件播放状态改变时回调
-     * @param [in] id  <br>
+     * @param [in] mix_id  <br>
      *        混音 ID  <br>
      *        使用 IAudioMixingManager{@link #IAudioMixingManager} 相关接口时传入的唯一 ID。
      * @param [in] state  <br>
@@ -65,30 +64,45 @@ public:
      *        详见 AudioMixingError{@link #AudioMixingError}
      * @notes  <br>
      *       + 此回调会被触发的时机汇总如下：  <br>
-     *       + 当调用 StartAudioMixing{@link #StartAudioMixing} 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
-     *       + 当使用相同的 ID 重复调用 StartAudioMixing{@link #StartAudioMixing} 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。  <br>
-     *       + 当调用 PauseAudioMixing{@link #PauseAudioMixing} 方法暂停播放成功后，会触发 state 值为 kAudioMixingStatePaused 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
-     *       + 当调用 ResumeAudioMixing{@link #ResumeAudioMixing} 方法恢复播放成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
-     *       + 当调用 StopAudioMixing{@link #StopAudioMixing} 方法暂停止播放成功后，会触发 state 值为 kAudioMixingStateStopped 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
-     *       + 播放结束会触发 state 值为 kAudioMixingStateFinished 回调。
+     *       + 1. 音乐文件类型： <br>
+     *       + 当调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
+     *       + 当使用相同的 ID 重复调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。  <br>
+     *       + 当调用 PauseAudioMixing{@link #IAudioMixingManager#PauseAudioMixing} 方法暂停播放成功后，会触发 state 值为 kAudioMixingStatePaused 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
+     *       + 当调用 ResumeAudioMixing{@link #IAudioMixingManager#ResumeAudioMixing} 方法恢复播放成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
+     *       + 当调用 StopAudioMixing{@link #IAudioMixingManager#StopAudioMixing} 方法暂停止播放成功后，会触发 state 值为 kAudioMixingStateStopped 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
+     *       + 播放结束会触发 state 值为 kAudioMixingStateFinished 回调。 <br>
+     *       + 2. PCM 流类型： <br>
+     *       + 当调用 EnableAudioMixingFrame{@link #IAudioMixingManager#EnableAudioMixingFrame} 方法成功后，会触发 state 值为 kAudioMixingStatePCMEnabled 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
+     *       + 当调用 DisableAudioMixingFrame{@link #IAudioMixingManager#DisableAudioMixingFrame} 方法成功后，会触发 state 值为 kAudioMixingStatePCMDisabled 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
      */
-    virtual void OnAudioMixingStateChanged(int id, bytertc::AudioMixingState state, bytertc::AudioMixingError error) {
+    virtual void OnAudioMixingStateChanged(int mix_id, bytertc::AudioMixingState state, bytertc::AudioMixingError error) {
     }
 
-    /**
+    /** 
+     * @type callback
+     * @region 混音
+     * @brief 混音音频文件播放进度回调
+     * @param [in] mix_id 混音 ID  <br>
+     * @param [in] progress 当前混音音频文件播放进度，单位毫秒
+     * @notes 调用 SetAudioMixingProgressInterval{@link #IAudioMixingManager#SetAudioMixingProgressInterval} 将时间间隔设为大于 0 的值后，或调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 将 AudioMixingConfig{@link #AudioMixingConfig} 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 <br>
+     */
+    virtual void OnAudioMixingPlayingProgress(int mix_id, int64_t progress){
+    }
+
+    /** 
      * @hidden
      * @deprecated since 325.1, use IAudioMixingManager instead
      * @type callback
      * @region 混音
      * @brief 本地音效文件播放已结束回调。
-     *        当调用 StartAudioMixing{@link #StartAudioMixing}  方法开始播放指定音效文件， 音效文件播放结束后， 应用会收到该回调。
+     *        当调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing}  方法开始播放指定音效文件， 音效文件播放结束后， 应用会收到该回调。
      * @param [in] sound_id
      *        音效ID，应用调用者维护，请保证唯一性。
      */
     virtual void OnAudioEffectFinished(int sound_id) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 引擎管理
      * @brief 端监控日志回调。当产生一个端监控事件时触发该回调。
@@ -102,7 +116,7 @@ public:
         (void)log_content;
     }
 
-    /**
+    /** 
      * @hidden(macOS,Windows)
      * @type callback
      * @region 音频事件回调
@@ -113,7 +127,7 @@ public:
         (void)device;
     };
 
-    /**
+    /** 
      * @type callback
      * @region 引擎管理
      * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
@@ -122,7 +136,7 @@ public:
     virtual void OnConnectionStateChanged(bytertc::ConnectionState state) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 引擎管理
      * @brief SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型发生改变时回调该事件。
@@ -132,7 +146,7 @@ public:
     virtual void OnNetworkTypeChanged(bytertc::NetworkType type) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 音视频回退
      * @brief 本地未开启发布性能回退，检测到设备性能不足时，收到此回调。<br>
@@ -154,17 +168,18 @@ public:
         (void)data;
     }
 
-    /**
+    /** 
      * @type callback
      * @region 引擎管理
-     * @brief 媒体设备状态回调。提示音频采集、音频渲染、视频采集三种媒体设备的状态。
-     * @param [in] device_id 设备 ID
+     * @brief 媒体设备状态回调。提示音频采集、音频播放、摄像头视频采集、屏幕视频采集四种媒体设备的状态。
+     * @param [in] device_id 设备 ID   <br>
+     *                       采集屏幕视频流时，设备 ID 为固定字符串 `screen_capture_video`
      * @param [in] device_type 设备类型，详见 MediaDeviceType{@link #MediaDeviceType}
      * @param [in] device_state 设备状态，详见 MediaDeviceState{@link #MediaDeviceState}
      * @param [in] device_error 设备错误类型，详见 MediaDeviceError{@link #MediaDeviceError}
      * @notes   <br>
-     *        + 媒体设备包括音频采集、音频渲染、视频采集三种设备类型。
-     *        + 此回调返回媒体设备的状态，包括：设备的插入、移除，以及使用中的设备开启、停止、运行时错误等状态。  <br>
+     *        + 媒体设备包括音频采集、音频播放、摄像头视频采集、屏幕视频采集四种设备类型。
+     *        + 此回调返回媒体设备的状态，包括：设备的插入、移除，使用中的设备开启、停止、运行时错误，以及屏幕采集开始、暂停、恢复、停止、错误等状态。  <br>
      */
     virtual void OnMediaDeviceStateChanged(const char* device_id,
                                            bytertc::MediaDeviceType device_type,
@@ -173,9 +188,26 @@ public:
         (void)device_id;
         (void)device_type;
         (void)device_state;
+        (void)device_error;
     }
 
-    /**
+
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 媒体设备警告回调。媒体设备包括：音频采集设备、音频渲染设备、和视频采集设备。
+     * @param [in] device_id 设备 ID
+     * @param [in] device_type 详见 MediaDeviceType{@link #MediaDeviceType}
+     * @param [in] device_warning 详见 MediaDeviceWarning{@link #MediaDeviceWarning}
+     */
+     virtual void OnMediaDeviceWarning(const char* device_id, bytertc::MediaDeviceType device_type,
+            bytertc::MediaDeviceWarning device_warning){
+        (void)device_id;
+        (void)device_type;
+        (void)device_warning;
+    }
+
+    /** 
      * @type callback
      * @region 引擎管理
      * @brief 周期性（2s）地发出回调，报告当前cpu与memory使用率
@@ -184,16 +216,16 @@ public:
     virtual void OnSysStats(const bytertc::SysStats& stats) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 代理回调
      * @brief HTTP 代理连接状态改变时，收到该回调。
      * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
      */
-        virtual void OnHttpProxyState(int state) {
+    virtual void OnHttpProxyState(int state) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 代理回调
      * @brief HTTPS 代理连接状态改变时，收到该回调。
@@ -202,7 +234,7 @@ public:
     virtual void OnHttpsProxyState(int state) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 代理回调
      * @brief Socks5 代理状态改变时，收到该回调。
@@ -219,11 +251,11 @@ public:
         const char* remote_address) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 本地录制
      * @brief 获取本地录制状态回调。  <br>
-     *        该回调由 StartFileRecording{@link #StartFileRecording} 或 StopFileRecording{@link #StopFileRecording} 触发。
+     *        该回调由 StartFileRecording{@link #IRtcEngineLite#StartFileRecording} 或 StopFileRecording{@link #IRtcEngineLite#StopFileRecording} 触发。
      * @param [out] type 录制流的流属性，参看 StreamIndex{@link #StreamIndex}
      * @param [out] state 录制状态，参看 RecordingState{@link #RecordingState}
      * @param [out] error_code 录制错误码，参看 RecordingErrorCode{@link #RecordingErrorCode}
@@ -233,11 +265,11 @@ public:
             StreamIndex type, RecordingState state, RecordingErrorCode error_code, RecordingInfo info) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 本地录制
      * @brief 本地录制进度回调。  <br>
-     *        该回调由 StartFileRecording{@link #StartFileRecording} 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
+     *        该回调由 StartFileRecording{@link #IRtcEngineLite#StartFileRecording} 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
      * @param [out] type 录制流的流属性，参看 StreamIndex{@link #StreamIndex}
      * @param [out] process 录制进度，参看 RecordingProgress{@link #RecordingProgress}
      * @param [out] info 录制文件的详细信息，参看 RecordingInfo{@link #RecordingInfo}
@@ -245,7 +277,7 @@ public:
     virtual void OnRecordingProgressUpdate(StreamIndex type, RecordingProgress process, RecordingInfo info) {
     }
 
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 登录结果回调
@@ -264,7 +296,7 @@ public:
         (void)error_code;
         (void)elapsed;
     }
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 登出结果回调
@@ -272,7 +304,7 @@ public:
      */
     virtual void OnLogout() {
     }
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 设置业务服务器参数的返回结果
@@ -285,7 +317,7 @@ public:
     virtual void OnServerParamsSetResult(int error) {
         (void)error;
     }
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 查询对端或本端用户登录状态的返回结果
@@ -300,7 +332,7 @@ public:
         (void)peer_user_id;
         (void)status;
     }
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 收到房间外用户调用 SendUserMessageOutsideRoom{@link #IRtcEngineLite#SendUserMessageOutsideRoom} 发来的文本消息时，会收到此回调
@@ -313,7 +345,7 @@ public:
         (void)uid;
         (void)message;
     }
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 收到房间外用户调用 SendUserBinaryMessageOutsideRoom{@link #IRtcEngineLite#SendUserBinaryMessageOutsideRoom} 发来的二进制消息时，会收到此回调
@@ -329,7 +361,7 @@ public:
         (void)size;
         (void)message;
     }
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 给房间外指定的用户发送消息的回调
@@ -346,7 +378,7 @@ public:
         (void)error;
     }
 
-    /**
+    /** 
      * @type callback
      * @region 实时消息通信
      * @brief 给业务服务器发送消息的回调
@@ -363,7 +395,7 @@ public:
         (void)error;
     }
 
-    /**
+    /** 
      * @type callback
      * @region 视频管理
      * @brief 收到通过 SendSEIMessage{@link #IRtcEngineLite#SendSEIMessage} 发送的带有 SEI 消息的视频帧时，收到此回调
@@ -371,47 +403,45 @@ public:
      * @param [in] message 收到的 SEI 消息内容
      * @param [in] length 收到的 SEI 消息长度
     */
-    virtual void OnSEIMessageReceived(RemoteStreamKey stream_key, const uint8_t* message, int length){
+   virtual void OnSEIMessageReceived(RemoteStreamKey stream_key, const uint8_t* message, int length){
         (void)stream_key;
         (void)message;
         (void)length;
     }
 
-    /**
-     * @type callback
-     * @region 音频管理
-     * @brief 远端用户进房后，本地调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} ，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。  <br>
-     * @param audio_properties_infos 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 RemoteAudioPropertiesInfo{@link #RemoteAudioPropertiesInfo}。  <br>
-     * @param audio_properties_info_number 远端音频信息的数量。  <br>
-     * @param total_remote_volume 所有订阅的远端流的总音量，范围是 [0,255]。  <br>
-     *       + [0,25] 接近无声；  <br>
-     *       + [25,75] 为低音量；  <br>
-     *       + [76,204] 为中音量；  <br>
-     *       + [205,255] 为高音量。  <br>
-     * @notes 要获取接收的来自远端的音频音量信息时，不限定音频采集方式，RTC SDK 内部采集机制和自定义采集都可以。
-     */
-    virtual void OnRemoteAudioPropertiesReport(const RemoteAudioPropertiesInfo* audio_properties_infos, int audio_properties_info_number, int total_remote_volume) {
+     /** 
+      * @type callback
+      * @region 音频管理
+      * @brief 远端用户进房后，本地调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport}，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。<br>
+      *        远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。
+      * @param [in] audio_properties_infos 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 RemoteAudioPropertiesInfo{@link #RemoteAudioPropertiesInfo}。
+      * @param [in] audio_properties_info_number 数组长度
+      * @param [in] total_remote_volume 所有订阅的远端流的总音量，范围是 [0,255]。  <br>
+      *       + [0,25] 接近无声；  <br>
+      *       + [25,75] 为低音量；  <br>
+      *       + [76,204] 为中音量；  <br>
+      *       + [205,255] 为高音量。  <br>
+      */
+     virtual void OnRemoteAudioPropertiesReport(const RemoteAudioPropertiesInfo* audio_properties_infos, int audio_properties_info_number, int total_remote_volume) {
         (void)audio_properties_infos;
         (void)audio_properties_info_number;
         (void)total_remote_volume;
     }
 
-    /**
-     * @type callback
-     * @region 音频管理
-     * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
-     * @param audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #LocalAudioPropertiesInfo} 。
-     * @param audio_properties_info_number 本地音频信息的数量。  <br>
-     * @notes <br>
-     *       + 使用 RTC SDK 内部机制采集麦克风音频时，回调麦克风的音量；  <br>
-     *       + 使用 RTC SDK 内部机制采集屏幕音频时，回调屏幕音频的音量。  <br>
-     */
-    virtual void OnLocalAudioPropertiesReport(const LocalAudioPropertiesInfo * audio_properties_infos, int audio_properties_info_number) {
+     /** 
+      * @type callback
+      * @region 音频管理
+      * @brief 调用 EnableAudioPropertiesReport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
+      *        本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
+      * @param [in] audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #LocalAudioPropertiesInfo} 。
+      * @param [in] audio_properties_info_number 数组长度
+      */
+     virtual void OnLocalAudioPropertiesReport(const LocalAudioPropertiesInfo * audio_properties_infos, int audio_properties_info_number) {
         (void)audio_properties_infos;
         (void)audio_properties_info_number;
     }
 
-    /**
+    /** 
      * @type api
      * @region 音频管理
      * @brief 音频流同步信息回调。可以通过此回调，在远端用户调用 SendStreamSyncInfo{@link #IRtcEngineLite#SendStreamSyncInfo} 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
@@ -429,11 +459,10 @@ public:
         (void)length;
     }
 
-    /**
+    /** 
      * @type callback
      * @region 通话前网络探测
      * @brief 通话前网络探测结果
-     *        成功调用 StartNetworkDetection{@link #IRtcEngineLite#StartNetworkDetection} 接口开始探测后，会每 2s 收到一次此回调。
      * @param type  <br>
      *        探测网络类型为上行/下行  <br>
      * @param quality  <br>
@@ -446,6 +475,7 @@ public:
      *        探测网络的带宽，单位：kbps  <br>
      * @param jitter  <br>
      *        探测网络的抖动,单位：ms  <br>
+     * @notes 成功调用 StartNetworkDetection{@link #IRtcEngineLite#StartNetworkDetection} 接口开始探测后，会每 2s 收到一次此回调。
      */
     virtual void OnNetworkDetectionResult(NetworkDetectionLinkType type, NetworkQuality quality, int rtt, double lost_rate,
                                       int bitrate, int jitter){
@@ -457,7 +487,7 @@ public:
         (void)jitter;
     }
 
-    /**
+    /** 
      * @type callback
      * @region 通话前网络探测
      * @brief 通话前网络探测结束
@@ -466,7 +496,7 @@ public:
      *        2. 当收到远端/本端音频首帧后，停止探测；
      *        3. 当探测超过3分钟后，停止探测；
      *        4. 当探测链路断开一定时间之后，停止探测。
-     * @param reason  <br>
+     * @param [in] reason  <br>
      *        停止探测的原因类型,参考 NetworkDetectionStopReason{@link #NetworkDetectionStopReason}  <br>
      */
     virtual void OnNetworkDetectionStopped(NetworkDetectionStopReason reason){

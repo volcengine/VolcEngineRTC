@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Internal API
+ * @brief VolcEngineRTC Internal API
 */
 
 #pragma once
@@ -14,34 +14,34 @@
 
 namespace bytertc {
 
-/**
- *@brief 自定义用户角色
- *@notes  必须在joinChannel之前调用
+/** 
+ * @brief 自定义用户角色
+ * @notes  必须在joinChannel之前调用
  */
 BYTERTC_API void SetCustomUserRole(IRtcEngine* engine, const char* role);
 
-/**
-*@brief 设置 ByteRTC SDK 默认开启使用QUIC获取配置
-*@notes  一般在linux端SDK使用
-*/
+/** 
+ * @brief 设置 ByteRTC SDK 默认开启使用QUIC获取配置
+ * @notes  一般在linux端SDK使用
+ */
 BYTERTC_API void SetDefaultEnableQuicGetAccess();
 
-/**
-*@brief 设置 ByteRTC SDK 默认开启使用KCP获取配置
-*@notes  一般在linux端SDK使用
-*/
+/** 
+ * @brief 设置 ByteRTC SDK 默认开启使用KCP获取配置
+ * @notes  一般在linux端SDK使用
+ */
 BYTERTC_API void SetDefaultEnableKcpGetAccess();
 
-/**
-*@brief 设置 ByteRTC SDK 默认开启通话前网络探测
-*@notes  一般在linux端SDK使用
-*/
+/** 
+ * @brief 设置 ByteRTC SDK 默认开启通话前网络探测
+ * @notes  一般在linux端SDK使用
+ */
 BYTERTC_API void SetDefaultEnableNetworkDetect();
 
-/**
-*@brief 设置 ByteRTC SDK 默认开启使用KCP消息通道
-*@notes  一般在linux端SDK使用
-*/
+/** 
+ * @brief 设置 ByteRTC SDK 默认开启使用KCP消息通道
+ * @notes  一般在linux端SDK使用
+ */
 BYTERTC_API void SetDefaultEnableKcpDataChannel();
 
 struct VideoStreamDescription {
@@ -78,12 +78,11 @@ class IEngineInternalEventHandler {
 public:
     virtual ~IEngineInternalEventHandler() {
     }
-    /**
-     *@brief 当前引擎是否启用ice复用功能
-     *@param [in] muxed
-     *       当前引擎是否启用ice复用
-     *       true  :启用ice复用
-     *       false :不启用ice复用
+    /** 
+     * @brief 当前引擎是否启用ice复用功能
+     * @param [in] muxed 当前引擎是否启用ice复用  <br>
+     *       + true  :启用ice复用
+     *       + false :不启用ice复用
      */
     virtual void OnPeerConnectionICEMux(bool muxed){};
     virtual void OnSystemInfoLog(double app_cpu_usage, double total_cpu_usage, double app_memery_usage){};
@@ -92,13 +91,11 @@ public:
     virtual void OnMediaServerAddrChanged(const char* addr){};
 };
 
-/**
- *@brief 设置当前引擎的内部回调事件
- *@param [in] engine
- *       当前app应用的RTC引擎
- *@param [in] handler
- *       当前app应用的内部事件回调句柄
- *@notes  必须在join channel前调用该函数
+/** 
+ * @brief 设置当前引擎的内部回调事件
+ * @param [in] engine 当前app应用的RTC引擎
+ * @param [in] handler 当前app应用的内部事件回调句柄
+ * @notes 必须在join channel前调用该函数
  */
 BYTERTC_API void SetEngineInternalEventHandler(
       IRtcEngine *engine,

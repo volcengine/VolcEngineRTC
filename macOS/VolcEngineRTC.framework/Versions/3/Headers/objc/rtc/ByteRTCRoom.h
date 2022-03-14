@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Room Object
+ * @brief VolcEngineRTC Room Object
 */
 
 #import <CoreMedia/CMTime.h>

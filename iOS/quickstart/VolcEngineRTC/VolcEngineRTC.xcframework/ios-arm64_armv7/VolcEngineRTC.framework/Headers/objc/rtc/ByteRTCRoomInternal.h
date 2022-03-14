@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Room Internal API
+ * @brief VolcEngineRTC Room Internal API
 */
 
 @interface ByteRTCRoom ()

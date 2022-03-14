@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Video Processor Interface
+ * @brief VolcEngineRTC Video Processor Interface
 */
 
 #pragma once
@@ -9,7 +9,7 @@
 
 namespace bytertc {
 
-/**
+/**  
  * @type callback
  * @brief 远端用户位置信息回调
  */
@@ -20,7 +20,7 @@ public:
      */
     virtual ~IRemotePositionInfoObserver() = default;
 
-    /**
+    /**  
      * @hidden(iOS, Android, Windows, macOS)
      * @type callback
      * @region 音频管理
@@ -30,7 +30,7 @@ public:
      */
     virtual void OnRemoteUserPositionInfo(const RemoteUserPositionInfo* user_infos, unsigned int len) = 0;
 
-    /**
+    /**  
      * @hidden(iOS, Android, Windows, macOS)
      * @type callback
      * @region 音频管理
@@ -41,7 +41,7 @@ public:
     virtual void OnRemoteUserPositionChanged(const RemoteUserPositionInfo* user_infos, unsigned int len) = 0;
 };
 
-/**
+/**  
  * @type api
  * @region 音频管理
  * @brief 空间音频接口
@@ -49,13 +49,13 @@ public:
 class IPositionAudioRenderInterface
 {
 public:
-    /**
+    /**  
      * @hidden
      * @brief 析构函数
      */
     virtual ~IPositionAudioRenderInterface() = default;
 
-    /**
+    /**  
      * @type api
      * @region 音频管理
      * @brief 开启或关闭空间音频效果。  <br>
@@ -65,7 +65,7 @@ public:
      */
     virtual void EnableAudioSpatialRender(bool enable) = 0;
 
-    /**
+    /**  
      * @type api
      * @region 音频管理
      * @brief 更新自己的位置坐标。  <br>
@@ -76,7 +76,7 @@ public:
      */
     virtual int UpdatePosition(const Position& pos) = 0;
 
-    /**
+    /**  
      * @type api
      * @region 音频管理
      * @brief 更新自己的朝向。本地朝向的设置只影响本地听到的音频效果，不影响本地发出的音频效果。  <br>
@@ -86,7 +86,7 @@ public:
      */
     virtual int UpdateSelfOrientation(const HumanOrientation& orientation) = 0;
 
-    /**
+    /**  
      * @hidden(iOS, Android, Windows, macOS)
      * @type api
      * @region 音频管理

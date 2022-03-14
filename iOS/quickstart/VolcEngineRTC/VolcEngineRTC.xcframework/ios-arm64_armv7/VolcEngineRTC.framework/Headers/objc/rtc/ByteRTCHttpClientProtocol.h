@@ -1,50 +1,43 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine HTTP Client Protocol
+ * @brief VolcEngineRTC HTTP Client Protocol
 */
 
 #import <Foundation/Foundation.h>
 
-/**
+/** 
  * @hidden
+ * @type api
  * @region 引擎管理
  * @author weirongbin
- * @type api
  */
 @protocol ByteRTCHttpClientProtocol <NSObject>
 
 @required
 
-/**
+/** 
  * @hidden
  * @type api
  * @region 引擎管理
  * @author weirongbin
  * @brief 需要实现的 HTTP 异步 GET 接口。
- * @param url  <br>
- *        GET 请求地址。
- * @param timeout  <br>
- *        超时时间。
- * @param callback  <br>
- *        GET 请求结果回调函数。
+ * @param url GET 请求地址。
+ * @param timeout 超时时间。
+ * @param callback GET 请求结果回调函数。
  */
 - (void)getAsync:(NSString * _Nonnull)url timeoutMillisecond:(int)timeout
     withCallback:(void(^ _Nullable)(int code, NSString* _Nullable data))callback;
 
-/**
+/** 
  * @hidden
  * @type api
  * @region 引擎管理
  * @author weirongbin
  * @brief 需要实现的 HTTP 异步 POST 接口。
- * @param url  <br>
- *        POST 请求地址。
- * @param content  <br>
- *        POST 请求的内容。
- * @param timeout  <br>
- *        超时时间。
- * @param callback  <br>
- *        POST 请求结果回调函数。
+ * @param url  POST 请求地址。
+ * @param content POST 请求的内容。
+ * @param timeout 超时时间。
+ * @param callback  POST 请求结果回调函数。
  */
 - (void)postAsync:(NSString * _Nonnull)url content:(NSString * _Nullable)content timeoutMillisecond:(int)timeout
     withCallback:(void(^ _Nullable)(int code, NSString* _Nullable data))callback;

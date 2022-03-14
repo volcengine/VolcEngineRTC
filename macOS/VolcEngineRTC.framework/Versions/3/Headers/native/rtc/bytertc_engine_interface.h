@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Interface
+ * @brief VolcEngineRTC Interface
  */
 
 #pragma once
@@ -21,7 +21,7 @@
 namespace bytertc {
 
 class IRTCRoomEventHandler;
-/**
+/**  
  * @type api
  * @brief 引擎API
  *      IRtcEngine用IRtcEngineEventHandler 注册接口类方法向应用程序发送回调通知
@@ -30,14 +30,14 @@ class IRtcEngine : public IRtcRoom,
                    public IRtcEngineLite {
 public:
 
-    /**
+    /**  
      * @hidden
      * @brief 析构函数
      */
     virtual ~IRtcEngine() {
     }
 
-    /**
+    /**  
      * @hidden
      * @deprecated since 326.1, use function joinRoom with RTCRoomConfig parameter instead
      * @type api
@@ -45,7 +45,7 @@ public:
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
      *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
-     *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #OnJoinRoomResult} 回调通知，远端用户会收到 OnUserJoined{@link #OnUserJoined} 回调通知。  <br>
+     *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #OnJoinRoomResult} 回调通知，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调通知。  <br>
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。  <br>
      * @param [in] room_id 加入的房间 ID。  <br>
@@ -71,7 +71,7 @@ public:
      */
     virtual int JoinRoom(
             const char* token, const char* room_id, const UserInfo& user_info, RoomProfileType profile_type) = 0;
-    /**
+    /**  
      * @type api
      * @region 房间管理
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
@@ -100,7 +100,7 @@ public:
      *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
      *       + 本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>     
-     */
+     */     
     virtual int JoinRoom(const char* token, const char* room_id, const UserInfo& user_info, const RTCRoomConfig& room_config) = 0;
 /**
  * @hidden
@@ -120,7 +120,7 @@ private:
     void SetRtcRoomEventHandler(IRTCRoomEventHandler* room_event_handler) override {};
 };
 
-/**
+/**  
  * @type api
  * @region 引擎管理
  * @brief 创建 RTCEngine 实例。  <br>
@@ -139,7 +139,7 @@ private:
 BYTERTC_API bytertc::IRtcEngine* CreateRtcEngine(const char* app_id,
         bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
 
-/**
+/**  
  * @hidden
  * @region 引擎管理
  * @brief 创建游戏 RTCEngine 实例。
@@ -157,7 +157,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngine(const char* app_id,
 BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id,
         bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
 
-/**
+/**  
  * @hidden
  * @region 引擎管理
  * @brief 创建 RTCEngine 实例。
@@ -176,7 +176,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngineWithPtr(
         const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,
         const char* parameters);
 
-/**
+/**  
  * @hidden
  * @region 引擎管理
  * @brief 创建游戏 RTCEngine 实例。
@@ -195,7 +195,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
         const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,
         const char* parameters);
 
-/**
+/**  
  * @type api
  * @region 引擎管理
  * @brief 销毁由 CreateRtcEngine{@link #CreateRtcEngine} 创建的 RTCEngine 实例，并释放所有相关资源。
@@ -208,7 +208,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
  */
 BYTERTC_API void DestroyRtcEngine(bytertc::IRtcEngine* engine);
 
-/**
+/**  
  * @hidden
  * @region 引擎管理
  * @brief 销毁由 CreateGameRtcEngine{@link #CreateGameRtcEngine} 创建的游戏 RTCEngine 实例，并释放所有相关资源。
@@ -225,7 +225,7 @@ BYTERTC_API void DestroyRtcEngine(bytertc::IRtcEngine* engine);
  */
 BYTERTC_API void DestroyGameRtcEngine(bytertc::IRtcEngine* engine);
 
-/**
+/**  
  * @type api
  * @region 错误码
  * @brief 获取错误码的描述
@@ -235,7 +235,7 @@ BYTERTC_API void DestroyGameRtcEngine(bytertc::IRtcEngine* engine);
  */
 BYTERTC_API const char* GetErrorDescription(int code);
 
-/**
+/**  
  * @type api
  * @region 引擎管理
  * @brief 获取当前 SDK 版本信息。

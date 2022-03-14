@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Advance API
+ * @brief VolcEngineRTC Advance API
 */
 
 #pragma once
@@ -26,7 +26,7 @@
 
 namespace bytertc {
 
-/**
+/**  
  * @hidden
  * @type
  * @brief RTC Audio Dump 节点配置。
@@ -144,23 +144,23 @@ struct RTCAudioSampleConfigure {
     }
 };
 
-/**
+/**  
  * @hidden
  * @type keytype
  * @brief SDK 的服务器环境。
  */
 enum Env {
-    /**
+    /**  
      * @hidden
      * @brief 线上环境。
      */
     kEnvProduct = 0,
-    /**
+    /**  
      * @hidden
      * @brief BOE 环境。
      */
     kEnvBOE,
-    /**
+    /**  
      * @hidden
      * @brief 测试环境。
      */
@@ -168,7 +168,7 @@ enum Env {
 };
 
 attribute_deprecated
-/**
+/**  
  * @hidden
  * @deprecated
  * @type api
@@ -185,14 +185,14 @@ attribute_deprecated
 BYTERTC_API int SetEnv(Env env);
 
 attribute_deprecated
-/**
+/**  
  * @hidden
  * @deprecated
  * @brief 设置设备ID
  * @param [in] device_id app根据当前软硬件环境生成的唯一设备id
  */
 BYTERTC_API void SetDeviceId(const char* device_id);
-/**
+/**  
  * @hidden
  * @brief 设置应用的状态
  * @param [in] engine
@@ -202,7 +202,7 @@ BYTERTC_API void SetDeviceId(const char* device_id);
 BYTERTC_API void SetAppState(IRtcEngine* engine, const char* appState);
 
 attribute_deprecated
-/**
+/**  
  * @hidden
  * @deprecated
  * @type api
@@ -213,7 +213,7 @@ attribute_deprecated
 BYTERTC_API int SetParameters(const char* parameters);
 
 #ifdef __ANDROID__
-/**
+/** 
  * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 视频管理
@@ -230,7 +230,7 @@ BYTERTC_API int SetParameters(const char* parameters);
  */
 BYTERTC_API bool SetHardWareEncodeContext(jobject j_egl_context);
 
-/**
+/**  
  * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 视频管理
@@ -244,7 +244,7 @@ BYTERTC_API bool SetHardWareEncodeContext(jobject j_egl_context);
  */
 BYTERTC_API bool SetHardWareEncodeContext();
 
-/**
+/**  
  * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 视频管理
@@ -252,7 +252,7 @@ BYTERTC_API bool SetHardWareEncodeContext();
  */
 BYTERTC_API void ClearHardWareEncodeContext();
 
-/**
+/**  
  * @hidden(iOS,macOS,Windows,Linux)
  * @type api
  * @region 引擎管理
@@ -264,7 +264,7 @@ BYTERTC_API void ClearHardWareEncodeContext();
 BYTERTC_API void SetApplicationContext(jobject j_application_context);
 #endif
 
-/**
+/**  
  * @hidden
  * @type api
  * @region 视频管理
@@ -272,55 +272,55 @@ BYTERTC_API void SetApplicationContext(jobject j_application_context);
  * @brief 硬件加速设备类型
  */
 enum HWDeviceType {
-    /**
+    /**  
      * @brief 未知的设备类型
      */
     kHWDeviceTypeNone,
 
-    /**
+    /**  
      * @brief direct3d 11 视频加速设备
      */
     kHWDeviceTypeD3D11,
 
-    /**
+    /**  
      * @brief cuda 硬件加速设备
      * @notes cuda 是 nvidia 平台下硬件加速设备
      */
     kHWDeviceTypeCuda,
 
-    /**
+    /**  
      * @brief intel 平台下 qsv 加速设备
      */
     kHWDeviceTypeQsv,
 
-    /**
+    /**  
      * @brief windows 平台 dx 硬件加速设备
      */
     kHWDeviceTypeDxva2,
 
-    /**
+    /**  
      * @brief Android 平台下硬件加速设备 mediacodec
      */
     kHWDeviceTypeMediaCodec,
 
-    /**
+    /**  
      * @brief IOS、MACOS 平台下硬件加速设备 VideoToolbox
      */
     kHWDeviceTypeVideoToolbox,
-     /**
+     /**  
      * @hidden
      * @brief android、linux 平台下硬件加速设备 egl context
      */
     kHWDeviceTypeEglContext,
 
-    /**
+    /**  
      * @hidden
      * @brief linux、windows 平台下硬件加速设备 va context
      */
     kHWDeviceTypeVaapi,
 };
 
-/**
+/**  
  * @hidden
  * @type keytype
  * @brief 硬编码设备 context
@@ -331,41 +331,41 @@ enum HWDeviceContextKey {
      * @brief cuda context
      */
     kHWDeviceContextKeyCudaContext,
-    /**
+    /**  
      * @hidden
      * @brief derict3D11 设备
      */
     kHWDeviceContextKeyD3D11Device,
-    /**
+    /**  
      * @hidden
      * @brief derict3D11 设备 context
      */
     kHWDeviceContextKeyD3D11DeviceContext,
-    /**
+    /**  
      * @hidden
      * @brief egl 设备 context
      */
     kHWDeviceContextKeyEglContext,
-    /**
+    /**  
      * @hidden
      * @brief vadisplay 设备 context
      */
     kHWDeviceContextKeyVADisplay,
 };
 
-/**
+/**  
  * @hidden
  * @type keytype
  * @brief 硬件加速设备 context
  */
 class IHWDeviceContext {
 public:
-    /**
+    /**  
      * @brief 获取硬件加速设备 context 类型
      * @return 硬件加速设备类型，详见 HWDeviceType{@link #HWDeviceType}
      */
     virtual HWDeviceType device_type() const = 0;
-    /**
+    /**  
      * @brief 设置属性
      * @param [in] key
      *        硬件加速设备 context 类型，详见 ByteRTCHWDeviceContextKey:{@link #ByteRTCHWDeviceContextKey}
@@ -373,33 +373,33 @@ public:
      *        指向硬件加速设备 context 地址的指针
      */
     virtual void set_property(HWDeviceContextKey key, void* value) = 0;
-    /**
+    /**  
      * @brief 获取属性
      * @param [in] key
      *        硬件加速设备 context 类型，详见 ByteRTCHWDeviceContextKey:{@link #ByteRTCHWDeviceContextKey}
      * @return 返回硬件加速设备 context 地址的指针
      */
     virtual void* get_property(HWDeviceContextKey key) = 0;
-    /**
+    /**  
      * @brief 内部 context 是否由该实例拥有
      * @return  <br>
      *        + true: 硬件设备 context 被实例对象拥有  <br>
      *        + false: 硬件设备上 context 文不被实例对象拥有  <br>
      */
     virtual bool own_context() const = 0;
-    /**
+    /**  
      * @brief 设置 context 是否被实例对象拥有
      * @param  [in] own_context  <br>
      *       + true: context 被实例对象拥有  <br>
      *       + false: context 不被实例对象拥有  <br>
      */
     virtual void set_own_context(bool own_context) = 0;
-    /**
+    /**  
      * @brief 转移硬件设备 context，
      * @return 指向硬件设备 context 的指针
      */
     virtual IHWDeviceContext* move_context() = 0;
-    /**
+    /**  
      * @brief 释放实例对象
      */
     virtual void release() = 0;
@@ -411,18 +411,18 @@ public:
  */
 BYTERTC_API IHWDeviceContext* CreateHwDeviceContext(HWDeviceType device_type);
 
-/**
+/**  
  * @hidden
  * @brief 设置视频源的设备上下文信息
  * @param [in] engine
- *       要设置的引擎，详见：{@link #IRtcEngine}
+ *       要设置的引擎，详见：IRtcEngine{@link #IRtcEngine}
  * @param [in] hw_context
- *        设置视频帧，详见：{@link #IHWDeviceContext}
+ *        设置视频帧，详见：IHWDeviceContext{@link #IHWDeviceContext}
  * @notes 用于硬件编码传入 GPU 内存时使用
  */
 BYTERTC_API void SetVideoSourceHWDeviceContext(IRtcEngine* engine, IHWDeviceContext* hw_context);
 
-/**
+/**  
  * @type api
  * @region 视频管理
  * @brief 创建 IVideoFrame
@@ -430,7 +430,7 @@ BYTERTC_API void SetVideoSourceHWDeviceContext(IRtcEngine* engine, IHWDeviceCont
  */
 BYTERTC_API IVideoFrame* BuildVideoFrame(const VideoFrameBuilder& builder);
 
-/**
+/**  
  * @type api
  * @region 视频管理
  * @brief 发送外部源视频数据
@@ -444,22 +444,22 @@ BYTERTC_API IVideoFrame* BuildVideoFrame(const VideoFrameBuilder& builder);
  */
 BYTERTC_API bool PushExternalVideoFrame(IRtcEngine* engine, const IVideoFrame* frame);
 
-/**
+/**  
  * @hidden
  * @type keytype
  * @region 音频管理
  * @brief 音频编码类型
  */
 enum AudioCodecType {
-    /**
+    /**  
      * @brief 未知编码类型
      */
     kAudioCodecTypeNone = 0,
-    /**
+    /**  
      * @brief Opus 编码类型
      */
     kAudioCodecTypeOpus,
-    /**
+    /**  
      * @brief AAC 编码类型
      */
     kAudioCodecTypeAac,
@@ -470,7 +470,7 @@ enum AudioCodecType {
  */
 BYTERTC_API IAudioFrame* BuildAudioFrame(const AudioFrameBuilder& builder);
 
-/**
+/**  
  * @hidden
  * @type keytype
  * @brief 音频帧信息
@@ -563,7 +563,7 @@ BYTERTC_API IEncodedAudioFrame* CreateEncodedAudioFrame();
  */
 BYTERTC_API IEncodedVideoFrame* BuildEncodedVideoFrame(const EncodedVideoFrameBuilder& builder);
 
-/**
+/**  
  * @hidden
  * @type callback
  * @region 音频数据回调
@@ -571,14 +571,14 @@ BYTERTC_API IEncodedVideoFrame* BuildEncodedVideoFrame(const EncodedVideoFrameBu
  */
 class ILocalEncodedAudioFrameObserver  {
 public:
-    /**
+    /**  
      * @hidden
      * @brief 析构函数
      */
     virtual ~ILocalEncodedAudioFrameObserver() {
     }
 
-    /**
+    /**  
      * @hidden
      * @type callback
      * @region 音频数据回调
@@ -589,7 +589,7 @@ public:
     virtual void OnLocalEncodedAudioFrame(StreamIndex type, const IEncodedAudioFrame& audio_stream) = 0;
 };
 
-/**
+/**  
  * @hidden
  * @type callback
  * @region 音频数据回调
@@ -597,14 +597,14 @@ public:
  */
 class IRemoteEncodedAudioFrameObserver  {
 public:
-    /**
+    /**  
      * @hidden
      * @brief 析构函数
      */
     virtual ~IRemoteEncodedAudioFrameObserver () {
     }
 
-    /**
+    /**  
      * @hidden
      * @type callback
      * @region 音频数据回调
@@ -618,7 +618,7 @@ public:
 };
 
 
-/**
+/**  
  * @hidden
  * @type api
  * @region 音频数据回调
@@ -632,7 +632,7 @@ public:
  */
 BYTERTC_API void RegisterRemoteEncodedAudioFrameObserver(IRtcEngine* engine, IRemoteEncodedAudioFrameObserver* observer);
 
-/**
+/**  
  * @hidden
  * @type api
  * @region 音频数据回调
@@ -681,7 +681,7 @@ struct MediaIoOption {
  */
 BYTERTC_API void SetupEngineMediaIo(IRtcEngine* engine, const MediaIoOption& option);
 
-/**
+/**  
  * @type keytype
  * @region 视频数据回调
  * @brief metadata 数据大小最大值
@@ -689,14 +689,14 @@ BYTERTC_API void SetupEngineMediaIo(IRtcEngine* engine, const MediaIoOption& opt
 const int MAX_METADATA_LENGTH = 1024;
 
 
-/**
+/**  
  * @hidden
  * @type callback
  * @brief 音频设备事件回调
  */
 class IAudioDeviceEventHandler {
 public:
-    /**
+    /**  
      * @hidden
      * @type callback
      * @brief 获得麦克风音量
@@ -705,7 +705,7 @@ public:
      */
     virtual void OnRecordingAudioVolumeIndication(int volume) = 0;
 
-    /**
+    /**  
      * @hidden
      * @type callback
      * @brief 获得Loopback音量
@@ -721,14 +721,14 @@ public:
  */
 class IAudioDeviceManagerEx : public IAudioDeviceManager {
 public:
-    /**
+    /**  
      * @hidden
      * @region 音频设备管理
      * @brief 构造函数
      */
     IAudioDeviceManagerEx() = default;
 
-    /**
+    /**  
      * @hidden
      * @type api
      * @region 音频设备管理
@@ -737,7 +737,7 @@ public:
      */
     virtual void Release() = 0;
 
-    /**
+    /**  
      * @hidden
      * @type api
      * @region 音频设备管理
@@ -750,14 +750,14 @@ public:
     virtual void SetEnableSpeakerphone(bool enable) = 0;
 
 protected:
-    /**
+    /**  
      * @hidden
      * @brief 析构函数
      */
     virtual ~IAudioDeviceManagerEx() = default;
 };
 
-/**
+/**  
  * @hidden
  * @type api
  * @brief 音频设备管理接口创建，该接口不依赖引擎，主要用于无引擎下的音频设备管理

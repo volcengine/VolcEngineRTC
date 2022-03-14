@@ -384,7 +384,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  * @param roomId 房间 ID
  * @return 方法调用结果  <br>
  *         + 0：方法调用成功  <br>
- *         + <0：方法调用失败  <br>
+ *         + < 0：方法调用失败  <br>
  * @notes 初次调用本方法发送本地语音时，会开启本地音频采集功能。
  *        之后再次调用本方法时，仅控制本地音频流的发送状态，不会影响本地音频采集状态。
  */
@@ -502,7 +502,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  * @param audioFrame 音频数据帧，详见 GameRTCAudioFrame{@link #GameRTCAudioFrame}
  * @return  方法调用结果  <br>
  *          + 0: 设置成功  <br>
- *          + <0: 设置失败  <br>
+ *          + < 0: 设置失败  <br>
  * @notes  <br>
  *       + 推送外部音频数据前，必须开启自定义采集。  <br>
  *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 enableExternalAudioDevice:playbackFormat:{@link #GameRTCEngineKit#enableExternalAudioDevice:playbackFormat:} 中设置的 sampleRate 和 channel 保持一致。  <br>
@@ -520,7 +520,7 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
  * @param audioFrame 音频数据帧，详见 GameRTCAudioFrame{@link #GameRTCAudioFrame}
  * @return  方法调用结果  <br>
  *        + 0: 设置成功  <br>
- *        + <0: 设置失败  <br>
+ *        + < 0: 设置失败  <br>
  * @notes  <br>
  *       + 拉取外部音频数据前，必须开启自定义采集。  <br>
  *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 enableExternalAudioDevice:playbackFormat:{@link #GameRTCEngineKit#enableExternalAudioDevice:playbackFormat:} 中设置的 sampleRate 和 channel 保持一致。  <br>

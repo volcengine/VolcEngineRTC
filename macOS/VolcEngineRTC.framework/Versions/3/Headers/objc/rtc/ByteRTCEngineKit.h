@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine
+ * @brief VolcEngineRTC
 */
 
 #import <CoreMedia/CMTime.h>
@@ -688,7 +688,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
  * @region 加密
  * @author wangjunlin.3182
  * @brief 自定义加密的方法接口，通过继承并实现该方法，可以扩展传输过程中的加密方法，
- *      详见 setCustomizeEncryptHandler:{@link #setCustomizeEncryptHandler:}
+ *      详见 setCustomizeEncryptHandler:{@link #ByteRTCEngineKit#setCustomizeEncryptHandler:}
  * @param rawData 原始音视频桢数据
  * @return 加密后的数据，可以为空，表示丢弃该桢
  * @notes 返回的数据大小应控制在原始数据的90%~120%范围以内，不然将被丢弃
@@ -701,7 +701,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
  * @region 加密
  * @author wangjunlin.3182
  * @brief 自定义解密的方法接口，通过继承并实现该方法，可以扩展传输过程中的解密方法，
- *      详见 setCustomizeEncryptHandler:{@link #setCustomizeEncryptHandler:}
+ *      详见 setCustomizeEncryptHandler:{@link #ByteRTCEngineKit#setCustomizeEncryptHandler:}
  * @param rawData 原始音视频桢数据
  * @return 解密后的数据，可以为空，表示丢弃该桢
  * @notes 返回的数据大小应控制在原始数据的90%~120%范围以内，不然将被丢弃
@@ -818,7 +818,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 引擎管理
  * @author chenweiming.push
  * @brief 获取SDK内各种错误码、警告码的描述文字
- * @param code 通过 rtcEngine:onWarning:{@link #rtcEngine:onWarning:} 和
+ * @param code 通过 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:} 和
  *      rtcEngine:onError:{@link #rtcEngine:onError:} 回调获得的值，
  *      具体可以参考 ByteRTCErrorCode{@link #ByteRTCErrorCode} 和 ByteRTCWarningCode{@link #ByteRTCWarningCode}
  * @return NSString* 描述文字
@@ -869,7 +869,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 该方法设置本地视频显示信息。
  * @param local 视频属性
  * @return   0：方法调用成功；
- *             <0： 方法调用失败
+ *             < 0： 方法调用失败
  * @notes 应用程序通过调用此接口绑定本地视频流的显示视窗(view)，并设置视频显示模式。在应用程序开发中，通常在初始化后调用该方法进行本地视频设置，然后再加入频道。
  *       退出频道后，绑定仍然有效，如果需要解除绑定，可以指定空(NULL)View调用setupLocalVideo。
  */
@@ -883,7 +883,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 设置本地视频镜像.该方法用于开启或关闭本地视频镜像，默认值为关闭（ByteRTCVideoMirrorModeDisabled）。
  * @param mode 视频镜像模式，类型为枚举类型 ByteRTCMirrorMode{@link #ByteRTCMirrorMode}
  * @return 0：方法调用成功；
- *           <0： 方法调用失败
+ *           < 0： 方法调用失败
  */
 - (int)setLocalVideoMirrorMode:(ByteRTCMirrorMode) mode;
 
@@ -906,7 +906,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 该方法绑定远程用户和显示视图，即设定 uid 指定的用户用哪个视图显示。
  * @param remote 视频属性
  * @return   0：方法调用成功；
- *          <0： 方法调用失败
+ *          < 0： 方法调用失败
  * @notes 调用该接口时需要指定远程视频的 uid，一般可以在进频道前提前设置好。
  *       如果应用程序不能事先知道对方的uid，可以在APP收到onUserJoined事件时设置。如果启用了视频录制功能，视频录制服务会做为一个哑客户端加入频道，因此其他客户端也会收到它的onUserJoined事件，
  *       APP不应给它绑定视图（因为它不会发送视频流），如果APP不能识别哑客户端，可以在onFirstRemoteVideoDecoded事件时再绑定视图。解除某个用户的绑定视图可以把view设置为空。退出频道后，SDK会把远程用户的绑定关系清除掉。
@@ -994,7 +994,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 该方法设置SimulCast发布的一组视频属性，每个属性对应一套视频参数，如分辨率、帧率、码率等。
  * @param profiles 视频属性
  * @return   0：方法调用成功；
- *             <0： 方法调用失败
+ *             < 0： 方法调用失败
  * @notes 给定的属性列表各项分辨率宽高比应保持一致，并按照从大到小的顺序排列
 */
 - (int) setVideoProfiles:(NSArray<ByteRTCVideoSolution *> * _Nonnull)profiles;
@@ -1031,7 +1031,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *         rtcEngine:onUserLeave:reason:{@link #rtcEngine:onUserleave:reason:} 回调通知。
  * @param leaveRoomBlock 离开房间后的执行的块，块参数为加入房间到离开房间过程间的统计信息，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats}
  * @return  0: 方法调用成功
- *          <0: 方法调用失败
+ *          < 0: 方法调用失败
  */
 - (int)leaveRoom:(void (^_Nullable)(ByteRTCRoomStats *_Nonnull stat))leaveRoomBlock;
 
@@ -1042,7 +1042,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author panjian.fishing
  * @brief 该方法用于打开视频模块。
  * @return   0：方法调用成功；
- *             <0： 方法调用失败
+ *             < 0： 方法调用失败
  * @notes 可以在加入频道前或者通话中调用，在加入频道前调用，则自动开启视频模式，在通话中调用则由音频模式切换为视频模式。
  *       调用该方法后，房间中的其他用户会收到didVideoEnabled的回调。调用 disableVideo 方法可关闭视频模式。
  */
@@ -1055,7 +1055,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author panjian.fishing
  * @brief 该方法用于关闭视频模块。
  * @return   0：方法调用成功；
- *             <0： 方法调用失败
+ *             < 0： 方法调用失败
  * @notes 可以在加入频道前或者通话中调用，在加入频道前调用，则自动开启纯音频模式，在通话中不可再切换为视频模式。
  *       在通话中调用则由视频模式切换为纯音频频模式。
  *       只能进行语音通话，不能显示、发送自己的视频，也不能接收、显示别人的视频。
@@ -1129,7 +1129,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * kErrorCodeInvalidToken{@link #kErrorCodeInvalidToken} 。 此时需要重新获取 Token ，然后调用此方法更新 Token。
  * @param token 更新的 Token
  * @return  0: 方法调用成功
- *          <0: 方法调用失败
+ *          < 0: 方法调用失败
  * @notes Token过期时，如果用户已经加入房间成功，则不会受到影响，Token 过期的错误会在用户下一次用过期的 Token
  * 加入房间或由于本地网络状况不佳导致断网重连入房间时通知给用户。
  */
@@ -1174,7 +1174,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 停止/开启本地视频流发送。调用该方法后，房间中的其他用户会收到didVideoMuted的回调。
  * @param mute YES:开启本地视频发送；NO:关闭本地视频发送
  * @return   0：方法调用成功；
- *            <0： 方法调用失败
+ *            < 0： 方法调用失败
  * @notes 调用该方法后，房间中的其他用户会收到didVideoMuted的回调。
 */
 - (int)muteLocalVideoStream:(BOOL)mute;
@@ -1186,7 +1186,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 停止/开启接收所有远端用户的视频流。
  * @param mute YES:停止接收远端视频流；NO:开启接收远端视频流
  * @return   0：方法调用成功；
- *            <0： 方法调用失败
+ *            < 0： 方法调用失败
 */
 - (int)muteAllRemoteVideoStreams:(BOOL)mute;
 
@@ -1198,7 +1198,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @param uid 指定用户的用户Id
  * @param mute YES:停止指定的远端视频流；NO:开启指定的远端视频流
  * @return   0：方法调用成功；
- *            <0： 方法调用失败
+ *            < 0： 方法调用失败
 */
 - (int)muteRemoteVideoStream:(NSString * _Nonnull)uid
                         mute:(BOOL)mute;
@@ -1257,7 +1257,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        + 0: 成功；  <br>
  *        + -1: 失败；  <br>
  * @notes  <br>
- *       + 本函数不可和 publishScreen{@link #publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
+ *       + 本函数不可和 publishScreen{@link #ByteRTCEngineKit#publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
  */
 - (int)startScreenCaptureByWindowId:(intptr_t)windowId regionRect:(CGRect)regionRect captureParameters:(ByteRTCScreenCaptureParameters *_Nonnull)captureParameters;
 
@@ -1277,7 +1277,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        + 0: 成功；  <br>
  *        + -1: 失败；  <br>
  * @notes  <br>
- *       + 本函数不可和 publishScreen{@link #publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
+ *       + 本函数不可和 publishScreen{@link #ByteRTCEngineKit#publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
  */
 - (int)startScreenCaptureByScreenRect:(CGRect)screenRect regionRect:(CGRect)regionRect captureParameters:(ByteRTCScreenCaptureParameters *_Nonnull)captureParameters;
 
@@ -1297,7 +1297,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        + -1: 失败；  <br>
  * @notes 共享一个窗口或该窗口的部分区域。需要在该方法中指定想要共享的窗口 id 。
  * @notes  <br>
- *       + 本函数不可和 publishScreen{@link #publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
+ *       + 本函数不可和 publishScreen{@link #ByteRTCEngineKit#publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
  */
 - (int)startScreenCaptureByDisplayId:(intptr_t)displayId regionRect:(CGRect)regionRect captureParameters:(ByteRTCScreenCaptureParameters *_Nonnull)captureParameters;
 
@@ -1335,7 +1335,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 停止屏幕或者窗口共享。
  * @notes  <br>
  *       + 本函数必须在 startScreenCaptureByScreenRect{@link #startScreenCaptureByScreenRect} 、 startScreenCaptureByDisplayId{@link #startScreenCaptureByDisplayId} 或者 startScreenCaptureByWindowId{@link #startScreenCaptureByWindowId} 之后调用  <br>
- *       + 本函数不可和 publishScreen{@link #publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
+ *       + 本函数不可和 publishScreen{@link #ByteRTCEngineKit#publishScreen} 、unpublishScreen{@link #unpublishScreen} 混用。  <br>
  */
 - (void)stopScreenCapture;
 
@@ -1406,7 +1406,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *           此时用户可以根据需要选择性调用此方法订阅新的音视频流，或者保存流信息在将来需要时再调用此方法订阅该音视频流。
  *         2.此方法仅支持订阅当前房间中的远端音视频流。如果指定的流在当前房间内不曾存在，则 SDK 不会订阅。
  *         3.此方法仅支持在开启手动订阅（关闭自动订阅）功能时调用，用户可通过调用 enableAutoSubscribe:{@link #enableAutoSubscribe:} 方法开启手动订阅功能。
- *         4.如果用户在未开启手动订阅（开启自动订阅）功能时调用此方法，SDK 不会订阅指定音视频流，同时会通过 rtcEngine:onWarning:{@link #rtcEngine:onWarning:}
+ *         4.如果用户在未开启手动订阅（开启自动订阅）功能时调用此方法，SDK 不会订阅指定音视频流，同时会通过 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:}
  * 回调通知用户订阅失败，回调警告码 ByteRTCWarningCode{@link #ByteRTCWarningCode} 。
  */
 - (void)subscribeStream:(NSString *_Nonnull)userId info:(ByteRTCSubscribeConfig *_Nonnull)info;
@@ -1524,7 +1524,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author wangjunzheng
  * @brief 调节音乐文件的文件音量。
  * @param volume
- *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
+ *        音乐文件播放音量范围为 [0,400]。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
@@ -1590,7 +1590,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author wangjunzheng
  * @brief 调节音乐文件的本地播放音量
  * @param  volume
- *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
+ *        音乐文件播放音量范围为 [0,400]。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
@@ -1607,7 +1607,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author wangjunzheng
  * @brief 调节音乐文件的远端播放音量
  * @param volume
- *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
+ *        音乐文件播放音量范围为 [0,400]。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
@@ -1623,7 +1623,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 调节指定音效文件的文件音量
  * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性。确保此处的 soundId 与  playEffect:filePath:loopback:cycle:withVolume:{@link #playEffect:filePath:loopback:cycle:withVolume:} 设置的 soundId 相同。
- * @param volume 音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
+ * @param volume 音乐文件播放音量范围为 [0,400]。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
@@ -1641,7 +1641,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @param soundId
  *        音效ID，应用调用者维护，请保证唯一性。确保此处的 soundId 与  playEffect:filePath:loopback:cycle:withVolume:{@link #playEffect:filePath:loopback:cycle:withVolume:} 设置的 soundId 相同。
  * @return
- *        > 0: 成功，文件音量，音量范围为 0~400。
+ *        > 0: 成功，文件音量，音量范围为 [0,400]。
  *        < 0: 失败
  * @notes 请在房间内调用该方法。
  */
@@ -1662,7 +1662,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        > 0：循环的次数；
  *         -1：无限循环，直至调用 stopEffect{@link #stopEffect:} 或 stopAllEffects{@link #stopAllEffects} 后停止。
  * @param volume
- *        音效文件播放音量范围为 0~400。默认 100 为原始文件音量
+ *        音效文件播放音量范围为 [0,400]。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
@@ -1762,7 +1762,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author wangjunzheng
  * @brief 调节所有音效文件的文件音量
  * @param  volume
- *        音乐文件播放音量范围为 0~400。默认 100 为原始文件音量
+ *        音乐文件播放音量范围为 [0,400]。默认 100 为原始文件音量
  * @return
  *        0: 成功
  *      < 0: 失败
@@ -1841,8 +1841,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *         1.参数 roomId 没有默认值，请确保对该参数正确赋值。
  *         2.请勿给参数 roomId 赋空字符串""或者空指针，否则将无法正确的创建房间对象。
  *         3.用户可以多次调用此方法创建多个 ByteRTCRoom{@link #ByteRTCRoom} 对象，再分别调用各 ByteRTCRoom{@link #ByteRTCRoom} 对象的
- *           joinRoomByToken{@link #joinRoomByToken} 方法，实现同时加入多个房间。
- *         4.加入多个房间后，用户可以同时订阅各房间的音视频流，但是目前仅支持同一时间在一个房间内发布一路音视频流。
+ *           joinRoomByToken{@link #joinRoomByToken} 方法，实现同时加入多个房间。<br>
+ *         4.加入多个房间后，用户可以同时订阅各房间的音视频流，同一时间仅能在一个房间内发布音视频流。
  */
 - (ByteRTCRoom * _Nullable)createRtcRoom:(NSString * _Nonnull)roomId;
 
@@ -1874,7 +1874,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 设置弱网条件下发布的音视频流回退选项
  * @param option 详见枚举类型 ByteRTCPublishFallbackOption{@link #ByteRTCPublishFallbackOption}
  * @return 0：方法调用成功，
- *           <0：方法调用失败
+ *           < 0：方法调用失败
  */
 - (int)setPublishFallbackOption:(ByteRTCPublishFallbackOption)option;
 
@@ -1885,7 +1885,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 设置订阅的音视频流回退选项
  * @param option 详见枚举类型 ByteRTCSubscribeFallbackOption{@link #ByteRTCSubscribeFallbackOption}
  * @return 0：方法调用成功，
- *           <0：方法调用失败
+ *           < 0：方法调用失败
  */
 - (int)setSubscribeFallbackOption:(ByteRTCSubscribeFallbackOption)option;
 
@@ -1952,7 +1952,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @param encrypt_type 加密类型，详见 ByteRTCEncryptType{@link #ByteRTCEncryptType}
  * @param key 加密密钥，长度限制为36位，超出部分将会被截断
  * @notes
- *      1. 该方法与 setCustomizeEncryptHandler:{@link #setCustomizeEncryptHandler:} 为互斥关系,
+ *      1. 该方法与 setCustomizeEncryptHandler:{@link #ByteRTCEngineKit#setCustomizeEncryptHandler:} 为互斥关系,
  *      即按照调用顺序，最后一个调用的方法为最终生效的版本。
  *      2. 该方法必须在调用  joinRoomByToken: roomId: userInfo:roomProfile:{@link # joinRoomByToken: roomId: userInfo:roomProfile:}
  * 之前调用，可重复调用，以最后调用的参数作为生效参数
@@ -1987,7 +1987,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @param rendingInfo 渲染功能相关参数。 <br>
  * @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br>
+ *         + < 0: 方法调用失败  <br>
 */
 - (int)enableCloudRending:(NSString *_Nonnull)rendingInfo;
 
@@ -1999,7 +1999,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @param rendingInfo 渲染功能相关参数。 <br>
  * @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br>
+ *         + < 0: 方法调用失败  <br>
 */
 - (int)updateCloudRending:(NSString *_Nonnull)rendingInfo;
 
@@ -2010,7 +2010,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @brief 停止云端渲染。 <br>
  * @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br>
+ *         + < 0: 方法调用失败  <br>
 */
 - (int)disableCloudRending;
 
@@ -2029,7 +2029,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 音频管理
  * @author wangjunzheng
  * @brief 调节录音音量。
- * @param volume 录音音量，可在 0~400 范围内进行调节  <br>
+ * @param volume 录音音量，可在 [0,400] 范围内进行调节  <br>
  *              + 0：静音  <br>
  *              + 100：原始音量  <br>
  *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
@@ -2042,7 +2042,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @region 音频管理
  * @author wangjunzheng
  * @brief 调节本地播放的所有远端用户音量
- * @param volume 播放音量，可在 0~400 范围内进行调节  <br>
+ * @param volume 播放音量，可在 [0,400] 范围内进行调节  <br>
  *              + 0：静音  <br>
  *              + 100：原始音量  <br>
  *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)
@@ -2058,13 +2058,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  * @author wangjunzheng
  * @brief 调节远端用户音量，默认值为100
  * @param uid 远端用户ID
- * @param volume  播放音量，可在 0~400 范围内进行调节  <br>
+ * @param volume  播放音量，可在 [0,400] 范围内进行调节  <br>
  *              + 0: 静音  <br>
  *              + 100: 原始音量  <br>
  *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
  * @return  方法调用结果  <br>
  *        + 0：方法调用成功  <br>
- *        + <0：方法调用失败  <br>
+ *        + < 0：方法调用失败  <br>
  */
 - (void)setRemoteAudioPlaybackVolume:(NSString* _Nonnull)uid volume:(int)volume;
 

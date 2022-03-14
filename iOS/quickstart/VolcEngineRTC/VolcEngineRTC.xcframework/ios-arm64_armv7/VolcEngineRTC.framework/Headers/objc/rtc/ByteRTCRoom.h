@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Room
+ * @brief VolcEngineRTC Room
 */
 
 #import <CoreMedia/CMTime.h>
@@ -9,14 +9,14 @@
 
 @class ByteRTCRoom;
 
-/**
+/** 
  * @type callback
  * @brief 房间事件回调接口
  */
 @protocol ByteRTCRoomDelegate <NSObject>
 @optional
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author shenpengliang
@@ -26,35 +26,35 @@
   * @param uid 用户 ID。
   * @param errorCode 用户加入房间回调的状态码。参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 以及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。  <br>
   *        + 0: 成功  <br>
-  *        + <0: 失败
+  *        + < 0: 失败
   * @param joinType 加入房间的类型。  <br>
   *        + 0: 首次加入房间。用户通过调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:}，加入成功。  <br>
   *        + 1: 重新加入房间。用户网络较差，失去与服务器的连接，重连加入成功。
   * @param elapsed 重连耗时。本地用户从连接断开到重连成功所经历的时间间隔，单位为 ms 。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onJoinRoomResult:(NSString *_Nonnull)roomId
              withUid:(nonnull NSString *)uid
            errorCode:(NSInteger)errorCode
             joinType:(NSInteger)joinType
              elapsed:(NSInteger)elapsed;
 
-/**
+/** 
  * @hidden
  * @type callback
  * @region 多房间
  * @author shenpengliang
  * @brief 离开房间成功回调。  <br>
- *        用户调用 leaveRoom{@link #leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并释放所有通话相关的音视频资源。SDK 完成所有的资源释放后通过此回调通知用户。  <br>
+ *        用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并释放所有通话相关的音视频资源。SDK 完成所有的资源释放后通过此回调通知用户。  <br>
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
  * @param stats 本次通话的统计数据，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats} 。  <br>
  * @notes  <br>
- *       + 用户调用 leaveRoom{@link #leaveRoom} 方法离开房间后，如果立即调用 destroyEngine{@link #destroyEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 方法离开房间后，如果立即调用 destroyEngine{@link #destroyEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
  *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLeaveRoomWithStats:(ByteRTCRoomStats *_Nonnull)stats;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author shenpengliang
@@ -63,9 +63,9 @@
   * @param rtcRoom ByteRTCRoom 对象。
   * @param warningCode 警告码，详见枚举类型 ByteRTCWarningCode{@link #ByteRTCWarningCode} 。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomWarning:(ByteRTCWarningCode)warningCode;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomWarning:(ByteRTCWarningCode)warningCode;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -76,7 +76,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode;
 
- /**
+ /** 
   * @hidden
   * @deprecated since 329.1, use onLocalAudioPropertiesReport/onRemoteAudioPropertiesReport instead
   * @type callback
@@ -92,11 +92,11 @@
   *        + 对于本地用户：只要进行本地音频采集，回调内就会包含本地音频流的音量信息。<br>
   *        + 对于远端用户：本地必须订阅某远端用户的音频流，回调内才会包含其发送的音频流的音量信息。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onAudioVolumeIndication:(NSArray<ByteRTCAudioVolumeInfo *> *_Nonnull)speakers
                               totalRemoteVolume:(NSInteger)totalRemoteVolume;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author liuzhiqiang.avcoder
@@ -107,7 +107,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomStats:(ByteRTCRoomStats *_Nonnull)stats;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author liuzhiqiang.avcoder
@@ -119,7 +119,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLocalStreamStats:(ByteRTCLocalStreamStats *_Nonnull)stats;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author liuzhiqiang.avcoder
@@ -130,7 +130,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRemoteStreamStats:(ByteRTCRemoteStreamStats *_Nonnull)stats;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -145,7 +145,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserJoined:(ByteRTCUserInfo *_Nonnull)userInfo elapsed:(NSInteger)elapsed;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -160,7 +160,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
 
-/**
+/** 
  * @hidden
  * @type callback
  * @region 多房间
@@ -171,10 +171,9 @@
  * @param uid 改变接收状态的用户 ID
  * @param muteState 接收状态，详见：ByteRTCMuteState{@link #ByteRTCMuteState}
  */
-
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onMuteAllRemoteAudio:(NSString *_Nonnull)uid muteState:(ByteRTCMuteState)muteState;
 
-/**
+/** 
  * @hidden
  * @type callback
  * @region 多房间
@@ -183,14 +182,13 @@
  * @param uid 暂停/恢复接收视频流的用户 ID。
  * @param muteState 暂停/恢复接收视频流。参看 ByteRTCMuteState{@link #ByteRTCMuteState}。
  */
-
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onMuteAllRemoteVideo:(NSString *_Nonnull)uid withMuteState:(ByteRTCMuteState)muteState;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
- * @brief 房间内某用户调用 muteLocalAudio:{@link #muteLocalAudio:}
+ * @brief 房间内某用户调用 muteLocalAudio:{@link #ByteRTCEngineKit#muteLocalAudio:}
  *        改变本地音频发送状态时，房间内其他用户会收到此回调。
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
  * @param uid 改变本地音频发送状态的用户 ID
@@ -198,7 +196,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserMuteAudio:(NSString *_Nonnull)uid muteState:(ByteRTCMuteState)muteState;
 
-/**
+/** 
  * @hidden
  * @deprecated since 323.1, use onUserStartAudioCapture instead
  * @type callback
@@ -213,27 +211,27 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom didLocalAudioEnabled:(BOOL)enabled byUid:(NSString *_Nonnull)uid;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author dixing
-  * @brief 房间内的用户调用 startAudioCapture{@link #startAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
+  * @brief 房间内的用户调用 startAudioCapture{@link #ByteRTCEngineKit#startAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。
   * @param userId 开启音频采集的远端用户 ID
   */
-- (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserStartAudioCapture:(NSString *_Nonnull)userId;
+ - (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserStartAudioCapture:(NSString *_Nonnull)userId;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author dixing
-  * @brief 房间内的用户调用 stopAudioCapture{@link #stopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
+  * @brief 房间内的用户调用 stopAudioCapture{@link #ByteRTCEngineKit#stopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。
   * @param userId 关闭音频采集的远端用户 ID
   */
-- (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserStopAudioCapture:(NSString *_Nonnull)userId;
+ - (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserStopAudioCapture:(NSString *_Nonnull)userId;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author wangjunzheng
@@ -243,7 +241,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstLocalAudioFrame:(ByteRTCStreamIndex) streamIndex;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author wangjunzheng
@@ -252,9 +250,9 @@
   * @param key 远端流信息, 详见 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
   * @notes 用户刚收到房间内每一路音频流时，都会收到该回调。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstRemoteAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstRemoteAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author shenpengliang
@@ -265,9 +263,9 @@
   * @param rtcRoom  ByteRTCRoom 对象。  <br>
   * @param stream 流属性，参看 ByteRTCStream{@link #ByteRTCStream} 。  <br>
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onStreamAdd:(id<ByteRTCStream> _Nonnull)stream;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onStreamAdd:(id<ByteRTCStream> _Nonnull)stream;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author shenpengliang
@@ -277,12 +275,12 @@
   * @param stream 流的属性，参看 ByteRTCStream{@link #ByteRTCStream}。  <br>
   * @param reason 远端流移除的原因，参看 ByteRTCStreamRemoveReason{@link #ByteRTCStreamRemoveReason} 。  <br>
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     didStreamRemoved:(NSString *_Nonnull)uid
               stream:(id<ByteRTCStream> _Nonnull)stream
               reason:(ByteRTCStreamRemoveReason)reason;
 
-/**
+/** 
  * @hidden
  * @type callback
  * @region 多房间
@@ -291,19 +289,18 @@
  *       当更新流的内容时比如增加或者减少音视频流成功更新时也会回调该事件
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
  * @param state
- *       订阅流的结果，详见：{@link #ByteRTCSubscribeState}
+ *       订阅流的结果，详见：ByteRTCSubscribeState{@link #ByteRTCSubscribeState}
  * @param userId
  *       用户的标识
  * @param info
- *       流的属性，详见：{@link #ByteRTCSubscribeConfig}
+ *       流的属性，详见：ByteRTCSubscribeConfig{@link #ByteRTCSubscribeConfig}
  */
-
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onStreamSubscribed:(ByteRTCSubscribeState)state
                 userId:(NSString *_Nonnull)userId
        subscribeConfig:(ByteRTCSubscribeConfig *_Nonnull)info;
 
-/**
+/** 
  * @hidden
  * @type callback
  * @region 多房间
@@ -314,10 +311,9 @@
  * @param isScreen 该流是否是屏幕流
  *
  */
-
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onStreamPublishSuccess:(NSString *_Nonnull)userId isScreen:(BOOL)isScreen;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author hanchenchen.c
@@ -326,39 +322,39 @@
   * @param uid 消息发送者 ID 。
   * @param message 收到的文本消息内容。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomMessageReceived:(NSString *_Nonnull)uid
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomMessageReceived:(NSString *_Nonnull)uid
         message:(NSString *_Nonnull)message;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author hanchenchen.c
-  * @brief 收到房间中调用 sendRoomBinaryMessage:{@link #sendRoomBinaryMessage:} 发送的广播二进制消息时，收到此回调。
+  * @brief 收到房间中调用 sendRoomBinaryMessage:{@link #ByteRTCRoom#sendRoomBinaryMessage:} 发送的广播二进制消息时，收到此回调。
   * @param rtcRoom ByteRTCRoom 对象
   * @param uid 消息发送者 ID 。
   * @param message 收到的二进制消息内容。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomBinaryMessageReceived:(NSString *_Nonnull)uid
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomBinaryMessageReceived:(NSString *_Nonnull)uid
         message:(NSData *_Nonnull)message;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author hanchenchen.c
-  * @brief 收到来自房间中其他用户通过 sendUserMessage:message:{@link #sendUserMessage:message:} 发来的文本消息时（P2P），会收到此回调。
+  * @brief 收到来自房间中其他用户通过 sendUserMessage:message:{@link #ByteRTCRoom#sendUserMessage:message:} 发来的文本消息时（P2P），会收到此回调。
   * @param rtcRoom ByteRTCRoom 对象
   * @param uid 消息发送者的用户 ID 。
   * @param message 收到的文本消息内容。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onUserMessageReceived:(NSString *_Nonnull)uid
                message:(NSString *_Nonnull)message;
 
- /**
+ /** 
  * @type callback
  * @region 多房间
  * @author hanchenchen.c
- * @brief 收到来自房间中其他用户通过 sendUserBinaryMessage:message:{@link #sendUserBinaryMessage:message:} 发来的二进制消息时，会收到此回调。
+ * @brief 收到来自房间中其他用户通过 sendUserBinaryMessage:message:{@link #ByteRTCRoom#sendUserBinaryMessage:message:} 发来的二进制消息时，会收到此回调。
  * @param rtcRoom ByteRTCRoom 对象
  * @param uid 消息发送者的用户 ID 。
  * @param message 收到的二进制消息内容。
@@ -367,7 +363,7 @@
     onUserBinaryMessageReceived:(NSString *_Nonnull)uid
                message:(NSData *_Nonnull)message;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author hanchenchen.c
@@ -376,12 +372,12 @@
   * @param msgid 本条消息的 ID。
   * @param error 消息发送结果，详见 ByteRTCUserMessageSendResult{@link #ByteRTCUserMessageSendResult}
   * @notes  <br>
-  *        + 你应调用 sendUserMessage:message:{@link #sendUserMessage:message:} 向房间内单个用户发送文本消息 <br>
-  *        + 你应调用 sendUserBinaryMessage:message:{@link #sendUserBinaryMessage:message:} 向房间内单个用户发送二进制消息
+  *        + 你应调用 sendUserMessage:message:{@link #ByteRTCRoom#sendUserMessage:message:} 向房间内单个用户发送文本消息 <br>
+  *        + 你应调用 sendUserBinaryMessage:message:{@link #ByteRTCRoom#sendUserBinaryMessage:message:} 向房间内单个用户发送二进制消息
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserMessageSendResult:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserMessageSendResult:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author hanchenchen.c
@@ -390,24 +386,24 @@
   * @param msgid 本条消息的 ID。
   * @param error 消息发送结果，详见 ByteRTCRoomMessageSendResult{@link #ByteRTCRoomMessageSendResult}
   * @notes  <br>
-  *        + 你应调用 sendRoomMessage:{@link #sendRoomMessage:} 向房间内群发文本消息 <br>
-  *        + 你应调用 sendRoomBinaryMessage:{@link #sendRoomBinaryMessage:} 向房间内群发二进制消息
+  *        + 你应调用 sendRoomMessage:{@link #ByteRTCRoom#sendRoomMessage:} 向房间内群发文本消息 <br>
+  *        + 你应调用 sendRoomBinaryMessage:{@link #ByteRTCRoom#sendRoomBinaryMessage:} 向房间内群发二进制消息
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomMessageSendResult:(int64_t)msgid error:(ByteRTCRoomMessageSendResult)error;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomMessageSendResult:(int64_t)msgid error:(ByteRTCRoomMessageSendResult)error;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author shenpengliang
   * @brief 合流转推错误回调。  <br>
-  *        调用 startLiveTranscoding:observer:{@link #startLiveTranscoding:observer:} 接口或直接在服务端启动合流转推功能后，你会通过此回调收到启动结果和推流过程中的错误。
+  *        调用 startLiveTranscoding:observer:{@link #ByteRTCRoom#startLiveTranscoding:observer:} 接口或直接在服务端启动合流转推功能后，你会通过此回调收到启动结果和推流过程中的错误。
   * @param rtcRoom ByteRTCRoom 对象。
   * @param url 推流地址的 URL。
   * @param errorCode 合流转推功能错误码，详见枚举类型 ByteRTCTranscodingError{@link #ByteRTCTranscodingError}。
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLiveTranscodingResult:(NSString *_Nonnull)url errorCode:(ByteRTCTranscodingError)errorCode;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLiveTranscodingResult:(NSString *_Nonnull)url errorCode:(ByteRTCTranscodingError)errorCode;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author zhushufan.ref
@@ -416,9 +412,9 @@
   * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
   * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo{@link #ByteRTCVideoFrameInfo}
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstLocalVideoFrameCaptured:(ByteRTCStreamIndex)streamIndex withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstLocalVideoFrameCaptured:(ByteRTCStreamIndex)streamIndex withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
   * @author zhushufan.ref
@@ -427,11 +423,11 @@
   * @param streamIndex 流属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
   * @param frameInfo 视频帧信息，参看 ByteRTCVideoFrameInfo{@link #ByteRTCVideoFrameInfo}
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onLocalVideoSizeChanged:(ByteRTCStreamIndex)streamIndex
                      withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author zhushufan.ref
@@ -444,7 +440,7 @@
     onRemoteVideoSizeChanged:(ByteRTCRemoteStreamKey *_Nonnull)streamKey
                      withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author zhushufan.ref
@@ -457,36 +453,36 @@
     onFirstRemoteVideoFrameRendered:(ByteRTCRemoteStreamKey *_Nonnull)streamKey
                       withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
 
-/**
+/** 
  * @type callback
  * @region 多房间
   * @author shenpengliang
- * @brief 房间内用户调用 muteLocalVideo:{@link #muteLocalVideo:} 暂停/恢复发送视频流时，房间内其他用户会收到此回调。
+ * @brief 房间内用户调用 muteLocalVideo:{@link #ByteRTCEngineKit#muteLocalVideo:} 暂停/恢复发送视频流时，房间内其他用户会收到此回调。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
  * @param uid 暂停/恢复发送视频流的用户 ID。
  * @param muteState 暂停/恢复发送视频流。参看 ByteRTCMuteState{@link #ByteRTCMuteState}
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserMuteVideo:(NSString *_Nonnull)uid withMuteState:(ByteRTCMuteState)muteState;
 
-/**
+/** 
  * @type callback
  * @region 多房间
- * @brief 房间中用户调用 startVideoCapture{@link #startVideoCapture} 时，房间中其他用户会收到此回调。
+ * @brief 房间中用户调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 时，房间中其他用户会收到此回调。
  * @param rtcRoom ByteRTCRoom 对象。  <br>
- * @param userId 调用 startVideoCapture{@link #startVideoCapture} 接口的远端用户 ID
+ * @param userId 调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 接口的远端用户 ID
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserStartVideoCapture:(NSString *_Nonnull)userId;
 
- /**
+ /** 
   * @type callback
   * @region 多房间
-  * @brief 房间中远端用户调用 stopVideoCapture{@link #stopVideoCapture} 时，本地用户将会收到该回调。
+  * @brief 房间中远端用户调用 stopVideoCapture{@link #ByteRTCEngineKit#stopVideoCapture} 时，本地用户将会收到该回调。
   * @param rtcRoom ByteRTCRoom 对象。  <br>
-  * @param uid 调用 stopVideoCapture{@link #stopVideoCapture} 接口的远端用户 ID
+  * @param uid 调用 stopVideoCapture{@link #ByteRTCEngineKit#stopVideoCapture} 接口的远端用户 ID
   */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserStopVideoCapture:(NSString *_Nonnull)uid;
+ - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserStopVideoCapture:(NSString *_Nonnull)uid;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author wangjunzheng
@@ -499,7 +495,7 @@
     onLocalAudioStateChanged:(ByteRTCLocalAudioStreamState)state
                      error:(ByteRTCLocalAudioStreamError)error;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author wangjunzheng
@@ -514,7 +510,7 @@
                             state:(ByteRTCRemoteAudioState)state
                            reason:(ByteRTCRemoteAudioStateChangeReason)reason;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @brief 本地视频流的状态发生改变时，收到该事件。
@@ -528,7 +524,7 @@
              withStreamState:(ByteRTCLocalVideoStreamState)state
              withStreamError:(ByteRTCLocalVideoStreamError)error;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @brief 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
@@ -542,7 +538,7 @@
                withVideoState:(ByteRTCRemoteVideoState)state
          withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -553,7 +549,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAudioFrameSendStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFrameSendState)state;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -564,7 +560,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onVideoFrameSendStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFrameSendState)state;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -575,7 +571,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onScreenVideoFrameSendStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFrameSendState)state;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -586,7 +582,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAudioFramePlayStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFramePlayState)state;
 
-/**
+/** 
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -597,7 +593,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onVideoFramePlayStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFramePlayState)state;
 
-/**
+/** 
  * @hidden
  * @type callback
  * @region 多房间
@@ -609,7 +605,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onScreenVideoFramePlayStateChanged:(ByteRTCUser *_Nonnull)user state:(ByteRTCFirstFramePlayState)state;
 
-/**
+/** 
  * @type callback
  * @region 视频管理
  * @author qipengxiang
@@ -627,7 +623,7 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onVideoStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
-/**
+/** 
  * @type callback
  * @region 音频事件回调
  * @author qipengxiang
@@ -645,6 +641,23 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAudioStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
+#pragma mark ForwardStream related callback
+    /** 
+     * @type callback
+     * @region 多房间
+     * @brief 跨房间媒体流转发状态和错误回调
+     * @param engine ByteRTCEngineKit object
+     * @param infos 跨房间媒体流转发目标房间信息数组，详见 ForwardStreamStateInfo{@link #ForwardStreamStateInfo}
+     */
+    - (void)rtcRoom:(ByteRTCRoom * _Nonnull)engine onForwardStreamStateChanged:(NSArray<ForwardStreamStateInfo *> * _Nonnull)infos;
+    /** 
+     * @type callback
+     * @region 多房间
+     * @brief 跨房间媒体流转发事件回调
+     * @param engine ByteRTCEngineKit 对象
+     * @param infos 跨房间媒体流转发目标房间事件数组，详见 ForwardStreamEventInfo{@link #ForwardStreamEventInfo}
+     */
+    - (void)rtcRoom:(ByteRTCRoom * _Nonnull)engine onForwardStreamEvent:(NSArray<ForwardStreamEventInfo *> * _Nonnull)infos;
 @end
 
 /**
@@ -656,7 +669,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 
 #pragma mark - Core Methods
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -665,7 +678,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  */
 - (void)destroy;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -673,7 +686,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  */
 - (NSString *_Nullable)getRoomId;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -681,10 +694,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        通过设置事件句柄，可以监听此 ByteRTCRoom 对象对应的回调事件。
  * @param roomDelegate 参见 ByteRTCRoomDelegate{@link #ByteRTCRoomDelegate}
  */
-
 - (void)setRtcRoomDelegate:(id<ByteRTCRoomDelegate> _Nullable)roomDelegate;
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use joinRoomByToken with MultiRoomConfig instead
  * @type api
@@ -712,12 +724,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @notes  <br>
  *        + 使用不同 App ID 的 App 是不能互通的。  <br>
  *        + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
- *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcEngine:onUserJoined:elapsed:{@link #rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
+ *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
  */
 - (int)joinRoomByToken:(NSString *_Nullable)token userInfo:(ByteRTCUserInfo *_Nonnull)userInfo roomProfile:(ByteRTCRoomProfile)roomProfile
 DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -732,7 +744,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @return 方法调用结果。  <br>
  *        +  0: 成功  <br>
  *        + -1: 参数无效  <br>
- *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom{@link #leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
+ *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
  *        + -3: room 为空 <br>
  * @notes  <br>
  *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
@@ -742,7 +754,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  */
 - (int)joinRoomByToken:(NSString *_Nullable)token userInfo:(ByteRTCUserInfo *_Nonnull)userInfo roomConfig:(ByteRTCMultiRoomConfig *_Nonnull)roomConfig;
 
-/**
+/** 
  * @hidden
  * @deprecated since 328.1, use setUserVisibility instead
  * @type api
@@ -767,7 +779,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 - (int)setUserRole:(ByteRTCUserRoleType)role
     __deprecated_msg("Will be removed in new version");
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author liuzhiqiang
@@ -790,7 +802,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  */
 - (BOOL)setUserVisibility:(BOOL)enable;
 
-/**
+/** 
+ * @hidden
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -799,7 +812,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  */
 - (ByteRTCUserRoleType)clientRole;
 
-/**
+/** 
  *  @type api
  *  @region 房间管理
  *  @author shenpengliang
@@ -807,7 +820,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *         用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
  *  @return 方法调用结果。  <br>
  *         +  0: 方法调用成功  <br>
- *         + <0: 方法调用失败  <br>
+ *         + < 0: 方法调用失败  <br>
  *  @notes  <br>
  *        + 用户离开房间后，本地会收到 onLeaveRoomWithStats:{@link #ByteRTCRoomDelegate#rtcRoom:onLeaveRoomWithStats:} 的回调；  <br>
  *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设为可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
@@ -816,24 +829,24 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 - (int)leaveRoom;
 
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
  * @brief 更新 Token。  <br>
  *        用户调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法加入房间时，
- *        如果使用了过期的 Token 将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调，
+ *        如果使用了过期的 Token 将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调，
  *        回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 ByteRTCErrorCodeInvalidToken。
  *        此时需要重新获取 Token，并调用此方法更新 Token。更新 Token 后，SDK 会自动加入房间。 <br>
  * @param token 更新的动态密钥。
  * @return 方法调用结果。  <br>
  *         +  0: 方法调用成功。  <br>
- *         + <0: 方法调用失败。  <br>
+ *         + < 0: 方法调用失败。  <br>
  * @notes Token 过期时，如果已经加入房间成功，则不会受到影响。Token 过期的错误会在下一次使用过期的 Token 加入房间时，或因本地网络状况不佳导致断网重新连入房间时通知用户。
  */
 - (int)renewToken:(NSString *_Nullable)token;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -841,12 +854,12 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @notes <br>
  *        + 多房间模式下，默认音视频流不自动发布。你必须调用此接口，进行手动发布。<br>
  *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布音视频流。 <br>
- *        + 用户在房间内，同一时间仅能发布一路音视频流。
+ *        + 用户在房间内，同一时间仅能在一个房间内发布音视频流。<br>
  *        + 房间内用户调用此方法成功发布音视频流后，房间中的其他用户将会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 回调通知。
  */
 - (int)publish;
 
- /**
+ /** 
   * @type api
   * @region 多房间
   * @author shenpengliang
@@ -855,14 +868,14 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
   *        + 在多房间模式下，调用 publish{@link #ByteRTCRoom#publish} 手动发布音视频流后，调用此接口停止发布。<br>
   *        + 房间内用户调用此方法停止发布音视频流后，房间中的其他用户将会收到 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 回调通知。
   */
-- (int)unpublish;
+ - (int)unpublish;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author liyi.000
  * @brief 发布本地屏幕视频流到此房间。（外部采集）<br>
- *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #pushScreenCaptureFrame:time:rotation:} 方法，
+ *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #ByteRTCEngineKit#pushScreenCaptureFrame:time:rotation:} 方法，
  *        将需要发送的屏幕数据推送给 SDK。
  * @param param 屏幕视频流编码参数，详见 ByteRTCScreenParam{@link #ByteRTCScreenParam}
  * @notes <br>
@@ -873,17 +886,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。
  * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
  */
-
 - (int)publishScreen:(ByteRTCScreenParam * _Nonnull)param;
 
 
-/**
+/** 
  * @hidden
  * @type api
  * @region 多房间
  * @author liyi.000
  * @brief 发布本地屏幕视频流到此房间。（外部采集）<br>
- *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #pushScreenCaptureFrame:time:rotation:} 方法，
+ *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #ByteRTCEngineKit#pushScreenCaptureFrame:time:rotation:} 方法，
  *        将需要发送的屏幕数据推送给 SDK。
  * @notes <br>
  *       + 仅房间内可见的用户可以进行手动发布。调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 可以设置用户可见性。<br>
@@ -895,10 +907,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link
  * #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
  */
-
 - (int)publishScreen;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author liyi.000
@@ -909,7 +920,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  */
 - (int)unpublishScreen;
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
@@ -931,11 +942,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 回调通知；2.当房间内音视频流停止发布时，本地会收到 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:}
  * 回调通知。通过这两个回调用户可以获得当前房间中的音视频流信息，并在需要时调用此方法订阅该音视频流。  <br>
  */
-
 - (int)subscribeStream:(NSString *_Nonnull)userId subscribeConfig:(ByteRTCSubscribeConfig *_Nonnull)info
 DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -954,7 +964,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  */
 - (void)subscribeUserStream:(NSString *_Nonnull)userId streamType:(ByteRTCStreamIndex)streamType mediaType:(ByteRTCSubscribeMediaType)mediaType videoConfig:(ByteRTCSubscribeVideoConfig *_Nonnull)videoConfig;
 
- /**
+ /** 
   * @hidden
   * @deprecated since 326.1, use subscribeUserStream instead
   * @type api
@@ -969,10 +979,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
   *         + 要开始订阅，参看 subscribeUserStream:streamType:mediaType:videoConfig:{@link #ByteRTCRoom#subscribeUserStream:streamType:mediaType:videoConfig:} <br>
   *         + 不管是否订阅了指定的远端音视频流，都可以调用此方法停止订阅。停止订阅的 userId 无效或未订阅时，SDK 不会做任何处理，没有负面影响。  <br>
   */
-- (int)unSubscribeStream:(NSString *_Nonnull)userId isScreen:(BOOL)isScreen
+ - (int)unSubscribeStream:(NSString *_Nonnull)userId isScreen:(BOOL)isScreen
 DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use joinRoomBytoken with MultiRoomConfig instead
  * @type api
@@ -987,11 +997,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *       + SDK 提供两种订阅模式：1.自动订阅模式，开启自动订阅功能时，SDK 自动帮助用户订阅房间中所有其他用户发布的音视频流；2.手动订阅模式，关闭自动订阅功能时，SDK不会自动订阅房间内的音视频流，只通过 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 和 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 回调通知用户当前所在房间中有哪些音视频流，由用户根据自己的需要调用 subscribeStream{@link #subscribeStream} 方法手动订阅其他用户发布的音视频流。  <br>
  *       + SDK 可以分别对音频/视频设置订阅模式。  <br>
  */
-
 - (int)enableAutoSubscribe:(ByteRTCSubscribeMode)audioMode videoMode:(ByteRTCSubscribeMode)videoMode
 DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 
- /**
+ /** 
   * @hidden
   * @deprecated since 323.1, use enableAudioPropertiesReport instead
   * @type api
@@ -1005,9 +1014,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
   *                + > 0：启用音量提示功能，并设置收到音量提示回调的时间间隔。单位为毫秒。<br>
   *                建议设置为大于等于 200 毫秒；小于 10 毫秒时，行为未定义。
   */
-- (void)setAudioVolumeIndicationInterval:(NSInteger)interval;
+ - (void)setAudioVolumeIndicationInterval:(NSInteger)interval;
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
@@ -1020,7 +1029,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 - (void)muteAllRemoteAudio:(ByteRTCMuteState)muteState
 DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscribedStream");
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1033,7 +1042,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  */
 - (void)pauseAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1045,7 +1054,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  */
 - (void)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
@@ -1059,7 +1068,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 - (void)muteRemoteAudio:(NSString *_Nonnull)userId muteState:(ByteRTCMuteState)muteState
 DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
  * @type api
@@ -1074,7 +1083,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 - (int)muteAllRemoteVideo:(ByteRTCMuteState)muteState
 DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscribedStream");
 
-/**
+/** 
  * @hidden
  * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
@@ -1090,7 +1099,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 - (int)muteRemoteVideo:(NSString * _Nonnull)uid
                   mute:(ByteRTCMuteState)muteState DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1099,16 +1108,15 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @param observer 端云一体合流转推观察者。  <br>
  *       + 合流转推的状态和方式会通过回调上报 RTC Engine。  <br>
  *       + 只有房间模式为直播模式，且用户角色为主播的用户才能调用此方法。  <br>
- *       + 启用端云一体合流转推时，回调合流完成的音视频流和 SEI 信息给 App。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate} 数据类型。
+ *       + 注册后回调合流完成的音视频流和 SEI 信息给 App。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate} 数据类型。
  * @notes <br>
  *       + 启用服务端转推时，设置 observer 为 null。  <br>
  *       + 只有主播角色的用户才能开启转推直播。<br>
- *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 rtcEngine:onLiveTranscodingResult:errorCode:{@link #rtcEngine:onLiveTranscodingResult:errorCode:} 通知用户。
+ *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 onStreamMixingEvent:eventData:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:eventData:error:mixType:} 通知用户。
  */
-
 - (int)startLiveTranscoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1116,7 +1124,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  */
 - (int)stopLiveTranscoding;
 
-/**
+/** 
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -1125,11 +1133,11 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @param transcoding 服务端转推配置参数，详见 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding} 。
  * @return 方法调用结果。  <br>
  *         +  0：方法调用成功  <br>
- *         + <0：方法调用失败
+ *         + < 0：方法调用失败
  */
 - (int)updateLiveTranscoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
 
- /**
+ /** 
   * @hidden
   * @deprecated since 326.1, use setRemoteVideoCanvas in engine instead
   * @type api
@@ -1147,13 +1155,13 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @param canvas 视图信息和渲染模式，参看 ByteRTCVideoCanvas{@link #ByteRTCVideoCanvas}
   * @return  <br>
   *         + 0：方法调用成功  <br>
-  *         + <0：方法调用失败  <br>
+  *         + < 0：方法调用失败  <br>
   */
-- (int)setRemoteVideoCanvas:(NSString * _Nonnull)uid
+ - (int)setRemoteVideoCanvas:(NSString * _Nonnull)uid
                   withIndex:(ByteRTCStreamIndex)streamIndex
                  withCanvas:(ByteRTCVideoCanvas * _Nullable)canvas;
 
- /**
+ /** 
   * @type api
   * @region 多房间
   * @author hanchenchen.c
@@ -1169,9 +1177,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *      + 调用该函数后会收到一次 rtcRoom:onUserMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败。  <br>
   *      + 若文本消息发送成功，则 uid 所指定的用户会收到 rtcRoom:onUserMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageReceived:message:} 回调。
   */
-- (int64_t)sendUserMessage:(NSString *_Nonnull)userId message:(NSString *_Nonnull)message;
+ - (int64_t)sendUserMessage:(NSString *_Nonnull)userId message:(NSString *_Nonnull)message;
 
- /**
+ /** 
   * @type api
   * @region 多房间
   * @author hanchenchen.c
@@ -1187,9 +1195,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *      + 调用该函数后会收到一次 rtcRoom:onUserMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onUserMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
   *      + 若二进制消息发送成功，则 uid 所指定的用户会收到 rtcRoom:onUserBinaryMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onUserBinaryMessageReceived:message:} 回调。
   */
-- (int64_t)sendUserBinaryMessage:(NSString * _Nonnull)uid message:(NSData * _Nonnull)message;
+ - (int64_t)sendUserBinaryMessage:(NSString * _Nonnull)uid message:(NSData * _Nonnull)message;
 
- /**
+ /** 
   * @type api
   * @region 多房间
   * @author hanchenchen.c
@@ -1203,9 +1211,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
   *      + 若文本消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageReceived:message:} 回调。
   */
-- (int64_t)sendRoomMessage:(NSString *_Nonnull)message;
+ - (int64_t)sendRoomMessage:(NSString *_Nonnull)message;
 
- /**
+ /** 
   * @type api
   * @region 多房间
   * @author hanchenchen.c
@@ -1219,6 +1227,75 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
   *      + 若二进制消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomBinaryMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomBinaryMessageReceived:message:} 回调。
   */
-- (int64_t)sendRoomBinaryMessage:(NSData *  _Nonnull)message;
+ - (int64_t)sendRoomBinaryMessage:(NSData *  _Nonnull)message;
 
+#pragma mark ForwardStream
+    /** 
+     * @type api
+     * @region 多房间
+     * @author wunailiang
+     * @brief 开始跨房间转发媒体流。
+     *        在用户进入房间后调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。<br>  
+     * @param configurations 跨房间媒体流转发指定房间的信息。参看 ForwardStreamConfiguration{@link #ForwardStreamConfiguration}。
+     * @return  <br>
+     *        0: 方法调用成功  
+     *        <0: 方法调用失败  <br>
+     * @notes <br>
+     *        + 调用本方法后，将在本端触发 rtcRoom:onForwardStreamStateChanged:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamStateChanged:} 回调。
+     *        + 调用本方法后，你可以通过监听 rtcRoom:onForwardStreamEvent:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamEvent:} 回调来获取各个目标房间在转发媒体流过程中的相关事件。
+     *        + 开始转发后，目标房间中的用户将接收到本地用户进房 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 和发流 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 的回调。
+     *        + 调用本方法后，可以调用 updateForwardStreamToRooms:{@link #ByteRTCRoom#updateForwardStreamToRooms:} 更新目标房间信息，例如，增加或减少目标房间等。
+     *        + 调用本方法后，可以调用 stopForwardStreamToRooms{@link #ByteRTCRoom#stopForwardStreamToRooms} 停止向所有房间转发媒体流。
+     *        + 调用本方法后，可以调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms} 暂停向所有房间转发媒体流。
+     */
+    - (int)startForwardStreamToRooms:(NSArray <ForwardStreamConfiguration *> * _Nullable)configurations;
+    /** 
+     * @type api
+     * @region 多房间
+     * @author wunailiang
+     * @brief 更新跨房间媒体流转发信息。<br>
+     *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法增加或者减少目标房间，或更新房间密钥。
+     *        调用本方法增加或删减房间后，将在本端触发 rtcRoom:onForwardStreamStateChanged:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamStateChanged:} 回调，包含发生了变动的目标房间中媒体流转发状态。
+     * @param configurations 跨房间媒体流转发目标房间信息。参看 ForwardStreamConfiguration{@link #ForwardStreamConfiguration}。
+     * @return  <br>
+     *        0: 方法调用成功  <br>
+     *        <0: 方法调用失败  <br>
+     * @notes <br>
+     *        + 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 和发布 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 的回调。
+     *        + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 rtcEngine:didStreamRemoved:stream:reason:{@link #ByteRTCEngineDelegate#rtcEngine:didStreamRemoved:stream:reason:}} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
+     */
+    - (int)updateForwardStreamToRooms:(NSArray <ForwardStreamConfiguration *> * _Nullable)configurations;
+    /** 
+     * @type api
+     * @region 多房间
+     * @author wunailiang
+     * @brief 停止跨房间媒体流转发。
+     *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
+     * @notes <br>
+     *        + 调用本方法后，将在本端触发 rtcRoom:onForwardStreamStateChanged:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamStateChanged:} 回调。
+     *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 rtcEngine:didStreamRemoved:stream:reason:{@link #ByteRTCEngineDelegate#rtcEngine:didStreamRemoved:stream:reason:}} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
+     *        + 如果需要停止向指定的房间转发媒体流，请调用 updateForwardStreamToRooms:{@link #ByteRTCRoom#updateForwardStreamToRooms:} 更新房间信息。
+     *        + 如果需要暂停转发，请调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms}，并在之后随时调用 resumeForwardStreamToAllRooms{@link #ByteRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。 
+     */
+    - (void)stopForwardStreamToRooms;
+    /** 
+     * @type api
+     * @region 多房间
+     * @author wunailiang
+     * @brief 暂停跨房间媒体流转发。
+     *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
+     *        调用本方法暂停向所有目标房间转发后，你可以随时调用 resumeForwardStreamToAllRooms{@link #ByteRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
+     * @notes 调用本方法后，目标房间中的用户将接收到本地用户停止发布 rtcEngine:didStreamRemoved:stream:reason:{@link #ByteRTCEngineDelegate#rtcEngine:didStreamRemoved:stream:reason:}} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
+     */
+     - (void)pauseForwardStreamToAllRooms;
+    /** 
+     * @type api
+     * @region 多房间
+     * @author wunailiang
+     * @brief 恢复跨房间媒体流转发。
+     *        调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms} 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
+     * @notes <br>
+     *        目标房间中的用户将接收到本地用户进房 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 和发布 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 的回调。
+     */
+    - (void)resumeForwardStreamToAllRooms;
 @end

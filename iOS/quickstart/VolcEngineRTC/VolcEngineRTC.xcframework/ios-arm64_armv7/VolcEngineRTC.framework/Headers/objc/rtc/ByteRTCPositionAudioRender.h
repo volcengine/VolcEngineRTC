@@ -6,7 +6,7 @@
 #import <Foundation/Foundation.h>
 #import "ByteRTCDefines.h"
 
-/**
+/**  
  * @type api
  * @region 音频管理
  * @author majun.lvhiei
@@ -14,7 +14,7 @@
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPositionAudioRender :NSObject
 
-/**
+/**  
  * @type api
  * @region 音频管理
  * @author majun.lvhiei
@@ -25,7 +25,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPositionAudioRender :NSObject
  */
 -(void)enableAudioSpatialRender:(BOOL) enable;
 
-/**
+/**  
  * @type api
  * @region 音频管理
  * @author majun.lvhiei
@@ -34,12 +34,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPositionAudioRender :NSObject
  * @return  <br>
  *        + 0: 参数检查通过，但不代表更新成功；  <br>
  *        + 其他: 更新失败。  <br>
-
  */
 -(int)updatePosition:(Position* _Nonnull) pos;
 
 
-/**
+/**  
  * @type api
  * @region 音频管理
  * @author majun.lvhiei

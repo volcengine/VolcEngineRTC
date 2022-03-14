@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		/iV73KQz0wevMMz5++B7fxFuWwI=
+		ylq/Vcf/9DP75vmnvms/uQ/xJtw=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,33 +15,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			0gZJ2+BvR3mwl/R17E4POA5+IdM=
+			AmC6yTHERM9ZyIOKBUf6rNTj178=
 			</data>
 			<key>hash2</key>
 			<data>
-			YAFo2ywfXyDSJU8zAPoc9SZ87u6Iw4RUd4lCc8BcCFs=
+			5E+Y780VsOLU6ktdryf7motd4cyIuK8OG3BfhhteWeE=
 			</data>
 		</dict>
 		<key>Headers/native/game/game_rtc_defines.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			bvKFqCDqzTWFzSCj4RmJ/Km4FHs=
+			piOPOeZLADA7nZ4+AksVbtJapvE=
 			</data>
 			<key>hash2</key>
 			<data>
-			Pi7BHP6KvRR7k4saSce5xnCZSZnsZud7Yf6LAfsjPGg=
+			LY1IoLOvwmmQlWc3S/vMruCibTMqvsvLdSv/JlKxh3M=
 			</data>
 		</dict>
 		<key>Headers/native/game/game_rtc_engine_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			sIBetlA2QxVWd5PvY45v63AgUnU=
+			LJrGlnv/CXvVEfLqiZz5TtxkP+4=
 			</data>
 			<key>hash2</key>
 			<data>
-			eUJ5shd/i80tMAYQLnJ5QvMQXIAS6jA8HySmXhyWvLw=
+			bkdCc9rkm/W1ILykgzbFFJnkpTaSIG1H9edDOYbSDvc=
 			</data>
 		</dict>
 		<key>Headers/native/game/game_rtc_engine_proxy.h</key>
@@ -81,264 +81,242 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			1Vw5/MQ6hta7SxT5gvikK4ieO+4=
+			yW+9mzLbN3nLSDtzHB9K+lpFx8w=
 			</data>
 			<key>hash2</key>
 			<data>
-			ibHRCLwjFNH/XoGAeqNgZVv+pYYXdy77oNQgSNu/Nj8=
+			qbxiPAaDogtUpXEc2+yVMuV1glyn2xMuUv2mVVGknes=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_advance.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			MItHRiFK3FTjZJwmDUDmYSu6V+0=
+			O82AFHzgRIkObQcRPIMcMhUOeBs=
 			</data>
 			<key>hash2</key>
 			<data>
-			IYF2gstJDHs0voMVcwT5cJzfdmvQrr8Om5fNdVGLqdk=
+			6RPV7SXGIU7peJxMxSCfGf/Sep8dhs4P1FVKNk/U5ZY=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_audio_frame.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			4GgNEyI4XsTAPMPxjjCaiREvbEE=
+			ss0FPKBF09CSF93BOshkvseY68Y=
 			</data>
 			<key>hash2</key>
 			<data>
-			0D8X3AwbiDnBMllHze5yfN5DThnyB51LnWWBcdqk9Kw=
+			VVqQtvs/KqUDpgD3csEXZK+OLA1b8MguWZ1XHtqeoOM=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_audio_mixing_manager.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			hpIwYrwAo+QPusT1xTTdGsatqF8=
+			hZe/7TinP0VIOboDJmxvisrHal4=
 			</data>
 			<key>hash2</key>
 			<data>
-			HduQZwzcMZvouI46smcMIUfD8felfsonmR+rS7ZPCO8=
+			4e0DGAGvK2EZHETrJyn1zU2/iFUQr8hySXjOojKfz30=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_camera_control_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			1FuHiB6mrGtKKCgqMXuwAlCh9pc=
+			gAexeqCjXFnu4AN7rcmaaHA71Gc=
 			</data>
 			<key>hash2</key>
 			<data>
-			kog0Y9BA+q2WpPKJ5Vh7ti0v2koVA5rhg0j7fPPjsEA=
+			4xDNKRG9nUuXx5qBfXJx70048ukJ/peeY4RgVrWzefA=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_defines.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			kB2+fWDCQsvqSyX48QinnQ0z8sc=
+			qPYVxHo5Y+n2uEC/wHRiBUJY3lg=
 			</data>
 			<key>hash2</key>
 			<data>
-			WfF+Fg+B40Ubf4bQKRDvwT4Mt6r3WwtlGITFUdbb6X0=
+			Jmq1untxfkQlCcU2ExW2RzuJLRenHWnt2jEEnba65Sw=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_device_manager.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			gbXtPveNIV5W8vrWtREZPWaMIn4=
+			AuOsFV9lZ4I/9hGE9vRuLBJo0Ek=
 			</data>
 			<key>hash2</key>
 			<data>
-			EsuNOGX5Am9i7/SkSpFB3PD8cWsr44jN3EF4tWKa8H0=
+			6JRzzKrESMyjWXCwkz1BfsnPgWTuunr3Chzx4IIVRpQ=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_engine_event_handler.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			IKDjCaA0Hj4DFV/9dk0ftX0buls=
+			SxZfJsHsKvAj+gKhoWTUItoY+1o=
 			</data>
 			<key>hash2</key>
 			<data>
-			hiGOuWWMR2qHA7wlsYxk3bJO4NHlKfHmzF/weN0jGvk=
+			/EuVnDNMgsSz0xFWPqI+tObhdG5MB2bn/wq40Jgz+kg=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_engine_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			yqvvog5BzBXAlazlZyu19G+ATrM=
+			NZppNQochuWv3iFVHwRgaasgdIY=
 			</data>
 			<key>hash2</key>
 			<data>
-			M3ZocLRnli+qDIH/rOanyyndtjS1M0m3zAp6RhH7hQk=
+			z/9/uqCkxwpVKGMOqLNqfHEC6xj2+YEa828voONBJPA=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_engine_lite_event_handler.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			HBUYityivy54WFDM3hoDy9YuVmw=
+			nd7suP13UwPlnhUqJ4k6VErjB1w=
 			</data>
 			<key>hash2</key>
 			<data>
-			aJqfkglx9h49V46ccW6JvDNRUOMVCQwwwnoejsdemjI=
+			81WreGZNZdZJLWrJLV7wf77qlBJsdNB8M32gAVgpwj0=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_engine_lite_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			U27xtgytGp3KMOPC3EnQC6fCrHY=
+			xIDCHZJsLqU8fvw/nW0Gfjivxjg=
 			</data>
 			<key>hash2</key>
 			<data>
-			+DF3pM0JAurApL8aH2N7RipQeHyD30mJalGrTvxn78g=
+			xINIBrUCQqKYDEMYyNmln7WYOcxXHY2jBC04lY9aTh0=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_internal.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			GsdOzXye2SqsCRp7loDTkU77UA0=
+			kOR4CNwNxGbpjLNaGhLI+hibZuE=
 			</data>
 			<key>hash2</key>
 			<data>
-			+eDQzQGeZXLclPC5s0tlk6D1wVPd2mOh04ZT83vyP4Y=
+			BOGM07VD/zFSmM78aiS59Ltl/rwC0qR1GwOcHqRwQ+M=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_position_audio_render_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			bZUbGh33KVk8xTK/5KclmF5yT+U=
+			bt6r9kYKNqOJadJE6YpWwX7jQCI=
 			</data>
 			<key>hash2</key>
 			<data>
-			KoI76yuWvggimOCZ/hJoiyjHvNr62qfJqqsNC1WeyWU=
+			NLjxpENbThDVlDgERlN2b0J1X7cGcxlJ79C3GbaizlM=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_room_event_handler_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			XUTt+b7I/RhEqrQQ6UADDhYVTMg=
+			rg9vCF9L+7in/px+SV9XZNJbdfQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			PXi88IpTPPHTLES02SV5sNi9qKoWhr7TuEnjFHu/pIY=
+			jO/0mfcl4DPyvfmUvYkWlWhlLw0Nrl1d7aJBDK7bV7o=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_room_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Yb02tnmkzZvgfSA9ADbg2DF1sBs=
+			tzELFAhmUCHat9iiaPckjjv4NpY=
 			</data>
 			<key>hash2</key>
 			<data>
-			HGM+VXu8hPNeyjVRS1yBSQ2UGCHDd9GZfCiZ4w5Ybpc=
+			qY4Jb3cjK8m5Zdsf+ikVk3AlkHg9sm9+znQCKM1vUgY=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_transcoder_define.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			+RZ0ZW8F8CQSPwnzQNVTkhGgi3A=
+			PaKjhkTDnJJZfMv8gfEXKVfqiEk=
 			</data>
 			<key>hash2</key>
 			<data>
-			1F/JZzeifqzIoUp9XpVkuNMUnrAUlVNlgG1aL4tXJps=
+			YDOY6o4b5kFNRBz2maEkvm4nzTAHc2+2nq0Ob4+959U=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_transcoder_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			os1ddBsz3D0cYdpiO6XyaF/x/S4=
+			5udlkji8GxTe8I0BYrLweS5ewMA=
 			</data>
 			<key>hash2</key>
 			<data>
-			gXJmjCVRUfl3xJDd5uPInR3DbwMrJEnAZ1xhF9V1vqw=
+			3KrGBMZPXjw6k0Jj6rnghhwStjryVVvjiQoermQXeLs=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_video_effect_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			BHd7NsYnr2vPMrtwB/ZmMIOfOcw=
+			LH6OtmyZNXlOdwuY0wsqRCyv0eQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			8ntI0snmwk/hp6La4AMqVYJ/n64FDrtzWTuXh4NG3/Y=
+			4Wh5AlNUqaL+ui5wQYoZo4NncpZpbm0hVjcsCEJMnL8=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_video_frame.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			Va76fD/rf60+DLUtevrNC/yXLsk=
+			lAOAXjxpTQw1ytVwfMuqE9+OLrw=
 			</data>
 			<key>hash2</key>
 			<data>
-			2EbMIQcGvoUdbTX5CD89jc0gAk0NgPmz/SeKWDXPp9k=
+			lh1ri9uyyAH0elkmu4LeykIz6FKYvYDV7Glt3PqJvRU=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/bytertc_video_processor_interface.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			8F9/xliUwzXmqmIEonWIFUgbm6U=
+			Yt9cSb2+K8WI8Bs+V/+TvC30Fa4=
 			</data>
 			<key>hash2</key>
 			<data>
-			EUJ2yyKTEIMwseQ8UNCh2L0Bw/rWfdNcgH0meUVbWhM=
+			QVlLS6ZhTsTwcXs1bJnMP2uqkvyiXZY5r+bCYtja8iw=
 			</data>
 		</dict>
 		<key>Headers/native/rtc/position_audio_render_define.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			kphamFlqZ/KvgES9JQAovJbfLBk=
+			h8gmSUPe4k9dD4KQT+PvEXFeQiQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			DjG9UOL2PGN/0XnLkagK8GW4zFW7mugz8uGptXeVdUY=
-			</data>
-		</dict>
-		<key>Headers/native/rts/byte_rts_play_engine_define.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			Xq5DcjGloubAoH8z1FuSDtdTqwE=
-			</data>
-			<key>hash2</key>
-			<data>
-			O7TUGf2aAPJbyB4IWyBQzbuToLheZXKVwDvzFBGeKf4=
-			</data>
-		</dict>
-		<key>Headers/native/rts/byte_rts_play_engine_interface.h</key>
-		<dict>
-			<key>hash</key>
-			<data>
-			ESaQna0rxpaXKsj2KQUFuIjiFjo=
-			</data>
-			<key>hash2</key>
-			<data>
-			Vwb7ajFLw2HkiJs4PxgBuDdD4vQSuQaLRS2z+zhnD5Y=
+			IRYwvFgb3z0fEn7FiNeg33jXd6dz6zMOLI93lL5T19w=
 			</data>
 		</dict>
 		<key>Headers/objc/game/GameRTCEngineKit.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			BUF+G/w9U8lxn0tSlHZQMmqU/V8=
+			7UhIZBAfdtplcYQfZ+e0r5sa6bs=
 			</data>
 			<key>hash2</key>
 			<data>
-			gJdtQERdH0hN+6UBzkr5Scs83lXMu8CYLGrFggY6R+k=
+			53aIq9YDy0K+KPZX303JGm/MzBRqd4HEABPa93w+rWg=
 			</data>
 		</dict>
 		<key>Headers/objc/game/GameRTCEngineKitDefines.h</key>
@@ -356,66 +334,66 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			eGFLLMHWCIjEE7lIS+MIHoNTwo4=
+			1ZR0N+dK7pbmJo1fPPcP9U3/HjU=
 			</data>
 			<key>hash2</key>
 			<data>
-			HiBlkCLD1NIGlkIAPXh3FTudjAw4UHvkN1vsZHzdCL4=
+			aaI8WR+MpyAQ++quBdbJKXYh8RtmFK05p4AYfcCFv3w=
 			</data>
 		</dict>
 		<key>Headers/objc/rtc/ByteRTCDefines.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			a4cfvsgQKo9QnlWC9ftdYZq2wLc=
+			TxLxzA9xgUdUX1BFR1WQTN/hQio=
 			</data>
 			<key>hash2</key>
 			<data>
-			7etTAvNk2iOKtxcXbVr7fy5dVe4urspXq9Ad46LWJ98=
+			ZAfn8iQuGmnEj3J4Psn4oxj+g5JCCk3Z9aMe69t2824=
 			</data>
 		</dict>
 		<key>Headers/objc/rtc/ByteRTCEngineKit.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			455o/+/yXZr/an7L8bXFc+2o7G0=
+			/8wdiqKi1Dktiv7Xyk6ZPDnAXcY=
 			</data>
 			<key>hash2</key>
 			<data>
-			42cEqjGMpOrqPZu8g/Q/gOtz5TMQC1kimRxRBR1MKTg=
+			gjkYUHtHEhMhQkROzoqsvCWuYJM9Iq0Z1cEZPMBT2rw=
 			</data>
 		</dict>
 		<key>Headers/objc/rtc/ByteRTCInternal.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			c0gMAqcFPDImuSSnk6Rj2Dko7JI=
+			TELBs+ve1lP+ASiEXlfpsxPTS1U=
 			</data>
 			<key>hash2</key>
 			<data>
-			bHhc2f2hv2Wt+2bxXtBryFrLTrfzcE5ndD9WRuWaCEM=
+			VoJ8LjZPeazTVoSTdTTAZuYM/p8K1QlGs7hBN5uq7a8=
 			</data>
 		</dict>
 		<key>Headers/objc/rtc/ByteRTCRoom.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			wzXxBflf4tjhB2jQKZ9D4xnII6w=
+			M9giLyM9Ne+nsK4qWYUHHqu7nqU=
 			</data>
 			<key>hash2</key>
 			<data>
-			0afMfhTvgI1OAWrHK0acaxMNekplMua8EUMBK5KD25w=
+			YUcm0pZL61O5o+T7bBWiQZ/4ulRVL1V2NNBIK63uA4c=
 			</data>
 		</dict>
 		<key>Headers/objc/rtc/ByteRTCRoomEventHandler.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			bHwYSf8xkFL9G76L5UuicpTH2js=
+			DDWw+Z4q8NaArmYH2hBaHPmGqBw=
 			</data>
 			<key>hash2</key>
 			<data>
-			YOu0nUemQ46RkqxCpm0KEmFbnKiZiOZad5ZFE+XvMAQ=
+			2AcfJICDnM6BCV7P2EbrD1bnuVCVnNuYZzWoeqE/tsc=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
@@ -433,11 +411,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			/iV73KQz0wevMMz5++B7fxFuWwI=
+			ylq/Vcf/9DP75vmnvms/uQ/xJtw=
 			</data>
 			<key>hash2</key>
 			<data>
-			HmQkf8KYH4B27ngyktGeVGZMse71Rf7lw4it7zQy98Y=
+			JKZB0cniQmt+S3Pd0axGIz4y1c1MjIuLG6eOvCVA+ow=
 			</data>
 		</dict>
 	</dict>

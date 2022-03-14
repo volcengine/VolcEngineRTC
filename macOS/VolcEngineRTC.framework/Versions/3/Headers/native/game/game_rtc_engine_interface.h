@@ -233,7 +233,7 @@ public:
      * @type api
      * @region 游戏语音
      * @brief 调节录音音量
-     * @param [in] volume 录音音量，可在 0~400 范围内进行调节
+     * @param [in] volume 录音音量，可在 [0,400] 范围内进行调节
      *       + 0: 静音
      *       + 100: 原始音量
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)
@@ -247,7 +247,7 @@ public:
      * @type api
      * @region 游戏语音
      * @brief 调节本地播放的所有远端用户音量
-     * @param [in] volume 播放音量，可在 0~400 范围内进行调节
+     * @param [in] volume 播放音量，可在 [0,400] 范围内进行调节
      *       + 0: 静音
      *       + 100: 原始音量
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护) 
@@ -275,7 +275,7 @@ public:
      *            2. 26个小写字母 a ~ z
      *            3. 10个数字 0 ~ 9
      *            4. 下划线"_", at符"@", 减号"-"
-     * @param [in] volume  播放音量，可在 0~400 范围内进行调节  <br>
+     * @param [in] volume  播放音量，可在 [0,400] 范围内进行调节  <br>
      *              + 0: 静音  <br>
      *              + 100: 原始音量  <br>
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)
@@ -303,7 +303,7 @@ public:
      *        音频采集设备ID, 可通过 GetAllRecordingDevices 获取。
      * @return  方法调用结果
      *        + 0：方法调用成功
-     *        + <0：方法调用失败
+     *        + < 0：方法调用失败
      */
     virtual int SetRecordingDevice(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
 
@@ -315,7 +315,7 @@ public:
      *        设备ID，使用方负责按 MAX_DEVICE_ID_LENGTH 大小，分配与释放内存
      * @return  方法调用结果
      *        + 0：方法调用成功
-     *        + <0：方法调用失败
+     *        + < 0：方法调用失败
      */
     virtual int GetCurrentRecordingDevice(char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
 
@@ -329,7 +329,7 @@ public:
      *        数组长度
      * @return  方法调用结果
      *        + 0：方法调用成功
-     *        + <0：方法调用失败
+     *        + < 0：方法调用失败
      */
     virtual int GetAllRecordingDevices(AudioDeviceInfo* info, int len) = 0;
 
@@ -351,7 +351,7 @@ public:
      *        音频播放设备ID, 可通过 GetAllPlaybackDevices 获取。
      * @return  方法调用结果
      *        + 0：方法调用成功
-     *        + <0：方法调用失败
+     *        + < 0：方法调用失败
      */
     virtual int SetPlaybackDevice(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
 
@@ -363,7 +363,7 @@ public:
      *        设备ID，使用方负责按 MAX_DEVICE_ID_LENGTH 大小，分配与释放内存
      * @return  方法调用结果
      *        + 0：方法调用成功
-     *        + <0：方法调用失败
+     *        + < 0：方法调用失败
      */
     virtual int GetCurrentPlaybackDevice(char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     
@@ -377,7 +377,7 @@ public:
      *        数组长度
      * @return  方法调用结果
      *        + 0：方法调用成功
-     *        + <0：方法调用失败
+     *        + < 0：方法调用失败
      */
     virtual int GetAllPlaybackDevices(AudioDeviceInfo* info, int len) = 0;
 
@@ -403,23 +403,23 @@ public:
      * @brief 禁用外部音频采集渲染。
      * @notes  <br>
      *      + 该方法应该在 JoinRoom{@link #JoinRoom} 前使用。  <br>
-     *      + 启用自定义音频采集请使用 EnableExternalAudioDevice{@link #EnableExternalAudioDevice}。  <br>
+     *      + 启用自定义音频采集请使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}。  <br>
      */
     virtual void DisableExternalAudioDevice() = 0;
     
     /**
      * @type api
      * @region 自定义音频采集渲染
-     * @brief 推送外部音频数据。使用 EnableExternalAudioDevice{@link #EnableExternalAudioDevice}
+     * @brief 推送外部音频数据。使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}
      * 启用自定义音频采集渲染后，可以使用本方法推送外部音频数据。
      * @param [in] data
      *        pcm 数据，内存大小应该为 samples * record_format.channel * 2。
      * @param [in] samples
-     *        采样点数量，应该为 EnableExternalAudioDevice{@link #EnableExternalAudioDevice} 中设置的 record_format.sample_rate / 100。
+     *        采样点数量，应该为 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice} 中设置的 record_format.sample_rate / 100。
      *        当设置采样率为48000时， 每次应该推送480个采样点
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + <0：方法调用失败  <br>
+     *        + < 0：方法调用失败  <br>
      * @notes  <br>
      *       + 必须是 pcm 数据，推送间隔是 10ms，音频采样格式为 s16。  <br>
      *       + 该函数运行在用户调用线程内，是一个同步函数  <br>
@@ -429,12 +429,12 @@ public:
     /**
      * @type api
      * @region 自定义音频采集渲染
-     * @brief 拉取远端音频数据。使用 EnableExternalAudioDevice{@link #EnableExternalAudioDevice}
+     * @brief 拉取远端音频数据。使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}
      * 启用自定义音频采集渲染后，可以使用本方法拉取远端音频数据。
      * @param [out] data
      *        pcm 数据，内存大小应该为 samples * playback_format.channel * 2。
      * @param [in] samples
-     *        采样点数量，应该为 EnableExternalAudioDevice{@link #EnableExternalAudioDevice} 中设置的 playback_format.sample_rate / 100。
+     *        采样点数量，应该为 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice} 中设置的 playback_format.sample_rate / 100。
      *        当设置采样率为 48000 时， 每次应该拉取 480 个采样点
      * @return  方法调用结果  <br>
      *        + true:方法调用成功  <br>

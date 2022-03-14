@@ -1,7 +1,7 @@
 /*
  *  Copyright (c) 2021 The ByteRtc project authors. All Rights Reserved.
  *  @company ByteDance.Inc
- *  @brief 游戏语音引擎配置信息
+ *  @brief Game voice engine configuration information
  */
 #pragma once
 

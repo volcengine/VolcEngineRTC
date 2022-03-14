@@ -11,7 +11,7 @@
 
 namespace bytertc {
 
-/**
+/**  
  * @type callback
  * @region 转推直播
  * @brief 推流 Observer
@@ -24,19 +24,19 @@ public:
     virtual bool IsSupportClientPushStream() {
         return false;
     }
-    /**
+    /**  
      * @type callback
      * @region 转推直播
      * @brief 通知 Transcoding 关键事件
-     * @param [in] event 事件类型
+     * @param [in] event 事件类型，参看 StreamMixingEvent{@link #StreamMixingEvent}
      * @param [in] event_data 事件参数
-     * @param [in] error 错误类型
-     * @param [in] mix_type 合流类型
+     * @param [in] error 错误类型，参看 TransCodingError{@link #TransCodingError}
+     * @param [in] mix_type 合流类型，参看 StreamMixingType{@link #StreamMixingType}
      */
     virtual void OnStreamMixingEvent(
             StreamMixingEvent event, const char* event_data, int error, StreamMixingType mix_type) = 0;
 
-    /**
+    /**  
      * @type callback
      * @region 转推直播
      * @brief 合流视频回调，运行在视频回调线程
@@ -44,7 +44,7 @@ public:
      */
     virtual void OnStreamMixingVideoFrame(IVideoFrame* video_frame) = 0;
 
-    /**
+    /**  
      * @type callback
      * @region 转推直播
      * @brief 合流音频回调，运行在音频回调线程
@@ -52,21 +52,21 @@ public:
      */
     virtual void OnStreamMixingAudioFrame(IAudioFrame* audio_frame) = 0;
 
-    /**
+    /**  
      * @type callback
      * @region 转推直播
      * @brief 视频SEI帧回调，运行在视频回调线程
      * @param dataFrame SEI 数据
      */
     virtual void OnStreamMixingDataFrame(IDataFrame* data_frame) = 0;
-    /**
+    /**  
      * @hidden
      * @brief 析构函数
      */
     virtual ~ITranscoderObserver() = default;
 };
 
-/**
+/**  
  * @hidden
  * @type api
  * @brief 创建合流参数实例

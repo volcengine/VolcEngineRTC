@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Event Handler
+ * @brief VolcEngineRTC Event Handler
 */
 
 #pragma once
@@ -14,7 +14,7 @@
 
 namespace bytertc {
 
-/**
+/**  
  * @type callback
  * @brief 音视频引擎事件回调接口。  <br>
  *        创建 RTCEngine 实例 CreateRtcEngine{@link #CreateRtcEngine} 时，传入该回调实例。  <br>
@@ -29,7 +29,7 @@ public:
     virtual ~IRtcEngineEventHandler() {
     }
 	
-	/**
+	/**  
     * @hidden
     * @type callback
     * @region 游戏接口
@@ -39,12 +39,12 @@ public:
     * @param [in] range_audio_mode  <br>
     *        远端用户的发送模式，详见: RangeAudioMode{@link #RangeAudioMode} 。
     */
-    virtual void OnUserAudioSendModeChange(const char* uid, int range_audio_mode) {
+   virtual void OnUserAudioSendModeChange(const char* uid, int range_audio_mode) {
         (void)uid;
         (void)range_audio_mode;
     }
 
-    /**
+    /**  
      * @hidden
      * @type callback
      * @region 游戏接口

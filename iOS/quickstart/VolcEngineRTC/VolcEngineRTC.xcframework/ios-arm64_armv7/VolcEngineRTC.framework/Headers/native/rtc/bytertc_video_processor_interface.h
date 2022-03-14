@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Video Processor Interface
+ * @brief VolcEngineRTC Video Processor Interface
 */
 
 #pragma once
@@ -9,7 +9,7 @@
 
 namespace bytertc {
 
-/**
+/**  
  * @type api
  * @region 视频处理
  */
@@ -21,7 +21,7 @@ public:
      */
     virtual ~IVideoProcessor() = default;
 
-   /**
+   /**  
     * @type api
     * @region 视频处理
     * @brief 获取 RTC SDK 采集得到的视频帧，根据 RegisterLocalVideoProcessor{@link #IRtcEngineLite#RegisterLocalVideoProcessor} 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。
@@ -31,7 +31,7 @@ public:
     *       + 在进行视频前处理前，你需要调用 RegisterLocalVideoProcessor{@link #IRtcEngineLite#RegisterLocalVideoProcessor} 设置视频前处理器。<br>
     *       + 如果需要取消视频前处理，可以将视频前处理器设置为 nullptr。
     */
-    virtual IVideoFrame* ProcessVideoFrame(IVideoFrame* src_frame) = 0;
+   virtual IVideoFrame* ProcessVideoFrame(IVideoFrame* src_frame) = 0;
 };
 
 } // namespace bytertc

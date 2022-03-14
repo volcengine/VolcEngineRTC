@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Advance API
+ * @brief VolcEngineRTC Advance API
 */
 
 #import "ByteRTCEngineKit.h"
@@ -33,7 +33,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
  *       设备 id
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)getDevice:(int)index DeviceName:(NSString * _Nonnull * _Nonnull)deviceName DeviceID:(NSString * _Nonnull * _Nonnull) deviceID;
 @end
@@ -133,7 +133,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频播放设备 id, 可通过 {@link #enumerateAudioPlaybackDevices} 获取。插拔设备不会影响 deviceID
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)setAudioPlaybackDevice:(NSString * _Nonnull)deviceID;
 /**
@@ -145,7 +145,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频设备 id
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)getAudioPlaybackDevice:(NSString * _Nonnull * _Nonnull) deviceID;
 /**
@@ -157,7 +157,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频采集设备 id, 可通过 {@link #enumerateAudioCaptureDevices} 获取。插拔设备不会影响 deviceID
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)setAudioCaptureDevice:(NSString * _Nonnull)deviceID;
 /**
@@ -169,7 +169,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频设备 id,
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)getAudioCaptureDevice:(NSString *_Nonnull * _Nonnull) deviceID;
 /**
@@ -182,7 +182,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *      false：取消设备静音
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) setAudioPlaybackDeviceMute:(bool)mute;
 /**
@@ -195,7 +195,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *      false：设备非静音
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) getAudioPlaybackDeviceMute:(bool * _Nonnull)mute;
 /**
@@ -208,7 +208,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *      false：取消设备静音
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) setAudioCaptureDeviceMute:(bool)mute;
 /**
@@ -221,7 +221,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *      false：设备非静音
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) getAudioCaptureDeviceMute:(bool * _Nonnull)mute;
 /**
@@ -233,7 +233,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频播放设备音量, 取值范围 [0,255], 超出此范围返回错误 -2
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) setAudioPlaybackDeviceVolume:(unsigned int)volume;
 /**
@@ -245,7 +245,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频播放设备音量, 取值范围 [0,255]
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) getAudioPlaybackDeviceVolume:(unsigned int * _Nonnull)volume;
 /**
@@ -257,7 +257,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频采集设备音量, 取值范围 [0,255], 超出此范围返回错误 -2
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) setAudioCaptureDeviceVolume:(unsigned int)volume;
 /**
@@ -269,7 +269,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       音频采集设备音量, 取值范围 [0,255]
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int) getAudioCaptureDeviceVolume:(unsigned int * _Nonnull)volume;
 
@@ -283,7 +283,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       指定音频文件的绝对路径，路径字符串使用 UTF-8 编码格式，支持以下音频格式: mp3，aac，m4a，3gp，wav
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  * @notes: 测试功能必须在 {@link #ByteRTCEngineKit#joinChannelByKey} 前应用。且不可与其它音频设备测试功能同时应用。
  */
 - (int)startAudioPlaybackDeviceTest:(NSString *_Nonnull)testAudioFilePath;
@@ -294,7 +294,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  * @brief 停止播放设备测试。
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)stopAudioPlaybackDeviceTest;
 /**
@@ -307,7 +307,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       回调的周期（毫秒）
  * @return
  *      0:成功
- *      <0：失败
+ *      < 0：失败
  * @notes: 测试功能必须在 {@link #ByteRTCEngineKit#joinChannelByKey} 前应用。且不可与其它音频设备测试功能同时应用。
  */
 - (int)startAudioCaptureDeviceTest:(unsigned int)indicationInterval;
@@ -319,7 +319,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       该方法停止录音设备测试。调用 {@link #startAudioCaptureDeviceTest} 后，必须调用该方法停止测试。
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)stopAudioCaptureDeviceTest;
 /**
@@ -334,7 +334,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  * @notes:
  *      1.测试功能必须在 {@link #ByteRTCEngineKit#joinChannelByKey} 前应用。且不可与其它音频设备测试功能同时应用。
  *      2.该方法仅在本地进行音频设备测试，不涉及网络连接。
@@ -348,7 +348,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *       该方法停止录音设备测试。调用 {@link #startAudioDeviceLoopbackTest} 后，必须调用该方法停止测试。
  * @return
  *      0：成功
- *      <0：失败
+ *      < 0：失败
  */
 - (int)stopAudioDeviceLoopbackTest;
 @end
@@ -466,7 +466,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
  * @brief 设置Json格式的字符串参数，配置RTC引擎参数。
  * @param parameters Json格式的字符串参数
  * @return 0：方法调用成功；
-            <0： 方法调用失败
+            < 0： 方法调用失败
  * @notes 需要在引擎初始化之前调用
  */
 + (int)setParameters:(NSString* _Nullable)parameters __attribute((deprecated("Will be removed in new version")));
@@ -592,7 +592,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
  * @param audioFrame 音频数据帧，详见 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  * @return  方法调用结果  <br>
  *         + 0: 调用成功  <br>
- *         + <0: 调用失败  <br>
+ *         + < 0: 调用失败  <br>
  * @notes  <br>
  *       + audioFrame 的 buffer 必须是pcm数据，内存大小应该为 recordFormat.samples * recordFormat.channel * 2， 推送间隔是10ms，音频采样格式为s16。  <br>
  *       + audioFrame 的 samples 表示采样点数量，应该为 enableExternalAudioDevice:playbackFormat:{@link #enableExternalAudioDevice:playbackFormat:} 中设置的 recordFormat.sampleRate / 100。
@@ -611,7 +611,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioFrameObserver<NSObject>
  * @param audioFrame 音频数据帧，详见 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  * @return  方法调用结果  <br>
  *         + 0: 调用成功  <br>
- *         + <0: 调用失败  <br>
+ *         + < 0: 调用失败  <br>
  * @notes  <br>
  *       + audioFrame 的 buffer 是pcm数据，内存大小为 playbackFormat.samples * playbackFormat.channel * 2， 拉取间隔是10ms，音频采样格式为s16。  <br>
  *       + audioFrame 的 samples 表示采样点数量，应该为 enableExternalAudioDevice:playbackFormat:{@link #enableExternalAudioDevice:playbackFormat:} 中设置的 playbackFormat.sampleRate / 100。

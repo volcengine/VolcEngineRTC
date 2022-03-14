@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Advance API
+ * @brief VolcEngineRTC Advance API
  */
 
 #import <VolcEngineRTC/objc/live/LiveRtc.h>

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Room Event Handler
+ * @brief VolcEngineRTC Room Event Handler
 */
 
 #import "src/sdk/native/rtc/bytertc_room_interface.h"

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
- * @brief VolcEngine Defines
+ * @brief VolcEngineRTC Defines
 */
 
 #import <CoreMedia/CMTime.h>
@@ -2288,20 +2288,24 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioChannel) {
 typedef NS_ENUM(NSInteger, ByteRTCAudioPlaybackDevice) {
     /**
      * @brief 扬声器
-    */
+     */
     ByteRTCAudioPlaybackDeviceSpeakerphone = 1,
     /**
      * @brief 听筒
-    */
+     */
     ByteRTCAudioPlaybackDeviceEarpiece = 2,
     /**
      * @brief 有线耳机
-    */
+     */
     ByteRTCAudioPlaybackDeviceHeadset = 3,
     /**
      * @brief 蓝牙耳机
-    */
+     */
     ByteRTCAudioPlaybackDeviceHeadsetBluetooth = 4,
+    /**
+     * @brief USB设备
+     */
+    ByteRTCAudioPlaybackDeviceHeadsetUSB = 5,
 };
 
 /**
