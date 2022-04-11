@@ -40,7 +40,7 @@ public:
      * @type callback
      * @region 转推直播
      * @brief 合流视频回调，运行在视频回调线程
-     * @param videoFrame 视频帧
+     * @param [in] video_frame 视频帧
      */
     virtual void OnStreamMixingVideoFrame(IVideoFrame* video_frame) = 0;
 
@@ -48,7 +48,7 @@ public:
      * @type callback
      * @region 转推直播
      * @brief 合流音频回调，运行在音频回调线程
-     * @param audioFrame 音频帧
+     * @param [in] audio_frame 音频帧
      */
     virtual void OnStreamMixingAudioFrame(IAudioFrame* audio_frame) = 0;
 
@@ -56,7 +56,7 @@ public:
      * @type callback
      * @region 转推直播
      * @brief 视频SEI帧回调，运行在视频回调线程
-     * @param dataFrame SEI 数据
+     * @param [in] data_frame SEI 数据
      */
     virtual void OnStreamMixingDataFrame(IDataFrame* data_frame) = 0;
     /**  

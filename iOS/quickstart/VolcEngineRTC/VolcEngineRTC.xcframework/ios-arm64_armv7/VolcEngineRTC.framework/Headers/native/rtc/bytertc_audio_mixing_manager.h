@@ -98,9 +98,9 @@ public:
      * @param [in] mix_id  <br>
      *        混音 ID  <br>
      *        应用调用者维护，请保证唯一性。  <br>
-     *        如果使用相同的 ID 调用本方法，后一次会覆盖前一次。 <br>
-     *        如果先调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} ，再使用相同的 ID 调用本方法 ，会先回调 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 上一个混音停止，然后加载后一个混音。  <br>
-     *        使用一个 ID 调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 播放 B.mp3，请先调用 UnloadAudioMixing{@link #UnloadAudioMixing} 卸载 A.mp3 ，否则会报错 kAudioMixingErrorLoadConflict。
+     *        如果使用相同的 mix_id 调用本方法，后一次会覆盖前一次。 <br>
+     *        如果先调用 StartAudioMixing{@link #StartAudioMixing} ，再使用相同的 mix_id 调用本方法 ，会先回调 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 上一个混音停止，然后加载后一个混音。  <br>
+     *        使用一个 mix_id 调用本方法预加载 A.mp3 后，如果需要使用相同的 mix_id 调用 StartAudioMixing{@link #StartAudioMixing} 播放 B.mp3，请先调用 UnloadAudioMixing{@link #UnloadAudioMixing} 卸载 A.mp3 ，否则会报错 kAudioMixingErrorLoadConflict。
      * @param [in] file_path 用于混音文件路径。可以是本地文件的绝对路径。<br>
      *        不同平台支持的音频文件格式: <br>
      *        <table>
@@ -222,12 +222,24 @@ public:
     /** 
      * @type api
      * @region 混音
-     * @brief 启动 PCM 音频数据混音。<br>
-     *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 mix_id。
-     * @param [in] mix_id 混音 ID用于标识混音，保证混音 ID 唯一性。  <br>
+     * @brief 如果你需要使用 EnableVocalInstrumentBalance{@link #IRtcEngineLite#EnableVocalInstrumentBalance} 对混音使音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
+     * @param [in] mixId 混音 ID
+     * @param [in] loudness 原始响度，单位：lufs，取值范围为 [-70.0, 0.0]。  <br>
+     *        当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音均衡处理。默认值为 1.0lufs，即不做处理。
+     * @notes 建议在 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 开始播放音频文件之前调用该接口，以免播放过程中的音量突变导致听感体验下降。
+     */
+    virtual void SetAudioMixingLoudness(int mix_id, float loudness) = 0;
+
+    /** 
+     * @type api
+     * @region 混音
+     * @brief 启动外部音频流混音
+     * @param [in] mix_id 混音 ID，用于标识混音，保证混音 ID 唯一性。  <br>
      *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 通知前一次混音已停止。
      * @param [in] type 混音播放类型  <br>
      *        是否本地播放、以及是否发送到远端，详见 AudioMixingType{@link #AudioMixingType}。
+     * @brief 启动 PCM 音频数据混音。<br>
+     *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 mix_id。
      * @notes  <br>
      *       + 必须先调用本方法启动 PCM 音频数据混音，随后调用 PushAudioMixingFrame{@link #PushAudioMixingFrame} 方法，才会开始混音。 <br>
      *       + 如要结束 PCM 音频数据混音，使用 DisableAudioMixingFrame{@link #IAudioMixingManager#DisableAudioMixingFrame}。

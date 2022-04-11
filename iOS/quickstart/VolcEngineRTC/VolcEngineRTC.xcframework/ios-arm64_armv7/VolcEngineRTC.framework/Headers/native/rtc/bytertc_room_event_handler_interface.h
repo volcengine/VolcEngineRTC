@@ -193,8 +193,7 @@ public:
     /** 
      * @type callback
      * @region 媒体流管理
-     * @brief 房间内某用户调用 MuteLocalAudio{@link #IRtcEngineLite#MuteLocalAudio}
-     *        改变本地音频发送状态时，房间内其他用户会收到此回调。
+     * @brief 房间内用户暂停/恢复发送音频流时，房间内其他用户会收到此回调。参看 MuteLocalAudio{@link #IRtcEngineLite#MuteLocalAudio}。
      * @param [in] user_id 改变本地音频发送状态的用户 ID
      * @param [in] mute_state 发送状态，参看 MuteState{@link #MuteState}
      */
@@ -225,7 +224,7 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @brief 房间内的用户调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
+     * @brief 房间内的可见用户调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 开启音频采集的远端用户 ID
      */
     virtual void OnUserStartAudioCapture(const char* user_id) {
@@ -235,7 +234,7 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @brief 房间内的用户调用 StopAudioCapture{@link #IRtcEngineLite#StopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
+     * @brief 房间内的可见用户调用 StopAudioCapture{@link #IRtcEngineLite#StopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 关闭音频采集的远端用户 ID
      */
     virtual void OnUserStopAudioCapture(const char* user_id) {
@@ -492,7 +491,7 @@ public:
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 第一帧远端视频流在视图上渲染成功后，收到此回调。
+     * @brief SDK 内部渲染成功远端视频流首帧后，收到此回调。
      * @param [in] key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
      */
@@ -501,13 +500,24 @@ public:
         (void)info;
     }
 
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief SDK 接收并解码远端视频流首帧后，收到此回调。
+     * @param [in] key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
+     */
+    virtual void OnFirstRemoteVideoFrameDecoded(const RemoteStreamKey key, const VideoFrameInfo& info) {
+        (void)key;
+        (void)info;
+    }
 
     /** 
      * @type callback
      * @region 媒体流管理
      * @brief 房间内用户暂停/恢复发送视频流时，房间内其他用户会收到此回调。参看 MuteLocalVideo{@link #IRtcEngineLite#MuteLocalVideo}。
      * @param [in] uid 暂停/恢复发送视频流的用户 ID。
-     * @param  [in] mute 暂停/恢复发送视频流的状态。参看 MuteState{@link #MuteState}。
+     * @param [in] mute 视频流的发送状态。参看 MuteState{@link #MuteState}。
      */
     virtual void OnUserMuteVideo(const char* uid, MuteState mute) {
         (void)uid;
@@ -536,7 +546,7 @@ public:
     /** 
      * @type callback
      * @region 视频事件回调
-     * @brief 房间内的用户调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 开启视频采集时，房间内其他用户会收到此回调。
+     * @brief 房间内的可见用户调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 开启内部视频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 开启视频采集的远端用户 ID
      */
     virtual void OnUserStartVideoCapture(const char* user_id) {
@@ -546,7 +556,7 @@ public:
     /** 
      * @type callback
      * @region 视频事件回调
-     * @brief 房间内的用户调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭视频采集时，房间内其他用户会收到此回调。
+     * @brief 房间内的可见用户调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭内部视频采集时，房间内其他用户会收到此回调。
      * @param [in] user_id 关闭视频采集的远端用户 ID
      */
     virtual void OnUserStopVideoCapture(const char* user_id) {

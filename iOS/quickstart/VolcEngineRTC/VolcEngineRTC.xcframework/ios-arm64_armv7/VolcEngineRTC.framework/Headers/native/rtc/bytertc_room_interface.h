@@ -32,7 +32,7 @@ public:
      * @hidden
      * @type api
      * @region 多房间
-     * @brief 销毁房间，该接口实现上会先执行退房操作，然后释放房间处理回调指针
+     * @brief 退出并销毁调用 CreateRtcRoom{@link #IRtcEngineLite#CreateRtcRoom} 所创建的房间。
      */
     virtual void Destroy() = 0;
 
@@ -59,19 +59,19 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 设置用户可见性。默认为可见。  <br>
-     *        通过对用户可见性进行设置，可以控制用户在房间内的行为：<br>
-     *        + 能否发布音视频流；  <br>
-     *        + 用户自身是否在房间中隐身。
-     * @param [in] enable 设置用户是否对房间内其他用户可见：  <br>
-     *        + true: 可以被房间中的其他用户感知，且可以在房间内发布和订阅音视频流；  <br>
-     *        + false: 无法被房间中的其他用户感知，且只能在房间内订阅音视频流。
+     * @brief 设置用户可见性。默认可见。  <br>
+     * @param enable 设置用户是否对房间内其他用户可见：  <br>
+     *        + true: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br>
+     *        + false: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+     * @return  <br>
+     *         + 0: 方法调用成功  <br>
+     *         + < 0: 方法调用失败  <br>
      * @notes  <br>
-     *        + 该方法在加入房间前后均可调用。 <br>
-     *        + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
+     *       + 该方法在加入房间前后均可调用。 <br>
+     *       + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
      *            - 从 false 切换至 true 时，房间内其他用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调通知；  <br>
-     *            - 从 true 切换至 false 时，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。 <br>
-     *        + 若调用该方法将可见性设为 false，此时尝试发布流会收到 OnWarning{@link #IRtcEngineLiteEventHandler#OnWarning} 警告，具体原因参看 WarningCode{@link #WarningCode} 中的 kWarningCodePublishStreamForbiden 警告码。
+     *            - 从 true 切换至 false 时，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。  <br>
+     *       + 若调用该方法将可见性设为 false，此时尝试发布流会收到 `kWarningCodePublishStreamForbiden` 警告。
      */
     virtual void SetUserVisibility(bool enable) = 0;
 
@@ -81,10 +81,8 @@ public:
      * @hidden
      * @type api
      * @region 多房间
-     * @brief 设置 IRtcRoom{@link #IRtcRoom} 对象的事件句柄。
-     *        通过设置事件句柄可以监听此 IRtcRoom{@link #IRtcRoom} 对象对应的房间的回调事件。
-     * @param [in] room_event_handler
-     *        回调处理器，详见 IRTCRoomEventHandler{@link #IRTCRoomEventHandler}
+     * @brief 通过设置 IRtcRoom{@link #IRtcRoom} 对象的事件句柄，监听此对象对应的回调事件。
+     * @param [in] room_event_handler 参见 IRTCRoomEventHandler{@link #IRTCRoomEventHandler}
      */
     virtual void SetRtcRoomEventHandler(IRTCRoomEventHandler* room_event_handler) = 0;
 
@@ -245,22 +243,23 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 将本端音视频流发布到此房间。
+     * @brief 在当前所在房间内停止发布本地音视频流
      * @notes  <br>
-     *        1.多房间模式下，默认音视频流不自动发布。你必须调用此接口，进行手动发布。<br>
-     *        2.调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布音视频流。 <br>
-     *        3.用户在房间内，同一时间仅能在一个房间内发布音视频流。<br>
-     *        4.房间内用户调用此方法成功发布音视频流后，房间中的其他用户将会收到 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 回调通知。
+     *        + 多房间模式下，默认音视频流不自动发布。你必须调用此接口，进行手动发布。<br>
+     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布音视频流。 <br>
+     *        + 如果你需要发布屏幕共享流，调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
+     *        + 如果你需要向多个房间发布音视频流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。
+     *        + 用户调用此方法成功发布音视频流后，房间中的其他用户将会收到 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 回调通知。
      */
     virtual void Publish() = 0;
 
     /** 
      * @type api
      * @region 多房间
-     * @brief 停止将本端音视频流发布到此房间。
+     * @brief 停止将本端音视频流发布到此房间
      * @notes  <br>
-     *        1.在多房间模式下，调用 Publish{@link #IRtcRoom#Publish} 手动发布音视频流后，调用此接口停止发布。<br>
-     *        2.房间内用户调用此方法停止发布音视频流后，房间中的其他用户将会收到 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 回调通知。
+     *        + 在多房间模式下，调用 Publish{@link #IRtcRoom#Publish} 手动发布音视频流后，调用此接口停止发布。<br>
+     *        + 房间内用户调用此方法停止发布音视频流后，房间中的其他用户将会收到 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 回调通知。
      */
     virtual void Unpublish() = 0;
 
@@ -354,7 +353,7 @@ public:
      * @param [in] media_type 媒体类型，用于指定订阅音/视频，参看 SubscribeMediaType{@link #SubscribeMediaType}。
      * @param [in] video_config 视频订阅配置，参看 SubscribeVideoConfig{@link #SubscribeVideoConfig}。
      * @notes  <br>
-     *        + 你可以通过 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 和 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 两个回调获取当前房间你的音视频流信息，并调用本方法按需订阅流或修改订阅配置。  <br>
+     *        + 你必须通过 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 和 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 两个回调获取当前房间里的音视频流信息，并调用本方法按需订阅流或修改订阅配置。  <br>
      *        + 若订阅失败，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      *        + 若调用 PauseAllSubscribedStream{@link #IRtcRoom#PauseAllSubscribedStream} 暂停接收远端音视频流，此时仍可使用该方法对暂停接收的流进行设置，你会在调用 ResumeAllSubscribedStream{@link #IRtcRoom#ResumeAllSubscribedStream} 恢复接收流后收到修改设置后的流。  <br>
      */
@@ -465,12 +464,12 @@ public:
      * @region 多房间
      * @brief 开启转推直播，并设置合流的视频视图布局和音频属性。
      * @param [in] param 转推直播配置参数。参看 ITranscoderParam{@link #ITranscoderParam}。
-     * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。
+     * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。  <br>
      *        设置 observer 接收合流完成的音视频流和 SEI 信息。
-     * @notes <br>
-     *        1.只有房间模式为直播模式的用户才能调用此方法。  <br>
-     *        2.调用该方法后，关于启动结果和推流过程中的错误，会收到 OnStreamMixingEvent{@link #ITranscoderObserver#OnStreamMixingEvent} 回调。
-     *        3.调用 StopLiveTranscoding{@link #IRtcRoom#StopLiveTranscoding} 停止转推直播。
+     * @notes  <br>
+     *       + 只有房间模式为直播模式的用户才能调用此方法。  <br>
+     *       + 调用该方法后，关于启动结果和推流过程中的错误，会收到 OnStreamMixingEvent{@link #ITranscoderObserver#OnStreamMixingEvent} 回调。
+     *       + 调用 StopLiveTranscoding{@link #IRtcRoom#StopLiveTranscoding} 停止转推直播。
      */
     virtual void StartLiveTranscoding(ITranscoderParam* param, ITranscoderObserver* observer) = 0;
 
@@ -487,7 +486,7 @@ public:
      * @region 多房间
      * @brief 更新转推直播参数。  <br>
      *        使用 StartLiveTranscoding{@link #IRtcRoom#StartLiveTranscoding} 启用转推直播功能后，使用此方法更新功能配置参数。
-     * @param [in] param 配置参数，参看 ITranscoderParam{@link #ITranscoderParam}
+     * @param [in] param 配置参数，参看 ITranscoderParam{@link #ITranscoderParam}。
      */
     virtual void UpdateLiveTranscoding(ITranscoderParam* param) = 0;
 
@@ -498,8 +497,7 @@ public:
      *        如果需要解除某个用户的绑定视图，你可以把 view 设置为空。
      * @notes  <br>
      *       + 实际使用时，你可以在收到回调 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 或 onFirstRemoteVideoFrame{@link #onFirstRemoteVideoFrame} 时获得远端用户 user_id。  <br>
-     *       + 这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调；
-     *       + 而不会收到 onFirstRemoteVideoFrame{@link #onFirstRemoteVideoFrame} 回调。你不应给录制的亚客户端绑定视图（因为它不会发送视频流）。
+     *       + 这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调，而不会收到 onFirstRemoteVideoFrame{@link #onFirstRemoteVideoFrame} 回调。你不应给录制的哑亚客户端绑定视图（因为它不会发送视频流）。
      * @param [in] user_id 视频来源的远端用户 ID。
      * @param [in] index 视频流属性，参看 StreamIndex{@link #StreamIndex}
      * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}

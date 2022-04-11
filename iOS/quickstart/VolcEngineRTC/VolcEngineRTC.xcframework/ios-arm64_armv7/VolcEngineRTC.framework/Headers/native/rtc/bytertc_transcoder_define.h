@@ -50,11 +50,11 @@ enum StreamMixingEvent {
      */
     kStreamMixingBase = 0,
     /** 
-     * @brief 合流开始
+     * @brief 合流功能触发
      */
     kStreamMixingStart = 1,
     /** 
-     * @brief 合流启动成功
+     * @brief 合流成功
      */
     kStreamMixingStartSuccess = 2,
     /** 
@@ -109,7 +109,7 @@ enum StreamMixingType {
      */
     kStreamMixingTypeByServer = 0,
     /** 
-     * @brief 客户端合流
+     * @brief 端云一体合流
      */
     kStreamMixingTypeByClient = 1,
 };
@@ -265,11 +265,11 @@ typedef struct IDataFrame {
  */
 typedef struct TranscoderLayoutRegion {
     /** 
-     * @brief 目标合流用户的 ID
+     * @brief 合流用户的 ID
      */
     const char* region_id;
     /** 
-     * @brief 跨房间订阅流时，目标流所在的房间 ID
+     * @brief 视频流发布用户的房间 ID
      */
     const char* room_id;
     /** 
@@ -305,7 +305,7 @@ typedef struct TranscoderLayoutRegion {
     /** 
      * @brief 是否为屏幕流：  <br>
      *        + true: 是  <br>
-     *        + false: 否（默认设置）
+     *        + false: 否
      */
     bool screen_stream = false;
     /** 
@@ -361,7 +361,7 @@ typedef struct TranscoderVideoParam {
      */
     int32_t i32_fps;
     /** 
-     * @brief 视频 I 帧间隔，单位：ms
+     * @brief 视频 I 帧间隔
      */
     int32_t i32_gop;
     /** 
@@ -526,7 +526,7 @@ public:
      * @type api
      * @region 转推直播
      * @brief 设置视频参数
-     * @param [in] TranscoderVideoParam 音频参数，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
+     * @param [in] TranscoderVideoParam 视频参数，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
      */
     virtual void SetVideoParam(const TranscoderVideoParam&) = 0;
     /** 

@@ -26,7 +26,7 @@
  * 7.销毁引擎 destroyEngine:
  *
  * 有以下常见的注意事项：
- * 1.本示例中，我们在 onFirstRemoteVideoFrameRendered:withFrameInfo: 这个事件中给远端用户设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在 onUserJoined:elapsed: 回调中设置远端用户视频渲染视图
+ * 1.本示例中，我们在 onFirstRemoteVideoFrameDecoded:withFrameInfo: 这个事件中给远端用户设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在 onUserJoined:elapsed: 回调中设置远端用户视频渲染视图
  * 2.SDK 回调不在主线程，UI 操作需要切换线程
  * 3.用户成功加入房间后，SDK 会通过 onUserJoined:elapsed: 回调已经在房间的用户信息
  * 4.SDK 支持同时发布多个参数的视频流，接口是 setVideoEncoderConfig:
@@ -226,7 +226,7 @@
     }
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onFirstRemoteVideoFrameRendered:(ByteRTCRemoteStreamKey *)streamKey withFrameInfo:(ByteRTCVideoFrameInfo *)frameInfo{
+- (void)rtcEngine:(ByteRTCEngineKit *)engine onFirstRemoteVideoFrameDecoded:(ByteRTCRemoteStreamKey *)streamKey withFrameInfo:(ByteRTCVideoFrameInfo *)frameInfo{
     NSLog(@"%@,%s",[NSThread currentThread],__func__);
 
     dispatch_async(dispatch_get_main_queue(), ^{

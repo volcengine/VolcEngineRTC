@@ -171,15 +171,11 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @brief 媒体设备状态回调。提示音频采集、音频播放、摄像头视频采集、屏幕视频采集四种媒体设备的状态。
-     * @param [in] device_id 设备 ID   <br>
-     *                       采集屏幕视频流时，设备 ID 为固定字符串 `screen_capture_video`
+     * @brief 媒体设备状态回调。提示音频采集、音频渲染、视频采集三种媒体设备的状态。
+     * @param [in] device_id 设备 ID
      * @param [in] device_type 设备类型，详见 MediaDeviceType{@link #MediaDeviceType}
      * @param [in] device_state 设备状态，详见 MediaDeviceState{@link #MediaDeviceState}
      * @param [in] device_error 设备错误类型，详见 MediaDeviceError{@link #MediaDeviceError}
-     * @notes   <br>
-     *        + 媒体设备包括音频采集、音频播放、摄像头视频采集、屏幕视频采集四种设备类型。
-     *        + 此回调返回媒体设备的状态，包括：设备的插入、移除，使用中的设备开启、停止、运行时错误，以及屏幕采集开始、暂停、恢复、停止、错误等状态。  <br>
      */
     virtual void OnMediaDeviceStateChanged(const char* device_id,
                                            bytertc::MediaDeviceType device_type,
@@ -190,7 +186,6 @@ public:
         (void)device_state;
         (void)device_error;
     }
-
 
     /** 
      * @type callback

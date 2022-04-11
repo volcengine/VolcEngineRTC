@@ -126,12 +126,12 @@ private:
  * @brief 创建 RTCEngine 实例。  <br>
  *        如果当前线程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br>
  *        如果当前线程中已创建了引擎实例，再次调用此方法时，会创建另一个独立的引擎实例。
- * @param [in] app_id  <br>
- *        每个应用的唯一标识符。只有使用相同的 app_id 生成的实例，才能够进行音视频通信。
- * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
+ * @param [in] app_id 每个应用的唯一标识符。只有使用相同的 app_id 生成的实例，才能够进行音视频通信。
+ * @param [in] event_handler SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
  * @param [in] parameters 用以覆盖默认参数的本引擎实例参数。JSON 字符串格式。
- * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
+ * @return  <br>
+ *        + IRtcEngine：创建成功。返回一个可用的 IRtcEngine{@link #IRtcEngine} 实例  <br>
+ *        + Null：创建失败。
  * @notes  <br>
  *        + 如果你在同一个线程中创建了多个引擎实例，这些实例必须分别调用 DestroyRtcEngine{@link #DestroyRtcEngine} 销毁。
  *        + 在 Linux 平台上创建引擎实例的数量取决于系统的硬件性能。
@@ -199,12 +199,11 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
  * @type api
  * @region 引擎管理
  * @brief 销毁由 CreateRtcEngine{@link #CreateRtcEngine} 创建的 RTCEngine 实例，并释放所有相关资源。
- * @param [in] engine  <br>
- *        CreateRtcEngine{@link #CreateRtcEngine} 时，返回的实例。
+ * @param [in] engine CreateRtcEngine{@link #CreateRtcEngine} 时，返回的实例。
  * @notes  <br>
  *        + 请确保和需要销毁的 IRtcEngine{@link #IRtcEngine} 实例相关的业务场景全部结束后，才调用此方法。  <br>
  *        + 该方法在调用之后，会销毁所有和此 IRtcEngine{@link #IRtcEngine} 实例相关的内存，并且停止与媒体服务器的任何交互。  <br>
- *        + 你不可以在回调线程中直接调用本方法；也不可以在回调方法中等待主线程的执行而同时在主线程调用本方法，否则会造成死锁。原因是本方法为阻塞调用，会阻塞当前线程直到 SDK 彻底完成退出逻辑。
+ *        + 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。
  */
 BYTERTC_API void DestroyRtcEngine(bytertc::IRtcEngine* engine);
 

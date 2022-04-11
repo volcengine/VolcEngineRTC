@@ -513,9 +513,11 @@ public:
      * @brief 调节音频采集音量
      * @param [in] index 流索引，指定调节主流还是调节屏幕流的音量，参看 StreamIndex{@link #StreamIndex}
      * @param [in] volume 采集的音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。
-     * @notes <br>
-     *        + 无论是采集来自麦克风的音频流，还是屏幕音频流；无论是 RTC SDK 内部采集，还是自定义采集，都可以使用此接口进行音量调节。
-     *        + 在开启音频采集前后，你都可以使用此接口设定采集音量。
+     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。
+     *       + 0：静音  <br>
+     *       + 100：原始音量  <br>
+     *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
+     * @notes 在开启音频采集前后，你都可以使用此接口设定采集音量。
      */
     virtual void SetCaptureVolume(StreamIndex index, int volume) = 0;
 
@@ -525,10 +527,10 @@ public:
      * @region 音频管理
      * @brief 调节本地播放的所有远端用户混音后的音量
      * @param [in] volume 音频播放音量，取值范围： [0,400] <br>
+     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
-     * @notes 为保证更好的通话质量，建议将 volume 值设为 [0,100]。
      */
     virtual void SetPlaybackVolume(const int volume) = 0;
 
@@ -598,13 +600,14 @@ public:
      * @type api
      * @region 音频管理
      * @brief 开启内部音频采集。默认为关闭状态。  <br>
-     *        调用后，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。 <br>
-     *        进房后调用该方法，房间中的其他用户会收到 OnUserStartAudioCapture{@link #IRTCRoomEventHandler#OnUserStartAudioCapture} 的回调。
+     *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+     *        调用该方法开启后，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。 <br>
+     *        非隐身用户进房后调用该方法，房间中的其他用户会收到 OnUserStartAudioCapture{@link #IRTCRoomEventHandler#OnUserStartAudioCapture} 的回调。
      * @notes  <br>
      *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 OnWarning{@link #IRtcEngineLiteEventHandler#OnWarning} 回调。  <br>
      *       + 调用 StopAudioCapture{@link #StopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
-     *       + 无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
-     *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
+     *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
+     *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 DisableExternalAudioDevice{@link #DisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
      */
     virtual void StartAudioCapture() = 0;
 
@@ -612,12 +615,13 @@ public:
      * @hidden(Linux)
      * @type api
      * @region 音频管理
-     * @brief 关闭内部音频采集。默认为关闭状态。  <br>
-     *        进房前调用该方法，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。  <br>
-     *        进房后调用该方法后，房间中的其他用户会收到 OnUserStopAudioCapture{@link #IRTCRoomEventHandler#OnUserStopAudioCapture} 的回调。
+     * @brief 立即关闭内部音频采集。默认为关闭状态。  <br>
+     *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+     *        调用该方法，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。  <br>
+     *        非隐身用户进房后调用该方法后，房间中的其他用户会收到 OnUserStopAudioCapture{@link #IRTCRoomEventHandler#OnUserStopAudioCapture} 的回调。
      * @notes  <br>
      *       + 调用 StartAudioCapture{@link #StartAudioCapture} 可以开启音频采集设备。  <br>
-     *       + 设备开启后若一直未调用该方法关闭，则 SDK 会在销毁引擎的时候自动关闭音频采集设备。  <br>
+     *       + 如果不调用本方法停止内部视频采集，则只有当销毁引擎实例时，内部音频采集才会停止。  
      */
     virtual void StopAudioCapture() = 0;
 
@@ -682,9 +686,11 @@ public:
      * @type api
      * @region 媒体流管理
      * @brief 控制本地音频流的发送状态：发送/不发送  <br>
-     *        使用此方法后，房间中的其他用户会收到回调： OnUserMuteAudio{@link #IRTCRoomEventHandler#OnUserMuteAudio}
+     *        非隐身用户使用此方法后，房间中的其他用户会收到回调： OnUserMuteAudio{@link #IRTCRoomEventHandler#OnUserMuteAudio}
      * @param [in] mute_state 发送状态，标识是否发送本地音频流，详见：MuteState{@link #MuteState}
-     * @notes 本方法仅控制本地音频流的发送状态，并不影响本地音频采集状态。
+     * @notes  <br>
+     *        + 本方法仅控制本地音频流的发送状态，并不影响本地音频采集状态。
+     *        + 无论是否开启音频采集，你都可以启动发送本地音频流。如果在采集前启用发送，音频将在采集开始后立即发送。
      */
     virtual void MuteLocalAudio(MuteState mute_state) = 0;
 
@@ -1236,7 +1242,6 @@ public:
      *       + 调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 可以停止内部视频采集。否则，只有当销毁引擎实例时，内部视频采集才会停止。  <br>
      *       + 创建引擎后，无论是否发布视频数据，你都可以调用该方法开启内部视频采集。只有当（内部或外部）视频采集开始以后视频流才会发布。  <br>
      *       + 如果需要从自定义视频采集切换为内部视频采集，你必须先关闭自定义采集，再调用此方法手动开启内部采集。
-     *       + 内部视频采集使用的摄像头由 switchCamera{@link #IRtcEngineLite#switchCamera} 接口指定。
      */
     virtual void StartVideoCapture() = 0;
 
@@ -1247,18 +1252,19 @@ public:
      * @brief 立即关闭内部视频采集。默认为关闭状态。  <br>
      *        内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
      *        调用该方法后，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。  <br>
-     *        调用该方法后，房间中的其他用户会收到 OnUserStopVideoCapture{@link #IRTCRoomEventHandler#OnUserStopVideoCapture} 的回调。
+     *        非隐身用户进房后调用该方法，房间中的其他用户会收到 OnUserStopVideoCapture{@link #IRTCRoomEventHandler#OnUserStopVideoCapture} 的回调。
      * @notes  <br>
      *       + 调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 可以开启内部视频采集。  <br>
      *       + 如果不调用本方法停止内部视频采集，则只有当销毁引擎实例时，内部视频采集才会停止。   <br>
      */
     virtual void StopVideoCapture() = 0;
 
-    /** 
+   /** 
+    * @hidden(Linux)
     * @type api
     * @region 视频管理
     * @brief 设置 RTC SDK 内部采集时的视频采集参数。<br>
-    *        如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数包括分辨率、帧率。
+    *        如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数，包括模式、分辨率、帧率。
     * @param videoCaptureConfig 视频采集参数。参看: VideoCaptureConfig{@link #VideoCaptureConfig}。
     * @return  <br>
     *        + 0: 成功；  <br>
@@ -1266,19 +1272,19 @@ public:
     * @notes  <br>
     * + 本接口在引擎创建后可调用，调用后立即生效。建议在调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 前调用本接口。
     * + 建议同一设备上的不同 Engine 使用相同的视频采集参数。
-    * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 中设置的参数。
+    * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 Auto 模式。
     */
    virtual int SetVideoCaptureConfig(const VideoCaptureConfig& videoCaptureConfig) = 0;
 
     /** 
      * @type api
      * @region 视频管理
-     * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+     * @brief 设置推送多路流时的各路视频参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
      * @param [in] index 视频流属性，参看 StreamIndex{@link #StreamIndex}。
-     * @param [in] solutions 视频参数数组首地址，参看 VideoSolution{@link #VideoSolution}。
+     * @param [in] solutions    要推送的多路视频流参数，参看 VideoSolution{@link #VideoSolution}。
+     *                          最大分辨率为 4096px * 4096px，超过或设置的分辨率无法编码时，会导致编码推流失败。<br>
      * @param [in] solution_num 视频参数数组长度。<br>
      *                          最多支持 4 路参数。当设置了多路参数时，分辨率必须是从大到小排列。 <br>
-     *                          最大分辨率为 4096px * 4096px，超过或设置的分辨率无法编码时，会导致编码推流失败。
      * @return  <br>
      *        + 0：成功  <br>
      *        + !0：失败  <br>
@@ -1367,7 +1373,7 @@ public:
      * @param  [in] muteState 发送状态，标识是否发送本地视频流，参看 MuteState{@link #MuteState}   <br>
      * @notes <br>
      *        + 本方法只是停止/启动本地视频流的发送，不影响视频采集状态。
-     *        + 无论是否开启视频采集，你都可以启动发送本地视频流。这样，一旦开始采集视频，即可进行发送。
+     *        + 无论是否开启视频采集，你都可以启动发送本地视频流。如果在采集前启用发送，视频将在采集开始后立即发送。
      */
     virtual void MuteLocalVideo(MuteState muteState) = 0;
 
@@ -1602,13 +1608,15 @@ public:
      *        + 0: 成功；  <br>
      *        + -1: 失败；  <br>
      * @notes  <br>
-     *       + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
+     *       + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 PublishScreen{@link #IRtcRoom#PublishScreen} 。<br>
      *       + 要关闭屏幕视频源采集，调用 StopScreenVideoCapture{@link #IRtcEngineLite#StopScreenVideoCapture}。  <br>
-     *       + 本地用户通过 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调获取屏幕采集状态，包括开始、暂停、恢复、错误等。  <br>
-     *       + 调用成功后，本端会收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调。  <br>
-     *       + 调用此接口前，你可以调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 设置屏幕视频流的采集帧率和编码分辨率。  <br>
-     *       + 在收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调后通过调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetLocalVideoSink{@link #SetLocalVideoSink} 函数设置本地屏幕共享视图。  <br>
-     *       + 也可通过注册 RegisterVideoFrameObserver{@link #RegisterVideoFrameObserver} 视频回调对象，监听 OnLocalScreenFrame{@link #IVideoFrameObserver#OnLocalScreenFrame} 本地屏幕视频回调事件。 <br>
+     *       + 调用成功后，本端会收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调。<br>
+     *       + 调用此接口前，你可以调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 设置屏幕视频流的采集帧率和编码分辨率。<br>
+     *       + 在收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured}
+     * 事件后通过调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetLocalVideoSink{@link
+     * #SetLocalVideoSink} 函数设置本地屏幕共享视图。  <br>
+     *       + 也可通过注册 RegisterVideoFrameObserver{@link #RegisterVideoFrameObserver} 视频回调对象，监听
+     * OnLocalScreenFrame{@link #IVideoFrameObserver#OnLocalScreenFrame} 本地屏幕视频回调事件 <br>
      */
     virtual int StartScreenVideoCapture(const ScreenCaptureSourceInfo& source_info, const ScreenCaptureParameters& capture_params) = 0;
 
@@ -1646,8 +1654,7 @@ public:
      * @region 屏幕共享
      * @brief 停止屏幕视频流采集。
      * @notes  <br>
-     *       + 要开启屏幕视频流采集，调用 StartScreenVideoCapture{@link #StartScreenVideoCapture}。  <br>
-     *       + 调用后，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。  <br>
+     *       + 要开启屏幕视频流采集，调用 StartScreenVideoCapture{@link #StartScreenVideoCapture}  <br>
      *       + 调用此接口不影响屏幕视频流发布。  <br>
      */
     virtual void StopScreenVideoCapture() = 0;
@@ -1739,10 +1746,10 @@ public:
      * @type api
      * @region 视频管理
      * @brief 设置向 SDK 输入的视频源
+     *        默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br>
      * @param [in] stream_index 视频流的属性，参看 StreamIndex{@link #StreamIndex}
      * @param [in] type 视频输入源类型，参看 VideoSourceType{@link #VideoSourceType}
      * @notes  <br>
-     *        + 默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br>
      *        + 该方法进房前后均可调用。  <br>
      *        + 当你已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。  <br>
      *        + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用此方法关闭自定义采集，然后调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 手动开启内部采集。  <br>
@@ -1793,16 +1800,16 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 创建并获取一个 IRtcRoom{@link #IRtcRoom} 对象  <br>
+     * @brief 创建房间
+     *        多次调用此方法以创建多个 IRTCRoom{@link #IRTCRoom} 实例。分别调用各 IRTCRoom 实例中的 JoinRoom{@link #IRtcEngine#JoinRoom} 方法，同时加入多个房间。多房间模式下，用户可以同时订阅各房间的音视频流。<br>
      * @param [in] room_id 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
      *       + 26个大写字母 A ~ Z  <br>
      *       + 26个小写字母 a ~ z  <br>
      *       + 10个数字 0 ~ 9  <br>
      *       + 下划线 "_", at 符 "@", 减号 "-"  <br>
      *        多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则会导致创建房间失败。  <br>
-     * @notes  <br>
-     *       + 用户可以多次调用此方法创建多个 IRtcRoom{@link #IRtcRoom} 对象，再分别调用各 IRTCRoom 对象的 JoinRoom{@link #IRtcRoom#JoinRoom} 方法，实现同时加入多个房间；  <br>
-     *       + 加入多个房间后，用户可以同时订阅各房间的音视频流，同一时间仅能在一个房间内发布音视频流。<br>
+     * @return `IRtcRoom` 实例 <br>
+     * @notes  如果你需要在多个房间发布音视频流，无须创建多房间，直接调用 startForwardStreamToRooms{@link #RTCEngine#startForwardStreamToRooms}。
      */
     virtual IRtcRoom* CreateRtcRoom(const char* room_id) = 0;
 
@@ -1830,7 +1837,7 @@ public:
      * @type api
      * @region 音视频回退
      * @brief 设置订阅的音视频流回退选项  <br>
-     *        你可以通过调用该接口来设置网络情况不佳或性能不足时只订阅小流或音频流，以保证通话质量。
+     *        你可以通过调用该接口来设置网络情况不佳或性能不足时只订阅小流或音频流，以保证通话流畅。
      * @param [in] option 远端订阅流回退处理选项，详见枚举类型 SubscribeFallbackOption{@link #SubscribeFallbackOption}
      * @return 0: 方法调用成功  <br>
      *        + < 0: 方法调用失败
@@ -1838,8 +1845,7 @@ public:
      *        + 你必须在进房前设置，进房后设置或更改设置无效。  <br>
      *        + 设置回退选项后，本端订阅的音视频流发生回退或从回退中恢复时,会收到 OnSimulcastSubscribeFallback{@link #IRTCRoomEventHandler#OnSimulcastSubscribeFallback} 回调通知。  <br>
      *        + 设置回退选项后，本端订阅的视频流因为回退分辨率发生变化时,会收到 OnRemoteVideoSizeChanged{@link #IRTCRoomEventHandler#OnRemoteVideoSizeChanged} 回调通知。  <br>
-     *        + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用
-     * API 设定的配置。
+     *        + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
      */
     virtual int SetSubscribeFallbackOption(SubscribeFallbackOption option) = 0;
 
@@ -1861,19 +1867,16 @@ public:
     /** 
      * @type api
      * @region 引擎管理
-     * @brief 设置业务标识参数。  <br>
-     *        可通过 business_id 区分不同的业务场景（角色/策略等）。business_id 由客户自定义，相当于一个“标签”，
-     *        可以分担和细化现在 AppId 的逻辑划分的功能。
+     * @brief 设置业务标识参数  <br>
+     *        可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。
      * @param [in] business_id  <br>
-     *        用户设置的自己的 business_id 值。business_id 相当于一个 sub AppId，可以分担和细化现在 AppId
-     * 的逻辑划分的功能， 但不需要鉴权。business_id 只是一个标签，颗粒度需要用户自定义。
+     *        用户设置的自己的 businessId 值
+     *        businessId 只是一个标签，颗粒度需要用户自定义。
      * @return  <br>
-     *        + 0： 成功。  <br>
+     *        + 0： 成功  <br>
      *        + < 0： 失败，具体原因参照 BusinessCheckCode{@link #BusinessCheckCode} 。  <br>
      *        + -6001： 用户已经在房间中。  <br>
-     *        + -6002：
-     * 输入非法，合法字符包括所有小写字母、大写字母和数字，除此外还包括四个独立字符分别是：英文句号，短横线，下划线和 @
-     * 。
+     *        + -6002： 输入非法，合法字符包括所有小写字母、大写字母和数字，除此外还包括四个独立字符，分别是：英文句号，短横线，下划线和 @ 。
      * @notes  <br>
      *        + 需要在调用 JoinRoom{@link #IRtcEngine#JoinRoom} 之前调用，JoinRoom{@link #IRtcEngine#JoinRoom}之后调用该方法无效。
      */
@@ -1914,17 +1917,17 @@ public:
     /** 
      * @type api
      * @region 视频管理
-     * @brief 为本地采集到的视频流开启镜像
-     * @param [in] mirrorType 设置镜像类型，参看 MirrorType{@link #MirrorType}
+     * @brief 为采集到的视频流开启镜像
+     * @param [in] mirrorType 镜像类型，参看 MirrorType{@link #MirrorType}
      * @notes <br>
+     *        + 切换视频源不影响镜像设置。<br>
+     *        + 屏幕视频流始终不受镜像设置影响。<br>
      *        + 该接口调用前，各视频源的初始状态如下：<br>
      *        <table>
      *           <tr><th></th><th>前置摄像头</th><th>后置摄像头</th><th>自定义采集视频源</th> <th>桌面端摄像头</th> </tr>
-     *           <tr><td>移动端</td><td>本地渲染镜像，编码传输不镜像</td><td> 本地渲染不镜像，编码传输不镜像 </td><td> 本地渲染不镜像，编码传输不镜像 </td><td>/</td></tr>
-     *           <tr><td>桌面端</td><td>/</td><td>/</td><td> 本地渲染不镜像，编码传输不镜像 </td><td> 本地渲染镜像，编码传输不镜像 </td></tr>
+     *           <tr><td>移动端</td><td>本地预览镜像，编码传输不镜像</td><td> 本地预览不镜像，编码传输不镜像 </td><td> 本地预览不镜像，编码传输不镜像 </td><td>/</td></tr>
+     *           <tr><td>桌面端</td><td>/</td><td>/</td><td> 本地预览不镜像，编码传输不镜像 </td><td> 本地预览镜像，编码传输不镜像 </td></tr> <br>
      *        </table>
-     *        + 切换视频源不影响镜像设置。<br>
-     *        + 屏幕视频流始终不受镜像设置影响。<br>
      */
     virtual void SetLocalVideoMirrorType(MirrorType mirrorType) = 0;
 
@@ -2489,7 +2492,27 @@ public:
       *       + 通过 OnRemoteAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnRemoteAudioPropertiesReport} 回调获取订阅的远端用户的音频信息。  <br>
       */
      virtual void EnableAudioPropertiesReport(const AudioPropertiesConfig& config) = 0;
-
+    /** 
+     * @type api
+     * @region 音频管理
+     * @brief 开启/关闭音量均衡功能。  <br>
+     *        开启音量均衡功能后，人声的响度会调整为 -16lufs。如果已调用 SetAudioMixingLoudness{@link #IAudioMixingManager#SetAudioMixingLoudness} 传入了混音音乐的原始响度，此音乐播放时，响度会调整为 -20lufs。
+     * @param [in] enable 是否开启音量均衡功能：  <br>
+     *       + True: 是  <br>
+     *       + False: 否
+     * @notes 该接口须在调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 开始播放音频文件之前调用。
+     */
+    virtual void EnableVocalInstrumentBalance(bool enable) = 0;
+    /** 
+     * @type api
+     * @region 音频管理
+     * @brief 打开/关闭音量闪避功能，适用于“一起看”等场景。  <br>
+     *        开启该功能后，当检测到远端人声时，本地的媒体播放音量会自动减弱，从而保证远端人声的清晰可辨；当远端人声消失时，本地媒体音量会恢复到闪避前的音量水平。
+     * @param enable 是否开启音量闪避：  <br>
+     *        + True: 是  <br>
+     *        + False: 否
+     */
+    virtual void EnablePlaybackDucking(bool enable) = 0;
     /** 
      * @type api
      * @region 视频数据回调
@@ -2587,6 +2610,15 @@ public:
      *        超出取值范围则设置失败，并且会触发 OnWarning{@link #IRtcEngineLiteEventHandler#OnWarning} 回调，提示 WarningCode{@link #WarningCode} 错误码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法
      */
     virtual void SetLocalVoicePitch(int pitch) = 0;
+
+    /** 
+     * @type api
+     * @region 媒体流管理
+     * @brief 控制本地音频流播放状态：播放/不播放  <br>
+     * @param [in] mute_state 播放状态，标识是否播放本地音频流，详见：MuteState{@link #MuteState}
+     * @notes 本方法仅控制本地收到音频流的播放状态，并不影响本地音频播放设备。
+     */
+    virtual void MuteAudioPlayback(MuteState mute_state) = 0;
 };
 
 }  // namespace bytertc

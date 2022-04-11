@@ -599,7 +599,7 @@ enum MediaDeviceType {
 
 /** 
  * @type keytype
- * @brief 媒体设备状态类型
+ * @brief 媒体设备状态
  */
 enum MediaDeviceState {
     /** 
@@ -615,11 +615,7 @@ enum MediaDeviceState {
      */
     kMediaDeviceStateRuntimeError = 3,
     /**  
-     *@brief 设备已暂停。包括： 
-     *        + 采集过程中，目标应用窗体最小化到任务栏。  
-     *        + 开启采集或采集过程中，目标应用窗体被隐藏。  
-     *        + 采集过程中，目标应用窗体正在被拉伸。 
-     *        + 采集过程中，目标应用窗体正在被拖动。  
+     *@brief 设备已暂停
      */
     kMediaDeviceStatePaused = 4,
     /**  
@@ -662,8 +658,7 @@ enum MediaDeviceError {
      */
     kMediaDeviceErrorDeviceNotFound = 4,
     /**  
-     *@brief 媒体设备被移除  
-     *       对象为采集屏幕流时，表明窗体被关闭或显示器被移除。
+     *@brief 媒体设备被移除(屏幕采集情况下窗体被关闭or显示器被移除)
      */
     kMediaDeviceErrorDeviceDisconnected = 5,
     /** 
@@ -756,7 +751,7 @@ enum CameraID {
 
 /** 
  * @type keytype
- * @brief 音频播放设备类型
+ * @brief 音频播放设备
  */
 enum AudioPlaybackDevice {
     /** 
@@ -828,7 +823,6 @@ enum AudioScenarioType {
     /** 
      * @brief 纯媒体场景。一般不建议使用。<br>
      *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。
-     *        外放通话时，极易出现回声和啸叫。
      */
     kAudioScenarioTypeMedia = 3,
     /** 
@@ -1371,7 +1365,6 @@ enum WarningCode {
 /** 
  * @type keytype
  * @brief 直播推流转码功能错误码。
- *        用户调用 StartLiveTranscoding{@link #IRtcRoom#StartLiveTranscoding} 方法启动直播推流转码功能后，服务端返回的执行结果。
  */
 enum TransCodingError {
     /** 
@@ -1383,22 +1376,22 @@ enum TransCodingError {
      */
     kTransCodingErrorInvalidArgument = 1,
     /** 
-     * @brief 后处理订阅流失败。
+     * @brief 和 RTC 服务端建立连接失败。会自动重连
      */
     kTransCodingErrorSubscribe = 2,
     /** 
-     * @brief 合流服务中间过程存在错误。
+     * @brief 合流服务中间过程存在错误，建议重试。
      */
     kTransCodingErrorProcessing = 3,
     /** 
-     * @brief 推 CDN 失败。
+     * @brief 推流失败，可以等待服务端重新推流。
      */
     kTransCodingErrorPublish = 4,
 };
 
 /** 
  * @type keytype
- * @brief 事务检查码。  <br>
+ * @brief 事务检查码  <br>
  *        用户调用 SetBusinessId{@link #IRtcEngineLite#SetBusinessId} 方法设置业务标识参数的返回错误码。  <br>
  */
 enum BusinessCheckCode {
@@ -1916,6 +1909,14 @@ struct RtcRoomStats {
      * @brief 当前系统的 CPU 使用率（%），暂未被使用
      */
     double cpu_total_usage;
+    /** 
+     * @brief 系统上行网络抖动（ms）
+     */
+    int tx_jitter;
+    /** 
+     * @brief 系统下行网络抖动（ms）
+     */
+    int rx_jitter;
 };
 
 /** 
@@ -3019,15 +3020,15 @@ enum EarMonitorMode{
  */
 enum MirrorType {
     /** 
-     * @brief 本地渲染和编码传输时均无镜像效果
+     * @brief 本地预览和编码传输时均无镜像效果
      */
     kMirrorTypeNone = 0,
     /** 
-     * @brief 本地渲染时有镜像效果，编码传输时无镜像效果
+     * @brief 本地预览时有镜像效果，编码传输时无镜像效果
      */
     kMirrorTypeRender = 1,
     /** 
-     * @brief 本地渲染和编码传输时均有镜像效果
+     * @brief 本地预览和编码传输时均有镜像效果
      */
     kMirrorTypeRenderAndEncoder = 3,
 };
@@ -3266,15 +3267,15 @@ struct LiveTranscodingConfig {
 
 /** 
  * @type keytype
- * @brief 停止/启动发送音/视频流的状态
+ * @brief 音视频流的发送/播放状态
  */
 enum MuteState {
     /** 
-     * @brief 启动发送音/视频流的状态
+     * @brief 发送
      */
     kMuteStateOff = 0,
     /** 
-     * @brief 停止发送音/视频流的状态
+     * @brief 停止发送
      */
     kMuteStateOn = 1,
 };
@@ -3340,7 +3341,7 @@ enum VideoSourceType {
      */
     VideoSourceTypeExternal = 0,
     /** 
-     * @brief SDK 内部采集视频源
+     * @brief 内部采集视频源
      */
     VideoSourceTypeInternal = 1,
     /** 
@@ -3875,10 +3876,34 @@ enum RtcRoomMode {
 };
 
 /** 
+ * @hidden(Linux)
  * @type keytype
  * @brief 视频采集配置参数。<br>
  */
 struct VideoCaptureConfig {
+   /** 
+    * @type keytype
+    * @brief 视频采集模式
+    */
+   enum CapturePreference {
+       /** 
+        * @brief （默认）自动设置采集参数。  
+        *        SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。
+        */
+       KAuto = 0,
+       /** 
+        * @brief 手动设置采集参数，包括采集分辨率、帧率。
+        */
+       KManual = 1,
+       /** 
+        * @brief 采集参数与编码参数一致，即在 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 中设置的参数。
+        */
+       KAutoPerformance = 2,
+    };
+   /** 
+    * @brief 视频采集模式，参看 CapturePreference{@link #CapturePreference}
+    */
+   CapturePreference capturePreference = CapturePreference::KAuto;
 
     /** 
      * @brief 视频采集分辨率的宽度，单位：px。

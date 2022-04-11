@@ -70,7 +70,7 @@ enum VideoStreamScaleMode {
      */
     kVideoStreamScaleModeAuto = 0,
     /** 
-     * @brief 对视频帧进行缩放，直至充满和视窗分辨率一致为止。这一过程不保证等比缩放。
+     * @brief 对视频帧进行缩放，直至充满和视窗分辨率一致为止。这一过程不保证等比缩放。这一过程不保证等比缩放。
      */
     kVideoStreamScaleModeStretch = 1,
     /** 
@@ -131,23 +131,23 @@ enum VideoCodecType {
 
 /** 
  * @type keytype
- * @brief 网络不好时的视频编码降级策略
+ * @brief 编码策略偏好
  */
 enum VideoEncodePreference {
     /** 
-     * @brief 不降级
+     * @brief 无偏好
      */
     kVideoEncodePreferenceDisabled = 0,
     /** 
-     * @brief 优先保证帧率，以保证视频流畅度
+     * @brief 帧率优先
      */
     kVideoEncodePreferenceFramerate,
     /** 
-     * @brief 优先保证画质
+     * @brief 质量优先
      */
     kVideoEncodePreferenceQuality,
     /** 
-     * @brief 平衡模式
+     * @brief 平衡质量与帧率
      */
     kVideoEncodePreferenceBalance,
 };
@@ -158,7 +158,7 @@ enum VideoEncodePreference {
 
 /** 
  * @type keytype
- * @brief 视频参数
+ * @brief 视频流参数
  */
 struct VideoSolution {
     /** 
@@ -550,7 +550,7 @@ public:
      * @brief 转换为i420格式的视频帧
      */
     virtual void to_i420() = 0;
-    /** 
+    /**  
      * @brief 根据视频帧参数创建视频帧并返回指针
      * @param [in] VideoFrameBuilder 视频帧创建类对象，详见 VideoFrameBuilder：{@link #VideoFrameBuilder}
      */

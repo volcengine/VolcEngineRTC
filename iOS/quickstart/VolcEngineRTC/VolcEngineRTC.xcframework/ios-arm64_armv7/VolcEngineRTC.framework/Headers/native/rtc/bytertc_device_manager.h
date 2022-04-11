@@ -156,7 +156,7 @@ public:
      * @region 音频设备管理
      * @brief 设置音频播放设备。
      * @param [in] device_id 音频播放设备 ID，可通过 EnumerateAudioPlaybackDevices{@link #EnumerateAudioPlaybackDevices} 获取。
-     * @return  方法调用结果  <br>
+     * @return   <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>
      */

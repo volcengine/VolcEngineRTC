@@ -63,7 +63,7 @@ import java.util.Locale;
  * 有以下常见的注意事项：
  * 1.创建引擎时，需要注册 RTC 事件回调的接口，类型是 IRTCEngineEventHandler 用户需要持有这个引用，例如本示例中
  *   将其作为 Activity 成员变量。因为这个引用在引擎内部是弱引用，可能会被系统回收导致收不到回调事件
- * 2.本示例中，我们在 {@link IRTCEngineEventHandler#onFirstRemoteVideoFrameRendered} 这个事件中给远端用户
+ * 2.本示例中，我们在 {@link IRTCEngineEventHandler#onFirstRemoteVideoFrameDecoded} 这个事件中给远端用户
  *   设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在
  *   {@link IRTCEngineEventHandler#onUserJoined} 回调中设置远端用户视频渲染视图
  * 3.SDK 回调不在主线程，UI 操作需要切换线程
@@ -109,11 +109,11 @@ public class RTCRoomActivity extends AppCompatActivity {
         }
 
         /**
-         * 第一帧远端视频流在视图上渲染成功后，收到此回调。
+         * SDK收到第一帧远端视频解码数据后，用户收到此回调。
          */
         @Override
-        public void onFirstRemoteVideoFrameRendered(RemoteStreamKey remoteStreamKey, VideoFrameInfo frameInfo) {
-            super.onFirstRemoteVideoFrameRendered(remoteStreamKey, frameInfo);
+        public void onFirstRemoteVideoFrameDecoded(RemoteStreamKey remoteStreamKey, VideoFrameInfo frameInfo) {
+            super.onFirstRemoteVideoFrameDecoded(remoteStreamKey, frameInfo);
             Log.d("IRtcEngineEventHandler", "onFirstRemoteVideoFrame: " + remoteStreamKey.toString());
             runOnUiThread(() -> setRemoteView(remoteStreamKey.getUserId()));
         }

@@ -85,6 +85,7 @@ public:
      *       + false :不启用ice复用
      */
     virtual void OnPeerConnectionICEMux(bool muxed){};
+    //TODO(shenpengliang) remove this method
     virtual void OnSystemInfoLog(double app_cpu_usage, double total_cpu_usage, double app_memery_usage){};
     virtual void OnSignalingAddrChanged(const char* addr){};
     virtual void OnConfigAddrChanged(const char* addr){};

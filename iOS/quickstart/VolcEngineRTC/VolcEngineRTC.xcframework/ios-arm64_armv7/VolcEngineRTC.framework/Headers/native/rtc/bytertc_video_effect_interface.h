@@ -68,7 +68,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成cvsdk  <br>
      *      + 1001: 本RTC版本不支持cv功能  <br>
-     *      + < 0: 调用失败，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      * @notes 开始使用视频特效前，你必须先调用这个方法进行许可证验证
      */
     virtual int CheckLicense(void* androidContext, void* jnienv, const char* licensePath) = 0;
@@ -84,7 +84,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成 CV SDK  <br>
      *      + 1001: 本 RTC 版本不支持 CV 功能  <br>
-     *      + < 0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码，请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      * @notes <br>
      *        + 使用 CV 的功能前，你必须获取 CV SDK 的在线许可证。  <br>
      *          通过此接口获取授权消息后，你必须参考 [在线授权说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99798/)。 <br>
@@ -102,7 +102,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成 CV SDK  <br>
      *      + 1001: 本 RTC 版本不支持 CV 功能  <br>
-     *      + < 0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码，请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     virtual int FreeAuthMessage(char * pmsg) = 0;
 
@@ -111,10 +111,11 @@ public:
      * @region 视频特效
      * @brief 开启关闭视频特效
      * @param enabled 是否开启特效，true: 开启，false: 关闭
-     * @return
-     *      0: 调用成功
-     *      1000: 未集成cvsdk
-     *      < 0: 调用失败，具体错误码含义请参考cvsdk文档
+     * @return  <br>
+     *      + 0: 成功  <br>
+     *      + 1000: 未集成 CV SDK  <br>
+     *      + 1001: 当前 RTC 版本不支持 CV 功能  <br>
+     *      + <0: 其他错误，具体参看[CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)
      * @notes 在调用CheckLicense{@link #CheckLicense}和SetAlgoModelPath{@link #SetAlgoModelPath}后调用此方法
      */
     virtual int EnableEffect(bool enabled) = 0;
@@ -139,7 +140,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成 CV SDK  <br>
      *      + 1001: 本 RTC 版本不支持 CV 功能  <br>
-     *      + < 0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码，请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     virtual int SetEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
 
@@ -158,7 +159,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成 CV SDK  <br>
      *      + 1001: 本 RTC 版本不支持 CV 功能  <br>
-     *      + < 0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码，请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     virtual int UpdateNode(const char* nodePath, const char* nodeKey, float nodeValue) = 0;
 
@@ -172,7 +173,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成 CV SDK  <br>
      *      + 1001: 本 RTC 版本不支持 CV 功能  <br>
-     *      + < 0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码，请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     virtual int SetColorFilter(const char* resPath) = 0;
 
@@ -186,7 +187,7 @@ public:
      *      + 0: 调用成功  <br>
      *      + 1000: 未集成 CV SDK  <br>
      *      + 1001: 本 RTC 版本不支持 CV 功能  <br>
-     *      + < 0: 调用失败，具体错误码，请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *      + < 0: 调用失败，具体错误码，请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     virtual int SetColorFilterIntensity(float intensity) = 0;
 
@@ -202,8 +203,8 @@ public:
      *        + 0: 调用成功。  <br>
      *        + 1000: 调用失败，未集成 CV SDK 。  <br>
      *        + 1001: 调用失败，本 SDK 版本不支持 CV 功能。  <br>
-     *        + > 40000: 调用失败，CV SDK 授权错误，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
-     *        + < 0: 调用失败，CV SDK 内部错误，具体错误码请参考 [CV SDK 文档](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
+     *        + > 40000: 调用失败，CV SDK 授权错误，具体错误码请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
+     *        + < 0: 调用失败，CV SDK 内部错误，具体错误码请参考 [CV 错误码表](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。  <br>
      */
     virtual int InitVirtualBackground(void* androidContext, void* jnienv, const char* licensePath,const char* modelPath) = 0;
 

@@ -38,7 +38,7 @@ protected:
 
     void OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
 
-    void OnFirstRemoteVideoFrameRendered(
+    void OnFirstRemoteVideoFrameDecoded(
             const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo &info) override;
 
 public

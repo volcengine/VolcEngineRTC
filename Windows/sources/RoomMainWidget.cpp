@@ -38,7 +38,7 @@
  * 8.销毁引擎 bytertc::DestroyRtcEngine(bytertc::IRtcEngine* engine)
  *
  * 有以下常见的注意事项：
- * 1.本示例中，我们在 IRtcEngineEventHandler->OnFirstRemoteVideoFrameRendered(const RemoteStreamKey key,
+ * 1.本示例中，我们在 IRtcEngineEventHandler->OnFirstRemoteVideoFrameDecoded(const RemoteStreamKey key,
  *   const VideoFrameInfo& info) 这个事件中给远端用户设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在
  *   IRtcEngineEventHandler->OnUserJoined(const UserInfo& user_info, const char* team_id,
  *   const RangeAudioMode send_mode, int elapsed) 回调中设置远端用户视频渲染视图
@@ -196,9 +196,9 @@ void RoomMainWidget::OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, 
     qDebug() << "first local video frame is rendered";
 }
 
-void RoomMainWidget::OnFirstRemoteVideoFrameRendered(
+void RoomMainWidget::OnFirstRemoteVideoFrameDecoded(
         const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo &info) {
-    qDebug() << "first remote video frame is rendered uid = " << key.user_id;
+    qDebug() << "first remote video frame is decoded uid = " << key.user_id;
     emit sigUserEnter(key.user_id);
 }
 
