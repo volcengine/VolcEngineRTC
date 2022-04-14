@@ -12,18 +12,29 @@ export interface AudioStats {
 
 export interface RTCClient {
   init: (...args: any[]) => void;
-  join: (...args: any[]) => void;
+  join: (...args: any[]) => any;
   publish: (...args: any[]) => Promise<void>;
   unpublish: (...args: any[]) => Promise<void>;
   subscribe: (...args: any[]) => void;
   leave: (...args: any[]) => void;
   on: (...args: any[]) => void;
   off: (...args: any[]) => void;
+  setupLocalVideoPlayer: (...args: any[]) => void;
+  createLocalStream: (...args: any[]) => void;
+  setRemoteVideoPlayer: (...args: any[]) => void;
+  removeEventListener: (...args: any[]) => void;
+  changeAudioState: (...args: any[]) => void;
+  changeVideoState: (...args: any[]) => void;
+  bindEngineEvents: (...args: any[]) => void;
 }
 
 
 export interface Stream {
-  uid: string;
+  userId: string;
+  hasAudio: boolean;
+  hasVideo: boolean;
+  isScreen: boolean;
+  videoStreamDescriptions: any[]
   stream: {
     screen: boolean;
   };
@@ -38,6 +49,7 @@ export interface Stream {
   setVideoEncoderConfiguration: (...args: any[]) => void;
   getStats(): any;
   getAudioLevel(): number;
+  playerComp: any;
 }
 
 export type SubscribeOption = {

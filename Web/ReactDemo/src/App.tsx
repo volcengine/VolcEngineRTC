@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import styled from 'styled-components';
+import VERTC from '@volcengine/rtc';
 
 
 import LogoHeaderImg from 'src/assets/images/header_logo.png';
@@ -67,11 +68,13 @@ const App: React.FC<Record<string, unknown>> = () => {
       value={{hasJoin, userId, roomId, setUserId, setRoomId, setJoin}}
     >
       <HeaderWrapper>
-        <Logo><img src={LogoHeaderImg}/></Logo>
+        <Logo>
+          <img src={LogoHeaderImg} />
+        </Logo>
         {hasJoin ? (
           <RoomId>{roomId}</RoomId>
         ) : (
-            <SDKVersion>RTC版本 v3.21.0</SDKVersion>
+          <SDKVersion>RTC版本 v{VERTC.getSdkVersion()}</SDKVersion>
         )}
       </HeaderWrapper>
       <ContentWrapper>

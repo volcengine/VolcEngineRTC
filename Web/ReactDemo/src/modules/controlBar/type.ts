@@ -18,5 +18,5 @@ interface IModuleConf{
 export interface IControlBarProps {
     systemConf?: Array<IModuleConf>;
     moduleConf?: Array<IModuleConf>;
-    RClient?: Nullable<RTCClient>;
+    RClient?: any;
 }

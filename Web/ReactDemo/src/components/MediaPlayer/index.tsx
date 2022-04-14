@@ -1,26 +1,30 @@
-import React, {useState, useEffect} from 'react';
-import {v4 as uuid} from 'uuid';
-import { Stream } from '../../app-interfaces';
+import React, { useLayoutEffect, useRef } from 'react';
 
 export interface VideoPlayerProps {
-  stream: Stream | undefined;
   userId: string;
+  setRemoteVideoPlayer: any;
+  stream: any;
 }
 
-const MediaPlayer: React.FC<VideoPlayerProps> = ({stream, userId}) => {
-
-  const [id] = useState<string>(uuid());
-
-  useEffect(() => {
-    if (stream) {
-      stream.play(id, {
-        fit: 'cover',
-      });
+const MediaPlayer: React.FC<VideoPlayerProps> = ({
+  userId,
+  setRemoteVideoPlayer,
+  stream,
+}) => {
+  const dom = useRef<any>();
+  useLayoutEffect(() => {
+    if (setRemoteVideoPlayer && dom) {
+      setRemoteVideoPlayer(userId, `remoteStream_${userId}`, stream);
     }
-  }, [id, stream]);
+  }, [setRemoteVideoPlayer, stream, userId]);
 
   return (
-    <div style={{width: '100%', height: '100%', position: 'relative'}} id={id}>
+    <div
+      style={{width: '100%', height: '100%', position: 'relative'}}
+      className='remoteStream'
+      id={`remoteStream_${userId}`}
+      ref={dom}
+    >
       <span
         style={{
           color: '#fff',
