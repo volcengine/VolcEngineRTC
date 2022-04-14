@@ -19,8 +19,9 @@
   <!-- player -->
   <div class="player">
     <div id="player-list">
-        <div id="local-player" class="player-wrapper">
+      <div id="local-player" class="player-wrapper">
         <div id="local-player-name" class="player-name"></div>
+      </div>
     </div>
   </div>
 
@@ -62,12 +63,13 @@
       </div>
     </div>
   </div>
-  
   <!--
     Import the RTC SDK for Web and local calls to it.
   -->
   <script src="./lib/jquery-3.4.1.min.js"></script>
-  <script src="./lib/VRTC.min.js" type="text/javascript"></script>
-  <script src="./index.js"></script>
+  <script src="./lib/index.min.js" type="text/javascript"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/rtc-client.js"></script>
+  <script src="./js/index.js"></script>
 </body>
 </html>
