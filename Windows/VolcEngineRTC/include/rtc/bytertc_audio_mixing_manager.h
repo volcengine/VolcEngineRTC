@@ -24,17 +24,15 @@ public:
      */
     IAudioMixingManager() {
     }
-
     /** 
      * @type api
      * @region 混音
-     * @brief 开始播放音乐文件及混音
-     * @param [in] mix_id  <br>
-     *        混音 ID  <br>
-     *        混音 ID 用于标识混音，请保证混音 ID 唯一性。  <br>
-     *        如果已经通过 PreloadAudioMixing{@link #PreloadAudioMixing} 将音效加载至内存，确保此处的 ID 与 PreloadAudioMixing{@link #PreloadAudioMixing} 设置的 ID 相同。  <br>
-     *        如果使用相同的 ID 重复调用本方法，前一次混音会停止，后一次混音开始，且 SDK 会使用 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 回调通知前一次混音已停止。
-     * @param [in] file_path 用于混音文件路径。可以是本地文件的绝对路径。<br>
+     * @brief 开始播放音频文件。<br>
+     *        可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
+     * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
+     *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 回调通知前一次混音已停止。
+     * @param [in] file_path 用于混音文件路径。<br>
+     *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br>
      *        不同平台支持的音频文件格式: <br>
      *        <table>
      *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
@@ -42,13 +40,13 @@ public:
      *           <tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
      *           <tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
      *        </table>
-     * @param [in] config  <br>
-     *        混音配置  <br>
-     *        可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 AudioMixingConfig{@link #AudioMixingConfig}
+     * @param [in] config 混音配置  <br>
+     *        可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 AudioMixingConfig{@link #AudioMixingConfig}。
      * @notes  <br>
-     *       + 调用本方法成功播放音乐文件后，SDK 会向本地回调当前的混音状态，见 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged}。  <br>
-     *       + 开始播放音乐文件及混音后，可以调用 StopAudioMixing{@link #IAudioMixingManager#StopAudioMixing} 方法停止播放音乐文件。  <br>
-     *       + 本方法混音数据来源于外部文件，而 EnableAudioMixingFrame{@link #IAudioMixingManager#EnableAudioMixingFrame} 的混音数据来源于外部缓存且音频格式为 PCM；这两种混音方式可以共存。
+     *       + 如果已经通过 PreloadAudioMixing{@link #IAudioMixingManager#PreloadAudioMixing} 将文件加载至内存，确保此处的 ID 与预加载时设置的 ID 相同。  <br>
+     *       + 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged}。  <br>
+     *       + 开始播放音频文件后，可以调用 StopAudioMixing{@link #IAudioMixingManager#StopAudioMixing} 方法停止播放音频文件。  <br>
+     *       + 本方法的混音数据来源于外部文件，而 EnableAudioMixingFrame{@link #IAudioMixingManager#EnableAudioMixingFrame} 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
      */
     virtual void StartAudioMixing(int mix_id, const char * file_path, const AudioMixingConfig& config) = 0;
 
@@ -89,19 +87,16 @@ public:
      *       + 调用本方法恢复播放音乐文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged}。
      */
     virtual void ResumeAudioMixing(int mix_id) = 0;
-
-
     /** 
      * @type api
      * @region 混音
-     * @brief 预加载指定音乐文件到内存中
-     * @param [in] mix_id  <br>
-     *        混音 ID  <br>
-     *        应用调用者维护，请保证唯一性。  <br>
-     *        如果使用相同的 mix_id 调用本方法，后一次会覆盖前一次。 <br>
-     *        如果先调用 StartAudioMixing{@link #StartAudioMixing} ，再使用相同的 mix_id 调用本方法 ，会先回调 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 上一个混音停止，然后加载后一个混音。  <br>
-     *        使用一个 mix_id 调用本方法预加载 A.mp3 后，如果需要使用相同的 mix_id 调用 StartAudioMixing{@link #StartAudioMixing} 播放 B.mp3，请先调用 UnloadAudioMixing{@link #UnloadAudioMixing} 卸载 A.mp3 ，否则会报错 kAudioMixingErrorLoadConflict。
-     * @param [in] file_path 用于混音文件路径。可以是本地文件的绝对路径。<br>
+     * @brief 预加载指定音频文件到内存中，以避免频繁播放时的重复加载。
+     * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
+     *        如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br>
+     *        如果先调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing}，再使用相同的 ID 调用本方法 ，会先回调 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged} 通知上一个混音停止，然后加载后一个混音。  <br>
+     *        使用一个 ID 调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 播放 B.mp3，请先调用 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载 A.mp3。
+     * @param [in] file_path 混音文件路径。<br>
+     *        支持在线文件的 URL，和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。预加载的文件长度不得超过 20s。<br>
      *        不同平台支持的音频文件格式: <br>
      *        <table>
      *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
@@ -109,12 +104,10 @@ public:
      *           <tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
      *           <tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
      *        </table>
-     *        如果音乐文件长度超过 20s，会回调加载失败，见 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged}。
      * @notes  <br>
-     *       + 需要频繁播放某个音乐文件的时候，调用本方法预加载该文件，在播放的时候可以只加载一次该文件，减少 CPU 占用。  <br>
-     *       + 本方法只是预加载指定音乐文件，只有调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 方法才开始播放指定音乐文件。 <br>
-     *       + 调用本方法预加载音乐文件后，SDK 会回调通知音乐文件已加载，见 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged}。  <br>
-     *       + 调用本方法预加载的指定音乐文件可以通过 UnloadAudioMixing{@link #UnloadAudioMixing} 卸载。
+     *       + 本方法只是预加载指定音频文件，只有调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 方法才开始播放指定音频文件。 <br>
+     *       + 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 OnAudioMixingStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioMixingStateChanged}。  <br>
+     *       + 调用本方法预加载的指定音频文件可以通过 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载。
      */
     virtual void PreloadAudioMixing(int mix_id, const char* file_path) = 0;
 
@@ -166,17 +159,14 @@ public:
      * @notes 调用本方法获取音乐文件播放进度前，需要先调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 开始播放音乐文件。
      */
     virtual int GetAudioMixingCurrentPosition(int mix_id) = 0;
-
     /** 
      * @type api
      * @region 混音
      * @brief 设置音频文件的起始播放位置
      * @param [in] mix_id 混音 ID
      * @param [in] position 音频文件起始播放位置，单位为毫秒。  <br>
-     *        你可以通过 GetAudioMixingDuration{@link #IAudioMixingManager#GetAudioMixingDuration} 获取音频文件总时长，position 的值不得大于音频文件总时长。
-     * @notes  <br>
-     *       + 调用本方法你可以根据实际情况从指定的位置播放音频文件，无需从头到尾完整播放一个音频文件。  <br>
-     *       + 调用本方法设置音频文件起始播放位置前，需要先调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 开始播放音频文件。
+     *        你可以通过 GetAudioMixingDuration{@link #IAudioMixingManager#GetAudioMixingDuration} 获取音频文件总时长，position 的值应小于音频文件总时长。
+     * @notes 在播放在线文件时，调用此接口可能造成播放延迟的现象。
      */
     virtual void SetAudioMixingPosition(int mix_id, int position) = 0;
 

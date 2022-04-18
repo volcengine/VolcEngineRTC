@@ -57,7 +57,7 @@ public:
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 调用 RequestRemoteVideoKeyFrame{@link #IRtcEngineLite#RequestRemoteVideoKeyFrame} 请求远端关键帧时，会触发该回调
+     * @brief 提示流发布端需重新生成关键帧的回调
      * @param [in] index 远端编码流的属性，参看 StreamIndex{@link #StreamIndex}
      * @param [in] video_index 对应编码流的下标
      */
@@ -79,7 +79,7 @@ public:
     /** 
      * @type callback
      * @region 视频数据回调
-     * @brief 调用 RegisterLocalEncodedVideoFrameObserver{@link #IRtcEngineLite#RegisterLocalEncodedVideoFrameObserver} 后，SDK 收到本地视频帧信息时，回调该事件
+     * @brief 调用 RegisterLocalEncodedVideoFrameObserver{@link #IRtcEngineLite#RegisterLocalEncodedVideoFrameObserver} 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。
      * @param [in] type 本地视频帧类型，参看 StreamIndex{@link #StreamIndex}
      * @param [in] video_stream 本地视频帧信息，参看 IEncodedVideoFrame{@link #IEncodedVideoFrame}
      */
@@ -183,7 +183,7 @@ public:
      * @brief 音频帧类型
      */
     enum AUDIO_FRAME_TYPE {
-        /**
+        /** 
          * @brief PCM 16bit
          */
         FRAME_TYPE_PCM16 = 0,
@@ -244,7 +244,7 @@ public:
     /** 
      * @type callback
      * @region 音频数据回调
-     * @brief 返回远端所有用户混音后的音频数据
+     * @brief 返回订阅的所有远端用户混音后的音频数据
      * @param [in] audio_frame 远端所有用户混音后的音频数据, 详见：AudioFrame{@link #AudioFrame}
      */
     virtual void OnPlaybackAudioFrame(const AudioFrame& audio_frame) = 0;
@@ -259,7 +259,7 @@ public:
     /** 
      * @type callback
      * @region 音频数据回调
-     * @brief 返回本地麦克风录制和远端所有用户混音后的音频数据
+     * @brief 返回本地麦克风录制和订阅的所有远端用户混音后的音频数据
      * @param [in] audio_frame 本地麦克风录制和远端所有用户混音后的音频数据, 详见：AudioFrame{@link #AudioFrame}
      */
     virtual void OnMixedAudioFrame(const AudioFrame& audio_frame) = 0;
@@ -299,7 +299,7 @@ public:
 /** 
  * @type callback
  * @region 视频管理
- * @brief 视频数据回调对象
+ * @brief 视频数据回调观察者
  */
 class IVideoFrameObserver {
 public:
@@ -312,49 +312,36 @@ public:
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 本地屏幕视频流采集成功后，会收到此回调。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。  <br>
-     * @return  <br>
-     *        + true: SDK 不处理返回值
-     *        + false: SDK 不处理返回值
-     * @notes 对于回调的视频数据，你可以进行自定义渲染。
+     * @brief 获取采集成功的本地屏幕视频帧，用于自定义处理或渲染。
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
     virtual bool OnLocalScreenFrame(IVideoFrame* videoFrame) = 0;
 
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 本地视频流数据回调
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。  <br>
-     * @return  <br>
-     *        + true: SDK 不处理返回值
-     *        + false: SDK 不处理返回值
+     * @brief 获取采集成功的本地摄像头流视频帧，用于自定义处理或渲染。
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
     virtual bool OnLocalVideoFrame(IVideoFrame* videoFrame) = 0;
 
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 远端屏幕共享流数据回调
+     * @brief 获取采集成功的远端屏幕视频帧，用于自定义处理或渲染。
      * @param [in] roomid 房间 ID。
      * @param [in] uid 远端用户 ID。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。  <br>
-     * @return  <br>
-     *        + true: SDK 不处理返回值
-     *        + false: SDK 不处理返回值
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
     virtual bool OnRemoteScreenFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
 
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 远端视频数据回调
+     * @brief 获取采集成功的远端摄像头流视频帧，用于自定义处理或渲染。
      * @param [in] roomid 房间 ID。
      * @param [in] uid 远端用户 ID。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}}。  <br>
-     * @return  <br>
-     *        + true: SDK 不处理返回值
-     *        + false: SDK 不处理返回值
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
     virtual bool OnRemoteVideoFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
 
@@ -363,15 +350,9 @@ public:
      * @type callback
      * @region 视频管理
      * @brief 拼接视频数据回调
-     * @param [in] roomid
-     *        房间 id
-     * @param [in] uid
-     *        远端用户ID
-     * @param [in] videoFrame
-     *        视频数据，详见 IVideoFrame{@link #IVideoFrame}}
-     * @return
-     *        true: SDK 不处理返回值
-     *       false: SDK 不处理返回值
+     * @param [in] roomid 房间 id
+     * @param [in] uid 远端用户ID
+     * @param [in] videoFrame 视频数据，详见 IVideoFrame{@link #IVideoFrame}
      */
     virtual bool OnMergeFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) {
         return false;
@@ -470,6 +451,7 @@ public:
     virtual int32_t GetCount() = 0;
 
     /** 
+     * @type api
      * @region 屏幕共享
      * @brief 根据索引，获取屏幕共享列表中的元素
      * @param [in] index 列表索引号
@@ -621,7 +603,7 @@ public:
      *        非隐身用户进房后调用该方法后，房间中的其他用户会收到 OnUserStopAudioCapture{@link #IRTCRoomEventHandler#OnUserStopAudioCapture} 的回调。
      * @notes  <br>
      *       + 调用 StartAudioCapture{@link #StartAudioCapture} 可以开启音频采集设备。  <br>
-     *       + 如果不调用本方法停止内部视频采集，则只有当销毁引擎实例时，内部音频采集才会停止。  
+     *       + 如果不调用本方法停止内部视频采集，则只有当销毁引擎实例时，内部音频采集才会停止。
      */
     virtual void StopAudioCapture() = 0;
 
@@ -683,6 +665,8 @@ public:
     virtual void SetAudioProfile(AudioProfileType audio_profile) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use UnpublishStream and PublishStream instead.
      * @type api
      * @region 媒体流管理
      * @brief 控制本地音频流的发送状态：发送/不发送  <br>
@@ -696,49 +680,70 @@ public:
 
     /** 
      * @type api
+     * @region 房间管理
+     * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
+     * @param [in] type 媒体流类型，用于指定发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @notes <br>
+     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br> 
+     *        + 如果你需要发布屏幕共享流，调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
+     *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。  <br>
+     *        + 调用此方法后，房间中的所有远端用户会收到 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br>
+     *        + 调用 UnpublishStream{@link #IRtcEngineLite#UnpublishStream} 取消发布。
+     */
+    virtual void PublishStream(MediaStreamType type) = 0;
+    
+    /** 
+     * @type api
+     * @region 房间管理
+     * @brief 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
+     * @param [in] type 媒体流类型，用于指定停止发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @notes  <br>
+     *        + 调用 PublishStream{@link #IRtcEngineLite#PublishStream} 手动发布摄像头音视频流后，你需调用此接口停止发布。<br>
+     *        + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream} 回调通知。
+     */
+    virtual void UnpublishStream(MediaStreamType type) = 0;
+
+    /** 
+     * @type api
      * @region 自定义音频采集渲染
      * @brief 启用自定义音频采集渲染
      * @param [in] recording_format 自定义音频数据采集格式，详见 AudioFormat{@link #AudioFormat}
      * @param [in] playback_format 自定义音频数据渲染格式，详见 AudioFormat{@link #AudioFormat}
      * @notes  <br>
      *      + 该方法需要在进房前调用。  <br>
-     *      + 启用自定义音频采集渲染的状态在离开房间后仍然有效，会一直持续到调用 DisableExternalAudioDevice{@link #DisableExternalAudioDevice} 关闭自定义音频采集渲染为止。  <br>
-     *      + 启用自定义音频采集渲染后，仍需要使用 PushExternalAudioFrame{@link #PushExternalAudioFrame}，推送外部音频数据，再使用 PullExternalAudioFrame{@link #PullExternalAudioFrame} 拉取外部音频数据。  <br>
-     *      + 当你已调用 StartAudioCapture{@link #StartAudioCapture} 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。  <br>
-     *      + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用 DisableExternalAudioDevice{@link #DisableExternalAudioDevice} 关闭自定义采集，然后调用 StartAudioCapture{@link #StartAudioCapture} 手动开启内部采集。
+     *      + 启用自定义音频采集渲染的状态在离开房间后仍然有效，会一直持续到调用 DisableExternalAudioDevice{@link #IRtcEngineLite#DisableExternalAudioDevice} 关闭自定义音频采集渲染为止。  <br>
+     *      + 必须同时启用自定义音频采集和自定义音频渲染，或同时启用内部音频采集和内部音频渲染。默认使用内部音频采集和渲染。 <br>
+     *      + 启用自定义音频采集渲染后，仍需要使用 PushExternalAudioFrame{@link #IRtcEngineLite#PushExternalAudioFrame}，推送外部音频数据，再使用 PullExternalAudioFrame{@link #IRtcEngineLite#PullExternalAudioFrame} 拉取外部音频数据。  <br>
+     *      + 当你调用此 API 由内部采集切换至自定义音频采集时，SDK 会自动关闭内部采集。  <br>
+     *      + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用 DisableExternalAudioDevice{@link #IRtcEngineLite#DisableExternalAudioDevice} 关闭自定义采集，然后调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 手动开启内部采集。
      */
-    virtual void EnableExternalAudioDevice(const AudioFormat &recording_format, const AudioFormat &playback_format) = 0;
+     virtual void EnableExternalAudioDevice(const AudioFormat &recording_format, const AudioFormat &playback_format) = 0;
+
+     /** 
+      * @type api
+      * @region 自定义音频采集渲染
+      * @brief 禁用自定义音频采集和渲染。
+      * @notes  <br>
+      *      + 如果已开启自定义采集，需要切换至内部采集，必须禁用已开启的自定义音频采集和渲染，然后调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 手动开启内部采集。<br>
+      *      + 要启用自定义音频采集和渲染，调用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}。
+      */
+     virtual void DisableExternalAudioDevice() = 0;
 
     /** 
      * @type api
      * @region 自定义音频采集渲染
-     * @brief 禁用已开启的自定义音频采集渲染，将音频采集渲染由自定义模块切换至内部模块。
-     * @notes  <br>
-     *      + 如果你已开启自定义音频采集渲染，你可以在进房前，使用本接口将音频采集渲染由自定义模块切换至内部模块。  <br>
-     *      + 使用该 API 禁用自定义音频采集渲染后， SDK 不会自动开启内部的音频采集，需要开启 SDK 内部采集请使用
-     * StartAudioCapture{@link #StartAudioCapture}。  <br>
-     *      + 启用自定义音频采集渲染请使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}。  <br>
-     */
-    virtual void DisableExternalAudioDevice() = 0;
-
-    /** 
-     * @type api
-     * @region 自定义音频采集渲染
-     * @brief 推送外部音频数据。使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}
-     * 启用自定义音频采集渲染后，可以使用本方法推送外部音频数据。
-     * @param [in] data
-     *        pcm 数据，内存大小应该为 samples * record_format.channel * 2。
-     * @param [in] samples
-     *        采样点数量，应该为 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice} 中设置的
-     * record_format.sample_rate / 100。 当设置采样率为48000时， 每次应该推送480个采样点
+     * @brief 推送自定义音频数据。
+     * @param [in] data pcm 数据。音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，内存大小应该为 `samples × record_format.channel × 2`。
+     * @param [in] samples 采样点数量，应该为 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice} 中设置的 `record_format.sample_rate / 100`。 例如，当设置采样率为 48000 时， 每次应该推送 480 个采样点。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>
      * @notes  <br>
-     *       + 必须是 pcm 数据，推送间隔是 10ms，音频采样格式为 s16。  <br>
-     *       + 该函数运行在用户调用线程内，是一个同步函数  <br>
+     *       + 推送自定义采集的音频数据前，必须先调用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice} 开启自定义采集。<br>
+     *       + 你必须每 10 us 推送一次数据
+     *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
      */
-    virtual bool PushExternalAudioFrame(int8_t* data, int samples) = 0;
+     virtual bool PushExternalAudioFrame(int8_t* data, int samples) = 0;
 
     /** 
      * @type api
@@ -746,7 +751,7 @@ public:
      * @brief 拉取远端音频数据。使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}
      * 启用自定义音频采集渲染后，可以使用本方法拉取远端音频数据。
      * @param [out] data
-     *        pcm 数据，内存大小应该为 samples * playback_format.channel * 2。
+     *        pcm 数据，内存大小应该为 samples × playback_format.channel × 2。
      * @param [in] samples
      *        采样点数量，应该为 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice} 中设置的
      * playback_format.sample_rate / 100。 当设置采样率为 48000 时， 每次应该拉取 480 个采样点
@@ -1277,12 +1282,82 @@ public:
    virtual int SetVideoCaptureConfig(const VideoCaptureConfig& videoCaptureConfig) = 0;
 
     /** 
+     * @hidden
+     * @type api
+     * @region 视频管理
+     * @brief 大小流功能控制开关
+     * @param [in] enabled 是否开启视频大小流模式
+     * @return <br>
+     *         + 0: 成功； <br>
+     *         + < 0: 失败； <br>
+     * @notes <br>
+     *   接口用于打开大小流，该功能仅对视频流有效。 需要在发布前进行配置。自动发布模式，在进房前进行配置。
+     *   打开该功能，发布端发布大小流，且会进行通道划分，受订阅端订阅行为影响，动态调整通道内的发布分辨率。
+     *   关闭该功能，不提供大小流功能。默认只发一路流。
+     */
+    virtual int EnableSimulcastMode(bool enabled) = 0;
+
+    /** 
+     * @hidden
+     * @type api
+     * @region 视频管理
+     * @brief 设置最大视频流参数
+     *        包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+     * @param [in] max_solution 最大视频流参数。参看 VideoEncoderConfig{@link #VideoEncoderConfig}。
+     * @return  <br>
+     *         0：成功  <br>
+     *         !0：失败  <br>
+     * @notes  <br>
+     *         当使用内部采集时，视频采集的分辨率、帧率会根据编码参数进行适配。<br>
+     *         默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
+     *         变更编码分辨率后马上生效，可能会引发相机重启。
+     *         当大小流功能开关 参看EnableSimulcastMode{@link #EnableSimulcastMode} 开启时，会按照规则进行大小流划分。
+     */
+    virtual int SetVideoEncoderConfig(const VideoEncoderConfig& max_solution) = 0;
+
+    /** 
+     * @hidden
+     * @type api
+     * @region 视频管理
+     * @brief 启动推送多路视频流，设置推送多路流时的各路视频参数，
+     *        包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+     * @param [in] solutions 视频参数数组首地址。 用于多路流通道划分。参看 VideoEncoderConfig{@link
+     * #VideoEncoderConfig}。
+     * @param [in] solution_num 视频参数数组长度。 <br>
+     *                          最多支持 3 路参数。当设置了多路参数时，分辨率必须是依次减小，从大到小排列的。 <br>
+     *                          最大分辨率没有限制。但是如果设置的分辨率无法编码，就会导致编码推流失败。
+     * @return  <br>
+     *         0：成功  <br>
+     *         !0：失败  <br>
+     * @notes  <br>
+     *         当使用内部采集时，视频采集的分辨率、帧率会根据编码参数进行适配。<br>
+     *         默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
+     *         变更编码分辨率后马上生效，可能会引发相机重启。
+     *         当大小流功能开关 参看EnableSimulcastMode{@link #EnableSimulcastMode} 开启时，会按照规则进行大小流划分。
+     * 当大小流开关关闭时 取首个参数，作为单流的编码参数
+     */
+    virtual int SetVideoEncoderConfig(const VideoEncoderConfig* channel_solutions, int solution_num) = 0;
+
+    /** 
+     * @hidden
+     * @type api
+     * @region 共享屏幕管理
+     * @brief 设置共享屏幕编码参数
+     *        包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+     * @param [in] screen_solution 共享屏幕流参数。参看 VideoEncoderConfig{@link #VideoEncoderConfig}。
+     * @return  <br>
+     *         0：成功  <br>
+     *         !0：失败  <br>
+     */
+    virtual int SetScreenVideoEncoderConfig(const VideoEncoderConfig& screen_solution) = 0;
+
+    /** 
      * @type api
      * @region 视频管理
      * @brief 设置推送多路流时的各路视频参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
      * @param [in] index 视频流属性，参看 StreamIndex{@link #StreamIndex}。
      * @param [in] solutions    要推送的多路视频流参数，参看 VideoSolution{@link #VideoSolution}。
-     *                          最大分辨率为 4096px * 4096px，超过或设置的分辨率无法编码时，会导致编码推流失败。<br>
+     *                          最大分辨率为 4096px × 4096px，超过或设置的分辨率无法编码时，会导致编码推流失败。<br>
      * @param [in] solution_num 视频参数数组长度。<br>
      *                          最多支持 4 路参数。当设置了多路参数时，分辨率必须是从大到小排列。 <br>
      * @return  <br>
@@ -1290,7 +1365,7 @@ public:
      *        + !0：失败  <br>
      * @notes  <br>
      *       + 当使用内部采集时，视频采集的分辨率、帧率会根据最大的编码分辨率、帧率进行适配<br>
-     *       + 默认的视频编码参数为：分辨率 640px * 360px，帧率 15fps。<br>
+     *       + 默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
      *       + 变更编码分辨率后马上生效，可能会引发相机重启。<br>
      *       + 屏幕流只取视频参数数组的第一组数据。
      */
@@ -1312,7 +1387,7 @@ public:
      *        + !0：失败  <br>
      * @notes  <br>
      *        + 当使用内部采集时，视频采集的分辨率、帧率会根据编码参数进行适配。<br>
-     *        + 默认的视频编码参数为：分辨率 640px * 360px，帧率 15fps。<br>
+     *        + 默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
      *        + 变更编码分辨率后马上生效，可能会引发相机重启。
      */
     virtual int SetVideoEncoderConfig(const VideoSolution* solutions, int solution_num) = 0;
@@ -1321,16 +1396,56 @@ public:
      * @hidden(Linux)
      * @type api
      * @region 视频管理
-     * @brief 设置本地视频渲染时，使用的视图，并设置渲染模式。 <br>
-     *        你应在加入房间前，绑定本地视图。退出房间后，此设置仍然有效。
-     *        如果需要解除绑定，你可以调用本方法传入空视图。
+     * @brief 设置本地视频渲染时，使用的视图，并设置渲染模式。
      * @param [in] index 视频流属性, 参看 StreamIndex{@link #StreamIndex}
      * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}
      * @return  <br>
      *        + 0：成功  <br>
-     *        + !0：失败  <br>
+     *        + !0：失败  <br> 
+     * @notes  <br>
+     *        + 你应在加入房间前，绑定本地视图。退出房间后，此设置仍然有效。  <br>
+     *        + 如果需要解除绑定，你可以调用本方法传入空视图。
      */
     virtual int SetLocalVideoCanvas(StreamIndex index, const VideoCanvas& canvas) = 0;
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 视频管理
+     * @brief 修改本地视频渲染模式和背景色。
+     * @param [in] index 视频流属性, 参看 StreamIndex{@link #StreamIndex}
+     * @param [in] renderMode 渲染模式，参看 RenderMode{@link #RenderMode}
+     * @param [in] backgroundColor 背景颜色，参看 VideoCanvas{@link #VideoCanvas}.background_color
+     * @notes 你可以在本地视频渲染过程中，调用此接口。调用结果会实时生效。
+     */
+    virtual void UpdateLocalVideoCanvas(StreamIndex index, const enum RenderMode renderMode, const uint32_t backgroundColor) = 0;
+
+    /** 
+     * @type api
+     * @hidden(Linux)
+     * @region 视频管理
+     * @brief 设置渲染指定视频流 `stream_key` 时，使用的视图和渲染模式。 <br>
+     *        如果需要解除某个用户的绑定视图，你可以把 `canvas` 设置为空。
+     * @param [in] stream_key 参看 RemoteStreamKey{@link #RemoteStreamKey}
+     * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}
+     * @return  <br>
+     *        + 0：成功  <br>
+     *        + !0：失败  <br>
+     * @notes  <br>
+     *       + 你应在收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 或 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 后，为远端视频绑定渲染视图。这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调，而不会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。你不应给录制的哑亚客户端绑定视图（因为它不会发送视频流）。<br>
+     *       + 本地用户离开房间时，会解除调用此 API 建立的绑定关系；远端用户离开房间则不会影响。
+     */
+    virtual void SetRemoteStreamVideoCanvas(RemoteStreamKey stream_key, const VideoCanvas& canvas) = 0;
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 视频管理
+     * @brief 修改远端视频渲染模式和背景色。
+     * @param [in] stream_key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}
+     * @param [in] renderMode 渲染模式，参看 RenderMode{@link #RenderMode}
+     * @param [in] backgroundColor 背景颜色，参看 VideoCanvas{@link #VideoCanvas}.background_color
+     * @notes 你可以在远端视频渲染过程中，调用此接口。调用结果会实时生效。
+     */
+    virtual void UpdateRemoteStreamVideoCanvas(RemoteStreamKey stream_key, const enum RenderMode renderMode, const uint32_t backgroundColor) = 0;
 
     /** 
      * @hidden(Linux)
@@ -1358,13 +1473,15 @@ public:
      * @param [in] required_format video_sink 适用的视频帧编码格式，参看 PixelFormat{@link #PixelFormat}。
      * @notes  <br>
      *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
-     *        + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 回调获取到远端流信息之后，再调用该方法。
+     *        + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调获取到远端流信息之后，再调用该方法。
      *        + 如果需要解除绑定，必须将 video_sink 设置为 null。进退房操作不会影响绑定状态。
      */
     virtual void SetRemoteVideoSink(RemoteStreamKey stream_key, IVideoSink* video_sink,
                                    IVideoSink::PixelFormat required_format) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use UnpublishStream and PublishStream instead.
      * @type api
      * @region 视频管理
      * @brief 停止/启动发送本地视频流，默认不发送。<br>
@@ -1376,28 +1493,6 @@ public:
      *        + 无论是否开启视频采集，你都可以启动发送本地视频流。如果在采集前启用发送，视频将在采集开始后立即发送。
      */
     virtual void MuteLocalVideo(MuteState muteState) = 0;
-
-    /** 
-     * @hidden(Linux)
-     * @hidden
-     * @type api
-     * @region 音频管理
-     * @brief 开启屏幕共享本地音频
-     * @notes  <br>
-     *       + 请优先调用 StartScreenCapture 开启屏幕共享能力，在开启屏幕音频共享  <br>
-     */
-    virtual void StartScreenAudioShare() = 0;
-
-    /** 
-     * @hidden(Linux)
-     * @hidden
-     * @type api
-     * @region 音频管理
-     * @brief 关闭屏幕共享本地音频
-     * @notes  <br>
-     *       + 请在调用 StopScreenCapture 之前关闭屏幕音频共享  <br>
-     */
-    virtual void StopScreenAudioShare() = 0;
 
     /** 
      * @hidden
@@ -1539,7 +1634,7 @@ public:
             unsigned int display_id, const Rectangle& region_rect, const DesktopCaptureParameters& capture_params) = 0;
 
     /** 
-     * @hidden(macOS,Windows)
+     * @hidden(macOS,Windows,iOS)
      * @deprecated since 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
@@ -1585,17 +1680,6 @@ public:
     virtual int UpdateScreenCaptureParameters(const DesktopCaptureParameters& capture_params) = 0;
 
     /** 
-     * @type api
-     * @deprecated since 327.1, use StopScreenVideoCapture instead
-     * @region 屏幕共享
-     * @brief 停止屏幕或者窗口共享。
-     * @notes  <br>
-     *       + 本函数必须在 StartScreenVideoCapture{@link #StartScreenVideoCapture} 之后调用  <br>
-     *       + 本函数不可和 PublishScreen{@link #IRtcRoom#PublishScreen} 、UnpublishScreen{@link #IRtcRoom#UnpublishScreen} 混用。  <br>
-     */
-    virtual void StopScreenCapture() = 0;
-
-    /** 
      * @hidden(iOS,Android,Linux)
      * @type api
      * @region 屏幕共享
@@ -1608,20 +1692,19 @@ public:
      *        + 0: 成功；  <br>
      *        + -1: 失败；  <br>
      * @notes  <br>
-     *       + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 PublishScreen{@link #IRtcRoom#PublishScreen} 。<br>
+     *       + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
      *       + 要关闭屏幕视频源采集，调用 StopScreenVideoCapture{@link #IRtcEngineLite#StopScreenVideoCapture}。  <br>
-     *       + 调用成功后，本端会收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调。<br>
-     *       + 调用此接口前，你可以调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 设置屏幕视频流的采集帧率和编码分辨率。<br>
-     *       + 在收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured}
-     * 事件后通过调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetLocalVideoSink{@link
-     * #SetLocalVideoSink} 函数设置本地屏幕共享视图。  <br>
-     *       + 也可通过注册 RegisterVideoFrameObserver{@link #RegisterVideoFrameObserver} 视频回调对象，监听
-     * OnLocalScreenFrame{@link #IVideoFrameObserver#OnLocalScreenFrame} 本地屏幕视频回调事件 <br>
+     *       + 本地用户通过 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调获取屏幕采集状态，包括开始、暂停、恢复、错误等。  <br>
+     *       + 调用成功后，本端会收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调。  <br>
+     *       + 调用此接口前，你可以调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 设置屏幕视频流的采集帧率和编码分辨率。  <br>
+     *       + 在收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调后通过调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetLocalVideoSink{@link #SetLocalVideoSink} 函数设置本地屏幕共享视图。  <br>
+     *       + 也可通过注册 RegisterVideoFrameObserver{@link #RegisterVideoFrameObserver} 视频回调对象，监听 OnLocalScreenFrame{@link #IVideoFrameObserver#OnLocalScreenFrame} 本地屏幕视频回调事件。 <br>
      */
     virtual int StartScreenVideoCapture(const ScreenCaptureSourceInfo& source_info, const ScreenCaptureParameters& capture_params) = 0;
 
     /** 
      * @hidden(macOS,Windows,iOS,Linux)
+     * @deprecated since 336.1, use StartScreenCapture instead
      * @type api
      * @region 屏幕共享
      * @brief 通过传入的Context开启屏幕共享。
@@ -1635,26 +1718,13 @@ public:
     virtual int StartScreenVideoCapture(void* context) = 0;
 
     /** 
-     * @hidden(macOS,Windows,Android,Linux)
-     * @type api
-     * @region 屏幕共享
-     * @brief 通过传入的groupid开启屏幕共享。
-     * @param [in] group_id
-     *        iOS 平台需传入 App 和 Extension 共同使用的 group id。
-     * @return  <br>
-     *        + 0: 成功；  <br>
-     *        + -1: 失败；  <br>
-     * @notes 开启屏幕共享，iOS专用接口。
-     */
-    virtual int StartScreenVideoCapture(const char* group_id) = 0;
-
-    /** 
-     * @hidden(Linux)
+     * @hidden(Linux,iOS)
      * @type api
      * @region 屏幕共享
      * @brief 停止屏幕视频流采集。
      * @notes  <br>
-     *       + 要开启屏幕视频流采集，调用 StartScreenVideoCapture{@link #StartScreenVideoCapture}  <br>
+     *       + 要开启屏幕视频流采集，调用 StartScreenVideoCapture{@link #StartScreenVideoCapture}。  <br>
+     *       + 调用后，本地用户会收到 OnMediaDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnMediaDeviceStateChanged} 的回调。  <br>
      *       + 调用此接口不影响屏幕视频流发布。  <br>
      */
     virtual void StopScreenVideoCapture() = 0;
@@ -1801,7 +1871,7 @@ public:
      * @type api
      * @region 多房间
      * @brief 创建房间
-     *        多次调用此方法以创建多个 IRTCRoom{@link #IRTCRoom} 实例。分别调用各 IRTCRoom 实例中的 JoinRoom{@link #IRtcEngine#JoinRoom} 方法，同时加入多个房间。多房间模式下，用户可以同时订阅各房间的音视频流。<br>
+     *        多次调用此方法以创建多个 IRTCRoom 实例。分别调用各 IRTCRoom 实例中的 JoinRoom{@link #IRtcEngine#JoinRoom} 方法，同时加入多个房间。多房间模式下，用户可以同时订阅各房间的音视频流。<br>
      * @param [in] room_id 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
      *       + 26个大写字母 A ~ Z  <br>
      *       + 26个小写字母 a ~ z  <br>
@@ -1809,7 +1879,7 @@ public:
      *       + 下划线 "_", at 符 "@", 减号 "-"  <br>
      *        多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则会导致创建房间失败。  <br>
      * @return `IRtcRoom` 实例 <br>
-     * @notes  如果你需要在多个房间发布音视频流，无须创建多房间，直接调用 startForwardStreamToRooms{@link #RTCEngine#startForwardStreamToRooms}。
+     * @notes  如果你需要在多个房间发布音视频流，无须创建多房间，直接调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。
      */
     virtual IRtcRoom* CreateRtcRoom(const char* room_id) = 0;
 
@@ -1916,6 +1986,22 @@ public:
 
     /** 
      * @type api
+     * @hidden(Windows,MacOS,Linux)
+     * @region 视频管理
+     * @brief 设置视频旋转模式。设置为跟随App界面方向时，远端画面随着本地App界面的方向变化切换横屏或者竖屏；
+     * 设置为跟随重力方向时，远端画面跟随本端设备握持姿态变化切换为横屏或者竖屏。
+     * @param [in] rotationMode 视频旋转模式，参看 VideoRotationMode{@link #VideoRotationMode}
+     * @return 0:设置成功
+     *        <0:设置失败
+     * @notes <br>
+     * 该接口仅作用于内部视频源，不适用于外部视频源和屏幕源
+     * 调用该接口前，SDK的默认行为是跟随App界面方向
+     * 开启视频采集后，调用该接口将立即生效，未开启采集时，将在下一次采集生效
+     */
+    virtual int SetVideoRotationMode(VideoRotationMode rotationMode) = 0;
+
+    /** 
+     * @type api
      * @region 视频管理
      * @brief 为采集到的视频流开启镜像
      * @param [in] mirrorType 镜像类型，参看 MirrorType{@link #MirrorType}
@@ -1989,9 +2075,7 @@ public:
      * @brief 设置本地麦克风录制的音频数据回调参数
      * @param [in] sample_rate 音频采样率（单位HZ），可以设置的值有 8000，16000，32000，44100，48000
      * @param [in] channels 音频通道数，支持单声道（1）和双声道（2）
-     * @notes 使用本方法设置参数，并使用RegisterAudioFrameObserver{@link #RegisterAudioFrameObserver}注册数据观察者，
-     *        之后可以在IAudioFrameObserver{@link #IAudioFrameObserver}的
-     *        OnRecordAudioFrame{@link #IAudioFrameObserver#OnRecordAudioFrame}收到数据
+     * @notes 使用本方法设置参数，并使用 RegisterAudioFrameObserver{@link #IRtcEngineLite#RegisterAudioFrameObserver} 注册数据观察者，之后可以在 IAudioFrameObserver{@link #IAudioFrameObserver} 的 OnRecordAudioFrame{@link #IAudioFrameObserver#OnRecordAudioFrame} 收到数据。
      */
     virtual void SetRecordingAudioFrameParameters(int sample_rate, int channels) = 0;
 
@@ -2002,31 +2086,30 @@ public:
      * @brief 设置远端所有用户音频数据混音后的音频数据回调参数
      * @param [in] sample_rate 音频采样率（单位HZ），可以设置的值有 8000，16000，32000，44100，48000
      * @param [in] channels 音频通道数，支持单声道（1）和双声道（2）
-     * @notes 使用本方法设置参数，并使用RegisterAudioFrameObserver{@link #RegisterAudioFrameObserver}注册数据观察者，
-     *        之后可以在IAudioFrameObserver{@link #IAudioFrameObserver}的
-     *        OnPlaybackAudioFrame{@link #IAudioFrameObserver#OnPlaybackAudioFrame}收到数据
+     * @notes 使用本方法设置参数，并使用 RegisterAudioFrameObserver{@link #IRtcEngineLite#RegisterAudioFrameObserver} 注册数据观察者，之后可以在 IAudioFrameObserver{@link #IAudioFrameObserver} 的 OnPlaybackAudioFrame{@link #IAudioFrameObserver#OnPlaybackAudioFrame} 收到数据
      */
     virtual void SetPlaybackAudioFrameParameters(int sample_rate, int channels) = 0;
-
-    /** 
+    /**  
+     * @hidden (Linux) 
      * @type api
      * @region 音频数据回调
      * @brief 设置本地麦克风录制音频数据和远端所有用户音频数据混音后的音频数据回调参数
      * @param [in] sample_rate 音频采样率（单位HZ），可以设置的值有 8000，16000，32000，44100，48000
      * @param [in] channels 音频通道数，支持单声道（1）和双声道（2）
-     * @notes 使用本方法设置参数，并使用 RegisterAudioFrameObserver{@link #RegisterAudioFrameObserver} 注册数据观察者，之后可以在 IAudioFrameObserver{@link #IAudioFrameObserver} 的 OnMixedAudioFrame{@link #IAudioFrameObserver#OnMixedAudioFrame}收到数据
+     * @notes 使用本方法设置参数，并使用 RegisterAudioFrameObserver{@link #IRtcEngineLite#RegisterAudioFrameObserver} 注册数据观察者，之后可以在 IAudioFrameObserver{@link #IAudioFrameObserver} 的 OnMixedAudioFrame{@link #IAudioFrameObserver#OnMixedAudioFrame} 收到数据
      */
     virtual void SetMixedAudioFrameParameters(int sample_rate, int channels) = 0;
 
     /** 
      * @type api
      * @region 音频数据回调
-     * @brief 注册音频数据回调观察者
-     * @param [in] observer 音频数据观察者，详见：IAudioFrameObserver{@link #IAudioFrameObserver}
-     * @notes 本方法需要与下面3个方法配合使用：
-     *        SetRecordingAudioFrameParameters{@link #SetRecordingAudioFrameParameters}、
-     *        SetPlaybackAudioFrameParameters{@link #SetPlaybackAudioFrameParameters}、
-     *        SetMixedAudioFrameParameters{@link #SetMixedAudioFrameParameters}
+     * @brief 注册音频数据回调观察者。  <br>
+     *        成功注册后，IAudioFrameObserver{@link #IAudioFrameObserver} 会触发相关回调。
+     * @param [in] observer 音频数据观察者，详见：IAudioFrameObserver{@link #IAudioFrameObserver} 。如果传入 null，则取消注册。
+     * @notes 通过以下的三个 API，你可以对回调的音频数据进行相关设置：
+     *        SetRecordingAudioFrameParameters{@link #IRtcEngineLite#SetRecordingAudioFrameParameters}、
+     *        SetPlaybackAudioFrameParameters{@link #IRtcEngineLite#SetPlaybackAudioFrameParameters}、
+     *        SetMixedAudioFrameParameters{@link #IRtcEngineLite#SetMixedAudioFrameParameters}
      */
     virtual void RegisterAudioFrameObserver(IAudioFrameObserver* observer) = 0;
 
@@ -2047,10 +2130,8 @@ public:
      * @type api
      * @region 视频数据回调
      * @brief 注册视频数据回调观察者
-     * @param [in] observer 数据回调函数，详见： IVideoFrameObserver{@link #IVideoFrameObserver} 。
-     * @notes  <br>
-     *       + 该方法可以在任意时间调用，建议在 JoinRoom{@link #IRtcEngine#JoinRoom} 前。  <br>
-     *       + 本接口支持动态取消注册，将参数设置为 nullptr 取消注册。  <br>
+     * @param [in] observer 数据回调函数，详见 IVideoFrameObserver{@link #IVideoFrameObserver}，将参数设置为 nullptr 则取消注册。
+     * @notes 该方法可以在任意时间调用，建议在 JoinRoom{@link #IRtcEngine#JoinRoom} 前。
      */
     virtual void RegisterVideoFrameObserver(IVideoFrameObserver* observer) = 0;
 
@@ -2476,11 +2557,87 @@ public:
      * @notes  <br>
      *        + 调用此接口推送屏幕共享时的自定义采集的音频数据前，必须调用 SetScreenAudioSourceType{@link #IRtcEngineLite#SetScreenAudioSourceType} 开启屏幕音频自定义采集。  <br>
      *        + 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。  <br>
-     *        + 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 samples * frame.channel * 2。  <br>
+     *        + 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 samples × frame.channel × 2。  <br>
      *        + 此函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
      *        + 调用此接口将自定义采集的音频帧推送到 RTC SDK 后，你必须调用 PublishScreen{@link #IRtcRoom#PublishScreen} 将采集到的屏幕音频推送到远端。在调用 PublishScreen{@link #IRtcRoom#PublishScreen} 前，推送到 RTC SDK 的音频帧信息会丢失。
      */
     virtual int PushScreenAudioFrame(IAudioFrame* frame) = 0;
+
+
+    /** 
+     * @type api
+     * @deprecated since 327.1, use StopScreenVideoCapture instead
+     * @region 屏幕共享
+     * @brief 停止屏幕或者窗口共享。
+     * @notes  <br>
+     *       + 本函数必须在 StartScreenVideoCapture{@link #StartScreenVideoCapture} 之后调用  <br>
+     *       + 本函数不可和 PublishScreen{@link #IRtcRoom#PublishScreen} 、UnpublishScreen{@link #IRtcRoom#UnpublishScreen} 混用。  <br>
+     */
+    virtual void StopScreenCapture() = 0;
+
+    /** 
+     * @hidden (macOS,Windows,Android,Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 设置 Extension 配置项
+     * @param groupId App 和 Extension 应该归属于同一个 App Group，此处需要传入 Group Id
+     * @notes 该函数必须在 sharedEngineWithAppId 函数之后立即调用 <br>
+     *       如果不调用或者调用时机比较晚，本地用户会收到 rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:} 的回调。 <br>
+     *       参数 device_state 值为 ByteRTCMediaDeviceStateStopped，device_error 值为 ByteRTCMediaDeviceErrorNotFindGroupId
+     */
+    virtual void SetExtensionConfig(const char* group_id) = 0;
+
+    /** 
+     * @hidden (macOS,Windows,Android,Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 发送屏幕共享 Extension 程序消息
+     * @param message :发送给 Extension 程序的消息内容
+     * @param size :message 大小
+     * @notes 该函数必须在 startScreenCapture 函数之后调用
+     */
+    virtual void SendScreenCaptureExtensionMessage(const char* message, size_t size) = 0;
+
+    /** 
+     * @hidden (macOS,Windows,Android,Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 开启本地屏幕共享数据采集
+     * @param type 屏幕共享数据采集类型
+     * @param bundle_id 传入 Broadcast Upload Extension 的 Bundle Id，用于在设置中优先展示 Extension
+     * @notes 当从 ios 控制中心异常启动 Extension 时可以不用调用本函数 <br>
+     *       本地用户会收到 rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:} 的回调。 <br>
+     *       参数 device_state 值为 ByteRTCMediaDeviceStateStarted，device_error 值为 ByteRTCMediaDeviceErrorOK
+     */
+    virtual void StartScreenCapture(ScreenMediaType type, const char* bundle_id) = 0;
+
+    /** 
+     * @hidden(macOS, Windows, iOS, Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 通过传入的Type和Context开启屏幕音视频内部采集。
+     * @param [in] type
+     *        指定的屏幕媒体采集类型，参看ScreenMediaType{@link #ScreenMediaType}
+     * @param [in] context
+     *        Android平台传入Intent对象，由业务方申请系统录屏权限后获得。
+     * @notes <br>
+     *        + 采集后，你还需要调用 PublishScreen {@link #IRtcRoom #PublishScreen} 将采集到的屏幕音视频推送到远端。<br>
+     *        + 开启屏幕音视频内部采集，Android专用接口。
+     */
+    virtual void StartScreenCapture(ScreenMediaType type, void* context) = 0;
+
+    /** 
+     * @hidden (macOS,Windows,Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 更新屏幕采集数据类型
+     * @param type 屏幕采集数据类型
+     * @notes 该函数必须在 startScreenCapture 函数之后调用
+     *       本地用户会收到 rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:} 的回调。 <br>
+     *       参数 device_state 值为 ByteRTCMediaDeviceStateStarted 或 ByteRTCMediaDeviceStateStopped，device_error 值为 ByteRTCMediaDeviceErrorOK
+     */
+    virtual void UpdateScreenCapture(ScreenMediaType type) = 0;
+
 
      /** 
       * @type api
@@ -2518,9 +2675,8 @@ public:
      * @region 视频数据回调
      * @brief 注册本地视频帧监测器。  <br>
      *        无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 OnLocalEncodedVideoFrame{@link #ILocalEncodedVideoFrameObserver#OnLocalEncodedVideoFrame} 回调给用户
-     * @param [in] engine 需设置的引擎，参看 IRtcEngine{@link #IRtcEngine}
      * @param [in] observer 本地视频帧监测器，参看 ILocalEncodedVideoFrameObserver{@link #ILocalEncodedVideoFrameObserver}。将参数设置为 nullptr 则取消注册。
-     * @notes 该方法可在进房前后的任意时间调用，调用越早，对视频帧的监测越早
+     * @notes 该方法可在进房前后的任意时间调用，在进房前调用可保证尽可能早地监测视频帧并触发回调
      */
     virtual void RegisterLocalEncodedVideoFrameObserver(ILocalEncodedVideoFrameObserver* observer) = 0;
 
@@ -2599,7 +2755,7 @@ public:
      *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
      */
     virtual int SendStreamSyncInfo(const uint8_t* data, int32_t length, const StreamSycnInfoConfig& config) = 0;
-    
+
     /** 
      * @type api
      * @region 混音

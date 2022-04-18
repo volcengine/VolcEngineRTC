@@ -171,8 +171,9 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @brief 媒体设备状态回调。提示音频采集、音频渲染、视频采集三种媒体设备的状态。
-     * @param [in] device_id 设备 ID
+     * @brief 媒体设备状态回调。提示音频采集、音频播放、摄像头视频采集、屏幕视频采集四种媒体设备的状态。
+     * @param [in] device_id 设备 ID   <br>
+     *                       采集屏幕视频流时，设备 ID 为固定字符串 `screen_capture_video`
      * @param [in] device_type 设备类型，详见 MediaDeviceType{@link #MediaDeviceType}
      * @param [in] device_state 设备状态，详见 MediaDeviceState{@link #MediaDeviceState}
      * @param [in] device_error 设备错误类型，详见 MediaDeviceError{@link #MediaDeviceError}
@@ -186,6 +187,7 @@ public:
         (void)device_state;
         (void)device_error;
     }
+
 
     /** 
      * @type callback
@@ -434,6 +436,17 @@ public:
      virtual void OnLocalAudioPropertiesReport(const LocalAudioPropertiesInfo * audio_properties_infos, int audio_properties_info_number) {
         (void)audio_properties_infos;
         (void)audio_properties_info_number;
+    }
+    /** 
+     * @type callback
+     * @region 音频管理
+     * @brief 调用 enableaudiopropertiesreport{@link #IRtcEngineLite#EnableAudioPropertiesReport} 后，根据设置的 `config.interval`，你会周期性地收到此回调，获取房间内的最活跃用户信息。
+     * @param room_id 房间 ID
+     * @param uid 最活跃用户（ActiveSpeaker）的用户 ID
+     */
+    virtual void OnActiveSpeaker(const char* room_id, const char* uid) {
+        (void)room_id;
+        (void)uid;
     }
 
     /** 

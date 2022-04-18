@@ -10,3 +10,4 @@
 #import <VolcEngineRTC/objc/rtc/ByteRTCHttpClientProtocol.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCPositionAudioRender.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRoom.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCScreenCapturerExt.h>

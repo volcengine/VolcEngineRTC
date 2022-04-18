@@ -185,6 +185,8 @@
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onMuteAllRemoteVideo:(NSString *_Nonnull)uid withMuteState:(ByteRTCMuteState)muteState;
 
 /** 
+ * @hidden
+ * @deprecated since 336.1, use onUserPublishStream, onUserPublishScreen, onUserUnPublishStream and onUserUnPublishScreen instead.
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -252,6 +254,8 @@
  - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onFirstRemoteAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
 
  /** 
+  * @hidden
+  * @deprecated since 336.1, use onUserPublishStream and onUserPublishScreen instead.
   * @type callback
   * @region 多房间
   * @author shenpengliang
@@ -278,21 +282,66 @@
     didStreamRemoved:(NSString *_Nonnull)uid
               stream:(id<ByteRTCStream> _Nonnull)stream
               reason:(ByteRTCStreamRemoveReason)reason;
-
 /** 
- * @hidden
  * @type callback
- * @region 多房间
+ * @region 房间管理
  * @author shenpengliang
- * @brief 当订阅一个流成功的时候回调该事件
- *       当更新流的内容时比如增加或者减少音视频流成功更新时也会回调该事件
- * @param rtcRoom  ByteRTCRoom 对象。  <br>
- * @param state
- *       订阅流的结果，详见：ByteRTCSubscribeState{@link #ByteRTCSubscribeState}
- * @param userId
- *       用户的标识
- * @param info
- *       流的属性，详见：ByteRTCSubscribeConfig{@link #ByteRTCSubscribeConfig}
+ * @brief 房间内新增远端摄像头/麦克风采集的媒体流流的回调。
+ * @param rtcRoom ByteRTCRoom 实例
+ * @param userId 远端流发布用户的用户 ID。
+ * @param type 远端媒体流的类型，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @notes 当房间内的远端用户调用 publishStream:{@link #ByteRTCRoom#publishStream:} 成功发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 subscribeStream:mediaStreamType:{@link #ByteRTCRoom#subscribeStream:mediaStreamType:} 订阅此流。
+ */
+- (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserPublishStream:(NSString *_Nonnull)userId            type:(ByteRTCMediaStreamType)type;
+/** 
+ * @type callback
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 房间内远端摄像头/麦克风采集的媒体流移除的回调。
+ * @param rtcRoom ByteRTCRoom 实例
+ * @param userId 移除的远端流发布用户的用户 ID。  <br>
+ * @param type 移除的远端流类型，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。  <br>
+ * @param reason 远端流移除的原因，参看 ByteRTCStreamRemoveReason{@link #ByteRTCStreamRemoveReason}。
+ * @notes 收到该回调通知后，你可以自行选择是否调用 unSubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unSubscribeStream:mediaStreamType:} 取消订阅此流。
+ */
+- (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserUnPublishStream:(NSString *_Nonnull)userId            type:(ByteRTCMediaStreamType)type
+           reason:(ByteRTCStreamRemoveReason)reason;
+/** 
+ * @type callback
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 房间内新增远端屏幕共享音视频流的回调。
+ * @param rtcRoom ByteRTCRoom实例
+ * @param userId 远端流发布用户的用户 ID。
+ * @param type 远端媒体流的类型，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @notes 当房间内的远端用户调用 publishScreen:{@link #ByteRTCRoom#publishScreen:} 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 subscribeScreen:mediaStreamType:{@link #ByteRTCRoom#subscribeScreen:mediaStreamType:} 订阅此流。
+ */
+- (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserPublishScreen:(NSString *_Nonnull)userId   type:(ByteRTCMediaStreamType)type;
+/** 
+ * @type callback
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 房间内远端屏幕共享音视频流移除的回调。
+ * @param rtcRoom ByteRTCRoom 实例
+ * @param userId 移除的远端流发布用户的用户 ID。  <br>
+ * @param type 移除的远端流类型，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。  <br>
+ * @param reason 远端流移除的原因，参看 ByteRTCStreamRemoveReason{@link #ByteRTCStreamRemoveReason}。
+ * @notes 收到该回调通知后，你可以自行选择是否调用 unSubscribeScreen:mediaStreamType:{@link #ByteRTCRoom#unSubscribeScreen:mediaStreamType:} 取消订阅此流。
+ */
+- (void)rtcRoom:(ByteRTCRoom * _Nonnull)rtcRoom onUserUnPublishScreen:(NSString *_Nonnull)userId type:(ByteRTCMediaStreamType)type
+           reason:(ByteRTCStreamRemoveReason)reason;
+/** 
+ * @type callback
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 关于订阅媒体流状态改变的回调
+ * @param rtcRoom ByteRTCRoom 对象
+ * @param state 订阅媒体流状态，参看 ByteRTCSubscribeState{@link #ByteRTCSubscribeState}
+ * @param userId 流发布用户的用户 ID
+ * @param info 流的属性，参看 ByteRTCSubscribeConfig{@link #ByteRTCSubscribeConfig}
+ * @notes 本地用户收到该回调的时机包括：  <br>
+ *        + 调用 subscribeStream:mediaStreamType:{@link #ByteRTCRoom#subscribeStream:mediaStreamType:} 或 unSubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unSubscribeStream:mediaStreamType:} 订阅/取消订阅指定远端摄像头音视频流后；  <br>
+ *        + 调用 subscribeScreen:mediaStreamType:{@link #ByteRTCRoom#subscribeScreen:mediaStreamType:} 或 unSubscribeScreen:mediaStreamType:{@link #ByteRTCRoom#unSubscribeScreen:mediaStreamType:} 订阅/取消订阅指定远端屏幕共享流后。
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
     onStreamSubscribed:(ByteRTCSubscribeState)state
@@ -393,18 +442,6 @@
  /** 
   * @type callback
   * @region 多房间
-  * @author shenpengliang
-  * @brief 合流转推错误回调。  <br>
-  *        调用 startLiveTranscoding:observer:{@link #ByteRTCRoom#startLiveTranscoding:observer:} 接口或直接在服务端启动合流转推功能后，你会通过此回调收到启动结果和推流过程中的错误。
-  * @param rtcRoom ByteRTCRoom 对象。
-  * @param url 推流地址的 URL。
-  * @param errorCode 合流转推功能错误码，详见枚举类型 ByteRTCTranscodingError{@link #ByteRTCTranscodingError}。
-  */
- - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLiveTranscodingResult:(NSString *_Nonnull)url errorCode:(ByteRTCTranscodingError)errorCode;
-
- /** 
-  * @type callback
-  * @region 多房间
   * @author zhushufan.ref
   * @brief 第一帧本地采集的视频/屏幕共享画面在本地视图渲染完成时，收到此回调。
   * @param rtcRoom ByteRTCRoom 对象。  <br>
@@ -466,9 +503,11 @@
                       withFrameInfo:(ByteRTCVideoFrameInfo *_Nonnull)frameInfo;
 
 /** 
+ * @hidden
+ * @deprecated since 336.1, use onUserPublishStream, onUserPublishScreen, onUserUnPublishStream and onUserUnPublishScreen instead.
  * @type callback
  * @region 多房间
-  * @author shenpengliang
+ * @author shenpengliang
  * @brief 房间内用户暂停/恢复发送视频流时，房间内其他用户会收到此回调。参看 muteLocalVideo:{@link #ByteRTCEngineKit#muteLocalVideo:}。
  * @param rtcRoom ByteRTCRoom 实例
  * @param uid 暂停/恢复发送视频流的用户 ID。
@@ -854,7 +893,15 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  */
 - (int)renewToken:(NSString *_Nullable)token;
 
+
+/**
+ * @hidden
+ */
+- (int) setRemoteVideoConfig:(NSString * _Nonnull) userId remoteVideoConfig:(ByteRTCRemoteVideoConfig *_Nonnull) remoteVideoConfig;
+
 /** 
+ * @hidden
+ * @deprecated since 336.1, use publishStream instead.
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -867,8 +914,28 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *        + 用户调用此方法成功发布音视频流后，房间中的其他用户将会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 回调通知。
  */
 - (int)publish;
+/** 
+ * @type api
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
+ * @param type 媒体流类型，用于指定发布音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}
+ * @return 方法调用结果： <br>
+ *        + 0: 发布成功  <br>
+ *        + -1: 发布失败
+ * @notes <br>
+ *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br> 
+ *        + 如果你需要发布屏幕共享流，调用 publishScreen:{@link #ByteRTCRoom#publishScreen:}。<br>
+ *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:}。  <br>
+ *        + 调用此方法后，房间中的所有远端用户会收到 rtcRoom:onUserPublishStream:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishStream:type:} 回调通知，其中成功收到了音频流的远端用户会收到 rtcRoom:onFirstRemoteAudioFrame:{@link #ByteRTCRoomDelegate#rtcRoom:onFirstRemoteAudioFrame:} 回调，订阅了视频流的远端用户会收到 rtcRoom:onFirstRemoteVideoFrameDecoded:withFrameInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onFirstRemoteVideoFrameDecoded:withFrameInfo:} 回调。<br>
+ *        + 调用 unpublishStream:{@link #ByteRTCRoom#unpublishStream:} 取消发布。
+ */
+- (int)publishStream:(ByteRTCMediaStreamType)type;
+
 
  /** 
+  * @hidden
+  * @deprecated since 336.1, use unpublishStream instead.
   * @type api
   * @region 多房间
   * @author shenpengliang
@@ -878,28 +945,25 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
   *        + 房间内用户调用此方法停止发布音视频流后，房间中的其他用户将会收到 rtcRoom:didStreamRemoved:stream:reason:{@link #ByteRTCRoomDelegate#rtcRoom:didStreamRemoved:stream:reason:} 回调通知。
   */
  - (int)unpublish;
-
 /** 
  * @type api
- * @region 多房间
- * @author liyi.000
- * @brief 发布本地屏幕视频流到此房间。（外部采集）<br>
- *        调用此方法后，你还需要周期性调用 pushScreenCaptureFrame:time:rotation:{@link #ByteRTCEngineKit#pushScreenCaptureFrame:time:rotation:} 方法，
- *        将需要发送的屏幕数据推送给 SDK。
- * @param param 屏幕视频流编码参数，详见 ByteRTCScreenParam{@link #ByteRTCScreenParam}
- * @notes <br>
- *       + 仅房间内可见的用户可以进行手动发布。调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 可以设置用户可见性。<br>
- *       + 调用此方法后，房间内的远端用户会收到 rtcRoom:onStreamAdd:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamAdd:} 事件。
- *       + 如果你需要由外部屏幕采集切换为内部采集，你必须调用 unpublishScreen{@link #unpublishScreen} 关闭外部采集后，
- *         通过调用 startScreenSharingWithPreferredExtension:groupId:{@link #startScreenSharingWithPreferredExtension:groupId:} 开启内部采集。
- *       + 本地可调用 setLocalVideoRenderer:forUserId: 函数设置本地屏幕共享视图。
- * onLocalScreenFrame:{@link #ByteRTCVideoFrameObserver#onLocalScreenFrame:}本地屏幕视频回调事件和 onRemoteScreenFrame:user:room:{@link #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
+ * @region 房间管理
+ * @author shenpengliang
+ * @brief 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
+ * @param type 媒体流类型，用于指定停止发布音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}
+ * @return  <br>
+ *        + 0: 停止发布成功  <br>
+ *        + -1: 停止发布失败
+ * @notes  <br>
+ *        + 调用 publishStream:{@link #ByteRTCRoom#publishStream:} 手动发布摄像头音视频流后，你需调用此接口停止发布。<br>
+ *        + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 rtcRoom:onUserUnPublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnPublishStream:type:reason:} 回调通知。
  */
-- (int)publishScreen:(ByteRTCScreenParam * _Nonnull)param;
+- (int)unpublishStream:(ByteRTCMediaStreamType)type;
 
 
 /** 
  * @hidden
+ * @deprecated since 336.1
  * @type api
  * @region 多房间
  * @author liyi.000
@@ -917,8 +981,26 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * #ByteRTCVideoFrameObserver#onRemoteScreenFrame:user:room:} 远端屏幕共享视频回调事件来获取原始数据。  <br>
  */
 - (int)publishScreen;
+/** 
+ * @type api
+ * @region 屏幕共享
+ * @author liyi.000
+ * @brief 在当前所在房间内发布本地屏幕共享音视频流
+ * @param type 媒体流类型，用于指定发布屏幕音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @return  <br>
+ *       + 0: 发布成功 <br>
+ *       + -1: 发布失败
+ * @notes <br>
+ *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
+ *        + 调用该方法后，房间中的所有远端用户会收到 rtcRoom:onUserPublishScreen:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishScreen:type:} 回调，其中成功收到音频流的远端用户会收到 rtcRoom:onFirstRemoteAudioFrame:{@link #ByteRTCRoomDelegate#rtcRoom:onFirstRemoteAudioFrame:} 回调，订阅了视频流的远端用户会收到 rtcRoom:onFirstRemoteVideoFrameDecoded:withFrameInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onFirstRemoteVideoFrameDecoded:withFrameInfo:} 回调。<br> 
+ *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:}。  <br>
+ *        + 调用 unpublishScreen:{@link #ByteRTCRoom#unpublishScreen:} 取消发布。
+ */
+- (int)publishScreen:(ByteRTCMediaStreamType)type;
 
 /** 
+ * @hidden
+ * @deprecated since 336.1
  * @type api
  * @region 多房间
  * @author liyi.000
@@ -928,8 +1010,22 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *        + 要发布本地屏幕视频流到指定房间，可以调用 publishScreen:{@link #publishScreen:}
  */
 - (int)unpublishScreen;
-
 /** 
+ * @type api
+ * @region 屏幕共享
+ * @author liyi.000
+ * @brief 停止将本地屏幕共享音视频流发布到当前所在房间中
+ * @param type 媒体流类型，用于指定停止发布屏幕音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}
+ * @return <br>
+ *      + 0: 停止发布成功 <br>
+ *      + -1: 停止发布失败
+ * @notes <br>
+ *        + 调用 publishScreen:{@link #ByteRTCRoom#publishScreen:} 发布屏幕流后，你需调用此接口停止发布。 <br>
+ *        + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 rtcRoom:onUserUnPublishScreen:type:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserUnPublishScreen:type:reason:} 回调。
+ */
+- (int)unpublishScreen:(ByteRTCMediaStreamType)type;
+
+/**  
  * @hidden
  * @deprecated since 326.1, use subscribeUserStream instead
  * @type api
@@ -955,6 +1051,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 /** 
+ * @hidden
+ * @deprecated since 336.1, use subscribeStream, unsubscribeStream, subscribeScreen and unsubscribeScreen instead.
  * @type api
  * @region 多房间
  * @author shenpengliang
@@ -971,8 +1069,62 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + 若调用 pauseAllSubscribedStream:{@link #ByteRTCRoom#pauseAllSubscribedStream:} 暂停接收远端音视频流，此时仍可使用该方法对暂停接收的流进行设置，你会在调用 resumeAllSubscribedStream:{@link #ByteRTCRoom#resumeAllSubscribedStream:} 恢复接收流后收到修改设置后的流。  <br>
  */
 - (void)subscribeUserStream:(NSString *_Nonnull)userId streamType:(ByteRTCStreamIndex)streamType mediaType:(ByteRTCSubscribeMediaType)mediaType videoConfig:(ByteRTCSubscribeVideoConfig *_Nonnull)videoConfig;
+/** 
+ * @type api
+ * @region 房间管理
+ * @author liuzhiqiang
+ * @brief 订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br>
+ *        该方法对自动订阅和手动订阅模式均适用。
+ * @param userId 指定订阅的远端发布音视频流的用户 ID。
+ * @param mediaStreamType 媒体流类型，用于指定订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @notes  <br>
+ *        + 你必须先通过 rtcRoom:onUserPublishStream:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishStream:type:} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ */
+- (void)subscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
+/** 
+ * @type api
+ * @region 房间管理
+ * @author liuzhiqiang
+ * @brief 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br>
+ *        该方法对自动订阅和手动订阅模式均适用。
+ * @param userId 指定取消订阅的远端发布音视频流的用户 ID。
+ * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @notes  <br> 
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ */
+- (void)unSubscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
+/** 
+ * @type api
+ * @region 房间管理
+ * @author liuzhiqiang
+ * @brief 订阅房间内指定的远端屏幕共享音视频流。  <br>
+ *        该方法对自动订阅和手动订阅模式均适用。
+ * @param userId 指定订阅的远端发布屏幕流的用户 ID。
+ * @param mediaStreamType 媒体流类型，用于指定订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @notes  <br>
+ *        + 你必须先通过 rtcRoom:onUserPublishScreen:type:{@link #ByteRTCRoomDelegate #rtcRoom:onUserPublishScreen:type:} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的订阅结果。  <br>
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ */
+- (void)subscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
+/** 
+ * @type api
+ * @region 房间管理
+ * @author liuzhiqiang
+ * @brief 取消订阅房间内指定的远端屏幕共享音视频流。  <br>
+ *        该方法对自动订阅和手动订阅模式均适用。
+ * @param userId 指定取消订阅的远端发布屏幕流的用户 ID。
+ * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @notes  <br> 
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ */
+- (void)unSubscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
 
- /** 
+ /**  
   * @hidden
   * @deprecated since 326.1, use subscribeUserStream instead
   * @type api
@@ -1111,38 +1263,43 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @type api
  * @region 多房间
  * @author wanghaoxu
- * @brief 开启转推直播，并设置合流的视频视图布局和音频属性。
- * @param transcoding 转推直播配置参数，详见 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding}
- * @param observer 端云一体转推直播观察者。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate} 数据类型。
+ * @brief 新增转推直播任务，并设置合流的视频视图布局和音频属性。  <br>
+ *        同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。
+ * @param task_id 转推直播任务 ID。你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。
+ * @param transcoding 转推直播配置参数，详见 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding}。
+ * @param observer 端云一体转推直播观察者。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate}。  <br>
+ *        通过注册 observer 接收转推直播相关的回调。
  * @notes  <br>
  *       + 只有房间模式为直播模式的用户才能调用此方法。  <br>
- *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 onStreamMixingEvent:eventData:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:eventData:error:mixType:} 通知用户。
- *       + 调用 stopLiveTranscoding{@link #ByteRTCRoom#stopLiveTranscoding} 停止转推直播
+ *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 onStreamMixingEvent:taskId:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:taskId:error:mixType:} 通知用户。
+ *       + 调用 stopLiveTranscoding:{@link #ByteRTCRoom#stopLiveTranscoding:} 停止转推直播
  */
-- (int)startLiveTranscoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer;
+- (int)startLiveTranscoding:(NSString * _Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer;
 
 /** 
  * @type api
  * @region 多房间
  * @brief 停止转推直播。
+ * @param task_id 转推直播任务 ID。可以指定想要停止的转推直播任务。
  * @return 方法调用结果。  <br>
  *         +  0：方法调用成功  <br>
  *         + < 0：方法调用失败
  */
-- (int)stopLiveTranscoding;
+- (int)stopLiveTranscoding:(NSString *_Nonnull)task_id;
 
 /** 
  * @type api
  * @region 多房间
  * @author shenpengliang
  * @brief 更新转推直播参数。  <br>
- *        启用转推直播功能后，你可以使用此方法更新合流转推功能配置参数。
- * @param transcoding 服务端转推配置参数，详见 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding} 。
+ *        开启转推直播功能后，你可以使用此方法更新合流转推功能配置参数。
+ * @param task_id 转推直播任务 ID。指定想要更新参数设置的转推直播任务。
+ * @param transcoding 配置参数，详见 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding} 。
  * @return 方法调用结果。  <br>
  *         +  0：方法调用成功  <br>
  *         + < 0：方法调用失败
  */
-- (int)updateLiveTranscoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
+- (int)updateLiveTranscoding:(NSString *_Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
 
  /** 
   * @hidden

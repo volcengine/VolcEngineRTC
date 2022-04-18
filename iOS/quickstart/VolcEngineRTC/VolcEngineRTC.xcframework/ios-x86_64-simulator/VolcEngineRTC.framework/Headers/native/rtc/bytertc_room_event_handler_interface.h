@@ -33,9 +33,9 @@ public:
      *        + 0: 加入房间成功；  <br>
      *        + 非 0: 加入房间失败，具体原因参看 ErrorCode{@link #ErrorCode} 以及 WarningCode{@link #WarningCode}。  <br>
      * @param [in] join_type 用户加入房间的类型，标识用户第一次加入或断网重连加入。参看 JoinRoomType{@link #JoinRoomType}。  <br>
-     * @param [in] elapsed  重连耗时。本地用户从连接断开到重连成功所经历的时间间隔，单位为 ms，加入房间失败为 -1  <br>
+     * @param [in] elapsed  保留字段，无意义。
      */
-    virtual void OnJoinRoomResult(
+     virtual void OnJoinRoomResult(
             const char* room_id, const char* uid, int error_code, JoinRoomType join_type, int elapsed) {
         (void)room_id;
         (void)error_code;
@@ -53,7 +53,7 @@ public:
      *       + 用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法离开房间后，若立即调用 DestroyRtcEngine{@link #DestroyRtcEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
      *       + 离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
      */
-    virtual void OnLeaveRoom(const RtcRoomStats& stats) {
+     virtual void OnLeaveRoom(const RtcRoomStats& stats) {
         (void)stats;
     }
 
@@ -140,7 +140,7 @@ public:
      * @param [in] user_info 用户信息，详见 UserInfo{@link #UserInfo}  <br>
      * @param [in] elapsed 此参数无意义
      */
-    virtual void OnUserJoined(const UserInfo& user_info, int elapsed) {
+     virtual void OnUserJoined(const UserInfo& user_info, int elapsed) {
         (void)user_info;
         (void)elapsed;
     }
@@ -148,15 +148,14 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @brief 远端可见用户离开房间，或从可见切换为隐身的回调。  <br>
-     *        发生以下情形时，房间内其他用户会收到此事件：  <br>
-     *        1. 远端可见用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法离开房间时；  <br>
-     *        2. 远端可见用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法切换至隐身；  <br>
-     *        3. 远端可见用户断网，且一直未恢复。  <br>
-     * @param [in] uid 离开房间，或切至隐身的远端用户 ID。  <br>
+     * @brief 发生以下情形时，房间内其他用户会收到此事件：  <br>
+     *        + 远端可见用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法离开房间时；  <br>
+     *        + 远端可见用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法切换至不可见时。  <br>
+     *        + 远端可见角色用户断网，且一直未恢复。  <br>
+     * @param [in] uid 离开房间，或切至不可见的远端用户 ID。  <br>
      * @param [in] reason 用户离开房间的原因，参看 UserOfflineReason{@link #UserOfflineReason} 。  <br>
      */
-    virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
+     virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
         (void)uid;
         (void)reason;
     }
@@ -191,6 +190,8 @@ public:
 
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use OnUserPublishStream, OnUserPublishScreen, OnUserUnPublishStream and OnUserUnPublishScreen instead.
      * @type callback
      * @region 媒体流管理
      * @brief 房间内用户暂停/恢复发送音频流时，房间内其他用户会收到此回调。参看 MuteLocalAudio{@link #IRtcEngineLite#MuteLocalAudio}。
@@ -265,6 +266,8 @@ public:
 
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use OnUserUnPublishStream and OnUserUnPublishScreen instead.
      * @type callback
      * @region 房间管理
      * @brief 房间内的远端用户停止发布音视频流时，本地用户会收到此回调。
@@ -277,6 +280,8 @@ public:
 
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use OnUserPublishStream and OnUserPublishScreen instead.
      * @type callback
      * @region 房间管理
      * @brief 房间内的用户发布新的音视频流时，房间内的其他用户会收到此回调。包括移除后又重新发布的流。  <br>
@@ -285,17 +290,69 @@ public:
     virtual void OnStreamAdd(const MediaStreamInfo& stream) {
         (void)stream;
     }
-
-
     /** 
-     * @hidden
      * @type callback
      * @region 房间管理
-     * @brief 当订阅一个流成功的时候回调该事件
-     *        当成功更新流的内容时，如增加或者减少音视频流时，也会回调该事件。
-     * @param [in] state_code 订阅流的结果。参看 SubscribeState{@link #SubscribeState}。  <br>
-     * @param [in] user_id 用户 ID。
-     * @param [in] info 订阅流的参数配置。参看 SubscribeConfig{@link #SubscribeConfig}。  <br>
+     * @brief 房间内新增远端摄像头/麦克风采集的媒体流的回调。
+     * @param [in] uid 远端流发布用户的用户 ID。
+     * @param [in] type 远端媒体流的类型，参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes 当房间内的远端用户调用 PublishStream{@link #IRtcRoom#PublishStream} 成功发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 SubscribeStream{@link #IRtcRoom#SubscribeStream} 订阅此流。
+     */
+    virtual void OnUserPublishStream(const char* uid, MediaStreamType type) {
+        (void)uid;
+        (void)type;
+    }
+    /** 
+     * @type callback
+     * @region 房间管理
+     * @brief 房间内远端摄像头/麦克风采集的媒体流移除的回调。
+     * @param [in] uid 移除的远端流发布用户的用户 ID。  <br>
+     * @param [in] type 移除的远端流类型，参看 MediaStreamType{@link #MediaStreamType}。  <br>
+     * @param [in] reason 远端流移除的原因，参看 StreamRemoveReason{@link #StreamRemoveReason}。
+     * @notes 收到该回调通知后，你可以自行选择是否调用 UnsubscribeStream{@link #IRtcRoom#UnsubscribeStream} 取消订阅此流。
+     */
+    virtual void OnUserUnPublishStream(const char* uid, MediaStreamType type,StreamRemoveReason reason) {
+        (void)uid;
+        (void)type;
+        (void)reason;
+    }
+    /** 
+     * @type callback
+     * @region 房间管理
+     * @brief 房间内新增远端屏幕共享音视频流的回调。
+     * @param [in] uid 远端流发布用户的用户 ID。
+     * @param [in] type 远端媒体流的类型，参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes 当房间内的远端用户调用 PublishScreen{@link #IRtcRoom#PublishScreen} 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 SubscribeScreen{@link #IRtcRoom#SubscribeScreen} 订阅此流。
+     */
+    virtual void OnUserPublishScreen(const char* uid, MediaStreamType type) {
+        (void)uid;
+        (void)type;
+    }
+    /** 
+     * @type callback
+     * @region 房间管理
+     * @brief 房间内远端屏幕共享音视频流移除的回调。
+     * @param [in] uid 移除的远端流发布用户的用户 ID。  <br>
+     * @param [in] type 移除的远端流类型，参看 MediaStreamType{@link #MediaStreamType}。  <br>
+     * @param [in] reason 远端流移除的原因，参看 StreamRemoveReason{@link #StreamRemoveReason}。
+     * @notes 收到该回调通知后，你可以自行选择是否调用 UnsubscribeScreen{@link #IRtcRoom#UnsubscribeScreen} 取消订阅此流。
+     */
+    virtual void OnUserUnPublishScreen(const char* uid, MediaStreamType type,StreamRemoveReason reason) {
+        (void)uid;
+        (void)type;
+        (void)reason;
+    }
+    
+    /** 
+     * @type callback
+     * @region 房间管理
+     * @brief 关于订阅媒体流状态改变的回调
+     * @param [in] state_code 订阅媒体流状态，参看 SubscribeState{@link #SubscribeState}
+     * @param [in] user_id 流发布用户的用户 ID
+     * @param [in] info 流的属性，参看 SubscribeConfig{@link #SubscribeConfig}
+     * @notes 本地用户收到该回调的时机包括：  <br>
+     *        + 调用 SubscribeStream{@link #IRtcRoom#SubscribeStream} 或 UnsubscribeStream{@link #IRtcRoom#UnsubscribeStream} 订阅/取消订阅指定远端摄像头音视频流后；  <br>
+     *        + 调用 SubscribeScreen{@link #IRtcRoom#SubscribeScreen} 或 UnsubscribeScreen{@link #IRtcRoom#UnsubscribeScreen} 订阅/取消订阅指定远端屏幕共享流后。
      */
     virtual void OnStreamSubscribed(SubscribeState state_code, const char* user_id, const SubscribeConfig& info) {
         (void)state_code;
@@ -342,20 +399,6 @@ public:
     virtual void OnRoomMessageReceived(const char* uid, const char* message) {
         (void)uid;
         (void)message;
-    }
-
-    /** 
-     * @hidden
-     * @type callback
-     * @region 房间管理
-     * @brief 直播推流转码错误回调。
-     *        用户调用 StartLiveTranscoding{@link #IRtcRoom#StartLiveTranscoding} 接口启动直播推流转码功能后，启动结果和推流过程中 的错误均会通过此回调方法通知用户。
-     * @param [in] url 推流地址的 URL。
-     * @param [in] error 直播推流转码功能错误码，详见枚举类型 TransCodingError{@link #TransCodingError}。
-     */
-    virtual void OnLiveTranscodingResult(const char* url, int error) {
-        (void)url;
-        (void)error;
     }
 
     /** 
@@ -513,6 +556,8 @@ public:
     }
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use OnUserPublishStream, OnUserPublishScreen, OnUserUnPublishStream and OnUserUnPublishScreen instead.
      * @type callback
      * @region 媒体流管理
      * @brief 房间内用户暂停/恢复发送视频流时，房间内其他用户会收到此回调。参看 MuteLocalVideo{@link #IRtcEngineLite#MuteLocalVideo}。
@@ -523,7 +568,6 @@ public:
         (void)uid;
         (void)mute;
     }
-
 
     /** 
      * @hidden
@@ -733,7 +777,7 @@ public:
      * @hidden
      * @brief 最大屏幕共享帧率改变时的回调
      * @param [in] screenPixels
-     *        为了保持帧率而推荐的最大视频宽度*高度的值
+     *        为了保持帧率而推荐的最大视频宽度×高度的值
      *
      */
     virtual void OnMaximumScreenSharePixelsUpdated(int screenPixels) {
@@ -812,6 +856,18 @@ public:
      * @param info_count 数组长度，代表目标房间数
      */
     virtual void OnForwardStreamEvent(ForwardStreamEventInfo* infos, int info_count) {
+    }
+
+    /** 
+     * @hidden(Linux)
+     * @type callback
+     * @brief 加入房间后， 以 2 秒 1 次的频率，报告用户的网络质量信息
+     * @param [in] localQuality 本端网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
+     * @param [in] remoteQualities 已订阅用户的网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
+     * @param [in] remoteQualityNum `remoteQualities` 数组长度
+     * @note 更多通话中的监测接口，详见[通话中质量监测](106866)
+     */
+    virtual void OnNetworkQuality(const NetworkQualityStats& localQuality, const NetworkQualityStats* remoteQualities, int remoteQualityNum) {
     }
 };
 

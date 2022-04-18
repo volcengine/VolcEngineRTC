@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
  * @brief VolcEngineRTC Video Frame
-*/
+ */
 
 #pragma once
 
@@ -188,6 +188,37 @@ struct VideoSolution {
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
 };
 
+/** 
+ * @type keytype
+ * @brief 视频参数
+ */
+struct VideoEncoderConfig {
+    /** 
+     * @brief 宽（像素）
+     */
+    int width;
+    /** 
+     * @brief 高（像素）
+     */
+    int height;
+    /** 
+     * @brief 视频帧率
+     */
+    int frameRate;
+    /** 
+     * @brief 最高编码码率（千比特每秒）<br>
+     *        建议使用默认设置。
+     */
+    int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
+    /** 
+     * @brief 视频帧缩放模式。你可以设置缩放以适应视窗，参看 VideoStreamScaleMode{@link #VideoStreamScaleMode}
+     */
+    VideoStreamScaleMode scaleMode = VideoStreamScaleMode::kVideoStreamScaleModeAuto;
+    /** 
+     * @brief 视频编码质量策略，参看 VideoEncodePreference{@link #VideoEncodePreference}
+     */
+    VideoEncodePreference encoderPreference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
+};
 
 /** 
  * @type keytype
@@ -238,7 +269,6 @@ typedef VideoSolutionDescription VideoProfile;
 
 /** 
  * @type keytype
- * @region 视频管理
  * @brief 视频帧颜色编码格式
  */
 enum VideoPixelFormat {
@@ -285,7 +315,6 @@ enum VideoPixelFormat {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @region 视频管理
  * @brief 视频YUV格式颜色空间
@@ -315,7 +344,6 @@ enum ColorSpace {
 
 /** 
  * @type keytype
- * @region 视频管理
  * @brief 视频帧格式
  */
 enum VideoFrameType {
@@ -392,17 +420,17 @@ typedef struct VideoFrameBuilder {
 #define ByteRTCNumDataPointers 4
     /** 
      * @hidden
-     * @brief 内存数据数据类型，默认为 cpu 内存，详见 VideoFrameType:{@link #VideoFrameType}
+     * @brief 内存数据数据类型，默认为 cpu 内存，详见 VideoFrameType{@link #VideoFrameType}
      */
     VideoFrameType frame_type = kVideoFrameTypeRawMemory;
     /** 
      * @hidden
-     * @brief 视频帧像素格式，详见 ByteRTCVideoSinkPixelFormat:{@link #ByteRTCVideoSinkPixelFormat}
+     * @brief 视频帧像素格式，详见 VideoPixelFormat{@link #VideoPixelFormat}
      */
     VideoPixelFormat pixel_fmt = kVideoPixelFormatUnknown;
     /** 
      * @hidden
-     * @brief 视频帧颜色空间
+     * @brief 视频帧颜色空间，参看 ColorSpace{@link #ColorSpace}
      */
     ColorSpace color_space = kColorSpaceUnknown;
     /** 
@@ -414,11 +442,11 @@ typedef struct VideoFrameBuilder {
      */
     int linesize[ByteRTCNumDataPointers];
     /** 
-     * @brief sei 数据地址
+     * @brief SEI 数据地址
      */
     uint8_t* extra_data = nullptr;
     /** 
-     * @brief sei 数据大小
+     * @brief SEI 数据大小
      */
     int extra_data_size = 0;
     /** 
@@ -442,8 +470,7 @@ typedef struct VideoFrameBuilder {
      */
     int height = 0;
     /** 
-     * @brief 视频旋转角度
-     * @notes 目前支持 0，90，180，270 几种旋转角度
+     * @brief 视频旋转角度，参看 VideoRotation{@link #VideoRotation}
      */
     VideoRotation rotation = kVideoRotation0;
     /** 
@@ -476,11 +503,11 @@ typedef struct VideoFrameBuilder {
 class IVideoFrame {
 public:
     /** 
-     * @brief 获取视频帧类型
+     * @brief 获取视频帧类型，参看 VideoFrameType{@link #VideoFrameType}
      */
     virtual VideoFrameType frame_type() const = 0;
     /** 
-     * @brief 获取视频帧格式
+     * @brief 获取视频帧格式，参看 VideoPixelFormat{@link #VideoPixelFormat}
      */
     virtual VideoPixelFormat pixel_format() const = 0;
     /** 
@@ -488,30 +515,32 @@ public:
      */
     virtual int64_t timestamp_us() const = 0;
     /** 
-     * @brief 获取视频帧宽度
+     * @brief 获取视频帧宽度，单位：px
      */
     virtual int width() const = 0;
     /** 
-     * @brief 获取视频帧高度
+     * @brief 获取视频帧高度，单位：px
      */
     virtual int height() const = 0;
     /** 
-     * @brief 获取视频帧旋转角度
+     * @brief 获取视频帧旋转角度，参看 VideoRotation{@link #VideoRotation}
      */
     virtual VideoRotation rotation() const = 0;
     /** 
      * @hidden
      * @brief 获取镜像信息
      * @return 是否需要镜像
+     *        + True: 是  <br>
+     *        + False: 否
      */
     virtual bool flip() const = 0;
     /** 
-     * @brief 获取视频帧颜色空间
+     * @brief 获取视频帧颜色空间，参看 ColorSpace{@link #ColorSpace}
      */
     virtual ColorSpace color_space() const = 0;
     /** 
      * @brief 视频帧颜色 plane 数量
-     * @notes yuv 数据存储格式分为 plane 存储格式和 pack 存储格式，plane 格式中有 y，u，v 分开存储，pack 中 yuv 数据
+     * @notes yuv 数据存储格式分为打包（planar）存储格式和平面（packed）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
      */
     virtual int number_of_planes() const = 0;
     /** 
@@ -550,11 +579,6 @@ public:
      * @brief 转换为i420格式的视频帧
      */
     virtual void to_i420() = 0;
-    /**  
-     * @brief 根据视频帧参数创建视频帧并返回指针
-     * @param [in] VideoFrameBuilder 视频帧创建类对象，详见 VideoFrameBuilder：{@link #VideoFrameBuilder}
-     */
-    static IVideoFrame* build_video_frame(const VideoFrameBuilder& builder);
 /**
  * @hidden
  */

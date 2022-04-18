@@ -28,6 +28,24 @@
 namespace bytertc {
 /** 
  * @type keytype
+ * @brief 媒体流类型
+ */
+enum MediaStreamType {
+    /** 
+     * @brief 只有音频，不含视频
+     */
+    kMediaStreamTypeAudio = 1 << 0,
+    /** 
+     * @brief 只有视频，不含音频
+     */
+    kMediaStreamTypeVideo = 1 << 1,
+    /** 
+     * @brief 同时包含音频和视频
+     */
+    kMediaStreamTypeBoth = kMediaStreamTypeAudio | kMediaStreamTypeVideo
+};
+/** 
+ * @type keytype
  * @brief 渲染模式
  */
 enum RenderMode {
@@ -44,10 +62,10 @@ enum RenderMode {
      */
     kRenderModeFit = 2,
     /** 
-     * @hidden
-     * @brief 暂时不支持设置为该值
+     *  @brief 视频帧自适应画布 <br>
+     *         视频帧非等比缩放，直至画布被填满。在此过程中，视频帧的长宽比例可能会发生变化。
      */
-    kRenderModeAdaptive = 3,
+   kRenderModeFill = 3,
 };
 
 /** 
@@ -56,17 +74,17 @@ enum RenderMode {
  */
 enum UserOfflineReason {
     /** 
-     * @brief 远端用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法主动退出房间，或切换为不可见。  <br>
+     * @brief 远端用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法主动退出房间。  <br>
      */
     kUserOfflineReasonQuit = 0,
     /** 
-     * @brief 远端用户因网络等原因掉线，或切换至隐身状态。  <br>
+     * @brief 远端用户因网络等原因掉线。  <br>
      */
     kUserOfflineReasonDropped = 1,
-    /**
-     * @hidden
+    /** 
+     * @brief 远端用户切换至隐身状态。  <br>
      */
-    kUserOfflineReasonBecomeAudience = 2,
+    kUserOfflineReasonSwitchToInvisible = 2,
 };
 
 /** 
@@ -122,7 +140,7 @@ enum UserRoleType {
  */
 enum JoinRoomType {
     /** 
-     * @brief 首次加入房间。用户手动调用 JoinRoom{@link #IRtcRoom#JoinRoom}，收到加入成功。  <br>
+     * @brief 首次加入房间。用户手动调用 JoinRoom{@link #IRtcRoom#JoinRoom} 以加入房间。  <br>
      */
     kJoinRoomTypeFirst = 0,
     /** 
@@ -147,11 +165,11 @@ enum LoginType {
 };
 /** 
  * @type errorcode
- * @brief 向房间内单个用户发送消息（P2P）的结果
+ * @brief 发送消息结果，成功或失败，及失败原因
  */
 enum UserMessageSendResult {
     /** 
-     * @brief 向房间内单个用户发送消息成功
+     * @brief 发送消息成功
      */
     kUserMessageSendResultSuccess = 0,
     /** 
@@ -367,37 +385,41 @@ enum NetworkQuality {
 
 /** 
  * @type keytype
- * @brief 用户维度媒体流网络质量。
+ * @brief 上行/下行网络质量
  */
-struct UserNetworkQualityMsg {
+struct NetworkQualityStats {
     /** 
-     * @brief 自己或者远端用户的 uid。
+     * @brief 用户 ID
      */
     const char* uid;
     /** 
-     * @brief 端到端的丢包，取值 （0~1）
+     * @brief 本端的上行/下行的丢包率，范围 [0.0,1.0]
+     *        当 `uid` 为本地用户时，代表发布流的上行丢包率。
+     *        当 `uid` 为远端用户时，代表接收所有订阅流的下行丢包率。
      */
     double fraction_lost;
     /** 
-     * @brief 端到端的往返延时，单位：ms
+     * @brief 当 `uid` 为本地用户时有效，客户端到服务端的往返延时（RTT），单位：ms
      */
     int rtt;
     /** 
-     * @brief rtp包的传输总量，单位：bps
+     * @brief 本端的音视频 RTP 包 2 秒内的平均传输速率，单位：bps
+     *        当 `uid` 为本地用户时，代表发送速率。
+     *        当 `uid` 为远端用户时，代表所有订阅流的接收速率。
      */
     int total_bandwidth;
     /** 
-     * @brief 上行质量分，取值见 NetworkQuality{@link #NetworkQuality}
+     * @brief 上行网络质量评分，详见 NetworkQuality{@link #NetworkQuality}。
      */
-    int tx_quality;
+    NetworkQuality tx_quality;
     /** 
-     * @brief 下行质量分，取值见 NetworkQuality{@link #NetworkQuality}
+     * @brief 下行网络质量评分，详见 NetworkQuality{@link #NetworkQuality}。
      */
-    int rx_quality;
+    NetworkQuality rx_quality;
     /**
      * @hidden
      */
-    UserNetworkQualityMsg() : uid(""), fraction_lost(0.), rtt(0), total_bandwidth(0), tx_quality(0), rx_quality(0) {
+    NetworkQualityStats() : uid(""), fraction_lost(0.), rtt(0), total_bandwidth(0), tx_quality(kNetworkQualityUnknown), rx_quality(kNetworkQualityUnknown) {
     }
 };
 
@@ -478,23 +500,22 @@ struct ScreenParameters {
 enum RoomProfileType {
     /** 
      * @brief 普通音视频通话模式。<br>
-     *        单声道，采样率为 48kHz
-     *        你应在 1V1 音视频通话时，使用此设置。<br>
+     *        单声道，采样率为 48kHz。 <br>
+     *        你应在 1V1 音视频通话时，使用此设置。 <br>
      *        此设置下，弱网抗性较好。
      */
     kRoomProfileTypeCommunication = 0,
     /** 
      * @brief 直播模式。<br>
-     *        单声道，采样率为 48kHz
+     *        单声道，采样率为 48kHz。 <br>
      *        当你对音视频通话的音质和画质要求较高时，应使用此设置。<br>
      *        此设置下，当用户使用蓝牙耳机收听时，蓝牙耳机使用媒体模式。
      */
     kRoomProfileTypeLiveBroadcasting = 1,
     /** 
-     * @brief 游戏语音模式。此模式下延时较低。<br>
-     *        单声道，采样率为 16kHz
+     * @brief 游戏语音模式。<br>
+     *        单声道，采样率为 16kHz。 <br>
      *        低端机在此模式下运行时，进行了额外的性能优化：<br>
-     *            + 采集播放采用 16kHz 单通道采样 <br>
      *            + 部分低端机型配置编码帧长 40/60 <br>
      *            + 部分低端机型关闭软件 3A 音频处理 <br>
      *        增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。
@@ -502,7 +523,7 @@ enum RoomProfileType {
     kRoomProfileTypeGame = 2,
     /** 
      * @brief 云游戏模式。<br>
-     *        单声道，采样率为 48kHz
+     *        单声道，采样率为 48kHz。 <br>
      *        如果你需要低延迟、高码率的设置时，你可以使用此设置。<br>
      *        此设置下，弱网抗性较差。
      */
@@ -516,31 +537,68 @@ enum RoomProfileType {
     kRoomProfileTypeLowLatency = 4,
 };
 
+
+/**
+ * @hidden
+ */
+enum FrameRateRatio {
+  /**
+   * @hidden
+   */
+  kFrameRateRatioOriginal = 0,
+  /**
+   * @hidden
+   */
+  kFrameRateRatioHalf = 1,
+  /**
+   * @hidden
+   */
+  kFrameRateRatioQuarter = 2,
+};
+
+/**
+ * @hidden
+ */
+struct RemoteVideoConfig {
+    /**
+     * @hidden
+     */
+    FrameRateRatio frame_rate_ratio = kFrameRateRatioOriginal;
+    /**
+     * @hidden
+     */
+    int resolution_width = 0;
+    /**
+     * @hidden
+     */
+    int resolution_height = 0;
+};
+
 /** 
  * @type keytype
  * @brief 房间参数配置
  */
 struct RTCRoomConfig {
     /** 
-     * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为普通音视频通话模式，进房后不可更改。
+     * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为 `kRoomProfileTypeCommunication`，进房后不可更改。
      */
-    RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
+     RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /** 
      * @brief 是否自动发布音视频流，默认为自动发布。 <br>
      *        若调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
      */
-    bool is_auto_publish = true;
+   bool is_auto_publish = true;
     /** 
-     * @brief 是否自动订阅音频流，默认为自动订阅。  <br>
-     *        进房后，你可以调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 修改订阅设置。
+     * @brief 是否自动订阅音频流，默认为自动订阅。
      */
-    bool is_auto_subscribe_audio = true;
+     bool is_auto_subscribe_audio = true;
     /** 
-     * @brief 是否自动订阅主视频流，默认为自动订阅。  <br>
-     *        进房后，你可以调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 修改订阅设置。  <br>
+     * @brief 是否自动订阅主视频流，默认为自动订阅。
      *        屏幕流始终自动订阅，不受该方法影响。
      */
-    bool is_auto_subscribe_video = true;
+     bool is_auto_subscribe_video = true;
+
+    RemoteVideoConfig remote_video_config;
 };
 /** 
  * @type keytype
@@ -559,6 +617,8 @@ struct MultiRoomConfig {
      * @brief 是否自动订阅视频流，默认为自动订阅
      */
     bool is_auto_subscribe_video = true;
+
+    RemoteVideoConfig remote_video_config;
 };
 
 /** 
@@ -587,11 +647,11 @@ enum MediaDeviceType {
      *@brief 视频采集设备类型
      */
     kMediaDeviceTypeVideoCaptureDevice = 3,
-    /**  
+    /** 
      *@brief 屏幕流视频设备
      */
     kMediaDeviceTypeScreenVideoCaptureDevice = 4,
-    /**  
+    /** 
      * @brief 屏幕流音频设备
      */
     kMediaDeviceTypeScreenAudioCaptureDevice= 5,
@@ -614,15 +674,19 @@ enum MediaDeviceState {
      *@brief 设备运行时错误
      */
     kMediaDeviceStateRuntimeError = 3,
-    /**  
-     *@brief 设备已暂停
+    /** 
+     *@brief 设备已暂停。包括：
+     *        + 采集过程中，目标应用窗体最小化到任务栏。
+     *        + 开启采集或采集过程中，目标应用窗体被隐藏。
+     *        + 采集过程中，目标应用窗体正在被拉伸。
+     *        + 采集过程中，目标应用窗体正在被拖动。
      */
     kMediaDeviceStatePaused = 4,
-    /**  
+    /** 
      *@brief 设备已恢复
      */
     kMediaDeviceStateResumed = 5,
-    /**  
+    /** 
      *@brief 设备已插入
      */
     kMediaDeviceStateAdded = 10,
@@ -657,8 +721,9 @@ enum MediaDeviceError {
      *@brief 未找到指定的媒体设备
      */
     kMediaDeviceErrorDeviceNotFound = 4,
-    /**  
-     *@brief 媒体设备被移除(屏幕采集情况下窗体被关闭or显示器被移除)
+    /** 
+     *@brief 媒体设备被移除
+     *       对象为采集屏幕流时，表明窗体被关闭或显示器被移除。
      */
     kMediaDeviceErrorDeviceDisconnected = 5,
     /** 
@@ -669,6 +734,11 @@ enum MediaDeviceError {
      * @brief 设备采样率不支持
      */
     kMediaDeviceErrorDeviceUNSupportFormat = 7,
+
+    /** 
+     * @brief ios 屏幕采集没有 group id 参数
+     */
+    kMediaDeviceErrorDeviceNotFindGroupId = 8,
 };
 
 /** 
@@ -898,25 +968,24 @@ enum VoiceReverbType {
 };
 
 /** 
- * @hidden
  * @type keytype
- * @brief 订阅流的结果
+ * @brief 订阅媒体流状态
  */
 enum SubscribeState {
     /** 
-     * @brief 订阅流成功
+     * @brief 订阅/取消订阅流成功
      */
     kSubscribeStateSuccess,
-    /**
-     * @hidden
+    /** 
+     * @brief 订阅/取消订阅流失败，本地用户未在房间中
      */
     kSubscribeStateFailedNotInRoom,
     /** 
-     * @brief 没有找到流
+     * @brief 订阅/取消订阅流失败，房间内未找到指定的音视频流
      */
     kSubscribeStateFailedStreamNotFound,
     /** 
-     * @brief 超过订阅流上限
+     * @brief 超过订阅流数上限
      */
     kSubscribeStateFailedOverLimit,
 };
@@ -1082,6 +1151,7 @@ enum FallbackOrRecoverReason {
      */
     kFallbackOrRecoverReasonPublishRecoverByPerformance = 7,
 };
+
 
 /** 
  * @type keytype
@@ -1351,7 +1421,7 @@ enum WarningCode {
      *        通过 SetScreenAudioStreamIndex{@link #IRtcEngineLite#SetScreenAudioStreamIndex} 设置屏幕共享时的音频采集方式。
      */
     kWarningCodeSetScreenAudioStreamIndexFailed = -5010,
-    /**  
+    /** 
      * @brief 设置语音音高不合法
      */
     kWarningCodeInvalidVoicePitch = -5011,
@@ -1443,13 +1513,13 @@ enum LocalAudioStreamState {
 
     /** 
      * @brief 本地音频静音成功后回调该状态。
-     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 UnpublishStream{@link #IRtcEngineLite#UnpublishStream} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamMute,
 
     /** 
      * @brief 本地音频解除静音成功后回调该状态。
-     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 UnpublishStream{@link #IRtcEngineLite#UnpublishStream} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamUnmute
 };
@@ -1701,7 +1771,7 @@ enum RemoteVideoStateChangeReason {
     kRemoteVideoStateChangeReasonRemoteUnmuted,
     /** 
      * @brief 远端用户离开频道。
-     *        状态转换参考 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove}
+     *        状态转换参考 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream}/OnUserUnPublishScreen{@link #IRTCRoomEventHandler#OnUserUnPublishScreen}
      */
     kRemoteVideoStateChangeReasonRemoteOffline,
 };
@@ -1754,9 +1824,15 @@ enum DivideMode {
  */
 struct AudioVolumeInfo {
     /** 
-     * @brief 音量，取值范围为：[0,255]
+     * @brief 线性音量，取值范围是：[0,255]，与原始音量呈线性关系，数值越大，音量越大。
+     * 无声为25以下（绝对无声为0，25以下基本已经无声音了，可以视为无声），低音量为25~76，中音量为76~204，高音量为204以上
      */
-    int volume;
+    int linear_volume;
+    /** 
+     * @brief 非线性音量，取值范围是：[-127，0]，单位dB。此音量范围是将原始音量进行对数转化，在中低音量时分辨更为灵敏，适用于作为Active Speaker（房间内最活跃用户）的识别。
+     * 高音量为0~-20dB，中音量为-20~-40dB，低音量为-40~-60dB，若低于-60dB，则为无声。
+     */
+    int nonlinear_volume;
     /** 
      * @brief 音频流来源的用户 ID
      */
@@ -1829,15 +1905,11 @@ struct SourceWantedData {
  */
 struct UserInfo {
     /** 
-     * @brief 用户 ID，长度在 128 字节以内的非空字符串。支持以下字符集范围:  <br>
-     *            1. 26 个大写字母 A ~ Z  <br>
-     *            2. 26 个小写字母 a ~ z  <br>
-     *            3. 10 个数字 0 ~ 9  <br>
-     *            4. 下划线 "_"，at 符 "@"，减 号 "-"
+     * @brief 用户 ID。该字符串符合正则表达式：`[a-zA-Z0-9_@\-]{1,128}`。
      */
     const char* uid = nullptr;
     /** 
-     * @brief 用户传递的额外信息，最大长度为 200 字节。会在 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 中回调给远端用户。
+     * @brief 用户的额外信息，最大长度为 200 字节。会在 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 中回调给远端用户。
      */
     const char* extra_info = nullptr;
 };
@@ -1848,11 +1920,11 @@ struct UserInfo {
  */
 struct RtcRoomStats {
     /** 
-     * @brief 当前应用的上行丢包率，取值范围为 [0, 1]。
+     * @brief 当前应用的上行丢包率，取值范围为 [0, 1]
      */
     float txLostrate;
     /** 
-     * @brief 当前应用的下行丢包率，取值范围为 [0, 1]。
+     * @brief 当前应用的下行丢包率，取值范围为 [0, 1]
      */
     float rxLostrate;
     /** 
@@ -1860,7 +1932,7 @@ struct RtcRoomStats {
      */
     int rtt;
     /** 
-     * @brief 通话时长，单位为秒，累计值
+     * @brief 进房到退房之间累计时长，单位为 s
      */
     unsigned int duration;
     /** 
@@ -1872,41 +1944,40 @@ struct RtcRoomStats {
      */
     unsigned int rx_bytes;
     /** 
-     * @brief 发送码率 (kbps)，获取该数据时的瞬时值
+     * @brief 发送码率（kbps），获取该数据时的瞬时值
      */
     unsigned short tx_kbitrate;
     /** 
-     * @brief 接收码率 (kbps)，获取该数据时的瞬时值
+     * @brief 接收码率（kbps），获取该数据时的瞬时值
      */
     unsigned short rx_kbitrate;
     /** 
-     * @brief 音频接收码率 (kbps)，获取该数据时的瞬时值
+     * @brief 音频接收码率（kbps），获取该数据时的瞬时值
      */
     unsigned short rx_audio_kbitrate;
     /** 
-     * @brief 音频发送码率 (kbps)，获取该数据时的瞬时值
+     * @brief 音频包的发送码率（kbps），获取该数据时的瞬时值
      */
     unsigned short tx_audio_kbitrate;
     /** 
-     * @brief 视频接收码率 (kbps)，获取该数据时的瞬时值
+     * @brief 视频接收码率（kbps），获取该数据时的瞬时值
      */
     unsigned short rx_video_kbitrate;
     /** 
-     * @brief 视频发送码率 (kbps)，获取该数据时的瞬时值
+     * @brief 视频发送码率（kbps），获取该数据时的瞬时值
      */
     unsigned short tx_video_kbitrate;
     /** 
-     * @brief 当前房间内的用户人数
+     * @brief 当前房间内的人数
      */
     unsigned int user_count;
     /** 
-     * @hidden
-     * @brief 当前应用程序的 CPU 使用率（%），暂未被使用
+     * @brief 当前应用的 CPU 使用率 (%)
      */
     double cpu_app_usage;
     /** 
      * @hidden
-     * @brief 当前系统的 CPU 使用率（%），暂未被使用
+     * @brief 当前系统的 CPU 使用率 (%)
      */
     double cpu_total_usage;
     /** 
@@ -2077,6 +2148,14 @@ struct MediaStreamInfo {
      *        当远端用户调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
      */
     int profile_count;
+
+    /** 
+     * @brief 最大视频流的属性。  <br>
+     *        since 336版本
+     *        当远端用户开启带通道划分的大小流时，回调最大视频流属性信息。用户可以使用新的订阅方式，订阅任意不超过该分辨率的流。
+     *        最终接收到的流，会受房间内其他用户的订阅行为的影响，综合确定一个最接近用户请求的分辨率的流。
+     */
+    VideoSolutionDescription max_profile;
 };
 
 /** 
@@ -2152,6 +2231,20 @@ struct SubscribeConfig {
      */
     int svc_layer = 0;
 
+    /** 
+     * @hidden
+     * @brief 用户通过指定UI对应的最合适的流的分辨率
+     */
+    int sub_width = 0;
+    /**
+     * @hidden
+     */
+    int sub_height = 0;
+    /**
+     * @hidden
+     */
+    int sub_video_index = -1;
+
 public:
     /** 
      * @hidden
@@ -2180,13 +2273,34 @@ public:
               priority(priority) {
     }
 
+    /** 
+     * @hidden
+     * @brief 构造函数
+     */
+    SubscribeConfig(bool is_screen, bool subvideo, bool subaudio, int videoindex, int priority,int svc_layer,int width,int height)
+            : is_screen(is_screen),
+              sub_video(subvideo),
+              sub_audio(subaudio),
+              video_index(videoindex),
+              priority(priority),
+              svc_layer(svc_layer),
+              sub_width(width),
+              sub_height(height){
+    }
     /**
      * @hidden
      */
     bool operator==(const SubscribeConfig& config) const {
-        bool result = is_screen == config.is_screen && sub_video == config.sub_video && sub_audio == config.sub_audio &&
-                      video_index == config.video_index && priority == config.priority && svc_layer == config.svc_layer;
-        ;
+        // sub_width * sub_height valid
+        bool common_result = is_screen == config.is_screen && sub_video == config.sub_video && sub_audio == config.sub_audio && priority == config.priority && svc_layer == config.svc_layer;
+        bool result;
+        if(sub_width * sub_height > 0 && config.sub_width * config.sub_height > 0) {
+          result = common_result && sub_width == config.sub_width && sub_height == config.sub_height ;
+        }  else if((sub_width * sub_height == 0) && (config.sub_width * config.sub_height == 0) ) {
+          result = common_result && video_index == config.video_index;
+        } else {
+          result = false;
+        }
         return result;
     }
 
@@ -2273,11 +2387,10 @@ enum VideoStreamType {
      */
     kVideoStreamTypeLow = 1,
 };
-
 /** 
  * @type keytype
- * @brief 画布信息和渲染模式。<br>
- *        你应使用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 将视频流绑定到本地视图。
+ * @brief 视频帧渲染设置。<br>
+ *        调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 将视频流绑定到本地视图。
  */
 struct VideoCanvas {
     /** 
@@ -2285,28 +2398,24 @@ struct VideoCanvas {
      */
     void* view;
     /** 
-     * @brief 渲染模式，参看 RenderMode{@link #RenderMode}
+     * @brief 视频渲染模式，参看 RenderMode{@link #RenderMode}
      */
     int render_mode;
     /** 
-     * @brief 视图对应的用户 ID
+     * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x0000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
      */
-    const char* uid;
-    /** 
-     * @brief 你的自定义数据，SDK 透传该数据。
-     */
-    void* priv;
+    uint32_t background_color;
     /** 
      * @hidden
      * @brief 构造函数
      */
-    VideoCanvas() : view(NULL), render_mode(kRenderModeHidden), uid(0), priv(NULL) {
+    VideoCanvas() : view(NULL), render_mode(kRenderModeHidden), background_color(0) {
     }
     /** 
      * @hidden
      * @brief 构造函数
      */
-    VideoCanvas(void* v, int m, const char* u) : view(v), render_mode(m), uid(u), priv(NULL) {
+    VideoCanvas(void* v, int m, uint32_t c) : view(v), render_mode(m), background_color(c)  {
     }
 };
 
@@ -2474,11 +2583,15 @@ struct LocalStreamStats {
      */
     LocalVideoStats video_stats;
     /** 
+     * @hidden
      * @brief 所属用户的媒体流上行网络质量，详见 NetworkQuality{@link #NetworkQuality}
+     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
      */
     NetworkQuality local_tx_quality;
     /** 
+     * @hidden
      * @brief 所属用户的媒体流下行网络质量，详见 NetworkQuality{@link #NetworkQuality}
+     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
      */
     NetworkQuality local_rx_quality;
     /** 
@@ -2507,11 +2620,15 @@ struct RemoteStreamStats {
      */
     RemoteVideoStats video_stats;
     /** 
+     * @hidden
      * @brief 所属用户的媒体流上行网络质量，详见 NetworkQuality{@link #NetworkQuality}
+     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
      */
     NetworkQuality remote_tx_quality;
     /** 
+     * @hidden
      * @brief 所属用户的媒体流下行网络质量，详见 NetworkQuality{@link #NetworkQuality}
+     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
      */
     NetworkQuality remote_rx_quality;
     /** 
@@ -2543,15 +2660,15 @@ struct SysStats {
      */
     double memory_usage;
     /** 
-     * @brief 全量内存（单位字节）
+     * @brief 全量内存（单位MB）
      */
     unsigned long long full_memory;
     /** 
-     * @brief 系统已使用内存（单位字节）
+     * @brief 系统已使用内存（单位MB）
      */
     unsigned long long total_memory_usage;
     /** 
-     * @brief 空闲可分配内存（单位字节）
+     * @brief 空闲可分配内存（单位MB）
      */
     unsigned long long free_memory;
     /** 
@@ -2566,7 +2683,7 @@ struct SysStats {
 
 /** 
  * @type keytype
- * @brief windows 窗口 id, windows 平台下传 windows 窗口句柄
+ * @brief Windows 窗口 id, Windows 平台下传 Windows 窗口句柄
  */
 typedef void* view_t;
 
@@ -2822,53 +2939,56 @@ enum AudioMixingState {
      */
     kAudioMixingStatePCMDisabled,
 };
-
-/** 
+/**  
  * @type keytype
- * @brief 音频混音文件播放错误码。
+ * @brief 混音错误码。
  */
 enum AudioMixingError {
-    /** 
-     * @brief 混音错误码，正常
+    /**  
+     * @brief 正常
      */
     kAudioMixingErrorOk = 0,
-    /** 
-     * @brief 预加载失败，找不到混音文件或者文件长度超出 20s
+    /**  
+     * @brief 预加载失败。找不到混音文件或者文件长度超出 20s
      */
     kAudioMixingErrorPreloadFailed,
-    /** 
-     * @brief 混音开启失败，找不到混音文件或者混音文件打开失败
+    /**  
+     * @brief 混音开启失败。找不到混音文件或者混音文件打开失败
      */
     kAudioMixingErrorStartFailed,
-    /** 
+    /**  
      * @brief 混音 ID 异常
      */
     kAudioMixingErrorIdNotFound,
-    /** 
-     * @brief 设置混音文件的播放位置出错
+    /**  
+     * @brief 设置混音文件的播放位置出错
      */
     kAudioMixingErrorSetPositionFailed,
-    /** 
-     * @brief 音量参数不合法，仅支持设置的音量值为[0 400]
+    /**  
+     * @brief 音量参数不合法，仅支持设置的音量值为[0, 400]
      */
     kAudioMixingErrorInValidVolume,
-    /** 
-     * @brief 播放的文件与预加载的文件不一致，请先使用 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载文件
+    /**  
+     * @brief 已有另一个文件完成了预加载。请先使用 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载此前的文件。
      */
     kAudioMixingErrorLoadConflict,
-    /** 
-     * @brief 混音 ID 类型不匹配，当前操作接口不支持该 ID 代表的音频流类型
+    /**  
+     * @brief 不支持此混音类型。
      */
     kAudioMixingErrorIdTypeNotMatch,
     /**  
      * @brief 设置混音文件的音调不合法
      */
     kAudioMixingErrorInValidPitch,
-    /**  
+    /** 
      * @brief 设置混音文件的音轨不合法
      */
     kAudioMixingErrorInValidAudioTrack,
-    /**  
+    /** 
+     * @brief 混音文件正在启动中
+     */
+    kAudioMixingErrorIsStarting,
+    /** 
      * @hidden
      * @deprecated since 325.1
      * @brief 混音错误码，失败，已废弃
@@ -2996,6 +3116,21 @@ enum MirrorMode {
      * @brief 开启
      */
     kMirrorModeOn = 1,
+};
+/** 
+ * @hidden(Windows, MacOS, Linux)
+ * @type keytype
+ * @brief 视频旋转模式
+ */
+enum VideoRotationMode {
+    /** 
+     * @brief 跟随App界面方向
+     */
+    kVideoRotationModeFollowApp = 0,
+    /** 
+     * @brief 跟随设备重力方向
+     */
+    kVideoRotationModeFollowGSensor = 1,
 };
 
 /** 
@@ -3158,7 +3293,7 @@ struct LiveTranscodingAudioConfig {
      */
     int sample_rate;
     /** 
-     * @brief 声道数，可取 1 或 2。
+     * @brief 音频声道数，可取 1 或 2。
      */
     int channels;
     /** 
@@ -3287,8 +3422,8 @@ enum MuteState {
 enum StreamIndex {
     /** 
      * @brief 主流。包括：<br>
-     *        + 通过默认摄像头/麦克风采集到的视频/音频; <br>
-     *        + 通过自定义设备采集到的视频/音频。
+     *        + 由摄像头/麦克风通过内部采集机制，采集到的视频/音频; <br>
+     *        + 通过自定义采集，采集到的视频/音频。
      */
     kStreamIndexMain = 0,
     /** 
@@ -3322,11 +3457,11 @@ struct RemoteStreamKey {
  */
 enum AudioSourceType {
     /** 
-     *  自定义采集音频源
+     * @brief 自定义采集音频源
      */
     kAudioSourceTypeExternal = 0,
     /** 
-     *  RTC SDK 内部采集音频源
+     * @brief RTC SDK 内部采集音频源
      */
     kAudioSourceTypeInternal ,
 };
@@ -3767,7 +3902,6 @@ struct AudioMixingConfig {
       *        + 传入的值小于等于 0 时，不会触发进度回调。  <br>
       */
      int64_t callback_on_progress_interval = 0;
-    
 };
 
 /** 
@@ -3887,7 +4021,7 @@ struct VideoCaptureConfig {
     */
    enum CapturePreference {
        /** 
-        * @brief （默认）自动设置采集参数。  
+        * @brief （默认）自动设置采集参数。
         *        SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。
         */
        KAuto = 0,
@@ -3944,22 +4078,31 @@ struct AudioPropertiesConfig {
      */
     bool enable_vad = false;
 };
-
 /** 
  * @type keytype
  * @brief 音频属性信息  <br>
  */
 struct AudioPropertiesInfo {
     /** 
-     * @brief 音量，取值范围为：[0, 255]
+     * @brief 线性音量，与原始音量呈线性关系，数值越大，音量越大。取值范围是：[0,255]。<br>
+     *        - [0, 25]: 无声 <br>
+     *        - [26, 75]: 低音量 <br>
+     *        - [76, 204]: 中音量 <br>
+     *        - [205, 255]: 高音量
      */
-    int volume;
-
+    int linear_volume;
+    /** 
+     * @brief 非线性音量。由原始音量的对数值转化而来，因此在中低音量时更灵敏，可以用作 Active Speaker（房间内最活跃用户）的识别。取值范围是：[-127，0]，单位 dB。 <br>
+     *        - [-127, -60]: 无声 <br>
+     *        - [-59, -40]: 低音量 <br>
+     *        - [-39, -20]: 中音量 <br>
+     *        - [-19, 0]: 高音量
+     */
+    int nonlinear_volume;
     /** 
      * @brief 频谱数组。默认长度为 257。
      */
     float spectrum[SPECTRUM_SIZE] = {0};
-
     /** 
      * @brief 人声检测（VAD）结果
      * @notes <br>
@@ -4212,6 +4355,25 @@ struct ForwardStreamEventInfo {
      * @brief 跨房间转发媒体流过程中该目标房间发生的事件，参看 ForwardStreamEvent{@link #ForwardStreamEvent}
      */
     ForwardStreamEvent event;
+};
+
+/** 
+ * @type keytype
+ * @brief 屏幕采集的媒体类型
+ */
+enum ScreenMediaType {
+    /** 
+     * @brief 仅采集视频
+     */
+    kScreenMediaTypeVideoOnly = 0,
+    /** 
+     * @brief 仅采集音频
+     */
+    kScreenMediaTypeAudioOnly = 1,
+    /** 
+     * @brief 同时采集音频和视频
+     */
+    kScreenMediaTypeVideoAndAudio = 2,
 };
 
 }  // namespace bytertc

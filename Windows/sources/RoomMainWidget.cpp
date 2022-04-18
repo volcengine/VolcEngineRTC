@@ -210,7 +210,6 @@ void RoomMainWidget::setRenderCanvas(bool isLocal, void *view, const std::string
     bytertc::VideoCanvas canvas;
     canvas.view = view;
     canvas.render_mode = bytertc::RenderMode::kRenderModeFit;
-    canvas.uid = id.c_str();
 
     if (isLocal) {
         // 设置本地视频渲染视图

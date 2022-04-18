@@ -9,6 +9,7 @@
 #define BYTE_RTC_VIDEO_EFFECT_INTERFACE_H__
 
 #include <stdint.h>
+#include "bytertc_defines.h"
 
 namespace bytertc {
 /** 
@@ -47,6 +48,50 @@ struct VirtualBackgroundSource{
      *       + 分辨率超过 1080P 时，图片会被等比缩放。背景图片和视频分辨率不一致时，图片会被裁剪缩放。<br>
      */
     const char* source_path = nullptr;
+};
+/**
+ * @hidden
+ */
+struct FaceDetectResult {
+    /**
+     * @hidden
+     */
+    static const int max_face_num = 10;
+    /**
+     * @hidden
+     */
+    int detect_result = 0;
+    /**
+     * @hidden
+     */
+    int face_count = 0;
+    /**
+     * @hidden
+     */
+    Rectangle rect[max_face_num];
+    /**
+     * @hidden
+     */
+    int image_width = 0;
+    /**
+     * @hidden
+     */
+    int image_height = 0;
+};
+/** 
+ * @type callback
+ * @region 视频特效
+ * @brief 人脸检测结果回调观察者
+ */
+class IFaceDetectionObserver {
+public:
+    /** 
+     * @type callback
+     * @region 视频特效
+     * @brief CV SDK 进行人脸检测结果的回调。 <br>
+     *        调用 RegisterFaceDetectionObserver{@link #IVideoEffect#RegisterFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并使用 RTC SDK 中包含的 CV SDK 进行视频特效处理时，你会收到此回调。
+     */
+    virtual void OnFaceDetectResult(const FaceDetectResult& result) = 0;
 };
 
 /** 
@@ -236,6 +281,18 @@ public:
      * @notes 调用 EnableVirtualBackground{@link #EnableVirtualBackground} 开启虚拟背景后，可以调用此接口关闭虚拟背景。
      */
     virtual int DisableVirtualBackground() = 0;
+    /** 
+     * @type api
+     * @region 视频特效
+     * @brief 设置人脸检测结果回调观察者 <br>
+     *        通过此观察者，你会周期性收到 OnFaceDetectResult{@link #IFaceDetectionObserver#OnFaceDetectResult}。
+     * @param observer 参看 IFaceDetectionObserver{@link #IFaceDetectionObserver}
+     * @param interval_ms 时间间隔。单位为 ms。实际收到回调的时间间隔大于 `interval_ms`，小于 `interval_ms + 视频采集帧间隔`
+     * @return  方法调用结果：  <br>
+     *        + 0：成功  <br>
+     *        + < 0：失败  <br>
+     */
+    virtual int RegisterFaceDetectionObserver(IFaceDetectionObserver * observer, int interval_ms) = 0;
 };
 
 }  // namespace bytertc

@@ -365,9 +365,9 @@ typedef struct TranscoderVideoParam {
      */
     int32_t i32_gop;
     /** 
-     * @brief 合流视频码率，单位：kbps
+     * @brief 输出的合流视频码率，单位：kbps，取值范围 [1,10000]
      */
-    int32_t i32_bitrate_kpbs;
+    int32_t i32_bitrate_kbps;
     /** 
      * @brief 视频编码规格，参看 TranscoderVideoCodecProfile{@link #TranscoderVideoCodecProfile}
      */

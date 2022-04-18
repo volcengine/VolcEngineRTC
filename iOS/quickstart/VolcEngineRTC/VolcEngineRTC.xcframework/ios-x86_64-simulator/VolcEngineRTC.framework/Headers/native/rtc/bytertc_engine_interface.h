@@ -21,7 +21,7 @@
 namespace bytertc {
 
 class IRTCRoomEventHandler;
-/**  
+/** 
  * @type api
  * @brief 引擎API
  *      IRtcEngine用IRtcEngineEventHandler 注册接口类方法向应用程序发送回调通知
@@ -30,14 +30,16 @@ class IRtcEngine : public IRtcRoom,
                    public IRtcEngineLite {
 public:
 
-    /**  
+    /** 
      * @hidden
      * @brief 析构函数
      */
     virtual ~IRtcEngine() {
     }
 
-    /**  
+
+
+    /** 
      * @hidden
      * @deprecated since 326.1, use function joinRoom with RTCRoomConfig parameter instead
      * @type api
@@ -71,37 +73,38 @@ public:
      */
     virtual int JoinRoom(
             const char* token, const char* room_id, const UserInfo& user_info, RoomProfileType profile_type) = 0;
-    /**  
+    /** 
      * @type api
      * @region 房间管理
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
      *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
-     *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
-     *        本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
-     *        使用不同 App ID 的 App 是不能互通的。  <br>
      *        请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
      * @param [in] room_id 加入的房间 ID。  <br>
-     *        房间 ID 为长度在 128 字节以内的非空字符串，支持以下字符集范围:  <br>
-     *            1. 26 个大写字母 A ~ Z 。  <br>
-     *            2. 26 个小写字母 a ~ z 。  <br>
-     *            3. 10 个数字 0 ~ 9 。  <br>
-     *            4. 下划线 "_"，at 符 "@"，减号 "-"。  <br>
+     *        该字符串符合正则表达式：`[a-zA-Z0-9_@\-]{1,128}`
      * @param [in] user_info 用户信息，参看 UserInfo{@link #UserInfo}。  <br>
      * @param [in] room_config 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 RTCRoomConfig{@link #RTCRoomConfig}。  <br>
      * @return  <br>
      *        +  0: 成功  <br>
-     *        + -1：room_id / user_info.uid 包含了无效的参数  <br>
+     *        + -1：失败。room_id / user_info.uid 包含了无效的参数  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 LeaveRoom:{@link #IRtcRoom#LeaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>  <br>
      * @notes  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
      *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
      *       + 本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>     
-     */     
-    virtual int JoinRoom(const char* token, const char* room_id, const UserInfo& user_info, const RTCRoomConfig& room_config) = 0;
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知；如果加入房间的用户可见，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
+     */
+     virtual int JoinRoom(const char* token, const char* room_id, const UserInfo& user_info, const RTCRoomConfig& room_config) = 0;
+    /**
+     * @hidden
+     */
+    virtual void PublishStream(MediaStreamType type) override {};
+    /**
+     * @hidden
+     */
+    virtual void UnpublishStream(MediaStreamType type) override {};
 /**
  * @hidden
  */
@@ -118,9 +121,11 @@ private:
      * @hidden
      */
     void SetRtcRoomEventHandler(IRTCRoomEventHandler* room_event_handler) override {};
+
+
 };
 
-/**  
+/** 
  * @type api
  * @region 引擎管理
  * @brief 创建 RTCEngine 实例。  <br>
@@ -139,7 +144,7 @@ private:
 BYTERTC_API bytertc::IRtcEngine* CreateRtcEngine(const char* app_id,
         bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
 
-/**  
+/** 
  * @hidden
  * @region 引擎管理
  * @brief 创建游戏 RTCEngine 实例。
@@ -157,7 +162,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngine(const char* app_id,
 BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngine(const char* app_id,
         bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
 
-/**  
+/** 
  * @hidden
  * @region 引擎管理
  * @brief 创建 RTCEngine 实例。
@@ -176,7 +181,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateRtcEngineWithPtr(
         const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,
         const char* parameters);
 
-/**  
+/** 
  * @hidden
  * @region 引擎管理
  * @brief 创建游戏 RTCEngine 实例。
@@ -195,7 +200,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
         const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,
         const char* parameters);
 
-/**  
+/** 
  * @type api
  * @region 引擎管理
  * @brief 销毁由 CreateRtcEngine{@link #CreateRtcEngine} 创建的 RTCEngine 实例，并释放所有相关资源。
@@ -207,7 +212,7 @@ BYTERTC_API bytertc::IRtcEngine* CreateGameRtcEngineWithPtr(
  */
 BYTERTC_API void DestroyRtcEngine(bytertc::IRtcEngine* engine);
 
-/**  
+/** 
  * @hidden
  * @region 引擎管理
  * @brief 销毁由 CreateGameRtcEngine{@link #CreateGameRtcEngine} 创建的游戏 RTCEngine 实例，并释放所有相关资源。
@@ -224,7 +229,7 @@ BYTERTC_API void DestroyRtcEngine(bytertc::IRtcEngine* engine);
  */
 BYTERTC_API void DestroyGameRtcEngine(bytertc::IRtcEngine* engine);
 
-/**  
+/** 
  * @type api
  * @region 错误码
  * @brief 获取错误码的描述
@@ -234,7 +239,7 @@ BYTERTC_API void DestroyGameRtcEngine(bytertc::IRtcEngine* engine);
  */
 BYTERTC_API const char* GetErrorDescription(int code);
 
-/**  
+/** 
  * @type api
  * @region 引擎管理
  * @brief 获取当前 SDK 版本信息。

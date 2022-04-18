@@ -155,13 +155,13 @@ public:
      * @brief 离开房间。  <br>
      *        用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
      *        加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
+     *        此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调通知。  <br>
      * @notes  <br>
-     *       + 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调通知。  <br>
      *       + 可见的用户离开房间后，房间内其他用户会收到 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 回调通知。  <br>
      *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 OnLeaveRoom{@link #IRTCRoomEventHandler#OnLeaveRoom} 回调。  <br>
      *       + 调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
      */
-    virtual void LeaveRoom() = 0;
+     virtual void LeaveRoom() = 0;
 
     /** 
      * @type api
@@ -240,7 +240,10 @@ public:
      *       + 同一房间内的其他用户会收到 OnRoomBinaryMessageReceived{@link #IRTCRoomEventHandler#OnRoomBinaryMessageReceived} 回调。
      */
     virtual int64_t SendRoomBinaryMessage(int size, const uint8_t* message) = 0;
+
     /** 
+     * @hidden
+     * @deprecated since 336.1, use PublishStream instead.
      * @type api
      * @region 多房间
      * @brief 在当前所在房间内停止发布本地音视频流
@@ -255,6 +258,23 @@ public:
 
     /** 
      * @type api
+     * @region 房间管理
+     * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
+     * @param [in] type 媒体流类型，用于指定发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @notes <br>
+     *        + 多房间模式下默认不自动发布流，你需调用该方法手动发布流。  <br>
+     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br> 
+     *        + 如果你需要发布屏幕共享流，调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
+     *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。  <br>
+     *        + 调用此方法后，房间中的所有远端用户会收到 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br>
+     *        + 调用 UnpublishStream{@link #IRtcRoom#UnpublishStream} 取消发布。
+     */
+    virtual void PublishStream(MediaStreamType type) = 0;
+
+    /** 
+     * @hidden
+     * @deprecated since 336.1, use UnpublishStream instead.
+     * @type api
      * @region 多房间
      * @brief 停止将本端音视频流发布到此房间
      * @notes  <br>
@@ -263,6 +283,17 @@ public:
      */
     virtual void Unpublish() = 0;
 
+    /** 
+     * @type api
+     * @region 房间管理
+     * @brief 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
+     * @param [in] type 媒体流类型，用于指定停止发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @notes  <br>
+     *        + 调用 PublishStream{@link #IRtcEngineLite#PublishStream} 手动发布摄像头音视频流后，你需调用此接口停止发布。<br>
+     *        + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream} 回调通知。
+     */
+    virtual void UnpublishStream(MediaStreamType type) = 0;
+
 
     /** 
      * @hidden
@@ -270,7 +301,7 @@ public:
      * @type api
      * @region 多房间
      * @brief 发布本地屏幕共享流到房间。
-     * @param [in] paramters
+     * @param [in] parameters
      *        屏幕共享流编码参数，详见 ScreenParameters{@link #ScreenParameters}
      * @notes  <br>
      *       + 此方法适用于调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设为可见的用户。  <br>
@@ -290,9 +321,11 @@ public:
      * #IVideoFrameObserver#OnRemoteScreenFrame}远端屏幕共享视频回调事件来获取原始数据。  <br>
      *       + 该方法在 JoinRoom{@link #IRtcRoom#JoinRoom} 后才能调用。  <br>
      */
-    virtual void PublishScreen(const ScreenParameters& paramters) = 0;
+    virtual void PublishScreen(const ScreenParameters& parameters) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 336.1
      * @type api
      * @region 屏幕共享
      * @brief 发布本地屏幕共享流到房间。
@@ -310,6 +343,21 @@ public:
     /** 
      * @type api
      * @region 屏幕共享
+     * @brief 在当前所在房间内发布本地屏幕共享音视频流
+     * @param [in] type 媒体流类型，用于指定发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes <br>
+     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
+     *        + 调用该方法后，房间中的所有远端用户会收到 OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 回调，其中成功收到音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br> 
+     *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。  <br>
+     *        + 调用 UnpublishScreen{@link #IRtcRoom#UnpublishScreen} 取消发布。
+     */
+    virtual void PublishScreen(MediaStreamType type) = 0;
+
+    /** 
+     * @hidden
+     * @deprecated since 336.1
+     * @type api
+     * @region 屏幕共享
      * @brief 停止发布本地屏幕共享流到房间。
      * @notes 远端会收到 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 事件。
      * @notes  <br>
@@ -317,6 +365,17 @@ public:
      *       + 调用 PublishScreen{@link #IRtcRoom#PublishScreen} 启动发布。
      */
     virtual void UnpublishScreen() = 0;
+
+    /** 
+     * @type api
+     * @region 屏幕共享
+     * @brief 停止将本地屏幕共享音视频流发布到当前所在房间中
+     * @param [in] type 媒体流类型，用于指定停止发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @notes <br>
+     *        + 调用 PublishScreen{@link #IRtcRoom#PublishScreen} 发布屏幕流后，你需调用此接口停止发布。 <br>
+     *        + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 OnUserUnPublishScreen{@link #IRTCRoomEventHandler#OnUserUnPublishScreen} 回调。
+     */
+    virtual void UnpublishScreen(MediaStreamType type) = 0;
 
     /** 
      * @hidden
@@ -343,6 +402,8 @@ public:
     virtual void SubscribeStream(const char* user_id, const SubscribeConfig& info) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 336.1, use SubscribeStream, UnsubscribeStream, SubscribeScreen and UnsubscribeScreen instead.
      * @type api
      * @region 多房间
      * @brief 订阅房间内指定的远端音视频流。  <br>
@@ -358,7 +419,64 @@ public:
      *        + 若调用 PauseAllSubscribedStream{@link #IRtcRoom#PauseAllSubscribedStream} 暂停接收远端音视频流，此时仍可使用该方法对暂停接收的流进行设置，你会在调用 ResumeAllSubscribedStream{@link #IRtcRoom#ResumeAllSubscribedStream} 恢复接收流后收到修改设置后的流。  <br>
      */
     virtual void SubscribeUserStream(const char* user_id, StreamIndex stream_type, SubscribeMediaType media_type, const SubscribeVideoConfig& video_config) = 0;
+    /**
+     * @hidden
+     */
+    virtual void SetRemoteVideoConfig(const char *user_id,const RemoteVideoConfig &remote_video_config) = 0;
 
+    /** 
+     * @type api
+     * @region 房间管理
+     * @brief 订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br>
+     *        该方法对自动订阅和手动订阅模式均适用。
+     * @param [in] user_id 指定订阅的远端发布音视频流的用户 ID。
+     * @param [in] type 媒体流类型，用于指定订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes  <br>
+     *        + 你必须先通过 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
+     *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知方法调用结果。  <br>
+     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
+     */
+    virtual void SubscribeStream(const char *user_id,MediaStreamType type) = 0;
+
+    /** 
+     * @type api
+     * @region 房间管理
+     * @brief 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br>
+     *        该方法对自动订阅和手动订阅模式均适用。
+     * @param [in] user_id 指定取消订阅的远端发布音视频流的用户 ID。
+     * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes  <br> 
+     *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的退订结果。  <br>
+     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     */
+    virtual void UnsubscribeStream(const char *user_id,MediaStreamType type) = 0;
+
+    /** 
+     * @type api
+     * @region 房间管理
+     * @brief 订阅房间内指定的远端屏幕共享音视频流。  <br>
+     *        该方法对自动订阅和手动订阅模式均适用。
+     * @param [in] user_id 指定订阅的远端发布屏幕流的用户 ID。
+     * @param [in] type 媒体流类型，用于指定订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes  <br>
+     *        + 你必须先通过 OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
+     *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的订阅结果。  <br>
+     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
+     */
+    virtual void SubscribeScreen(const char *user_id,MediaStreamType type) = 0;
+
+    /** 
+     * @type api
+     * @region 房间管理
+     * @brief 取消订阅房间内指定的远端屏幕共享音视频流。  <br>
+     *        该方法对自动订阅和手动订阅模式均适用。
+     * @param [in] user_id 指定取消订阅的远端发布屏幕流的用户 ID。
+     * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes  <br> 
+     *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的退订结果。  <br>
+     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     */
+    virtual void UnsubscribeScreen(const char *user_id,MediaStreamType type) = 0;
     /** 
      * @type api
      * @region 多房间
@@ -462,49 +580,54 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 开启转推直播，并设置合流的视频视图布局和音频属性。
+     * @brief 新增转推直播任务，并设置合流的视频视图布局和音频属性。  <br>
+     *        同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。
+     * @param [in] task_id 转推直播任务 ID。你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。
      * @param [in] param 转推直播配置参数。参看 ITranscoderParam{@link #ITranscoderParam}。
      * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。  <br>
-     *        设置 observer 接收合流完成的音视频流和 SEI 信息。
+     *        通过注册 observer 接收转推直播相关的回调。
      * @notes  <br>
      *       + 只有房间模式为直播模式的用户才能调用此方法。  <br>
      *       + 调用该方法后，关于启动结果和推流过程中的错误，会收到 OnStreamMixingEvent{@link #ITranscoderObserver#OnStreamMixingEvent} 回调。
      *       + 调用 StopLiveTranscoding{@link #IRtcRoom#StopLiveTranscoding} 停止转推直播。
      */
-    virtual void StartLiveTranscoding(ITranscoderParam* param, ITranscoderObserver* observer) = 0;
+    virtual void StartLiveTranscoding(const char* task_id, ITranscoderParam* param, ITranscoderObserver* observer) = 0;
 
     /** 
      * @type api
      * @region 多房间
      * @brief 停止转推直播。<br>
      *        关于启动转推直播，参看 StartLiveTranscoding{@link #IRtcRoom#StartLiveTranscoding}。
+     * @param [in] task_id 转推直播任务 ID。可以指定想要停止的转推直播任务。
      */
-    virtual void StopLiveTranscoding() = 0;
+    virtual void StopLiveTranscoding(const char* task_id) = 0;
 
     /** 
      * @type api
      * @region 多房间
      * @brief 更新转推直播参数。  <br>
      *        使用 StartLiveTranscoding{@link #IRtcRoom#StartLiveTranscoding} 启用转推直播功能后，使用此方法更新功能配置参数。
+     * @param [in] task_id 转推直播任务 ID。指定想要更新参数设置的转推直播任务。
      * @param [in] param 配置参数，参看 ITranscoderParam{@link #ITranscoderParam}。
      */
-    virtual void UpdateLiveTranscoding(ITranscoderParam* param) = 0;
-
+    virtual void UpdateLiveTranscoding(const char* task_id, ITranscoderParam* param) = 0;
     /** 
+     * @deprecated  since 336, use SetRemoteStreamVideoCanvas instead
+     * @hidden
      * @type api
      * @region 多房间
      * @brief 设置来自指定远端用户 user_id 的视频渲染时，使用的视图，并设置渲染模式。 <br>
      *        如果需要解除某个用户的绑定视图，你可以把 view 设置为空。
-     * @notes  <br>
-     *       + 实际使用时，你可以在收到回调 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 或 onFirstRemoteVideoFrame{@link #onFirstRemoteVideoFrame} 时获得远端用户 user_id。  <br>
-     *       + 这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调，而不会收到 onFirstRemoteVideoFrame{@link #onFirstRemoteVideoFrame} 回调。你不应给录制的哑亚客户端绑定视图（因为它不会发送视频流）。
      * @param [in] user_id 视频来源的远端用户 ID。
      * @param [in] index 视频流属性，参看 StreamIndex{@link #StreamIndex}
      * @param [in] canvas 视图信息和渲染模式，参看：VideoCanvas{@link #VideoCanvas}
      * @return  <br>
      *        + 0：成功  <br>
      *        + !0：失败  <br>
-     * @notes 你应在加入房间后，绑定视图。退出房间后，此设置不失效。
+     * @notes  <br>
+     *        + 你应在加入房间后，绑定视图。退出房间后，此设置不失效。
+     *        + 实际使用时，你可以在收到回调 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 或 OnFirstRemoteVideoFrameRendered{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameRendered} 时获得远端用户 user_id。  <br>
+     *        + 这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调，而不会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。你不应给录制的哑亚客户端绑定视图（因为它不会发送视频流）。
      */
     virtual void SetRemoteVideoCanvas(const char* user_id, StreamIndex index, const VideoCanvas& canvas) = 0;
 
@@ -578,7 +701,7 @@ public:
      * @type api
      * @region 多房间
      * @brief 开始跨房间转发媒体流。
-     *        在用户进入房间后调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。<br>  
+     *        在用户进入房间后调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。<br>
      * @param [in] configuration 跨房间媒体流转发指定房间的信息。参看 ForwardStreamConfiguration{@link #ForwardStreamConfiguration}。
      * @return  <br>
      *        0: 方法调用成功  <br>
@@ -586,7 +709,7 @@ public:
      * @notes <br>
      *        + 调用本方法后，将在本端触发 OnForwardStreamStateChanged{@link #IRTCRoomEventHandler#OnForwardStreamStateChanged} 回调。
      *        + 调用本方法后，你可以通过监听 OnForwardStreamEvent{@link #IRTCRoomEventHandler#OnForwardStreamEvent} 回调来获取各个目标房间在转发媒体流过程中的相关事件。
-     *        + 开始转发后，目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和发流 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 的回调。
+     *        + 开始转发后，目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和发流 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream}/OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 的回调。
      *        + 调用本方法后，可以调用 UpdateForwardStreamToRooms{@link #IRtcRoom#UpdateForwardStreamToRooms} 更新目标房间信息，例如，增加或减少目标房间等。
      *        + 调用本方法后，可以调用 StopForwardStreamToRooms{@link #IRtcRoom#StopForwardStreamToRooms} 停止向所有房间转发媒体流。
      *        + 调用本方法后，可以调用 PauseForwardStreamToAllRooms{@link #IRtcRoom#PauseForwardStreamToAllRooms} 暂停向所有房间转发媒体流。
@@ -604,8 +727,8 @@ public:
      *        0: 方法调用成功  <br>
      *        <0: 方法调用失败  <br>
      * @notes <br>
-     *        + 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和发布 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 的回调。
-     *        + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 和退房 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 的回调。
+     *        + 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和发布 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream}/OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 的回调。
+     *        + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream}/OnUserUnPublishScreen{@link #IRTCRoomEventHandler#OnUserUnPublishScreen} 和退房 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 的回调。
      */
     virtual int UpdateForwardStreamToRooms(const ForwardStreamConfiguration& configuration) = 0;
 
@@ -616,9 +739,9 @@ public:
      *        通过 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms} 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
      * @notes <br>
      *        + 调用本方法后，将在本端触发 OnForwardStreamStateChanged{@link #IRTCRoomEventHandler#OnForwardStreamStateChanged} 回调。
-     *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 和退房 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 的回调。
+     *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream}/OnUserUnPublishScreen{@link #IRTCRoomEventHandler#OnUserUnPublishScreen} 和退房 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 的回调。
      *        + 如果需要停止向指定的房间转发媒体流，请调用 UpdateForwardStreamToRooms{@link #IRtcRoom#UpdateForwardStreamToRooms} 更新房间信息。
-     *        + 如果需要暂停转发，请调用 PauseForwardStreamToAllRooms{@link #IRtcRoom#PauseForwardStreamToAllRooms}，并在之后随时调用 ResumeForwardStreamToAllRooms{@link #IRtcRoom#ResumeForwardStreamToAllRooms} 快速恢复转发。 
+     *        + 如果需要暂停转发，请调用 PauseForwardStreamToAllRooms{@link #IRtcRoom#PauseForwardStreamToAllRooms}，并在之后随时调用 ResumeForwardStreamToAllRooms{@link #IRtcRoom#ResumeForwardStreamToAllRooms} 快速恢复转发。
      */
     virtual void StopForwardStreamToRooms() = 0;
 
@@ -628,7 +751,7 @@ public:
      * @brief 暂停跨房间媒体流转发。
      *        通过 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms} 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
      *        调用本方法暂停向所有目标房间转发后，你可以随时调用 ResumeForwardStreamToAllRooms{@link #IRtcRoom#ResumeForwardStreamToAllRooms} 快速恢复转发。
-     * @notes 调用本方法后，目标房间中的用户将接收到本地用户停止发布 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 和退房 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 的回调。
+     * @notes 调用本方法后，目标房间中的用户将接收到本地用户停止发布 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream}/OnUserUnPublishScreen{@link #IRTCRoomEventHandler#OnUserUnPublishScreen} 和退房 OnUserLeave{@link #IRTCRoomEventHandler#OnUserLeave} 的回调。
      */
      virtual void PauseForwardStreamToAllRooms() = 0;
 
@@ -638,7 +761,7 @@ public:
      * @brief 恢复跨房间媒体流转发。
      *        调用 PauseForwardStreamToAllRooms{@link #IRtcRoom#PauseForwardStreamToAllRooms} 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
      * @notes <br>
-     *        目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和发布 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 的回调。
+     *        目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 和发布 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream}/OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 的回调。
      */
     virtual void ResumeForwardStreamToAllRooms() = 0;
 };

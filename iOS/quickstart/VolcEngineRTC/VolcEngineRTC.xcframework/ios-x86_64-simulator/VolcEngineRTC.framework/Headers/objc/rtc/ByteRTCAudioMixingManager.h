@@ -11,16 +11,16 @@
  * @region 混音
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
-
 /** 
  * @type api
  * @region 混音
  * @author majun.lvhiei
- * @brief 开始播放音频文件及混音
- * @param mixId 混音 ID。用于标识混音，请保证 mixId 唯一性。  <br>
- *        如果已经通过 preloadAudioMixing:filePath:{@link #ByteRTCAudioMixingManager#preloadAudioMixing:filePath:} 将音效加载至内存，确保此处的 mixId 与 preloadAudioMixing:filePath:{@link #ByteRTCAudioMixingManager#preloadAudioMixing:filePath:} 中相同。  <br>
- *        使用相同的 mixId 重复调用该方法后，前一次混音会停止，后一次混音开始，且 SDK 会使用 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:} 回调通知前一次混音已停止。
- * @param filePath 用于混音文件路径。可以是本地文件的绝对路径。<br>
+ * @brief 开始播放音频文件。<br>
+ *        可以通过传入不同的 mixId 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
+ * @param mixId 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
+ *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:} 回调通知前一次混音已停止。
+ * @param filePath 用于混音文件路径。<br>
+ *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br>
  *        不同平台支持的音频文件格式: <br>
  *        <table>
  *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
@@ -28,15 +28,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *           <tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
  *           <tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
  *        </table>
- *        可以通过传入不同的 mixId 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
- * @param config  <br>
- *        混音配置 <br>
- *        可以设置混音的播放次数、是否本地播放、以及是否将混音发送至远端，详见 ByteRTCAudioMixingConfig{@link #ByteRTCAudioMixingConfig}。
+ * @param config 混音配置  <br>
+ *        可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 ByteRTCAudioMixingConfig{@link #ByteRTCAudioMixingConfig}
  * @notes  <br>
- *       + 如果已经通过 preloadAudioMixing:filePath:{@link #preloadAudioMixing:filePath:} 将音效加载至内存，确保此处的 mixId 与之设置的相同。  <br>
- *       + 调用本方法播放音频文件后，SDK 会向本地回调当前的混音状态，见 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:}。  <br>
- *       + 开始播放音频文件及混音后，可以调用 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 方法停止播放音频文件。  <br>
- *       + 本方法混音数据来源于外部文件，而 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 混音的数据来源外部缓存且音频格式为 PCM，这两种混音方式可以共存。  <br>
+ *       + 如果已经通过 preloadAudioMixing:filePath:{@link #ByteRTCAudioMixingManager#preloadAudioMixing:filePath:} 将文件加载至内存，确保此处的 ID 与预加载时设置的 ID 相同。  <br>
+ *       + 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:}。  <br>
+ *       + 开始播放音频文件后，可以调用 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 方法停止播放音频文件。  <br>
+ *       + 本方法的混音数据来源于外部文件，而 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
  */
 -(void)startAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath config:(ByteRTCAudioMixingConfig * _Nullable)config;
 
@@ -80,20 +78,17 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法恢复播放音频文件后，SDK 会向本地回调通知音频文件正在播放中，见 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:}。
  */
 -(void)resumeAudioMixing:(int)mixId;
-
-
 /** 
  * @type api
  * @region 混音
  * @author majun.lvhiei
- * @brief 预加载指定音频文件到内存中
- * @param mixId  <br>
- *        混音 ID  <br>
- *        应用调用者维护，请保证唯一性。 <br>
- *        如果使用相同的 mixId 重复调用本方法，后一次会覆盖前一次。  <br>
- *        如果先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:}，再使用相同的 mixId 调用本方法 ，会先回调 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:} 上一个混音停止，然后加载后一个混音。  <br>
- *        使用一个 mixId 调用本方法预加载 A.mp3 后，如果需要使用相同的 mixId 调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 播放 B.mp3，请先调用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载 A.mp3 ，否则会报错 ByteRTCAudioMixingErrorLoadConflict。
- * @param filePath 用于混音文件路径。可以是本地文件的绝对路径。<br>
+ * @brief 预加载指定音频文件到内存中，以避免频繁播放时的重复加载。
+ * @param mixId 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
+ *        如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br>
+ *        如果先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:}，再使用相同的 ID 调用本方法 ，会先回调 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:} 通知上一个混音停止，然后加载后一个混音。  <br>
+ *        使用一个 ID 调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 播放 B.mp3，请先调用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载 A.mp3。
+ * @param filePath 混音文件路径。<br>
+ *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。预加载的文件长度不得超过 20s。<br>
  *        不同平台支持的音频文件格式: <br>
  *        <table>
  *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
@@ -101,11 +96,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *           <tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
  *           <tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
  *        </table>
- *        如果音频文件长度超过 20s，会回调加载失败，见 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:}。
  * @notes  <br>
- *       + 需要频繁播放某个音频文件的时候，调用本方法预加载该文件，在播放的时候可以只加载一次该文件，减少 CPU 占用。  <br>
- *       + 本方法只是预加载播放指定音频文件，只有调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 方法才开始播放指定音频文件。 <br>
- *       + 调用本方法预加载音频文件后，SDK 会回调通知音频文件已加载，见 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:}。  <br>
+ *       + 本方法只是预加载指定音频文件，只有调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 方法才开始播放指定音频文件。 <br>
+ *       + 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 rtcEngine:onAudioMixingStateChanged:state:error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioMixingStateChanged:state:error:}。  <br>
  *       + 调用本方法预加载的指定音频文件可以通过 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载。
  */
 -(void)preloadAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath;
@@ -162,7 +155,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  * @notes 调用本方法获取音频文件播放进度前，需要先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件。
  */
 -(int)getAudioMixingCurrentPosition:(int)mixId;
-
 /** 
  * @type api
  * @region 混音
@@ -171,9 +163,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  * @param mixId 混音 ID
  * @param position 音频文件起始播放位置，单位为毫秒。  <br>
  *        你可以通过 getAudioMixingDuration:{@link #ByteRTCAudioMixingManager#getAudioMixingDuration:} 获取音频文件总时长，position 的值不得大于音频文件总时长。
- * @notes  <br>
- *       + 调用本方法你可以根据实际情况从指定的位置播放音频文件，无需从头到尾完整播放一个音频文件。  <br>
- *       + 调用本方法设置音频文件起始播放位置前，需要先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件。
+ * @notes 在播放在线文件时，调用此接口可能造成播放延迟的现象。
  */
 -(void)setAudioMixingPosition:(int)mixId position:(int)position;
 

@@ -18,7 +18,7 @@ namespace bytertc {
  * @brief 音频帧类型
  */
 enum AudioFrameType {
-    /**
+    /** 
      * @brief PCM 16bit
      */
     kFrameTypePCM16 = 0
