@@ -17,8 +17,7 @@ let isVideoOn = false; // control the video
 const config = {
   appId: 'xxxx',
   roomId: '',
-  token: null,
-  uid: '',
+  token: {},
 };
 
 /**

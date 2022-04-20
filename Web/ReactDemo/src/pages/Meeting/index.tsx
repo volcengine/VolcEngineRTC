@@ -106,8 +106,8 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     (async () => {
       if (!roomId || !userId || !rtc.current) return;
       rtc.current.bindEngineEvents();
-      rtc
-        .current.join(config.token, roomId, userId)
+      rtc.current
+        .join((config.token as any)?.[userId] || null, roomId, userId)
         .then(() =>
           rtc?.current?.createLocalStream((res: any) => {
             const {code, msg, devicesStatus} = res;

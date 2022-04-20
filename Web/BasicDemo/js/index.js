@@ -54,7 +54,7 @@ $('#submit').on('click', async () => {
     /*
     * before join a room, you should create a room,then you can join it with `engine.join(token,roomId,uid, onSuccessFunc, onFailFunc)`
     */
-    await rtc.join(config.token, config.roomId, config.uid);
+    await rtc.join((config.token || {})[config.uid], config.roomId, config.uid);
     $('#header-version').text(`${config.roomId}`);
     $('#local-player').show();
     $('#local-player-name').text(`${config.uid}`);
