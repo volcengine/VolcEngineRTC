@@ -18,12 +18,23 @@ class RtcClient{
   }
   async setRemoteVideoPlayer(remoteUserId, dom, stream){
     // 如果进房的config有自动订阅，这里就不需要订阅了
-    await this.engine.subscribeUserStream(remoteUserId, VERTC.SubscribeMediaType.AUDIO_AND_VIDEO);
-    await this.engine.setRemoteVideoPlayer(VERTC.StreamIndex.STREAM_INDEX_MAIN, {
-      userId: remoteUserId,
-      renderDom: dom,
-      isScreen: stream.isScreen,
-    });
+    await this.engine.subscribeUserStream(
+      remoteUserId,
+      VERTC.SubscribeMediaType.AUDIO_AND_VIDEO,
+      stream.isScreen
+        ? VERTC.StreamIndex.STREAM_INDEX_SCREEN
+        : VERTC.StreamIndex.STREAM_INDEX_MAIN
+    );
+    await this.engine.setRemoteVideoPlayer(
+      stream.isScreen
+        ? VERTC.StreamIndex.STREAM_INDEX_SCREEN
+        : VERTC.StreamIndex.STREAM_INDEX_MAIN,
+      {
+        userId: remoteUserId,
+        renderDom: dom,
+        isScreen: stream.isScreen,
+      }
+    );
   }
   /**
   * remove the listeners when `createengine`

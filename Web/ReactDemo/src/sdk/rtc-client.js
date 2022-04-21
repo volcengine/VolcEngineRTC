@@ -27,12 +27,18 @@ export default class RtcClient {
     await this.engine.subscribeUserStream(
       remoteUserId,
       SubscribeMediaType.AUDIO_AND_VIDEO,
+      stream.isScreen ? StreamIndex.STREAM_INDEX_SCREEN : StreamIndex.STREAM_INDEX_MAIN
     );
-    await this.engine.setRemoteVideoPlayer(StreamIndex.STREAM_INDEX_MAIN, {
-      userId: remoteUserId,
-      renderDom: domId,
-      isScreen: stream.isScreen,
-    });
+    await this.engine.setRemoteVideoPlayer(
+      stream.isScreen
+        ? StreamIndex.STREAM_INDEX_SCREEN
+        : StreamIndex.STREAM_INDEX_MAIN,
+      {
+        userId: remoteUserId,
+        renderDom: domId,
+        isScreen: stream.isScreen,
+      }
+    );
   }
   /**
    * remove the listeners when `createengine`
