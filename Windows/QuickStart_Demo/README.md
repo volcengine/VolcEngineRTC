@@ -1,5 +1,5 @@
 # 跑通 Demo
-[跑通 Android 快速开始 Demo](https://www.volcengine.com/docs/6348/70125)
+[跑通 Windows 快速开始 Demo](https://www.volcengine.com/docs/6348/70125)
 
 <br>
 
