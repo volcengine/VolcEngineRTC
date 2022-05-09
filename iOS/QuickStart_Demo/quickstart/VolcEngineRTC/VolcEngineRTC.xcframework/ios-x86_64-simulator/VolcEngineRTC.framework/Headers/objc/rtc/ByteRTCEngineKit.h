@@ -120,19 +120,17 @@
  */
  - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onUserJoined:(nonnull ByteRTCUserInfo *)userInfo elapsed:(NSInteger)elapsed;
 
-/** 
- * @type callback
- * @region 房间管理
- * @author shenpengliang
- * @brief 发生以下情形时，本地用户会收到此事件：  <br>
- *        1.远端可见用户调用 leaveRoom{@link #ByteRTCEngineKit#leaveRoom} 方法离开房间时；  <br>
- *        2.远端可见用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 方法切换至不可见；  <br>
- *        3.远端可见用户断网，且一直未恢复。  <br>
- * @param engine ByteRTCEngineKit 对象。  <br>
- * @param uid 离开房间，或切至不可见的远端用户 ID 。  <br>
- * @param reason 用户离开房间的原因，参看 ByteRTCUserOfflineReason{@link #ByteRTCUserOfflineReason}。  <br>
- */
- - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
+    /** 
+     * @type callback
+     * @author shenpengliang
+     * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
+     * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
+     * @param reason 用户离开房间的原因：  <br>
+     *              + 0: 远端用户调用 leaveRoom{@link #ByteRTCEngineKit#leaveRoom} 主动退出房间。  <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 切换至不可见状态。
+     */
+    - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
 
 /** 
  * @hidden
@@ -196,7 +194,12 @@
  *       + 该接口已废弃，请使用 rtcEngine:onUserStartAudioCapture:{@link #ByteRTCEngineDelegate#rtcEngine:onUserStartAudioCapture:} 以及 rtcEngine:onUserStopAudioCapture:{@link #ByteRTCEngineDelegate#rtcEngine:onUserStopAudioCapture:} <br>
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine didLocalAudioEnabled:(BOOL)enabled byUid:(NSString * _Nonnull)uid;
-
+    /** 
+     * @type callback
+     * @brief Token 过期前 30 秒将触发该回调。<br>
+     *        调用 updateToken:{@link #ByteRTCEngineKit#updateToken:} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+     */
+     - (void)onTokenWillExpire:(ByteRTCEngineKit * _Nonnull)engine;
 /** 
  * @type callback
  * @region 音频事件回调
@@ -281,8 +284,7 @@
  * @param roomId 房间 ID
  * @param uid 最活跃用户（ActiveSpeaker）的用户 ID
  */
-- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onActiveSpeaker:(NSString * _Nonnull)roomId
-                                                                       uid:(NSString *_Nonnull)uid;
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onActiveSpeaker:(NSString * _Nonnull)roomId uid:(NSString *_Nonnull)uid;
 
 #pragma mark - Core Video Delegate Methods
 // @name core video event callback
@@ -718,8 +720,9 @@
 
 #pragma mark - Media Device Delegate Methods
 // @name media device event callback
-
 /** 
+ * @hidden
+ * @deprecated since 338.1, use onAudioRouteChanged instead
  *  @type callback
  *  @region 音频事件回调
  *  @author dixing
@@ -729,7 +732,15 @@
  *  @notes 音频设备设置与音频路由策略，详见 setAudioPlaybackDevice:{@link #ByteRTCEngineKit#setAudioPlaybackDevice:}
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onAudioPlaybackDeviceChanged:(ByteRTCAudioPlaybackDevice)device;
-
+/** 
+ * @type callback
+ * @region 音频事件回调
+ * @author dixing
+ * @brief 音频播放路由变化时，收到该回调。
+ * @param device 新的音频播放路由，详见 ByteRTCAudioRouteDevice{@link #ByteRTCAudioRouteDevice}
+ * @notes 关于音频路由设置，详见 setAudioRoute:{@link #ByteRTCEngineKit#setAudioRoute:}。
+ */
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRouteDevice)device;
 
 #pragma mark custom message Delegate Methods
 // @name send message callback
@@ -1332,7 +1343,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine
 onPushPublicStreamResult:(NSString *_Nonnull)publicStreamId
         errorCode:(int)errorCode;
-  
+
 /** 
  * @type callback
  * @author qipengxiang
@@ -1634,7 +1645,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        + True: 发布成功  <br>
  *        + False: 发布失败
  * @notes <br>
- *        + 调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br> 
+ *        + 调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
  *        + 如果你需要发布屏幕共享流，调用 publishScreen:{@link #ByteRTCEngineKit#publishScreen:}。<br>
  *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms:{@link #ByteRTCEngineKit#startForwardStreamToRooms:}。  <br>
  *        + 调用此方法后，房间中的所有远端用户会收到 rtcEngine:onUserPublishStream:type:{@link #ByteRTCEngineDelegate #rtcEngine:onUserPublishStream:type:} 回调通知，其中成功收到了音频流的远端用户会收到 rtcEngine:onFirstRemoteAudioFrame:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstRemoteAudioFrame:} 回调，订阅了视频流的远端用户会收到 rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:} 回调。<br>
@@ -1789,20 +1800,18 @@ DEPRECATED_MSG_ATTRIBUTE("Please use leaveRoom");
  - (int)leaveRoom;
 
 /** 
- * @type api
- * @region 房间管理
- * @author shenpengliang
- * @brief 更新 Token。  <br>
- *        用户调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法加入房间时，
- *        如果使用了过期的 Token 将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调，
- *        回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 ByteRTCErrorCodeInvalidToken
- *        此时需要重新获取 Token，并调用此方法更新 Token。更新 Token 后，SDK 会自动加入房间。 <br>
- * @param token 更新的动态密钥。  <br>
- * @return 方法调用结果。  <br>
- *         +  0: 方法调用成功。  <br>
- *         + < 0: 方法调用失败。  <br>
- * @notes Token 过期时，如果已经加入房间成功，则不会受到影响。Token 过期的错误会在下一次使用过期的 Token 加入房间时，或因本地网络状况不佳导致断网重新连入房间时通知用户。
- */
+* @type api
+* @author shenpengliang
+* @brief 更新 Token。  <br>
+*        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 onTokenWillExpire:{@link #ByteRTCEngineDelegate#onTokenWillExpire:} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
+*        调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+* @param token 有效的 Token。  <br>
+*        如果传入的 Token 无效，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
+* @return 方法调用结果。  <br>
+*         +  0: 方法调用成功  <br>
+*         + < 0: 方法调用失败  <br>
+* @notes 当 Token 过期时，用户将被移出房间并将收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 重新加入房间。
+*/
 - (int)updateToken:(NSString *_Nonnull)token;
 
 /** 
@@ -2453,8 +2462,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
   * @notes  <br>
   *       + 调用 stopVideoCapture{@link #ByteRTCEngineKit#stopVideoCapture} 可以停止内部视频采集。否则，只有当销毁引擎实例时，内部视频采集才会停止。  <br>
   *       + 创建引擎后，无论是否发布视频数据，你都可以调用该方法开启内部视频采集。只有当（内部或外部）视频采集开始以后视频流才会发布。  <br>
-  *       + 如果需要从自定义视频采集切换为内部视频采集，你必须先停止发布流，关闭自定义采集，再调用此方法手动开启内部采集。
-  *       + 内部视频采集使用的摄像头由 switchCamera:{@link #ByteRTCEngineKit#switchCamera:} 接口指定。
+  *       + 如果需要从自定义视频采集切换为内部视频采集，你必须先停止发布流，关闭自定义采集，再调用此方法手动开启内部采集。<br>
+  *       + 内部视频采集使用的摄像头由 switchCamera:{@link #ByteRTCEngineKit#switchCamera:} 接口指定。<br>
+  *       + 自 v3.37.0 升级版本，你需要在应用中向用户申请摄像头权限后才能开始采集。
   */
  - (void)startVideoCapture;
 
@@ -2556,7 +2566,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @author wangjunlin.3182
  * @brief 设置采集视频的旋转模式。默认以 App 方向为旋转参考系。<br>
  *        接收端渲染视频时，将按照和发送端相同的方式进行旋转。<br>
- * @param [in] rotationMode 视频旋转参考系为 App 方向或重力方向，参看 ByteRTCVideoRotationMode{@link #ByteRTCVideoRotationMode}。
+ * @param rotationMode 视频旋转参考系为 App 方向或重力方向，参看 ByteRTCVideoRotationMode{@link #ByteRTCVideoRotationMode}。
  * @return 0:设置成功
  *        <0:设置失败
  * @notes <br>
@@ -2661,6 +2671,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
 - (int)setVideoEffectAlgoModelResourceFinder:(void *)finder deleter:(void *)deteter;
 
 /** 
+ * @hidden
  * @type api
  * @region 视频特效
  * @author liqi.ritchie
@@ -2696,7 +2707,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @region 视频特效
  * @author liqi.ritchie
  * @brief  叠加视频特效素材包。
- * @param effectNodePaths 特效素材包路径数组。 
+ * @param effectNodePaths 特效素材包路径数组。
  * @return  <br>
  *      + 0: 调用成功。  <br>
  *      + 1000: 未集成特效 SDK。  <br>
@@ -2894,8 +2905,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @region 视频特效
  * @author wangjunlin.3182
  * @brief 注册人脸检测结果回调观察者 <br>
- *        注册此观察者后，你会周期性收到 onFaceDetectionResult:{@link #ByteRTCFaceDetectionObserver#onFaceDetectionResult:} 回调。调用 setVideoEffectExpressionDetect{@link #ByteRTCEngineKit#setVideoEffectExpressionDetect} 设置视频特效特征识别参数后，你会周期性收到 onExpressionDetectResult{@link #ByteRTCFaceDetectionObserver#onExpressionDetectResult} 回调。
- * @param faceDetectionObserver 人脸检测结果回调观察者，参看 IFaceDetectionObserver{@link #IFaceDetectionObserver}。
+ *        注册此观察者后，你会周期性收到 onFaceDetectionResult:{@link #ByteRTCFaceDetectionObserver#onFaceDetectionResult:} 回调。
+ * @param faceDetectionObserver 人脸检测结果回调观察者，参看 ByteRTCFaceDetectionObserver{@link #ByteRTCFaceDetectionObserver}。
  * @param interval 时间间隔。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval + 视频采集帧间隔`。
  * @return <br>
  *        + 0：方法调用成功  <br>
@@ -3083,7 +3094,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        该方法对自动订阅和手动订阅模式均适用。
  * @param userId 指定取消订阅的远端发布音视频流的用户 ID。
  * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
- * @notes  <br> 
+ * @notes  <br>
  *        + 调用该方法后，你会收到 rtcEngine:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCEngineDelegate#rtcEngine:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
@@ -3110,7 +3121,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        该方法对自动订阅和手动订阅模式均适用。
  * @param userId 指定取消订阅的远端发布屏幕流的用户 ID。
  * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
- * @notes  <br> 
+ * @notes  <br>
  *        + 调用该方法后，你会收到 rtcEngine:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCEngineDelegate#rtcEngine:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
@@ -3134,8 +3145,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 #pragma mark Audio Routing Controller
 // @name audio playback route
-
 /** 
+ * @hidden
+ * @deprecated since 338.1, use setAudioRoute instead
  * @type api
  * @region 音频管理
  * @author dixing
@@ -3152,6 +3164,29 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *       + 进房前和进房后，均可调用此方法设置音频播放设备。  <br>
  */
 - (int)setAudioPlaybackDevice:(ByteRTCAudioPlaybackDevice)audioPlaybackDevice;
+/** 
+ * @type api
+ * @region 音频管理
+ * @author liuxiaowu
+ * @brief 设置音频播放路由。默认使用扬声器。  <br>
+ *        音频播放路由发生变化时，会收到 rtcEngine:onAudioRouteChanged:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioRouteChanged:} 回调。  <br>
+ * @param audioRouteDevice 音频播放路由，参见 ByteRTCAudioRouteDevice{@link #ByteRTCAudioRouteDevice}。不支持 `ByteRTCAudioRouteDeviceUnknown`。<br>
+ *        当音量类型为媒体模式时，此参数不可设置为 `ByteRTCAudioRouteDeviceEarpiece`；当音量模式为通话模式时，此参数不可设置为 `ByteRTCAudioRouteDeviceHeadsetBluetooth` 或 `ByteRTCAudioRouteDeviceHeadsetUSB`。
+ * @return  <br>
+ *        + 0: 方法调用成功  <br>
+ *        + < 0: 方法调用失败  <br>
+ * @notes 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
+ */
+- (int)setAudioRoute:(ByteRTCAudioRouteDevice)audioRouteDevice;
+/** 
+ * @type api
+ * @region 音频管理
+ * @author dixing
+ * @brief 获取当前使用的音频播放路由。  <br>
+ * @return 详见 ByteRTCAudioRouteDevice{@link #ByteRTCAudioRouteDevice}
+ * @notes 要设置音频路由，详见 setAudioRoute:{@link #ByteRTCEngineKit#setAudioRoute:}。
+ */
+- (ByteRTCAudioRouteDevice)getAudioRoute;
 
 #pragma mark Combined to Push
 
@@ -3258,7 +3293,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @type api
  * @author qipengxiang
  * @brief 停止发布当前用户发布的公共流<br>
- *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link #ByteRTCEngineKit#startPushPublicStream:withLayout:}。 
+ *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link #ByteRTCEngineKit#startPushPublicStream:withLayout:}。
  * @param publicStreamId 公共流 ID<br>
  *                  指定的流必须为当前用户所发布。
  * @return
@@ -3639,7 +3674,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @notes  <br>
  *      + 在房间内广播文本消息前，必须先调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 加入房间。  <br>
  *      + 调用该函数后会收到一次 rtcEngine:onRoomMessageSendResult:error:{@link #ByteRTCEngineDelegate#rtcEngine:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
- *      + 若文本消息发送成功，则房间内所有用户会收到 rtcEngine:onRoomMessageReceived:message:{@link #ByteRTCEngineDelegate#rtcEngine:onRoomMessageReceived:message:} 回调。
+ *      + 若文本消息发送成功，则房间内所有远端用户会收到 rtcEngine:onRoomMessageReceived:message:{@link #ByteRTCEngineDelegate#rtcEngine:onRoomMessageReceived:message:} 回调。
  */
 - (int)sendRoomMessage:(NSString *  _Nonnull)message;
 
@@ -4547,7 +4582,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @param type 媒体流类型，用于指定发布屏幕音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
  * @notes <br>
  *        + 调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
- *        + 调用该方法后，房间中的所有远端用户会收到 rtcEngine:onUserPublishScreen:type:{@link #ByteRTCEngineDelegate#rtcEngine:onUserPublishScreen:type:} 回调，其中成功收到音频流的远端用户会收到 rtcEngine:onFirstRemoteAudioFrame:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstRemoteAudioFrame:} 回调，订阅了视频流的远端用户会收到 rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:} 回调。<br> 
+ *        + 调用该方法后，房间中的所有远端用户会收到 rtcEngine:onUserPublishScreen:type:{@link #ByteRTCEngineDelegate#rtcEngine:onUserPublishScreen:type:} 回调，其中成功收到音频流的远端用户会收到 rtcEngine:onFirstRemoteAudioFrame:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstRemoteAudioFrame:} 回调，订阅了视频流的远端用户会收到 rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:} 回调。<br>
  *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms:{@link #ByteRTCEngineKit#startForwardStreamToRooms:}。  <br>
  *        + 调用 unpublishScreen:{@link #ByteRTCEngineKit#unpublishScreen:} 取消发布。
  */
@@ -5052,6 +5087,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        + -2: 消息发送失败。传入的消息内容为空。  <br>
  *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
  *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ByteRTCErrorCode{@link #ByteRTCErrorCode}。  <br>
+ * @notes 在采用 `ByteRTCRoomProfileLiveBroadcasting` 作为房间模式时，此消息一定会送达。在其他房间模式下，如果本地用户未说话，此消息不一定会送达。
  */
 - (int)sendStreamSyncInfo:(NSData* _Nonnull)data config:(ByteRTCStreamSycnInfoConfig * _Nonnull)config;
 

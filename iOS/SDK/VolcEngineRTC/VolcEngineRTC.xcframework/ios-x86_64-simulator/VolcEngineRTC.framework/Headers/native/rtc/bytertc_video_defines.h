@@ -320,11 +320,11 @@ struct LiveTranscodingAudioConfig {
  */
 struct LiveTranscodingRegion {
     /** 
-     * @brief 视频流发布用户的用户 ID 。
+     * @brief 视频流发布用户的用户 ID 。必填。
      */
     const char* uid = nullptr;
     /** 
-     * @brief 视频流发布用户的房间 ID 。
+     * @brief 视频流发布用户的房间 ID 。必填。
      */
     const char* roomId = nullptr;
     /** 
@@ -563,24 +563,27 @@ struct SubscribeConfig {
      *        当开启了订阅流回退选项功能（详见 SetSubscribeFallbackOption{@link #IRtcEngineLite#SetSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
      */
     int priority = 0;
-
     /** 
      * @brief 远端用户的时域分层，参看 SVCLayer{@link #SVCLayer}，默认值为 0 。  <br>
      *        仅码流支持SVC特性时可以生效。  <br>
      */
     int svc_layer = 0;
-
     /** 
-     * @brief 用户通过指定UI对应的最合适的流的宽度
+     * @brief 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。  <br>
+     *        当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。  <br>
+     *        仅码流支持 SVC 分级编码特性时方可生效。
+     */
+    int framerate = 0;
+    /** 
+     * @brief 用户通过指定UI对应的最合适的流的宽度，单位：px
      */
     int sub_width = 0;
     /** 
-     * @brief 用户通过指定UI对应的最合适的流的高度
+     * @brief 用户通过指定UI对应的最合适的流的高度，单位：px
      */
     int sub_height = 0;
-    /** 
+    /**
      * @hidden
-     * @brief 337需求，缺注释，需补齐
      */
     int sub_video_index = -1;
 
@@ -616,8 +619,8 @@ public:
      * @hidden
      * @brief 构造函数
      */
-    SubscribeConfig(bool is_screen, bool subvideo, bool subaudio, int videoindex, int priority,
-                int svc_layer, int width, int height)
+    SubscribeConfig(bool is_screen, bool subvideo, bool subaudio, int videoindex,
+     int priority,int svc_layer,int width,int height)
             : is_screen(is_screen),
               sub_video(subvideo),
               sub_audio(subaudio),
@@ -633,11 +636,12 @@ public:
     bool operator==(const SubscribeConfig& config) const {
         // sub_width * sub_height valid
         bool common_result = is_screen == config.is_screen && sub_video == config.sub_video
-            && sub_audio == config.sub_audio && priority == config.priority && svc_layer == config.svc_layer;
+                                          && sub_audio == config.sub_audio && priority == config.priority
+                                          && svc_layer == config.svc_layer && framerate == config.framerate;
         bool result;
-        if (sub_width * sub_height > 0 && config.sub_width * config.sub_height > 0) {
-          result = common_result && sub_width == config.sub_width && sub_height == config.sub_height;
-        }  else if ((sub_width * sub_height == 0) && (config.sub_width * config.sub_height == 0)) {
+        if(sub_width * sub_height > 0 && config.sub_width * config.sub_height > 0) {
+          result = common_result && sub_width == config.sub_width && sub_height == config.sub_height ;
+        }  else if((sub_width * sub_height == 0) && (config.sub_width * config.sub_height == 0) ) {
           result = common_result && video_index == config.video_index;
         } else {
           result = false;
@@ -799,23 +803,43 @@ struct ScreenParameters {
 
 /** 
  * @type keytype
- * @brief 屏幕共享时，内部采集参数配置
+ * @region 屏幕共享
+ * @brief 内部采集屏幕视频流的内容类型。
+ */
+enum ContentHint {
+    /** 
+     * @brief 细节内容。当共享文档、图片时，建议使用该内容类型。
+     */
+    kContentHintDetails = 0,
+    /** 
+     * @brief 动画内容。当共享视频、游戏时，建议使用该内容类型。
+     */
+    kContentHintMotion,
+};
+
+/** 
+ * @type keytype
+ * @brief 屏幕共享内部采集参数
  */
 struct ScreenCaptureParameters {
     /** 
-     * @brief 采集区域，参看 Rectangle{@link #Rectangle}
+     * @brief 内容类型，参看 ContentHint{@link #ContentHint}。
+     */
+    ContentHint content_hint = kContentHintDetails;
+    /** 
+     * @brief 采集区域，参看 Rectangle{@link #Rectangle}。
      */
     Rectangle region_rect;
     /** 
-     * @brief 是否采集鼠标状态，参看 MouseCursorCaptureState{@link #MouseCursorCaptureState}
+     * @brief 是否采集鼠标状态，参看 MouseCursorCaptureState{@link #MouseCursorCaptureState}。
      */
     MouseCursorCaptureState capture_mouse_cursor;
     /** 
-     * @brief 屏幕过滤设置，参看 ScreenFilterConfig{@link #ScreenFilterConfig}
+     * @brief 屏幕过滤设置，参看 ScreenFilterConfig{@link #ScreenFilterConfig}。
      */
     ScreenFilterConfig filter_config;
     /** 
-     * @brief 采集区域的边框高亮设置，参看 HighlightConfig{@link #HighlightConfig}
+     * @brief 采集区域的边框高亮设置，参看 HighlightConfig{@link #HighlightConfig}。
      */
     HighlightConfig highlight_config;
 };
@@ -1177,9 +1201,11 @@ enum FrameRateRatio {
  */
 struct RemoteVideoConfig {
     /** 
-     * @brief 占发布端原始帧率的比例，参看 FrameRateRatio{@link #FrameRateRatio}
+     * @brief 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。  <br>
+     *        当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。  <br>
+     *        仅码流支持 SVC 分级编码特性时方可生效。
      */
-    FrameRateRatio frame_rate_ratio = kFrameRateRatioOriginal;
+    int framerate = 0;
     /** 
      * @brief 视频宽度，单位：px
      */

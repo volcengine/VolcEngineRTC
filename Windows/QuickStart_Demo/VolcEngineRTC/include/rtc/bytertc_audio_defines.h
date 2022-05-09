@@ -104,6 +104,37 @@ enum RTCAudioDeviceType {
  * @type keytype
  * @brief 音频播放设备
  */
+enum AudioRouteDevice {
+    /** 
+     * @brief 未知设备
+     */
+    kAudioRouteDeviceUnknown = -1,
+    /** 
+     * @brief 有线耳机
+     */
+    kAudioRouteDeviceHeadset = 1,
+    /** 
+     * @brief 听筒
+     */
+    kAudioRouteDeviceEarpiece = 2,
+    /** 
+     * @brief 扬声器
+     */
+    kAudioRouteDeviceSpeakerphone = 3,
+    /** 
+     * @brief 蓝牙耳机
+     */
+    kAudioRouteDeviceHeadsetBluetooth = 4,
+    /** 
+     * @brief USB设备
+     */
+    kAudioRouteDeviceHeadsetUSB = 5
+};
+
+/** 
+ * @type keytype
+ * @brief 音频播放设备
+ */
 enum AudioPlaybackDevice {
     /** 
      * @brief 有线耳机
@@ -355,6 +386,10 @@ enum AudioMixingError {
      */
     kAudioMixingErrorIsStarting,
     /** 
+     * @brief 设置混音文件的播放速度不合法
+     */
+    kAudioMixingErrorInValidPlaybackSpeed,
+    /** 
      * @hidden
      * @deprecated since 325.1
      * @brief 混音错误码，失败，已废弃
@@ -509,7 +544,6 @@ struct AudioMixingConfig {
     AudioMixingType type;
     /** 
      * @brief 混音播放次数，
-     * @notes  <br>
      *       + play_count <= 0: 无限循环  <br>
      *       + play_count == 1: 播放一次（默认）  <br>
      *       + play_count > 1: 播放 play_count 次
@@ -601,7 +635,6 @@ struct AudioPropertiesInfo {
     float spectrum[SPECTRUM_SIZE] = {0};
     /** 
      * @brief 人声检测（VAD）结果
-     * @notes <br>
      *        + 1: 检测到人声。<br>
      *        + 0: 未检测到人声。<br>
      *        + -1: 未开启 VAD。<br>

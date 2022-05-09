@@ -558,11 +558,6 @@ public:
      * @brief 转换为i420格式的视频帧
      */
     virtual void to_i420() = 0;
-    /**  
-     * @brief 根据视频帧参数创建视频帧并返回指针
-     * @param [in] VideoFrameBuilder 视频帧创建类对象，详见 VideoFrameBuilder{@link #VideoFrameBuilder}
-     */
-    static IVideoFrame* build_video_frame(const VideoFrameBuilder& builder);
 /**
  * @hidden
  */

@@ -226,9 +226,9 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 设置音频播放设备，默认使用扬声器。  <br>
-     *        音频播放设备发生变化时，会收到 OnAudioPlaybackDeviceChanged{@link
-     * #IRtcEngineLiteEventHandler#OnAudioPlaybackDeviceChanged} 回调。
-     * @param [in] device 音频播放设备。参看 AudioPlaybackDevice{@link #AudioPlaybackDevice} <br>
+     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link
+     * #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
+     * @param [in] device 音频播放设备。参看 AudioRouteDevice{@link #AudioRouteDevice} <br>
      * @return 方法调用结果  <br>
      *        + 0: 方法调用成功  <br>
      *        + < 0: 方法调用失败  <br>
@@ -239,9 +239,24 @@ public:
      *       + 3.
      * 若连接有线或者蓝牙音频播放设备时，将音频播放设备设置为扬声器或听筒将调用成功，但不会立马切换到扬声器或听筒，会在有线或者蓝牙音频播放设备移除后，根据设置自动切换到听筒或者扬声器。
      * <br>
-     *       + 4. 通话前和通话中都可以调用该方法。  <br>
+     *       + 4. 通话前和通话中都可以调用该方法。
+     *       + 5. 设置kAudioRouteDeviceUnknown时将会失败。 <br>
      */
-    virtual int SetAudioPlaybackDevice(AudioPlaybackDevice device) = 0;
+    virtual int SetAudioRoute(AudioRouteDevice device) = 0;
+
+    /** 
+     * @hidden(macOS,Windows)
+     * @type api
+     * @region 音频设备管理
+     * @brief 获取当前音频播放设备  <br>
+     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
+     * @return device 当前音频播放设备。参看 AudioRouteDevice{@link #AudioRouteDevice}
+     * @notes  <br>
+     *       + 1. 该接口仅适用于移动设备。  <br>
+     * <br>
+     *       + 2. 通话前和通话中都可以调用该方法。  <br>
+     */
+    virtual AudioRouteDevice GetAudioRoute() = 0;
 
     /** 
      * @type api
@@ -269,6 +284,7 @@ public:
      *        + -2: 消息发送失败。传入的消息内容为空。  <br>
      *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
      *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
+     * @notes 在采用 `kRoomProfileTypeLiveBroadcasting` 作为房间模式时，此消息一定会送达。在其他房间模式下，如果本地用户未说话，此消息不一定会送达。
      */
     virtual int SendStreamSyncInfo(const uint8_t* data, int32_t length, int repeat_count) = 0;
 
@@ -494,7 +510,7 @@ public:
      *        + 调用 StartFileRecording{@link #IRTCAudioEngine#StartFileRecording} 开启本地录制后，你必须调用该方法停止录制。  <br>
      *        + 调用该方法后，你会收到 OnRecordingStateUpdate{@link #IRTCAudioEngineEventHandler#OnRecordingStateUpdate} 回调提示录制结果。
      */
-    virtual void StopFileRecording() = 0;  
+    virtual void StopFileRecording() = 0;
 
     /** 
      * @type api
@@ -505,8 +521,7 @@ public:
      * @param [in] key 加密密钥，长度限制为 36 位，超出部分将会被截断
      * @param [in] key_size 参数 key 的长度
      * @notes  <br>
-     *       + 使用传输时内置加密时，使用此方法；如果需要使用传输时自定义加密，参看 OnEncryptData{@link
-     * #OnEncryptData}。 内置加密和自定义加密互斥，根据最后一个调用的方法确定传输是加密的方案。  <br>
+     *       + 使用传输时内置加密时，使用此方法；如果需要使用传输时自定义加密，参看 OnEncryptData{@link #IEncryptHandler#OnEncryptData}。 内置加密和自定义加密互斥，根据最后一个调用的方法确定传输是加密的方案。  <br>
      *       + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  <br>
      */
     virtual void SetEncryptInfo(EncryptType encrypt_type, const char* key, int key_size) = 0;
@@ -695,7 +710,7 @@ public:
     virtual void StopNetworkDetection() = 0;
 };
 
-/**  
+/** 
  * @type api
  * @region 引擎管理
  * @brief 创建 RTCEngine 实例。  <br>
@@ -714,7 +729,7 @@ public:
 BYTERTC_API IRTCAudioEngine* CreateRTCAudioEngine(const char* app_id,
         IRTCAudioEngineEventHandler* event_handler, const char* parameters);
 
-/**  
+/** 
  * @type api
  * @region 引擎管理
  * @brief 销毁由 CreateRTCAudioEngine{@link #CreateRTCAudioEngine} 创建的 RTCEngine 实例，并释放所有相关资源。
@@ -727,7 +742,7 @@ BYTERTC_API IRTCAudioEngine* CreateRTCAudioEngine(const char* app_id,
  */
 BYTERTC_API void DestroyRTCAudioEngine(IRTCAudioEngine* engine);
 
-/**  
+/** 
  * @type api
  * @region 错误码
  * @brief 获取错误码的描述
@@ -737,7 +752,7 @@ BYTERTC_API void DestroyRTCAudioEngine(IRTCAudioEngine* engine);
  */
 BYTERTC_API const char* GetErrorDescription(int code);
 
-/**  
+/** 
  * @type api
  * @region 引擎管理
  * @brief 获取当前 SDK 版本信息。

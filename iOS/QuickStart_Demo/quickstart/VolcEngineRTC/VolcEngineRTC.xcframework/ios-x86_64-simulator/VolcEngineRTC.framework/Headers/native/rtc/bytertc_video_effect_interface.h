@@ -28,6 +28,7 @@ enum VirtualBackgroundSourceType {
 };
 
 /**  
+ * @hidden
  * @type keytype
  * @brief 人像属性检测参数
  */
@@ -110,6 +111,7 @@ struct FaceDetectResult {
 };
 
 /**  
+ * @hidden
  * @type keytype
  * @brief 人像属性检测信息
  */
@@ -153,6 +155,7 @@ struct ExpressionDetectInfo {
 };
 
 /** 
+ * @hidden
  * @type keytype
  * @brief 人像属性检测结果
  */
@@ -193,10 +196,11 @@ public:
      */
     virtual void OnFaceDetectResult(const FaceDetectResult& result) = 0;
     /** 
+     * @hidden
      * @type callback
      * @region 视频特效
      * @brief 特效 SDK 进行人像属性检测结果的回调。 <br>
-     *        调用 RegisterFaceDetectionObserver{@link #IVideoEffect#RegisterFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并调用 SetVideoEffectExpressionDetect{@link #IVideoEffect#SetVideoEffectExpressionDetect} 设置视频特效特征识别参数后，你会收到此回调。
+     *        调用 RegisterFaceDetectionObserver{@link #IVideoEffect#RegisterFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并调用 SetVideoEffectExpressionDetect{@link #IVideoEffect#SetVideoEffectExpressionDetect} 开启人像属性检测后，你会收到此回调。
      * @param [in] result 人像属性检测结果, 参看 ExpressionDetectResult{@link #ExpressionDetectResult}。
      */
     virtual void OnExpressionDetectResult(const ExpressionDetectResult& result) = 0;
@@ -298,10 +302,11 @@ public:
     virtual void SetAlgoModelPath(const char* modelPath) = 0;
     
     /** 
+     * @hidden
      * @type api
      * @region 视频特效
-     * @brief 设置视频特效特征识别参数。
-     * @param [in] expressionDetectConfig 视频特效特征识别参数，参看 VideoEffectExpressionDetectConfig{@link #VideoEffectExpressionDetectConfig}。
+     * @brief 开启人像属性检测。
+     * @param [in] expressionDetectConfig 人像属性检测参数，参看 VideoEffectExpressionDetectConfig{@link #VideoEffectExpressionDetectConfig}。
      * @return  <br>
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
@@ -454,7 +459,7 @@ public:
      * @type api
      * @region 视频特效
      * @brief 注册人脸检测结果回调观察者 <br>
-     *        注册此观察者后，你会周期性收到 onFaceDetectResult{@link #IFaceDetectionObserver#onFaceDetectResult} 回调。调用 SetVideoEffectExpressionDetect{@link #IVideoEffect#SetVideoEffectExpressionDetect} 设置视频特效特征识别参数后，你会周期性收到 onExpressionDetectResult{@link #IFaceDetectionObserver#onExpressionDetectResult} 回调。
+     *        注册此观察者后，你会周期性收到 OnFaceDetectResult{@link #IFaceDetectionObserver#OnFaceDetectResult} 回调。
      * @param [in] observer 人脸检测结果回调观察者，参看 IFaceDetectionObserver{@link #IFaceDetectionObserver}。
      * @param [in] interval_ms 时间间隔。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval + 视频采集帧间隔`。
      * @return <br>

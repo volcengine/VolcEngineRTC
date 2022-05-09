@@ -128,6 +128,17 @@ public:
     };
 
     /** 
+     * @hidden(macOS,Windows)
+     * @type callback
+     * @region 音频事件回调
+     * @brief 音频播放设备变化时回调该事件。
+     * @param [in] device 变化后的音频播放设备，参看 AudioRouteDevice{@link #AudioRouteDevice}。  <br>
+     */
+    virtual void OnAudioRouteChanged(AudioRouteDevice device) {
+        (void)device;
+    };
+
+    /** 
      * @type callback
      * @region 引擎管理
      * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。

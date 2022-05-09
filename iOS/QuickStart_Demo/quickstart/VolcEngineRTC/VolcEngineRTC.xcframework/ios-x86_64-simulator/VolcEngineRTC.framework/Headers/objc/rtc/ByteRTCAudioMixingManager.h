@@ -197,6 +197,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
 /** 
  * @type api
  * @region 混音
+ * @author dixing
+ * @brief 设置混音时音频文件的播放速度
+ * @param mixId 混音 ID
+ * @param speed 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br>
+ *        超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 ByteRTCAudioMixingState{@link #ByteRTCAudioMixingState} 状态为 `ByteRTCAudioMixingStateFailed` 混音播放失败，ByteRTCAudioMixingError{@link #ByteRTCAudioMixingError} 错误码为 `ByteRTCAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。
+ * @notes   <br>
+ *        + 暂不支持对 PCM 音频数据进行变速调整。  <br>
+ *        + 你需要在调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 ByteRTCAudioMixingState{@link #ByteRTCAudioMixingState} 状态为 `ByteRTCAudioMixingStatePlaying`，ByteRTCAudioMixingError{@link #ByteRTCAudioMixingError} 错误码为 `AUDIO_MIXING_ERROR_OK` 之后调用该方法。  <br>
+ *        + 在 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 停止混音或 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载音频文件后调用该 API，会收到状态为 `ByteRTCAudioMixingStateFailed` 错误码为 `ByteRTCAudioMixingErrorIdNotFound` 的 `onAudioMixingStateChanged` 回调。
+ */
+-(int)setAudioMixingPlaybackSpeed:(int)mixId speed:(int)speed;
+
+/** 
+ * @type api
+ * @region 混音
  * @author majun.lvhiei
  * @brief 如果你需要使用 `enableVocalInstrumentBalance:` 对混音使音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
  * @param mixId 混音 ID

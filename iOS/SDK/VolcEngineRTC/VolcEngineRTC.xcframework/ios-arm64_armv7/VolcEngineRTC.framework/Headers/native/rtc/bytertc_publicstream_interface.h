@@ -323,10 +323,10 @@ public:
     virtual ~IPublicStreamParam() = default;
 };
 
-/**
+/** 
  * @hidden
  * @type api
  * @brief 创建公共流参数实例
  */
-BYTERTC_API IPublicStreamParam* CreatePublicStreamParam();
+ BYTERTC_API IPublicStreamParam* CreatePublicStreamParam();
 } /* namespace bytertc */

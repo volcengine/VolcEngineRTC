@@ -270,6 +270,36 @@ typedef NS_ENUM(NSInteger, ByteRTCAACProfile) {
      */
     ByteRTCAACProfileHEv2 = 3,
 };
+/** 
+ * @type keytype
+ * @brief 音频播放路由
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioRouteDevice) {
+    /** 
+     * @brief 未知设备
+     */
+    ByteRTCAudioRouteDeviceUnknown = -1,
+    /** 
+     * @brief 有线耳机
+     */
+    ByteRTCAudioRouteDeviceHeadset = 1,
+    /** 
+     * @brief 听筒。设备自带的，一般用于通话的播放硬件。
+     */
+    ByteRTCAudioRouteDeviceEarpiece = 2,
+    /** 
+     * @brief 扬声器。设备自带的，一般用于免提播放的硬件。
+     */
+    ByteRTCAudioRouteDeviceSpeakerphone = 3,
+    /** 
+     * @brief 蓝牙耳机
+     */
+    ByteRTCAudioRouteDeviceHeadsetBluetooth = 4,
+    /** 
+     * @brief USB设备
+     */
+    ByteRTCAudioRouteDeviceHeadsetUSB = 5,
+};
 
 /** 
  * @type keytype
@@ -484,6 +514,10 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
      * @brief 混音文件正在启动中
      */
     ByteRTCAudioMixingErrorIsStarting,
+    /** 
+     * @brief 设置混音文件的播放速度不合法
+     */
+    ByteRTCAudioMixingErrorInValidPlaybackSpeed,
 };
 
 /** 
@@ -606,7 +640,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @region 音频数据回调
  * @author wangjunzheng
  * @brief 返回麦克风录制的音频数据
- * @param audioFrame 麦克风录制的音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
+ * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onRecordAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
@@ -614,7 +648,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @region 音频数据回调
  * @author wangjunzheng
  * @brief 返回订阅的所有远端用户混音后的音频数据
- * @param audioFrame 远端所有用户混音后的音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
+ * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onPlaybackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /**  
@@ -632,7 +666,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @region 音频数据回调
  * @author wangjunzheng
  * @brief 返回本地麦克风录制和订阅的所有远端用户混音后的音频数据
- * @param audioFrame 本地麦克风录制和远端所有用户混音后的音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
+ * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onMixedAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
@@ -795,7 +829,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 @property(assign, nonatomic) ByteRTCAudioMixingType type;
 /** 
  * @brief 混音播放次数
- * @notes  <br>
  *       + play_count <= 0: 无限循环  <br>
  *       + play_count == 1: 播放一次（默认）  <br>
  *       + play_count > 1: 播放 play_count 次
@@ -859,7 +892,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 @property(assign, nonatomic) NSInteger nonlinearVolume;
 /** 
  * @brief 人声检测（VAD）结果
- * @notes <br>
  *        + 1: 检测到人声。<br>
  *        + 0: 未检测到人声。<br>
  *        + -1: 未开启 VAD。<br>

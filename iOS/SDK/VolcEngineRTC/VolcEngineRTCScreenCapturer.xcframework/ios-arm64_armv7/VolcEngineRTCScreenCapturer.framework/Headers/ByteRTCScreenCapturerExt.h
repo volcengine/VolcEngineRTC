@@ -25,7 +25,6 @@ BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
  * @notes 用户调用 stopScreenCapture{@link #ByteRTCEngineKit#stopScreenCapture} 后，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
  */
 - (void)onQuitFromApp;
-/**
 /** 
  * @type api
  * @region 视频管理
@@ -39,7 +38,6 @@ BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
  * @brief Socket 连接断开时触发此回调
  */
 - (void)onSocketDisconnect;
-/**
 /** 
  * @type api
  * @region 视频管理
@@ -92,7 +90,7 @@ BYTE_RTC_EXPORT @interface ByteRtcScreenCapturerExt : NSObject
  * @param sampleBuffer 采集到的数据
  * @param sampleBufferType 数据类型
  */
-- (void)processSampleBuffer:(CMSampleBufferRef)sampleBuffer withType:(RPSampleBufferType)sampleBufferType;
+- (void)processSampleBuffer:(CMSampleBufferRef)sampleBuffer withType:(RPSampleBufferType)sampleBufferType API_AVAILABLE(ios(10));
 
 @end
 

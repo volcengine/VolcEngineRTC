@@ -223,11 +223,12 @@ typedef struct IDataFrame {
  */
 typedef struct TranscoderLayoutRegion {
     /** 
-     * @brief 合流用户的 ID
+     * @brief 合流用户的 ID。必填。
      */
     const char* region_id;
-    /** 
-     * @brief 视频流发布用户的房间 ID
+   /** 
+     * @brief 媒体流所在房间的房间 ID。<br>
+     *        如果此媒体流是通过 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id;
     /** 

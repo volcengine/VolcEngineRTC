@@ -197,6 +197,20 @@ public:
     /** 
      * @type api
      * @region 混音
+     * @brief 设置混音时音频文件的播放速度
+     * @param [in] mix_id 混音 ID
+     * @param [in] speed 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br>
+     *        超出取值范围则设置失败，你会收到 `OnAudioMixingStateChanged` 回调，提示 AudioMixingState{@link #AudioMixingState} 状态为 `kAudioMixingStateFailed` 混音播放失败，AudioMixingError{@link #AudioMixingError} 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。
+     * @notes   <br>
+     *        + 暂不支持对 PCM 音频数据进行变速调整。  <br>
+     *        + 你需要在调用 StartAudioMixing{@link #IAudioMixingManager#StartAudioMixing} 开始混音，并且收到`OnAudioMixingStateChanged` 回调提示 AudioMixingState{@link #AudioMixingState} 状态为 `kAudioMixingStatePlaying`，AudioMixingError{@link #AudioMixingError} 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  <br>
+     *        + 在 StopAudioMixing{@link #IAudioMixingManager#StopAudioMixing} 停止混音或 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载音频文件后调用该 API，会收到状态为 `kAudioMixingStateFailed` 错误码为 `kAudioMixingErrorIdNotFound` 的 `OnAudioMixingStateChanged` 回调。
+     */
+    virtual int SetAudioMixingPlaybackSpeed(int mix_id, int speed) = 0;
+
+    /** 
+     * @type api
+     * @region 混音
      * @brief 设置混音时音频文件播放进度回调的间隔
      * @param [in] mix_id 混音 ID  <br>
      *        可以通过多次调用本接口传入不同的 ID 对多个 ID 进行间隔设置。

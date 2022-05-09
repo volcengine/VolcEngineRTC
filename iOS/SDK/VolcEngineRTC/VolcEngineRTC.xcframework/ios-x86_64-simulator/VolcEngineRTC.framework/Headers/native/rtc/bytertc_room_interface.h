@@ -30,7 +30,6 @@ public:
     }
 
     /** 
-     * @hidden
      * @type api
      * @region 多房间
      * @brief 退出并销毁调用 CreateRtcRoom{@link #IRtcEngineLite#CreateRtcRoom} 所创建的房间。
@@ -79,7 +78,6 @@ public:
 
 
     /** 
-     * @hidden
      * @type api
      * @region 多房间
      * @brief 通过设置 IRtcRoom{@link #IRtcRoom} 对象的事件句柄，监听此对象对应的回调事件。
@@ -107,9 +105,9 @@ public:
      *      other: 失败
      * @notes
      *        1.使用不同 App ID 的 App 是不能互通的。
-     *        2.调用该方法成功加入房间后，本端会收到 OnJoinRoomResult{@link #OnJoinRoomResult} 回调通知，errorcode 为 0
+     *        2.调用该方法成功加入房间后，本端会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，errorcode 为 0
      * ，JoinRoomType{@link #JoinRoomType} 为 KJoinRoomFirst。 3.本端网络状况不佳的情况下，SDK
-     * 可能会与服务器失去连接，此时 SDK 将会自动重连，重连成功后收到 OnJoinRoomResult{@link #OnJoinRoomResult}
+     * 可能会与服务器失去连接，此时 SDK 将会自动重连，重连成功后收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult}
      * 回调通知， errorcode 为 0 ，JoinRoomType{@link #JoinRoomType} 为 kJoinRoomTypeReconnected 4.同一个 App ID
      * 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入
      *          房间的用户踢出房间，并且先加入房间的用户会收到 OnRoomError{@link #OnRoomError}回调通知，
@@ -143,7 +141,7 @@ public:
      *        + -1：room_id / user_info.uid 包含了无效的参数。  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 LeaveRoom:{@link #IRtcRoom#LeaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
      * @notes  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
      *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
      *       + 本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
@@ -166,14 +164,15 @@ public:
 
     /** 
      * @type api
-     * @region 多房间
      * @brief 更新 Token。  <br>
-     *        Token 有一定的有效期，当 Token 过期时，用户需调用此方法更新房间的 Token 信息。  <br>
-     *        用户调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间时，如果使用了过期的 Token 将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，错误码为 ErrorCode{@link #ErrorCode} 中的 kErrorCodeInvalidToken 。此时需要重新获取 Token，并调用此方法更新 Token。  <br>
-     * @param [in] token 更新的动态密钥。  <br>
-     * @notes  <br>
-     *       + 如果用户因 Token 过期导致加入房间失败，则调用此方法更新 Token 后，SDK 会自动重新加入房间，而不需要用户自己调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法。  <br>
-     *       + Token 过期时，如果已经加入房间成功，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 加入房间时，或因本地网络状况不佳导致断网重新连入房间时通知给用户。  <br>
+     *        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 OnTokenWillExpire{@link #IRTCRoomEventHandler#OnTokenWillExpire} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
+     *        调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+     * @param token 有效的 Token。  <br>
+     *        如果传入的 Token 无效，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
+     * @return 方法调用结果。  <br>
+     *         +  0: 方法调用成功  <br>
+     *         + < 0: 方法调用失败  <br>
+     * @notes 当 Token 过期时，用户将被移出房间并将收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 JoinRoom{@link #IRtcRoom#JoinRoom} 重新加入房间。
      */
     virtual void UpdateToken(const char* token) = 0;
 
@@ -776,31 +775,46 @@ public:
      */
     virtual void ResumeForwardStreamToAllRooms() = 0;
 
-	/** 
+    /** 
      * @type api
-     * @region 多房间
-     * @brief 开始推送公共流，并设置公共流的视频视图布局和音频属性。
-     * @param [in] param 公共流配置参数。参看 IPublicStreamParam{@link #IPublicStreamParam}。
+     * @brief 发布一路公共流<br>
+     *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 appID 的用户，可以调用 StartPlayPublicStream{@link #IRtcEngineLite#StartPlayPublicStream} 获取和播放指定的公共流。
+     * @param public_stream_id 公共流 ID 
+     * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
+     *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
+     *              如果指定的媒体流还未发布，则公共流将在指定流开始发布后实时更新。
+     * @return
+     *        + 0: 成功。同时将收到 OnPushPublicStreamResult{@link #IRTCRoomEventHandler#OnPushPublicStreamResult} 回调。<br>
+     *        + !0: 失败。当参数不合法或参数为空，调用失败。<br>
      * @notes <br>
-     *        1.只有房间模式为直播模式的用户才能调用此方法。  <br>
-     *        2.调用该方法后，关于启动结果和推流过程中的错误，
-     *          会收到 OnPushPublicStreamResult{@link #IRTCRoomEventHandler#OnPushPublicStreamResult} 回调。
-     *        3.调用 StopPushPublicStream{@link #IRtcRoom#StopPushPublicStream} 停止推送公共流。
+     *        + 只有房间模式为直播模式的用户才能调用此方法。
+     *        + 同一用户使用同一公共流 ID 多次调用本接口无效。如果你希望更新公共流参数，调用 UpdatePublicStreamParam{@link #IRtcRoom#UpdatePublicStreamParam} 接口。<br>
+     *        + 不同用户使用同一公共流 ID 多次调用本接口时，RTC 将使用最后一次调用时传入的参数更新公共流。<br>
+     *        + 使用不同的 ID 多次调用本接口可以发布多路公共流。<br>
+     *        + 调用 StopPushPublicStream{@link #IRtcRoom#StopPushPublicStream} 停止发布公共流。
      */
     virtual int StartPushPublicStream(const char* public_stream_id, IPublicStreamParam* param) = 0;
     /** 
      * @type api
-     * @region 多房间
-     * @brief 停止推送公共流。<br>
-     *        如果要启动推送公共流，参看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。
+     * @brief 停止发布当前用户发布的公共流<br>
+     *        关于发布公共流，查看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。 
+     * @param public_stream_id 公共流 ID<br>
+     *                  指定的流必须为当前用户所发布。
+     * @return
+     *        + 0: 成功<br>
+     *        + !0: 失败<br>
      */
     virtual int StopPushPublicStream(const char* public_stream_id) = 0;
     /** 
      * @type api
-     * @region 多房间
-     * @brief 更新推送公共流参数。  <br>
-     *        使用 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream} 启用推动公共流功能后，使用此方法更新功能配置参数。
-     * @param [in] param 配置参数，参看 IPublicStreamParam{@link #IPublicStreamParam}
+     * @brief 更新公共流参数<br>
+     *        关于发布公共流，查看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。 
+     * @param public_stream_id 公共流 ID<br>
+     * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
+     *              指定的流必须为当前用户所发布的。
+     * @return
+     *        + 0: 成功<br>
+     *        + !0: 失败<br>
      */
     virtual int UpdatePublicStreamParam(const char* public_stream_id, IPublicStreamParam* param) = 0;
 };

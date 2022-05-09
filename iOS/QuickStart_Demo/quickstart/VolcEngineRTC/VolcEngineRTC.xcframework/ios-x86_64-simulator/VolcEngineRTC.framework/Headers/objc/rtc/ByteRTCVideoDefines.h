@@ -5,18 +5,18 @@
 
 #import "ByteRTCCommonDefines.h"
 #import "ByteRTCAudioDefines.h"
-/**  
+/** 
  * @type keytype
  * @brief 视频帧渲染设置
  */
 typedef NS_ENUM(NSUInteger, ByteRTCRenderMode) {
-    /**  
+    /** 
      * @brief 视窗填满优先。  <br>
      *        视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>
      *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
      */
     ByteRTCRenderModeHidden = 1,
-    /**  
+    /** 
      * @brief 视频帧内容全部显示优先。  <br>
      *        视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将填充 `background_color`。<br>
      *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
@@ -305,7 +305,7 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoCapturePreference) {
     */
    ByteRTCVideoCapturePreferenceMannal = 1,
    /** 
-    * @brief 采集参数与编码参数一致，即在 setVideoEncoderConfig:config:{@link #ByteRTCEngineKit#setVideoEncoderConfig:config:} 中设置的参数。
+    * @brief 采集参数与编码参数一致
     */
    ByteRTCVideoCapturePreferenceAutoPerformance = 2,
 };
@@ -753,7 +753,7 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCMediaStreamType) {
     ByteRTCMediaStreamTypeBoth = ByteRTCMediaStreamTypeAudio | ByteRTCMediaStreamTypeVideo,
 };
 
-/**  
+/** 
  * @type keytype
  * @brief 占发布端原始帧率的比例
  */
@@ -788,6 +788,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode) {
 };
 
 /** 
+ * @hidden
  * @type keytype
  * @brief 人像属性检测参数
  */
@@ -814,7 +815,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectConfig : NSObject
 @property (assign, nonatomic) BOOL enableHappinessDetect;
 @end
 
-/**  
+/** 
+ * @hidden
  * @type keytype
  * @brief 人像属性检测信息
  */
@@ -858,6 +860,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectInfo : NSObject
 @end
 
 /** 
+ * @hidden
  * @type keytype
  * @brief 人像属性检测结果
  */
@@ -924,7 +927,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
  */
 @property(nonatomic, copy) NSArray<ByteRTCRectangle *> * faces;
 @end
-/**  
+/** 
  * @type keytype
  * @brief 视频帧渲染设置
  */
@@ -1112,26 +1115,29 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
  *         用户可以通过调用 SetVideoEncoderConfig:{@link #ByteRTCEngineKit#SetVideoEncoderConfig:} 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
  */
 @property(nonatomic, assign) NSInteger videoIndex;
-
 /** 
- * @brief 订阅的视频流时域分层，默认值为0。  <br>
+ * @brief 订阅的视频流时域分层，默认值为 0。  <br>
  */
 @property(nonatomic, assign) NSInteger svcLayer;
-
 /** 
- * @brief 订阅的宽度信息， 默认值为0。 <br>
+ * @brief 订阅的宽度信息，单位：px，默认值为 0。 <br>
  */
 @property(nonatomic, assign) NSInteger width;
-
 /** 
- * @brief 订阅的高度信息， 默认值为0。
+ * @brief 订阅的高度信息，单位：px， 默认值为0。
  */
 @property(nonatomic, assign) NSInteger height;
-
 /**
  * @hidden
  */
 @property(nonatomic, assign) NSInteger subVideoIndex;
+/** 
+ * @brief 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。  <br>
+ *        当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。  <br>
+ *        仅码流支持 SVC 分级编码特性时方可生效。
+ */
+@property (nonatomic, assign) NSInteger framerate;
+
 
 @end
 
@@ -1254,11 +1260,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEncodedVideoFrame : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 /** 
- * @brief 视频流发布用户的用户 ID 。
+ * @brief 视频流发布用户的用户 ID 。必填。
  */
 @property(copy, nonatomic) NSString * _Nonnull uid;
 /** 
- * @brief 视频流发布用户的房间 ID 。
+ * @brief 媒体流所在房间的房间 ID。<br>
+ *        如果此媒体流是通过 startForwardStreamToRooms:{@link #ByteRTCEngineKit#startForwardStreamToRooms:} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
  */
 @property(copy, nonatomic) NSString * _Nonnull roomId;
 /** 
@@ -1964,11 +1971,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrameInfo : NSObject
  */
 - (void)onFaceDetectionResult:(ByteRTCFaceDetectionResult * _Nonnull)result;
 /** 
+ * @hidden
  * @type callback
  * @region 视频特效
  * @author liqi.ritchie
  * @brief 特效 SDK 进行人像属性检测结果的回调。 <br>
- *        调用 registerFaceDetectionObserver{@link #ByteRTCEngineKit#registerFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并调用 setVideoEffectExpressionDetect:{@link #ByteRTCEngineKit#setVideoEffectExpressionDetect:} 设置视频特效特征识别参数后，你会收到此回调。
+ *        调用 registerFaceDetectionObserver:withInterval:{@link #ByteRTCEngineKit#registerFaceDetectionObserver:withInterval:} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并调用 setVideoEffectExpressionDetect:{@link #ByteRTCEngineKit#setVideoEffectExpressionDetect:} 开启人像属性检测后，你会收到此回调。
  * @param result 人像属性检测结果, 参看 ExpressionDetectResult{@link #ExpressionDetectResult}。
  */
 - (void)onExpressionDetectResult:(ByteRTCExpressionDetectResult * _Nonnull)result;
@@ -2043,15 +2051,17 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
  */
 @property(nonatomic, assign) ByteRTCVideoEncoderPreference encoderPreference;
 @end
-/**  
+/** 
  * @type keytype
  * @brief 远端视频帧信息
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoConfig : NSObject
 /** 
- * @brief 占发布端原始帧率的比例，参看 ByteRTCFrameRateRatio{@link #ByteRTCFrameRateRatio}
+ * @brief 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。  <br>
+ *        当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。  <br>
+ *        仅码流支持 SVC 分级编码特性时方可生效。
  */
-@property(nonatomic, assign) ByteRTCFrameRateRatio  frameRateRation;
+@property (nonatomic, assign) int framerate;
 /** 
  * @brief 视频宽度，单位：px
  */

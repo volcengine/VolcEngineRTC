@@ -145,20 +145,23 @@
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserJoined:(ByteRTCUserInfo *_Nonnull)userInfo elapsed:(NSInteger)elapsed;
 
-/** 
- * @type callback
- * @region 多房间
- * @author shenpengliang
- * @brief 远端可见用户离开房间，或从可见切换为隐身的回调。  <br>
- *        发生以下情形时，房间内其他用户会收到此事件：  <br>
- *        1.远端可见用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 方法离开房间时；  <br>
- *        2.远端可见用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法切换至隐身；  <br>
- *        3.远端可见用户断网，且一直未恢复。  <br>
- * @param rtcRoom ByteRTCRoom 对象。  <br>
- * @param uid 离开房间，或切至隐身的远端用户 ID 。  <br>
- * @param reason 用户离开房间的原因，参看 ByteRTCUserOfflineReason{@link #ByteRTCUserOfflineReason}。  <br>
- */
-- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
+    /** 
+     * @type callback
+     * @author shenpengliang
+     * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
+     * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
+     * @param reason 用户离开房间的原因：  <br>
+     *              + 0: 远端用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 主动退出房间。  <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 切换至不可见状态。 
+     */
+    - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
+    /** 
+     * @type callback
+     * @brief Token 过期前 30 秒将触发该回调。<br>
+     *        调用 updateToken:{@link #ByteRTCEngineKit#updateToken:} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+     */
+     - (void)onTokenWillExpire:(ByteRTCRoom *_Nonnull)rtcRoom;
 
 /** 
  * @hidden
@@ -1407,7 +1410,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
   * @notes  <br>
   *      + 在发送房间内文本消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>
   *      + 调用该函数后会收到一次 rtcRoom:onRoomMessageSendResult:error:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
-  *      + 若文本消息发送成功，则房间内所有用户会收到 rtcRoom:onRoomMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageReceived:message:} 回调。
+  *      + 若文本消息发送成功，则房间内所有远端用户会收到 rtcRoom:onRoomMessageReceived:message:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomMessageReceived:message:} 回调。
   */
  - (int64_t)sendRoomMessage:(NSString *_Nonnull)message;
 
@@ -1529,7 +1532,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  *        + 0: 成功<br>
  *        + !0: 失败<br>
  */
-- (int)stopPushPublicStreaming:(NSString * _Nonnull)publicStreamId;
+- (int)stopPushPublicStream:(NSString * _Nonnull)publicStreamId;
 
 /** 
  * @type api

@@ -91,11 +91,32 @@ public:
      * @notes 当不再使用返回的对象时，你需要调用 Release{@link #IDeviceCollection#Release} 进行释放。
      */
     virtual IDeviceCollection* EnumerateAudioCaptureDevices() = 0;
+
+    /** 
+     * @type api
+     * @region 音频设备管理
+     * @brief 设置音频播放路由是否跟随系统。
+     * @param followed <br>
+     *        + true: 跟随。此时，调用 SetAudioPlaybackDevice{@link #IAudioDeviceManager#SetAudioPlaybackDevice} 会失败。
+     *        + false: 不跟随系统。此时，可以调用 SetAudioPlaybackDevice{@link #IAudioDeviceManager#SetAudioPlaybackDevice} 进行设置。
+     */
+    virtual void FollowSystemPlaybackDevice(bool followed) = 0;
+
+    /** 
+     * @type api
+     * @region 音频设备管理
+     * @brief 设置音频采集路由是否跟随系统。
+     * @param followed <br>
+     *        + true: 跟随。此时，调用 SetAudioCaptureDevice{@link #IAudioDeviceManager#SetAudioCaptureDevice} 会失败。
+     *        + false: 不跟随系统。此时，可以调用 SetAudioCaptureDevice{@link #IAudioDeviceManager#SetAudioCaptureDevice} 进行设置。
+     */
+    virtual void FollowSystemCaptureDevice(bool followed) = 0;
     /** 
      * @type api
      * @region 音频设备管理
      * @brief 设置音频播放设备。
-     * @param [in] device_id 音频播放设备 ID，可通过 EnumerateAudioPlaybackDevices{@link #EnumerateAudioPlaybackDevices} 获取。
+     * @param [in] device_id 音频播放设备 ID，可通过 EnumerateAudioPlaybackDevices{@link #EnumerateAudioPlaybackDevices}
+     * 获取。
      * @return   <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>

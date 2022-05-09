@@ -556,14 +556,14 @@ public:
      * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
      * @param [in] type 媒体流类型，用于指定发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
      * @notes <br>
-     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br> 
+     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
      *        + 如果你需要发布屏幕共享流，调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
      *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。  <br>
      *        + 调用此方法后，房间中的所有远端用户会收到 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br>
      *        + 调用 UnpublishStream{@link #IRtcEngineLite#UnpublishStream} 取消发布。
      */
     virtual void PublishStream(MediaStreamType type) = 0;
-    
+
     /** 
      * @type api
      * @region 房间管理
@@ -1494,7 +1494,7 @@ public:
             const DesktopCaptureParameters& capture_params) = 0;
 
     /** 
-     * @hidden(iOS,Android)
+     * @hidden
      * @deprecated since 327.1, use StartScreenVideoCapture and PublishScreen instead
      * @type api
      * @region 屏幕共享
@@ -1567,18 +1567,18 @@ public:
      *        其中，虚拟屏幕中显示的内容仅在 Windows 平台上支持。
      * @param [in] source_info 待共享的屏幕源，参看 ScreenCaptureSourceInfo{@link #ScreenCaptureSourceInfo}。<br>
      *                         你可以调用 GetScreenCaptureSourceList{@link #IRtcEngineLite#GetScreenCaptureSourceList} 获得所有可以共享的屏幕源。
-     * @param [in] capture_params 共享参数。参看 ScreenCaptureParameters{@link #ScreenCaptureParameters}
+     * @param [in] capture_params 共享参数。参看 ScreenCaptureParameters{@link #ScreenCaptureParameters}。
      * @return  <br>
-     *        + 0: 成功；  <br>
-     *        + -1: 失败；  <br>
+     *        + 0: 成功  <br>
+     *        + -1: 失败  <br>
      * @notes  <br>
      *       + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
-     *       + 要关闭屏幕视频源采集，调用 StopScreenVideoCapture{@link #IRtcEngineLite#StopScreenVideoCapture}。  <br>
+     *       + 调用 StopScreenVideoCapture{@link #IRtcEngineLite#StopScreenVideoCapture} 关闭屏幕视频源采集，。  <br>
      *       + 本地用户通过 OnVideoDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnVideoDeviceStateChanged} 的回调获取屏幕采集状态，包括开始、暂停、恢复、错误等。  <br>
      *       + 调用成功后，本端会收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调。  <br>
-     *       + 调用此接口前，你可以调用 SetVideoEncoderConfig{@link #SetVideoEncoderConfig} 设置屏幕视频流的采集帧率和编码分辨率。  <br>
+     *       + 调用此接口前，你可以调用 SetScreenVideoEncoderConfig{@link #IRtcEngineLite#SetScreenVideoEncoderConfig} 设置屏幕视频流的采集帧率和编码分辨率。  <br>
      *       + 在收到 OnFirstLocalVideoFrameCaptured{@link #IRTCRoomEventHandler#OnFirstLocalVideoFrameCaptured} 回调后通过调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 或 SetLocalVideoSink{@link #SetLocalVideoSink} 函数设置本地屏幕共享视图。  <br>
-     *       + 也可通过注册 RegisterVideoFrameObserver{@link #RegisterVideoFrameObserver} 视频回调对象，监听 OnLocalScreenFrame{@link #IVideoFrameObserver#OnLocalScreenFrame} 本地屏幕视频回调事件。 <br>
+     *       + 可以调用 RegisterVideoFrameObserver{@link #RegisterVideoFrameObserver} 注册视频回调对象，通过回调 OnLocalScreenFrame{@link #IVideoFrameObserver#OnLocalScreenFrame} 获取采集成功的本地视频帧。 <br>
      */
     virtual int StartScreenVideoCapture(const ScreenCaptureSourceInfo& source_info, const ScreenCaptureParameters& capture_params) = 0;
 
@@ -1750,6 +1750,43 @@ public:
     virtual int SetAudioPlaybackDevice(AudioPlaybackDevice device) = 0;
 
     /** 
+     * @hidden(macOS,Windows)
+     * @type api
+     * @region 音频设备管理
+     * @brief 设置音频播放设备，默认使用扬声器。  <br>
+     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link
+     * #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
+     * @param [in] device 音频播放设备。参看 AudioRouteDevice{@link #AudioRouteDevice} <br>
+     * @return 方法调用结果  <br>
+     *        + 0: 方法调用成功  <br>
+     *        + < 0: 方法调用失败  <br>
+     * @notes  <br>
+     *       + 1. 该接口仅适用于移动设备。  <br>
+     *       + 2. 该方法只支持将音视频播放设备设置为听筒或者扬声器。当 App 连接有线或蓝牙音频播放设备时，SDK
+     * 会自动切换到有线或蓝牙音频播放设备。主动设置为有线或蓝牙音频播放设备，会返回调用失败。  <br>
+     *       + 3.
+     * 若连接有线或者蓝牙音频播放设备时，将音频播放设备设置为扬声器或听筒将调用成功，但不会立马切换到扬声器或听筒，会在有线或者蓝牙音频播放设备移除后，根据设置自动切换到听筒或者扬声器。
+     * <br>
+     *       + 4. 通话前和通话中都可以调用该方法。
+     *       + 5. 设置kAudioRouteDeviceUnknown时将会失败。 <br>
+     */
+    virtual int SetAudioRoute(AudioRouteDevice device) = 0;
+
+    /** 
+     * @hidden(macOS,Windows)
+     * @type api
+     * @region 音频设备管理
+     * @brief 获取当前音频播放设备  <br>
+     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
+     * @return device 当前音频播放设备。参看 AudioRouteDevice{@link #AudioRouteDevice}
+     * @notes  <br>
+     *       + 1. 该接口仅适用于移动设备。  <br>
+     * <br>
+     *       + 2. 通话前和通话中都可以调用该方法。  <br>
+     */
+    virtual AudioRouteDevice GetAudioRoute() = 0;
+
+    /** 
      * @type api
      * @region 多房间
      * @brief 创建房间
@@ -1853,6 +1890,7 @@ public:
     virtual void DisableBackground() = 0;
 
     /** 
+     * @hidden
      * @deprecated since 329.1, use SetLocalVideoMirrorType instead
      * @type api
      * @region 视频管理
@@ -1864,16 +1902,15 @@ public:
     /** 
      * @type api
      * @hidden(Windows,MacOS,Linux)
-     * @region 视频管理
-     * @brief 设置视频旋转模式。设置为跟随App界面方向时，远端画面随着本地App界面的方向变化切换横屏或者竖屏；
-     * 设置为跟随重力方向时，远端画面跟随本端设备握持姿态变化切换为横屏或者竖屏。
-     * @param [in] rotationMode 视频旋转模式，参看 VideoRotationMode{@link #VideoRotationMode}
+     * @brief 设置采集视频的旋转模式。默认以 App 方向为旋转参考系。<br>
+     *        接收端渲染视频时，将按照和发送端相同的方式进行旋转。<br>
+     * @param [in] rotationMode 视频旋转参考系为 App 方向或重力方向，参看  VideoRotationMode{@link #VideoRotationMode}
      * @return 0:设置成功
      *        <0:设置失败
      * @notes <br>
-     * 该接口仅作用于内部视频源，不适用于外部视频源和屏幕源
-     * 调用该接口前，SDK的默认行为是跟随App界面方向
-     * 开启视频采集后，调用该接口将立即生效，未开启采集时，将在下一次采集生效
+     *        + 旋转仅对内部视频采集生效，不适用于外部视频源和屏幕源。
+     *        + 调用该接口时已开启视频采集，将立即生效；调用该接口时未开启视频采集，则将在采集开启后生效。
+     *        + 更多信息请参考[视频采集方向](106458)。
      */
     virtual int SetVideoRotationMode(VideoRotationMode rotationMode) = 0;
 
@@ -2429,6 +2466,7 @@ public:
 
 
     /** 
+     * @hidden
      * @type api
      * @deprecated since 327.1, use StopScreenVideoCapture instead
      * @region 屏幕共享
@@ -2617,6 +2655,7 @@ public:
      *        + -2: 消息发送失败。传入的消息内容为空。  <br>
      *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
      *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
+     * @notes 在采用 `kRoomProfileTypeLiveBroadcasting` 作为房间模式时，此消息一定会送达。在其他房间模式下，如果本地用户未说话，此消息不一定会送达。
      */
     virtual int SendStreamSyncInfo(const uint8_t* data, int32_t length, const StreamSycnInfoConfig& config) = 0;
 

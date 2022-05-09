@@ -94,7 +94,7 @@ public:
      * @type api
      * @region 音频管理
      * @brief 获取音频帧数据大小
-     * @return 音频帧数据大小
+     * @return 音频帧数据大小，单位：字节。
      */
     virtual int data_size() const = 0;
     /**  
@@ -182,7 +182,7 @@ public:
      * @type callback
      * @region 音频数据回调
      * @brief 返回麦克风录制的音频数据
-     * @param [in] audio_frame 麦克风录制的音频数据, 详见：IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
     virtual void OnRecordAudioFrame(const IAudioFrame& audio_frame) = 0;
 
@@ -190,15 +190,15 @@ public:
      * @type callback
      * @region 音频数据回调
      * @brief 返回订阅的所有远端用户混音后的音频数据
-     * @param [in] audio_frame 远端所有用户混音后的音频数据, 详见：IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
     virtual void OnPlaybackAudioFrame(const IAudioFrame& audio_frame) = 0;
 
     /** 
-     * @hidden
      * @region 音频数据回调
-     * @brief 远端用户音频回调
-     * @param [in] audio_frame 远端用户音频帧, 详见 IAudioFrame{@link #IAudioFrame}
+     * @brief 返回远端单个用户的音频数据
+     * @param [in] stream_info 远端流信息，参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] audio_frame 音频数据, 参看 IAudioFrame{@link #IAudioFrame}
      */
     virtual void OnRemoteUserAudioFrame(const RemoteStreamKey& stream_info, const IAudioFrame& audio_frame) = 0;
 
@@ -206,16 +206,15 @@ public:
      * @type callback
      * @region 音频数据回调
      * @brief 返回本地麦克风录制和订阅的所有远端用户混音后的音频数据
-     * @param [in] audio_frame 本地麦克风录制和远端所有用户混音后的音频数据, 详见：IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
     virtual void OnMixedAudioFrame(const IAudioFrame& audio_frame) = 0;
 
     /** 
-     * @hidden
      * @type callback
      * @region 屏幕音频数据回调
-     * @brief 返回本地播放的音频数据
-     * @param [in] audio_frame 麦克风录制的音频数据, 详见：IAudioFrame{@link #IAudioFrame}
+     * @brief 返回本地屏幕录制的音频数据
+     * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
     virtual void OnRecordScreenAudioFrame(const IAudioFrame& audio_frame) {
     }

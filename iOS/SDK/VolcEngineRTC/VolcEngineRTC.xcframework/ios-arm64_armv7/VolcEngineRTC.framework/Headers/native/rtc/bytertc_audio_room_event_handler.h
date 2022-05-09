@@ -75,7 +75,14 @@ public:
     virtual void OnRoomError(int err) {
         (void)err;
     }
+    /** 
+     * @type callback
+     * @brief Token 过期前 30 秒将触发该回调。<br>
+     *        调用 UpdateToken{@link #IRTCAudioRoom#UpdateToken} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+     */
+     virtual void OnTokenWillExpire() {
 
+    }
     /** 
      * @type callback
      * @region 数据统计
@@ -124,14 +131,12 @@ public:
 
     /** 
      * @type callback
-     * @region 房间管理
-     * @brief 远端可见用户离开房间，或从可见切换为隐身的回调。  <br>
-     *        发生以下情形时，房间内其他用户会收到此事件：  <br>
-     *        1. 远端可见用户调用 LeaveRoom{@link #IRTCAudioRoom#LeaveRoom} 方法离开房间时；  <br>
-     *        2. 远端可见用户调用 SetUserVisibility{@link #IRTCAudioRoom#SetUserVisibility} 方法切换至隐身；  <br>
-     *        3. 远端可见用户断网，且一直未恢复。  <br>
-     * @param [in] uid 离开房间，或切至隐身的远端用户 ID。  <br>
-     * @param [in] reason 用户离开房间的原因，参看 UserOfflineReason{@link #UserOfflineReason} 。  <br>
+     * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
+     * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
+     * @param reason 用户离开房间的原因：  <br>
+     *              + 0: 远端用户调用 LeaveRoom{@link #IRTCAudioRoom#LeaveRoom} 主动退出房间。  <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 2: 远端用户调用 SetUserVisibility{@link #IRTCAudioRoom#SetUserVisibility} 切换至不可见状态。 
      */
     virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
         (void)uid;

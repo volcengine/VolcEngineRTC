@@ -326,6 +326,14 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      *        + 因调用解散房间的 OpenAPI，离开房间。
      */
     ByteRTCErrorCodeDuplicateLogin             = -1004,
+        /** 
+     * @brief Token 过期。调用 `joinRoomByKey:roomId:userInfo:rtcRoomConfig:` 使用新的 Token 重新加入房间。
+     */
+    ByteRTCErrorCodeTokenExpired            = -1009,
+        /** 
+     * @brief 调用 `updateToken:` 传入的 Token 无效
+     */
+    ByteRTCErrorCodeUpdateTokenWithInvalidToken     = -1010,
     /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
@@ -786,7 +794,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCSubscribeFallbackOption) {
     ByteRTCSubscribeFallbackOptionDisabled = 0,
     /** 
      * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看性能回退文档。 <br>
-     *        该设置仅对发布端调用 enableSimulcastMode:{@link #ByteRTCEngineKit#enableSimulcastMode:} 开启发送多路流功能的情况生效。
+     *        该设置仅对发布端调用 `enableSimulcastMode:` 开启发送多路流功能的情况生效。
      */
     ByteRTCSubscribeFallbackOptionVideoStreamLow = 1,
     /** 
@@ -1188,29 +1196,39 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceType) {
 
 /** 
  * @type keytype
- * @brief 媒体设备状态
+ * @brief 媒体设备状态<br>
+ *        通过 `rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:` 或 `rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:` 回调设备状态。
  */
 typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceState) {
     /** 
-     *@brief 设备已开启
+     * @brief 设备已开启
      */
     ByteRTCMediaDeviceStateStarted = 1,
     /** 
-     *@brief 设备已停止
+     * @brief 设备已停止
      */
     ByteRTCMediaDeviceStateStopped = 2,
     /** 
-     *@brief 设备运行时错误
+     * @brief 设备运行时错误<br>
+     *       例如，当媒体设备的预期行为是正常采集，但没有收到采集数据时，将回调该状态。
      */
     ByteRTCMediaDeviceStateRuntimeError = 3,
     /** 
-     *@brief 设备已插入
+     * @brief 设备已插入
      */
     ByteRTCMediaDeviceStateAdded = 10,
     /** 
-     *@brief 设备被移除
+     * @brief 设备被移除
      */
-    ByteRTCMediaDeviceStateRemoved = 11
+    ByteRTCMediaDeviceStateRemoved = 11,
+    /** 
+     * @brief 系统通话，锁屏或第三方应用打断了音视频通话。将在通话结束或第三方应用结束占用后自动恢复。
+     */
+    ByteRTCMediaDeviceStateInterruptionBegan = 12,
+    /** 
+     * @brief 音视频通话已从系统电话或第三方应用打断中恢复
+     */
+    ByteRTCMediaDeviceStateInterruptionEnded = 13
 };
 
 /** 
@@ -1243,7 +1261,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceError) {
      */
     ByteRTCMediaDeviceErrorDeviceDisconnected = 5,
     /** 
-     * @brief 设备没有数据回调
+     * @brief 无采集数据。当媒体设备的预期行为是正常采集，但没有收到采集数据时，将收到该错误。
      */
     ByteRTCMediaDeviceErrorDeviceNoCallback = 6,
     /** 
@@ -1270,7 +1288,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
      */
     ByteRTCMediaDeviceWarningOperationDenied = 1,
     /** 
-     * @brief 采集静音。
+     * @brief 采集到的数据为静音帧。
      */
     ByteRTCMediaDeviceWarningCaptureSilence = 2,
     // The following warning codes are only valid for meeting scenarios.
@@ -1686,7 +1704,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
  */
 @property(assign, nonatomic) NSInteger rxVideoKBitrate;
 /** 
- * @brief 当前房间内的用户人数，包括本地用户自身
+ * @brief 当前房间内的可见用户人数，包括本地用户自身
  */
 @property(assign, nonatomic) NSInteger userCount;
 /** 

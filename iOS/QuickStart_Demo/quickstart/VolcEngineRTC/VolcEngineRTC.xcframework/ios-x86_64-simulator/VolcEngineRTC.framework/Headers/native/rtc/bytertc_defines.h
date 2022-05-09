@@ -8,5 +8,3 @@
 #include "bytertc_common_defines.h"
 #include "bytertc_audio_defines.h"
 #include "bytertc_video_defines.h"
-
-

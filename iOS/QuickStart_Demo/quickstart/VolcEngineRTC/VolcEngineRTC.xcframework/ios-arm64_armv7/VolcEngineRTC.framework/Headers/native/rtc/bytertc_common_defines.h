@@ -568,7 +568,7 @@ enum MediaDeviceType {
 
 /** 
  * @type keytype
- * @brief 媒体设备状态
+ * @brief 媒体设备状态。通过 OnAudioDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioDeviceStateChanged} 或 OnVideoDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnVideoDeviceStateChanged} 回调设备状态。
  */
 enum MediaDeviceState {
     /** 
@@ -580,7 +580,8 @@ enum MediaDeviceState {
      */
     kMediaDeviceStateStopped = 2,
     /** 
-     *@brief 设备运行时错误
+     *@brief 设备运行时错误<br>
+     *       例如，当媒体设备的预期行为是正常采集，但没有收到采集数据时，将回调该状态。
      */
     kMediaDeviceStateRuntimeError = 3,
     /** 
@@ -602,7 +603,15 @@ enum MediaDeviceState {
     /** 
      *@brief 设备被移除
      */
-    kMediaDeviceStateRemoved = 11
+    kMediaDeviceStateRemoved = 11,
+    /** 
+     * @brief 用户合盖打断了视频通话。如果系统未休眠或关机，将在开盖后自动恢复视频通话。
+     */
+    kMediaDeviceInterruptionBegan = 12,
+    /** 
+     * @brief 视频通话已从合盖打断中恢复
+     */
+    kMediaDeviceInterruptionEnded = 13
 };
 
 /** 
@@ -667,6 +676,7 @@ enum MediaDeviceWarning {
      */
     kMediaDeviceWarningCaptureSilence = 2,
     /** 
+     * @hidden
      * @brief Android 特有的静音，系统层面的静音上报
      */
     kMediaDeviceWarningAndroidSysSilence = 3,
@@ -697,7 +707,7 @@ enum MediaDeviceWarning {
     kMediaDeviceWarningDetectInsertSilence = 13,
     /** 
      * @hidden
-     * @brief 设备采集静音
+     * @brief 设备采集静音（算法层）
      */
     kMediaDeviceWarningCaptureDetectSilence = 14,
     /** 
@@ -924,7 +934,7 @@ enum ErrorCode {
      * @brief 用户被踢出房间。
      *        本端用户被主动踢出所在房间时，回调此错误。
      */
-    kBrerrKickedOut = -1006,
+    kErrorCodeKickedOut = -1006,
 
 
     /** 
@@ -936,6 +946,14 @@ enum ErrorCode {
      * @brief 当调用 `CreateRTCRoom` ，如果已经存在了相同的房间，会返回null，并抛出该error
      */
     kRoomErrorCodeUserIsInRoom = -1008,
+    /** 
+     * @brief Token 过期。调用 `JoinRoom` 使用新的 Token 重新加入房间。
+     */
+    kRoomErrorTokenExpired = -1009,
+    /** 
+     * @brief 调用 `updateToken` 传入的 Token 无效
+     */
+    kRoomErrorUpdateTokenWithInvalidToken = -1010,
 
 
     /** 
@@ -1138,13 +1156,13 @@ enum LocalAudioStreamState {
 
     /** 
      * @brief 本地音频静音成功后回调该状态。
-     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 SetAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamMute,
 
     /** 
      * @brief 本地音频解除静音成功后回调该状态。
-     *        调用 MuteLocalAudioStream 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 SetAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamUnmute
 };
@@ -1493,7 +1511,7 @@ struct RtcRoomStats {
      */
     unsigned short tx_video_kbitrate;
     /** 
-     * @brief 当前房间内的人数
+     * @brief 当前房间内的可见用户人数
      */
     unsigned int user_count;
     /** 
@@ -2034,7 +2052,7 @@ public:
      *        + ≥ 0：加密后实际写入缓冲区的数据大小  <br>
      *        + 0：丢弃该帧  <br>
      * @notes <br>
-     *        + 使用此接口进行自定义加密前，你必须先设置自定义加密方式，参看 SetCustomizeEncryptHandler{@link #IRtcEngineLite#SetCustomizeEncryptHandler}。
+     *        + 使用此接口进行自定义加密前，你必须先设置自定义加密方式，参看 `SetCustomizeEncryptHandler`。
      *        + 使用 OnDecryptData{@link #OnDecryptData} 对已加密的音视频帧数据进行解密。
      *        + 返回的数据大小应控制在原始数据的 90% ~ 120% 范围以内，不然将被丢弃。
      */
@@ -2054,7 +2072,7 @@ public:
      *        + ≥ 0：加密后实际写入缓冲区的数据大小  <br>
      *        + 0：丢弃该帧  <br>
      * @notes <br>
-     *        + 使用此接口进行解密前，你必须先设定解密方式，参看 SetCustomizeEncryptHandler{@link #IRtcEngineLite#SetCustomizeEncryptHandler}。
+     *        + 使用此接口进行解密前，你必须先设定解密方式，参看 `SetCustomizeEncryptHandler`。
      *        + 返回的数据大小应控制在原始数据的 90% ~ 120% 范围以内，不然将被丢弃。
     */
    virtual unsigned int OnDecryptData(
@@ -2154,8 +2172,9 @@ enum StreamIndex {
  * @brief 远端流信息
  */
 struct RemoteStreamKey {
-    /** 
-     * @brief 房间 ID
+   /** 
+     * @brief 媒体流所在房间的房间 ID。<br>
+     *        如果此媒体流是通过 `StartForwardStreamToRooms` 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id;
     /** 

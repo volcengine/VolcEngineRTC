@@ -80,6 +80,14 @@ public:
     virtual void OnRoomError(int err) {
         (void)err;
     }
+    /** 
+     * @type callback
+     * @brief Token 过期前 30 秒将触发该回调。<br>
+     *        调用 UpdateToken{@link #IRtcRoom#UpdateToken} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+     */
+     virtual void OnTokenWillExpire() {
+
+    }
 
     /** 
      * @hidden
@@ -149,15 +157,14 @@ public:
 
     /** 
      * @type callback
-     * @region 房间管理
-     * @brief 发生以下情形时，房间内其他用户会收到此事件：  <br>
-     *        + 远端可见用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 方法离开房间时；  <br>
-     *        + 远端可见用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法切换至不可见时。  <br>
-     *        + 远端可见角色用户断网，且一直未恢复。  <br>
-     * @param [in] uid 离开房间，或切至不可见的远端用户 ID。  <br>
-     * @param [in] reason 用户离开房间的原因，参看 UserOfflineReason{@link #UserOfflineReason} 。  <br>
+     * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
+     * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
+     * @param reason 用户离开房间的原因：  <br>
+     *              + 0: 远端用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 主动退出房间。  <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 2: 远端用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 切换至不可见状态。 
      */
-     virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
+    virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
         (void)uid;
         (void)reason;
     }
@@ -875,7 +882,7 @@ public:
     /** 
      * @type callback
      * @brief 公共流发布结果回调。<br>
-     *        调用 StartPushPublicStream{@link #IPublicStreamer#StartPushPublicStream} 接口发布公共流后，启动结果通过此回调方法通知用户。
+     *        调用 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream} 接口发布公共流后，启动结果通过此回调方法通知用户。
      * @param [in] public_stream_id 公共流 ID
      * @param [in] errorCode 公共流发布结果状态码。<br>
      *             `200`: 发布成功

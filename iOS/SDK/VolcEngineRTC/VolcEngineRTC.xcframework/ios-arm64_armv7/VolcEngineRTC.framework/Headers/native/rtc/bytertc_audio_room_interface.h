@@ -24,7 +24,6 @@ public:
     }
 
     /** 
-     * @hidden
      * @type api
      * @region 多房间
      * @brief 销毁房间，该接口实现上会先执行退房操作，然后释放房间处理回调指针
@@ -71,14 +70,15 @@ public:
 
     /** 
      * @type api
-     * @region 多房间
      * @brief 更新 Token。  <br>
-     *        Token 有一定的有效期，当 Token 过期时，用户需调用此方法更新房间的 Token 信息。  <br>
-     *        用户调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 方法加入房间时，如果使用了过期的 Token 将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCAudioRoomEventHandler#OnJoinRoomResult} 回调通知，错误码为 ErrorCode{@link #ErrorCode} 中的 kErrorCodeInvalidToken 。此时需要重新获取 Token，并调用此方法更新 Token。  <br>
-     * @param [in] token 更新的动态密钥。  <br>
-     * @notes  <br>
-     *       + 如果用户因 Token 过期导致加入房间失败，则调用此方法更新 Token 后，SDK 会自动重新加入房间，而不需要用户自己调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 方法。  <br>
-     *       + Token 过期时，如果已经加入房间成功，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 加入房间时，或因本地网络状况不佳导致断网重新连入房间时通知给用户。  <br>
+     *        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 OnTokenWillExpire{@link #IRTCAudioRoomEventHandler#OnTokenWillExpire} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
+     *        调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCAudioRoomEventHandler#OnJoinRoomResult} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+     * @param token 有效的 Token。  <br>
+     *        如果传入的 Token 无效，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
+     * @return 方法调用结果。  <br>
+     *         +  0: 方法调用成功  <br>
+     *         + < 0: 方法调用失败  <br>
+     * @notes 当 Token 过期时，用户将被移出房间并将收到 OnError{@link #IRTCAudioRoomEventHandler#onError} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 JoinRoom{@link #IRTCAudioRoom#joinRoom} 重新加入房间。
      */
     virtual void UpdateToken(const char* token) = 0;
 
@@ -102,13 +102,11 @@ public:
     virtual void SetUserVisibility(bool enable) = 0;
 
     /** 
-     * @hidden
      * @type api
      * @region 多房间
-     * @brief 设置 IRtcRoom{@link #IRtcRoom} 对象的事件句柄。
-     *        通过设置事件句柄可以监听此 IRtcRoom{@link #IRtcRoom} 对象对应的房间的回调事件。
-     * @param [in] room_event_handler
-     *        回调处理器，详见 IRTCRoomEventHandler{@link #IRTCRoomEventHandler}
+     * @brief 设置 IRTCAudioRoom{@link #IRTCAudioRoom} 对象的事件句柄。
+     *        通过设置事件句柄可以监听此 IRTCAudioRoom{@link #IRTCAudioRoom} 对象对应的房间的回调事件。
+     * @param [in] room_event_handler 回调处理器，详见 IRTCAudioRoomEventHandler{@link #IRTCAudioRoomEventHandler}
      */
     virtual void SetRTCRoomEventHandler(IRTCAudioRoomEventHandler* room_event_handler) = 0;
 
