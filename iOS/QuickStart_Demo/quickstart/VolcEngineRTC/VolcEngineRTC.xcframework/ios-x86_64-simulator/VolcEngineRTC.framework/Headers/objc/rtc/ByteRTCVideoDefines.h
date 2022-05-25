@@ -463,29 +463,41 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingEvent) {
      */
     StreamMixingStartFailed = 3,
     /** 
+     * @brief 更新合流
+     */
+    StreamMixingUpdate = 4,
+    /** 
      * @brief 合流结束
      */
-    StreamMixingStop = 4,
+    StreamMixingStop = 5,
     /** 
      * @brief 服务端合流/端云一体合流
      */
-    StreamMixingChangeMixeType = 5,
+    StreamMixingChangeMixeType = 6,
     /** 
      * @brief 收到合流音频首帧
      */
-    StreamMixingFirstAudioFrameByClientMixer = 6,
+    StreamMixingFirstAudioFrameByClientMixer = 7,
     /** 
      * @brief 收到合流视频首帧
      */
-    StreamMixingFirstVideoFrameByClientMixer = 7,
+    StreamMixingFirstVideoFrameByClientMixer = 8,
     /** 
      * @brief 更新合流超时
      */
-    StreamMixingUpdateTimeout = 8,
+    StreamMixingUpdateTimeout = 9,
     /** 
      * @brief 开始合流超时
      */
-    StreamMixingStartTimeout = 9,
+    StreamMixingStartTimeout = 10,
+    /** 
+     * @brief 合流布局参数错误
+     */
+    StreamMixingRequestParamError = 11,
+    /**
+     * @hidden
+     */
+    StreamMixingMax,
 };
 
 /** 
@@ -621,11 +633,19 @@ typedef NS_ENUM(NSInteger, ByteRTCCameraID) {
      * @brief 后置摄像头
      */
     ByteRTCCameraIDBack = 1,
+    /** 
+     * @brief 外接摄像头
+     */
+    ByteRTCCameraIDExternal = 2,
+    /** 
+     * @brief 无效值
+     */
+    ByteRTCCameraIDInvalid = 3,
 };
 
 /** 
- * @type errorcode
- * @brief 转推直播功能错误码。
+ * @type keytype
+ * @brief 转推直播错误码
  */
 typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
     /** 
@@ -637,7 +657,7 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
      */
     TranscoderErrorBase = 1090,
     /** 
-     * @brief 推流参数无效，检查合流参数合法性。
+     * @brief 客户端 SDK 检测到无效推流参数，请检查合流参数合法性。
      */
     TranscoderErrorInvalidParam = 1091,
     /** 
@@ -649,13 +669,33 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
      */
     TranscoderErrorInvalidOperator = 1093,
     /** 
-     * @brief 超时，请检查网络状态并重试
+     * @brief 转推直播任务处理超时，请检查网络状态并重试
      */
     TranscoderErrorTimeOut = 1094,
+    /** 
+     *@brief 服务端检测到错误的推流参数
+     */
+    TranscoderErrorInvalidParamByServer = 1095,
+    /** 
+     * @brief 服务端检测到订阅流超时
+     */
+    TranscoderErrorSubTimeoutByServer = 1096,
+    /** 
+     * @brief 合流服务端内部错误。
+     */
+    TranscoderErrorInvalidStateByServer = 1097,
+    /** 
+     * @brief 合流服务端推 CDN 失败。
+     */
+    TranscoderErrorAuthenticationByCDN = 1098,
+    /** 
+     * @brief 服务端接收信令超时，请检查网络状态并重试。
+     */
+    TranscoderErrorTimeoutBySignaling = 1099,
     /**
      * @hidden
      */
-    TranscoderErrorMax = 1099,
+    TranscoderErrorMax = 1199,
 };
 
 /** 
@@ -989,8 +1029,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoSolution: NSObject
  */
 @property(nonatomic, assign) NSInteger frameRate;
 /** 
- * @brief 最高编码码率（千比特每秒）  <br>
- *        建议使用预估值。
+ * @brief 最高编码码率（千比特每秒）。建议使用 `-1`，SDK 会自动根据分辨率和帧率适配合适的码率。
  */
 @property(nonatomic, assign) NSInteger maxKbps;
 /** 
@@ -1206,6 +1245,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrame : NSObject
  */
 @property(assign, nonatomic) int flip;
 /** 
+ * @brief 视频帧的摄像头信息，参考 ByteRTCCameraID{@link #ByteRTCCameraID}
+ */
+@property(assign, nonatomic) ByteRTCCameraID cameraId;
+/** 
  * @brief 视频帧附加的数据
  */
 @property(strong, nonatomic) ByteRTCFrameExtendedData * _Nullable extendedData;
@@ -1339,7 +1382,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingLayout : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingVideoConfig : NSObject
 /** 
- * @brief 视频编码格式。H264 编码格式或自定义编码格式
+ * @brief codec 编码器。默认值为 `0`。 <br>
+ *        + 值为 `0` 时，使用 H.264； <br>
+ *        + 值为 `1` 时，使用 byteVC1。此时，你必须调用 setKBitRate{@link #VideoConfig#setKBitRate} 设置视频码率。
  */
 @property(copy, nonatomic) NSString * _Nonnull codec;
 /** 
@@ -1351,15 +1396,15 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingVideoConfig : NSObject
  */
 @property(assign, nonatomic) NSInteger height;
 /** 
- * @brief 合流视频帧率信息。
+ * @brief 合流的视频帧率。默认值为 `15`，取值范围是 `[1, 60]`。值不合法时，自动调整为默认值。
  */
 @property(assign, nonatomic) NSInteger fps;
 /** 
- * @brief 视频 I 帧间隔。
+ * @brief I 帧间隔。默认值为 `4`，取值范围为 `[1, 5]`，单位为秒。值不合法时，自动调整为默认值。
  */
 @property(assign, nonatomic) NSInteger gop;
 /** 
- * @brief 合流视频码率，单位为 kbps，取值范围 [1,10000]
+ * @brief 合流视频码率。单位为 kbps，取值范围为 `[1,10000]`，默认值为自适应。值不合法时，自动调整为默认值。
  */
 @property(assign, nonatomic) NSInteger kBitRate;
 /** 
@@ -1435,9 +1480,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
  */
 @property(copy, nonatomic) NSString * _Nullable url;
 /** 
- * @brief 推流房间 ID。
+ * @brief 推流房间 ID，必填。
  */
-@property(copy, nonatomic) NSString * _Nullable roomId;
+@property(copy, nonatomic) NSString * _Nonnull roomId;
 /** 
  * @brief 推流用户 ID。
  */
@@ -1579,11 +1624,13 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkProtocol <NSObject>
  * @brief 输出视频的 PixelBuffer
  * @param pixelBuffer 视频的 PixelBuffer
  * @param rotation 视频旋转角度，{@link #ByteRTCVideoRotation}
+ * @param cameraId 视频的相机Id, {@link #ByteRTCCameraID}
  * @param extendedData 视频帧附加的数据,视频解码后获得的附加数据
  * @notes 通过该方法获取视频的 PixelBuffer
  */
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
+                 cameraId:(ByteRTCCameraID) cameraId
              extendedData:(NSData * _Nullable)extendedData DEPRECATED_MSG_ATTRIBUTE("Please use ByteVideoSinkDelegate");
 
 /**
@@ -2278,6 +2325,48 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamAudioConfig : NSObject
  * @brief 音频码率(kbps); 16kbsp, 32kbps, 64kbps
  */
 @property(assign, nonatomic) NSInteger bitrate;
+@end
+
+/** 
+ * @type keytype
+ * @brief 水印图片相对视频流的位置和大小。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVideoByteWatermark: NSObject
+/** 
+ * @brief 水印图片相对视频流左上角的横向偏移与视频流宽度的比值，取值范围为 [0,1)。
+ */
+@property(assign, nonatomic) float x;
+/** 
+ * @brief 水印图片相对视频流左上角的纵向偏移与视频流高度的比值，取值范围为 [0,1)。
+ */
+@property(assign, nonatomic) float y;
+/** 
+ * @brief 水印图片宽度与视频流宽度的比值，取值范围 [0,1)。
+ */
+@property(assign, nonatomic) float width;
+/** 
+ * @brief 水印图片高度与视频流高度的比值，取值范围为 [0,1)。
+ */
+@property(assign, nonatomic) float height;
+@end
+
+/** 
+ * @type keytype
+ * @brief 水印参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVideoWatermarkConfig: NSObject
+/** 
+ * @brief 水印是否在视频预览中可见，默认可见。
+ */
+@property(nonatomic, assign) BOOL visibleInPreview;
+/** 
+ * @brief 横屏时的水印位置和大小，参看 ByteRTCVideoByteWatermark{@link #ByteRTCVideoByteWatermark}。
+ */
+@property(strong, nonatomic) ByteRTCVideoByteWatermark * _Nonnull positionInLandscapeMode;
+/** 
+ * @brief 竖屏时的水印位置和大小，参看 ByteRTCVideoByteWatermark{@link #ByteRTCVideoByteWatermark}。
+ */
+@property(strong, nonatomic) ByteRTCVideoByteWatermark * _Nonnull positionInPortraitMode;
 @end
 
 /** 

@@ -120,6 +120,7 @@ public:
      * @return   <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>
+     * @notes 当你调用 FollowSystemPlaybackDevice{@link #IAudioDeviceManager#FollowSystemPlaybackDevice} 设置音频播放设备跟随系统后，将无法调用此接口设置音频播放设备。
      */
     virtual int SetAudioPlaybackDevice(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 
@@ -130,6 +131,7 @@ public:
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>
+     * @notes 当你调用 FollowSystemCaptureDevice{@link #IAudioDeviceManager#FollowSystemCaptureDevice} 设置音频采集设备跟随系统后，将无法调用此接口设置音频采集设备。
      */
     virtual int SetAudioCaptureDevice(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 

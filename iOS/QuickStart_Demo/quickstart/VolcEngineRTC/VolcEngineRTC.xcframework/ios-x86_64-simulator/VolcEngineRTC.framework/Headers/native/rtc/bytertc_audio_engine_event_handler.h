@@ -132,6 +132,15 @@ public:
         (void)type;
     }
 
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 音频设备状态回调。提示音频采集、音频播放等设备的状态。
+     * @param [in] device_id 设备 ID
+     * @param [in] device_type 设备类型，参看 RTCAudioDeviceType{@link #RTCAudioDeviceType}。
+     * @param [in] device_state 设备状态，参看 MediaDeviceState{@link #MediaDeviceState}。
+     * @param [in] device_error 设备错误类型，参看 MediaDeviceError{@link #MediaDeviceError}。
+     */
     virtual void OnAudioDeviceStateChanged(const char* device_id, bytertc::RTCAudioDeviceType device_type,
             bytertc::MediaDeviceState device_state, bytertc::MediaDeviceError device_error) {
         (void)device_id;
@@ -140,6 +149,14 @@ public:
         (void)device_error;
     }
 
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 音频设备警告回调。音频设备包括音频采集设备和音频渲染设备。
+     * @param [in] device_id 设备 ID
+     * @param [in] device_type 参看 RTCAudioDeviceType{@link #RTCAudioDeviceType}
+     * @param [in] device_warning 参看 MediaDeviceWarning{@link #MediaDeviceWarning}
+     */
     virtual void OnAudioDeviceWarning(const char* device_id, bytertc::RTCAudioDeviceType device_type,
             bytertc::MediaDeviceWarning device_warning) {
         (void)device_id;
@@ -256,7 +273,7 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @brief 设置业务服务器参数的返回结果
+     * @brief 设置应用服务器参数的返回结果
      * @param [in] error <br>
      *        设置结果  <br>
      *        + 返回 200，设置成功  <br>
@@ -334,18 +351,21 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @brief 给业务服务器发送消息的回调
+     * @brief 给应用服务器发送消息的回调
      * @param [in] msgid  <br>
      *        本条消息的 ID  <br>
      *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
      * @param [in] error  <br>
      *        消息发送结果  <br>
      *        详见 UserMessageSendResult{@link #UserMessageSendResult}。
+     * @param [in] msg  <br>
+     *        业务服务器返回的消息。
      * @notes 当调用 SendServerMessage{@link #IRTCAudioEngine#SendServerMessage} 或 SendServerBinaryMessage{@link #IRTCAudioEngine#SendServerBinaryMessage} 接口发送消息后，会收到此回调。
      */
-    virtual void OnServerMessageSendResult(int64_t msgid, int error) {
+    virtual void OnServerMessageSendResult(int64_t msgid, int error, const bytertc::ServerACKMsg& msg) {
         (void)msgid;
         (void)error;
+        (void)msg;
     }
 
      /** 

@@ -131,6 +131,29 @@ enum VideoEncodePreference {
     kVideoEncodePreferenceBalance,
 };
 
+/** 
+ * @type keytype
+ * @brief 摄像头。
+ */
+enum CameraID {
+    /** 
+     *@brief 移动端前置摄像头，PC端内置摄像头
+     */
+    kCameraIDFront = 0,
+    /** 
+     *@brief 移动端后置摄像头，PC端无定义
+     */
+    kCameraIDBack = 1,
+    /** 
+     *@brief 外接摄像头
+     */
+    kCameraIDExternal = 2,
+    /** 
+     *@brief 无效值
+     */
+    kCameraIDInvalid = 3
+};
+
 
 #define SEND_KBPS_AUTO_CALCULATE -1
 #define SEND_KBPS_DISABLE_VIDEO_SEND 0
@@ -506,6 +529,7 @@ public:
      */
     virtual VideoRotation rotation() const = 0;
     /** 
+     * @deprecated
      * @hidden
      * @brief 获取镜像信息
      * @return 是否需要镜像
@@ -558,6 +582,10 @@ public:
      * @brief 转换为i420格式的视频帧
      */
     virtual void to_i420() = 0;
+    /** 
+     * @brief 获取视频帧的摄像头信息，参看 CameraID{@link #CameraID}
+     */
+    virtual CameraID get_cameraId() const = 0;
 /**
  * @hidden
  */

@@ -234,6 +234,7 @@ public:
      * @param [in] message  <br>
      *        用户发送的二进制广播消息  <br>
      *        消息不超过 46KB。
+     * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 JoinRoom{@link #IRtcRoom#JoinRoom} 加入房间。  <br>
      *       + 调用该函数后，会收到一次 OnRoomMessageSendResult{@link #IRTCRoomEventHandler#OnRoomMessageSendResult} 回调。  <br>
@@ -263,7 +264,7 @@ public:
      * @param [in] type 媒体流类型，用于指定发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
      * @notes <br>
      *        + 多房间模式下默认不自动发布流，你需调用该方法手动发布流。  <br>
-     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br> 
+     *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
      *        + 如果你需要发布屏幕共享流，调用 PublishScreen{@link #IRtcRoom#PublishScreen}。<br>
      *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。  <br>
      *        + 调用此方法后，房间中的所有远端用户会收到 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br>
@@ -347,7 +348,7 @@ public:
      * @param [in] type 媒体流类型，用于指定发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}。
      * @notes <br>
      *        + 调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
-     *        + 调用该方法后，房间中的所有远端用户会收到 OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 回调，其中成功收到音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br> 
+     *        + 调用该方法后，房间中的所有远端用户会收到 OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 回调，其中成功收到音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCRoomEventHandler#OnFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 OnFirstRemoteVideoFrameDecoded{@link #IRTCRoomEventHandler#OnFirstRemoteVideoFrameDecoded} 回调。<br>
      *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRtcRoom#StartForwardStreamToRooms}。  <br>
      *        + 调用 UnpublishScreen{@link #IRtcRoom#UnpublishScreen} 取消发布。
      */
@@ -455,7 +456,7 @@ public:
      *        该方法对自动订阅和手动订阅模式均适用。
      * @param [in] user_id 指定取消订阅的远端发布音视频流的用户 ID。
      * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
-     * @notes  <br> 
+     * @notes  <br>
      *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的退订结果。  <br>
      *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
@@ -482,7 +483,7 @@ public:
      *        该方法对自动订阅和手动订阅模式均适用。
      * @param [in] user_id 指定取消订阅的远端发布屏幕流的用户 ID。
      * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
-     * @notes  <br> 
+     * @notes  <br>
      *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的退订结果。  <br>
      *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
@@ -592,7 +593,8 @@ public:
      * @region 多房间
      * @brief 新增转推直播任务，并设置合流的视频视图布局和音频属性。  <br>
      *        同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。
-     * @param [in] task_id 转推直播任务 ID。你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。
+     * @param [in] task_id 转推直播任务 ID。<br>
+     *               你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。
      * @param [in] param 转推直播配置参数。参看 ITranscoderParam{@link #ITranscoderParam}。
      * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。  <br>
      *        通过注册 observer 接收转推直播相关的回调。
@@ -779,7 +781,7 @@ public:
      * @type api
      * @brief 发布一路公共流<br>
      *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 appID 的用户，可以调用 StartPlayPublicStream{@link #IRtcEngineLite#StartPlayPublicStream} 获取和播放指定的公共流。
-     * @param public_stream_id 公共流 ID 
+     * @param public_stream_id 公共流 ID
      * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
      *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
      *              如果指定的媒体流还未发布，则公共流将在指定流开始发布后实时更新。
@@ -797,7 +799,7 @@ public:
     /** 
      * @type api
      * @brief 停止发布当前用户发布的公共流<br>
-     *        关于发布公共流，查看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。 
+     *        关于发布公共流，查看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。
      * @param public_stream_id 公共流 ID<br>
      *                  指定的流必须为当前用户所发布。
      * @return
@@ -808,7 +810,7 @@ public:
     /** 
      * @type api
      * @brief 更新公共流参数<br>
-     *        关于发布公共流，查看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。 
+     *        关于发布公共流，查看 StartPushPublicStream{@link #IRtcRoom#StartPushPublicStream}。
      * @param public_stream_id 公共流 ID<br>
      * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
      *              指定的流必须为当前用户所发布的。

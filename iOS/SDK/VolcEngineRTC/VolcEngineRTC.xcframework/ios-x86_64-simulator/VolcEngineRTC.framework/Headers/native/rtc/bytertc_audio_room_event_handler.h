@@ -10,7 +10,7 @@
 namespace bytertc {
 /** 
  * @type callback
- * @brief 音视频房间事件回调接口
+ * @brief 音频房间事件回调接口
  */
 class IRTCAudioRoomEventHandler {
 public:
@@ -44,11 +44,11 @@ public:
      * @type callback
      * @region 房间管理
      * @brief 离开房间回调。  <br>
-     *        用户调用 LeaveRoom{@link #IRTCAudioRoom#LeaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
+     *        用户调用 LeaveRoom{@link #IRTCAudioRoom#LeaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音频资源后，通过此回调通知用户离开房间成功。  <br>
      * @param [in] stats 本次通话的统计数据，参看 RtcRoomStats{@link #RtcRoomStats} 。  <br>
      * @notes  <br>
      *       + 用户调用 LeaveRoom{@link #IRTCAudioRoom#LeaveRoom} 方法离开房间后，若立即调用 DestroyRTCAudioEngine{@link #DestroyRTCAudioEngine} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
-     *       + 离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
+     *       + 离开房间后，如果 App 需要使用系统音频设备，则建议收到此回调后再初始化音频设备，否则可能由于 SDK 占用音频设备而导致初始化失败。  <br>
      */
     virtual void OnLeaveRoom(const RtcRoomStats& stats) {
         (void)stats;
@@ -78,7 +78,7 @@ public:
     /** 
      * @type callback
      * @brief Token 过期前 30 秒将触发该回调。<br>
-     *        调用 UpdateToken{@link #IRTCAudioRoom#UpdateToken} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+     *        调用 UpdateToken{@link #IRTCAudioRoom#UpdateToken} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行语音通话。
      */
      virtual void OnTokenWillExpire() {
 
@@ -354,7 +354,7 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视音频流的发送时，触发此回调。
+     * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。
      * @param [in] uid 被禁用/解禁的音频流用户 ID
      * @param [in] banned 音频流发送状态 <br>
      *        + true: 音频流发送被禁用 <br>
@@ -375,9 +375,9 @@ public:
     /** 
      * @type callback
      * @region 多房间
-     * @brief 跨房间媒体流转发状态和错误回调
-     * @param infos 跨房间媒体流转发目标房间信息数组，详见 ForwardStreamStateInfo{@link #ForwardStreamStateInfo}
-     * @param info_count 数组长度，代表目标房间数
+     * @brief 跨房间音频流转发状态和错误回调
+     * @param [in] infos 跨房间音频流转发目标房间信息数组，详见 ForwardStreamStateInfo{@link #ForwardStreamStateInfo}
+     * @param [in] info_count 数组长度，代表目标房间数
      */
     virtual void OnForwardStreamStateChanged(ForwardStreamStateInfo* infos, int info_count) {
         (void)infos;
@@ -387,9 +387,9 @@ public:
     /** 
      * @type callback
      * @region 多房间
-     * @brief 跨房间媒体流转发事件回调
-     * @param infos 跨房间媒体流转发目标房间事件数组，详见 ForwardStreamEventInfo{@link #ForwardStreamEventInfo}
-     * @param info_count 数组长度，代表目标房间数
+     * @brief 跨房间音频流转发事件回调
+     * @param [in] infos 跨房间音频流转发目标房间事件数组，详见 ForwardStreamEventInfo{@link #ForwardStreamEventInfo}
+     * @param [in] info_count 数组长度，代表目标房间数
      */
     virtual void OnForwardStreamEvent(ForwardStreamEventInfo* infos, int info_count) {
         (void)infos;

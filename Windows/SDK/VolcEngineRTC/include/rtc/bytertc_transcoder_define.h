@@ -14,6 +14,12 @@
 #define TRANSCODE_ERR_INVALID_STATE 1092
 #define TRANSCODE_ERR_INVALID_OPERATOR 1093
 #define TRANSCODE_ERR_TIMEOUT 1094
+#define TRANSCODE_ERR_INVALID_PARAM_BY_SERVER 1095
+#define TRANSCODE_ERR_SUB_TIMEOUT_BY_SERVER 1096
+#define TRANSCODE_ERR_INVALID_STATE_BY_SERVER 1097
+#define TRANSCODE_ERR_AUTHENTICATION_BY_CDN 1098
+#define TRANSCODE_ERR_TIMEOUT_BY_SIGNALING 1099
+#define TRANSCODE_ERR_MAX 1199
 
 namespace bytertc {
 
@@ -78,6 +84,61 @@ enum StreamMixingEvent {
 
 /** 
  * @type keytype
+ * @brief 转推直播错误码
+ */
+enum StreamMixingErrorCode {
+    /** 
+     * @brief 推流成功。
+     */
+    kStreamMixingErrorOK = 0,
+    /**
+     * @hidden
+     */
+    kStreamMixingErrorBase= 1090,
+    /** 
+     * @brief 客户端 SDK 检测到无效推流参数，请检查合流参数合法性。
+     */
+    kStreamMixingErrorInvalidParam = 1091,
+    /** 
+     * @brief 状态错误，需要在状态机正常状态下发起操作
+     */
+    kStreamMixingErrorInvalidState = 1092,
+    /** 
+     * @brief 无效操作
+     */
+    kStreamMixingErrorInvalidOperator = 1093,
+    /** 
+     * @brief 转推直播任务处理超时，请检查网络状态并重试
+     */
+    kStreamMixingErrorTimeout = 1094,
+    /** 
+     *@brief 服务端检测到错误的推流参数
+     */
+    kStreamMixingErrorInvalidParamByServer = 1095,
+    /** 
+     * @brief 服务端检测到订阅流超时
+     */
+    kStreamMixingErrorSubTimeoutByServer = 1096,
+    /** 
+     * @brief 合流服务端内部错误。
+     */
+    kStreamMixingErrorInvalidStateByServer = 1097,
+    /** 
+     * @brief 合流服务端推 CDN 失败。
+     */
+    kStreamMixingErrorAuthenticationByCDN  = 1098,
+    /** 
+     * @brief 服务端接收信令超时，请检查网络状态并重试。
+     */
+    kStreamMixingErrorTimeoutBySignaling = 1099,
+    /**
+     * @hidden
+     */
+    kStreamMixingErrorMax = 1199,
+};
+
+/** 
+ * @type keytype
  * @brief 合流类型
  */
 enum StreamMixingType {
@@ -90,6 +151,7 @@ enum StreamMixingType {
      */
     kStreamMixingTypeByClient = 1,
 };
+
 
 /** 
  * @type keytype
@@ -316,15 +378,15 @@ typedef struct TranscoderVideoParam {
      */
     int32_t i32_height;
     /** 
-     * @brief 合流视频帧率，单位：fps
+     * @brief 合流的视频帧率。默认值为 `15`，取值范围是 `[1, 60]`。值不合法时，自动调整为默认值。
      */
     int32_t i32_fps;
     /** 
-     * @brief 视频 I 帧间隔
+     * @brief I 帧间隔。默认值为 `4`，取值范围为 `[1, 5]`，单位为秒。值不合法时，自动调整为默认值。
      */
     int32_t i32_gop;
     /** 
-     * @brief 输出的合流视频码率，单位：kbps，取值范围 [1,10000]
+     * @brief 合流视频码率。单位为 kbps，取值范围为 `[1,10000]`，默认值为自适应。值不合法时，自动调整为默认值。
      */
     int32_t i32_bitrate_kbps;
     /** 
@@ -344,7 +406,7 @@ typedef struct TranscoderVideoParam {
  */
 class ITranscoderParam : public ITranscoderParamBase {
 public:
-    
+
     /** 
      * @type api
      * @region 转推直播

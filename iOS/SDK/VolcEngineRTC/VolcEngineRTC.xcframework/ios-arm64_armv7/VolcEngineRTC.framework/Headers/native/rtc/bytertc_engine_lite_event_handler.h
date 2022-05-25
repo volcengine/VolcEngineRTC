@@ -378,7 +378,7 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @brief 设置业务服务器参数的返回结果
+     * @brief 设置应用服务器参数的返回结果
      * @param [in] error <br>
      *        设置结果  <br>
      *        + 返回 200，设置成功  <br>
@@ -452,18 +452,17 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @brief 给业务服务器发送消息的回调
-     * @param [in] msgid  <br>
-     *        本条消息的 ID  <br>
+     * @brief 给应用服务器发送消息的回调
+     * @param [in] msgid 本条消息的 ID  <br>
      *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
-     * @param [in] error  <br>
-     *        消息发送结果  <br>
-     *        详见 UserMessageSendResult{@link #UserMessageSendResult}。
-     * @notes 当调用 SendServerMessage{@link #IRtcEngineLite#SendServerMessage} 或 SendServerBinaryMessage{@link #IRtcEngineLite#SendServerBinaryMessage} 接口发送消息后，会收到此回调。
+     * @param [in] error 消息发送结果，详见 UserMessageSendResult{@link #UserMessageSendResult}。
+     * @param [in] message 应用服务器收到 HTTP 请求后，在 ACK 中返回的信息。
+     * @notes 当调用 SendServerMessage{@link #IRtcEngineLite#SendServerMessage} 或 SendServerBinaryMessage{@link #IRtcEngineLite#SendServerBinaryMessage} 发送消息后，会收到此回调。
      */
-    virtual void OnServerMessageSendResult(int64_t msgid, int error) {
+    virtual void OnServerMessageSendResult(int64_t msgid, int error, const bytertc::ServerACKMsg& msg) {
         (void)msgid;
         (void)error;
+        (void)msg;
     }
 
     /** 

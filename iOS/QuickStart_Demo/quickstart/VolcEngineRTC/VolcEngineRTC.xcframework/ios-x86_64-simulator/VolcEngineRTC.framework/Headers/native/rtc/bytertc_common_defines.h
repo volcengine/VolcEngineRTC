@@ -171,12 +171,27 @@ enum USER_ONLINE_STATUS {
 };
 
 /** 
- * @type errorcode
- * @brief 向房间内单个用户发送消息（P2P）的结果
+ * @type keytype
+ * @brief 服务端消息发送结果回调内容
+ */
+struct ServerACKMsg {
+    /** 
+     * @brief 回调消息长度
+     */
+    int length;
+    /** 
+     * @brief 回调消息内容
+     */
+    char* ACKMsg;
+};
+
+/** 
+ * @type keytype
+ * @brief 发送消息结果，成功或失败，及失败原因
  */
 enum UserMessageSendResult {
     /** 
-     * @brief 向房间内单个用户发送消息成功
+     * @brief 发送消息成功
      */
     kUserMessageSendResultSuccess = 0,
     /** 
@@ -216,7 +231,7 @@ enum UserMessageSendResult {
      */
     kUserMessageSendResultEmptyUser = 104,
     /** 
-     * @brief 房间外或业务服务器消息发送方没有登录
+     * @brief 房间外或应用服务器消息发送方没有登录
      */
     kUserMessageSendResultNotLogin = 105,
     /** 
@@ -231,27 +246,27 @@ enum UserMessageSendResult {
 
 /** 
  * @type keytype
- * @brief 发送消息给房间的结果
+ * @brief 房间内广播消息发送结果
  */
 enum RoomMessageSendResult {
     /** 
-     * @brief 房间Broadcast消息发送成功
+     * @brief 消息发送成功
      */
     kRoomMessageSendResultSuccess = 200,
     /** 
-     * @brief 没有加入房间
+     * @brief 失败，发送方未加入房间
      */
     kRoomMessageSendResultNotJoin = 100,
     /** 
-     * @brief 没有可用的数据传输通道连接
+     * @brief 失败，没有可用的数据传输通道连接
      */
     kRoomMessageSendResultNoConnection = 102,
     /** 
-     * @brief 消息超过最大长度，当前为64KB
+     * @brief 失败，消息超过最大长度，当前为 64KB
      */
     kRoomMessageSendResultExceedMaxLength = 103,
     /** 
-     * @brief 未知错误
+     * @brief 失败，未知错误
      */
     kRoomMessageSendResultUnknown = 1000,
 };
@@ -568,7 +583,7 @@ enum MediaDeviceType {
 
 /** 
  * @type keytype
- * @brief 媒体设备状态。通过 OnAudioDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnAudioDeviceStateChanged} 或 OnVideoDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnVideoDeviceStateChanged} 回调设备状态。
+ * @brief 媒体设备状态。通过 `OnAudioDeviceStateChanged` 或 OnVideoDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnVideoDeviceStateChanged} 回调设备状态。
  */
 enum MediaDeviceState {
     /** 
@@ -1531,6 +1546,14 @@ struct RtcRoomStats {
      * @brief 系统下行网络抖动（ms）
      */
     int rx_jitter;
+    /** 
+     * @brief 蜂窝路径发送的码率 (kbps)，获取该数据时的瞬时值
+     */
+    unsigned short tx_cellular_kbitrate;
+    /** 
+     * @brief 蜂窝路径接收码率 (kbps)，获取该数据时的瞬时值
+     */
+    unsigned short rx_cellular_kbitrate;
 };
 
 /** 
@@ -2432,7 +2455,8 @@ struct StreamSycnInfoConfig {
  */
 struct ForwardStreamInfo {
     /** 
-     * @brief 用于向该房间转发媒体流的 Token。<br>
+     * @brief 使用转发目标房间 RoomID 和 UserID 生成 Token。<br>
+     *        测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。<br>
      *        如果 Token 无效，转发失败。
      */
     const char* token;
@@ -2572,6 +2596,55 @@ struct ForwardStreamEventInfo {
      * @brief 跨房间转发媒体流过程中该目标房间发生的事件，参看 ForwardStreamEvent{@link #ForwardStreamEvent}
      */
     ForwardStreamEvent event;
+};
+
+/** 
+ * @type keytype
+ * @brief 水印图片相对视频流的位置和大小。
+ */
+struct ByteWatermark {
+    /** 
+     * @hidden
+     */
+    const char* url;
+    /** 
+     * @brief 水印图片相对视频流左上角的横向偏移与视频流宽度的比值，取值范围为 [0,1)。
+     */
+    float x;
+    /** 
+     * @brief 水印图片相对视频流左上角的纵向偏移与视频流高度的比值，取值范围为 [0,1)。
+     */
+    float y;
+    /** 
+     * @brief 水印图片宽度与视频流宽度的比值，取值范围 [0,1)。
+     */
+    float width;
+    /** 
+     * @brief 水印图片高度与视频流高度的比值，取值范围为 [0,1)。
+     */
+    float height;
+};
+
+/** 
+ * @type keytype
+ * @brief 水印参数
+ */
+struct RTCWatermarkConfig {
+    /** 
+     * @type keytype
+     * @brief 水印是否在视频预览中可见，默认可见。
+     */
+    bool visibleInPreview = true;
+    /** 
+     * @type keytype
+     * @brief 横屏时的水印位置和大小，参看 ByteWatermark{@link #ByteWatermark}。
+     */
+    ByteWatermark positionInLandscapeMode;
+    /** 
+     * @type keytype
+     * @brief 视频编码的方向模式为竖屏时的水印位置和大小，参看 ByteWatermark{@link #ByteWatermark}。
+     */
+    ByteWatermark positionInPortraitMode;
 };
 
 }  // namespace bytertc

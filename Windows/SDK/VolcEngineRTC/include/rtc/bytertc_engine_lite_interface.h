@@ -2239,19 +2239,22 @@ public:
     /** 
      * @type api
      * @region 实时消息通信
-     * @brief 必须先登录注册一个 uid，才能发送房间外消息和向业务服务器发送消息
+     * @brief 必须先登录，才能发送房间外点对点消息和向应用服务器发送消息<br>
+     *        在调用本接口登录后，如果想要登出，需要调用 Logout{@link #IRtcEngineLite#Logout}。  <br>
      * @param [in] token  <br>
      *        动态密钥  <br>
      *        用户登录必须携带的 Token，用于鉴权验证。  <br>
-     *        本 Token 与加入房间时必须携带的 Token 不同。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。
+     *        登录 Token 与加入房间时必须携带的 Token 不同。测试时可使用控制台生成临时 Token，`roomId` 填任意值或置空，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。
      * @param [in] uid  <br>
      *        用户 ID  <br>
      *        用户 ID 在 appid 的维度下是唯一的。
-     * @notes  <br>
-     *       + 在调用本接口登录后，如果想要登出，需要调用 Logout{@link #IRtcEngineLite#Logout}。  <br>
-     *       + 本地用户调用此方法登录后，会收到 OnLoginResult{@link #IRtcEngineLiteEventHandler#OnLoginResult} 回调通知登录结果，远端用户不会收到通知。
+     * @return <br>
+     *        + `0`：成功<br>
+     *        + `-1`：失败。无效参数<br>
+     *        + `-2`：无效调用。用户已经登录。成功登录后再次调用本接口将收到此返回值 <br>
+     * @notes 本地用户调用此方法登录后，会收到 OnLoginResult{@link #IRtcEngineLiteEventHandler#OnLoginResult} 回调通知登录结果，远端用户不会收到通知。
      */
-    virtual void Login(const char* token, const char* uid) = 0;
+    virtual int64_t Login(const char* token, const char* uid) = 0;
     /** 
      * @type api
      * @region 实时消息通信
@@ -2277,13 +2280,13 @@ public:
     /** 
      * @type api
      * @region 实时消息通信
-     * @brief 设置业务服务器参数  <br>
-     *        客户端调用 SendServerMessage{@link #IRtcEngineLite#SendServerMessage} 或 SendServerBinaryMessage{@link #IRtcEngineLite#SendServerBinaryMessage} 发送消息给业务服务器之前，必须设置有效签名和业务服务器地址。
+     * @brief 设置应用服务器参数  <br>
+     *        客户端调用 SendServerMessage{@link #IRtcEngineLite#SendServerMessage} 或 SendServerBinaryMessage{@link #IRtcEngineLite#SendServerBinaryMessage} 发送消息给应用服务器之前，必须设置有效签名和应用服务器地址。
      * @param [in] signature  <br>
      *        动态签名  <br>
-     *        业务服务器会使用该签名对请求进行鉴权验证。
+     *        应用服务器会使用该签名对请求进行鉴权验证。
      * @param [in] url  <br>
-     *        业务服务器的地址
+     *        应用服务器的地址
      * @notes  <br>
      *       + 用户必须调用 Login{@link #IRtcEngineLite#Login} 登录后，才能调用本接口。  <br>
      *       + 调用本接口后，SDK 会使用 OnServerParamsSetResult{@link #IRtcEngineLiteEventHandler#OnServerParamsSetResult} 返回相应结果。
@@ -2344,7 +2347,7 @@ public:
     /** 
      * @type api
      * @region 实时消息通信
-     * @brief 客户端给业务服务器发送文本消息（P2Server）
+     * @brief 客户端给应用服务器发送文本消息（P2Server）
      * @param [in] message  <br>
      *        发送的文本消息内容  <br>
      *        消息不超过 62KB。
@@ -2352,15 +2355,15 @@ public:
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
      *        + -1：发送失败，RtcEngine 实例未创建
      * @notes  <br>
-     *       + 在向业务服务器发送文本消息前，必须先调用 Login{@link #IRtcEngineLite#Login} 完成登录，随后调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置业务服务器。  <br>
+     *       + 在向应用服务器发送文本消息前，必须先调用 Login{@link #IRtcEngineLite#Login} 完成登录，随后调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置应用服务器。  <br>
      *       + 调用本接口后，会收到一次 OnServerMessageSendResult{@link #IRtcEngineLiteEventHandler#OnServerMessageSendResult} 回调，通知消息发送方是否发送成功。  <br>
-     *       + 若文本消息发送成功，则之前调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置的业务服务器会收到该条消息。
+     *       + 若文本消息发送成功，则之前调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置的应用服务器会收到该条消息。
      */
     virtual int64_t SendServerMessage(const char* message) = 0;
     /** 
      * @type api
      * @region 实时消息通信
-     * @brief 客户端给业务服务器发送二进制消息（P2Server）
+     * @brief 客户端给应用服务器发送二进制消息（P2Server）
      * @param [in] length <br>
      *        二进制字符串的长度
      * @param [in] message  <br>
@@ -2370,9 +2373,9 @@ public:
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
      *        + -1：发送失败，RtcEngine 实例未创建
      * @notes  <br>
-     *       + 在向业务服务器发送二进制消息前，必须先调用 Login{@link #IRtcEngineLite#Login} 完成登录，随后调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置业务服务器。  <br>
+     *       + 在向应用服务器发送二进制消息前，必须先调用 Login{@link #IRtcEngineLite#Login} 完成登录，随后调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置应用服务器。  <br>
      *       + 调用本接口后，会收到一次 OnServerMessageSendResult{@link #IRtcEngineLiteEventHandler#OnServerMessageSendResult} 回调，通知消息发送方发送成功或失败。  <br>
-     *       + 若二进制消息发送成功，则之前调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置的业务服务器会收到该条消息。
+     *       + 若二进制消息发送成功，则之前调用 SetServerParams{@link #IRtcEngineLite#SetServerParams} 设置的应用服务器会收到该条消息。
      */
     virtual int64_t SendServerBinaryMessage(int length, const uint8_t* message) = 0;
 
@@ -2727,6 +2730,33 @@ public:
      */
     virtual void SetPublicStreamVideoSink(const char* public_stream_id, IVideoSink* video_sink,
                                           IVideoSink::PixelFormat format) = 0;
+
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 音视频处理
+     * @brief 在指定视频流上添加水印。
+     * @param [in] streamIndex 需要添加水印的视频流属性，参看 StreamIndex{@link #StreamIndex}。
+     * @param [in] image_path 水印图片路径，支持本地文件绝对路径和Asset 资源路径（/assets/xx.png），长度限制为 512 字节。  <br>
+     *          水印图片为 PNG 或 JPG 格式。
+     * @param [in] config 水印参数，参看 RTCWatermarkConfig{@link #RTCWatermarkConfig}。
+     * @notes  <br>
+     *        + 调用 ClearVideoWatermark{@link #IRtcEngineLite#ClearVideoWatermark} 移除指定视频流的水印。  <br>
+     *        + 同一路流只能设置一个水印，新设置的水印会代替上一次的设置。你可以多次调用本方法来设置不同流的水印。  <br>
+     *        + 进入房间前后均可调用此方法。  <br>
+     *        + 若开启本地预览镜像，或开启本地预览和编码传输镜像，则远端水印均不镜像；在开启本地预览水印时，本端水印会镜像。  <br>
+     *        + 开启大小流后，水印对大小流均生效，且针对小流进行等比例缩小。
+     */
+    virtual void SetVideoWatermark(StreamIndex streamIndex, const char* image_path, RTCWatermarkConfig config) = 0;
+
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 音视频处理
+     * @brief 移除指定视频流的水印。
+     * @param [in] streamIndex 需要移除水印的视频流属性，参看 StreamIndex{@link #StreamIndex}。
+     */
+    virtual void ClearVideoWatermark(StreamIndex streamIndex) = 0;
 };
 
 }  // namespace bytertc

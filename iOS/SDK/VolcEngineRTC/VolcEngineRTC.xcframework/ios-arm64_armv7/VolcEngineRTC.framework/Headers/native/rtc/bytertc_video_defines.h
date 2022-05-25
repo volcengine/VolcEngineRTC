@@ -35,21 +35,6 @@ enum RenderMode {
 
 /** 
  * @type keytype
- * @brief 移动端摄像头。
- */
-enum CameraID {
-    /** 
-     *@brief 前置摄像头
-     */
-    kCameraIDFront = 0,
-    /** 
-     *@brief 后置摄像头
-     */
-    kCameraIDBack = 1
-};
-
-/** 
- * @type keytype
  * @brief 订阅媒体的类型
  */
 enum SubscribeMediaType {

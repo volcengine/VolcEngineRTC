@@ -605,11 +605,11 @@ typedef NS_ENUM(NSInteger, ByteRTCLoginErrorCode) {
 
 /** 
  * @type keytype
- * @brief 消息发送结果。
+ * @brief 发送消息结果，成功或失败，及失败原因
  */
 typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult) {
     /** 
-     * @brief 向房间内单个用户发送消息成功
+     * @brief 发送消息成功
      */
     ByteRTCUserMessageSendResultSuccess = 0,
     /** 
@@ -649,7 +649,8 @@ typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult) {
      */
     ByteRTCUserMessageSendResultEmptyUser = 104,
     /** 
-     * @brief 房间外或业务服务器消息发送方没有登录
+     * @hidden
+     * @brief 房间外或应用服务器消息发送方没有登录
      */
     ByteRTCUserMessageSendResultNotLogin = 105,
     /** 
@@ -686,15 +687,15 @@ typedef NS_ENUM(NSInteger, ByteRTCUserOnlineStatus) {
 
 /** 
  * @type keytype
- * @brief 广播消息发送结果。
+ * @brief 房间内广播消息发送结果
  */
 typedef NS_ENUM(NSInteger, ByteRTCRoomMessageSendResult) {
     /** 
-     * @brief 向房间内所有用户发送消息成功
+     * @brief 消息发送成功
      */
     ByteRTCRoomMessageSendResultSuccess = 200,
     /** 
-     * @brief 失败，没有加入房间。
+     * @brief 失败，发送方未加入房间
      */
     ByteRTCRoomMessageSendResultNotJoin = 100,
     /** 
@@ -706,7 +707,7 @@ typedef NS_ENUM(NSInteger, ByteRTCRoomMessageSendResult) {
      */
     ByteRTCRoomMessageSendResultNoConnection = 102,
     /** 
-     * @brief 消息超过最大长度，当前为64KB
+     * @brief 消息超过最大长度，当前为 64KB
      */
     ByteRTCRoomMessageSendResultExceedMaxLength = 103,
     /** 
@@ -1737,6 +1738,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
  * @brief 系统下行网络抖动（ms）
  */
 @property(assign, nonatomic) NSInteger rxJitter;
+
+@property(assign, nonatomic) NSInteger tx_cellular_kbitrate;
+
+@property(assign, nonatomic) NSInteger rx_cellular_kbitrate;
 @end
 
 /** 
@@ -2341,11 +2346,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCStreamSycnInfoConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ForwardStreamConfiguration: NSObject
     /** 
-     * @brief 跨间转发媒体流过程中目标房间 ID<br>
+     * @brief 跨房间转发媒体流过程中目标房间 ID<br>
      */
     @property(strong, nonatomic) NSString* _Nullable roomId;
     /** 
-     * @brief 用于向该房间转发媒体流的 Token。<br>
+     * @brief 使用转发目标房间 RoomID 和 UserID 生成 Token。<br>
+     *        测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。<br>
      *        如果 Token 无效，转发失败。
      */
     @property(strong, nonatomic) NSString* _Nullable token;
@@ -2421,3 +2427,4 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCNetworkQualityStats: NSObject
  */
 @property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 @end
+

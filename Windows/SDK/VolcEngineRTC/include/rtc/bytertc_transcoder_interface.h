@@ -34,7 +34,7 @@ public:
      * @param [in] mix_type 转推直播类型，参看 StreamMixingType{@link #StreamMixingType}
      */
     virtual void OnStreamMixingEvent(
-            StreamMixingEvent event, const char* task_id, int error, StreamMixingType mix_type) = 0;
+            StreamMixingEvent event, const char* task_id, StreamMixingErrorCode error, StreamMixingType mix_type) = 0;
 
     /**  
      * @type callback

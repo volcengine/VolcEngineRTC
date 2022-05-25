@@ -153,7 +153,7 @@
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 主动退出房间。  <br>
      *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
-     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 切换至不可见状态。 
+     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 切换至不可见状态。
      */
     - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
     /** 
@@ -719,11 +719,11 @@
  * @type callback
  * @region 公共流事件回调
  * @author qipengxiang
- * @brief 调用 StartPushPublicStream 方法开始推公共流时，触发此回调。
- * @param streamid 公共流id
- * @param code 推流错误码，该错误码代表了向信令服务器发送消息的错误码
- * @notes  <br>
- *        + 客户端启动推送公共流操作后，信令服务器收到请求后会返回一个结果
+ * @brief 公共流发布结果回调<br>
+ *        startPushPublicStream:withLayout:{@link #ByteRTCRoom#startPushPublicStream:withLayout:} 接口发布公共流后，启动结果通过此回调方法通知用户。
+ * @param streamid 公共流 ID
+ * @param code 公共流发布结果状态码<br>
+ *             `200`: 发布成功
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onPushPublicStreamResult:(NSString *_Nonnull)streamid errorCode:(int)code;
 @end
@@ -1304,7 +1304,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @author wanghaoxu
  * @brief 新增转推直播任务，并设置合流的视频视图布局和音频属性。  <br>
  *        同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。
- * @param task_id 转推直播任务 ID。你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。
+ * @param task_id 转推直播任务 ID。<br>
+ *               你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。
  * @param transcoding 转推直播配置参数，详见 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding}。
  * @param observer 端云一体转推直播观察者。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate}。  <br>
  *        通过注册 observer 接收转推直播相关的回调。
@@ -1525,7 +1526,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @type api
  * @author qipengxiang
  * @brief 停止发布当前用户发布的公共流<br>
- *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link ByteRTCRoom#startPushPublicStream:withLayout:}。 
+ *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link #ByteRTCRoom#startPushPublicStream:withLayout:}。 
  * @param publicStreamId 公共流 ID<br>
  *                  指定的流必须为当前用户所发布。
  * @return
