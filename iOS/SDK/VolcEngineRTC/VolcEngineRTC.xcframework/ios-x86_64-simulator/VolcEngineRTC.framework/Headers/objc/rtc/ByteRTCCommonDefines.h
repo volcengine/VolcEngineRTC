@@ -25,6 +25,11 @@ typedef NS_ENUM(NSUInteger, ByteRTCUserOfflineReason) {
      * @brief 远端用户切换至隐身状态。  <br>
      */
      ByteRTCUserOfflineReasonSwitchToInvisible = 2,
+    /** 
+     * @brief 远端用户被踢出出房间。
+     *        因调用踢出用户的 OpenAPI，远端用户被踢出房间。
+     */
+    ByteRTCUserOfflineReasonKickedByAdmin = 3,
 };
 
 /** 
@@ -320,13 +325,16 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      */
     ByteRTCErrorCodeNoSubscribePermission     = -1003,
     /** 
-     * @brief 用户被踢出房间：<br>
-     *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
-     *        + 因调用踢出用户的 OpenAPI，被踢出房间；<br>
-     *        + 因调用解散房间的 OpenAPI，离开房间。
+     * @brief 相同用户 ID 的用户加入本房间，当前用户被踢出房间
      */
     ByteRTCErrorCodeDuplicateLogin             = -1004,
-        /** 
+
+    /** 
+     * @brief 服务端调用 OpenAPI 将当前用户踢出房间 
+     */
+    ByteRTCErrorCodeKickedOut = -1006,
+
+    /** 
      * @brief Token 过期。调用 `joinRoomByKey:roomId:userInfo:rtcRoomConfig:` 使用新的 Token 重新加入房间。
      */
     ByteRTCErrorCodeTokenExpired            = -1009,
@@ -334,6 +342,12 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      * @brief 调用 `updateToken:` 传入的 Token 无效
      */
     ByteRTCErrorCodeUpdateTokenWithInvalidToken     = -1010,
+
+    /** 
+     * @brief 服务端调用 OpenAPI 解散房间，所有用户被移出房间。
+     */
+    ByteRTCErrorCodeRoomDismiss = -1011,
+
     /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
@@ -354,6 +368,12 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      *        RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。
      */
     ByteRTCErrorCodeOverVideoPublishLimit = -1082,
+    /** 
+     * @brief 音视频同步失败。  <br>
+     *        当前音频源已与其他视频源关联同步关系。  <br>
+     *        单个音频源不支持与多个视频源同时同步。
+     */
+    ByteRTCErrorCodInvalidAudioSyncUidRepeated = -1083,
 };
 
 /** 
@@ -494,6 +514,10 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      * @brief 设置语音音高不合法
      */
     ByteRTCWarningInvalidVoicePitch = -5011,
+    /** 
+     * @brief 外部音频源新旧接口混用
+     */
+    ByteRTCWarningInvalidCallForExtAudio = -5013,
     /** 
      * @brief 指定的内部渲染画布句柄无效。  <br>
      *        当你调用 setLocalVideoCanvas:withCanvas:{@link #ByteRTCEngineKit#setLocalVideoCanvas:withCanvas:} 或 setRemoteVideoCanvas:withIndex:withCanvas:{@link #ByteRTCEngineKit#setRemoteVideoCanvas:withIndex:withCanvas:} 时指定了无效的画布句柄，触发此回调。
@@ -1653,6 +1677,30 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingFileType) {
      * @brief mp4 格式文件
      */
     RecordingFileTypeMP4 = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 音视频同步状态
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAVSyncState) {
+    /** 
+     * @brief 音视频开始同步
+     */
+    AVSyncStateAVStreamSyncBegin = 0,
+    /** 
+     * @brief 音视频同步过程中音频移除，但不影响当前的同步关系
+     */
+    AVSyncStateAudioStreamRemove = 1,
+    /** 
+     * @brief 音视频同步过程中视频移除，但不影响当前的同步关系
+     */
+    AVSyncStateVdieoStreamRemove = 2,
+    /** 
+     * @hidden
+     * @brief 订阅端设置同步  <br>
+     */
+    AVSyncStateSetAVSyncStreamId = 3,
 };
 
 /** 

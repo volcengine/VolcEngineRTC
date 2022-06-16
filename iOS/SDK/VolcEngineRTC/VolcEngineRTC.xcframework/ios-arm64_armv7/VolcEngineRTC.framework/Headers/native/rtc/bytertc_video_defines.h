@@ -955,6 +955,21 @@ enum MirrorType {
 
 /** 
  * @type keytype
+ * @brief 弱光适应类型
+ */
+enum AdjustedMode {
+    /** 
+     * @brief 关闭弱光适应
+     */
+    kAdjustedModeDisabled = 0,
+    /** 
+     * @brief 开启弱光适应
+     */
+    kAdjustedModeEnabled = 1,
+};
+
+/** 
+ * @type keytype
  * @brief 视频输入源类型
  */
 enum VideoSourceType {

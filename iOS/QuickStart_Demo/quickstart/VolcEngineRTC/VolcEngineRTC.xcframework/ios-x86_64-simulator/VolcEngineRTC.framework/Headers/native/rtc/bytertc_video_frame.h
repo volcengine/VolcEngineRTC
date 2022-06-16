@@ -543,7 +543,7 @@ public:
     virtual ColorSpace color_space() const = 0;
     /** 
      * @brief 视频帧颜色 plane 数量
-     * @notes yuv 数据存储格式分为打包（planar）存储格式和平面（packed）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
+     * @notes yuv 数据存储格式分为打包（packed）存储格式和平面（planar）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
      */
     virtual int number_of_planes() const = 0;
     /** 

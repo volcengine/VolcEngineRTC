@@ -105,9 +105,9 @@ public:
      * @type callback
      * @region 音频事件回调
      * @brief 音频播放设备变化时回调该事件。
-     * @param [in] device 变化后的音频播放设备，参看 AudioRouteDevice{@link #AudioRouteDevice}。  <br>
+     * @param [in] device 变化后的音频播放设备，参看 AudioRoute{@link #AudioRoute}。  <br>
      */
-    virtual void OnAudioRouteChanged(AudioRouteDevice device) {
+    virtual void OnAudioRouteChanged(AudioRoute device) {
         (void)device;
     }
 

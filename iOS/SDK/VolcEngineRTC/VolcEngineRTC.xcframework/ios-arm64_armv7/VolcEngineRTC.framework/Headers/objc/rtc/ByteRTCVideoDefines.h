@@ -18,7 +18,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCRenderMode) {
     ByteRTCRenderModeHidden = 1,
     /** 
      * @brief 视频帧内容全部显示优先。  <br>
-     *        视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将填充 `background_color`。<br>
+     *        视频尺寸等比缩放，优先保证视频内容全部显示。当视频尺寸与显示窗口尺寸不一致时，会把窗口未被填满的区域填充成背景颜色。<br>
      *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
      */
     ByteRTCRenderModeFit = 2,
@@ -28,6 +28,44 @@ typedef NS_ENUM(NSUInteger, ByteRTCRenderMode) {
      */
    ByteRTCRenderModeFill = 3,
 };
+
+/** 
+ * @type keytype
+ * @brief 合流输出内容类型
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCTranscoderContentControlType) {
+    /** 
+     * @brief 输出的混流包含音频和视频
+     */
+    ByteRTCTranscoderContentControlTypeHasAudioAndVideo = 0,
+    /** 
+     * @brief 输出的混流只包含音频
+     */
+    ByteRTCTranscoderContentControlTypeHasAudioOnly = 1,
+    /** 
+     * @brief 输出的混流只包含视频
+     */
+    ByteRTCTranscoderContentControlTypeHasVideoOnly = 2,
+};
+
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 合流布局区域类型
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCTranscoderLayoutRegionType) {
+    
+    /** 
+     * @brief 合流布局区域类型为视频。
+     */
+    ByteRTCTranscoderLayoutRegionTypeVideoStream = 0,
+    
+    /** 
+     * @brief 合流布局区域类型为图片。
+     */
+    ByteRTCTranscoderLayoutRegionTypeImage = 1,
+};
+
 
 /** 
  * @type keytype
@@ -434,11 +472,11 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingType) {
     /** 
      * @brief 通过服务端转推
      */
-    StreamMixingTypeByServer = 0,
+    ByteRTCStreamMixingTypeByServer = 0,
     /** 
      * @brief 端云一体转推
      */
-    StreamMixingTypeByClient = 1,
+    ByteRTCStreamMixingTypeByClient = 1,
 };
 
 /** 
@@ -449,55 +487,60 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingEvent) {
     /**
      * @hidden
      */
-    StreamMixingBase = 0,
+    ByteRTCStreamMixingEventBase = 0,
     /** 
      * @brief 合流功能触发
      */
-    StreamMixingStart = 1,
+    ByteRTCStreamMixingEventStart = 1,
     /** 
      * @brief 合流成功
      */
-    StreamMixingStartSuccess = 2,
+    ByteRTCStreamMixingEventStartSuccess = 2,
     /** 
      * @brief 合流启动失败
      */
-    StreamMixingStartFailed = 3,
+    ByteRTCStreamMixingEventStartFailed = 3,
     /** 
      * @brief 更新合流
      */
-    StreamMixingUpdate = 4,
+    ByteRTCStreamMixingEventUpdate = 4,
     /** 
      * @brief 合流结束
      */
-    StreamMixingStop = 5,
+    ByteRTCStreamMixingEventStop = 5,
     /** 
      * @brief 服务端合流/端云一体合流
      */
-    StreamMixingChangeMixeType = 6,
+    ByteRTCStreamMixingEventChangeMixType = 6,
     /** 
      * @brief 收到合流音频首帧
      */
-    StreamMixingFirstAudioFrameByClientMixer = 7,
+    ByteRTCStreamMixingEventFirstAudioFrameByClientMixer = 7,
     /** 
      * @brief 收到合流视频首帧
      */
-    StreamMixingFirstVideoFrameByClientMixer = 8,
+    ByteRTCStreamMixingEventFirstVideoFrameByClientMixer = 8,
     /** 
      * @brief 更新合流超时
      */
-    StreamMixingUpdateTimeout = 9,
+    ByteRTCStreamMixingEventUpdateTimeout = 9,
     /** 
      * @brief 开始合流超时
      */
-    StreamMixingStartTimeout = 10,
+    ByteRTCStreamMixingEventStartTimeout = 10,
     /** 
      * @brief 合流布局参数错误
      */
-    StreamMixingRequestParamError = 11,
+    ByteRTCStreamMixingEventRequestParamError = 11,
+    /** 
+     * @hidden
+     * @brief 合流加图片
+     */
+    ByteRTCStreamMixingEventMixImage = 12,
     /**
      * @hidden
      */
-    StreamMixingMax,
+    ByteRTCStreamMixingEventMixingMax = 15,
 };
 
 /** 
@@ -651,51 +694,56 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
     /** 
      * @brief 推流成功。
      */
-    TranscoderErrorOK = 0,
+    ByteRtcTranscoderErrorCodeOK = 0,
     /**
      * @hidden
      */
-    TranscoderErrorBase = 1090,
+    ByteRtcTranscoderErrorCodeBase = 1090,
     /** 
      * @brief 客户端 SDK 检测到无效推流参数，请检查合流参数合法性。
      */
-    TranscoderErrorInvalidParam = 1091,
+    ByteRtcTranscoderErrorCodeInvalidParam = 1091,
     /** 
      * @brief 状态错误，需要在状态机正常状态下发起操作
      */
-    TranscoderErrorInvalidState = 1092,
+    ByteRtcTranscoderErrorCodeInvalidState = 1092,
     /** 
      * @brief 无效操作
      */
-    TranscoderErrorInvalidOperator = 1093,
+    ByteRtcTranscoderErrorCodeInvalidOperator = 1093,
     /** 
      * @brief 转推直播任务处理超时，请检查网络状态并重试
      */
-    TranscoderErrorTimeOut = 1094,
+    ByteRtcTranscoderErrorCodeTimeOut = 1094,
     /** 
      *@brief 服务端检测到错误的推流参数
      */
-    TranscoderErrorInvalidParamByServer = 1095,
+    ByteRtcTranscoderErrorCodeInvalidParamByServer = 1095,
     /** 
      * @brief 服务端检测到订阅流超时
      */
-    TranscoderErrorSubTimeoutByServer = 1096,
+    ByteRtcTranscoderErrorCodeSubTimeoutByServer = 1096,
     /** 
      * @brief 合流服务端内部错误。
      */
-    TranscoderErrorInvalidStateByServer = 1097,
+    ByteRtcTranscoderErrorCodeInvalidStateByServer = 1097,
     /** 
      * @brief 合流服务端推 CDN 失败。
      */
-    TranscoderErrorAuthenticationByCDN = 1098,
+    ByteRtcTranscoderErrorCodeAuthenticationByCDN = 1098,
     /** 
      * @brief 服务端接收信令超时，请检查网络状态并重试。
      */
-    TranscoderErrorTimeoutBySignaling = 1099,
+    ByteRtcTranscoderErrorCodeTimeoutBySignaling = 1099,
+    /** 
+     * @hidden
+     * @brief 图片合流失败。
+     */
+    ByteRtcTranscoderErrorCodeMixImageFail = 1100,
     /**
      * @hidden
      */
-    TranscoderErrorMax = 1199,
+    ByteRtcTranscoderErrorCodeMax = 1199,
 };
 
 /** 
@@ -951,7 +999,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
 /** 
  * @brief 人脸检测结果 <br>
  *        + 0：检测成功 <br>
- *        + !0：检测失败
+ *        + !0：检测失败。详见[CV 错误码](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
  */
 @property(assign, nonatomic) int detectResult;
 /** 
@@ -1291,6 +1339,22 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEncodedVideoFrame : NSObject
  * @brief 视频帧数据指针地址
  */
 @property(strong, nonatomic) NSData * _Nonnull data;
+
+@end
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 图片合流相关参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCTranscoderLayoutRegionDataParam : NSObject
+/** 
+ * @brief 原始图片的宽度，单位为 px。
+ */
+@property (assign, nonatomic) NSInteger imageWidth;
+/** 
+ * @brief 原始图片的高度，单位为 px。
+ */
+@property (assign, nonatomic) NSInteger imageHeight;
 @end
 
 /** 
@@ -1340,20 +1404,34 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  */
 @property(assign, nonatomic) BOOL screenStream;
 /** 
- * @brief 透明度。范围为 [0.0, 1.0]。
+ * @brief 透明度，可选范围为 [0.0, 1.0]，0.0 为全透明。
  */
 @property(assign, nonatomic) CGFloat alpha;
 /** 
- * @brief 合流内容控制。默认值为 0 ，取值范围及含义如下:  <br>
- *        + 0: 输出的混流包含音视频  <br>
- *        + 1: 只包含音频  <br>
- *        + 2: 只包含视频
+ * @brief 合流内容控制。默认值为 `ByteRTCTranscoderContentControlTypeHasAudioAndVideo`，参看 ByteRTCTranscoderContentControlType{@link #ByteRTCTranscoderContentControlType} 。
  */
-@property(assign, nonatomic) NSInteger contentControl;
+@property (assign, nonatomic) ByteRTCTranscoderContentControlType contentControl;
+
 /** 
  * @brief 视频显示模式。详见 ByteRTCRenderMode{@link #ByteRTCRenderMode} 数据类型。  <br>
  */
 @property(assign, nonatomic) ByteRTCRenderMode renderMode;
+/** 
+ * @hidden
+ * @brief 合流布局区域类型。参看 ByteRTCTranscoderLayoutRegionType{@link #ByteRTCTranscoderLayoutRegionType}。
+ */
+@property (assign, nonatomic) ByteRTCTranscoderLayoutRegionType type;
+/** 
+ * @hidden
+ * @brief 图片合流布局区域类型对应的数据。类型为图片时传入图片 RGBA 数据，当类型为视频流时传空。
+ */
+@property (strong, nonatomic) NSData * _Nullable data;
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 合流布局区域数据的对应参数。当类型为视频流时传空，类型为图片时传入对应图片的参数，参看 ByteRTCTranscoderLayoutRegionDataParam{@link #ByteRTCTranscoderLayoutRegionDataParam}。
+ */
+@property (strong, nonatomic) ByteRTCTranscoderLayoutRegionDataParam * _Nullable dataParam;
 @end
 
 /** 
@@ -1384,7 +1462,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingVideoConfig : NSObject
 /** 
  * @brief codec 编码器。默认值为 `0`。 <br>
  *        + 值为 `0` 时，使用 H.264； <br>
- *        + 值为 `1` 时，使用 byteVC1。此时，你必须调用 setKBitRate{@link #VideoConfig#setKBitRate} 设置视频码率。
+ *        + 值为 `1` 时，使用 byteVC1。此时，你必须指明 ByteRTCTranscodingVideoConfig{@link #ByteRTCTranscodingVideoConfig} 的视频码率。
  */
 @property(copy, nonatomic) NSString * _Nonnull codec;
 /** 
@@ -1415,27 +1493,27 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingVideoConfig : NSObject
 
 /** 
  * @type keytype
- * @brief 音频转码配置参数。
+ * @brief 音频转码配置参数
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
 /** 
- * @brief 音频编码格式。使用 AAC 编码格式。
+ * @brief 音频编码格式，仅支持`AAC`编码格式。
  */
 @property(copy, nonatomic) NSString * _Nonnull codec;
 /** 
- * @brief 音频采样率。单位为 kHz。可选取值：16, 32, 44.1, 48。
+ * @brief 音频采样率，单位 kHz。可取 32Khz、44.1Khz、48Khz，默认值为 48Khz。
  */
 @property(assign, nonatomic) NSInteger sampleRate;
 /** 
- * @brief 声道数，可取 1 或 2。
+ * @brief 音频声道数。可取 1、2，默认值为 2。
  */
 @property(assign, nonatomic) NSInteger channels;
 /** 
- * @brief 音频码率。单位为 kbps。可选取值：16, 32, 64。
+ * @brief 音频码率，单位 Kbps。可取范围 [32Kbps, 192Kbps]，默认值为 64Kbps。
  */
 @property(assign, nonatomic) NSInteger kBitRate;
 /** 
- * @brief AAC 等级，详见 ByteRTCAACProfile{@link #ByteRTCAACProfile}
+ * @brief AAC 等级，参看 ByteRTCAACProfile{@link #ByteRTCAACProfile}。默认值为 `0`。
  */
 @property(assign, nonatomic) ByteRTCAACProfile profile;
 /**
@@ -1488,7 +1566,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
  */
 @property(copy, nonatomic) NSString * _Nullable userId;
 /** 
- * @brief 获取默认合流参数。
+ * @brief 获取默认转推直播配置参数。
+ * @return 转推直播配置参数，参看 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding}。
  */
 + (instancetype _Nonnull)defaultTranscoding;
 @end
@@ -2387,9 +2466,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreaming : NSObject
  */
 @property(strong, nonatomic) ByteRTCPublicStreamAudioConfig * _Nonnull audio;
 /** 
- * @brief 公共流ID
+ * @brief 推公共流的房间ID
  */
-@property(copy, nonatomic) NSString * _Nullable publicStreamId;
+@property(copy, nonatomic) NSString * _Nullable roomId;
 /** 
  * @brief 获取默认合流参数
  */

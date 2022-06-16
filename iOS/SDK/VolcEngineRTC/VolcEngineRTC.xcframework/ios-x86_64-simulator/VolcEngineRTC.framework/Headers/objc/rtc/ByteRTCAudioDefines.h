@@ -9,7 +9,6 @@
  * @type keytype
  * @brief 音频场景类型  <br>
  *        选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量。  <br>
- *        你可以调用 `setAudioScenario:` 设置音频场景。  <br>
  *        如果以下音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
@@ -185,11 +184,11 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioDeviceType) {
      */
     ByteRTCAudioDeviceTypeUnknown = -1,
     /** 
-     * @brief 音频渲染设备类型
+     * @brief 音频渲染设备
      */
     ByteRTCAudioDeviceTypeRenderDevice = 0,
     /** 
-     * @brief 音频采集设备类型
+     * @brief 音频采集设备
      */
     ByteRTCAudioDeviceTypeCaptureDevice = 1,
     /** 
@@ -258,47 +257,43 @@ typedef NS_ENUM(NSInteger, ByteRTCAACProfile) {
      */
     ByteRTCAACProfileLC   = 0,
     /** 
-     * @brief MAIN
-     */
-    ByteRTCAACProfileMain = 1,
-    /** 
      * @brief HEv1
      */
-    ByteRTCAACProfileHEv1 = 2,
+    ByteRTCAACProfileHEv1 = 1,
     /** 
      * @brief HEv2
      */
-    ByteRTCAACProfileHEv2 = 3,
+    ByteRTCAACProfileHEv2 = 2,
 };
 /** 
  * @type keytype
  * @brief 音频播放路由
  */
-typedef NS_ENUM(NSInteger, ByteRTCAudioRouteDevice) {
+typedef NS_ENUM(NSInteger, ByteRTCAudioRoute) {
     /** 
      * @brief 未知设备
      */
-    ByteRTCAudioRouteDeviceUnknown = -1,
+    ByteRTCAudioRouteUnknown = -1,
     /** 
      * @brief 有线耳机
      */
-    ByteRTCAudioRouteDeviceHeadset = 1,
+    ByteRTCAudioRouteHeadset = 1,
     /** 
      * @brief 听筒。设备自带的，一般用于通话的播放硬件。
      */
-    ByteRTCAudioRouteDeviceEarpiece = 2,
+    ByteRTCAudioRouteEarpiece = 2,
     /** 
      * @brief 扬声器。设备自带的，一般用于免提播放的硬件。
      */
-    ByteRTCAudioRouteDeviceSpeakerphone = 3,
+    ByteRTCAudioRouteSpeakerphone = 3,
     /** 
      * @brief 蓝牙耳机
      */
-    ByteRTCAudioRouteDeviceHeadsetBluetooth = 4,
+    ByteRTCAudioRouteHeadsetBluetooth = 4,
     /** 
      * @brief USB设备
      */
-    ByteRTCAudioRouteDeviceHeadsetUSB = 5,
+    ByteRTCAudioRouteHeadsetUSB = 5,
 };
 
 /** 
@@ -465,7 +460,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingState) {
      */
     ByteRTCAudioMixingStatePCMDisabled,
 };
-/**  
+/** 
  * @type keytype
  * @brief 混音错误码。
  */
@@ -498,7 +493,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
      * @brief 不支持此混音类型。
      */
     ByteRTCAudioMixingErrorIdTypeNotMatch,
-    /**  
+    /** 
      * @brief 已有另一个文件完成了预加载。请先使用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载此前的文件。
      */
     ByteRTCAudioMixingErrorLoadConflict,
@@ -537,6 +532,21 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioSourceType) {
 
 /** 
  * @type keytype
+ * @brief 音频输出源类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioRenderType) {
+    /** 
+     * @brief 自定义渲染音频
+     */
+    ByteRTCAudioRenderTypeExternal = 0,
+    /** 
+     * @brief RTC SDK 内部渲染音频
+     */
+    ByteRTCAudioRenderTypeInternal,
+};
+
+/** 
+ * @type keytype
  * @brief 开启/关闭耳返功能
  */
 typedef NS_ENUM(NSInteger, ByteRTCEarMonitorMode) {
@@ -550,24 +560,24 @@ typedef NS_ENUM(NSInteger, ByteRTCEarMonitorMode) {
     ByteRTCEarMonitorModeOn = 1,
 };
 
-/**  
+/** 
  * @type keytype
  * @brief 音频回调方法
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioFrameCallbackMethod) {
-    /**  
+    /** 
      * @brief 本地麦克风录制的音频数据回调
      */
     ByteRTCAudioFrameCallbackRecord = 0,
-    /**  
+    /** 
      * @brief 订阅的远端所有用户混音后的音频数据回调
      */
     ByteRTCAudioFrameCallbackPlayback = 1,
-    /**  
+    /** 
      * @brief 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调
      */
     ByteRTCAudioFrameCallbackMixed = 2,
-    /**  
+    /** 
      * @brief 订阅的远端每个用户混音前的音频数据回调
      */
     ByteRTCAudioFrameCallbackRemoteUser = 3,
@@ -592,7 +602,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioVolumeInfo : NSObject
 @property(assign, nonatomic) NSUInteger nonlinearVolume;
 @end
 
-/**  
+/** 
  * @type keytype
  * @brief 音频参数格式
  */
@@ -651,7 +661,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onPlaybackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-/**  
+/** 
  * @type callback
  * @region 音频数据回调
  * @author wangjunzheng
@@ -771,11 +781,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
  */
 @property(copy, nonatomic) NSString *_Nonnull accessToken;
 /** 
- *  @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://www.volcengine.com/docs/6561/107789)
+ *  @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#uh8x72)
  */
 @property(copy, nonatomic) NSString *_Nonnull secretKey;
 /** 
- *  @brief 场景信息，参看[业务集群](https://www.volcengine.com/docs/6561/80818#_3-2-2-%E5%8F%91%E9%80%81-full-client-request)
+ *  @brief 场景信息，参看[业务集群](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#aI4WCt)
  */
 @property(copy, nonatomic) NSString *_Nonnull cluster;
 /** 
@@ -812,7 +822,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCASREngineEventHandler<NSObject>
  * @brief 当语音识别服务内部发生错误事件时触发该回调。
  * @param errorCode 错误码  <br>
  *        + < 0: 参数错误或 API 调用顺序错误，参看 ByteRTCASRErrorCode{@link #ByteRTCASRErrorCode}；  <br>
- *        + >0: 参看 [语音识别服务错误码](https://www.volcengine.com/docs/6561/80818#_3-3-%E9%94%99%E8%AF%AF%E7%A0%81)
+ *        + >0: 参看 [语音识别服务错误码](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#VPknqs)
  * @param errorMessage 错误原因说明
  */
 - (void)onError:(NSInteger)errorCode withErrorMessage:(NSString *_Nonnull)errorMessage;
@@ -853,8 +863,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 /** 
- * @brief 信息提示间隔，单位：ms
- * @notes  <br>
+ * @brief 信息提示间隔，单位：ms <br>
  *       + <= 0: 关闭信息提示  <br>
  *       + >0 && <=100: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
  *       + > 100: 开启信息提示，并将信息提示间隔设置为此值  <br>
@@ -941,26 +950,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioPropertiesInfo : NSObject
 
 /** 
  * @type keytype
- * @brief 使用范围语音功能时，语音的接收范围
- */
-BYTERTC_APPLE_EXPORT @interface ReceiveRange : NSObject
-/** 
- * @brief 收听声音无衰减的最小范围值。<br>
- *        当收听者和声源距离小于 min 的时候，收听到的声音完全无衰减。
- */
-@property(nonatomic, assign) int min;
-/** 
- *  @brief 能够收听到声音的最大范围。<br>
- *        当收听者和声源距离大于 max 的时候，无法收听到声音。<br>
- *        当收听者和声源距离处于 [min, max) 之间时，收听到的音量根据距离有衰减。
- */
-@property(nonatomic, assign) int max;
-
-@end
-
-/** 
- * @type keytype
- * @brief 用户的位置信息
+ * @brief 本地用户在房间内的位置坐标，需自行建立空间直角坐标系
  */
 BYTERTC_APPLE_EXPORT @interface Position : NSObject
 /** 
@@ -975,45 +965,5 @@ BYTERTC_APPLE_EXPORT @interface Position : NSObject
  * @brief z 坐标
  */
 @property(nonatomic, assign) int z;
-
-@end
-
-/** 
- * @type keytype
- * @brief 方向朝向信息
- */
-BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
-/** 
- * @brief x 方向向量
- */
-@property(nonatomic, assign) float x;
-/** 
- * @brief y 方向向量
- */
-@property(nonatomic, assign) float y;
-/** 
- * @brief z 方向向量
- */
-@property(nonatomic, assign) float z;
-
-@end
-
-/** 
- * @type keytype
- * @brief 用户的三维方向朝向信息，三个向量需要两两垂直
- */
-BYTERTC_APPLE_EXPORT @interface HumanOrientation : NSObject
-/** 
- * @brief 正前方朝向向量
- */
-@property(nonatomic, strong) Orientation* _Nonnull forward;
-/** 
- * @brief 正右方朝向向量
- */
-@property(nonatomic, strong) Orientation* _Nonnull right;
-/** 
- * @brief 正上方朝向向量
- */
-@property(nonatomic, strong) Orientation* _Nonnull up;
 
 @end

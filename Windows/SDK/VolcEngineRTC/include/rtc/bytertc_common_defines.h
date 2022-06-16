@@ -29,7 +29,7 @@ namespace bytertc {
  */
 enum UserOfflineReason {
     /** 
-     * @brief 远端用户调用 `LeaveRoom` 方法主动退出房间。  <br>
+     * @brief 远端用户调用 `LeaveRoom` 方法退出房间。  <br>
      */
     kUserOfflineReasonQuit = 0,
     /** 
@@ -40,6 +40,11 @@ enum UserOfflineReason {
      * @brief 远端用户切换至隐身状态。  <br>
      */
     kUserOfflineReasonSwitchToInvisible = 2,
+    /** 
+     * @brief 远端用户被踢出出房间。
+     *        因调用踢出用户的 OpenAPI，远端用户被踢出房间。
+     */
+    kUserOfflineReasonKickedByAdmin = 3,
 };
 
 /** 
@@ -547,19 +552,19 @@ struct AudioRoomConfig {
 
 /** 
  * @type keytype
- * @brief 当前媒体设备类型
+ * @brief 媒体设备类型
  */
 enum MediaDeviceType {
     /** 
-     * @brief 未知设备类型
+     * @brief 未知设备
      */
     kMediaDeviceTypeAudioUnknown = -1,
     /** 
-     * @brief 音频渲染设备类型
+     * @brief 音频渲染设备
      */
     kMediaDeviceTypeAudioRenderDevice = 0,
     /** 
-     * @brief 音频采集设备类型
+     * @brief 音频采集设备
      */
     kMediaDeviceTypeAudioCaptureDevice = 1,
     /** 
@@ -568,7 +573,7 @@ enum MediaDeviceType {
      */
     kMediaDeviceTypeVideoRenderDevice = 2,
     /** 
-     *@brief 视频采集设备类型
+     *@brief 视频采集设备
      */
     kMediaDeviceTypeVideoCaptureDevice = 3,
     /** 
@@ -583,7 +588,7 @@ enum MediaDeviceType {
 
 /** 
  * @type keytype
- * @brief 媒体设备状态。通过 `OnAudioDeviceStateChanged` 或 OnVideoDeviceStateChanged{@link #IRtcEngineLiteEventHandler#OnVideoDeviceStateChanged} 回调设备状态。
+ * @brief 媒体设备状态。
  */
 enum MediaDeviceState {
     /** 
@@ -938,25 +943,17 @@ enum ErrorCode {
      */
     kErrorCodeNoSubscribePermission = -1003,
     /** 
-     * @brief 用户被踢出房间：<br>
-     *        + 本地用户所在房间中有相同用户 ID 的用户加入房间，导致前者被踢出房间；<br>
-     *        + 因调用踢出用户的 OpenAPI，被踢出房间；<br>
-     *        + 因调用解散房间的 OpenAPI，离开房间。
+     * @brief 相同用户 ID 的用户加入本房间，当前用户被踢出房间
      */
     kErrorCodeDuplicateLogin = -1004,
-
     /** 
-     * @brief 用户被踢出房间。
-     *        本端用户被主动踢出所在房间时，回调此错误。
+     * @brief 服务端调用 OpenAPI 将当前用户踢出房间 
      */
     kErrorCodeKickedOut = -1006,
-
-
     /** 
      * @brief 当调用 `CreateRTCRoom` ，如果roomid 非法，会返回null，并抛出该error
      */
     kRoomErrorCodeRoomIdIllegal = -1007,
-
     /** 
      * @brief 当调用 `CreateRTCRoom` ，如果已经存在了相同的房间，会返回null，并抛出该error
      */
@@ -969,6 +966,12 @@ enum ErrorCode {
      * @brief 调用 `updateToken` 传入的 Token 无效
      */
     kRoomErrorUpdateTokenWithInvalidToken = -1010,
+
+
+    /** 
+     * @brief 服务端调用 OpenAPI 解散房间，所有用户被移出房间。
+     */
+    kErrorCodeRoomDismiss = -1011,
 
 
     /** 
@@ -991,6 +994,12 @@ enum ErrorCode {
      *        RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。
      */
     kErrorCodeOverVideoPublishLimit = -1082,
+    /** 
+     * @brief 音视频同步失败。  <br>
+     *        当前音频源已与其他视频源关联同步关系。  <br>
+     *        单个音频源不支持与多个视频源同时同步。
+     */
+    kErrorCodeInvalidAudioSyncUidRepeated = -1083,
 };
 
 /** 
@@ -1110,6 +1119,10 @@ enum WarningCode {
      * @brief 设置音频格式不合法
      */
     kWarningCodeInvalidAudioFormat = -5012,
+    /** 
+     * @brief 外部音频源新旧接口混用
+     */
+    kWarningCodeInvalidCallForExtAudio = -5013,
     /** 
      * @brief 指定的内部渲染画布句柄无效。  <br>
      *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
@@ -2407,6 +2420,30 @@ enum UserWorkerType {
      * @brief 用户需要在房间进入多人模式时获取房间内所有流的相关回调  <br>
      */
     UserWorkerNeedStreamCallBack = (1 << 3),
+};
+
+/** 
+ * @type keytype
+ * @brief 音视频同步状态
+ */
+enum AVSyncState {
+    /** 
+     * @brief 音视频开始同步
+     */
+    kAVSyncStateAVStreamSyncBegin = 0,
+    /** 
+     * @brief 音视频同步过程中音频移除，但不影响当前的同步关系
+     */
+    kAVSyncStateAudioStreamRemove,
+    /** 
+     * @brief 音视频同步过程中视频移除，但不影响当前的同步关系
+     */
+    kAVSyncStateVdieoStreamRemove,
+    /** 
+     * @hidden
+     * @brief 订阅端设置同步  <br>
+     */
+    kAVSyncStateSetAVSyncStreamId,
 };
 
 /**

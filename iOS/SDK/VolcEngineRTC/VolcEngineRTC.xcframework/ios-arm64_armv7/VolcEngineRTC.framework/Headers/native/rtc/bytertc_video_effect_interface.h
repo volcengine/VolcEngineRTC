@@ -89,7 +89,7 @@ struct FaceDetectResult {
     /** 
      * @brief 人脸检测结果 <br>
      *        + 0：检测成功 <br>
-     *        + !0：检测失败
+     *        + !0：检测失败。详见[CV 错误码](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
      */
     int detect_result = 0;
     /** 

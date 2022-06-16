@@ -13,6 +13,8 @@
 #include "bytertc_room_event_handler_interface.h"
 #include "bytertc_transcoder_interface.h"
 #include "bytertc_publicstream_interface.h"
+#include "bytertc_range_audio_interface.h"
+#include "bytertc_spatial_audio_interface.h"
 
 namespace bytertc {
 
@@ -583,6 +585,21 @@ public:
 
 #ifndef ByteRTC_AUDIO_ONLY
 
+    /** 
+     * @type api
+     * @region 多房间
+     * @brief 设置发流端音画同步。  <br>
+     *        当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
+     * @param [in] audio_user_id 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。
+     * @notes <br>
+     *        + 该方法在进房前后均可调用。  <br>
+     *        + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  <br>
+     *        + 调用该接口后音画同步状态发生改变时，你会收到 OnAVSyncStateChange{@link #IRTCRoomEventHandler#OnAVSyncStateChange} 回调。  <br>
+     *        + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  <br>
+     *        + 如需更换同步音频源，再次调用该接口传入新的 `audio_user_id` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
+     */
+    virtual void SetMultiDeviceAVSync(const char* audio_user_id) = 0;
+
     /**
      * @hidden
     */
@@ -599,7 +616,6 @@ public:
      * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。  <br>
      *        通过注册 observer 接收转推直播相关的回调。
      * @notes  <br>
-     *       + 只有房间模式为直播模式的用户才能调用此方法。  <br>
      *       + 调用该方法后，关于启动结果和推流过程中的错误，会收到 OnStreamMixingEvent{@link #ITranscoderObserver#OnStreamMixingEvent} 回调。
      *       + 调用 StopLiveTranscoding{@link #IRtcRoom#StopLiveTranscoding} 停止转推直播。
      */
@@ -780,7 +796,7 @@ public:
     /** 
      * @type api
      * @brief 发布一路公共流<br>
-     *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 appID 的用户，可以调用 StartPlayPublicStream{@link #IRtcEngineLite#StartPlayPublicStream} 获取和播放指定的公共流。
+     *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 `appID` 的用户，可以调用 StartPlayPublicStream{@link #IRtcEngineLite#StartPlayPublicStream} 获取和播放指定的公共流。
      * @param public_stream_id 公共流 ID
      * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
      *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
@@ -789,7 +805,6 @@ public:
      *        + 0: 成功。同时将收到 OnPushPublicStreamResult{@link #IRTCRoomEventHandler#OnPushPublicStreamResult} 回调。<br>
      *        + !0: 失败。当参数不合法或参数为空，调用失败。<br>
      * @notes <br>
-     *        + 只有房间模式为直播模式的用户才能调用此方法。
      *        + 同一用户使用同一公共流 ID 多次调用本接口无效。如果你希望更新公共流参数，调用 UpdatePublicStreamParam{@link #IRtcRoom#UpdatePublicStreamParam} 接口。<br>
      *        + 不同用户使用同一公共流 ID 多次调用本接口时，RTC 将使用最后一次调用时传入的参数更新公共流。<br>
      *        + 使用不同的 ID 多次调用本接口可以发布多路公共流。<br>
@@ -819,6 +834,32 @@ public:
      *        + !0: 失败<br>
      */
     virtual int UpdatePublicStreamParam(const char* public_stream_id, IPublicStreamParam* param) = 0;
+
+    /** 
+     * @type api
+     * @region 范围语音
+     * @brief 获取范围语音接口实例。
+     * @return 方法调用结果： <br>
+     *        + IRangeAudio：成功，返回一个 IRangeAudio{@link #IRangeAudio} 实例。  <br>
+     *        + nullptr：失败，当前 SDK 不支持范围语音功能。
+     * @notes 首次调用该方法须在创建房间后、加入房间前。
+     */
+    virtual IRangeAudio* GetRangeAudio() = 0;
+
+    /** 
+     * @type api
+     * @region 空间音频
+     * @brief 获取空间音频接口实例。  <br>
+     * @return 方法调用结果：  <br>
+     *        + ISpatialAudio：成功，返回一个 ISpatialAudio{@link #ISpatialAudio} 实例。  <br>
+     *        + nullptr：失败，当前 SDK 不支持空间音频功能。
+     * @notes  <br>
+     *        + 首次调用该方法须在创建房间后、加入房间前。  <br>
+     *        + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
+     *        + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
+     *        + SDK 最多支持 30 个用户同时开启空间音频功能。
+     */
+    virtual ISpatialAudio* GetSpatialAudio() = 0;
 };
 
 } // namespace bytertc

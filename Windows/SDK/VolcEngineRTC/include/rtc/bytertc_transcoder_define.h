@@ -76,6 +76,11 @@ enum StreamMixingEvent {
      * @brief 合流布局参数错误
      */
     kStreamMixingRequestParamError = 11,
+    /** 
+     * @hidden
+     * @brief 合流加图片
+     */
+    kStreamMixingMixImageEvent = 12,
     /**
      * @hidden
      */
@@ -131,6 +136,11 @@ enum StreamMixingErrorCode {
      * @brief 服务端接收信令超时，请检查网络状态并重试。
      */
     kStreamMixingErrorTimeoutBySignaling = 1099,
+    /** 
+     * @hidden
+     * @brief 图片合流失败。
+     */
+    kStreamMixingErrorMixImageFail = 1100,
     /**
      * @hidden
      */
@@ -163,17 +173,13 @@ enum TranscoderAudioCodecProfile {
      */
     kByteAACProfileLC = 0,
     /** 
-    * @brief 编码等级 AAC-MAIN
-    */
-   kByteAACProfileMain = 1,
-    /** 
      * @brief 编码等级 HE-AAC v1
      */
-    kByteAACProfileHEv1 = 2,
+    kByteAACProfileHEv1 = 1,
     /** 
      * @brief 编码等级 HE-AAC v2
      */
-    kByteAACProfileHEv2 = 3,
+    kByteAACProfileHEv2 = 2,
 };
 
 /** 
@@ -209,7 +215,7 @@ enum TranscoderVideoCodecProfile {
 
 /** 
  * @type keytype
- * @brief 渲染时，视频内容的缩放模式
+ * @brief 视频渲染的缩放模式
  */
 enum TranscoderRenderMode {
     /**
@@ -218,18 +224,55 @@ enum TranscoderRenderMode {
      */
     kRenderUnknown = 0,
     /** 
-     * @brief 视频尺寸等比缩放，优先保证窗口被填满。当视频尺寸与显示窗口尺寸不一致时，多出的视频将被截掉。
+     * @brief 视窗填满优先。  <br>
+     *        视频尺寸等比缩放，直至视窗被填满。当视频尺寸与显示窗口尺寸不一致时，多出的视频将被截掉。
      */
     kRenderHidden = 1,
     /** 
-     * @brief 视频尺寸等比缩放，优先保证视频内容全部显示。当视频尺寸与显示窗口尺寸不一致时，会把窗口未被填满的区域填充成黑色。
+     * @brief 视频帧内容全部显示优先。  <br>
+     *        视频尺寸等比缩放，优先保证视频内容全部显示。当视频尺寸与显示窗口尺寸不一致时，会把窗口未被填满的区域填充成背景颜色。
      */
     kRenderFit = 2,
     /** 
-     * @brief 视频尺寸非等比例缩放，把窗口充满。当视频尺寸与显示窗口尺寸不一致时，视频高或宽方向会被拉伸。
+     * @brief 视频帧自适应画布。 <br>
+     *        视频尺寸非等比例缩放，把窗口充满。在此过程中，视频帧的长宽比例可能会发生变化。
      */
     kRenderAdaptive = 3,
 };
+
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 合流布局区域类型
+ */
+enum TranscoderLayoutRegionType {
+    
+    /** 
+     * @brief 合流布局区域类型为视频。
+     */
+    kLayoutRegionTypeVideoStream = 0,
+    
+    /** 
+     * @brief 合流布局区域类型为图片。
+     */
+    kLayoutRegionTypeImage = 1,
+};
+
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 图片合流相关参数
+ */
+typedef struct TranscoderLayoutRegionDataParam{
+    /** 
+     * @brief 原始图片的宽度，单位为 px。
+     */
+    int image_width;
+    /** 
+     * @brief 原始图片的高度，单位为 px。
+     */
+    int image_height;
+}TranscoderLayoutRegionDataParam;
 
 /** 
  * @type keytype
@@ -330,34 +373,53 @@ typedef struct TranscoderLayoutRegion {
      */
     bool screen_stream = false;
     /** 
-     * @brief 合流输出内容，参看 TranscoderContentControlType{@link #TranscoderContentControlType}
+     * @brief 合流内容控制。默认值为 `kHasAudioAndVideo`，参看 TranscoderContentControlType{@link #TranscoderContentControlType}。
      */
     TranscoderContentControlType content_control;
     /** 
      * @brief 渲染时，视频内容缩放模式，参看 TranscoderRenderMode{@link #TranscoderRenderMode}
      */
     TranscoderRenderMode render_mode;
+    /** 
+     * @hidden
+     * @type keytype
+     * @brief 合流布局区域类型，参看 TranscoderLayoutRegionType{@link #TranscoderLayoutRegionType}。
+     */
+    TranscoderLayoutRegionType type;
+    /** 
+     * @hidden
+     * @type keytype
+     * @brief 图片合流布局区域类型对应的数据。类型为图片时传入图片 RGBA 数据，当类型为视频流时传空。
+     */
+    uint8_t* data;
+    /** 
+     * @hidden
+     * @type keytype
+     * @brief 合流布局区域数据的对应参数。当类型为视频流时传空，类型为图片时传入对应图片的参数，参看 TranscoderLayoutRegionDataParam{@link #TranscoderLayoutRegionDataParam}。
+     */
+    TranscoderLayoutRegionDataParam data_param;
+    
 } TranscoderLayoutRegion;
 
 /** 
- * @type keytype
- * @brief 合流音频参数
+ *  @type keytype
+ *  @brief 音频转码配置参数。
  */
 typedef struct TranscoderAudioParam {
     /** 
-     * @brief 音频采样率，包括 16k, 32k, 44.1k, 48k
+     * @brief 音频采样率，单位 kHz。可取 32Khz、44.1Khz、48Khz，默认值为 48Khz。
      */
     int32_t i32_sample_rate;
     /** 
-     * @brief 声道数
+     * @brief 音频声道数。可取 1、2，默认值为 2。
      */
     int32_t i32_channel_num;
     /** 
-     * @brief 音频码率，单位：kbps，包括 16kbsp, 32kbps, 64kbps
+     * @brief 音频码率，单位 Kbps。可取范围 [32Kbps, 192Kbps]，默认值为 64Kbps。
      */
     int32_t i32_bitrate_kbps;
     /** 
-     *  @brief AAC 等级，参看 TranscoderAudioCodecProfile{@link #TranscoderAudioCodecProfile}
+     *  @brief AAC 等级，参看 TranscoderAudioCodecProfile{@link #TranscoderAudioCodecProfile}。默认值为 `0`。
      */
     TranscoderAudioCodecProfile audio_codec_profile;
 } TranscoderAudioParam;
@@ -401,8 +463,9 @@ typedef struct TranscoderVideoParam {
     bool lowLatency;
 } TranscoderVideoParam;
 
-/**
- * @type api
+/** 
+ * @type keytype
+ * @brief 转推直播配置参数
  */
 class ITranscoderParam : public ITranscoderParamBase {
 public:
@@ -414,6 +477,13 @@ public:
      * @return 合流类型，参看 StreamMixingType{@link #StreamMixingType}
      */
     virtual StreamMixingType ExpectedMixingType() = 0;
+    /** 
+     * @type api
+     * @region 转码
+     * @brief 获取合流用户 ID
+     * @return 合流用户 ID
+     */
+    virtual const char* UserID() = 0;
     /** 
      * @type api
      * @region 转推直播
@@ -450,6 +520,23 @@ public:
      * @return 合流视窗布局信息，参看 TranscoderLayoutRegion{@link #TranscoderLayoutRegion}
      */
     virtual TranscoderLayoutRegion LayoutRegionByIndex(int32_t index) = 0;
+    
+    /** 
+     * @hidden
+     * @type api
+     * @region 转推直播
+     * @brief 获取动态扩展自定义参数
+     * @return 动态扩展自定义参数
+     */
+    virtual const char* AdvancedConfig() = 0;
+    /** 
+     * @hidden
+     * @type api
+     * @region 转推直播
+     * @brief  获取业务透传鉴权信息
+     * @return 业务透传鉴权信息
+     */
+    virtual const char* AuthInfo() = 0;
     /** 
      * @type api
      * @region 转推直播
@@ -457,6 +544,13 @@ public:
      * @param [in] expected_mix_type 合流类型，参看 StreamMixingType{@link #StreamMixingType}
      */
     virtual void SetExpectedMixingType(StreamMixingType expected_mix_type) = 0;
+    /** 
+     * @type api
+     * @region 转推直播
+     * @brief 设置合流用户 ID
+     * @param [in] user_id 发起合流的用户的 ID
+     */
+    virtual void SetUserID(const char* user_id) = 0;
     /** 
      * @type api
      * @region 转推直播
@@ -490,6 +584,23 @@ public:
     virtual void SetLayoutParam(
             TranscoderLayoutRegion regions[], int32_t regions_size, const char* bg_color, const char* app_data) = 0;
     /** 
+     * @hidden
+     * @type api
+     * @region 转推直播
+     * @brief 设置动态扩展自定义参数
+     * @param [in] advancedConfig 动态扩展自定义参数
+     */
+    virtual void SetAdvancedConfig(const char* advancedConfig) = 0;
+    /** 
+     * @hidden
+     * @type api
+     * @region 转推直播
+     * @brief  设置业务透传鉴权信息
+     * @param [in] authInfo 业务透传鉴权信息
+     */
+    virtual void SetAuthInfo(const char* authInfo) = 0;
+   
+    /** 
      * @type api
      * @region 转推直播
      * @brief 将输入的 json 格式的字符串转成 ITranscoderParam 结构体
@@ -497,6 +608,14 @@ public:
      * @return 转换后的 ITranscoderParam 结构体
      */
     virtual ITranscoderParam* Inflatten(const char* json_str) = 0;
+    
+    /** 
+     * @type api
+     * @region 转推直播
+     * @brief 获取默认的合流转推参数
+     * @return 生成的 ITranscoderParam 结构体
+     */
+    virtual ITranscoderParam* defaultTranscoding() = 0;
     /**
      * @hidden
      */

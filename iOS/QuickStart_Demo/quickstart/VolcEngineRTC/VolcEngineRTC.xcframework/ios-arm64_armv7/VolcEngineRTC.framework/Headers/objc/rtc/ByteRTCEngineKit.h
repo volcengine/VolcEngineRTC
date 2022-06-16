@@ -8,7 +8,6 @@
 #import "ByteRTCDefines.h"
 #import "ByteRTCHttpClientProtocol.h"
 #import "ByteRTCAudioMixingManager.h"
-#import "ByteRTCPositionAudioRender.h"
 
 @class ByteRTCEngineKit;
 @class ByteRTCRoom;
@@ -47,6 +46,15 @@
  * @param errorCode 错误代码，参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。  <br>
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onError:(ByteRTCErrorCode)errorCode;
+
+/** 
+ * @type callback
+ * @region 多房间
+ * @brief 发布端调用 setMultiDeviceAVSync:{@link #ByteRTCEngineKit#setMultiDeviceAVSync:} 后音视频同步状态发生改变时，会收到此回调。
+ * @param engine ByteRTCEngineKit 实例
+ * @param state 音视频同步状态，参看 ByteRTCAVSyncState{@link #ByteRTCAVSyncState}。
+ */
+-(void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onAVSyncStateChange:(ByteRTCAVSyncState)state;
 
 /** 
  * @type callback
@@ -128,7 +136,8 @@
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 leaveRoom{@link #ByteRTCEngineKit#leaveRoom} 主动退出房间。  <br>
      *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
-     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 切换至不可见状态。
+     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 切换至不可见状态。<br>
+     *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
     - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
 
@@ -737,10 +746,10 @@
  * @region 音频事件回调
  * @author dixing
  * @brief 音频播放路由变化时，收到该回调。
- * @param device 新的音频播放路由，详见 ByteRTCAudioRouteDevice{@link #ByteRTCAudioRouteDevice}
+ * @param device 新的音频播放路由，详见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}
  * @notes 关于音频路由设置，详见 setAudioRoute:{@link #ByteRTCEngineKit#setAudioRoute:}。
  */
-- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRouteDevice)device;
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRoute)device;
 
 #pragma mark custom message Delegate Methods
 // @name send message callback
@@ -1130,6 +1139,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 // @name audio mix callback
 
 /** 
+ * @hidden
  * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type callback
  * @region 混音
@@ -1140,6 +1150,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 - (void)rtcEngineLocalAudioMixingDidFinish:(ByteRTCEngineKit *_Nonnull)engine;
 
 /** 
+ * @hidden
  * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
  * @type callback
  * @region 混音
@@ -1617,6 +1628,25 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  */
 - (BOOL)setUserVisibility:(BOOL)enable;
 
+/** 
+ * @type api
+ * @region 多房间
+ * @author wangzhanqiang
+ * @brief 设置发流端音画同步。  <br>
+ *        当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
+ * @param audioUserId 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。
+ * @return 方法调用结果：  <br>
+ *        + True：成功  <br>
+ *        + False：失败
+ * @notes <br>
+ *        + 该方法在进房前后均可调用。  <br>
+ *        + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  <br>
+ *        + 调用该接口后音画同步状态发生改变时，你会收到 rtcEngine:onAVSyncStateChange:{@link #ByteRTCEngineDelegate#rtcEngine:onAVSyncStateChange:} 回调。  <br>
+ *        + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  <br>
+ *        + 如需更换同步音频源，再次调用该接口传入新的 `audioUserId` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
+ */
+- (BOOL)setMultiDeviceAVSync:(NSString* _Nullable) audioUserId;
+
 
 /** 
  * @hidden
@@ -1802,9 +1832,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use leaveRoom");
 * @author shenpengliang
 * @brief 更新 Token。  <br>
 *        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 onTokenWillExpire:{@link #ByteRTCEngineDelegate#onTokenWillExpire:} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
-*        调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+*        调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `ByteRTCErrorCodeInvalidToken`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
 * @param token 有效的 Token。  <br>
-*        如果传入的 Token 无效，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
+*        如果传入的 Token 无效，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `ByteRTCErrorCodeUpdateTokenWithInvalidToken`。
 * @return 方法调用结果。  <br>
 *         +  0: 方法调用成功  <br>
 *         + < 0: 方法调用失败  <br>
@@ -3168,23 +3198,26 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @author liuxiaowu
  * @brief 设置音频播放路由。默认使用扬声器。  <br>
  *        音频播放路由发生变化时，会收到 rtcEngine:onAudioRouteChanged:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioRouteChanged:} 回调。  <br>
- * @param audioRouteDevice 音频播放路由，参见 ByteRTCAudioRouteDevice{@link #ByteRTCAudioRouteDevice}。不支持 `ByteRTCAudioRouteDeviceUnknown`。<br>
- *        当音量类型为媒体模式时，此参数不可设置为 `ByteRTCAudioRouteDeviceEarpiece`；当音量模式为通话模式时，此参数不可设置为 `ByteRTCAudioRouteDeviceHeadsetBluetooth` 或 `ByteRTCAudioRouteDeviceHeadsetUSB`。
+ * @param audioRoute 音频播放路由，参见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}。不支持 `ByteRTCAudioRouteUnknown`。<br>
+ *        当音量类型为媒体模式时，此参数不可设置为 `ByteRTCAudioRouteEarpiece`；当音量模式为通话模式时，此参数不可设置为 `ByteRTCAudioRouteHeadsetBluetooth` 或
+ * `ByteRTCAudioRouteHeadsetUSB`。
  * @return  <br>
  *        + 0: 方法调用成功  <br>
  *        + < 0: 方法调用失败  <br>
- * @notes 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
+ * @notes
+ * 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见
+ * ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
  */
-- (int)setAudioRoute:(ByteRTCAudioRouteDevice)audioRouteDevice;
+- (int)setAudioRoute:(ByteRTCAudioRoute)audioRoute;
 /** 
  * @type api
  * @region 音频管理
  * @author dixing
  * @brief 获取当前使用的音频播放路由。  <br>
- * @return 详见 ByteRTCAudioRouteDevice{@link #ByteRTCAudioRouteDevice}
+ * @return 详见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}
  * @notes 要设置音频路由，详见 setAudioRoute:{@link #ByteRTCEngineKit#setAudioRoute:}。
  */
-- (ByteRTCAudioRouteDevice)getAudioRoute;
+- (ByteRTCAudioRoute)getAudioRoute;
 
 #pragma mark Combined to Push
 
@@ -3200,7 +3233,6 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @param observer 端云一体转推直播观察者。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate}。  <br>
  *        通过注册 observer 接收转推直播相关的回调。
  * @notes  <br>
- *       + 只有房间模式为直播模式的用户才能调用此方法。  <br>
  *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 onStreamMixingEvent:taskId:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:taskId:error:mixType:} 通知用户。
  *       + 调用 stopLiveTranscoding:{@link #ByteRTCEngineKit#stopLiveTranscoding:} 停止转推直播
  */
@@ -3271,7 +3303,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @type api
  * @author qipengxiang
  * @brief 发布一路公共流<br>
- *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 appID 的用户，可以调用 startPlayPublicStream:{@link #ByteRTCEngineKit#startPlayPublicStream:} 获取和播放指定的公共流。
+ *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 `appID` 的用户，可以调用 startPlayPublicStream:{@link #ByteRTCEngineKit#startPlayPublicStream:} 获取和播放指定的公共流。
  * @param publicStreamId 公共流 ID。<br>
  * @param publicStreamParam 公共流参数。详见 ByteRTCPublicStreaming{@link #ByteRTCPublicStreaming}。<br>
  *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
@@ -3280,7 +3312,6 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + 0: 成功。同时将收到 rtcEngine:onPushPublicStreamResult:errorCode:{@link #ByteRTCEngineDelegate#rtcEngine:onPushPublicStreamResult:errorCode:} 回调。<br>
  *        + !0: 失败。当参数不合法或参数为空，调用失败。<br>
  * @notes  <br>
- *        + 只有房间模式为直播模式( `CHANNEL_PROFILE_LIVE_BROADCASTING` )的用户才能调用此方法。
  *        + 同一用户使用同一公共流 ID 多次调用本接口无效。如果你希望更新公共流参数，调用 updatePublicStreamParam:withLayout:{@link #ByteRTCEngineKit#updatePublicStreamParam:withLayout:} 接口。<br>
  *        + 不同用户使用同一公共流 ID 多次调用本接口时，RTC 将使用最后一次调用时传入的参数更新公共流。<br>
  *        + 使用不同的 ID 多次调用本接口可以发布多路公共流。<br>
@@ -3473,8 +3504,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 
 #pragma mark External Audio Data
 // @name custom audio capture and rendering
-
 /** 
+ * @hidden
+ * @deprecated since 340.1, use SetAudioSourceType and SetAudioRenderType instead.
  * @type api
  * @region 自定义音频采集渲染
  * @author dixing
@@ -3490,8 +3522,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *      + 如果已开启自定义采集，需要切换至内部采集，必须调用 disableExternalAudioDevice{@link #ByteRTCEngineKit#disableExternalAudioDevice} 关闭自定义采集，然后调用 startVideoCapture{@link #ByteRTCEngineKit#startVideoCapture} 手动开启内部采集。
  */
  - (void)enableExternalAudioDevice:(ByteRTCAudioFormat * _Nonnull) recordingFormat playbackFormat:(ByteRTCAudioFormat * _Nonnull) playbackFormat;
-
  /** 
+  * @hidden
+  * @deprecated since 340.1, use SetAudioSourceType and SetAudioRenderType instead.
  * @type api
  * @region 自定义音频采集渲染
  * @author dixing
@@ -3501,6 +3534,37 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *      + 要启用自定义音频采集和渲染，调用 enableExternalAudioDevice:playbackFormat:{@link #enableExternalAudioDevice:playbackFormat:}。
  */
 - (void)disableExternalAudioDevice;
+/** 
+ * @type api
+ * @region 自定义音频采集渲染
+ * @author gaoguangyuan
+ * @brief  切换音频采集方式
+ * @param type 音频数据源，详见 ByteRTCAudioSourceType{@link #ByteRTCAudioSourceType}。<br>
+ *             默认使用内部音频采集。音频采集和渲染方式无需对应。
+ * @return  方法调用结果：  <br>
+ *        + >0: 切换成功。<br>
+ *        + -1：切换失败。
+ * @notes  <br>
+ *      + 进房前后调用此方法均有效。<br>
+ *      + 如果你调用此方法由内部采集切换至自定义采集，SDK 会自动关闭内部采集。然后，调用 pushExternalAudioFrame:{@link #ByteRTCEngineKit#pushExternalAudioFrame:} 推送自定义采集的音频数据到 RTC SDK 用于传输。 <br>
+ *      + 如果你调用此方法由自定义采集切换至内部采集，你必须再调用 startAudioCapture{@link #ByteRTCEngineKit#startAudioCapture} 手动开启内部采集。
+ */
+- (int)setAudioSourceType:(ByteRTCAudioSourceType) type;
+/** 
+ * @type api
+ * @region 自定义音频采集渲染
+ * @author gaoguangyuan
+ * @brief  切换音频渲染方式
+ * @param type 音频输出类型，详见 ByteRTCAudioRenderType{@link #ByteRTCAudioRenderType} <br>
+ *             默认使用内部音频渲染。音频采集和渲染方式无需对应。
+ * @return  方法调用结果：  <br>
+ *        + >0: 切换成功。<br>
+ *        + -1：切换失败。
+ * @notes  <br>
+ *      + 进房前后调用此方法均有效。<br>
+ *      + 如果你调用此方法切换至自定义渲染，调用 pullExternalAudioFrame:{@link #ByteRTCEngineKit#pullExternalAudioFrame:} 获取音频数据。 <br>
+ */
+- (int)setAudioRenderType:(ByteRTCAudioRenderType) type;
 
  /** 
   * @deprecated since 325.1, use ByteRTCAudioMixingManager instead
@@ -3578,7 +3642,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *               当音频回调方法设置为 `0`、`1`、`2`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br>
  *               当音频回调方法设置为 `3`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。
  * @param format 音频参数格式，参看 ByteRTCAudioFormat{@link #ByteRTCAudioFormat}。
- * @notes 开启音频回调并调用 setAudioFrameObserver:{@link #ByteRTCEngineKit#setAudioFrameObserver:} ByteRTCAudioFrameObserver{@link #ByteRTCAudioFrameObserver} 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  <br>
+ * @notes 开启音频回调并调用 setAudioFrameObserver:{@link #ByteRTCEngineKit#setAudioFrameObserver:} 后，ByteRTCAudioFrameObserver{@link #ByteRTCAudioFrameObserver} 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  <br>
  */
 - (void)enableAudioFrameCallback:(ByteRTCAudioFrameCallbackMethod) method format:(ByteRTCAudioFormat* _Nullable)format;
 
@@ -4754,20 +4818,6 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
   */
  - (ByteRTCAudioMixingManager *_Nullable)getAudioMixingManager;
 
-/** 
- * @type api
- * @region 音频管理
- * @author majun.lvhiei
- * @brief 获取位置音频接口实例，包括范围语音、空间语音等和位置相关的音频接口。  <br>
- * @return 位置音频管理接口实例。如果返回 NULL，则表示不支持空间音频，详见 ByteRTCPositionAudioRender{@link #ByteRTCPositionAudioRender} 。  <br>
- * @notes  <br>
- *       + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
- *       + 在网络状况不佳的情况下，即使开启了这一功能，也不会产生空间音频效果；  <br>
- *       + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
- *       + 空间音频效果在启用服务端选路功能时，不生效。  <br>
- */
-- (ByteRTCPositionAudioRender *_Nullable)getPositionAudioRender;
-
 #pragma mark - Rtm
 /** 
  * @type api
@@ -4896,7 +4946,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        + -1：发送失败，RtcEngine 实例未创建
  * @notes  <br>
  *       + 在向应用服务器发送文本消息前，必须先调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 完成登录，随后调用 setServerParams:url:{@link #ByteRTCEngineKit#setServerParams:url:} 设置应用服务器。  <br>
- *       + 调用本接口后，会收到一次 rtcEngine:onServerMessageSendResult:error:{@link #ByteRTCEngineDelegate#rtcEngine:onServerMessageSendResult:error:} 回调，通知消息发送方是否发送成功。  <br>
+ *       + 调用本接口后，会收到一次 rtcEngine:onServerMessageSendResult:error:message:{@link #ByteRTCEngineDelegate#rtcEngine:onServerMessageSendResult:error:message:} 回调，通知消息发送方是否发送成功。  <br>
  *       + 若文本消息发送成功，则之前调用 setServerParams:url:{@link #ByteRTCEngineKit#setServerParams:url:} 设置的应用服务器会收到该条消息。
  */
 - (int64_t)sendServerMessage:(NSString * _Nonnull)messageStr;
@@ -4913,7 +4963,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        + -1：发送失败，RtcEngine 实例未创建
  * @notes  <br>
  *       + 在向应用服务器发送二进制消息前，先调用 login:uid:{@link #ByteRTCEngineKit#login:uid:} 完成登录，随后调用 setServerParams:url:{@link #ByteRTCEngineKit#setServerParams:url:} 设置应用服务器。  <br>
- *       + 调用本接口后，会收到一次 rtcEngine:onServerMessageSendResult:error:{@link #ByteRTCEngineDelegate#rtcEngine:onServerMessageSendResult:error:} 回调，通知消息发送方发送成功或失败；  <br>
+ *       + 调用本接口后，会收到一次 rtcEngine:onServerMessageSendResult:error:message:{@link #ByteRTCEngineDelegate#rtcEngine:onServerMessageSendResult:error:message:} 回调，通知消息发送方发送成功或失败；  <br>
  *       + 若二进制消息发送成功，则之前调用 setServerParams:url:{@link #ByteRTCEngineKit#setServerParams:url:} 设置的应用服务器会收到该条消息。
  */
 - (int64_t)sendServerBinaryMessage:(NSData * _Nonnull)messageStr;

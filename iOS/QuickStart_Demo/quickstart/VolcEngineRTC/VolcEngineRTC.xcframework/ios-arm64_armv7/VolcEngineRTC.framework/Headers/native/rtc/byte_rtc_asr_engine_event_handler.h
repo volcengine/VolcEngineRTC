@@ -34,7 +34,7 @@ public:
      * @brief 当语音识别服务内部发生错误事件时触发该回调。
      * @param [in] error_code 错误码  <br>
      *        + < 0: 参数错误或 API 调用顺序错误，参看 RTCASRErrorCode{@link #RTCASRErrorCode}；  <br> 
-     *        + >0: 参看 [语音识别服务错误码](https://www.volcengine.com/docs/6561/80818#_3-3-%E9%94%99%E8%AF%AF%E7%A0%81)  
+     *        + >0: 参看 [语音识别服务错误码](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#VPknqs)  
      * @param [in] error_message 错误原因说明
      */
     virtual void OnError(int error_code, const char* error_message) = 0;

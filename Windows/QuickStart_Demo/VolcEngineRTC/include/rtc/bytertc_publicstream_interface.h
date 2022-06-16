@@ -210,12 +210,6 @@ class IPublicStreamParam : public ITranscoderParamBase {
 public:
     /** 
      * @type api
-     * @brief 获取公共流的 ID
-     * @return 公共流的 ID
-     */
-    virtual const char* PublicStreamID() = 0;
-    /** 
-     * @type api
      * @brief 设置公共流的布局模式，目前只支持 `kLayoutCustomerMode` 模式
      * @return 公共流的布局模式，参看 StreamLayoutMode{@link #StreamLayoutMode}
      */
@@ -253,17 +247,6 @@ public:
      * @return 公共流视窗布局信息，参看 PublicStreamLayoutRegion{@link #PublicStreamLayoutRegion}
      */
     virtual PublicStreamLayoutRegion LayoutRegionByIndex(int32_t index) = 0;
-    /** 
-     * @type api
-     * @brief 设置公共流 ID
-     * @param [in] public_stream_id 公共流 ID<br>
-     *        长度在 128 字节以内的非空字符串，支持以下字符集范围:<br>
-     *        1. 26 个大写字母 A ~ Z 。<br>
-     *        2. 26 个小写字母 a ~ z 。<br>
-     *        3. 10 个数字 0 ~ 9 。<br>
-     *        4. 下划线 "_"，at 符 "@"，减号 "-"，"."。
-     */
-    virtual void SetPublicStreamID(const char* public_stream_id) = 0;
     /** 
      * @type api
      * @brief 设置补帧模式

@@ -9,7 +9,8 @@
 #import <VolcEngineRTC/objc/rtc/ByteRTCDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCHttpClientProtocol.h>
-#import <VolcEngineRTC/objc/rtc/ByteRTCPositionAudioRender.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCRangeAudio.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRoom.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCScreenCapturerExt.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCSpatialAudio.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCVideoDefines.h>

@@ -54,8 +54,12 @@ typedef struct AudioFrameBuilder {
      * @brief 音频帧数据大小
      */
     int64_t data_size = 0;
-} AudioFrameBuilder;
 
+    /** 
+     * @brief 是否深拷贝
+     */
+    bool deep_copy = true;
+} AudioFrameBuilder;
 /**  
  * @type keytype
  * @brief 音频帧
@@ -195,10 +199,11 @@ public:
     virtual void OnPlaybackAudioFrame(const IAudioFrame& audio_frame) = 0;
 
     /** 
+     * @type callback
      * @region 音频数据回调
      * @brief 返回远端单个用户的音频数据
      * @param [in] stream_info 远端流信息，参看 RemoteStreamKey{@link #RemoteStreamKey}。
-     * @param [in] audio_frame 音频数据, 参看 IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频数据, 参看 IAudioFrame{@link #IAudioFrame}。
      */
     virtual void OnRemoteUserAudioFrame(const RemoteStreamKey& stream_info, const IAudioFrame& audio_frame) = 0;
 

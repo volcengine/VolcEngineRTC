@@ -162,7 +162,8 @@ public:
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 LeaveRoom{@link #IRtcRoom#LeaveRoom} 主动退出房间。  <br>
      *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
-     *              + 2: 远端用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 切换至不可见状态。 
+     *              + 2: 远端用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 切换至不可见状态。 <br>
+     *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
     virtual void OnUserLeave(const char* uid, UserOfflineReason reason) {
         (void)uid;
@@ -823,6 +824,16 @@ public:
     virtual void OnVideoStreamBanned(const char* uid, bool banned) {
         (void)uid;
         (void)banned;
+    }
+
+    /** 
+     * @type callback
+     * @region 多房间
+     * @brief 发布端调用 SetMultiDeviceAVSync{@link #IRtcRoom#SetMultiDeviceAVSync} 后音视频同步状态发生改变时，会收到此回调。
+     * @param state 音视频同步状态，参看 AVSyncState{@link #AVSyncState}。
+     */
+    virtual void OnAVSyncStateChange(AVSyncState state) {
+        (void)state;
     }
 
 #endif  // ByteRTC_AUDIO_ONLY

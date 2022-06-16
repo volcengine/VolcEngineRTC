@@ -6,6 +6,8 @@
 #import <CoreMedia/CMTime.h>
 #import <UIKit/UIKit.h>
 #import "ByteRTCDefines.h"
+#import "ByteRTCRangeAudio.h"
+#import "ByteRTCSpatialAudio.h"
 
 @class ByteRTCRoom;
 
@@ -75,6 +77,15 @@
  * @param errorCode 错误码，详见枚举类型 ByteRTCErrorCode{@link #ByteRTCErrorCode} 。
  */
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode;
+
+/** 
+ * @type callback
+ * @region 多房间
+ * @brief 发布端调用 setMultiDeviceAVSync:{@link #ByteRTCRoom#setMultiDeviceAVSync:} 后音视频同步状态发生改变时，会收到此回调。
+ * @param rtcRoom ByteRTCRoom 实例
+ * @param state 音视频同步状态，参看 ByteRTCAVSyncState{@link #ByteRTCAVSyncState}。
+ */
+- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onAVSyncStateChange:(ByteRTCAVSyncState)state;
 
  /** 
   * @hidden
@@ -153,7 +164,8 @@
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 主动退出房间。  <br>
      *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
-     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 切换至不可见状态。
+     *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 切换至不可见状态。 <br>
+     *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
     - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onUserLeave:(NSString *_Nonnull)uid reason:(ByteRTCUserOfflineReason)reason;
     /** 
@@ -877,6 +889,25 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
 - (ByteRTCUserRoleType)clientRole;
 
 /** 
+ * @type api
+ * @region 多房间
+ * @author wangzhanqiang
+ * @brief 设置发流端音画同步。  <br>
+ *        当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
+ * @param audioUserId 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。
+ * @return 方法调用结果：  <br>
+ *        + True：成功  <br>
+ *        + False：失败
+ * @notes <br>
+ *        + 该方法在进房前后均可调用。  <br>
+ *        + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  <br>
+ *        + 调用该接口后音画同步状态发生改变时，你会收到 rtcRoom:onAVSyncStateChange:{@link #ByteRTCRoomDelegate#rtcRoom:onAVSyncStateChange:} 回调。  <br>
+ *        + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  <br>
+ *        + 如需更换同步音频源，再次调用该接口传入新的 `audioUserId` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
+ */
+- (BOOL)setMultiDeviceAVSync:(NSString* _Nullable) audioUserId;
+
+/** 
  *  @type api
  *  @region 房间管理
  *  @author shenpengliang
@@ -1310,7 +1341,6 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @param observer 端云一体转推直播观察者。详见 LiveTranscodingDelegate{@link #LiveTranscodingDelegate}。  <br>
  *        通过注册 observer 接收转推直播相关的回调。
  * @notes  <br>
- *       + 只有房间模式为直播模式的用户才能调用此方法。  <br>
  *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 onStreamMixingEvent:taskId:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:taskId:error:mixType:} 通知用户。
  *       + 调用 stopLiveTranscoding:{@link #ByteRTCRoom#stopLiveTranscoding:} 停止转推直播
  */
@@ -1505,7 +1535,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @type api
  * @author qipengxiang
  * @brief 发布一路公共流<br>
- *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 appID 的用户，可以调用 startPlayPublicStream:{@link ByteRTCRoom#startPlayPublicStream:} 获取和播放指定的公共流。
+ *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 `appID` 的用户，可以调用 startPlayPublicStream:{@link ByteRTCRoom#startPlayPublicStream:} 获取和播放指定的公共流。
  * @param publicStreamId 公共流 ID。<br>
  * @param publicStreamParam 推公共流配置参数。详见 ByteRTCPublicStreaming{@link #ByteRTCPublicStreaming}。
  *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
@@ -1526,7 +1556,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @type api
  * @author qipengxiang
  * @brief 停止发布当前用户发布的公共流<br>
- *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link #ByteRTCRoom#startPushPublicStream:withLayout:}。 
+ *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link #ByteRTCRoom#startPushPublicStream:withLayout:}。
  * @param publicStreamId 公共流 ID<br>
  *                  指定的流必须为当前用户所发布。
  * @return
@@ -1548,4 +1578,33 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  *        + !0: 失败<br>
  */
 - (int)updatePublicStreamParam:(NSString * _Nonnull)publicStreamId withLayout:(ByteRTCPublicStreaming *_Nullable)publicStreamParam;
+
+/** 
+ * @type api
+ * @region 范围语音
+ * @author chuzhongtao
+ * @brief 获取范围语音接口实例。
+ * @return 方法调用结果： <br>
+ *        + ByteRTCRangeAudio：成功，返回一个 ByteRTCRangeAudio{@link #ByteRTCRangeAudio} 实例。  <br>
+ *        + NULL：失败，当前 SDK 不支持范围语音功能。
+ * @notes 首次调用该方法须在创建房间后、加入房间前。
+ */
+- (ByteRTCRangeAudio *_Nullable)getRangeAudio;
+
+/** 
+ * @type api
+ * @region 空间音频
+ * @author majun.lvhiei
+ * @brief 获取空间音频接口实例。  <br>
+ * @return 方法调用结果：  <br>
+ *        + ByteRTCSpatialAudio：成功，返回一个 ByteRTCSpatialAudio{@link #ByteRTCSpatialAudio} 实例。  <br>
+ *        + NULL：失败，当前 SDK 不支持空间音频功能。
+ * @notes  <br>
+ *        + 首次调用该方法须在创建房间后、加入房间前。  <br>
+ *        + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
+ *        + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
+ *        + SDK 最多支持 30 个用户同时开启空间音频功能。
+ */
+- (ByteRTCSpatialAudio *_Nullable)getSpatialAudio;
+
 @end

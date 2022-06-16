@@ -14,7 +14,6 @@
 #include "byte_rtc_asr_engine_event_handler.h"
 #include "bytertc_audio_mixing_manager.h"
 #include "bytertc_video_processor_interface.h"
-#include "bytertc_position_audio_render_interface.h"
 #include "bytertc_camera_control_interface.h"
 
 namespace bytertc {
@@ -72,6 +71,7 @@ public:
 class ILocalEncodedVideoFrameObserver {
 public:
     /** 
+     * @hidden
      * @brief 析构函数
      */
     virtual ~ILocalEncodedVideoFrameObserver() {
@@ -574,8 +574,9 @@ public:
      *        + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 OnUserUnPublishStream{@link #IRTCRoomEventHandler#OnUserUnPublishStream} 回调通知。
      */
     virtual void UnpublishStream(MediaStreamType type) = 0;
-
     /** 
+     * @hidden
+     * @deprecated since 340.1, use SetAudioSourceType and SetAudioRenderType instead.
      * @type api
      * @region 自定义音频采集渲染
      * @brief 启用自定义音频采集渲染
@@ -590,8 +591,9 @@ public:
      *      + 当你调用此方法开启自定义采集后，想要切换至内部采集，你必须先调用 DisableExternalAudioDevice{@link #IRtcEngineLite#DisableExternalAudioDevice} 关闭自定义采集，然后调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 手动开启内部采集。
      */
      virtual void EnableExternalAudioDevice(const AudioFormat &recording_format, const AudioFormat &playback_format) = 0;
-
      /** 
+      * @hidden
+      * @deprecated since 340.1, use SetAudioSourceType and SetAudioRenderType instead.
       * @type api
       * @region 自定义音频采集渲染
       * @brief 禁用自定义音频采集和渲染。
@@ -600,8 +602,9 @@ public:
       *      + 要启用自定义音频采集和渲染，调用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}。
       */
      virtual void DisableExternalAudioDevice() = 0;
-
     /** 
+     * @hidden
+     * @deprecated since 340.1, use PushExternalAudioFrame with IAudioFrame parameter instead.
      * @type api
      * @region 自定义音频采集渲染
      * @brief 推送自定义音频数据。
@@ -616,8 +619,9 @@ public:
      *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
      */
      virtual bool PushExternalAudioFrame(int8_t* data, int samples) = 0;
-
     /** 
+     * @hidden
+     * @deprecated since 340.1, use PullExternalAudioFrame with IAudioFrame parameter instead.
      * @type api
      * @region 自定义音频采集渲染
      * @brief 拉取远端音频数据。使用 EnableExternalAudioDevice{@link #IRtcEngineLite#EnableExternalAudioDevice}
@@ -635,6 +639,62 @@ public:
      *       + 该函数运行在用户调用线程内，是一个同步函数  <br>
      */
     virtual bool PullExternalAudioFrame(int8_t* data, int samples) = 0;
+    /** 
+     * @type api
+     * @region 自定义音频采集渲染
+     * @brief  切换音频采集方式
+     * @param type 音频数据源，详见 AudioSourceType{@link #AudioSourceType}。<br>
+     *             默认使用内部音频采集。音频采集和渲染方式无需对应。
+     * @return  方法调用结果：  <br>
+     *        + >0: 切换成功。<br>
+     *        + -1：切换失败。
+     * @notes  <br>
+     *      + 进房前后调用此方法均有效。<br>
+     *      + 如果你调用此方法由内部采集切换至自定义采集，SDK 会自动关闭内部采集。然后，调用 PushExternalAudioFrame{@link #IRtcEngineLite#PushExternalAudioFrame} 推送自定义采集的音频数据到 RTC SDK 用于传输。 <br>
+     *      + 如果你调用此方法由自定义采集切换至内部采集，你必须再调用 StartAudioCapture{@link #IRtcEngineLite#StartAudioCapture} 手动开启内部采集。 <br>
+     */
+    virtual int SetAudioSourceType (AudioSourceType type) = 0;
+    /** 
+     * @type api
+     * @region 自定义音频采集渲染
+     * @brief  切换音频渲染方式
+     * @param type 音频输出类型，详见 AudioRenderType{@link #AudioRenderType} <br>
+     *             默认使用内部音频渲染。音频采集和渲染方式无需对应。
+     * @return  方法调用结果：  <br>
+     *        + >0: 切换成功。<br>
+     *        + -1：切换失败。
+     * @notes  <br>
+     *      + 进房前后调用此方法均有效。<br>
+     *      + 如果你调用此方法切换至自定义渲染，调用 PullExternalAudioFrame{@link #IRtcEngineLite#PullExternalAudioFrame} 获取音频数据。 <br>
+     */
+    virtual int SetAudioRenderType (AudioRenderType type) = 0;
+    /** 
+     * @type api
+     * @region 自定义音频采集渲染
+     * @brief 推送自定义音频数据。
+     * @param [in] audioFrame 10 ms 对应的音频数据。详见 IAudioFrame{@link #IAudioFrame}。
+     * @return  方法调用结果  <br>
+     *        + 0：方法调用成功  <br>
+     *        + < 0：方法调用失败  <br>
+     * @notes  <br>
+     *       + 推送自定义采集的音频数据前，必须先调用 SetAudioSourceType{@link #IRtcEngineLite#SetAudioSourceType} 开启自定义采集。<br>
+     *       + 你必须每 10 ms 推送一次数据。<br>
+     *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
+     */
+    virtual bool PushExternalAudioFrame(IAudioFrame* audioFrame) = 0;
+    /** 
+     * @region 自定义音频采集渲染
+     * @brief 拉取远端音频数据。可用于自定义音频渲染。
+     * @param [out] audioFrame 获取的 10 ms 内的音频数据。详见 IAudioFrame{@link #IAudioFrame}。
+     * @return  方法调用结果：  <br>
+     *        + true: 方法调用成功  <br>
+     *        + false：方法调用失败  <br>
+     * @notes  <br>
+     *       + 获取音频数据用于自定义渲染前，必须先调用 SetAudioRenderType{@link #IRtcEngineLite#SetAudioRenderType} 开启自定义渲染。<br>
+     *       + 每隔 10 ms 获取一次音频数据。<br>
+     *       + 该函数运行在用户调用线程内，是一个同步函数。  <br>
+     */
+    virtual bool PullExternalAudioFrame(IAudioFrame* audioFrame) = 0;
 
     /** 
      * @hidden
@@ -1756,7 +1816,7 @@ public:
      * @brief 设置音频播放设备，默认使用扬声器。  <br>
      *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link
      * #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
-     * @param [in] device 音频播放设备。参看 AudioRouteDevice{@link #AudioRouteDevice} <br>
+     * @param [in] device 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
      * @return 方法调用结果  <br>
      *        + 0: 方法调用成功  <br>
      *        + < 0: 方法调用失败  <br>
@@ -1768,23 +1828,24 @@ public:
      * 若连接有线或者蓝牙音频播放设备时，将音频播放设备设置为扬声器或听筒将调用成功，但不会立马切换到扬声器或听筒，会在有线或者蓝牙音频播放设备移除后，根据设置自动切换到听筒或者扬声器。
      * <br>
      *       + 4. 通话前和通话中都可以调用该方法。
-     *       + 5. 设置kAudioRouteDeviceUnknown时将会失败。 <br>
+     *       + 5. 设置kAudioRouteUnknown时将会失败。 <br>
      */
-    virtual int SetAudioRoute(AudioRouteDevice device) = 0;
+    virtual int SetAudioRoute(AudioRoute device) = 0;
 
     /** 
      * @hidden(macOS,Windows)
      * @type api
      * @region 音频设备管理
      * @brief 获取当前音频播放设备  <br>
-     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
-     * @return device 当前音频播放设备。参看 AudioRouteDevice{@link #AudioRouteDevice}
+     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link #IRtcEngineLiteEventHandler#OnAudioRouteChanged}
+     * 回调。
+     * @return device 当前音频播放设备。参看 AudioRoute{@link #AudioRoute}
      * @notes  <br>
      *       + 1. 该接口仅适用于移动设备。  <br>
      * <br>
      *       + 2. 通话前和通话中都可以调用该方法。  <br>
      */
-    virtual AudioRouteDevice GetAudioRoute() = 0;
+    virtual AudioRoute GetAudioRoute() = 0;
 
     /** 
      * @type api
@@ -2129,20 +2190,6 @@ public:
      * @return 音频设备管理接口
      */
     virtual IAudioDeviceManager* GetAudioDeviceManager() = 0;
-
-
-    /** 
-     * @type api
-     * @region 音频管理
-     * @brief 获取位置音频接口实例，包括范围语音、空间语音等和位置相关的音频接口。  <br>
-     * @return 位置音频管理接口实例。如果返回 NULL，则表示不支持空间音频，详见 IPositionAudioRenderInterface{@link #IPositionAudioRenderInterface} 。  <br>
-     * @notes  <br>
-     *       + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
-     *       + 在网络状况不佳的情况下，即使开启了这一功能，也不会产生空间音频效果；  <br>
-     *       + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
-     *       + 空间音频效果在启用服务端选路功能时，不生效。  <br>
-     */
-    virtual IPositionAudioRenderInterface* GetPositionAudioRender() = 0;
 
     /** 
      * @hidden

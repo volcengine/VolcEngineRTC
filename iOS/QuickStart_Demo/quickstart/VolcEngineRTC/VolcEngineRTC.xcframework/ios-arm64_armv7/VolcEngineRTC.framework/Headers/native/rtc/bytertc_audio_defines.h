@@ -79,7 +79,7 @@ struct AudioFormat {
 
 /** 
  * @type keytype
- * @brief 当前音频设备类型
+ * @brief 音频设备类型
  */
 enum RTCAudioDeviceType {
     /** 
@@ -87,11 +87,11 @@ enum RTCAudioDeviceType {
      */
     kRTCAudioDeviceTypeUnknown = -1,
     /** 
-     * @brief 音频渲染设备类型
+     * @brief 音频渲染设备
      */
     kRTCAudioDeviceTypeRenderDevice = 0,
     /** 
-     * @brief 音频采集设备类型
+     * @brief 音频采集设备
      */
     kRTCAudioDeviceTypeCaptureDevice = 1,
     /** 
@@ -104,31 +104,31 @@ enum RTCAudioDeviceType {
  * @type keytype
  * @brief 音频播放设备
  */
-enum AudioRouteDevice {
+enum AudioRoute {
     /** 
      * @brief 未知设备
      */
-    kAudioRouteDeviceUnknown = -1,
+    kAudioRouteUnknown = -1,
     /** 
      * @brief 有线耳机
      */
-    kAudioRouteDeviceHeadset = 1,
+    kAudioRouteHeadset = 1,
     /** 
      * @brief 听筒
      */
-    kAudioRouteDeviceEarpiece = 2,
+    kAudioRouteEarpiece = 2,
     /** 
      * @brief 扬声器
      */
-    kAudioRouteDeviceSpeakerphone = 3,
+    kAudioRouteSpeakerphone = 3,
     /** 
      * @brief 蓝牙耳机
      */
-    kAudioRouteDeviceHeadsetBluetooth = 4,
+    kAudioRouteHeadsetBluetooth = 4,
     /** 
      * @brief USB设备
      */
-    kAudioRouteDeviceHeadsetUSB = 5
+    kAudioRouteHeadsetUSB = 5
 };
 
 /** 
@@ -430,6 +430,21 @@ enum AudioSourceType {
 
 /** 
  * @type keytype
+ * @brief 音频输出类型
+ */
+enum AudioRenderType {
+    /** 
+     *  自定义渲染
+     */
+    kAudioRenderTypeExternal = 0,
+    /** 
+     *  RTC SDK 内部渲染
+     */
+    kAudioRenderTypeInternal,
+};
+
+/** 
+ * @type keytype
  * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务服务相关同学
  */
 enum ASRAuthorizationType {
@@ -465,11 +480,11 @@ struct RTCASRConfig {
      */
     const char* access_token;
     /** 
-     * @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://www.volcengine.com/docs/6561/107789)
+     * @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#uh8x72)
      */
     const char* secret_key;
     /** 
-     * @brief 场景信息，参看[业务集群](https://www.volcengine.com/docs/6561/80818#_3-2-2-%E5%8F%91%E9%80%81-full-client-request)
+     * @brief 场景信息，参看[业务集群](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#aI4WCt)
      */
     const char* cluster;
 };
@@ -590,8 +605,7 @@ enum AudioMixingDualMonoMode{
  */
 struct AudioPropertiesConfig {
     /** 
-     * @brief 信息提示间隔，单位：ms
-     * @notes  <br>
+     * @brief 信息提示间隔，单位：ms <br>
      *       + <= 0: 关闭信息提示  <br>
      *       + >0 && <=100: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
      *       + > 100: 开启信息提示，并将信息提示间隔设置为此值  <br>
@@ -705,6 +719,31 @@ enum AudioProfileType {
      *        游戏场景不建议使用。
      */
     kAudioProfileTypeHD = 3,
+};
+
+/** 
+ * @type keytype
+ * @brief 本地用户在房间内的位置坐标，需自行建立空间直角坐标系
+ */
+struct Position {
+    /**  
+     * @brief x 坐标
+     */
+    int x;
+    /**  
+     * @brief y 坐标
+     */
+    int y;
+    /**  
+     * @brief z 坐标
+     */
+    int z;
+    /**
+     * @hidden
+     */
+    bool isEqual(const Position& pos) const {
+        return x == pos.x && y == pos.y && z == pos.z;
+    }
 };
 
 }  // namespace bytertc

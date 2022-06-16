@@ -7,6 +7,8 @@
 
 #include "bytertc_audio_defines.h"
 #include "bytertc_audio_room_event_handler.h"
+#include "bytertc_range_audio_interface.h"
+#include "bytertc_spatial_audio_interface.h"
 
 namespace bytertc {
 
@@ -195,7 +197,7 @@ public:
      * @brief 在当前所在房间内发布本地麦克风采集的音频流
      * @notes <br>
      *        + 多房间模式下默认不自动发布流，你需调用该方法手动发布流。  <br>
-     *        + 调用 SetUserVisibility{@link #IRTCAudioRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布音频流。 <br> 
+     *        + 调用 SetUserVisibility{@link #IRTCAudioRoom#SetUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布音频流。 <br>
      *        + 如果你需要向多个房间发布流，调用 StartForwardStreamToRooms{@link #IRTCAudioRoom#StartForwardStreamToRooms}。  <br>
      *        + 调用此方法后，房间中的所有远端用户会收到 OnUserPublishStream{@link #IRTCAudioRoomEventHandler#OnUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 OnFirstRemoteAudioFrame{@link #IRTCAudioRoomEventHandler#OnFirstRemoteAudioFrame} 回调。<br>
      *        + 调用 UnpublishStream{@link #IRTCAudioRoom#UnpublishStream} 取消发布。
@@ -230,7 +232,7 @@ public:
      * @brief 取消订阅房间内指定的通过麦克风采集的音频流。  <br>
      *        该方法对自动订阅和手动订阅模式均适用。
      * @param userId 指定取消订阅的远端发布音频流的用户 ID。
-     * @notes  <br> 
+     * @notes  <br>
      *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCAudioRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void UnsubscribeStream(const char* user_id) = 0;
@@ -260,7 +262,7 @@ public:
      * @type api
      * @region 多房间
      * @brief 开始跨房间转发音频流。
-     *        在用户进入房间后调用本接口，实现向多个房间转发音频流，适用于跨房间连麦等场景。<br>  
+     *        在用户进入房间后调用本接口，实现向多个房间转发音频流，适用于跨房间连麦等场景。<br>
      * @param [in] configuration 跨房间音频流转发指定房间的信息。参看 ForwardStreamConfiguration{@link #ForwardStreamConfiguration}。
      * @return  <br>
      *        0: 方法调用成功  <br>
@@ -300,7 +302,7 @@ public:
      *        + 调用本方法后，将在本端触发 OnForwardStreamStateChanged{@link #IRTCAudioRoomEventHandler#OnForwardStreamStateChanged} 回调。
      *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 OnUserUnPublishStream{@link #IRTCAudioRoomEventHandler#OnUserUnPublishStream}  和退房 OnUserLeave{@link #IRTCAudioRoomEventHandler#OnUserLeave} 的回调。
      *        + 如果需要停止向指定的房间转发音频流，请调用 UpdateForwardStreamToRooms{@link #IRTCAudioRoom#UpdateForwardStreamToRooms} 更新房间信息。
-     *        + 如果需要暂停转发，请调用 PauseForwardStreamToAllRooms{@link #IRTCAudioRoom#PauseForwardStreamToAllRooms}，并在之后随时调用 ResumeForwardStreamToAllRooms{@link #IRTCAudioRoom#ResumeForwardStreamToAllRooms} 快速恢复转发。 
+     *        + 如果需要暂停转发，请调用 PauseForwardStreamToAllRooms{@link #IRTCAudioRoom#PauseForwardStreamToAllRooms}，并在之后随时调用 ResumeForwardStreamToAllRooms{@link #IRTCAudioRoom#ResumeForwardStreamToAllRooms} 快速恢复转发。
      */
     virtual void StopForwardStreamToRooms() = 0;
 
@@ -323,7 +325,31 @@ public:
      *        目标房间中的用户将接收到本地用户进房 OnUserJoined{@link #IRTCAudioRoomEventHandler#OnUserJoined} 和发布 OnUserPublishStream{@link #IRTCAudioRoomEventHandler#OnUserPublishStream}  的回调。
      */
     virtual void ResumeForwardStreamToAllRooms() = 0;
+    /** 
+     * @type api
+     * @region 范围语音
+     * @brief 获取范围语音接口实例。
+     * @return 方法调用结果： <br>
+     *        + IRangeAudio：成功，返回一个 IRangeAudio{@link #IRangeAudio} 实例。  <br>
+     *        + nullptr：失败，当前 SDK 不支持范围语音功能。
+     * @notes 首次调用该方法须在创建房间后、加入房间前。
+     */
+    virtual IRangeAudio* GetRangeAudio() = 0;
+    
+    /** 
+     * @type api
+     * @region 空间音频
+     * @brief 获取空间音频接口实例。  <br>
+     * @return 方法调用结果：  <br>
+     *        + ISpatialAudio：成功，返回一个 ISpatialAudio{@link #ISpatialAudio} 实例。  <br>
+     *        + nullptr：失败，当前 SDK 不支持空间音频功能。
+     * @notes  <br>
+     *        + 首次调用该方法须在创建房间后、加入房间前。  <br>
+     *        + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
+     *        + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
+     *        + SDK 最多支持 30 个用户同时开启空间音频功能。
+     */
+    virtual ISpatialAudio* GetSpatialAudio() = 0;
 };
 
 }  // namespace bytertc
-

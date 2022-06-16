@@ -61,13 +61,6 @@ public:
      */
     virtual const char* RoomID() = 0;
     /** 
-     * @type api
-     * @region 转码
-     * @brief 获取合流用户 ID
-     * @return 合流用户 ID
-     */
-    virtual const char* UserID() = 0;
-    /** 
      * @hidden
      * @type api
      * @region 转推直播
@@ -106,13 +99,6 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置合流用户 ID
-     * @param [in] user_id 发起合流的用户的 ID
-     */
-    virtual void SetUserID(const char* user_id) = 0;
-    /** 
-     * @type api
-     * @region 转推直播
      * @brief 设置 jsonContent  <br>
      *        传入通过 Flatten{@link #ITranscoderParamBase#Flatten} 方法转换得到的 json 格式内容
      * @param [in] json_content json 格式内容
@@ -138,7 +124,9 @@ public:
      * @return 转换后的 json 字符串
      */
     virtual const char* Flatten(const char* contentType, const char* action) = 0;
-    
+    /**
+     * @hidden
+     */
     ~ITranscoderParamBase() = default;
 };
 }/*namespace bytertc*/
