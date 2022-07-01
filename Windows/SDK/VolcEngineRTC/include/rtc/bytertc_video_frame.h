@@ -71,7 +71,7 @@ enum VideoStreamScaleMode {
      */
     kVideoStreamScaleModeAuto = 0,
     /** 
-     * @brief 对视频帧进行缩放，直至充满和视窗分辨率一致为止。这一过程不保证等比缩放。这一过程不保证等比缩放。
+     * @brief 对视频帧进行缩放，直至充满和视窗分辨率一致为止。这一过程不保证等比缩放。
      */
     kVideoStreamScaleModeStretch = 1,
     /** 
@@ -438,11 +438,11 @@ typedef struct VideoFrameBuilder {
     /** 
      * @brief 视频帧数据平面指针数组
      */
-    uint8_t* data[ByteRTCNumDataPointers];
+    uint8_t* data[ByteRTCNumDataPointers] = { 0 };
     /** 
      * @brief 视频帧数据平面行长度
      */
-    int linesize[ByteRTCNumDataPointers];
+    int linesize[ByteRTCNumDataPointers] = { 0 };
     /** 
      * @brief SEI 数据地址
      */
@@ -618,7 +618,7 @@ typedef struct EncodedVideoFrameBuilder {
      * @brief 视频帧数据指针
      * @notes IEncodedVideoFrame 会获取数据的所有权
      */
-    uint8_t* data;
+    uint8_t* data = nullptr;
     /** 
      * @brief 视频帧数据大小
      */

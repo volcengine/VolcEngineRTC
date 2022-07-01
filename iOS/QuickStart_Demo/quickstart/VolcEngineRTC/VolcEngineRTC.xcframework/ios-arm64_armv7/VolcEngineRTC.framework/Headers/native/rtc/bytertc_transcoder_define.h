@@ -19,6 +19,7 @@
 #define TRANSCODE_ERR_INVALID_STATE_BY_SERVER 1097
 #define TRANSCODE_ERR_AUTHENTICATION_BY_CDN 1098
 #define TRANSCODE_ERR_TIMEOUT_BY_SIGNALING 1099
+#define TRANSCODE_ERR_PUSH_PUBLIC_STREAM_FAIL 1100
 #define TRANSCODE_ERR_MAX 1199
 
 namespace bytertc {
@@ -96,8 +97,8 @@ enum StreamMixingErrorCode {
      * @brief 推流成功。
      */
     kStreamMixingErrorOK = 0,
-    /**
-     * @hidden
+    /** 
+     * 未定义的合流错误
      */
     kStreamMixingErrorBase= 1090,
     /** 

@@ -107,12 +107,12 @@ public:
      *      other: 失败
      * @notes
      *        1.使用不同 App ID 的 App 是不能互通的。
-     *        2.调用该方法成功加入房间后，本端会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，errorcode 为 0
+     *        2.调用该方法成功加入房间后，本端会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知，errorcode 为 0
      * ，JoinRoomType{@link #JoinRoomType} 为 KJoinRoomFirst。 3.本端网络状况不佳的情况下，SDK
-     * 可能会与服务器失去连接，此时 SDK 将会自动重连，重连成功后收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult}
+     * 可能会与服务器失去连接，此时 SDK 将会自动重连，重连成功后收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged}
      * 回调通知， errorcode 为 0 ，JoinRoomType{@link #JoinRoomType} 为 kJoinRoomTypeReconnected 4.同一个 App ID
      * 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入
-     *          房间的用户踢出房间，并且先加入房间的用户会收到 OnRoomError{@link #OnRoomError}回调通知，
+     *          房间的用户踢出房间，并且先加入房间的用户会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，
      *          错误类型为重复登录 kErrorCodeDuplicateLogin{@link #kErrorCodeDuplicateLogin} 。
      *        5.请务必保证生成 Token 使用的App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。
      *        6.该方法仅能加入此 IRtcRoom{@link #IRtcRoom}
@@ -143,10 +143,10 @@ public:
      *        + -1：room_id / user_info.uid 包含了无效的参数。  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 LeaveRoom:{@link #IRtcRoom#LeaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
      * @notes  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
-     *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     *       + 本地用户调用此方法加入房间成功后，会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知。  <br>
      */
     virtual int JoinRoom(const char* token, const UserInfo& user_info, const MultiRoomConfig& config) = 0;
 
@@ -168,13 +168,13 @@ public:
      * @type api
      * @brief 更新 Token。  <br>
      *        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 OnTokenWillExpire{@link #IRTCRoomEventHandler#OnTokenWillExpire} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
-     *        调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+     *        调用 JoinRoom{@link #IRtcRoom#JoinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
      * @param token 有效的 Token。  <br>
      *        如果传入的 Token 无效，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
      * @return 方法调用结果。  <br>
      *         +  0: 方法调用成功  <br>
      *         + < 0: 方法调用失败  <br>
-     * @notes 当 Token 过期时，用户将被移出房间并将收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 JoinRoom{@link #IRtcRoom#JoinRoom} 重新加入房间。
+     * @notes 当 Token 过期时，用户将被移出房间并将收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 JoinRoom{@link #IRtcRoom#JoinRoom} 重新加入房间。
      */
     virtual void UpdateToken(const char* token) = 0;
 
@@ -391,7 +391,7 @@ public:
      * 方法关闭自动订阅功能以使用手动订阅模式。  <br> 用户在自动订阅功能开启时调用此方法，SDK 不会订阅音视频流，并通过
      * OnRoomWarning{@link #OnRoomWarning} 回调通知用户订阅失败，回调警告码为
      * kWarningCodeSubscribeStreamForbiden{@link #kWarningCodeSubscribeStreamForbiden} 。  <br> 订阅流失败时，SDK
-     * 会按失败原因回调 OnRoomError{@link #OnRoomError} 通知用户，具体错误可参考错误码 ErrorCode{@link
+     * 会按失败原因回调 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 通知用户，具体错误可参考错误码 ErrorCode{@link
      * #ErrorCode} 描述。  <br>
      * @param [in] user_id 指定订阅的远端用户的用户ID 。  <br>
      * @param [in] info 选择订阅配置，详见数据结构 SubscribeConfig{@link #SubscribeConfig} 。  <br>
@@ -418,7 +418,7 @@ public:
      * @param [in] video_config 视频订阅配置，参看 SubscribeVideoConfig{@link #SubscribeVideoConfig}。
      * @notes  <br>
      *        + 你必须通过 OnStreamAdd{@link #IRTCRoomEventHandler#OnStreamAdd} 和 OnStreamRemove{@link #IRTCRoomEventHandler#OnStreamRemove} 两个回调获取当前房间里的音视频流信息，并调用本方法按需订阅流或修改订阅配置。  <br>
-     *        + 若订阅失败，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 若订阅失败，你会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      *        + 若调用 PauseAllSubscribedStream{@link #IRtcRoom#PauseAllSubscribedStream} 暂停接收远端音视频流，此时仍可使用该方法对暂停接收的流进行设置，你会在调用 ResumeAllSubscribedStream{@link #IRtcRoom#ResumeAllSubscribedStream} 恢复接收流后收到修改设置后的流。  <br>
      */
     virtual void SubscribeUserStream(const char* user_id, StreamIndex stream_type, SubscribeMediaType media_type, const SubscribeVideoConfig& video_config) = 0;
@@ -433,7 +433,7 @@ public:
      *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
      *        + 该方法需在进房后调用，若想进房前设置，你需调用 JoinRoom{@link #IRtcRoom#JoinRoom}，并对 `room_config` 中的 `remote_video_config` 进行设置。  <br>
      *        + 该方法在订阅前后都可调用，订阅后的设置会在重新订阅该流时生效。 <br>
-     *        + SDK 会根据发布端和所有订阅端的设置灵活调整视频流的参数，具体调整策略详见[推送多路流](70139)文档。
+     *        + SDK 会根据发布端和所有订阅端的设置灵活调整视频流的参数，具体调整策略详见[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。
      */
     virtual void SetRemoteVideoConfig(const char *user_id,const RemoteVideoConfig &remote_video_config) = 0;
 
@@ -447,7 +447,7 @@ public:
      * @notes  <br>
      *        + 你必须先通过 OnUserPublishStream{@link #IRTCRoomEventHandler#OnUserPublishStream} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知方法调用结果。  <br>
-     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 关于其他调用异常，你会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void SubscribeStream(const char *user_id,MediaStreamType type) = 0;
 
@@ -460,7 +460,7 @@ public:
      * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
      * @notes  <br>
      *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的退订结果。  <br>
-     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 关于其他调用异常，你会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void UnsubscribeStream(const char *user_id,MediaStreamType type) = 0;
 
@@ -474,7 +474,7 @@ public:
      * @notes  <br>
      *        + 你必须先通过 OnUserPublishScreen{@link #IRTCRoomEventHandler#OnUserPublishScreen} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的订阅结果。  <br>
-     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 关于其他调用异常，你会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void SubscribeScreen(const char *user_id,MediaStreamType type) = 0;
 
@@ -487,7 +487,7 @@ public:
      * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
      * @notes  <br>
      *        + 调用该方法后，你会收到 OnStreamSubscribed{@link #IRTCRoomEventHandler#OnStreamSubscribed} 通知流的退订结果。  <br>
-     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 关于其他调用异常，你会收到 OnStreamStateChanged{@link #IRTCRoomEventHandler#OnStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void UnsubscribeScreen(const char *user_id,MediaStreamType type) = 0;
     /** 
@@ -529,7 +529,8 @@ public:
      * @region 多房间
      * @brief 调节来自远端用户的音频播放音量
      * @param user_id 音频来源的远端用户 ID
-     * @param volume  播放音量，取值范围： [0,400]  <br>
+     * @param volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
+     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
      *              + 0: 静音  <br>
      *              + 100: 原始音量  <br>
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
@@ -854,7 +855,7 @@ public:
      *        + ISpatialAudio：成功，返回一个 ISpatialAudio{@link #ISpatialAudio} 实例。  <br>
      *        + nullptr：失败，当前 SDK 不支持空间音频功能。
      * @notes  <br>
-     *        + 首次调用该方法须在创建房间后、加入房间前。  <br>
+     *        + 首次调用该方法须在创建房间后、加入房间前。 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。 <br>
      *        + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
      *        + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
      *        + SDK 最多支持 30 个用户同时开启空间音频功能。

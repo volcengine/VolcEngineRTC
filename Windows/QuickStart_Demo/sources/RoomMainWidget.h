@@ -26,9 +26,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 protected:
-    void OnJoinRoomResult(const char *room_id, const char *uid, int error_code, bytertc::JoinRoomType join_type,
-                          int elapsed) override;
-
     void OnError(int err) override;
 
 	void OnUserJoined(const bytertc::UserInfo &user_info, 

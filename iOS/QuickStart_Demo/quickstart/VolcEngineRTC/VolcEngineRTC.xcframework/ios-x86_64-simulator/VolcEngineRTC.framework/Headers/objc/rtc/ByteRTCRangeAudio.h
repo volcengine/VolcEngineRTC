@@ -14,12 +14,12 @@
  * @brief 本地用户能收听到、且具有衰减效果的音频接收范围
  */
 BYTERTC_APPLE_EXPORT @interface ReceiveRange : NSObject
-/**  
+/** 
  * @brief 能够接收语音、并且具有衰减效果的最小距离值，该值须 ≥ 0，但 ≤ max。  <br>
  *        小于该值的范围内没有范围语音效果，即收听到的音频音量相同。
  */
 @property(nonatomic, assign) int min;
-/**  
+/** 
  * @brief 能够收听语音的最大距离值，该值须 > 0 且 ≥ min。  <br>
  *        当收听者和声源距离处于 [min, max) 之间时，收听到的音量根据距离呈衰减效果。  <br>
  *        超出该值范围的音频将无法收听到。
@@ -49,7 +49,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudioInfo : NSObject
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCRangeAudioObserver <NSObject>
 /** 
- * @type api
+ * @type callback
  * @region 范围语音
  * @author chuzhongtao
  * @brief 关于当前范围语音衰减系数的回调。  <br>
@@ -92,7 +92,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @notes 若此前你已调用 registerRangeAudioObserver:{@link #ByteRTCRangeAudio#registerRangeAudioObserver:} 注册了范围语音衰减系数监测器，房间内有任何用户调用该接口更新音频收听范围后，你都会收到 onRangeAudioInfo:{@link #ByteRTCRangeAudioObserver#onRangeAudioInfo:} 回调。
  */
 - (int)updateReceiveRange:(ReceiveRange* _Nonnull) range;
-/**  
+/** 
  * @type api
  * @region 范围语音
  * @author chuzhongtao
@@ -118,4 +118,3 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
 - (void)registerRangeAudioObserver:(_Nullable id<ByteRTCRangeAudioObserver>) observer;
 
 @end
-

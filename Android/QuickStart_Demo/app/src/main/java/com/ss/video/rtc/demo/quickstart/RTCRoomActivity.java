@@ -97,18 +97,6 @@ public class RTCRoomActivity extends AppCompatActivity {
     private IRTCEngineEventHandler mIRtcEngineEventHandler = new IRTCEngineEventHandler() {
 
         /**
-         * 首次加入房间/重连加入房间的回调。
-         */
-        @Override
-        public void onJoinRoomResult(String roomId, String uid, int errorCode, int joinType, int elapsed) {
-            super.onJoinRoomResult(roomId, uid, errorCode, joinType, elapsed);
-            Log.d("IRtcEngineEventHandler", "onJoinRoomResult: " + uid);
-            if (errorCode != 0) {
-                showAlertDialog(String.format(Locale.US, "error: %d", errorCode));
-            }
-        }
-
-        /**
          * SDK收到第一帧远端视频解码数据后，用户收到此回调。
          */
         @Override

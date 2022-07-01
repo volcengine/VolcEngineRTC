@@ -169,7 +169,8 @@ public:
      * @type api
      * @region 音频管理
      * @brief 调节本地播放的所有远端用户混音后的音量
-     * @param [in] volume 音频播放音量，取值范围： [0,400] <br>
+     * @param [in] volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
+     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
@@ -182,7 +183,8 @@ public:
       * @region 音频管理
       * @brief 启用音频信息提示。  <br>
       * @param config 详见 AudioPropertiesConfig{@link #AudioPropertiesConfig}
-      * @notes 开启提示后，你可以：  <br>
+      * @notes <br>
+      *       开启提示后，你可以：  <br>
       *       + 通过 OnLocalAudioPropertiesReport{@link #IRTCAudioEngineEventHandler#OnLocalAudioPropertiesReport} 回调获取本地麦克风和屏幕音频流采集的音频信息；  <br>
       *       + 通过 OnRemoteAudioPropertiesReport{@link #IRTCAudioEngineEventHandler#OnRemoteAudioPropertiesReport} 回调获取订阅的远端用户的音频信息。  <br>
       */
@@ -585,14 +587,10 @@ public:
      *        需要实现对应的加密/解密方法，详情参考 EncryptType{@link #EncryptType} 。 <br>
      * @param [in] handler 自定义加密 handler，需要实现 handler 的加密和解密方法  <br>
      * @notes  <br>
-     *       + 该方法与 SetEncryptInfo{@link #SetEncryptInfo} 为互斥关系，
-     *         只能选择自定义加密方式或者默认加密方式。最终生效的加密方式取决于最后一个调用的方法。  <br>
+     *       + 该方法与 SetEncryptInfo{@link #SetEncryptInfo} 为互斥关系，只能选择自定义加密方式或者默认加密方式。最终生效的加密方式取决于最后一个调用的方法。  <br>
      *       + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  <br>
-     *       + 无论加密或者解密，其对原始数据的长度修改，需要控制在 90% ~ 120% 之间，即如果输入数据为 100
-     * 字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃。  <br>
-     *       +
-     * 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率。是否使用该方法，需要由使用方谨慎评估。
-     * <br>
+     *       + 无论加密或者解密，其对原始数据的长度修改，需要控制在 90% ~ 120% 之间，即如果输入数据为 100 字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃。  <br>
+     *       + 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率。是否使用该方法，需要由使用方谨慎评估。
      */
     virtual void SetCustomizeEncryptHandler(IEncryptHandler* handler) = 0;
 
@@ -763,6 +761,27 @@ public:
      *       + 调用本接口后，会收到一次 OnNetworkDetectionStopped{@link #IRTCAudioEngineEventHandler#OnNetworkDetectionStopped} 回调通知探测停止。
      */
     virtual void StopNetworkDetection() = 0;
+
+    /** 
+     * @type api
+     * @region 云代理
+     * @brief 开启云代理
+     * @param [in] configuration 云代理服务器信息列表。参看 CloudProxyConfiguration{@link #CloudProxyConfiguration}。
+     * @notes  <br>
+     *        + 在加入房间前调用此接口  <br>
+     *        + 在开启云代理后，进行通话前网络探测 <br>
+     *        + 开启云代理后，并成功链接云代理服务器后，会收到 onCloudProxyConnected{@link #IRTCAudioEventHandler#onCloudProxyConnected}。<br>
+     *        + 要关闭云代理，调用 stopCloudProxy{@link #IRTCAudio#stopCloudProxy}。
+     */
+    virtual void StartCloudProxy(const CloudProxyConfiguration& configuration) = 0;
+
+    /** 
+     * @type api
+     * @region 云代理
+     * @brief 关闭云代理
+     * @notes 要开启云代理，调用 startCloudProxy{@link #IRTCAudio#startCloudProxy}。
+     */
+    virtual void StopCloudProxy() = 0;
 };
 
 /** 

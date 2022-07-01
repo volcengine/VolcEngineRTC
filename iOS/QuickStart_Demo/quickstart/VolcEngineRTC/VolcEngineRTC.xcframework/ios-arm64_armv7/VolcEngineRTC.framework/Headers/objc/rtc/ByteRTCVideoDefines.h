@@ -695,8 +695,8 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
      * @brief 推流成功。
      */
     ByteRtcTranscoderErrorCodeOK = 0,
-    /**
-     * @hidden
+    /** 
+     * 未定义的合流错误
      */
     ByteRtcTranscoderErrorCodeBase = 1090,
     /** 

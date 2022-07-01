@@ -50,9 +50,9 @@ public:
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 `LeaveRoom` 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
      * @notes  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRTCAudioEngineEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
-     *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCAudioRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 本地用户调用此方法加入房间成功后，会收到 OnRoomStateChanged{@link #IRTCAudioRoomEventHandler#OnRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 SetUserVisibility{@link #IRTCAudioRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCAudioRoomEventHandler#OnUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCAudioRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnRoomStateChanged{@link #IRTCAudioRoomEventHandler#OnRoomStateChanged} 回调通知。  <br>
      */
     virtual int JoinRoom(const char* token, const UserInfo& user_info, const AudioRoomConfig& room_config) = 0;
 
@@ -74,7 +74,7 @@ public:
      * @type api
      * @brief 更新 Token。  <br>
      *        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 OnTokenWillExpire{@link #IRTCAudioRoomEventHandler#OnTokenWillExpire} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
-     *        调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 OnJoinRoomResult{@link #IRTCAudioRoomEventHandler#OnJoinRoomResult} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+     *        调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 OnRoomStateChanged{@link #IRTCAudioRoomEventHandler#OnRoomStateChanged} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
      * @param token 有效的 Token。  <br>
      *        如果传入的 Token 无效，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
      * @return 方法调用结果。  <br>
@@ -117,7 +117,8 @@ public:
      * @region 多房间
      * @brief 调节来自远端用户的音频播放音量
      * @param user_id 音频来源的远端用户 ID
-     * @param volume  播放音量，取值范围： [0,400]  <br>
+     * @param volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
+     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
      *              + 0: 静音  <br>
      *              + 100: 原始音量  <br>
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
@@ -222,7 +223,7 @@ public:
      * @param [in] user_id 指定订阅的远端发布音频流的用户 ID。
      * @notes  <br>
      *        + 你必须先通过 OnUserPublishStream{@link #IRTCAudioRoomEventHandler#OnUserPublishStream} 回调获取当前房间里的远端音频流信息，然后调用本方法按需订阅。  <br>
-     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCAudioRoomEventHandler#OnRoomError} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 关于其他调用异常，你会收到 OnStreamStateChanged{@link #IRTCAudioRoomEventHandler#OnStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void SubscribeStream(const char* user_id) = 0;
 
@@ -233,7 +234,7 @@ public:
      *        该方法对自动订阅和手动订阅模式均适用。
      * @param userId 指定取消订阅的远端发布音频流的用户 ID。
      * @notes  <br>
-     *        + 关于其他调用异常，你会收到 OnRoomError{@link #IRTCAudioRoomEventHandler#OnRoomError} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     *        + 关于其他调用异常，你会收到 OnStreamStateChanged{@link #IRTCAudioRoomEventHandler#OnStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void UnsubscribeStream(const char* user_id) = 0;
 
@@ -344,7 +345,7 @@ public:
      *        + ISpatialAudio：成功，返回一个 ISpatialAudio{@link #ISpatialAudio} 实例。  <br>
      *        + nullptr：失败，当前 SDK 不支持空间音频功能。
      * @notes  <br>
-     *        + 首次调用该方法须在创建房间后、加入房间前。  <br>
+     *        + 首次调用该方法须在创建房间后、加入房间前。 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。 <br>
      *        + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
      *        + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
      *        + SDK 最多支持 30 个用户同时开启空间音频功能。

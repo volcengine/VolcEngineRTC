@@ -480,11 +480,11 @@ struct RTCASRConfig {
      */
     const char* access_token;
     /** 
-     * @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#uh8x72)
+     * @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://www.volcengine.com/docs/6561/107789)
      */
     const char* secret_key;
     /** 
-     * @brief 场景信息，参看[业务集群](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#aI4WCt)
+     * @brief 场景信息，参看[业务集群](https://www.volcengine.com/docs/6561/80818#_3-2-2-%E5%8F%91%E9%80%81-full-client-request)
      */
     const char* cluster;
 };
@@ -606,9 +606,9 @@ enum AudioMixingDualMonoMode{
 struct AudioPropertiesConfig {
     /** 
      * @brief 信息提示间隔，单位：ms <br>
-     *       + <= 0: 关闭信息提示  <br>
-     *       + >0 && <=100: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
-     *       + > 100: 开启信息提示，并将信息提示间隔设置为此值  <br>
+     *       + `<= 0`: 关闭信息提示  <br>
+     *       + `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
+     *       + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
      */
     int interval;
 

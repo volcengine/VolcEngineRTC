@@ -171,14 +171,6 @@ void RoomMainWidget::slotOnHangup() {
     clearVideoView();
 }
 
-void RoomMainWidget::OnJoinRoomResult(const char *room_id, const char *uid, int error_code,
-                                      bytertc::JoinRoomType join_type, int elapsed) {
-    qDebug() << "error_code" << error_code << "bytertc::JoinRoomType join_type" << join_type;
-    qDebug() << "receive join room result event";
-	if(error_code != 0)
-	emit sigError(error_code);
-}
-
 void RoomMainWidget::OnError(int err) {
     qDebug() << "bytertc::OnError err" << err;
 	emit sigError(err);

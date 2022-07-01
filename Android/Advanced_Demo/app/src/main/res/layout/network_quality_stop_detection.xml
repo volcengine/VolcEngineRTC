@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/uplink_stat_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <common.SubTitleLayout
+            android:id="@+id/uplink_title_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/uplink_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/uplink_rtt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/uplink_loss_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/uplink_bandwidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/uplink_jitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/downlink_stat_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <common.SubTitleLayout
+            android:id="@+id/downlink_title_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/downlink_network"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/downlink_rtt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/downlink_loss_rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/downlink_bandwidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <common.ValueLayout
+            android:id="@+id/downlink_jitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/stop_detection_btn"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            android:background="@color/blue"
+            android:gravity="center"
+            android:text="结束检测"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+</LinearLayout>
