@@ -47,7 +47,7 @@ public:
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时即加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
      *        进房后重复调用无效，用户必须调用 LeaveRoom{@link #LeaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
-     *        本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调通知。  <br>
+     *        本地用户调用此方法加入房间成功后，会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined} 回调通知。  <br>
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。  <br>
      * @param [in] room_id 加入的房间 ID。  <br>
@@ -68,7 +68,7 @@ public:
      * @notes  <br>
      *       + 使用不同 App ID 的 App 是不能互通的。  <br>
      *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知。  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode}。  <br>
      */
     virtual int JoinRoom(
@@ -92,9 +92,9 @@ public:
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 LeaveRoom:{@link #IRtcRoom#LeaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>  <br>
      * @notes  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 OnError{@link #IRtcEngineLiteEventHandler#OnError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
-     *       + 本地用户调用此方法加入房间成功后，会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知。  <br>
+     *       + 本地用户调用此方法加入房间成功后，会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身设为可见后加入房间，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnJoinRoomResult{@link #IRTCRoomEventHandler#OnJoinRoomResult} 回调通知；如果加入房间的用户可见，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 OnRoomStateChanged{@link #IRTCRoomEventHandler#OnRoomStateChanged} 回调通知；如果加入房间的用户可见，远端用户会收到 OnUserJoined{@link #IRTCRoomEventHandler#OnUserJoined}。  <br>
      */
      virtual int JoinRoom(const char* token, const char* room_id, const UserInfo& user_info, const RTCRoomConfig& room_config) = 0;
     /**

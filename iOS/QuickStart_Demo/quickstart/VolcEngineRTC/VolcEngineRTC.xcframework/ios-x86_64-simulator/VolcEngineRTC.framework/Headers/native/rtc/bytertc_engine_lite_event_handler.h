@@ -630,6 +630,14 @@ public:
     virtual void OnFirstPublicStreamAudioFrame(const char* public_stream_id) {
         (void)public_stream_id;
     }
+    /** 
+     * @type callback
+     * @brief 调用 StartCloudProxy{@link #IRtcEngineLite#StartCloudProxy} 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
+     * @param [in] interval 从开启云代理到连接成功经过的时间，单位为 ms
+     */
+    virtual void OnCloudProxyConnected(int interval) {
+        (void)interval;
+    }
 };
 
 } // namespace bytertc

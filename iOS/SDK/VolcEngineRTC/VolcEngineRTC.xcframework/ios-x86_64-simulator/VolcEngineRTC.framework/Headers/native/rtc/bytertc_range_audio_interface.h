@@ -14,12 +14,12 @@ namespace bytertc {
  * @brief 本地用户能收听到、且具有衰减效果的音频接收范围
  */
 struct ReceiveRange {
-    /**  
+    /** 
      * @brief 能够接收语音、并且具有衰减效果的最小距离值，该值须 ≥ 0，但 ≤ max。  <br>
      *        小于该值的范围内没有范围语音效果，即收听到的音频音量相同。
      */
     int min;
-    /**  
+    /** 
      * @brief 能够收听语音的最大距离值，该值须 > 0 且 ≥ min。  <br>
      *        当收听者和声源距离处于 [min, max) 之间时，收听到的音量根据距离呈衰减效果。  <br>
      *        超出该值范围的音频将无法收听到。
@@ -49,7 +49,7 @@ struct RangeAudioInfo {
 class IRangeAudioObserver {
 public:
     /** 
-     * @type api
+     * @type callback
      * @region 范围语音
      * @brief 关于当前范围语音衰减系数的回调。  <br>
      *        手动订阅的场景下，房间内任一用户调用 UpdatePosition{@link #IRangeAudio#UpdatePosition} 更新自身位置或调用 UpdateReceiveRange{@link #IRangeAudio#UpdateReceiveRange} 更新语音接收范围时，该用户与房间内其他用户的相对距离都会发生改变，据此计算的衰减系数也会发生改变，并通过该回调通知用户。 <br>
@@ -93,7 +93,7 @@ public:
      * @notes 若此前你已调用 RegisterRangeAudioObserver{@link #IRangeAudio#RegisterRangeAudioObserver} 注册了范围语音衰减系数监测器，房间内有任何用户调用该接口更新音频收听范围后，你都会收到 OnRangeAudioInfo{@link #IRangeAudioObserver#OnRangeAudioInfo} 回调。
      */
     virtual int UpdateReceiveRange(const ReceiveRange &range) = 0;
-    /**  
+    /** 
      * @type api
      * @region 范围语音
      * @brief 更新本地用户在房间内空间直角坐标系中的位置坐标。
@@ -121,4 +121,3 @@ public:
     virtual ~IRangeAudio() {}
 };
 }  // namespace bytertc
-

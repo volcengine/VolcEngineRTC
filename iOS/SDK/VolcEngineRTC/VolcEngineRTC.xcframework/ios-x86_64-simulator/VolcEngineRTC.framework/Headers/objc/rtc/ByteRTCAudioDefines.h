@@ -781,11 +781,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
  */
 @property(copy, nonatomic) NSString *_Nonnull accessToken;
 /** 
- *  @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#uh8x72)
+ *  @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://www.volcengine.com/docs/6561/107789)
  */
 @property(copy, nonatomic) NSString *_Nonnull secretKey;
 /** 
- *  @brief 场景信息，参看[业务集群](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#aI4WCt)
+ *  @brief 场景信息，参看[业务集群](https://www.volcengine.com/docs/6561/80818#_3-2-2-%E5%8F%91%E9%80%81-full-client-request)
  */
 @property(copy, nonatomic) NSString *_Nonnull cluster;
 /** 
@@ -822,7 +822,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCASREngineEventHandler<NSObject>
  * @brief 当语音识别服务内部发生错误事件时触发该回调。
  * @param errorCode 错误码  <br>
  *        + < 0: 参数错误或 API 调用顺序错误，参看 ByteRTCASRErrorCode{@link #ByteRTCASRErrorCode}；  <br>
- *        + >0: 参看 [语音识别服务错误码](https://bytedance.feishu.cn/docs/doccnMx9153dZEpfLX2I6BkFsMg#VPknqs)
+ *        + >0: 参看 [语音识别服务错误码](https://www.volcengine.com/docs/6561/80818#_3-3-%E9%94%99%E8%AF%AF%E7%A0%81)
  * @param errorMessage 错误原因说明
  */
 - (void)onError:(NSInteger)errorCode withErrorMessage:(NSString *_Nonnull)errorMessage;
@@ -864,9 +864,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 /** 
  * @brief 信息提示间隔，单位：ms <br>
- *       + <= 0: 关闭信息提示  <br>
- *       + >0 && <=100: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
- *       + > 100: 开启信息提示，并将信息提示间隔设置为此值  <br>
+ *       + `<= 0`: 关闭信息提示  <br>
+ *       + `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
+ *       + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
  */
 @property(assign, nonatomic) NSInteger interval;
 /** 

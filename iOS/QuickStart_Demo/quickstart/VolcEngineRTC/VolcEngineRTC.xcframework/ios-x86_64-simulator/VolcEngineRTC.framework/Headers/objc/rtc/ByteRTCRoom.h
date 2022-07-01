@@ -22,24 +22,37 @@
   * @type callback
   * @region 多房间
   * @author shenpengliang
-  * @brief 首次加入房间/重连加入房间的回调。根据错误码判断成功/失败以及区别是否为重连。
-  * @param rtcRoom ByteRTCRoom 对象。
+  * @brief 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
   * @param roomId 房间 ID。
   * @param uid 用户 ID。
-  * @param errorCode 用户加入房间回调的状态码。参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 以及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。  <br>
-  *        + 0: 成功  <br>
-  *        + < 0: 失败
-  * @param joinType 加入房间的类型。  <br>
-  *        + 0: 首次加入房间。用户通过调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:}，加入成功。  <br>
-  *        + 1: 重新加入房间。用户网络较差，失去与服务器的连接，重连加入成功。
-  * @param elapsed 重连耗时。本地用户从连接断开到重连成功所经历的时间间隔，单位为 ms 。
+  * @param state 房间状态码。  <br>
+  *              + 0: 成功。  <br>
+  *              + !0: 失败，具体原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。
+  * @param extraInfo 额外信息。
+  *                  `joinType`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
+  *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 到加入房间成功所经历的时间间隔，单位为 ms。
   */
  - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
-    onJoinRoomResult:(NSString *_Nonnull)roomId
+    onRoomStateChanged:(NSString *_Nonnull)roomId
              withUid:(nonnull NSString *)uid
-           errorCode:(NSInteger)errorCode
-            joinType:(NSInteger)joinType
-             elapsed:(NSInteger)elapsed;
+           state:(NSInteger)state
+           extraInfo:(NSString *_Nonnull)extraInfo;
+
+/** 
+ * @type callback
+ * @region 多房间
+ * @author shenpengliang
+ * @brief 流状态改变回调，发生流相关的警告或错误时会收到此回调。
+ * @param roomId 房间 ID。
+ * @param uid 用户 ID。
+ * @param state 流状态码，参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。
+ * @param extraInfo 附加信息，目前为空。
+ */
+- (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom
+   onStreamStateChanged:(NSString *_Nonnull)roomId
+            withUid:(nonnull NSString *)uid
+          state:(NSInteger)state
+          extraInfo:(NSString *_Nonnull)extraInfo;
 
 /** 
  * @hidden
@@ -57,6 +70,8 @@
 - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onLeaveRoomWithStats:(ByteRTCRoomStats *_Nonnull)stats;
 
  /** 
+  * @hidden
+  * @deprecated since 341.1 by onRoomStateChanged and onStreamStateChanged
   * @type callback
   * @region 多房间
   * @author shenpengliang
@@ -68,6 +83,8 @@
  - (void)rtcRoom:(ByteRTCRoom *_Nonnull)rtcRoom onRoomWarning:(ByteRTCWarningCode)warningCode;
 
 /** 
+ * @hidden
+ * @deprecated since 341.1 by onRoomStateChanged and onStreamStateChanged
  * @type callback
  * @region 多房间
  * @author shenpengliang
@@ -356,7 +373,8 @@
  * @param state 订阅媒体流状态，参看 ByteRTCSubscribeState{@link #ByteRTCSubscribeState}
  * @param userId 流发布用户的用户 ID
  * @param info 流的属性，参看 ByteRTCSubscribeConfig{@link #ByteRTCSubscribeConfig}
- * @notes 本地用户收到该回调的时机包括：  <br>
+ * @notes  <br>
+ *        本地用户收到该回调的时机包括：  <br>
  *        + 调用 subscribeStream:mediaStreamType:{@link #ByteRTCRoom#subscribeStream:mediaStreamType:} 或 unSubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unSubscribeStream:mediaStreamType:} 订阅/取消订阅指定远端摄像头音视频流后；  <br>
  *        + 调用 subscribeScreen:mediaStreamType:{@link #ByteRTCRoom#subscribeScreen:mediaStreamType:} 或 unSubscribeScreen:mediaStreamType:{@link #ByteRTCRoom#unSubscribeScreen:mediaStreamType:} 订阅/取消订阅指定远端屏幕共享流后。
  */
@@ -827,7 +845,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *        + -3: room 为空 <br>
  * @notes  <br>
  *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
- *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调通知。  <br>
+ *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。  <br>
  *        + 本地用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
  *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
  */
@@ -930,7 +948,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @author shenpengliang
  * @brief 更新 Token。  <br>
  *        用户调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法加入房间时，
- *        如果使用了过期的 Token 将导致加入房间失败，并会收到 rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onJoinRoomResult:withUid:errorCode:joinType:elapsed:} 回调，
+ *        如果使用了过期的 Token 将导致加入房间失败，并会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调，
  *        回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 ByteRTCErrorCodeInvalidToken。
  *        此时需要重新获取 Token，并调用此方法更新 Token。更新 Token 后，SDK 会自动加入房间。 <br>
  * @param token 更新的动态密钥。
@@ -952,7 +970,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
  *        + 该方法需在进房后调用，若想进房前设置，你需调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:}，并对 `roomConfig` 中的 `remoteVideoConfig` 进行设置。  <br>
  *        + 该方法在订阅前后都可调用，订阅后的设置会在重新订阅该流时生效。 <br>
- *        + SDK 会根据发布端和所有订阅端的设置灵活调整视频流的参数，具体调整策略详见[推送多路流](70139)文档。
+ *        + SDK 会根据发布端和所有订阅端的设置灵活调整视频流的参数，具体调整策略详见[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。
  */
 - (int) setRemoteVideoConfig:(NSString * _Nonnull) userId remoteVideoConfig:(ByteRTCRemoteVideoConfig *_Nonnull) remoteVideoConfig;
 
@@ -1137,7 +1155,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @notes  <br>
  *        + 你必须先通过 rtcRoom:onUserPublishStream:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishStream:type:} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
- *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
 /** 
@@ -1150,7 +1168,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
  * @notes  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
- *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)unSubscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
 /** 
@@ -1164,7 +1182,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @notes  <br>
  *        + 你必须先通过 rtcRoom:onUserPublishScreen:type:{@link #ByteRTCRoomDelegate #rtcRoom:onUserPublishScreen:type:} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的订阅结果。  <br>
- *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
 /** 
@@ -1177,7 +1195,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
  * @notes  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
- *        + 关于其他调用异常，你会收到 rtcRoom:onRoomError:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomError:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
+ *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)unSubscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
 
@@ -1239,7 +1257,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use joinRoomByToken with multiRoomConfig");
  * @author majun.lvhiei
  * @brief 调节来自指定远端用户的音频播放音量，默认为 100。
  * @param uid 音频来源的远端用户 ID
- * @param volume 播放音量，调节范围：[0,400]  <br>
+ * @param volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
+ *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
  *              + 0: 静音  <br>
  *              + 100: 原始音量  <br>
  *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
@@ -1600,7 +1619,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  *        + ByteRTCSpatialAudio：成功，返回一个 ByteRTCSpatialAudio{@link #ByteRTCSpatialAudio} 实例。  <br>
  *        + NULL：失败，当前 SDK 不支持空间音频功能。
  * @notes  <br>
- *        + 首次调用该方法须在创建房间后、加入房间前。  <br>
+ *        + 首次调用该方法须在创建房间后、加入房间前。 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。 <br>
  *        + 只有在使用支持真双声道播放的设备时，才能开启空间音频效果；  <br>
  *        + 机型性能不足可能会导致音频卡顿，使用低端机时，不建议开启空间音频效果；  <br>
  *        + SDK 最多支持 30 个用户同时开启空间音频功能。

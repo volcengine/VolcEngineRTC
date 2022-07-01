@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/QuickStart">
+        <file>Resources/audio.bmp</file>
+        <file>Resources/audio_disable.bmp</file>
+        <file>Resources/audio_hover.bmp</file>
+        <file>Resources/hangup.bmp</file>
+        <file>Resources/hangup_hover.bmp</file>
+        <file>Resources/video.bmp</file>
+        <file>Resources/video_disable.bmp</file>
+        <file>Resources/video_hover.bmp</file>
+        <file>Resources/wclose.bmp</file>
+        <file>app.ico</file>
+        <file>Resources/beauty.png</file>
+        <file>Resources/setting.png</file>
+        <file>Resources/setting_close.png</file>
+        <file>Resources/share_screen.png</file>
+        <file>Resources/sharing.png</file>
+    </qresource>
+</RCC>

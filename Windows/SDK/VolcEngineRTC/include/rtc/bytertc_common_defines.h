@@ -809,7 +809,7 @@ enum PublishFallbackOption {
      */
     kPublishFallbackOptionDisabled = 0,
     /** 
-     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配从大流开始做降级处理，具体降级规则参看[性能回退](70137)文档。
+     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配从大流开始做降级处理，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。
      */
     kPublishFallbackOptionSimulcast = 1,
 };
@@ -966,14 +966,15 @@ enum ErrorCode {
      * @brief 调用 `updateToken` 传入的 Token 无效
      */
     kRoomErrorUpdateTokenWithInvalidToken = -1010,
-
-
     /** 
      * @brief 服务端调用 OpenAPI 解散房间，所有用户被移出房间。
      */
     kErrorCodeRoomDismiss = -1011,
-
-
+    /** 
+     * @brief 加入房间错误。
+     *        调用 JoinRoom{@link #IRtcEngine#JoinRoom} 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
+     */
+    kErrorCodeJoinRoomWithoutLicenseAuthenticateSDK = -1012,
     /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
@@ -1127,7 +1128,11 @@ enum WarningCode {
      * @brief 指定的内部渲染画布句柄无效。  <br>
      *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
      */
-    kWarningCodeInvalidCanvasHandle = -6001
+    kWarningCodeInvalidCanvasHandle = -6001,
+    /** 
+     * @brief 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。  <br>
+     */
+    kWarningLicenseFileExpired = -7001
 };
 
 /** 
@@ -2682,6 +2687,37 @@ struct RTCWatermarkConfig {
      * @brief 视频编码的方向模式为竖屏时的水印位置和大小，参看 ByteWatermark{@link #ByteWatermark}。
      */
     ByteWatermark positionInPortraitMode;
+};
+/** 
+ * @type keytype
+ * @brief 云代理信息
+ */
+struct CloudProxyInfo {
+    /** 
+     * @type keytype
+     * @brief 云代理服务器 IP
+     */
+    const char* cloud_proxy_ip;
+    /** 
+     * @type keytype
+     * @brief 云代理服务器端口
+     */
+    int cloud_proxy_port;
+};
+
+/** 
+ * @type keytype
+ * @brief 云代理相关信息
+ */
+struct CloudProxyConfiguration {
+    /** 
+     * @brief 云代理信息。
+     */
+    CloudProxyInfo* cloud_proxies = nullptr;
+    /** 
+     * @brief 云代理数量。
+     */
+    int cloud_proxy_count = 0;
 };
 
 }  // namespace bytertc

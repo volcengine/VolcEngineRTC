@@ -788,7 +788,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCPublishFallbackOption) {
      */
     ByteRTCPublishFallbackOptionDisabled = 0,
     /** 
-     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配从大流开始做降级处理，具体降级规则参看[性能回退](70137)文档。
+     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配从大流开始做降级处理，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。
      */
     ByteRTCPublishFallbackOptionSimulcast = 1,
 };
@@ -2475,4 +2475,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCNetworkQualityStats: NSObject
  */
 @property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 @end
-
+/** 
+ * @type keytype
+ * @brief 云代理信息
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCCloudProxyInfo: NSObject
+/** 
+ * @type keytype
+ * @brief 云代理服务器 IP
+ */
+@property(strong, nonatomic) NSString* _Nonnull cloudProxyIp;
+/** 
+ * @type keytype
+ * @brief 云代理服务器端口
+ */
+@property(assign, nonatomic) int cloudProxyPort;
+@end

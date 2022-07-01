@@ -65,6 +65,7 @@ private:
      */
     virtual void OnRoomWarning(int warn) override {
     }
+
      /**
       * @hidden
      */

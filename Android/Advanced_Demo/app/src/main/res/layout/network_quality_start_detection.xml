@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <common.SubTitleLayout
+        android:id="@+id/title_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include
+        android:id="@+id/uplink_switch"
+        layout="@layout/layout_tip_item_switch" />
+
+    <common.ValueLayout
+        android:id="@+id/uplink_bitrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include
+        android:id="@+id/downlink_switch"
+        layout="@layout/layout_tip_item_switch" />
+
+    <common.ValueLayout
+        android:id="@+id/downlink_bitrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/start_detection_btn"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            android:background="@color/blue"
+            android:gravity="center"
+            android:text="开始检测"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </FrameLayout>
+</LinearLayout>

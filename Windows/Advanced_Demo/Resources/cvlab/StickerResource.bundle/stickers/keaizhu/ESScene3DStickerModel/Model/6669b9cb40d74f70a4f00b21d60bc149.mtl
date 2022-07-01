@@ -1,0 +1,86 @@
+{
+    "materials": [
+        {
+            "name": "mtl_0",
+            "techniques": [
+                {
+                    "name": "tech_0",
+                    "passes": [
+                        {
+                            "blend": true,
+                            "blend_dst_factor": "BF_ZERO",
+                            "blend_equation": "",
+                            "blend_src_factor": "BF_ONE",
+                            "cullFace": false,
+                            "depthFunc": "DF_LEQUAL",
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "name": "pass_0",
+                            "renderFaceMode": "RFM_FRONT",
+                            "renderType": "Transparent",
+                            "shaders": [
+                                {
+                                    "defination": [
+                                    ],
+                                    "source": "b1c5b708482c44ba911a0b6bfc263851_v1.glsl",
+                                    "type": "VERTEX_SHADER"
+                                },
+                                {
+                                    "defination": [
+                                    ],
+                                    "source": "b1c5b708482c44ba911a0b6bfc263851_f1.glsl",
+                                    "type": "FRAGMENT_SHADER"
+                                }
+                            ],
+                            "uniforms": {
+                                "g_unif_BoneMatArr": "BT_BONE_MATRIXES",
+                                "g_unif_CameraWorldPos": "BT_CAMERA_WORLD_POS",
+                                "g_unif_ModelMat": "BT_MODEL_MATRIX",
+                                "g_unif_ModelViewProjMat": "BT_MODEL_VIEW_PROJECTION_MATRIX",
+                                "g_unif_NormalWorldMat": "BT_NORMAL_WORLD_MATRIX",
+                                "u_AmbientOcclusion": 1,
+                                "u_BaseColor": {
+                                    "filter": "FM_NEAREST",
+                                    "source": [
+                                        "../textures/aa36a550694f4e8197c3e8eeb9080cad.png"
+                                    ],
+                                    "type": "2d_texture",
+                                    "wrap": "WM_CLAMP"
+                                },
+                                "u_Culloff": 0,
+                                "u_EmissiveColor": [
+                                    0,
+                                    0,
+                                    0
+                                ],
+                                "u_IBLIntensity": 2.2510805130004883,
+                                "u_IBLOffset": 0.22,
+                                "u_IrradianceTex": {
+                                    "filter": "FM_LINEAR",
+                                    "source": [
+                                        "../textures/250515667be84a6780497944317ed86a.png"
+                                    ],
+                                    "type": "2d_texture",
+                                    "wrap": "WM_CLAMP"
+                                },
+                                "u_Metallic": 0.01,
+                                "u_RadianceTex": {
+                                    "filter": "FM_LINEAR",
+                                    "source": [
+                                        "../textures/3627e8ec64fb4a1aaffbe116e2345c46.png"
+                                    ],
+                                    "type": "2d_texture",
+                                    "wrap": "WM_CLAMP"
+                                },
+                                "u_Roughness": 0.96,
+                                "u_Specular": 0.5,
+                                "u_Translucency": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "name": "mat"
+}

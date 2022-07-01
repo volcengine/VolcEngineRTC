@@ -11,8 +11,9 @@
 #define PUBLICSTREAM_BASE 1190
 #define PUBLICSTREAM_INVALID_PARAM 1191
 #define PUBLICSTREAM_INVALID_STATE 1192
-#define PUBLICSTREAM_INVALID_OPERATOR 1193
-#define PUBLICSTREAM_TIMEOUT 1194
+#define PUBLICSTREAM_INTERNAL_ERROR 1193
+#define PUBLICSTREAM_PUSH_FAILED 1195
+#define PUBLICSTREAM_TIMEOUT 1196
 
 namespace bytertc {
 /** 
@@ -25,6 +26,38 @@ enum StreamLayoutMode {
      */
     kLayoutCustomerMode = 2
 };
+
+/** 
+ * @type keytype
+ * @brief 公共流错误码。
+ */
+enum PublicStreamErrorCode {
+    /** 
+     * @brief 推流成功。
+     */
+    kPublicStreamOK = 200,
+    /** 
+     * @brief 推流参数错误。
+     */
+    kPushPublicStreamInvalidParam = 1191,
+    /** 
+     * @brief 推流状态异常。
+     */
+    kPushPublicStreamInvalidStatus = 1192,
+    /** 
+     * @brief 推流内部错误。
+     */
+    kPushPublicStreamInternalError = 1193,
+    /** 
+     * @brief 推流失败。
+     */
+    kPushPublicStreamPushFailed = 1195,
+    /** 
+     * @brief 推流消息发送超时。
+     */
+    kPushPublicStreamTimeout = 1196,
+};
+
 /** 
  * @type keytype
  * @brief 公共流视频裁剪配置

@@ -23,21 +23,37 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @brief 首次加入房间/重连加入房间的回调。此回调表示用户调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 的结果，根据错误码判断成功/失败以及区别是否为重连。  <br>
-     * @param [in] room_id 房间 ID。  <br>
-     * @param [in] uid 用户 ID。  <br>
-     * @param [in] error_code 用户加入房间回调的状态码。  <br>
-     *        + 0: 加入房间成功；  <br>
-     *        + 非 0: 加入房间失败，具体原因参看 ErrorCode{@link #ErrorCode} 以及 WarningCode{@link #WarningCode}。  <br>
-     * @param [in] join_type 用户加入房间的类型，标识用户第一次加入或断网重连加入。参看 JoinRoomType{@link #JoinRoomType}。  <br>
-     * @param [in] elapsed  重连耗时。本地用户从连接断开到重连成功所经历的时间间隔，单位为 ms，加入房间失败为 -1  <br>
+     * @brief 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
+     * @param [in] room_id 房间 ID。
+     * @param [in] uid 用户 ID。
+     * @param [in] state 房间状态码。  <br>
+     *              + 0: 成功。  <br>
+     *              + !0: 失败，具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
+     * @param [in] extra_info 额外信息。
+     *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
+     *                  `elapsed`表示加入房间耗时，即本地用户从调用 JoinRoom{@link #IRTCAudioRoom#JoinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
      */
-    virtual void OnJoinRoomResult(const char* room_id, const char* uid,
-            int error_code, JoinRoomType join_type, int elapsed) {
+    virtual void OnRoomStateChanged(const char* room_id, const char* uid,
+            int state, const char* extra_info) {
         (void)room_id;
-        (void)error_code;
-        (void)join_type;
-        (void)elapsed;
+        (void)state;
+        (void)extra_info;
+    }
+    
+    /** 
+     * @type callback
+     * @region 房间管理
+     * @brief 流状态改变回调，发生流相关的警告或错误时会收到此回调。
+     * @param [in] room_id 房间 ID。
+     * @param [in] uid 用户 ID。
+     * @param [in] state 流状态码，参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
+     * @param [in] extra_info 附加信息，目前为空。
+     */
+    virtual void OnStreamStateChanged(const char* room_id, const char* uid,
+            int state, const char* extra_info) {
+        (void)room_id;
+        (void)state;
+        (void)extra_info;
     }
 
     /** 
@@ -55,6 +71,8 @@ public:
     }
 
     /** 
+     * @hidden
+     * @deprecated since 341.1 by OnRoomStateChanged and OnStreamStateChanged
      * @type callback
      * @region 房间管理
      * @brief SDK 发生警告回调。  <br>
@@ -66,6 +84,8 @@ public:
     }
 
     /** 
+     * @hidden
+     * @deprecated since 341.1 by OnRoomStateChanged and OnStreamStateChanged
      * @type callback
      * @region 房间管理
      * @brief SDK 发生错误回调。  <br>

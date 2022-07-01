@@ -380,8 +380,8 @@ public:
      * @type api
      * @region 音频管理
      * @brief 调节本地播放的所有远端用户混音后的音量
-     * @param [in] volume 音频播放音量，取值范围： [0,400] <br>
-     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。
+     * @param [in] volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
+     *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
      *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
@@ -461,7 +461,7 @@ public:
      *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 OnWarning{@link #IRtcEngineLiteEventHandler#OnWarning} 回调。  <br>
      *       + 调用 StopAudioCapture{@link #StopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
      *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
-     *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 DisableExternalAudioDevice{@link #DisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
+     *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 SetAudioSourceType{@link #IRtcEngineLite#SetAudioSourceType} 关闭自定义采集，再调用此方法手动开启内部采集。
      */
     virtual void StartAudioCapture() = 0;
 
@@ -1223,6 +1223,7 @@ public:
      *        + 0: 成功 <br>
      *        + <0: 失败
      * @notes <br>
+     *        + 开启推送多路流前请联系技术支持人员通过配置下发开启该功能。  <br>
      *        + 你应在进房前或进房后但未发布流时，调用此方法。  <br>
      *        + 开启推送多路视频流模式后，你可以调用 [SetVideoEncoderConfig](#IRtcEngineLite-setvideoencoderconfig-1) 为多路视频流分别设置编码参数。  <br>
      *        + 该功能关闭时，或该功能开启但未设置多路流参数时，默认只发一路视频流，该流的编码参数为：分辨率 640px × 360px，帧率 15fps。
@@ -1239,7 +1240,7 @@ public:
      *        + 0：成功  <br>
      *        + !0：失败  <br>
      * @notes  <br>
-     *        + 若调用该方法设置了期望发布的最大分辨率的流参数之前，已调用 EnableSimulcastMode{@link #IRtcEngineLite#EnableSimulcastMode} 开启发布多路视频流的模式，SDK 会根据订阅端的设置自动调整发布的流数以及各路流的参数，其中最大分辨率为设置的分辨率，流数最多 4 条，具体参看[推送多路流](70139)文档；否则仅发布该条最大分辨率的视频流。 <br>
+     *        + 若调用该方法设置了期望发布的最大分辨率的流参数之前，已调用 EnableSimulcastMode{@link #IRtcEngineLite#EnableSimulcastMode} 开启发布多路视频流的模式，SDK 会根据订阅端的设置自动调整发布的流数以及各路流的参数，其中最大分辨率为设置的分辨率，流数最多 4 条，具体参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档；否则仅发布该条最大分辨率的视频流。 <br>
      *        + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  <br>
      *        + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 SetScreenVideoEncoderConfig{@link #IRtcEngineLite#SetScreenVideoEncoderConfig}。
      */
@@ -1255,7 +1256,7 @@ public:
      *        + 0: Success <br>
      *        + ! 0: Failure <br>
      * @notes  <br>
-     *        + If you call this API after enabling the mode of publishing multiple streams with EnableSimulcastMode{@link #IRtcEngineLite#EnableSimulcastMode}, SDK will automatically adjust the number of streams published and the parameters of each published stream according to the settings of subscribers. Up to 4 streams will be published, and the resolution you set in this API will be considered as the largest resolution among these 4 streams, see [Publish Multiple Streams](70139) for details. Until you enable the mode of publishing multiple streams, SDK will only publish the stream you set.  <br>
+     *        + If you call this API after enabling the mode of publishing multiple streams with EnableSimulcastMode{@link #IRtcEngineLite#EnableSimulcastMode}, SDK will automatically adjust the number of streams published and the parameters of each published stream according to the settings of subscribers. Up to 4 streams will be published, and the resolution you set in this API will be considered as the largest resolution among these 4 streams, see [Publish Multiple Streams](https://www.volcengine.com/docs/6348/70139) for details. Until you enable the mode of publishing multiple streams, SDK will only publish the stream you set.  <br>
      *        + Without calling this API, SDK will only publish one stream for you with a resolution of 640px × 360px and a frame rate of 15fps.  <br>
      *        + This API is applicable to the video stream captured by the camera, see SetScreenVideoEncoderConfig{@link #IRtcEngineLite#SetScreenVideoEncoderConfig} for setting parameters for screen sharing video stream.
      */
@@ -1273,7 +1274,7 @@ public:
      * @notes  <br>
      *        + 该方法是否生效取决于是否同时调用了 EnableSimulcastMode{@link #IRtcEngineLite#EnableSimulcastMode} 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 默认发布分辨率最大的一条流，多个分辨率的设置会在开启推送多路流模式之后生效。  <br>
      *        + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  <br>
-     *        + 调用该方法设置分辨率不同的多条流后，SDK 会根据订阅端设置的期望订阅参数自动匹配发送的流，具体规则参看[推送多路流](70139)文档。  <br>
+     *        + 调用该方法设置分辨率不同的多条流后，SDK 会根据订阅端设置的期望订阅参数自动匹配发送的流，具体规则参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。  <br>
      *        + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 SetScreenVideoEncoderConfig{@link #IRtcEngineLite#SetScreenVideoEncoderConfig}。
      */
     virtual int SetVideoEncoderConfig(const VideoEncoderConfig* channel_solutions, int solution_num) = 0;
@@ -1971,7 +1972,7 @@ public:
      * @notes <br>
      *        + 旋转仅对内部视频采集生效，不适用于外部视频源和屏幕源。
      *        + 调用该接口时已开启视频采集，将立即生效；调用该接口时未开启视频采集，则将在采集开启后生效。
-     *        + 更多信息请参考[视频采集方向](106458)。
+     *        + 更多信息请参考[视频采集方向](https://www.volcengine.com/docs/6348/106458)。
      */
     virtual int SetVideoRotationMode(VideoRotationMode rotationMode) = 0;
 
@@ -2031,13 +2032,10 @@ public:
      *        需要实现对应的加密/解密方法，详情参考 EncryptType{@link #EncryptType} 。 <br>
      * @param [in] handler 自定义加密 handler，需要实现 handler 的加密和解密方法  <br>
      * @notes  <br>
-     *       + 该方法与 SetEncryptInfo{@link #SetEncryptInfo} 为互斥关系，
-     *         只能选择自定义加密方式或者默认加密方式。最终生效的加密方式取决于最后一个调用的方法。  <br>
+     *       + 该方法与 SetEncryptInfo{@link #SetEncryptInfo} 为互斥关系，只能选择自定义加密方式或者默认加密方式。最终生效的加密方式取决于最后一个调用的方法。  <br>
      *       + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  <br>
-     *       + 无论加密或者解密，其对原始数据的长度修改，需要控制在 90% ~ 120% 之间，即如果输入数据为 100
-     * 字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃。  <br>
-     *       +
-     * 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率。是否使用该方法，需要由使用方谨慎评估。
+     *       + 无论加密或者解密，其对原始数据的长度修改，需要控制在 90% ~ 120% 之间，即如果输入数据为 100 字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃。  <br>
+     *       + 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率。是否使用该方法，需要由使用方谨慎评估。
      * <br>
      */
     virtual void SetCustomizeEncryptHandler(IEncryptHandler* handler) = 0;
@@ -2208,6 +2206,7 @@ public:
      * @brief 该方法将通话过程中的音视频数据录制到本地的文件中。
      * @param [in] type 流属性，指定录制主流还是屏幕流，参看 StreamIndex{@link #StreamIndex}
      * @param [in] config 本地录制参数配置，参看 RecordingConfig{@link #RecordingConfig}
+     * @param [in] recording_type 本地录制的媒体类型，参看 RecordingType{@link #RecordingType}
      * @return  <br>
      *        + 0: 正常
      *        + -1: 参数设置异常
@@ -2596,7 +2595,8 @@ public:
       * @region 音频管理
       * @brief 启用音频信息提示。  <br>
       * @param config 详见 AudioPropertiesConfig{@link #AudioPropertiesConfig}
-      * @notes 开启提示后，你可以：  <br>
+      * @notes  <br>
+      *       开启提示后，你可以：  <br>
       *       + 通过 OnLocalAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnLocalAudioPropertiesReport} 回调获取本地麦克风和屏幕音频流采集的音频信息；  <br>
       *       + 通过 OnRemoteAudioPropertiesReport{@link #IRtcEngineLiteEventHandler#OnRemoteAudioPropertiesReport} 回调获取订阅的远端用户的音频信息。  <br>
       */
@@ -2663,7 +2663,7 @@ public:
      * @param [in] video_index 对应的编码流下标，从 0 开始，如果调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 设置了多路流，此处数量须与之保持一致
      * @param [in] video_stream 编码流视频帧信息，参看 IEncodedVideoFrame{@link #IEncodedVideoFrame}。  <br>
      * @notes  <br>
-     *        + 目前仅支持推送 H264 和 ByteVC1 格式的视频帧。  <br>
+     *        + 目前仅支持推送 H264 和 ByteVC1 格式的视频帧，且视频流协议格式须为 Annex B 格式。  <br>
      *        + 该函数运行在用户调用线程内  <br>
      *        + 推送自定义编码视频帧前，必须调用 SetVideoSourceType{@link #IRtcEngineLite#SetVideoSourceType} 将视频输入源切换至自定义编码视频源。
      */
@@ -2768,7 +2768,7 @@ public:
     virtual int SetPublicStreamVideoCanvas(const char* public_stream_id, const VideoCanvas& canvas) = 0;
     /** 
      * @type api
-     * @brief 为指定公共流绑定自定义渲染器。详见[自定义视频渲染](81201)。
+     * @brief 为指定公共流绑定自定义渲染器。详见[自定义视频渲染](https://www.volcengine.com/docs/6348/81201)。
      * @param [in] public_stream_id 公共流 ID
      * @param [in] video_sink 自定义视频渲染器，自定义视频渲染器，需要释放渲染器资源时，将 videoSink 设置为 `null`。参看 IVideoSink{@link #IVideoSink}
      * @return  <br>
@@ -2804,6 +2804,27 @@ public:
      * @param [in] streamIndex 需要移除水印的视频流属性，参看 StreamIndex{@link #StreamIndex}。
      */
     virtual void ClearVideoWatermark(StreamIndex streamIndex) = 0;
+
+    /** 
+     * @type api
+     * @region 云代理
+     * @brief 开启云代理
+     * @param [in] configuration 云代理服务器信息列表。参看 CloudProxyConfiguration{@link #CloudProxyConfiguration}。
+     * @notes  <br>
+     *        + 在加入房间前调用此接口  <br>
+     *        + 在开启云代理后，进行通话前网络探测 <br>
+     *        + 开启云代理后，并成功链接云代理服务器后，会收到 OnCloudProxyConnected{@link #IRtcEngineLiteEventHandler#OnCloudProxyConnected}。<br>
+     *        + 要关闭云代理，调用 StopCloudProxy{@link #IRtcEngineLite#StopCloudProxy}。
+     */
+    virtual void StartCloudProxy(const CloudProxyConfiguration& configuration) = 0;
+
+    /** 
+     * @type api
+     * @region 云代理
+     * @brief 关闭云代理
+     * @notes 要开启云代理，调用 StartCloudProxy{@link #IRtcEngineLite#StartCloudProxy}。
+     */
+    virtual void StopCloudProxy() = 0;
 };
 
 }  // namespace bytertc
