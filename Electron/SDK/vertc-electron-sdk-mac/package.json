@@ -1,0 +1,76 @@
+{
+    "name": "@byted/vertc-electron-sdk",
+    "version": "1.3.0",
+    "description": "vertc electron sdk",
+    "main": "./js/index.js",
+    "dependencies": {
+        "bluebird": "^3.7.1",
+        "decompress": "^4.2.1",
+        "download": "^7.1.0",
+        "extract-zip": "^1.6.8",
+        "fs-extra": "^9.0.1",
+        "just-task": "^1.4.0",
+        "node-addon-api": "^3.0.1",
+        "node-gyp": "^5.1.0",
+        "rimraf": "^3.0.2",
+        "semver": "^6.0.0",
+        "yuv-canvas": "^1.2.11",
+        "node-addon-api": "^3.0.1",
+        "decompress": "^4.2.1",
+        "shelljs": "^0.8.4"
+    },
+    "devDependencies": {
+        "@byted/api-doc-generator": "^0.1.6-alpha.15",
+        "@types/node": "10.17.5",
+        "glob": "^7.1.7",
+        "prettier": "1.19.1",
+        "ts-node": "8.4.1",
+        "tslint": "5.20.1",
+        "typedoc": "0.15.0",
+        "typescript": "3.7.2"
+    },
+    "gypfile": false,
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "config:copyBindingGyp": "just config:copyBindingGyp",
+        "config:syncLib": "just config:syncLib",
+        "build:node": "just build:node",
+        "build:electron": "just build:electron",
+        "build:ts": "rimraf js && tsc -p tsconfig.json",
+        "clean": "rimraf build js",
+        "download": "just download",
+        "install": "just install",
+        "prepublish": "npm run build:ts"
+    },
+    "author": "",
+    "license": "MIT",
+    "files": [
+        "configs",
+        "js",
+        "proj",
+        "scripts",
+        "src",
+        "just-task.js",
+        "rebuild-mac-electron-sdk.sh",
+        "rebuild-win-electron-sdk.bat",
+        "package.json",
+        "README.md",
+        "tsconfig.json"
+    ],
+    "config": {
+        "lib_sdk_win": "http://tosv.byted.org/obj/rtcsdk/3.27.301/full/Release/cpp/windows/VolcEngineRTC_Windows_3.27.301.zip",
+        "lib_sdk_mac": "http://tosv.byted.org/obj/rtcsdk/3.27.301/full/Release/mac/VolcEngineRTC_Mac_3.27.301.zip"
+    },
+    "apiDoc": {
+        "plugins": [
+            [
+              "region",
+              "overview"
+            ]
+          ],
+        "files": [
+            "./vertc-electron-sdk/src/**/*"],
+        "outDir": "docs",
+        "refName": "ref"
+        }
+}

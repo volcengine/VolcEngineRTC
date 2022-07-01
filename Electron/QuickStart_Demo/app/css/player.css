@@ -1,0 +1,31 @@
+.player-name {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  color: #fff;
+  z-index: 1;
+}
+.player {
+  width: 100vw;
+  height: 90vh;
+}
+#player-list {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.remote-player {
+  width: 100%;
+}
+.player-wrapper {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  flex: 0 0 auto;
+}
+#local-player{
+  background: #000;
+}

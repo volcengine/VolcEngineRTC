@@ -1,0 +1,53 @@
+{
+  "name": "QuickStart",
+  "appInfo": {
+    "sdkName": "@byted/vertc-electron-sdk"
+  },
+  "version": "1.0.0",
+  "description": "A minimal Electron application",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ./app",
+    "build": "yarn buildApp && yarn start",
+    "buildApp": "yarn copySdkAddon && yarn buildMain && yarn buildRenderer && yarn buildSetting && yarn buildPreload ",
+    "buildMain": "webpack --config webpack.config.main.js --mode development",
+    "buildRenderer": "webpack --config webpack.config.renderer.js --mode development",
+    "buildPreload": "webpack --config webpack.config.preload.js --mode development",
+    "buildSetting": "webpack --config webpack.config.setting.js --mode development",
+    "copySdkAddon": "node ./scripts/copySdkAddon.js",
+    "packageWin32": "electron-builder --win --ia32 --config builder-config-win.js",
+    "packageWin64": "electron-builder --win --x64 --config builder-config-win64.js",
+    "packageDarwin": "electron-builder --mac --x64 --config builder-config-mac.js"
+  },
+  "repository": "",
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@byted/vertc-electron-sdk": "1.2.0",
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.13.15",
+    "@babel/plugin-transform-regenerator": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.1.0",
+    "electron": "11.3.0",
+    "electron-builder": "^22.1.0",
+    "electron-log": "^4.3.5",
+    "electron-rebuild": "^1.8.5",
+    "native-ext-loader": "^2.3.0",
+    "node-loader": "^0.6.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.5",
+    "webpack": "^4.37.0",
+    "webpack-cli": "^3.3.6",
+    "yuv-canvas": "1.2.6",
+    "rimraf": "^3.0.2"
+  },
+  "vertc_electron": {
+    "arch": "x64", 
+    "prebuilt": true
+  }
+  
+}
