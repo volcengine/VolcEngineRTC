@@ -29,7 +29,7 @@ namespace bytertc {
  */
 enum UserOfflineReason {
     /** 
-     * @brief 远端用户调用 `LeaveRoom` 方法退出房间。  <br>
+     * @brief 远端用户调用 `leaveRoom` 方法退出房间。  <br>
      */
     kUserOfflineReasonQuit = 0,
     /** 
@@ -100,7 +100,7 @@ enum UserRoleType {
  */
 enum JoinRoomType {
     /** 
-     * @brief 首次加入房间。用户手动调用 `JoinRoom` 加入房间。  <br>
+     * @brief 首次加入房间。用户手动调用 `joinRoom` 加入房间。  <br>
      */
     kJoinRoomTypeFirst = 0,
     /** 
@@ -115,7 +115,7 @@ enum JoinRoomType {
  */
 enum LoginType {
     /** 
-     * @brief 首次登录。用户手动调用 `Login`，收到登录成功。
+     * @brief 首次登录。用户手动调用 `login`，收到登录成功。
      */
     kLoginTypeFirst = 0,
     /** 
@@ -127,28 +127,28 @@ enum LoginType {
 /** 
  * @type errorcode
  * @brief 登录结果  <br>
- *        调用 `Login` 登录的结果，会通过 `OnLoginResult` 回调通知用户。
+ *        调用 `login` 登录的结果，会通过 `onLoginResult` 回调通知用户。
  */
 enum LoginErrorCode {
     /** 
-     * @brief 调用 `Login` 方法登录成功
+     * @brief 调用 `login` 方法登录成功
      */
     kLoginErrorCodeSuccess = 0,
     /** 
-     * @brief 调用 `Login` 方法时使用的 Token 无效或过期失效，需要用户重新获取 Token。
+     * @brief 调用 `login` 方法时使用的 Token 无效或过期失效，需要用户重新获取 Token。
      */
     kLoginErrorCodeInvalidToken = -1000,
     /** 
      * @brief 登录错误  <br>
-     *        调用 `Login` 方法时发生未知错误导致登录失败，需要重新登录。
+     *        调用 `login` 方法时发生未知错误导致登录失败，需要重新登录。
      */
     kLoginErrorCodeLoginFailed = -1001,
     /** 
-     * @brief 调用 `Login` 方法时传入的用户 ID 有问题。
+     * @brief 调用 `login` 方法时传入的用户 ID 有问题。
      */
     kLoginErrorCodeInvalidUserId = -1002,
     /** 
-     * @brief 调用 `Login` 登录时服务端出错。
+     * @brief 调用 `login` 登录时服务端出错。
      */
     kLoginErrorCodeServerError = -1003,
 };
@@ -160,12 +160,12 @@ enum LoginErrorCode {
 enum USER_ONLINE_STATUS {
     /** 
      * @brief 对端用户离线  <br>
-     *        对端用户已调用 `Logout`，或者没有调用 `Login` 进行登录。
+     *        对端用户已调用 `logout`，或者没有调用 `login` 进行登录。
      */
     kUserOnlineStatusOffline = 0,
     /** 
      * @brief 对端用户在线  <br>
-     *        对端用户调用 `Login` 登录，并且连接状态正常。
+     *        对端用户调用 `login` 登录，并且连接状态正常。
      */
     kUserOnlineStatusOnline = 1,
     /** 
@@ -188,6 +188,25 @@ struct ServerACKMsg {
      * @brief 回调消息内容
      */
     char* ACKMsg;
+};
+
+/** 
+ * @type keytype
+ * @brief 消息类型
+ */
+enum MessageConfig {
+    /** 
+     * @brief 低延时可靠有序消息
+     */
+    kMessageConfigReliableOrdered = 0,
+    /** 
+     * @brief 超低延时有序消息
+     */
+    kMessageConfigUnreliableOrdered = 1,
+    /** 
+     * @brief 超低延时无序消息
+     */
+    kMessageConfigUnreliableUnordered = 2
 };
 
 /** 
@@ -275,18 +294,17 @@ enum RoomMessageSendResult {
      */
     kRoomMessageSendResultUnknown = 1000,
 };
-
 /** 
  * @type keytype
  * @brief SDK 与信令服务器连接状态。
  */
 enum ConnectionState {
     /** 
-     * @brief 连接断开。
+     * @brief 连接断开超过 12 秒
      */
     kConnectionStateDisconnected = 1,
     /** 
-     * @brief 首次连接，正在连接中。
+     * @brief 首次请求建立连接，正在连接中。
      */
     kConnectionStateConnecting = 2,
     /** 
@@ -294,15 +312,17 @@ enum ConnectionState {
      */
     kConnectionStateConnected = 3,
     /** 
-     * @brief 连接断开后重新连接中。
+     * @brief 涵盖了以下情况：<br>
+     *        + 首次连接时，10秒连接不成功; <br>
+     *        + 连接成功后，断连 10 秒。自动重连中。
      */
     kConnectionStateReconnecting = 4,
     /** 
-     * @brief 连接断开后重连成功。
+     * @brief 连接断开后，重连成功。
      */
     kConnectionStateReconnected = 5,
     /** 
-     * @brief 网络连接断开超过 10 秒，仍然会继续重连。
+     * @brief 处于 `DISCONNECTED` 状态超过 10 秒，且期间重连未成功。
      */
     kConnectionStateLost = 6,
 };
@@ -310,7 +330,7 @@ enum ConnectionState {
 /** 
  * @type errorcode
  * @brief 开始探测的返回值
- *        `StartNetworkDetection` 返回对象类型
+ *        `startNetworkDetection` 返回对象类型
  */
 enum NetworkDetectionStartReturn {
     /** 
@@ -338,7 +358,7 @@ enum NetworkDetectionStartReturn {
 /** 
  * @type keytype
  * @brief 通话前探测的停止原因
- *        `OnNetworkDetectionStopped` 回调的参数类型
+ *        `onNetworkDetectionStopped` 回调的参数类型
  */
 enum NetworkDetectionStopReason {
     /** 
@@ -366,7 +386,7 @@ enum NetworkDetectionStopReason {
 /** 
  * @type keytype
  * @brief 通话前探测链接的类型。
- *        `OnNetworkDetectionResult` 回调的参数类型
+ *        `onNetworkDetectionResult` 回调的参数类型
  */
 enum NetworkDetectionLinkType {
     /** 
@@ -533,6 +553,62 @@ enum RoomProfileType {
      *        在使用此模式前，强烈建议咨询技术支持同学。
      */
     kRoomProfileTypeLowLatency = 4,
+    /** 
+     * @brief 适用于 1 vs 1 纯语音通话
+     */
+    kRoomProfileTypeChat = 5,
+    /** 
+     * @brief 适用于 2 人以上纯语音通话
+     */
+    kRoomProfileTypeChatRoom = 6,
+    /** 
+     * @brief 适用于 “一起看” 或 “一起听” 场景
+     */
+    kRoomProfileTypeLwTogether = 7,
+    /** 
+     * @brief 适用于对音质要求较高的游戏场景
+     */
+    kRoomProfileTypeGameHD = 8,
+    /** 
+     * @brief 适用于直播中主播之间连麦的业务场景
+     */
+    kRoomProfileTypeCoHost = 9,
+    /** 
+     * @brief 适用于互动直播
+     */
+    kRoomProfileTypeInteractivePodcast = 10,
+    /** 
+     * @brief 适合线上 KTV 场景，满足高音质，低延迟
+     */
+    kRoomProfileTypeKTV = 11,
+    /** 
+     * @brief 适合在线合唱场景
+     */
+    kRoomProfileTypeChorus = 12,
+    /** 
+     * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声
+     */
+    kRoomProfileTypeVRChat = 13,
+    /** 
+     * @brief 适用于 1 vs 1 游戏串流
+     */
+    kRoomProfileTypeGameStreaming = 14,
+    /** 
+     * @brief 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率
+     */
+    kRoomProfileTypeLanLiveStreaming = 15,
+    /** 
+     * @brief 适用于云端会议
+     */
+    kRoomProfileTypeMeeting = 16,
+    /** 
+     * @brief 线下会议室
+     */
+    kRoomProfileTypeMeetingRoom = 17,
+    /** 
+     * @brief 适用于课堂互动
+     */
+    kRoomProfileTypeClassroom = 18,
 };
 
 /** 
@@ -548,6 +624,8 @@ struct AudioRoomConfig {
      * @brief 是否自动订阅音频流，默认为自动订阅。
      */
     bool is_auto_subscribe_audio = true;
+    
+    bool is_auto_publish_audio = false;
 };
 
 /** 
@@ -631,7 +709,15 @@ enum MediaDeviceState {
     /** 
      * @brief 视频通话已从合盖打断中恢复
      */
-    kMediaDeviceInterruptionEnded = 13
+    kMediaDeviceInterruptionEnded = 13,
+    /** 
+     * @brief 设备成为系统默认
+     */
+    kMediaDeviceBecomeSystemDefault = 14,
+    /** 
+     * @brief 设备不再是系统默认
+     */
+    kMediaDeviceResignSystemDefault = 15
 };
 
 /** 
@@ -740,6 +826,31 @@ enum MediaDeviceWarning {
      * @brief 啸叫
      */
     kMediaDeviceWarningCaptureDetectHowling = 16,
+    /** 
+     * @hidden
+     * @brief setAudioRoute结果回调, 该scenario下不支持设置
+     */
+    kMediaDeviceWarningSetAudioRouteInvalidScenario = 20,
+    /** 
+     * @hidden
+     * @brief setAudioRoute结果回调, routing device 不存在 (Android)
+     */
+    kMediaDeviceWarningSetAudioRouteNotExists = 21,
+    /** 
+     * @hidden
+     * @brief setAudioRoute结果回调, 系统高优先级路由占用 (IOS)
+     */
+    kMediaDeviceWarningSetAudioRouteFailedByPriority = 22,
+    /** 
+     * @hidden
+     * @brief setAudioRoute结果回调, 非通话模式下不支持设置(Android)
+     */
+    kMediaDeviceWarningSetAudioRouteNotVoipMode = 23,
+    /** 
+     * @hidden
+     * @brief setAudioRoute结果回调, 设备没有启动
+     */
+    kMediaDeviceWarningSetAudioRouteDeviceNotStart = 24,
 };
 
 /** 
@@ -768,7 +879,7 @@ enum SubscribeState {
 /** 
  * @hidden
  * @type keytype
- * @brief 订阅模式选项。业务方在加入房间前，调用 EnableAutoSubscribe{@link #IRtcRoom#EnableAutoSubscribe} 接口设置订阅模式。 <br>
+ * @brief 订阅模式选项。业务方在加入房间前，调用 enableAutoSubscribe{@link #IRTCRoom#enableAutoSubscribe} 接口设置订阅模式。 <br>
  */
 enum SubscribeMode {
     /** 
@@ -776,7 +887,7 @@ enum SubscribeMode {
      */
     kSubscribeModeAuto = 0,
     /** 
-     * @brief 手动订阅模式。SDK 不会自动订阅房间内的音视频流，你应根据根据需要调用 SubscribeUserStream{@link #IRtcRoom#SubscribeUserStream} 方法手动订阅其他用户发布的音视频流。  <br>
+     * @brief 手动订阅模式。SDK 不会自动订阅房间内的音视频流，你应根据根据需要调用 subscribeUserStream{@link #IRTCRoom#subscribeUserStream} 方法手动订阅其他用户发布的音视频流。  <br>
      */
     kSubscribeModeManual = 1
 };
@@ -824,7 +935,7 @@ enum SubscribeFallbackOption {
     kSubscribeFallbackOptionDisable = 0,
     /** 
      * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看性能回退文档。 <br>
-     *        该设置仅对发布端调用 EnableSimulcastMode{@link #IRtcEngineLite#EnableSimulcastMode} 开启发送多路流功能的情况生效。
+     *        该设置仅对发布端调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启发送多路流功能的情况生效。
      */
     kSubscribeFallbackOptionVideoStreamLow = 1,
     /** 
@@ -878,7 +989,7 @@ enum FallbackOrRecoverReason {
 
 /** 
  * @type keytype
- * @brief `OnPerformanceAlarms` 告警的原因
+ * @brief `onPerformanceAlarms` 告警的原因
  */
 enum PerformanceAlarmReason {
     /** 
@@ -919,12 +1030,12 @@ enum PerformanceAlarmMode {
 /** 
  * @type errorcode
  * @brief 回调错误码。  <br>
- *        SDK 内部遇到不可恢复的错误时，会通过 `OnError` 回调通知用户。
+ *        SDK 内部遇到不可恢复的错误时，会通过 `onError` 回调通知用户。
  */
 enum ErrorCode {
     /** 
      * @brief Token 无效。
-     *        进房时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 `UpdateToken` 方法更新 Token。
+     *        进房时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 `updateToken` 方法更新 Token。
      */
     kErrorCodeInvalidToken = -1000,
     /** 
@@ -951,15 +1062,11 @@ enum ErrorCode {
      */
     kErrorCodeKickedOut = -1006,
     /** 
-     * @brief 当调用 `CreateRTCRoom` ，如果roomid 非法，会返回null，并抛出该error
+     * @brief 当调用 `createRTCRoom` ，如果roomid 非法，会返回null，并抛出该error
      */
     kRoomErrorCodeRoomIdIllegal = -1007,
     /** 
-     * @brief 当调用 `CreateRTCRoom` ，如果已经存在了相同的房间，会返回null，并抛出该error
-     */
-    kRoomErrorCodeUserIsInRoom = -1008,
-    /** 
-     * @brief Token 过期。调用 `JoinRoom` 使用新的 Token 重新加入房间。
+     * @brief Token 过期。调用 `joinRoom` 使用新的 Token 重新加入房间。
      */
     kRoomErrorTokenExpired = -1009,
     /** 
@@ -971,10 +1078,14 @@ enum ErrorCode {
      */
     kErrorCodeRoomDismiss = -1011,
     /** 
-     * @brief 加入房间错误。
-     *        调用 JoinRoom{@link #IRtcEngine#JoinRoom} 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
+     * @brief 加入房间错误。 <br>
+     *        调用 joinRoom{@link #IRtcEngine#joinRoom} 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
      */
     kErrorCodeJoinRoomWithoutLicenseAuthenticateSDK = -1012,
+    /** 
+     * @brief 通话回路检测已经存在同样 roomId 的房间了
+     */
+    kErrorCodeRoomAlreadyExist = -1013,
     /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
@@ -1044,13 +1155,13 @@ enum WarningCode {
      */
     kWarningCodeInvalidExpectMediaServerAddress = -2007,
     /** 
-     * @brief 当调用 `SetUserVisibility` 将自身可见性设置为 false 后，再尝试发布流会触发此警告。  <br>
+     * @brief 当调用 `setUserVisibility` 将自身可见性设置为 false 后，再尝试发布流会触发此警告。  <br>
      */
     kWarningCodePublishStreamForbiden = -2009,
     /** 
      * @hidden
      * @brief 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br>
-     *        你需在进房前调用 EnableAutoSubscribe{@link #IRtcRoom#EnableAutoSubscribe} 方法关闭自动订阅模式，再调用 SubscribeStream{@link #IRtcRoom#SubscribeStream} 方法手动订阅音视频流。
+     *        你需在进房前调用 enableAutoSubscribe{@link #IRTCRoom#enableAutoSubscribe} 方法关闭自动订阅模式，再调用 subscribeStream{@link #IRTCRoom#subscribeStream} 方法手动订阅音视频流。
      */
     kWarningCodeSubscribeStreamForbiden = -2010,
     /** 
@@ -1058,9 +1169,24 @@ enum WarningCode {
      */
     kWarningCodeSendCustomMessage = -2011,
     /** 
-     * @brief 当房间内人数超过 500 人时，停止向房间内已有用户发送 `OnUserJoined` 和 `OnUserLeave` 回调，并通过广播提示房间内所有用户。
+     * @brief 当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。
      */
     kWarningCodeUserNotifyStop = -2013,
+
+    /** 
+     * @brief 用户已经在其他房间发布过流，或者用户正在发布公共流。
+     */
+    kWarningCodeUserInPublish = -2014,
+
+    /** 
+     * @brief 新生成的房间已经替换了同样roomId的旧房间
+     */
+    kWarningCodeOldRoomBeenReplaced = -2016,
+
+    /** 
+     * @brief 当前正在进行回路测试，该接口调用无效
+     */
+    kWarningCodeInEchoTestMode = -2017,
 
     /** 
      * @brief 摄像头权限异常，当前应用没有获取摄像头权限。
@@ -1104,12 +1230,12 @@ enum WarningCode {
     kWarningCodeMediaDeviceOperationDenied = -5008,
 
     /** 
-     * @brief 不支持在 `PublishScreen` 之后调用 `SetScreenAudioSourceType` 设置屏幕音频采集类型，请在 PublishScreen 之前设置
+     * @brief 不支持在 `publishScreen` 之后调用 `setScreenAudioSourceType` 设置屏幕音频采集类型，请在 publishScreen 之前设置
      */
     kWarningCodeSetScreenAudioSourceTypeFailed = -5009,
 
     /** 
-     * @brief 不支持在 `PublishScreen` 之后， 通过 `SetScreenAudioStreamIndex` 设置屏幕共享时的音频采集方式。
+     * @brief 不支持在 `publishScreen` 之后， 通过 `setScreenAudioStreamIndex` 设置屏幕共享时的音频采集方式。
      */
     kWarningCodeSetScreenAudioStreamIndexFailed = -5010,
     /** 
@@ -1126,7 +1252,7 @@ enum WarningCode {
     kWarningCodeInvalidCallForExtAudio = -5013,
     /** 
      * @brief 指定的内部渲染画布句柄无效。  <br>
-     *        当你调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
+     *        当你调用 setLocalVideoCanvas{@link #IRtcEngine#setLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
      */
     kWarningCodeInvalidCanvasHandle = -6001,
     /** 
@@ -1138,7 +1264,7 @@ enum WarningCode {
 /** 
  * @type keytype
  * @brief 事务检查码  <br>
- *        用户调用 `SetBusinessId` 方法设置业务标识参数的返回错误码。  <br>
+ *        用户调用 `setBusinessId` 方法设置业务标识参数的返回错误码。  <br>
  */
 enum BusinessCheckCode {
     /** 
@@ -1149,7 +1275,7 @@ enum BusinessCheckCode {
 
     /** 
      * @brief 输入参数非法。  <br>
-     *        用户传入的业务标识参数非法，参数合法性参考 `SetBusinessId` 方法的参数说明。  <br>
+     *        用户传入的业务标识参数非法，参数合法性参考 `setBusinessId` 方法的参数说明。  <br>
      */
     ERROR_INPUT_INVALIDATE = -6002,
 };
@@ -1157,7 +1283,7 @@ enum BusinessCheckCode {
 /** 
  * @type keytype
  * @brief 本地音频流状态。
- *        SDK 通过 `OnLocalAudioStateChanged` 回调本地音频流状态
+ *        SDK 通过 `onLocalAudioStateChanged` 回调本地音频流状态
  */
 enum LocalAudioStreamState {
     /** 
@@ -1189,13 +1315,13 @@ enum LocalAudioStreamState {
 
     /** 
      * @brief 本地音频静音成功后回调该状态。
-     *        调用 SetAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamMute,
 
     /** 
      * @brief 本地音频解除静音成功后回调该状态。
-     *        调用 SetAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamUnmute
 };
@@ -1203,7 +1329,7 @@ enum LocalAudioStreamState {
 /** 
  * @type keytype
  * @brief 本地音频流状态改变时的错误码。
- *        SDK 通过 `OnLocalAudioStateChanged` 回调该错误码。
+ *        SDK 通过 `onLocalAudioStateChanged` 回调该错误码。
  */
 enum LocalAudioStreamError {
     /** 
@@ -1302,12 +1428,12 @@ enum LocalVideoStreamError {
 /** 
  * @type keytype
  * @brief 远端音频流状态。<br>
- *        用户可以通过 `OnRemoteAudioStateChanged` 了解该状态。
+ *        用户可以通过 `onRemoteAudioStateChanged` 了解该状态。
  */
 enum RemoteAudioState {
     /** 
      * @brief  不接收远端音频流。 <br>
-     *         以下情况下会触发回调 `OnRemoteAudioStateChanged`：  <br>
+     *         以下情况下会触发回调 `onRemoteAudioStateChanged`：  <br>
      *       + 本地用户停止接收远端音频流，对应原因是：kRemoteAudioStateChangeReasonLocalMuted{@link
      * #RemoteAudioStateChangeReason}  <br>
      *       + 远端用户停止发送音频流，对应原因是：kRemoteAudioStateChangeReasonRemoteMuted{@link
@@ -1318,13 +1444,13 @@ enum RemoteAudioState {
     kRemoteAudioStateStopped = 0,
     /** 
      * @brief 开始接收远端音频流首包。<br>
-     *        刚收到远端音频流首包会触发回调 `OnRemoteAudioStateChanged`，
+     *        刚收到远端音频流首包会触发回调 `onRemoteAudioStateChanged`，
      *        对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonLocalUnmuted`
      */
     kRemoteAudioStateStarting,
     /** 
      * @brief  远端音频流正在解码，正常播放。 <br>
-     *         以下情况下会触发回调 `OnRemoteAudioStateChanged`：  <br>
+     *         以下情况下会触发回调 `onRemoteAudioStateChanged`：  <br>
      *       + 成功解码远端音频首帧，对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonLocalUnmuted` <br>
      *       + 网络由阻塞恢复正常，对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonNetworkRecovery` <br>
      *       + 本地用户恢复接收远端音频流，对应原因是：RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonLocalUnmuted` <br>
@@ -1333,7 +1459,7 @@ enum RemoteAudioState {
     kRemoteAudioStateDecoding,
     /** 
      * @brief 远端音频流卡顿。<br>
-     *        网络阻塞、丢包率大于 40% 时，会触发回调 `OnRemoteAudioStateChanged`，
+     *        网络阻塞、丢包率大于 40% 时，会触发回调 `onRemoteAudioStateChanged`，
      *        对应原因是： RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason} 中的 `kRemoteAudioStateChangeReasonNetworkCongestion`
      */
     kRemoteAudioStateFrozen,
@@ -1348,7 +1474,7 @@ enum RemoteAudioState {
 /** 
  * @type keytype
  * @brief 接收远端音频流状态改变的原因。  <br>
- *        用户可以通过 `OnRemoteAudioStateChanged` 了解该原因。
+ *        用户可以通过 `onRemoteAudioStateChanged` 了解该原因。
  */
 enum RemoteAudioStateChangeReason {
     /** 
@@ -1387,7 +1513,7 @@ enum RemoteAudioStateChangeReason {
 
 /** 
  * @type keytype
- * @brief 远端视频流状态。状态改变时，会收到 `OnRemoteVideoStateChanged` 回调
+ * @brief 远端视频流状态。状态改变时，会收到 `onRemoteVideoStateChanged` 回调
  */
 enum RemoteVideoState {
     /** 
@@ -1446,9 +1572,29 @@ enum RemoteVideoStateChangeReason {
      */
     kRemoteVideoStateChangeReasonRemoteUnmuted,
     /** 
-     * @brief 远端用户离开频道。状态转换参考 `OnUserUnPublishStream`。
+     * @brief 远端用户离开频道。状态转换参考 `onUserUnPublishStream`。
      */
     kRemoteVideoStateChangeReasonRemoteOffline,
+};
+
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 黑帧视频流状态
+ */
+enum SEIStreamEventType {
+    /** 
+     * @brief 远端用户发布黑帧视频流。  <br>
+     *        纯语音通话场景下，远端用户调用 sendSEIMessage{@link #IRTCVideo#sendSEIMessage} 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。
+     */
+    kSEIStreamEventTypeStreamAdd = 0,
+    /** 
+     * @brief 远端黑帧视频流移除。该回调的触发时机包括：  <br>
+     *        + 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br>
+     *        + 远端用户调用 sendSEIMessage{@link #IRTCVideo#sendSEIMessage} 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br>
+     *        + 远端用户调用 setVideoSourceType{@link #IRTCVideo#setVideoSourceType} 切换至自定义视频采集时，黑帧视频流停止发布。
+     */
+     kSEIStreamEventTypeStreamRemove,
 };
 
 /** 
@@ -1485,7 +1631,7 @@ struct UserInfo {
      */
     const char* uid = nullptr;
     /** 
-     * @brief 用户的额外信息，最大长度为 200 字节。会在 `OnUserJoined` 中回调给远端用户。
+     * @brief 用户的额外信息，最大长度为 200 字节。会在 `onUserJoined` 中回调给远端用户。
      */
     const char* extra_info = nullptr;
 };
@@ -1544,6 +1690,14 @@ struct RtcRoomStats {
      */
     unsigned short tx_video_kbitrate;
     /** 
+     * @brief 屏幕接收码率，获取该数据时的瞬时值，单位为 Kbps
+     */
+    unsigned short rx_screen_kbitrate;
+    /** 
+     * @brief 屏幕发送码率，获取该数据时的瞬时值，单位为 Kbps
+     */
+    unsigned short tx_screen_kbitrate;
+    /** 
      * @brief 当前房间内的可见用户人数
      */
     unsigned int user_count;
@@ -1597,7 +1751,7 @@ enum VideoCodecType {
 /** 
  * @type keytype
  * @brief 本地音频流统计信息，统计周期为 2s 。  <br>
- *        本地用户发布音频流成功后，SDK 会周期性地通过 `OnLocalStreamStats`
+ *        本地用户发布音频流成功后，SDK 会周期性地通过 `onLocalStreamStats`
  *        通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct LocalAudioStats {
@@ -1639,7 +1793,7 @@ struct LocalAudioStats {
 /** 
  * @type keytype
  * @brief 远端音频流统计信息，统计周期为 2s。  <br>
- *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 `OnRemoteStreamStats` 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
+ *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 `onRemoteStreamStats` 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteAudioStats {
     /** 
@@ -1723,12 +1877,12 @@ struct RemoteAudioStats {
 /** 
  * @type keytype
  * @brief 本地视频流统计信息，统计周期为 2s 。  <br>
- *        本地用户发布视频流成功后，SDK 会周期性地通过 `OnLocalStreamStats`
+ *        本地用户发布视频流成功后，SDK 会周期性地通过 `onLocalStreamStats`
  *        通知用户发布的视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct LocalVideoStats {
     /** 
-     * @brief 发送码率。此次统计周期内的视频发送码率，单位为 kbps 。
+     * @brief 发送码率。此次统计周期内实际发送的分辨率最大的视频流的发送码率，单位为 Kbps 
      */
     int sent_kbitrate;
     /** 
@@ -1736,11 +1890,11 @@ struct LocalVideoStats {
      */
     int input_frame_rate;
     /** 
-     * @brief 发送帧率。此次统计周期内的视频发送帧率，单位为 fps 。
+     * @brief 发送帧率。此次统计周期内实际发送的分辨率最大的视频流的视频发送帧率，单位为 fps 。
      */
     int sent_frame_rate;
     /** 
-     * @brief 编码器输出帧率。当前编码器在此次统计周期内的输出帧率，单位为 fps 。
+     * @brief 编码器输出帧率。当前编码器在此次统计周期内实际发送的分辨率最大的视频流的输出帧率，单位为 fps 。
      */
     int encoder_output_frame_rate;
     /** 
@@ -1748,16 +1902,8 @@ struct LocalVideoStats {
      */
     int renderer_output_frame_rate;
     /** 
-     * @brief 目标发送码率。此次统计周期内的视频目标发送码率，单位为 kbps 。
-     */
-    int target_kbitrate;
-    /** 
-     * @brief 目标发送帧率。当前编码器在此次统计周期内的目标发送帧率，单位为 fps 。
-     */
-    int target_frame_rate;
-    /** 
      * @brief 统计间隔，单位为 ms 。
-     * @notes 此字段用于设置回调的统计周期，默认设置为 2s 。
+     *        此字段用于设置回调的统计周期，默认设置为 2s 。
      */
     int stats_interval;
     /** 
@@ -1769,19 +1915,19 @@ struct LocalVideoStats {
      */
     int rtt;
     /** 
-     * @brief 视频编码码率。此次统计周期内的视频编码码率，单位为 kbps 。
+     * @brief 视频编码码率。此次统计周期内的实际发送的分辨率最大的视频流视频编码码率，单位为 Kbps 。
      */
     int encoded_bitrate;
     /** 
-     * @brief 视频编码宽度，单位为 px 。
+     * @brief 实际发送的分辨率最大的视频流的视频编码宽度，单位为 px 。
      */
     int encoded_frame_width;
     /** 
-     * @brief 视频编码高度，单位为 px 。
+     * @brief 实际发送的分辨率最大的视频流的视频编码高度，单位为 px 。
      */
     int encoded_frame_height;
     /** 
-     * @brief 此次统计周期内发送的视频帧总数。
+     * @brief 此次统计周期内实际发送的分辨率最大的视频流的发送的视频帧总数。
      */
     int encoded_frame_count;
     /** 
@@ -1801,7 +1947,7 @@ struct LocalVideoStats {
 /** 
  * @type keytype
  * @brief 远端音频流统计信息，统计周期为 2s 。  <br>
- *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 `OnRemoteStreamStats`
+ *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 `onRemoteStreamStats`
  *        通知本地用户订阅的远端视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteVideoStats {
@@ -1871,7 +2017,7 @@ struct RemoteVideoStats {
 /** 
  * @type keytype
  * @brief 本地音/视频流统计信息以及网络状况，统计周期为 2s 。  <br>
- *        本地用户发布音/视频流成功后，SDK 会周期性地通过 `OnLocalStreamStats`
+ *        本地用户发布音/视频流成功后，SDK 会周期性地通过 `onLocalStreamStats`
  *        通知本地用户发布的音/视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
  */
 struct LocalStreamStats {
@@ -1886,13 +2032,13 @@ struct LocalStreamStats {
     /** 
      * @hidden
      * @brief 所属用户的媒体流上行网络质量，详见 NetworkQuality{@link #NetworkQuality}
-     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
+     * @deprecated since 336.1, use onNetworkQuality{@link #onNetworkQuality} instead
      */
     NetworkQuality local_tx_quality;
     /** 
      * @hidden
      * @brief 所属用户的媒体流下行网络质量，详见 NetworkQuality{@link #NetworkQuality}
-     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
+     * @deprecated since 336.1, use onNetworkQuality{@link #onNetworkQuality} instead
      */
     NetworkQuality local_rx_quality;
     /** 
@@ -1904,7 +2050,7 @@ struct LocalStreamStats {
 /** 
  * @type keytype
  * @brief 用户订阅的远端音/视频流统计信息以及网络状况，统计周期为 2s 。  <br>
- *        订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 `OnRemoteStreamStats`
+ *        订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 `onRemoteStreamStats`
  *        通知本地用户订阅的远端音/视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteStreamStats {
@@ -1923,13 +2069,13 @@ struct RemoteStreamStats {
     /** 
      * @hidden
      * @brief 所属用户的媒体流上行网络质量，详见 NetworkQuality{@link #NetworkQuality}
-     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
+     * @deprecated since 336.1, use onNetworkQuality{@link #onNetworkQuality} instead
      */
     NetworkQuality remote_tx_quality;
     /** 
      * @hidden
      * @brief 所属用户的媒体流下行网络质量，详见 NetworkQuality{@link #NetworkQuality}
-     * @deprecated since 336.1, use OnNetworkQuality{@link #OnNetworkQuality} instead
+     * @deprecated since 336.1, use onNetworkQuality{@link #onNetworkQuality} instead
      */
     NetworkQuality remote_rx_quality;
     /** 
@@ -2000,7 +2146,7 @@ enum ProblemFeedbackOption {
 /** 
  * @type keytype
  * @brief App 使用的 cpu 和内存信息。  <br>
- *        信息由 SDK 周期性（2s）地通过 `OnSysStats` 回调通知给用户。
+ *        信息由 SDK 周期性（2s）地通过 `onSysStats` 回调通知给用户。
  */
 struct SysStats {
     /** 
@@ -2093,18 +2239,18 @@ public:
      *        + ≥ 0：加密后实际写入缓冲区的数据大小  <br>
      *        + 0：丢弃该帧  <br>
      * @notes <br>
-     *        + 使用此接口进行自定义加密前，你必须先设置自定义加密方式，参看 `SetCustomizeEncryptHandler`。
-     *        + 使用 OnDecryptData{@link #OnDecryptData} 对已加密的音视频帧数据进行解密。
+     *        + 使用此接口进行自定义加密前，你必须先设置自定义加密方式，参看 `setCustomizeEncryptHandler`。
+     *        + 使用 onDecryptData{@link #onDecryptData} 对已加密的音视频帧数据进行解密。
      *        + 返回的数据大小应控制在原始数据的 90% ~ 120% 范围以内，不然将被丢弃。
      */
-    virtual unsigned int OnEncryptData(
+    virtual unsigned int onEncryptData(
             const unsigned char* data, unsigned int length, unsigned char* buf, unsigned int buf_len) = 0;
 
     /** 
      * @type api
      * @region 加密
      * @brief 自定义解密。  <br>
-     *        对自定义加密后的音视频帧数据进行解密。关于自定义加密，参看 OnEncryptData{@link #IEncryptHandler#OnEncryptData}。
+     *        对自定义加密后的音视频帧数据进行解密。关于自定义加密，参看 onEncryptData{@link #IEncryptHandler#onEncryptData}。
      * @param data 原始音视频帧数据
      * @param length 原始音视频帧数据的长度
      * @param buf 可供写入的加密后数据缓冲区
@@ -2113,10 +2259,10 @@ public:
      *        + ≥ 0：加密后实际写入缓冲区的数据大小  <br>
      *        + 0：丢弃该帧  <br>
      * @notes <br>
-     *        + 使用此接口进行解密前，你必须先设定解密方式，参看 `SetCustomizeEncryptHandler`。
+     *        + 使用此接口进行解密前，你必须先设定解密方式，参看 `setCustomizeEncryptHandler`。
      *        + 返回的数据大小应控制在原始数据的 90% ~ 120% 范围以内，不然将被丢弃。
     */
-   virtual unsigned int OnDecryptData(
+   virtual unsigned int onDecryptData(
             const unsigned char* data, unsigned int length, unsigned char* buf, unsigned int buf_len) = 0;
 };
 
@@ -2215,7 +2361,7 @@ enum StreamIndex {
 struct RemoteStreamKey {
    /** 
      * @brief 媒体流所在房间的房间 ID。<br>
-     *        如果此媒体流是通过 `StartForwardStreamToRooms` 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+     *        如果此媒体流是通过 `startForwardStreamToRooms` 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id;
     /** 
@@ -2319,7 +2465,7 @@ enum RecordingState {
      */
     kRecordingStateProcessing = 1,
     /** 
-     * @brief 录制文件保存成功，调用 `StopFileRecording` 结束录制之后才会收到该状态码。
+     * @brief 录制文件保存成功，调用 `stopFileRecording` 结束录制之后才会收到该状态码。
      */
     kRecordingStateSuccess = 2,
 };
@@ -2497,7 +2643,7 @@ struct StreamSycnInfoConfig {
  */
 struct ForwardStreamInfo {
     /** 
-     * @brief 使用转发目标房间 RoomID 和 UserID 生成 Token。<br>
+     * @brief 使用转发目标房间 roomID 和 UserID 生成 Token。<br>
      *        测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。<br>
      *        如果 Token 无效，转发失败。
      */
@@ -2530,19 +2676,19 @@ struct ForwardStreamConfiguration {
 enum ForwardStreamState {
     /** 
      * @brief 空闲状态
-     *        + 成功调用 `StopForwardStreamToRooms` 后，所有目标房间为空闲状态。
-     *        + 成功调用 `UpdateForwardStreamToRooms` 减少目标房间后，本次减少的目标房间为空闲状态。
+     *        + 成功调用 `stopForwardStreamToRooms` 后，所有目标房间为空闲状态。
+     *        + 成功调用 `updateForwardStreamToRooms` 减少目标房间后，本次减少的目标房间为空闲状态。
      */
     kForwardStreamStateIdle = 0,
     /** 
      * @brief 开始转发
-     *        + 调用 `StartForwardStreamToRooms` 成功向所有房间开始转发媒体流后，返回此状态。
-     *        + 调用 `UpdateForwardStreamToRooms` 后，成功向新增目标房间开始转发媒体流后，返回此状态。
+     *        + 调用 `startForwardStreamToRooms` 成功向所有房间开始转发媒体流后，返回此状态。
+     *        + 调用 `updateForwardStreamToRooms` 后，成功向新增目标房间开始转发媒体流后，返回此状态。
      */
     kForwardStreamStateSuccess = 1,
     /** 
      * @brief 转发失败，失败详情参考 ForwardStreamError{@link #ForwardStreamError}
-     *        调用 `StartForwardStreamToRooms` 或 `UpdateForwardStreamToRooms` 后，如遇转发失败，返回此状态。
+     *        调用 `startForwardStreamToRooms` 或 `updateForwardStreamToRooms` 后，如遇转发失败，返回此状态。
      */
     kForwardStreamStateFailure = 2,
 };
@@ -2596,11 +2742,11 @@ enum ForwardStreamEvent {
      */
     kForwardStreamEventInterrupt = 2,
     /** 
-     * @brief 目标房间已更新，由 `UpdateForwardStreamToRooms` 触发。
+     * @brief 目标房间已更新，由 `updateForwardStreamToRooms` 触发。
      */
     kForwardStreamEventDstRoomUpdated = 3,
     /** 
-     * @brief API 调用时序错误。例如，在调用 `StartForwardStreamToRooms` 之前调用 `UpdateForwardStreamToRooms` 。
+     * @brief API 调用时序错误。例如，在调用 `startForwardStreamToRooms` 之前调用 `updateForwardStreamToRooms` 。
      */
     kForwardStreamEventUnExpectAPICall = 4,
 };
@@ -2718,6 +2864,135 @@ struct CloudProxyConfiguration {
      * @brief 云代理数量。
      */
     int cloud_proxy_count = 0;
+};
+
+/** 
+ * @type keytype
+ * @brief ID 最大长度
+ */
+const unsigned int MAX_DEVICE_ID_LENGTH = 512;
+
+
+/** 
+ * @type keytype
+ * @brief 设备的传输方式
+ */
+enum DeviceTransportType {
+    /** 
+     * @brief 未知类型
+     */
+    kDeviceTransportTypeUnknown = 0,
+    /** 
+     * @brief 系统内置
+     */
+    kDeviceTransportTypeBuiltIn = 1,
+    /** 
+     * @brief 未知模式蓝牙
+     */
+    kDeviceTransportTypeBlueToothUnknownMode = 2,
+    /** 
+     * @brief 免提模式蓝牙
+     */
+    kDeviceTransportTypeBlueToothHandsFreeMode = 3,
+    /** 
+     * @brief 立体声模式蓝牙
+     */
+    kDeviceTransportTypeBlueToothStereoMode = 4,
+    /** 
+     * @brief 显示器/电视机音频设备
+     */
+    kDeviceTransportTypeDisplayAudio = 5,
+    /** 
+     * @brief 虚拟设备
+     */
+    kDeviceTransportTypeVirtual = 6
+};
+
+
+/** 
+ * @type keytype
+ * @brief 音视频回路测试结果
+ */
+enum class EchoTestResult {
+    /** 
+     * @brief 接收到采集的音视频的回放，通话回路检测成功
+     */
+    kTestSuccess = 0,
+    /** 
+     * @brief 测试超过 60s 仍未完成，已自动停止
+     */
+    kTestTimeout,
+    /** 
+     * @brief 上一次测试结束和下一次测试开始之间的时间间隔少于 5s
+     */
+    kTestIntervalShort,
+    /** 
+     * @brief 音频采集异常
+     */
+    kAudioDeviceError,
+    /** 
+     * @brief 视频采集异常
+     */
+    kVideoDeviceError,
+    /** 
+     * @brief 音频接收异常
+     */
+    kAudioReceiveError,
+    /** 
+     * @brief 视频接收异常
+     */
+    kVideoReceiveError,
+    /** 
+     * @brief 内部错误，不可恢复
+     */
+    kInternalError
+};
+
+/**  
+ * @type keytype
+ * @brief 音视频回路测试参数
+ */
+struct EchoTestConfig {
+    /** 
+     * @brief 用于渲染接收到的视频的视图
+     */
+    void* view;
+    /** 
+     * @brief 是否检测音频。检测设备为系统默认音频设备。  <br>
+     *        + true：是  <br>
+     *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioPropertiesReportInterval 值大于 0 时触发 onLocalAudioPropertiesReport{@link #IRtcEngineEventHandler#onLocalAudioPropertiesReport} 回调，你可以根据该回调判断麦克风的工作状态  <br>
+     *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame{@link #IRtcEngine#pushExternalAudioFrame} 将采集到的音频推送给 SDK  <br>
+     *        + flase：否  <br>
+     */
+    bool enableAudio;
+    /** 
+     * @brief 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
+     *        + true：是  <br>
+     *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
+     *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame{@link #IRtcEngine#pushExternalVideoFrame} 将采集到的视频推送给 SDK  <br>
+     *        + flase：否  <br>
+     * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
+     */
+    bool enableVideo;
+    /** 
+     * @brief 音量信息提示间隔，单位：ms，默认为 100ms <br>
+     *       + `<= 0`: 关闭信息提示  <br>
+     *       + `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
+     *       + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
+     */
+    int audioPropertiesReportInterval;
+    /** 
+     * @brief 进行音视频通话回路测试的用户 ID
+     */
+    const char* uid;
+    /** 
+     * @brief 测试用户加入的房间 ID。  <br>
+     */
+    const char* roomId;
+    /** 
+     * @brief 对用户进房时进行鉴权验证的动态密钥，用于保证音视频通话回路测试的安全性。
+     */
+    const char* token;
 };
 
 }  // namespace bytertc

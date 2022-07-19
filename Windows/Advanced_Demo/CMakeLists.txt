@@ -28,11 +28,16 @@ list(APPEND CMAKE_PREFIX_PATH "$ENV{Qt64Path}")
 set(WINDEPLOYQT_PATH $ENV{Qt64Path}\\..\\..\\bin)
 set(PLATFORM "x64")
 ENDIF ()
-	
-find_package(Qt5Widgets ${FIND_MODE})
-find_package(Qt5Network ${FIND_MODE})
-find_package(Qt5Core ${FIND_MODE})
-find_package(Qt5Gui ${FIND_MODE})
+
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+	set(CMAKE_CXX_STANDARD 17)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	find_package(Qt6 COMPONENTS Core Gui Widgets Network REQUIRED)
+else()
+	find_package(Qt5 COMPONENTS Core Gui Widgets Network REQUIRED)
+endif()
 
 set(VolcEngineRTC_Lib "VolcEngineRTC")
 
@@ -47,11 +52,21 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #ui
 FILE(GLOB UI_FILES "ui/*.ui")
-qt5_wrap_ui(MainWindow_UI_FILES ${UI_FILES})
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_wrap_ui(MainWindow_UI_FILES ${UI_FILES})
+else()
+	qt5_wrap_ui(MainWindow_UI_FILES ${UI_FILES})
+endif()
 list(APPEND ALL_SOURCES_AND_HEADERS ${UI_FILES})
 
 message(STATUS "**************${MainWindow_UI_FILES}*************")
-qt5_add_resources(MainWindow_QRC_FILES app.qrc)
+
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_resources(MainWindow_QRC_FILES app.qrc)
+else()
+	qt5_add_resources(MainWindow_QRC_FILES app.qrc)
+endif()
 #qrc
 
 #sources
@@ -86,8 +101,10 @@ target_link_directories(Advanced_Demo PUBLIC ${CMAKE_SOURCE_DIR}/${VolcEngineRTC
 ENDIF ()
 
 target_link_libraries(Advanced_Demo
-	Qt5::Widgets
-	Qt5::Network
+	Qt${QT_VERSION_MAJOR}::Core
+	Qt${QT_VERSION_MAJOR}::Gui
+	Qt${QT_VERSION_MAJOR}::Widgets
+	Qt${QT_VERSION_MAJOR}::Network
 	${VolcEngineRTC_Lib}
 	)
 	

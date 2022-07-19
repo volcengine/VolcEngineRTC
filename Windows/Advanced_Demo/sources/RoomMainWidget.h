@@ -28,26 +28,29 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 protected:
-    void OnError(int err) override;
+    void onError(int err) override;
 
-	void OnUserJoined(const bytertc::UserInfo &user_info, 
+	void onUserJoined(const bytertc::UserInfo &user_info,
 		int elapsed) override;
 
-    void OnUserLeave(const char *uid, bytertc::UserOfflineReason reason) override;
+    void onUserLeave(const char *uid, bytertc::UserOfflineReason reason) override;
 
-    void OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
+    void onFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
 
-    void OnFirstRemoteVideoFrameDecoded(
+    void onFirstRemoteVideoFrameDecoded(
             const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo &info) override;
+	void onUserPublishStream(const char* uid, bytertc::MediaStreamType type)override;
 
-    void OnUserPublishStream(const char* uid, bytertc::MediaStreamType type)override;
+	void onUserPublishScreen(const char* uid, bytertc::MediaStreamType type) override;
 
-    void OnUserPublishScreen(const char* uid, bytertc::MediaStreamType type) override;
+    void onUserUnPublishStream(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)override;
 
-    void OnUserUnPublishStream(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)override;
+    void onUserUnPublishScreen(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason) override;
+	
+	void onUserStartVideoCapture(const char* user_id)  override;
 
-    void OnUserUnPublishScreen(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason) override;
-
+	void onUserStopVideoCapture(const char* user_id) override;
+ 
 public slots:
     void slotOnEnterRoom(
     const QString &roomID,
@@ -73,6 +76,10 @@ signals:
     void sigUserLeave(int stream_index, const QString &uid);
 
 	void sigError(int errorCode);
+
+    void sigUserVideoStateChanged(const QString& uid, bool isMuted); 
+     
+    void updateLocalVideoStreamType(int stream_index);
 private:
     void setupView();
 
@@ -99,6 +106,6 @@ private:
     std::string m_uid;
     std::string m_roomId;
     QList<VideoWidget *> m_videoWidgetList;
-    QMap<QString, std::pair<VideoWidget*, VideoWidget*>> m_activeWidgetMap;
+    QMap<QString, VideoWidget*> m_activeWidgetMap;
     SettingModel m_settingModel;
 };

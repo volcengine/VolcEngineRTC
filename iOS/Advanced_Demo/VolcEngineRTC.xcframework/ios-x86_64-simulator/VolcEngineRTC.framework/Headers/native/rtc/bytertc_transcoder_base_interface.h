@@ -59,59 +59,59 @@ public:
      * @brief 获取合流房间 ID
      * @return 合流房间 ID
      */
-    virtual const char* RoomID() = 0;
+    virtual const char* roomID() = 0;
     /** 
      * @hidden
      * @type api
      * @region 转推直播
-     * @brief 获取 Other 数据
+     * @brief 获取 other 数据
      * @return Other数据
      */
-    virtual const char* Other() = 0;
+    virtual const char* other() = 0;
     /** 
      * @type api
      * @region 转推直播
-     * @brief 获取通过 Flatten{@link #ITranscoderParamBase#Flatten} 方法转换得到的 json 格式内容
+     * @brief 获取通过 flatten{@link #ITranscoderParamBase#flatten} 方法转换得到的 json 格式内容
      * @return json 格式数据
      */
-    virtual const char* JsonContent() = 0;
+    virtual const char* jsonContent() = 0;
     /** 
      * @type api
      * @region 转推直播
      * @brief 获取合流参数中视窗的数量
      * @return 合流参数中视窗的数量
      */
-    virtual int32_t LayoutRegionsSize() = 0;
+    virtual int32_t layoutRegionsSize() = 0;
     /** 
      * @type api
      * @region 转推直播
      * @brief 获取背景颜色
      * @return 背景颜色
      */
-    virtual const char* BackgroundColor() = 0;
+    virtual const char* backgroundColor() = 0;
     /** 
      * @type api
      * @region 转推直播
      * @brief 设置合流房间 ID
      * @param [in] room_id 发起合流的用户所在的房间 ID
      */
-    virtual void SetRoomID(const char* room_id) = 0;
+    virtual void setRoomID(const char* room_id) = 0;
     /** 
      * @type api
      * @region 转推直播
      * @brief 设置 jsonContent  <br>
-     *        传入通过 Flatten{@link #ITranscoderParamBase#Flatten} 方法转换得到的 json 格式内容
+     *        传入通过 flatten{@link #ITranscoderParamBase#flatten} 方法转换得到的 json 格式内容
      * @param [in] json_content json 格式内容
      */
-    virtual void SetJsonContent(const char* json_content) = 0;
+    virtual void setJsonContent(const char* json_content) = 0;
     /** 
      * @hidden
      * @type api
      * @region 转推直播
-     * @brief 设置 Other 数据
-     * @param [in] other Other 数据
+     * @brief 设置 other 数据
+     * @param [in] other other 数据
      */
-    virtual void SetOther(const char* other) = 0;
+    virtual void setOther(const char* other) = 0;
     /** 
      * @type api
      * @region 转推直播
@@ -123,7 +123,7 @@ public:
      *               + stopped: 停止合流
      * @return 转换后的 json 字符串
      */
-    virtual const char* Flatten(const char* contentType, const char* action) = 0;
+    virtual const char* flatten(const char* contentType, const char* action) = 0;
     /**
      * @hidden
      */

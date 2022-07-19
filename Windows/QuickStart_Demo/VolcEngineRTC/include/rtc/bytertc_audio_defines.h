@@ -6,7 +6,7 @@
 #pragma once
 
 #include "bytertc_common_defines.h"
-
+#include <string.h>
 // use fft size 512 to calculate spectrum, so spectrum size is 512 / 2 + 1 = 257
 #define SPECTRUM_SIZE 257
 
@@ -64,7 +64,7 @@ enum AudioChannel {
 
 /** 
  * @type keytype
- * @brief 音频参数格式
+ * @brief 音频格式
  */
 struct AudioFormat {
     /** 
@@ -76,7 +76,24 @@ struct AudioFormat {
      */
     AudioChannel channel;
 };
-
+/** 
+ * @type keytype
+ * @brief 返回给音频处理器的音频类型
+ */
+enum AudioProcessorMethod{
+    /** 
+     * @brief 本地采集的音频
+     */
+    kAudioFrameProcessorRecord = 0,
+    /** 
+     * @brief 远端音频流的混音音频
+     */
+    kAudioFrameProcessorPlayback = 1,
+    /** 
+     * @brief 各个远端音频流
+     */
+    kAudioFrameProcessorRemoteUser = 2,
+};
 /** 
  * @type keytype
  * @brief 音频设备类型
@@ -163,7 +180,7 @@ enum AudioPlaybackDevice {
  * @type keytype
  * @brief 音频场景类型。<br>
  *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。<br>
- *        你可以调用 SetAudioScenario{@link #SetAudioScenario} 设置音频场景。<br>
+ *        你可以调用 setAudioScenario{@link #setAudioScenario} 设置音频场景。<br>
  *        如果预设的音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
  */
 enum AudioScenarioType {
@@ -172,10 +189,10 @@ enum AudioScenarioType {
      *        此场景适用于对音乐表现力有要求的场景。如音乐直播等。<br>
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
      *        </table>
      */
     kAudioScenarioTypeMusic = 0,
@@ -185,10 +202,10 @@ enum AudioScenarioType {
      *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验；并尽可能避免使用蓝牙耳机时音量类型切换导致的听感突变。<br>
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th> <th>备注</th> </tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
      *        </table>
      */
     kAudioScenarioTypeHighQualityCommunication = 1,
@@ -336,44 +353,44 @@ enum AudioMixingState {
      */
     kAudioMixingStatePCMDisabled,
 };
-/**  
+/** 
  * @type keytype
  * @brief 混音错误码。
  */
 enum AudioMixingError {
-    /**  
+    /** 
      * @brief 正常
      */
     kAudioMixingErrorOk = 0,
-    /**  
+    /** 
      * @brief 预加载失败。找不到混音文件或者文件长度超出 20s
      */
     kAudioMixingErrorPreloadFailed,
-    /**  
+    /** 
      * @brief 混音开启失败。找不到混音文件或者混音文件打开失败
      */
     kAudioMixingErrorStartFailed,
-    /**  
+    /** 
      * @brief 混音 ID 异常
      */
     kAudioMixingErrorIdNotFound,
-    /**  
+    /** 
      * @brief 设置混音文件的播放位置出错
      */
     kAudioMixingErrorSetPositionFailed,
-    /**  
+    /** 
      * @brief 音量参数不合法，仅支持设置的音量值为[0, 400]
      */
     kAudioMixingErrorInValidVolume,
-    /**  
-     * @brief 已有另一个文件完成了预加载。请先使用 UnloadAudioMixing{@link #IAudioMixingManager#UnloadAudioMixing} 卸载此前的文件。
+    /** 
+     * @brief 已有另一个文件完成了预加载。请先使用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载此前的文件。
      */
     kAudioMixingErrorLoadConflict,
-    /**  
+    /** 
      * @brief 不支持此混音类型。
      */
     kAudioMixingErrorIdTypeNotMatch,
-    /**  
+    /** 
      * @brief 设置混音文件的音调不合法
      */
     kAudioMixingErrorInValidPitch,
@@ -492,7 +509,7 @@ struct RTCASRConfig {
 /** 
  * @type keytype
  * @brief 语音识别服务错误码。  <br>
- *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 `StartASR` 重启语音识别功能。
+ *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 `startASR` 重启语音识别功能。
  */
 enum RTCASRErrorCode {
     /** 
@@ -500,7 +517,7 @@ enum RTCASRErrorCode {
      */
     kRTCASRErrorNetworkInterrupted = -1,
     /** 
-     * @brief 重复调用 `StartASR`。开启语音识别服务后，你需要先调用 `StopASR` 停止语音识别服务，才能二次调用 `StartASR` 再次开启服务。
+     * @brief 重复调用 `startASR`。开启语音识别服务后，你需要先调用 `stopASR` 停止语音识别服务，才能二次调用 `startASR` 再次开启服务。
      */
     kRTCASRErrorAlreadyStarted = -2,
     /** 
@@ -569,7 +586,7 @@ struct AudioMixingConfig {
       */
      int position;
      /** 
-      * @brief 设置音频文件播放进度回调的时间间隔，单位毫秒，并按照设置的值触发 `OnAudioMixingPlayingProgress` 回调，默认不回调。  <br>
+      * @brief 设置音频文件播放进度回调的时间间隔，单位毫秒，并按照设置的值触发 `onAudioMixingPlayingProgress` 回调，默认不回调。  <br>
       *        + 该值应为大于 0 的 10 的倍数，当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
       *        + 传入的值小于等于 0 时，不会触发进度回调。  <br>
       */
@@ -632,7 +649,7 @@ struct AudioPropertiesInfo {
      *        - [0, 25]: 无声 <br>
      *        - [26, 75]: 低音量 <br>
      *        - [76, 204]: 中音量 <br>
-     *        - [205, 255]: 高音量
+     *        - [205, 255]: 高音量 <br>
      */
     int linear_volume;
     /** 
@@ -640,7 +657,7 @@ struct AudioPropertiesInfo {
      *        - [-127, -60]: 无声 <br>
      *        - [-59, -40]: 低音量 <br>
      *        - [-39, -20]: 中音量 <br>
-     *        - [-19, 0]: 高音量
+     *        - [-19, 0]: 高音量 <br>
      */
     int nonlinear_volume;
     /** 
@@ -692,7 +709,7 @@ struct LocalAudioPropertiesInfo {
 /** 
  * @type keytype
  * @brief 音质档位
- *        调用 `SetAudioProfile` 设置的音质档位
+ *        调用 `setAudioProfile` 设置的音质档位
  */
 enum AudioProfileType {
     /** 
@@ -719,6 +736,14 @@ enum AudioProfileType {
      *        游戏场景不建议使用。
      */
     kAudioProfileTypeHD = 3,
+    /** 
+     * @brief 标准音质。双声道，采样率为 48 KHz，编码码率最大值为 80 Kbps
+     */
+    kAudioProfileTypeStandardStereo = 4,
+    /** 
+     * @brief 音乐音质。单声道，采样率为 48 kHz，编码码率最大值为 128 Kbps
+     */
+    kAudioProfileTypeHDMono = 5,
 };
 
 /** 
@@ -726,15 +751,15 @@ enum AudioProfileType {
  * @brief 本地用户在房间内的位置坐标，需自行建立空间直角坐标系
  */
 struct Position {
-    /**  
+    /** 
      * @brief x 坐标
      */
     int x;
-    /**  
+    /** 
      * @brief y 坐标
      */
     int y;
-    /**  
+    /** 
      * @brief z 坐标
      */
     int z;
@@ -745,5 +770,99 @@ struct Position {
         return x == pos.x && y == pos.y && z == pos.z;
     }
 };
+
+/** 
+ * @hidden(Linux)
+ * @type keytype
+ * @brief 音频音量是否可设置
+ */
+enum AudioAbilityType {
+    /** 
+     * @brief 未知
+     */
+    kAudioAbilityTypeUnknown = -1,
+    /** 
+     * @brief 音量可设置
+     */
+    kAudioAbilityAble = 0,
+    /** 
+     * @brief 音量不可设置
+     */
+    kAudioAbilityUnable = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频设备信息
+ */
+struct AudioDeviceInfo {
+    /** 
+     * @brief 设备 ID
+     */
+    char device_id[MAX_DEVICE_ID_LENGTH];
+    /** 
+     * @brief 设备名称
+     */
+    char device_name[MAX_DEVICE_ID_LENGTH];
+    /** 
+     * @brief 设备所连接的声卡 ID，便于选择使用同一声卡的扬声器和麦克风。
+     */
+    char device_container_id[MAX_DEVICE_ID_LENGTH];
+    /** 
+     * @brief 设备的厂商 ID
+     */
+    int64_t device_vid;
+    /** 
+     * @brief 设备的产品编码
+     */
+    int64_t device_pid;
+    /** 
+     * @brief 设备的传输方式
+     */
+    DeviceTransportType transport_type;
+    /** 
+     * @brief 是否支持设置音量
+     */
+    AudioAbilityType volume_settable;
+    /** 
+     * @brief 是否系统默认设备
+     */
+    bool is_system_default;
+    /**
+     * @hidden
+     */
+    AudioDeviceInfo() {
+        memset(device_id, 0, MAX_DEVICE_ID_LENGTH);
+        memset(device_name, 0, MAX_DEVICE_ID_LENGTH);
+        memset(device_container_id, 0, MAX_DEVICE_ID_LENGTH);
+        this->device_vid = 0;
+        this->device_pid = 0;
+        this->transport_type = DeviceTransportType::kDeviceTransportTypeUnknown;
+        this->volume_settable = AudioAbilityType::kAudioAbilityTypeUnknown;
+        this->is_system_default = false;
+    }
+    
+    /**
+     * @hidden
+     */
+    AudioDeviceInfo& operator=(const AudioDeviceInfo& src) {
+        if (this != &src) {
+            strncpy(device_id, src.device_id, MAX_DEVICE_ID_LENGTH - 1);
+            strncpy(device_name, src.device_name, MAX_DEVICE_ID_LENGTH - 1);
+            strncpy(device_container_id, src.device_container_id, MAX_DEVICE_ID_LENGTH - 1);
+            device_id[MAX_DEVICE_ID_LENGTH - 1] = '\0';
+            device_name[MAX_DEVICE_ID_LENGTH - 1] = '\0';
+            device_container_id[MAX_DEVICE_ID_LENGTH - 1] = '\0';
+            device_vid = src.device_vid;
+            device_pid = src.device_pid;
+            transport_type = src.transport_type;
+            volume_settable = src.volume_settable;
+            is_system_default = src.is_system_default;
+        }
+
+        return *this;
+    }
+};
+
 
 }  // namespace bytertc

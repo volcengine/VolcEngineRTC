@@ -191,19 +191,19 @@ public:
      * @type callback
      * @region 视频特效
      * @brief 特效 SDK 进行人脸检测结果的回调。 <br>
-     *        调用 RegisterFaceDetectionObserver{@link #IVideoEffect#RegisterFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。
+     *        调用 registerFaceDetectionObserver{@link #IVideoEffect#registerFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。
      * @param [in] result 人脸检测结果, 参看 FaceDetectResult{@link #FaceDetectResult}。
      */
-    virtual void OnFaceDetectResult(const FaceDetectResult& result) = 0;
+    virtual void onFaceDetectResult(const FaceDetectResult& result) = 0;
     /** 
      * @hidden
      * @type callback
      * @region 视频特效
      * @brief 特效 SDK 进行人像属性检测结果的回调。 <br>
-     *        调用 RegisterFaceDetectionObserver{@link #IVideoEffect#RegisterFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并调用 SetVideoEffectExpressionDetect{@link #IVideoEffect#SetVideoEffectExpressionDetect} 开启人像属性检测后，你会收到此回调。
+     *        调用 registerFaceDetectionObserver{@link #IVideoEffect#registerFaceDetectionObserver} 注册了 IFaceDetectionObserver{@link #IFaceDetectionObserver}，并调用 setVideoEffectExpressionDetect{@link #IVideoEffect#setVideoEffectExpressionDetect} 开启人像属性检测后，你会收到此回调。
      * @param [in] result 人像属性检测结果, 参看 ExpressionDetectResult{@link #ExpressionDetectResult}。
      */
-    virtual void OnExpressionDetectResult(const ExpressionDetectResult& result) = 0;
+    virtual void onExpressionDetectResult(const ExpressionDetectResult& result) = 0;
     
 };
 
@@ -226,7 +226,7 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int SetAlgoModelResourceFinder(uintptr_t finder, uintptr_t deleter) = 0;
+    virtual int setAlgoModelResourceFinder(uintptr_t finder, uintptr_t deleter) = 0;
 
     /** 
      * @type api
@@ -244,7 +244,7 @@ public:
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      * @notes 开始使用视频特效前，你必须先调用这个方法进行许可证验证
      */
-    virtual int CheckLicense(void* androidContext, void* jnienv, const char* licensePath) = 0;
+    virtual int checkLicense(void* androidContext, void* jnienv, const char* licensePath) = 0;
 
     /** 
      * @type api
@@ -261,23 +261,23 @@ public:
      * @notes <br>
      *        + 使用视频特效的功能前，你必须获取特效 SDK 的在线许可证。  <br>
      *          通过此接口获取授权消息后，你必须参考 [在线授权说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99798/)。 <br>
-     *          自行实现获取在线许可证的业务逻辑。获取许可证后，你必须调用 CheckLicense{@link #CheckLicense} 确认许可证有效。然后，你才可以使用 CV 功能。  <br>
-     *        + 获取授权消息后，调用 FreeAuthMessage{@link #FreeAuthMessage} 释放内存。
+     *          自行实现获取在线许可证的业务逻辑。获取许可证后，你必须调用 checkLicense{@link #checkLicense} 确认许可证有效。然后，你才可以使用 CV 功能。  <br>
+     *        + 获取授权消息后，调用 freeAuthMessage{@link #freeAuthMessage} 释放内存。
      */
-    virtual int GetAuthMessage(char ** ppmsg, int * len) = 0;
+    virtual int getAuthMessage(char ** ppmsg, int * len) = 0;
     /** 
      * @type api
      * @region 视频特效
      * @hidden (iOS, Android)
      * @brief 使用完授权消息字符串后，释放内存。
-     * @param [in] pmsg GetAuthMessage 返回的授权消息字符串。
+     * @param [in] pmsg getAuthMessage 返回的授权消息字符串。
      * @return  <br>
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int FreeAuthMessage(char * pmsg) = 0;
+    virtual int freeAuthMessage(char * pmsg) = 0;
 
     /** 
      * @type api
@@ -289,9 +289,9 @@ public:
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     * @notes 在调用CheckLicense{@link #CheckLicense}和SetAlgoModelPath{@link #SetAlgoModelPath}后调用此方法
+     * @notes 在调用CheckLicense{@link #checkLicense}和SetAlgoModelPath{@link #setAlgoModelPath}后调用此方法
      */
-    virtual int EnableEffect(bool enabled) = 0;
+    virtual int enableEffect(bool enabled) = 0;
 
     /** 
      * @type api
@@ -299,7 +299,7 @@ public:
      * @brief 设置视频特效算法模型路径
      * @param [in] modelPath 模型路径
      */
-    virtual void SetAlgoModelPath(const char* modelPath) = 0;
+    virtual void setAlgoModelPath(const char* modelPath) = 0;
     
     /** 
      * @hidden
@@ -313,7 +313,7 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int SetVideoEffectExpressionDetect(const VideoEffectExpressionDetectConfig& expressionDetectConfig) = 0;
+    virtual int setVideoEffectExpressionDetect(const VideoEffectExpressionDetectConfig& expressionDetectConfig) = 0;
     
     /** 
      * @type api
@@ -329,7 +329,7 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int SetEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
+    virtual int setEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
     
     /** 
      * @hidden
@@ -343,9 +343,9 @@ public:
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     * @notes  该接口会在 SetEffectNodes{@link #IVideoEffect#SetEffectNodes} 设置的特效基础上叠加特效。
+     * @notes  该接口会在 setEffectNodes{@link #IVideoEffect#setEffectNodes} 设置的特效基础上叠加特效。
      */
-    virtual int AppendEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
+    virtual int appendEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
     
     /** 
      * @hidden
@@ -359,9 +359,9 @@ public:
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     * @notes 移除 SetEffectNodes{@link #IVideoEffect#SetEffectNodes} 或 AppendEffectNodes{@link #IVideoEffect#AppendEffectNodes} 设置的视频特效资源。
+     * @notes 移除 setEffectNodes{@link #IVideoEffect#SetEffectNodes} 或 appendEffectNodes{@link #IVideoEffect#appendEffectNodes} 设置的视频特效资源。
      */
-    virtual int RemoveEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
+    virtual int removeEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
 
     /** 
      * @type api
@@ -379,7 +379,7 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int UpdateNode(const char* nodePath, const char* nodeKey, float nodeValue) = 0;
+    virtual int updateNode(const char* nodePath, const char* nodeKey, float nodeValue) = 0;
 
     /** 
      * @type api
@@ -393,7 +393,7 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int SetColorFilter(const char* resPath) = 0;
+    virtual int setColorFilter(const char* resPath) = 0;
 
     /** 
      * @type api
@@ -407,7 +407,7 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int SetColorFilterIntensity(float intensity) = 0;
+    virtual int setColorFilterIntensity(float intensity) = 0;
 
     /** 
      * @type api
@@ -424,7 +424,7 @@ public:
      *        + > 40000: 调用失败，特效 SDK 授权错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      *        + < 0: 调用失败，特效 SDK 内部错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
-    virtual int InitVirtualBackground(void* androidContext, void* jnienv, const char* licensePath,const char* modelPath) = 0;
+    virtual int initVirtualBackground(void* androidContext, void* jnienv, const char* licensePath,const char* modelPath) = 0;
 
     /** 
      * @type api
@@ -434,15 +434,15 @@ public:
      * @return  <br>
      *        + 0: 调用成功。  <br>
      *        + < 0: 调用失败，特效 SDK 内部错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     *        + -1: 调用失败，未调用 InitVirtualBackground{@link #IVideoEffect#InitVirtualBackground} 或调用失败，导致 license 验证失败。  <br>
+     *        + -1: 调用失败，未调用 initVirtualBackground{@link #IVideoEffect#initVirtualBackground} 或调用失败，导致 license 验证失败。  <br>
      *        + -4: 调用失败，自定义背景图片打开失败。  <br>
      *        + -37: 调用失败，自定义背景图片解码失败。  <br>
      *        + -38: 调用失败，图片格式不支持。支持的图片格式是 jpg、jpeg、和 png。  <br>
      * @notes  <br>
-     *       + 调用此接口前，需要先调用 InitVirtualBackground{@link #IVideoEffect#InitVirtualBackground} 初始化 CV 环境；  <br>
+     *       + 调用此接口前，需要先调用 initVirtualBackground{@link #IVideoEffect#initVirtualBackground} 初始化 CV 环境；  <br>
      *       + 虚拟背景仅支持摄像头采集的视频流，包括 RTC SDK 内部机制采集的方式和自定义采集的方式。虚拟背景不支持屏幕视频流。  <br>
      */
-    virtual int EnableVirtualBackground(const VirtualBackgroundSource& source) = 0;
+    virtual int enableVirtualBackground(const VirtualBackgroundSource& source) = 0;
 
     /** 
      * @type api
@@ -451,22 +451,22 @@ public:
      * @return  <br>
      *        + 0: 调用成功。  <br>
      *        + < 0: 调用失败，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     * @notes 调用 EnableVirtualBackground{@link #EnableVirtualBackground} 开启虚拟背景后，可以调用此接口关闭虚拟背景。
+     * @notes 调用 enableVirtualBackground{@link #enableVirtualBackground} 开启虚拟背景后，可以调用此接口关闭虚拟背景。
      */
-    virtual int DisableVirtualBackground() = 0;
+    virtual int disableVirtualBackground() = 0;
 
     /** 
      * @type api
      * @region 视频特效
      * @brief 注册人脸检测结果回调观察者 <br>
-     *        注册此观察者后，你会周期性收到 OnFaceDetectResult{@link #IFaceDetectionObserver#OnFaceDetectResult} 回调。
+     *        注册此观察者后，你会周期性收到 onFaceDetectResult{@link #IFaceDetectionObserver#onFaceDetectResult}} 回调。
      * @param [in] observer 人脸检测结果回调观察者，参看 IFaceDetectionObserver{@link #IFaceDetectionObserver}。
      * @param [in] interval_ms 时间间隔。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval + 视频采集帧间隔`。
      * @return <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>
      */
-    virtual int RegisterFaceDetectionObserver(IFaceDetectionObserver * observer, int interval_ms) = 0;
+    virtual int registerFaceDetectionObserver(IFaceDetectionObserver * observer, int interval_ms) = 0;
 };
 
 }  // namespace bytertc

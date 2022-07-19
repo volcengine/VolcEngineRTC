@@ -155,6 +155,25 @@ typedef NS_ENUM(NSUInteger, ByteRTCMirrorType) {
 
 /** 
  * @type keytype
+ * @brief 基础美颜模式
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCEffectBeautyMode) {
+    /** 
+     * @brief 美白
+     */
+    ByteRTCEffectWhiteMode = 0,
+    /** 
+     * @brief 磨皮
+     */
+    ByteRTCEffectSmoothMode = 1,
+    /** 
+     * @brief 锐化
+     */
+    ByteRTCEffectSharpenMode = 2,
+};
+
+/** 
+ * @type keytype
  * @brief 视频旋转信息，枚举类型，定义了以 90 度为间隔的四种旋转模式。
  */
 typedef NS_ENUM(NSInteger, ByteRTCVideoRotation) {
@@ -174,6 +193,21 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoRotation) {
      * @brief 视频顺时针旋转 270 度
      */
     ByteRTCVideoRotation270 = 270,
+};
+
+/** 
+ * @type keytype
+ * @brief 视频内容类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVideoContentType) {
+    /** 
+     * @brief 普通视频
+     */
+    ByteRTCVideoContentTypeNormalFrame = 0,
+    /** 
+     * @brief 黑帧视频
+     */
+    ByteRTCVideoContentTypeBlackFrame = 1,
 };
 
 /** 
@@ -478,10 +512,9 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingType) {
      */
     ByteRTCStreamMixingTypeByClient = 1,
 };
-
 /** 
  * @type keytype
- * @brief 合流状态改变事件
+ * @brief 转推直播事件
  */
 typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingEvent) {
     /**
@@ -489,58 +522,70 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingEvent) {
      */
     ByteRTCStreamMixingEventBase = 0,
     /** 
-     * @brief 合流功能触发
+     *  请求发起转推直播任务
      */
     ByteRTCStreamMixingEventStart = 1,
     /** 
-     * @brief 合流成功
+     *  发起转推直播任务成功
      */
     ByteRTCStreamMixingEventStartSuccess = 2,
     /** 
-     * @brief 合流启动失败
+     *  发起转推直播任务失败
      */
     ByteRTCStreamMixingEventStartFailed = 3,
     /** 
-     * @brief 更新合流
+     *  请求更新转推直播任务配置
      */
     ByteRTCStreamMixingEventUpdate = 4,
     /** 
-     * @brief 合流结束
+     *  成功更新转推直播任务配置
      */
-    ByteRTCStreamMixingEventStop = 5,
+    ByteRTCStreamMixingEventUpdateSuccess = 5,
     /** 
-     * @brief 服务端合流/端云一体合流
+     *  更新转推直播任务配置失败
      */
-    ByteRTCStreamMixingEventChangeMixType = 6,
+    ByteRTCStreamMixingEventUpdateFailed = 6,
     /** 
-     * @brief 收到合流音频首帧
+     *  请求结束转推直播任务
      */
-    ByteRTCStreamMixingEventFirstAudioFrameByClientMixer = 7,
+    ByteRTCStreamMixingEventStop = 7,
     /** 
-     * @brief 收到合流视频首帧
+     *  结束转推直播任务成功
      */
-    ByteRTCStreamMixingEventFirstVideoFrameByClientMixer = 8,
+    ByteRTCStreamMixingEventStopSuccess = 8,
     /** 
-     * @brief 更新合流超时
+     *  结束转推直播任务失败
      */
-    ByteRTCStreamMixingEventUpdateTimeout = 9,
+    ByteRTCStreamMixingEventStopFailed = 9,
     /** 
-     * @brief 开始合流超时
+     *  更新转推直播任务配置的请求超时
      */
-    ByteRTCStreamMixingEventStartTimeout = 10,
+    ByteRTCStreamMixingEventChangeMixType = 10,
     /** 
-     * @brief 合流布局参数错误
+     *  得到客户端合流音频首帧
      */
-    ByteRTCStreamMixingEventRequestParamError = 11,
+    ByteRTCStreamMixingEventFirstAudioFrameByClientMixer = 11,
     /** 
-     * @hidden
-     * @brief 合流加图片
+     *  收到客户端合流视频首帧
      */
-    ByteRTCStreamMixingEventMixImage = 12,
-    /**
-     * @hidden
+    ByteRTCStreamMixingEventFirstVideoFrameByClientMixer = 12,
+    /** 
+     *  更新转推直播任务配置超时
      */
-    ByteRTCStreamMixingEventMixingMax = 15,
+    ByteRTCStreamMixingEventUpdateTimeout = 13,
+    /** 
+     *  发起转推直播任务配置超时
+     */
+    ByteRTCStreamMixingEventStartTimeout = 14,
+    /** 
+     *  合流布局参数错误
+     */
+    ByteRTCStreamMixingEventRequestParamError = 15,
+    /** 
+    * @hidden
+    *  合流加图片
+    */
+    ByteRTCStreamMixingEventMixImage = 16,
 };
 
 /** 
@@ -685,14 +730,13 @@ typedef NS_ENUM(NSInteger, ByteRTCCameraID) {
      */
     ByteRTCCameraIDInvalid = 3,
 };
-
 /** 
- * @type keytype
+ * @type errorcode
  * @brief 转推直播错误码
  */
 typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
     /** 
-     * @brief 推流成功。
+     *  推流成功。
      */
     ByteRtcTranscoderErrorCodeOK = 0,
     /** 
@@ -700,46 +744,49 @@ typedef NS_ENUM(NSInteger, ByteRtcTranscoderErrorCode) {
      */
     ByteRtcTranscoderErrorCodeBase = 1090,
     /** 
-     * @brief 客户端 SDK 检测到无效推流参数，请检查合流参数合法性。
+     *  客户端 SDK 检测到无效推流参数。
      */
     ByteRtcTranscoderErrorCodeInvalidParam = 1091,
     /** 
-     * @brief 状态错误，需要在状态机正常状态下发起操作
+     *  状态错误，需要在状态机正常状态下发起操作
      */
     ByteRtcTranscoderErrorCodeInvalidState = 1092,
     /** 
-     * @brief 无效操作
+     *  无效操作
      */
     ByteRtcTranscoderErrorCodeInvalidOperator = 1093,
     /** 
-     * @brief 转推直播任务处理超时，请检查网络状态并重试
+     *  转推直播任务处理超时，请检查网络状态并重试
      */
     ByteRtcTranscoderErrorCodeTimeOut = 1094,
     /** 
-     *@brief 服务端检测到错误的推流参数
+     * 服务端检测到错误的推流参数
      */
     ByteRtcTranscoderErrorCodeInvalidParamByServer = 1095,
     /** 
-     * @brief 服务端检测到订阅流超时
+     *  对流的订阅超时
      */
     ByteRtcTranscoderErrorCodeSubTimeoutByServer = 1096,
     /** 
-     * @brief 合流服务端内部错误。
+     *  合流服务端内部错误。
      */
     ByteRtcTranscoderErrorCodeInvalidStateByServer = 1097,
     /** 
-     * @brief 合流服务端推 CDN 失败。
+     *  合流服务端推 CDN 失败。
      */
     ByteRtcTranscoderErrorCodeAuthenticationByCDN = 1098,
     /** 
-     * @brief 服务端接收信令超时，请检查网络状态并重试。
+     *  服务端接收信令超时，请检查网络状态并重试。
      */
     ByteRtcTranscoderErrorCodeTimeoutBySignaling = 1099,
     /** 
-     * @hidden
-     * @brief 图片合流失败。
+     *  图片合流失败。
      */
     ByteRtcTranscoderErrorCodeMixImageFail = 1100,
+    /** 
+     *  服务端未知错误。
+     */
+    ByteRtcTranscoderErrorCodeUnKnownErrorByServer = 1101,
     /**
      * @hidden
      */
@@ -783,6 +830,58 @@ typedef NS_ENUM(NSInteger, ByteRTCScreenMediaType) {
      */
     ByteRTCScreenMediaTypeVideoAndAudio = 2
 };
+
+/** 
+ * @type keytype
+ * @author liyi.000
+ * @brief 屏幕采集对象的类型
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCScreenCaptureSourceType) {
+    /** 
+     * @brief 类型未知
+     */
+    ByteRTCScreenCaptureSourceTypeUnknown = 0,
+    /** 
+     * @brief 应用程序的窗口
+     */
+    ByteRTCScreenCaptureSourceTypeWindow = 1,
+    /** 
+     * @brief 桌面
+     */
+    ByteRTCScreenCaptureSourceTypeScreen = 2
+};
+/** 
+ * @type keytype
+ * @brief 内部采集屏幕视频流时，是否采集鼠标信息
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCMouseCursorCaptureState) {
+    /** 
+     * @brief 采集鼠标信息
+     */
+    ByteRTCMouseCursorCaptureStateOn,
+    /** 
+     * @brief 不采集鼠标信息
+     */
+    ByteRTCMouseCursorCaptureStateOff,
+};
+/** 
+ * @type keytype
+ * @brief 屏幕共享时的边框高亮设置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCHighlightConfig: NSObject
+/** 
+ * @brief 是否显示高亮边框，默认显示。
+ */
+@property (assign, nonatomic) BOOL enableHighlight;
+/** 
+ * @brief 边框的颜色, 颜色格式为十六进制 ARGB:  0xAARRGGBB
+ */
+@property (assign, nonatomic) uint32_t borderColor;
+/** 
+ * @brief 边框的宽度，单位：像素
+ */
+@property (assign, nonatomic) int borderWidth;
+@end
 
 /** 
  * @type keytype
@@ -963,10 +1062,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectResult : NSObject
  * @brief 识别到的人脸数量。
  */
 @property (assign, nonatomic) int faceCount;
+
 /** 
  * @brief 特征识别信息。数组的长度和检测到的人脸数量一致。参看 ByteRTCExpressionDetectInfo{@link #ByteRTCExpressionDetectInfo}。
  */
-@property (nonatomic, copy) NSArray<ByteRTCExpressionDetectInfo *> * detectInfo;
+@property (nonatomic, copy) NSArray<ByteRTCExpressionDetectInfo *> * _Nonnull detectInfo;
+
 @end
 
 /** 
@@ -1013,7 +1114,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
 /** 
  * @brief 识别到人脸的矩形框。数组的长度和检测到的人脸数量一致。参看 ByteRTCRectangle{@link #ByteRTCRectangle}。
  */
-@property(nonatomic, copy) NSArray<ByteRTCRectangle *> * faces;
+@property(nonatomic, copy) NSArray<ByteRTCRectangle *> * _Nullable faces;
+
 @end
 /** 
  * @type keytype
@@ -1023,7 +1125,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCanvas : NSObject
 /** 
  * @brief 本地视图句柄
  */
-@property(strong, nonatomic) UIView* _Nullable view;
+@property(strong, nonatomic) ByteRTCView* _Nullable view;
 /** 
  * @brief 渲染模式，参看 ByteRTCRenderMode{@link #ByteRTCRenderMode}
  */
@@ -1239,6 +1341,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrame : NSObject
  * @brief 视频帧格式，参考 ByteRTCVideoPixelFormat {@link #ByteRTCVideoPixelFormat}
  */
 @property(assign, nonatomic) int format;
+/** 
+ * @hidden
+ * @type api
+ * @brief 获取视频内容类型
+ * @return 视频内容类型，参看 ByteRTCVideoContentType{@link #ByteRTCVideoContentType}。
+ */
+@property(assign, nonatomic) ByteRTCVideoContentType contentType;
 /** 
  * @brief 当前帧的时间戳信息
  */
@@ -1729,10 +1838,12 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
  * @brief 输出视频的 PixelBuffer
  * @param pixelBuffer 视频的 PixelBuffer
  * @param rotation 视频旋转角度，参看 ByteRTCVideoRotation{@link #ByteRTCVideoRotation}
+ * @param contentType 视频内部类型 参看 ByteRTCVideoContentType{@link #ByteRTCVideoContentType}
  * @param extendedData 视频解码后获得的附加数据
  */
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
+                 contentType:(ByteRTCVideoContentType)contentType
              extendedData:(NSData * _Nullable)extendedData;
 /**
  * @hidden
@@ -1836,7 +1947,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoPreprocessorConfig : NSObject
 - (ByteRTCVideoFrame* _Nullable) processVideoFrame:(ByteRTCVideoFrame* _Nonnull)src_frame;
 
 @end
-
 /** 
  * @type keytype
  * @region 视频管理
@@ -1860,9 +1970,40 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureParam : NSObject
  */
 @property(nonatomic, assign) NSInteger bitrate;
 /** 
+ * @brief 采集区域
+ */
+@property(nonatomic, assign) CGRect regionRect;
+/** 
  * @brief 是否采集鼠标
  */
-@property(nonatomic, assign) BOOL captureMouseCursor;
+@property(nonatomic, assign) ByteRTCMouseCursorCaptureState mouseCursorCaptureState;
+/** 
+ * @brief 屏幕过滤设置
+ */
+@property (strong, nonatomic) NSArray<NSNumber *> * _Nullable excludedWindowList;
+/** 
+ * @brief 采集区域的边框高亮设置，参看 ByteRTCHighlightConfig{@link #ByteRTCHighlightConfig}。
+ */
+@property (strong, nonatomic) ByteRTCHighlightConfig * _Nonnull highlightConfig;
+@end
+/** 
+ * @type keytype
+ * @author liyi.000
+ * @brief 屏幕采集对象的具体信息
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureSourceInfo : NSObject
+/** 
+ * @brief 屏幕分享时，共享对象的类型，参看 ByteRTCScreenCaptureSourceType{@link #ByteRTCScreenCaptureSourceType}
+ */
+@property (assign, nonatomic) ByteRTCScreenCaptureSourceType sourceType;
+/** 
+ * @brief 屏幕分享时，共享对象的 ID。
+ */
+@property (assign, nonatomic) intptr_t sourceId;
+/** 
+ * @brief 屏幕分享时共享对象的名称。<br>
+ */
+@property (copy, nonatomic) NSString * _Nullable sourceName;
 @end
 
 /** 
@@ -1902,7 +2043,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVirtualBackgroundSource: NSObject
  *       + 分辨率超过 1080P 时，图片会被等比缩放。背景图片和视频分辨率不一致时，图片会被裁剪缩放。<br>
  *       + 若使用工程中传入的 png 格式图片作为背景，并开启了 png 压缩，则需要在 xcode 右侧界面的文件视图中，将需要的 png 图片的文件类型指定为 Data 类型，阻止此文件被压缩，否则会导致图片解码失败。
  */
-@property(nonatomic) NSString* sourcePath;
+@property(nonatomic) NSString* _Nullable sourcePath;
 @end
 
 /** 
@@ -2228,31 +2369,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
 @end
 /** 
  * @type keytype
- * @author shenpengliang
- * @brief 多房间参数配置
- */
-BYTERTC_APPLE_EXPORT @interface ByteRTCMultiRoomConfig : NSObject
-/** 
- * @brief 房间模式，参看 ByteRTCRoomProfile{@link #ByteRTCRoomProfile}，默认为普通音视频通话模式，进房后不可更改。
- */
-@property(nonatomic) ByteRTCRoomProfile profile;
-/** 
- * @brief 是否自动订阅音频流。  <br>
- */
-@property(assign, nonatomic) BOOL isAutoSubscribeAudio;
-/** 
- * @brief 是否自动订阅主视频流。  <br>
- *        屏幕流始终自动订阅，不受该方法影响。
- */
-@property(assign, nonatomic) BOOL isAutoSubscribeVideo;
-/** 
- * @brief 远端视频流参数，参看 ByteRTCRemoteVideoConfig{@link #ByteRTCRemoteVideoConfig}
- */
-@property(nonatomic, strong) ByteRTCRemoteVideoConfig * _Nonnull remoteVideoConfig;
-@end
-
-/** 
- * @type keytype
  * @brief 公共流裁剪信息
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCSourceCropInfo : NSObject
@@ -2473,4 +2589,45 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreaming : NSObject
  * @brief 获取默认合流参数
  */
 + (instancetype _Nonnull)defaultPublicStreaming;
+@end
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 视频设备管理
+ * @brief 主要用于枚举、设置视频采集设备
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 视频设备管理
+ * @author zhangzhenyu.samuel
+ * @brief 获取视频采集设备列表。
+ * @return ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}
+ */
+- (ByteRTCDeviceCollection * _Nonnull)enumerateVideoCaptureDevices;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 视频设备管理
+ * @author zhangzhenyu.samuel
+ * @brief 获取当前 SDK 正在使用的视频采集设备信息
+ * @param deviceID 视频设备 ID
+ * @return  <br>
+ *        + 0：方法调用成功  <br>
+ *        + !0：方法调用失败  <br>
+ */
+- (int)getVideoCaptureDevice:(NSString * _Nonnull * _Nonnull) deviceID;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 视频设备管理
+ * @author zhangzhenyu.samuel
+ * @brief 设置当前视频采集设备
+ * @param deviceID 视频设备 ID。调用 enumerateVideoCaptureDevices{@link #ByteRTCVideoDeviceManager#enumerateVideoCaptureDevices} 获取全量视频设备。
+ * @return  <br>
+ *        + 0：方法调用成功  <br>
+ *        + !0：方法调用失败  <br>
+ */
+- (int)setVideoCaptureDevice:(NSString* _Nonnull)deviceID;
 @end

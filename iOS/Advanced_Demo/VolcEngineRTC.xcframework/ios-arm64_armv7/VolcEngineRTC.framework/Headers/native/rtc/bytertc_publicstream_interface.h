@@ -246,7 +246,7 @@ public:
      * @brief 设置公共流的布局模式，目前只支持 `kLayoutCustomerMode` 模式
      * @return 公共流的布局模式，参看 StreamLayoutMode{@link #StreamLayoutMode}
      */
-    virtual StreamLayoutMode LayoutMode() = 0;
+    virtual StreamLayoutMode layoutMode() = 0;
     /** 
      * @type api
      * @brief 获取补帧模式
@@ -254,32 +254,32 @@ public:
      *         `0`: 补最后一帧<br>
      *         `1`: 补背景图片或者黑帧
      */
-    virtual int InterpolationMode() = 0;
+    virtual int interpolationMode() = 0;
     /** 
      * @type api
      * @brief 获取背景图片地址
      * @return 背景图片的地址
      */
-    virtual const char* BackgroundImageUri() = 0;
+    virtual const char* backgroundImageUri() = 0;
     /** 
      * @type api
      * @brief 获取公共流音频参数
      * @return 公共流音频参数内容，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
-    virtual PublicStreamAudioParam AudioParam() = 0;
+    virtual PublicStreamAudioParam audioParam() = 0;
     /** 
      * @type api
      * @brief 获取公共流视频参数
      * @return 公共流视频参数内容，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
      */
-    virtual PublicStreamVideoParam VideoParam() = 0;
+    virtual PublicStreamVideoParam videoParam() = 0;
     /** 
      * @type api
      * @brief 获取公共流视窗布局信息
      * @param [in] index 视窗对应下标
      * @return 公共流视窗布局信息，参看 PublicStreamLayoutRegion{@link #PublicStreamLayoutRegion}
      */
-    virtual PublicStreamLayoutRegion LayoutRegionByIndex(int32_t index) = 0;
+    virtual PublicStreamLayoutRegion layoutRegionByIndex(int32_t index) = 0;
     /** 
      * @type api
      * @brief 设置补帧模式
@@ -287,25 +287,25 @@ public:
      *         `0`: 补最后一帧<br>
      *         `1`: 补背景图片或者黑帧
      */
-    virtual void SetInterpolationMode(int mode) = 0;
+    virtual void setInterpolationMode(int mode) = 0;
     /** 
      * @type api
      * @brief 设置背景图片的地址
      * @param [in] uri 公共流的背景图片的地址
      */
-    virtual void SetBackgroundImageUri(const char* uri) = 0;
+    virtual void setBackgroundImageUri(const char* uri) = 0;
     /** 
      * @type api
      * @brief 设置音频参数
      * @param [in] PublicStreamAudioParam 音频参数，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
-    virtual void SetAudioParam(const PublicStreamAudioParam&) = 0;
+    virtual void setAudioParam(const PublicStreamAudioParam&) = 0;
     /** 
      * @type api
      * @brief 设置视频参数
      * @param [in] PublicStreamVideoParam 音频参数，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
      */
-    virtual void SetVideoParam(const PublicStreamVideoParam&) = 0;
+    virtual void setVideoParam(const PublicStreamVideoParam&) = 0;
     /** 
      * @type api
      * @brief 设置公共流布局参数
@@ -314,7 +314,7 @@ public:
      * @param [in] bg_color 公共流背景颜色
      * @param [in] mode 布局参数，参看 StreamLayoutMode{@link #StreamLayoutMode}
      */
-    virtual void SetLayoutParam(
+    virtual void setLayoutParam(
                 PublicStreamLayoutRegion regions[], int32_t regions_size, const char* bg_color,
                 StreamLayoutMode mode) = 0;
     /** 
@@ -323,7 +323,7 @@ public:
      * @param [in] json_str json 格式字符串
      * @return 转换后的 ITranscoderParam 结构体
      */
-    virtual IPublicStreamParam* Inflatten(const char* json_str) = 0;
+    virtual IPublicStreamParam* inflatten(const char* json_str) = 0;
     /** 
      * @type api
      * @brief 参数校验
@@ -332,7 +332,7 @@ public:
      *        `true`: 所有参数都合法<br>
      *        `false`: 存在不合法参数
      */
-    virtual bool CheckParameter(const char* json_str) = 0;
+    virtual bool checkParameter(const char* json_str) = 0;
     /**
      * @hidden
      */
@@ -344,5 +344,5 @@ public:
  * @type api
  * @brief 创建公共流参数实例
  */
- BYTERTC_API IPublicStreamParam* CreatePublicStreamParam();
+ BYTERTC_API IPublicStreamParam* createPublicStreamParam();
 } /* namespace bytertc */

@@ -18,31 +18,31 @@ namespace bytertc {
  * @brief 自定义用户角色
  * @notes  必须在joinChannel之前调用
  */
-BYTERTC_API void SetCustomUserRole(IRtcEngine* engine, const char* role);
+BYTERTC_API void setCustomUserRole(IRtcEngine* engine, const char* role);
 
 /** 
  * @brief 设置 ByteRTC SDK 默认开启使用QUIC获取配置
  * @notes  一般在linux端SDK使用
  */
-BYTERTC_API void SetDefaultEnableQuicGetAccess();
+BYTERTC_API void setDefaultEnableQuicGetAccess();
 
 /** 
  * @brief 设置 ByteRTC SDK 默认开启使用KCP获取配置
  * @notes  一般在linux端SDK使用
  */
-BYTERTC_API void SetDefaultEnableKcpGetAccess();
+BYTERTC_API void setDefaultEnableKcpGetAccess();
 
 /** 
  * @brief 设置 ByteRTC SDK 默认开启通话前网络探测
  * @notes  一般在linux端SDK使用
  */
-BYTERTC_API void SetDefaultEnableNetworkDetect();
+BYTERTC_API void setDefaultEnableNetworkDetect();
 
 /** 
  * @brief 设置 ByteRTC SDK 默认开启使用KCP消息通道
  * @notes  一般在linux端SDK使用
  */
-BYTERTC_API void SetDefaultEnableKcpDataChannel();
+BYTERTC_API void setDefaultEnableKcpDataChannel();
 
 struct VideoStreamDescription {
     unsigned int width;
@@ -84,12 +84,12 @@ public:
      *       + true  :启用ice复用
      *       + false :不启用ice复用
      */
-    virtual void OnPeerConnectionICEMux(bool muxed){};
+    virtual void onPeerConnectionICEMux(bool muxed){};
     //TODO(shenpengliang) remove this method
-    virtual void OnSystemInfoLog(double app_cpu_usage, double total_cpu_usage, double app_memery_usage){};
-    virtual void OnSignalingAddrChanged(const char* addr){};
-    virtual void OnConfigAddrChanged(const char* addr){};
-    virtual void OnMediaServerAddrChanged(const char* addr){};
+    virtual void onSystemInfoLog(double app_cpu_usage, double total_cpu_usage, double app_memery_usage){};
+    virtual void onSignalingAddrChanged(const char* addr){};
+    virtual void onConfigAddrChanged(const char* addr){};
+    virtual void onMediaServerAddrChanged(const char* addr){};
 };
 
 /** 
@@ -98,7 +98,7 @@ public:
  * @param [in] handler 当前app应用的内部事件回调句柄
  * @notes 必须在join channel前调用该函数
  */
-BYTERTC_API void SetEngineInternalEventHandler(
+BYTERTC_API void setEngineInternalEventHandler(
       IRtcEngine *engine,
       IEngineInternalEventHandler* handler);
       

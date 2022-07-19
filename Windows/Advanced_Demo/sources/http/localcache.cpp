@@ -41,9 +41,9 @@ QByteArray LocalCache::hash(const QByteArray &s) {
 }
 
 bool LocalCache::isCached(const QString &path) {
-    bool cached = QFile::exists(path) &&
-                  (maxSeconds == 0 || QFileInfo(path).created().secsTo(
-                                              QDateTime::currentDateTimeUtc()) < maxSeconds);
+	bool cached = QFile::exists(path) &&
+		(maxSeconds == 0 || QFileInfo(path).birthTime().secsTo(
+			QDateTime::currentDateTimeUtc()) < maxSeconds);
 #ifndef QT_NO_DEBUG_OUTPUT
     if (!cached) misses++;
 #endif
@@ -132,7 +132,7 @@ void LocalCache::expire() {
     while (it.hasNext()) {
         QString path = it.next();
         QFileInfo info = it.fileInfo();
-        cacheItems.insert(info.created(), path);
+        cacheItems.insert(info.birthTime(), path);
         totalSize += info.size();
         qApp->processEvents();
     }

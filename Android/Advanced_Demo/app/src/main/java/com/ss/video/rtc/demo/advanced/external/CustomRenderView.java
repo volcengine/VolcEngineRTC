@@ -359,9 +359,9 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
         int width = frame.getRotation().value() % 180 == 0 ? frame.getWidth() : frame.getHeight();
         int height = frame.getRotation().value() % 180 == 0 ? frame.getHeight() : frame.getWidth();
 
-        YuvHelper.I420Rotate(frame.getPlaneData(0), frame.getPlaneLineSize(0),
-                frame.getPlaneData(1), frame.getPlaneLineSize(1),
-                frame.getPlaneData(2), frame.getPlaneLineSize(2),
+        YuvHelper.I420Rotate(frame.getPlaneData(0), frame.getPlaneStride(0),
+                frame.getPlaneData(1), frame.getPlaneStride(1),
+                frame.getPlaneData(2), frame.getPlaneStride(2),
                 mBuffer, frame.getWidth(), frame.getHeight(), 360 - frame.getRotation().value());
 
         frame.release();

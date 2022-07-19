@@ -72,11 +72,7 @@ QNetworkReply *Http::networkReply(const HttpRequest &req) {
         request.setRawHeader("Range", QStringLiteral("bytes=%1-").arg(req.offset).toUtf8());
 
     QNetworkAccessManager *manager = networkAccessManager();
-	if (manager->networkAccessible() == QNetworkAccessManager::NotAccessible) 
-	{
-		manager->setNetworkAccessible(QNetworkAccessManager::Accessible);
-	}
-
+ 
     QNetworkReply *networkReply = nullptr;
     switch (req.operation) {
     case QNetworkAccessManager::GetOperation:

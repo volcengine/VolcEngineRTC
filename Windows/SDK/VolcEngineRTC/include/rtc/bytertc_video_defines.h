@@ -426,7 +426,7 @@ enum BackgroundMode {
 
 /** 
  * @hidden
- * @deprecated since 332.1, use EnableVirtualBackground instead
+ * @deprecated since 332.1, use enableVirtualBackground instead
  * @type keytype
  * @brief 分割模型
  */
@@ -464,13 +464,13 @@ struct MediaStreamInfo {
     bool has_audio;
     /** 
      * @brief 视频流的属性。  <br>
-     *        当远端用户调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
+     *        当远端用户调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
      *        参看 VideoSolutionDescription{@link #VideoSolutionDescription}。
      */
     VideoSolutionDescription* profiles;
     /** 
      * @brief 不同配置流的个数。  <br>
-     *        当远端用户调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
+     *        当远端用户调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
      */
     int profile_count;
 
@@ -490,7 +490,7 @@ struct MediaStreamInfo {
 struct SubscribeVideoConfig {
     /** 
      * @brief 订阅的视频流分辨率下标。  <br>
-     *        当远端用户通过调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+     *        当远端用户通过调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
      *        默认值为 0，即订阅第一路流。  <br>
      *        如果不想更改之前的设置，可以输入 -1。  <br>
      */
@@ -540,12 +540,12 @@ struct SubscribeConfig {
     bool sub_audio;
     /** 
      * @brief 订阅的视频流分辨率下标。  <br>
-     *        用户可以通过调用 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+     *        用户可以通过调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
      */
     int video_index;
     /** 
      * @brief 远端用户的需求优先级，参看 RemoteUserPriority{@link #RemoteUserPriority}，默认值为 0 。  <br>
-     *        当开启了订阅流回退选项功能（详见 SetSubscribeFallbackOption{@link #IRtcEngineLite#SetSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
+     *        当开启了订阅流回退选项功能（详见 setSubscribeFallbackOption{@link #IRtcEngine#setSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
      */
     int priority = 0;
     /** 
@@ -658,10 +658,11 @@ enum VideoStreamType {
      */
     kVideoStreamTypeLow = 1,
 };
+
 /** 
  * @type keytype
  * @brief 视频帧渲染设置。<br>
- *        调用 SetLocalVideoCanvas{@link #IRtcEngineLite#SetLocalVideoCanvas} 将视频流绑定到本地视图。
+ *        调用 setLocalVideoCanvas{@link #IRtcEngine#setLocalVideoCanvas} 将视频流绑定到本地视图。
  */
 struct VideoCanvas {
     /** 
@@ -698,7 +699,7 @@ typedef void* view_t;
 
 /** 
  * @type keytype
- * @brief 矩形，用于屏幕共享指定区域, 默认值表示抓取整个屏幕
+ * @brief 矩形区域，用于指定屏幕区域
  */
 struct Rectangle {
     /** 
@@ -894,7 +895,7 @@ enum PixelFormat {
      * @param [out] videoFrame 视频帧结构类，参看 IVideoFrame{@link #IVideoFrame}
      * @return 返回值暂未使用
      */
-    virtual bool OnFrame(IVideoFrame* videoFrame) = 0;
+    virtual bool onFrame(IVideoFrame* videoFrame) = 0;
     /** 
      * @hidden
      * @type callback
@@ -902,13 +903,13 @@ enum PixelFormat {
      * @brief 获取外部渲染耗时。
      * @notes 获取外部渲染耗时进行上报。开发者需要自己计算平均渲染耗时。
      */
-    virtual int GetRenderElapse() = 0;
+    virtual int getRenderElapse() = 0;
     /** 
      * @type callback
      * @brief 释放渲染器。
      * @notes 通知开发者渲染器即将被废弃。收到该返回通知后即可释放资源。
      */
-    virtual void Release() {
+    virtual void release() {
     }
     /** 
      * @hidden
@@ -1078,7 +1079,7 @@ struct VideoCaptureConfig {
         */
        KManual = 1,
        /** 
-        * @brief 采集参数与编码参数一致，即在 SetVideoEncoderConfig{@link #IRtcEngineLite#SetVideoEncoderConfig} 中设置的参数。
+        * @brief 采集参数与编码参数一致，即在 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 中设置的参数。
         */
        KAutoPerformance = 2,
     };
@@ -1195,7 +1196,7 @@ enum FrameRateRatio {
    */
   kFrameRateRatioQuarter = 2,
 };
-/**  
+/** 
  * @type keytype
  * @brief 远端视频帧信息
  */
@@ -1215,7 +1216,7 @@ struct RemoteVideoConfig {
      */
     int resolution_height = 0;
 };
-/**  
+/** 
  * @type keytype
  * @brief 房间参数配置
  */
@@ -1226,7 +1227,7 @@ struct RTCRoomConfig {
      RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /** 
      * @brief 是否自动发布音视频流，默认为自动发布。 <br>
-     *        若调用 SetUserVisibility{@link #IRtcRoom#SetUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+     *        若调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
      */
    bool is_auto_publish = true;
     /** 
@@ -1285,5 +1286,77 @@ enum ScreenMediaType {
     kScreenMediaTypeVideoAndAudio = 2,
 };
 
-}  // namespace bytertc
+/** 
+ * @type keytype
+ * @brief 基础美颜模式
+ */
+enum EffectBeautyMode {
+    /** 
+     * @brief 美白
+     */
+    kEffectBeautyWhite = 0,
+    /** 
+     * @brief 磨皮
+     */
+    kEffectBeautySmooth = 1,
+    /** 
+     * @brief 锐化
+     */
+    kEffectBeautySharpen = 2,
+};
 
+/** 
+ * @type keytype
+ * @brief 视频设备信息
+ */
+struct VideoDeviceInfo {
+    /** 
+     * @brief 设备 ID
+     */
+    char device_id[MAX_DEVICE_ID_LENGTH];
+    /** 
+     * @brief 设备名称
+     */
+    char device_name[MAX_DEVICE_ID_LENGTH];
+    /** 
+     * @brief 设备的厂商 ID
+     */
+    int64_t device_vid;
+    /** 
+     * @brief 设备的产品编码
+     */
+    int64_t device_pid;
+    /** 
+     * @brief 设备的传输方式
+     */
+    DeviceTransportType transport_type;
+    /**
+     * @hidden
+     */
+    VideoDeviceInfo() {
+        memset(device_id, 0, MAX_DEVICE_ID_LENGTH);
+        memset(device_name, 0, MAX_DEVICE_ID_LENGTH);
+        this->device_vid = 0;
+        this->device_pid = 0;
+        this->transport_type = DeviceTransportType::kDeviceTransportTypeUnknown;
+    };
+    
+    /**
+     * @hidden
+     */
+    VideoDeviceInfo& operator=(const VideoDeviceInfo& src) {
+        if (this != &src) {
+            strncpy(device_id, src.device_id, MAX_DEVICE_ID_LENGTH - 1);
+            strncpy(device_name, src.device_name, MAX_DEVICE_ID_LENGTH - 1);
+            device_id[MAX_DEVICE_ID_LENGTH - 1] = '\0';
+            device_name[MAX_DEVICE_ID_LENGTH - 1] = '\0';
+            device_vid = src.device_vid;
+            device_pid = src.device_pid;
+            transport_type = src.transport_type;
+        }
+        
+        return *this;
+    }
+};
+
+}  // namespace bytertc

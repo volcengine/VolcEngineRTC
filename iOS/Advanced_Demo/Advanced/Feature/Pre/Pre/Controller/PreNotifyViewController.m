@@ -92,8 +92,7 @@
 
 - (void)sendUserMessageOutsideRoom:(NSString *)uid
                            message:(NSString *)message {
-    [_rtcKit sendUserMessageOutsideRoom:uid
-                                message:message];
+    [_rtcKit sendUserMessageOutsideRoom:uid message:message config:0];
 }
 
 - (void)logout {

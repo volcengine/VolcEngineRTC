@@ -11,7 +11,7 @@
 #include "ui_setting.h"
 #include "utils.h"
 
-static constexpr char* kQss =
+static constexpr char kQss[] =
     "QListView{"
     "background:#fff;"
     "border:1px solid #E5E6EB;"

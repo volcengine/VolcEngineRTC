@@ -1,5 +1,7 @@
 package com.ss.video.rtc.demo.advanced;
 
+import static com.ss.bytertc.engine.type.MessageConfig.MessageConfigReliableOrdered;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -451,9 +453,9 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
                     }
                     if (mRTCEngine != null) {
                         if (mIsBinary) {
-                            mRTCEngine.sendUserBinaryMessage(userId, content.getBytes());
+                            mRTCEngine.sendUserBinaryMessage(userId, content.getBytes(), MessageConfigReliableOrdered);
                         } else {
-                            mRTCEngine.sendUserMessage(userId, content);
+                            mRTCEngine.sendUserMessage(userId, content, MessageConfigReliableOrdered);
                         }
                     }
                     dismiss();

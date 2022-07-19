@@ -29,7 +29,7 @@ enum TorchState{
  * @type api
  * @region 视频管理
  * @brief 相机控制接口
- * @notes 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能使用这个接口。
+ * @notes 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能使用这个接口。
  */
 class ICameraControl {
 public:
@@ -39,15 +39,15 @@ public:
      * @region 视频管理
      * @brief 设置当前使用的摄像头（前置/后置）的变焦倍数
      * @param zoom_val 变焦倍数。取值范围是 [1, <最大变焦倍数>]。<br>
-     *                 最大变焦倍数可以通过调用 GetCameraZoomMaxRatio{@link #GetCameraZoomMaxRatio} 获取。
+     *                 最大变焦倍数可以通过调用 getCameraZoomMaxRatio{@link #getCameraZoomMaxRatio} 获取。
      * @return  <br>
      *        + 0： 成功。 <br>
      *        + < 0： 失败。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能设置摄像头变焦倍数。<br>
-     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭内部采集后失效。
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能设置摄像头变焦倍数。<br>
+     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngine#StopVideoCapture} 关闭内部采集后失效。
      */
-    virtual int SetCameraZoomRatio(float zoom_val) = 0;
+    virtual int setCameraZoomRatio(float zoom_val) = 0;
 
     /**  
      * @hidden(macOS, Windows)
@@ -55,9 +55,9 @@ public:
      * @region 视频管理
      * @brief 获取当前使用的摄像头（前置/后置）的最大变焦倍数
      * @return 最大变焦倍数
-     * @notes 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检测摄像头最大变焦倍数。
+     * @notes 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检测摄像头最大变焦倍数。
      */
-    virtual float GetCameraZoomMaxRatio() = 0;
+    virtual float getCameraZoomMaxRatio() = 0;
 
     /**  
      * @hidden(macOS, Windows)
@@ -67,9 +67,9 @@ public:
      * @return  <br>
      *        + true: 支持 <br>
      *        + false: 不支持
-     * @notes 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检测摄像头变焦能力。
+     * @notes 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检测摄像头变焦能力。
      */
-    virtual bool IsCameraZoomSupported() = 0;
+    virtual bool isCameraZoomSupported() = 0;
 
     /**  
      * @hidden(macOS, Windows)
@@ -79,9 +79,9 @@ public:
      * @return  <br>
      *        + true: 支持 <br>
      *        + false: 不支持
-     * @notes 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检测闪光能力。
+     * @notes 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检测闪光能力。
      */
-    virtual bool IsCameraTorchSupported() = 0;
+    virtual bool isCameraTorchSupported() = 0;
 
     /**  
      * @hidden(macOS, Windows)
@@ -93,10 +93,10 @@ public:
      *        + 0： 成功。
      *        + < 0： 失败。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能设置闪光灯。<br>
-     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭内部采集后失效。
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能设置闪光灯。<br>
+     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngine#StopVideoCapture} 关闭内部采集后失效。
      */
-    virtual int SetCameraTorch(TorchState torch_state) = 0;
+    virtual int setCameraTorch(TorchState torch_state) = 0;
 
     /** 
      * @hidden(macOS, Windows)
@@ -107,9 +107,9 @@ public:
      *        + true： 支持。
      *        + false： 不支持。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检查对焦点设置能力。<br>
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检查对焦点设置能力。<br>
      */
-    virtual bool IsCameraFocusPositionSupported() = 0;
+    virtual bool isCameraFocusPositionSupported() = 0;
     
     /** 
      * @hidden(macOS, Windows)
@@ -122,11 +122,11 @@ public:
      *        + 0： 成功。
      *        + < 0： 失败。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集，并且使用SDK内部渲染时，才能设置对焦点。<br>
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集，并且使用SDK内部渲染时，才能设置对焦点。<br>
      *        + 对焦点设置为画布中央(即[0.5， 0.5]) 时，恢复系统默认值。
-     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭内部采集后失效。
+     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngine#StopVideoCapture} 关闭内部采集后失效。
      */
-    virtual int SetCameraFocusPosition(float x, float y) = 0;
+    virtual int setCameraFocusPosition(float x, float y) = 0;
     
     /** 
      * @hidden(macOS, Windows)
@@ -137,9 +137,9 @@ public:
      *        + true： 支持。
      *        + false： 不支持。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检查曝光点设置能力。<br>
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能检查曝光点设置能力。<br>
      */
-    virtual bool IsCameraExposurePositionSupported() = 0;
+    virtual bool isCameraExposurePositionSupported() = 0;
     
     /** 
      * @hidden(macOS, Windows)
@@ -152,11 +152,11 @@ public:
      *        + 0： 成功。
      *        + < 0： 失败。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集，并且使用SDK内部渲染时，才能设置曝光点。<br>
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集，并且使用SDK内部渲染时，才能设置曝光点。<br>
      *        + 曝光点设置为画布中央(即[0.5， 0.5]) 时，恢复系统默认值。
-     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭内部采集后失效。
+     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngine#StopVideoCapture} 关闭内部采集后失效。
      */
-    virtual int SetCameraExposurePosition(float x, float y) = 0;
+    virtual int setCameraExposurePosition(float x, float y) = 0;
     
     /** 
      * @hidden(macOS, Windows)
@@ -168,10 +168,10 @@ public:
      *        + 0： 成功。
      *        + < 0： 失败。
      * @notes <br>
-     *        + 必须已调用 StartVideoCapture{@link #IRtcEngineLite#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能设置曝光补偿。<br>
-     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngineLite#StopVideoCapture} 关闭内部采集后失效。
+     *        + 必须已调用 StartVideoCapture{@link #IRtcEngine#StartVideoCapture} 使用 SDK 内部采集模块进行视频采集时，才能设置曝光补偿。<br>
+     *        + 设置结果在调用 StopVideoCapture{@link #IRtcEngine#StopVideoCapture} 关闭内部采集后失效。
      */
-    virtual int SetCameraExposureCompensation(float val) = 0;
+    virtual int setCameraExposureCompensation(float val) = 0;
 };
 
 }  // namespace bytertc

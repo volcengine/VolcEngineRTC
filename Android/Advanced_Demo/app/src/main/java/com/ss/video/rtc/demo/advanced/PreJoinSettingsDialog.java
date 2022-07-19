@@ -1,5 +1,7 @@
 package com.ss.video.rtc.demo.advanced;
 
+import static com.ss.bytertc.engine.type.MessageConfig.MessageConfigReliableOrdered;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -30,6 +32,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
+import com.ss.bytertc.engine.type.NetworkDetectionLinkType;
+import com.ss.bytertc.engine.type.NetworkDetectionStartReturn;
 import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
 import com.ss.video.rtc.demo.basic_module.ui.CommonListDialog;
@@ -382,7 +386,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             startDetectionBtn.setOnClickListener(v -> {
                 switchStatus(true);
                 showOrHideStats();
-                IRTCEngineEventHandler.NetworkDetectionStartReturn startReturn
+                NetworkDetectionStartReturn startReturn
                         = mRTCEngine.startNetworkDetection(mEnableUplinkDetection, mUplinkDetectionTarget,
                         mEnableDownlinkDetection, mDownlinkDetectionTarget);
                 SafeToast.show(getContext(), "网络监测开启结果: " + startReturn.toString(), Toast.LENGTH_SHORT);
@@ -594,7 +598,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
                     @Override
                     void action(String input) {
-                        mRTCEngine.sendUserMessageOutsideRoom(mSendUid, input);
+                        mRTCEngine.sendUserMessageOutsideRoom(mSendUid, input, MessageConfigReliableOrdered);
                     }
                 };
                 LinkedList<CommonInputDialog.IInputCallback> callbacks = new LinkedList<>();

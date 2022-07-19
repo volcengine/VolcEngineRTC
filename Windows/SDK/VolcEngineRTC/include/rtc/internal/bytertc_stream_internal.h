@@ -16,18 +16,18 @@ namespace bytertc {
  * @brief ByteRTC SDK 推一路无房间流
  * @notes  一般在linux端SDK使用
  */
-BYTERTC_API int StartPushStream(IRtcEngine* engine, const char* token, const char* stream_id);
+BYTERTC_API int startPushStream(IRtcEngine* engine, const char* token, const char* stream_id);
 
 /** 
  * @brief ByteRTC SDK 停止推无房间流
  * @notes  一般在linux端SDK使用
  */
-BYTERTC_API void StopPushStream(IRtcEngine* engine);
+BYTERTC_API void stopPushStream(IRtcEngine* engine);
 
 class IEngineInternalStreamEventHandler {
 public:
     virtual ~IEngineInternalStreamEventHandler() = default;
-    virtual void OnPushStreamResult(const char* stream_id, int error_code) {}
+    virtual void onPushStreamResult(const char* stream_id, int error_code) {}
 };
 
 /** 
@@ -36,6 +36,6 @@ public:
  * @param [in] handler 当前app应用的内部事件回调句柄
  * @notes 必须在StartPushStream前调用该函数
  */
-BYTERTC_API void SetEngineInternalStreamEventHandler(IRtcEngine *engine, IEngineInternalStreamEventHandler* handler);
+BYTERTC_API void setEngineInternalStreamEventHandler(IRtcEngine *engine, IEngineInternalStreamEventHandler* handler);
 
 }  // namespace bytertc

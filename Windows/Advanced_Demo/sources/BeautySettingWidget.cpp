@@ -84,13 +84,17 @@ void BeautySettingWidget::paintEvent(QPaintEvent *event) {
 void BeautySettingWidget::initUI() {
 	//beauty group
 	m_beautyBtnGroup = new QButtonGroup(this);
-	connect(m_beautyBtnGroup, static_cast<void(QButtonGroup::*)(int )>(&QButtonGroup::buttonClicked), 
-		this, [=](int beautyType) {
-
+	auto beautyButtonClickedHander = [=](int beautyType) {
 		m_beautyKey2ValueInfo[m_currentBeautyKeyType].value = getEffectValue();
 		m_currentBeautyKeyType = static_cast<BeautyKeyType> (beautyType);
 		updateEffectSliderValue();
-	});
+	};
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+	connect(m_beautyBtnGroup, &QButtonGroup::idClicked, this, beautyButtonClickedHander);
+#else
+	connect(m_beautyBtnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), this, beautyButtonClickedHander);
+#endif
 
 	m_beautyBtnGroup->addButton(ui.whiteBtn, kWhiteKeyType);
 	m_beautyBtnGroup->addButton(ui.gridThinBtn, kSkinGrindingKeyType);
@@ -99,9 +103,7 @@ void BeautySettingWidget::initUI() {
 
 	//sticker type
 	m_stickerBtnGroup = new QButtonGroup(this);
-	connect(m_stickerBtnGroup, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked),
-		this, [=](int stickerType) {
-
+	auto stickerBtnClickedHander = [=](int stickerType) {
 		auto currentStickerName = m_stickerType2Name[stickerType];
 		if (currentStickerName == m_currentStickerName) {
 			m_currentVideoEffectStatus &= ~kStickerpath;
@@ -121,7 +123,13 @@ void BeautySettingWidget::initUI() {
 			m_currentStickerName = currentStickerName;
 		}
 		updateEffectNodes();
-	});
+	};
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+	connect(m_stickerBtnGroup, &QButtonGroup::idClicked, this, stickerBtnClickedHander);
+#else
+	connect(m_stickerBtnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), this, stickerBtnClickedHander);
+#endif
 
 	m_stickerBtnGroup->addButton(ui.stickerBtn_1,kBlackCatGlassStickerType);
 	m_stickerBtnGroup->addButton(ui.stickerBtn_2,kMakeMoneyCatStickerType);
@@ -134,12 +142,17 @@ void BeautySettingWidget::initUI() {
 
 	// color filter
 	m_colorFilterBtnGroup = new QButtonGroup(this);
-	connect(m_colorFilterBtnGroup, static_cast<void(QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked),
-		this, [=](int colorFilterType) {
+	auto colorFilterBtnClickedHander = [=](int colorFilterType) {
 		m_currentVideoEffectStatus |= kColorFilterPath;
 		m_currentColorFilter = m_colorFilerType2Name[colorFilterType];
 		updateColorFilter();
-	});
+	};
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+	connect(m_colorFilterBtnGroup, &QButtonGroup::idClicked, this, colorFilterBtnClickedHander);
+#else
+	connect(m_colorFilterBtnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked), this, colorFilterBtnClickedHander);
+#endif
 
 	m_colorFilterBtnGroup->addButton(ui.filterBtn_1, kPeachColorFilter);
 	m_colorFilterBtnGroup->addButton(ui.filterBtn_2, kClearColorFIlter);
@@ -189,10 +202,10 @@ void BeautySettingWidget::updateColorFilter() {
 	if (m_currentVideoEffectStatus & kColorFilterPath) {   
 		QString colorFIlterPath =m_videoEffectType2Path[kColorFilterPath] + "/" + m_currentColorFilter;
 		std::string strColorFilter = colorFIlterPath.toStdString();
-		effectPtr->SetColorFilter(strColorFilter.c_str());
-		effectPtr->SetColorFilterIntensity(getColorValue());
+		effectPtr->setColorFilter(strColorFilter.c_str());
+		effectPtr->setColorFilterIntensity(getColorValue());
 	}else {
-		effectPtr->SetColorFilter(nullptr);
+		effectPtr->setColorFilter(nullptr);
 	}
 }
 
@@ -220,7 +233,7 @@ void BeautySettingWidget::updateEffectNodes(){
 		appendNode(m_videoEffectType2Path[kStickerpath] + "/" + m_currentStickerName);
 	}
 	
-	effectPtr->SetEffectNodes(effectNodeArray, i);
+	effectPtr->setEffectNodes(effectNodeArray, i);
 
 	std::string path;
 	path = m_videoEffectType2Path[kBeautyPath].toStdString();
@@ -234,7 +247,7 @@ void BeautySettingWidget::updateEffectNodes(){
 		else {
 			path = m_videoEffectType2Path[kReshapePath].toStdString();
 		}
-		auto nRet = effectPtr->UpdateNode(path.c_str(),info.keyName.c_str(),info.value);
+		auto nRet = effectPtr->updateNode(path.c_str(),info.keyName.c_str(),info.value);
 	}
 
 	//free memory
@@ -302,7 +315,7 @@ void BeautySettingWidget::requestLicense()
 	//authMsg
 	char *pMsg = nullptr;
 	int len = 0;
-	effectPtr->GetAuthMessage(&pMsg, &len);
+	effectPtr->getAuthMessage(&pMsg, &len);
 	if (pMsg == NULL) 
 	{
 		setCheckLicenseResultText(kLicenseError, QStringLiteral("获取授权消息失败"));
@@ -310,9 +323,8 @@ void BeautySettingWidget::requestLicense()
 	}
 	QString authMsg = pMsg;
 	postDataObj["authMsg"] = authMsg;
-	effectPtr->FreeAuthMessage(pMsg);
-	qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
-	qint64 nonceNum = qrand() % 99999999;   //随机生成0到9的随机数
+	effectPtr->freeAuthMessage(pMsg);
+	qint64 nonceNum = QRandomGenerator::global()->generate64() % 99999999;  //随机生成0到9的随机数
 	postDataObj["nonce"] = nonceNum;
 
 	//timestamp
@@ -413,13 +425,13 @@ void BeautySettingWidget::checkLicense() {
 	}
 	auto licensePath = getLicenseFilePath().toStdString();
 	QString strResultText = QStringLiteral("检测结果：");
-	auto nRet = effectPtr->CheckLicense(nullptr, nullptr, licensePath.c_str());
+	auto nRet = effectPtr->checkLicense(nullptr, nullptr, licensePath.c_str());
 
 	if (nRet == 0){
 		std::string algoModelPath = m_videoEffectType2Path[kAlgoModelPath].toStdString();
 		qDebug() << algoModelPath.c_str();
-		effectPtr->SetAlgoModelPath(algoModelPath.c_str());
-		nRet = effectPtr->EnableEffect(true);
+		effectPtr->setAlgoModelPath(algoModelPath.c_str());
+		nRet = effectPtr->enableEffect(true);
 		QFile::remove(licensePath.c_str());
 		updateEffectNodes();
 		updateColorFilter();

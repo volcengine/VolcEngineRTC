@@ -26,16 +26,16 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 protected:
-    void OnError(int err) override;
+    void onError(int err) override;
 
-	void OnUserJoined(const bytertc::UserInfo &user_info, 
+	void onUserJoined(const bytertc::UserInfo &user_info,
 		int elapsed) override;
 
-    void OnUserLeave(const char *uid, bytertc::UserOfflineReason reason) override;
+    void onUserLeave(const char *uid, bytertc::UserOfflineReason reason) override;
 
-    void OnFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
+    void onFirstLocalVideoFrameCaptured(bytertc::StreamIndex index, bytertc::VideoFrameInfo info) override;
 
-    void OnFirstRemoteVideoFrameDecoded(
+    void onFirstRemoteVideoFrameDecoded(
             const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo &info) override;
 
 public

@@ -72,14 +72,14 @@ public:
      * @brief 获取音频帧时间戳。
      * @return 音频帧时间戳，单位：微秒
      */
-    virtual int64_t timestamp_us() const = 0;
+    virtual int64_t timestampUs() const = 0;
     /**  
      * @type api
      * @region 音频管理
      * @brief 获取音频采样率。参看 AudioSampleRate{@link #AudioSampleRate}
      * @return 音频采样率，单位：Hz
      */
-    virtual AudioSampleRate sample_rate() const = 0;
+    virtual AudioSampleRate sampleRate() const = 0;
     /**  
      * @type api
      * @region 音频管理
@@ -100,14 +100,14 @@ public:
      * @brief 获取音频帧数据大小
      * @return 音频帧数据大小，单位：字节。
      */
-    virtual int data_size() const = 0;
+    virtual int dataSize() const = 0;
     /**  
      * @type api
      * @region 音频管理
      * @brief 获取音频帧类型
      * @return 音频帧类型，目前只支持 PCM，详见 AudioFrameType{@link #AudioFrameType}
      */
-    virtual AudioFrameType frame_type() const = 0;
+    virtual AudioFrameType frameType() const = 0;
     /**  
      * @type api
      * @region 音频管理
@@ -122,7 +122,7 @@ public:
      *        + true: 是  <br>
      *        + false: 否
      */
-    virtual bool is_muted_data() const = 0;
+    virtual bool isMutedData() const = 0;
     /**
      * @hidden
      */
@@ -139,7 +139,7 @@ protected:
  * @brief 创建 IAudioFrame
  * @param [in] builder 音频帧构建实例，参看 AudioFrameBuilder{@link #AudioFrameBuilder}
  */
-BYTERTC_API IAudioFrame* BuildAudioFrame(const AudioFrameBuilder& builder);
+BYTERTC_API IAudioFrame* buildAudioFrame(const AudioFrameBuilder& builder);
 
 /**  
  * @type keytype
@@ -188,7 +188,7 @@ public:
      * @brief 返回麦克风录制的音频数据
      * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
-    virtual void OnRecordAudioFrame(const IAudioFrame& audio_frame) = 0;
+    virtual void onRecordAudioFrame(const IAudioFrame& audio_frame) = 0;
 
     /** 
      * @type callback
@@ -196,16 +196,16 @@ public:
      * @brief 返回订阅的所有远端用户混音后的音频数据
      * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
-    virtual void OnPlaybackAudioFrame(const IAudioFrame& audio_frame) = 0;
-
+    virtual void onPlaybackAudioFrame(const IAudioFrame& audio_frame) = 0;
     /** 
      * @type callback
      * @region 音频数据回调
      * @brief 返回远端单个用户的音频数据
      * @param [in] stream_info 远端流信息，参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] audio_frame 音频数据, 参看 IAudioFrame{@link #IAudioFrame}。
+     * @notes 此回调在播放线程调用。不要在此回调中做任何耗时的事情，否则可能会影响整个音频播放链路。
      */
-    virtual void OnRemoteUserAudioFrame(const RemoteStreamKey& stream_info, const IAudioFrame& audio_frame) = 0;
+    virtual void onRemoteUserAudioFrame(const RemoteStreamKey& stream_info, const IAudioFrame& audio_frame) = 0;
 
     /** 
      * @type callback
@@ -213,7 +213,7 @@ public:
      * @brief 返回本地麦克风录制和订阅的所有远端用户混音后的音频数据
      * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
-    virtual void OnMixedAudioFrame(const IAudioFrame& audio_frame) = 0;
+    virtual void onMixedAudioFrame(const IAudioFrame& audio_frame) = 0;
 
     /** 
      * @type callback
@@ -221,12 +221,13 @@ public:
      * @brief 返回本地屏幕录制的音频数据
      * @param [in] audio_frame 音频数据, 详见：IAudioFrame{@link #IAudioFrame}
      */
-    virtual void OnRecordScreenAudioFrame(const IAudioFrame& audio_frame) {
+    virtual void onRecordScreenAudioFrame(const IAudioFrame& audio_frame) {
     }
 };
-
 /** 
  * @type keytype
+ * @hidden 
+ * @deprecated since 342, use IAudioFrameProcessor instead.
  * @region 音频处理
  * @brief 自定义音频处理器
  */
@@ -234,6 +235,8 @@ class IAudioProcessor{
 public:
     /** 
      * @type callback
+     * @hidden 
+     * @deprecated since 342, use IAudioFrameProcessor instead.
      * @region 音频处理
      * @brief 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
      * @param [in] audioFrame RTC SDK 采集到的音频帧，自定义处理可直接对音频 data 中的数据进行修改。参看 IAudioFrame{@link #IAudioFrame}。
@@ -241,9 +244,40 @@ public:
      *        0: 未处理  <br>
      *        >0: 处理成功  <br>
      *        < 0: 处理失败
-     * @notes 在进行音频自定义处理前，你需要调用 `RegisterLocalAudioProcessor` 设置音频自定义处理器。
+     * @notes 在进行音频自定义处理前，你需要调用 `registerLocalAudioProcessor` 设置音频自定义处理器。
      */
-    virtual int ProcessAudioFrame(const IAudioFrame& audioFrame) = 0;
+    virtual int processAudioFrame(const IAudioFrame& audioFrame) = 0;
+};
+/** 
+ * @type callback
+ * @brief 自定义音频处理器
+ */
+class IAudioFrameProcessor{
+public:
+   /**  
+    * @type callback
+    * @brief 回调本地采集的音频帧地址，供自定义音频处理。
+    * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
+    * @notes <br>
+    *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。如果开启了耳返功能，那么对耳返音频也会生效。<br>
+    *        + 调用 enableAudioProcessor{@link #IRTCVideo#enableAudioProcessor}，并在参数中选择本地采集的音频时，收到此回调。
+    */
+   virtual int onProcessRecordAudioFrame(IAudioFrame& audioFrame) = 0;
+   /**  
+    * @type callback
+    * @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
+    * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
+    * @notes 调用 enableAudioProcessor{@link #IRTCVideo#enableAudioProcessor}，并在参数中选择远端音频流的的混音音频时，收到此回调。
+    */
+   virtual int onProcessPlayBackAudioFrame(IAudioFrame& audioFrame) = 0;
+   /**  
+    * @type callback
+    * @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
+    * @param [in] stream_info 音频流信息，参看 RemoteStreamKey{@link #RemoteStreamKey}
+    * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
+    * @notes 调用 enableAudioProcessor{@link #IRTCVideo#enableAudioProcessor}，并在参数中选择各个远端音频流时，收到此回调。
+    */
+   virtual int onProcessRemoteUserAudioFrame(const RemoteStreamKey& stream_info, IAudioFrame& audioFrame) = 0;
 };
 
 }  // namespace bytertc

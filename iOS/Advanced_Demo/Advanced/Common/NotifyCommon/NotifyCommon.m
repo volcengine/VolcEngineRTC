@@ -101,13 +101,13 @@
 
 - (void)sendUserMessage:(NSString *)message
                     uid:(NSString *)uid {
-    [_rtcKit sendUserMessage:uid message:message];
+    [_rtcKit sendUserMessage:uid message:message config:0];
 }
 
 - (void)sendUserBinaryMessage:(NSString *)message
                           uid:(NSString *)uid {
     NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [_rtcKit sendUserBinaryMessage:uid message:data];
+    [_rtcKit sendUserBinaryMessage:uid message:data config:0];
 }
 
 - (void)sendRoomMessage:(NSString *)message {

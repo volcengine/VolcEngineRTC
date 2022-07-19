@@ -41,5 +41,4 @@
  */
 - (void)postAsync:(NSString * _Nonnull)url content:(NSString * _Nullable)content timeoutMillisecond:(int)timeout
     withCallback:(void(^ _Nullable)(int code, NSString* _Nullable data))callback;
-
 @end

@@ -4,7 +4,15 @@
 */
 
 #import <CoreMedia/CMTime.h>
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 #import <UIKit/UIKit.h>
+typedef UIView   ByteRTCView;
+typedef UIImage  ByteRTCImage;
+#elif TARGET_OS_MAC
+#import <AppKit/AppKit.h>
+typedef NSView   ByteRTCView;
+typedef NSImage  ByteRTCImage;
+#endif
 
 #define BYTERTC_APPLE_EXPORT __attribute__((visibility("default")))
 
@@ -105,6 +113,62 @@ typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
      *        在使用此模式前，强烈建议咨询技术支持同学。
      */
     ByteRTCRoomProfileLowLatency = 4,
+    /** 
+     * @brief 适用于 1 vs 1 纯语音通话
+     */
+    ByteRTCRoomProfileChat = 5,
+    /** 
+     * @brief 适用于 2 人以上纯语音通话
+     */
+    ByteRTCRoomProfileChatRoom = 6,
+    /** 
+     * @brief 适用于 “一起看” 或 “一起听” 场景
+     */
+    ByteRTCRoomProfileLwTogether = 7,
+    /** 
+     * @brief 适用于对音质要求较高的游戏场景
+     */
+    ByteRTCRoomProfileGameHD = 8,
+    /** 
+     * @brief 适用于直播中主播之间连麦的业务场景
+     */
+    ByteRTCRoomProfileCoHost = 9,
+    /** 
+     * @brief 适用于互动直播
+     */
+    ByteRTCRoomProfileInteractivePodcast = 10,
+    /** 
+     * @brief 适合线上 KTV 场景，满足高音质，低延迟
+     */
+    ByteRTCRoomProfileKTV = 11,
+    /** 
+     * @brief 适合在线合唱场景
+     */
+    ByteRTCRoomProfileChorus = 12,
+    /** 
+     * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声
+     */
+    ByteRTCRoomProfileVRChat = 13,
+    /** 
+     * @brief 适用于 1 vs 1 游戏串流
+     */
+    ByteRTCRoomProfileGameStreaming = 14,
+    /** 
+     * @brief 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率
+     */
+    ByteRTCRoomProfileLanLiveStreaming = 15,
+    /** 
+     * @brief 适用于云端会议
+     */
+    ByteRTCRoomProfileMeeting = 16,
+    /** 
+     * @brief 线下会议室
+     */
+    ByteRTCRoomProfileMeetingRoom = 17,
+    /** 
+     * @brief 适用于课堂互动
+     */
+    ByteRTCRoomProfileClassroom = 18,
 };
 
 /** 
@@ -122,18 +186,17 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
      */
     ByteRTCUserRoleTypeSilentAudience = 2,
 };
-
 /** 
  * @type keytype
  * @brief SDK 与信令服务器连接状态。
  */
 typedef NS_ENUM(NSInteger, ByteRTCConnectionState) {
     /** 
-     * @brief 连接中断。
+     * @brief 连接断开超过 12 秒
      */
     ByteRTCConnectionStateDisconnected = 1,
     /** 
-     * @brief 首次连接，正在连接中。
+     * @brief 首次请求建立连接，正在连接中。
      */
     ByteRTCConnectionStateConnecting = 2,
     /** 
@@ -141,15 +204,17 @@ typedef NS_ENUM(NSInteger, ByteRTCConnectionState) {
      */
     ByteRTCConnectionStateConnected = 3,
     /** 
-     * @brief 连接断开后重新连接中。
+     * @brief 涵盖了以下情况：<br>
+     *        + 首次连接时，10秒连接不成功; <br>
+     *        + 连接成功后，断连 10 秒。自动重连中。
      */
     ByteRTCConnectionStateReconnecting = 4,
     /** 
-     * @brief 连接断开后重连成功。
+     * @brief 连接断开后，重连成功。
      */
     ByteRTCConnectionStateReconnected = 5,
     /** 
-     * @brief 网络连接断开超过 10 秒，仍然会继续重连。
+     * @brief 处于 `DISCONNECTED` 状态超过 10 秒，且期间重连未成功。
      */
     ByteRTCConnectionStateLost = 6,
 };
@@ -330,9 +395,15 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
     ByteRTCErrorCodeDuplicateLogin             = -1004,
 
     /** 
-     * @brief 服务端调用 OpenAPI 将当前用户踢出房间 
+     * @brief 服务端调用 OpenAPI 将当前用户踢出房间
      */
     ByteRTCErrorCodeKickedOut = -1006,
+
+    /** 
+     * @brief 当调用 `createRtcRoom:` ，如果 roomId 非法，会返回 null，并抛出该错误
+     */
+    ByteRTCErrorCodeRoomIdIllegal = -1007,
+
 
     /** 
      * @brief Token 过期。调用 `joinRoomByKey:roomId:userInfo:rtcRoomConfig:` 使用新的 Token 重新加入房间。
@@ -347,6 +418,17 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      * @brief 服务端调用 OpenAPI 解散房间，所有用户被移出房间。
      */
     ByteRTCErrorCodeRoomDismiss = -1011,
+
+    /** 
+     * @brief 加入房间错误。  <br>
+     *        调用 `joinRoomByToken:userInfo:roomConfig:` 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
+     */
+    ByteRTCJoinRoomWithoutLicenseAuthenticateSDK = -1012,
+
+    /** 
+     * @brief 通话回路检测已经存在同样 roomId 的房间了
+     */
+    ByteRTCRoomAlreadyExist = -1013,
 
     /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
@@ -457,6 +539,24 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      * @brief 当房间内人数超过 500 人时，停止向房间内已有用户发送 `rtcEngine:onUserJoined:elapsed:` 和 `rtcEngine:onUserLeave:reason:` 回调，并通过广播提示房间内所有用户。
      */
     ByteRTCWarningCodeCodeUserNotifyStop = -2013,
+    /** 
+         * @brief 用户已经在其他房间发布过流，或者用户正在发布公共流。
+         */
+    ByteRTCWarningCodeUserInPublish = -2014,
+    /** 
+     * @brief 同样roomid的房间已经存在了
+     */
+    ByteRTCWarningCodeRoomAlreadyExist = -2015,
+
+    /** 
+     * @brief 新生成的房间已经替换了同样roomId的旧房间
+     */
+    ByteRTCWarningCodeOldRoomBeenReplaced = -2016,
+
+    /** 
+     * @brief 当前正在进行回路测试，该接口调用无效
+     */
+    ByteRTCWarningCodeInEchoTestMode = -2017,
     /** 
      * @brief 摄像头权限异常，当前应用没有获取摄像头权限
      */
@@ -625,6 +725,25 @@ typedef NS_ENUM(NSInteger, ByteRTCLoginErrorCode) {
      * @brief 调用 `login:uid:` 登录时服务器错误。
      */
     ByteRTCLoginErrorCodeServerError = -1003,
+};
+
+/** 
+ * @type keytype
+ * @brief 发送消息的可靠有序类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMessageConfig) {
+    /** 
+     * @brief 低延时可靠有序消息
+     */
+    ByteRTCMessageConfigReliableOrdered = 0,
+    /** 
+     * @brief 超低延时有序消息
+     */
+    ByteRTCMessageConfigUnreliableOrdered = 1,
+    /** 
+     * @brief 超低延时无序消息
+     */
+    ByteRTCMessageConfigUnreliableUnordered = 2,
 };
 
 /** 
@@ -818,7 +937,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCSubscribeFallbackOption) {
      */
     ByteRTCSubscribeFallbackOptionDisabled = 0,
     /** 
-     * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看性能回退文档。 <br>
+     * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看[性能回退](70137)文档。 <br>
      *        该设置仅对发布端调用 `enableSimulcastMode:` 开启发送多路流功能的情况生效。
      */
     ByteRTCSubscribeFallbackOptionVideoStreamLow = 1,
@@ -1351,7 +1470,32 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
      * @hidden
      * @brief 啸叫
      */
-    ByteRTCMediaDeviceWarningCaptureDetectHowling = 16
+    ByteRTCMediaDeviceWarningCaptureDetectHowling = 16,
+    /** 
+     * @hidden(Mac)
+     * @brief 当前 AudioScenario 不支持更改音频路由，设置音频路由失败
+     */
+    ByteRTCMediaDeviceWarningSetAudioRouteInvalidScenario = 20,
+    /** 
+     * @hidden(iOS,Mac)
+     * @brief 音频设备不存在，设置音频路由失败
+     */
+    ByteRTCMediaDeviceWarningSetAudioRouteNotExists = 21,
+    /** 
+     * @hidden(Mac)
+     * @brief 音频路由被系统或其他应用占用，设置音频路由失败
+     */
+    ByteRTCMediaDeviceWarningSetAudioRouteFailedByPriority = 22,
+    /** 
+     * @hidden(iOS,Mac)
+     * @brief 当前非通话模式，不支持设置音频路由
+     */
+    ByteRTCMediaDeviceWarningSetAudioRouteNotVoipMode = 23,
+    /** 
+     * @hidden(Mac)
+     * @brief 音频设备未启动，设置音频路由失败
+     */
+    ByteRTCMediaDeviceWarningSetAudioRouteDeviceNotStart = 24
 };
 
 /** 
@@ -1412,6 +1556,29 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
      */
     ByteRTCFeedBackProblemTypeEarBackDelay = (1 << 11),
 };
+
+/** 
+ * @hidden
+ * @brief 342 需求，缺注释，需补齐
+ */
+BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemOption: NSObject
+/** 
+ * @hidden
+ * @brief 342 需求，缺注释，需补齐
+ */
+- (instancetype _Nonnull)initWithOption:(ByteRTCProblemFeedbackOption)option;
+/** 
+ * @hidden
+ * @brief 342 需求，缺注释，需补齐
+ */
+@property(nonatomic, assign, readonly) ByteRTCProblemFeedbackOption option;
+/** 
+ * @hidden
+ * @brief 342 需求，缺注释，需补齐
+ */
+@property(nonatomic, copy, readonly) NSString * _Nonnull desc;
+@end
+
 
 /** 
  * @type keytype
@@ -1510,6 +1677,26 @@ typedef NS_ENUM(NSInteger, ByteRTCMuteState) {
      * @brief 停止发送
      */
     ByteRTCMuteStateOn = 1,
+};
+
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 黑帧视频流状态
+ */
+typedef NS_ENUM(NSInteger,  ByteSEIStreamEventType) {
+    /** 
+     * @brief 远端用户发布黑帧视频流。  <br>
+     *        纯语音通话场景下，远端用户调用 sendSEIMessage:andMessage:andRepeatCount:{@link #RTCVideo#sendSEIMessage:andMessage:andRepeatCount:} 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。
+     */
+    ByteSEIStreamEventTypeStreamAdd = 0,
+    /** 
+     * @brief 远端黑帧视频流移除。该回调的触发时机包括：  <br>
+     *        + 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br>
+     *        + 远端用户调用 sendSEIMessage:andMessage:andRepeatCount:{@link #RTCVideo#sendSEIMessage:andMessage:andRepeatCount:} 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br>
+     *        + 远端用户调用 setVideoSourceType:WithStreamIndex:{@link #RTCVideo#setVideoSourceType:WithStreamIndex:} 切换至自定义视频采集时，黑帧视频流停止发布。
+     */
+     ByteSEIStreamEventTypeStreamRemove = 1,
 };
 
 /** 
@@ -1702,6 +1889,90 @@ typedef NS_ENUM(NSInteger, ByteRTCAVSyncState) {
      */
     AVSyncStateSetAVSyncStreamId = 3,
 };
+/** 
+ * @type keytype
+ * @brief 音视频回路测试结果
+ */
+typedef NS_ENUM(NSInteger, ByteRTCEchoTestResult) {
+    /** 
+     * @brief 接收到采集的音视频的回放，通话回路检测成功
+     */
+    EchoTestSuccess = 0,
+    /** 
+     * @brief 测试超过 60s 仍未完成，已自动停止
+     */
+    EchoTestTimeout = 1,
+    /** 
+     * @brief 上一次测试结束和下一次测试开始之间的时间间隔少于 5s
+     */
+    EchoTestIntervalShort = 2,
+    /** 
+     * @brief 音频采集异常
+     */
+    EchoTestAudioDeviceError = 3,
+    /** 
+     * @brief 视频采集异常
+     */
+    EchoTestVideoDeviceError = 4,
+    /** 
+     * @brief 音频接收异常
+     */
+    EchoTestAudioReceiveError = 5,
+    /** 
+     * @brief 视频接收异常
+     */
+    EchoTestVideoReceiveError = 6,
+    /** 
+     * @brief 内部错误，不可恢复
+     */
+    EchoTestInternalError = 7
+};
+/** 
+ * @type keytype
+ * @brief 音视频回路测试参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
+/** 
+ * @brief 用于渲染接收到的视频的视图
+ */
+@property(strong, nonatomic) ByteRTCView* _Nullable view;
+/** 
+ * @brief 测试用户加入的房间 ID。  <br>
+ */
+@property(copy, nonatomic) NSString *_Nonnull roomId;
+/** 
+ * @brief 进行音视频通话回路测试的用户 ID
+ */
+@property(copy, nonatomic) NSString *_Nonnull userId;
+/** 
+ * @brief 对用户进房时进行鉴权验证的动态密钥，用于保证音视频通话回路测试的安全性。
+ */
+@property(copy, nonatomic) NSString *_Nonnull token;
+/** 
+ * @brief 是否检测音频。检测设备为系统默认音频设备。  <br>
+ *        + true：是  <br>
+ *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCEngineDelegate#rtcEngine:onLocalAudioPropertiesReport:} 回调，你可以根据该回调判断麦克风的工作状态  <br>
+ *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame:{@link #ByteRTCEngineKit#pushExternalAudioFrame:} 将采集到的音频推送给 SDK  <br>
+ *        + flase：否  <br>
+ */
+@property(assign, nonatomic) BOOL enableAudio;
+/** 
+ * @brief 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
+ *        + true：是  <br>
+ *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
+ *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame:time:{@link #ByteRTCEngineKit#pushExternalVideoFrame:time:} 将采集到的视频推送给 SDK  <br>
+ *        + flase：否  <br>
+ * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
+ */
+@property(assign, nonatomic) BOOL enableVideo;
+/** 
+ * @brief 音量信息提示间隔，单位：ms，默认为 100ms <br>
+ *       + `<= 0`: 关闭信息提示  <br>
+ *       + `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
+ *       + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
+ */
+@property(assign, nonatomic) NSInteger audioReportInterval;
+@end
 
 /** 
  *  @type keytype
@@ -1737,6 +2008,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
  */
 @property(assign, nonatomic) NSInteger rxBytes;
 /** 
+ * @brief 发送码率（kbps），获取该数据时的瞬时值
+ */
+@property(assign, nonatomic) NSInteger txKbitrate;
+/** 
+ * @brief 接收码率（kbps），获取该数据时的瞬时值
+ */
+@property(assign, nonatomic) NSInteger rxKbitrate;
+/** 
  * @brief 本地用户的音频发送码率 (kbps)，瞬时值
  */
 @property(assign, nonatomic) NSInteger txAudioKBitrate;
@@ -1752,6 +2031,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
  * @brief 本地用户的视频接收码率 (kbps)，瞬时值
  */
 @property(assign, nonatomic) NSInteger rxVideoKBitrate;
+/** 
+ * @brief 屏幕接收码率，获取该数据时的瞬时值，单位为 Kbps
+ */
+@property(assign, nonatomic) NSInteger txScreenKBitrate;
+/** 
+ * @brief 屏幕发送码率，获取该数据时的瞬时值，单位为 Kbps
+ */
+@property(assign, nonatomic) NSInteger rxScreenKBitrate;
 /** 
  * @brief 当前房间内的可见用户人数，包括本地用户自身
  */
@@ -1844,7 +2131,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSysStats : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
 /** 
- * @brief 发送的码率。此次统计周期内的视频发送码率，单位为 kbps 。  <br>
+ * @brief 发送码率。此次统计周期内实际发送的分辨率最大的视频流的发送码率，单位为 Kbps 
  */
 @property(assign, nonatomic) float sentKBitrate;
 /** 
@@ -1852,25 +2139,17 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
  */
 @property(assign, nonatomic) NSInteger inputFrameRate;
 /** 
- * @brief 发送帧率。此次统计周期内的视频发送帧率，单位为 fps 。
+ * @brief 发送帧率。此次统计周期内实际发送的分辨率最大的视频流的视频发送帧率，单位为 fps 。
  */
 @property(assign, nonatomic) NSInteger sentFrameRate;
 /** 
- * @brief 编码器输出帧率。当前编码器在此次统计周期内的输出帧率，单位为 fps 。
+ * @brief 编码器输出帧率。当前编码器在此次统计周期内实际发送的分辨率最大的视频流的输出帧率，单位为 fps 。
  */
 @property(assign, nonatomic) NSInteger encoderOutputFrameRate;
 /** 
  * @brief 本地渲染帧率。此次统计周期内的本地视频渲染帧率，单位为 fps 。
  */
 @property(assign, nonatomic) NSInteger rendererOutputFrameRate;
-/** 
- * @brief 目标发送码率。此次统计周期内的视频目标发送码率，单位为 kbps 。
- */
-@property(assign, nonatomic) NSInteger sentTargetKBitrate;
-/** 
- * @brief 目标发送帧率。当前编码器在此次统计周期内的目标发送帧率，单位为 fps 。
- */
-@property(assign, nonatomic) NSInteger sentTargetFrameRate;
 /** 
  * @brief 统计间隔，单位为 ms 。
  * @notes 此字段用于设置回调的统计周期，默认设置为 2s 。
@@ -1885,19 +2164,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
  */
 @property(assign, nonatomic) NSInteger rtt;
 /** 
- * @brief 视频编码码率。此次统计周期内的视频编码码率，单位为 kbps 。
+ * @brief 视频编码码率。此次统计周期内的实际发送的分辨率最大的视频流视频编码码率，单位为 Kbps 。
  */
 @property(assign, nonatomic) NSInteger encodedBitrate;
 /** 
- * @brief 视频编码宽度，单位为 px 。
+ * @brief 实际发送的分辨率最大的视频流的视频编码宽度，单位为 px 。
  */
 @property(assign, nonatomic) NSInteger encodedFrameWidth;
 /** 
- * @brief 视频编码高度，单位为 px 。
+ * @brief 实际发送的分辨率最大的视频流的视频编码高度，单位为 px 。
  */
 @property(assign, nonatomic) NSInteger encodedFrameHeight;
 /** 
- * @brief 此次统计周期内发送的视频帧总数。
+ * @brief 此次统计周期内实际发送的分辨率最大的视频流的发送的视频帧总数。
  */
 @property(assign, nonatomic) NSInteger encodedFrameCount;
 /** 
@@ -2146,7 +2425,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
  * @brief 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
  */
 @property(nonatomic, assign) BOOL is_screen;
-
 @end
 
 /** 
@@ -2184,7 +2462,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
  * @brief 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
  */
 @property(nonatomic, assign) BOOL is_screen;
-
 @end
 
 /** 
@@ -2266,7 +2543,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamKey : NSObject
 - (NSData * _Nonnull) ByteRTCDecryptRawData:(NSData * _Nonnull)rawData;
 @end
 
-__attribute((deprecated("Will be removed in new version")))
 /** 
  * @type callback
  * @region 监控
@@ -2277,6 +2553,7 @@ __attribute((deprecated("Will be removed in new version")))
 @optional
 
 /** 
+ * @hidden
  * @type callback
  * @region 监控
  * @brief 埋点日志回调  <br>
@@ -2288,6 +2565,7 @@ __attribute((deprecated("Will be removed in new version")))
 - (void)onMonitorLog:(NSDictionary * _Nullable)data withType:(NSString * _Nullable)type;
 
 /** 
+ * @hidden
  * @type api
  * @region 监控
  * @brief 是否进行控制台输出
@@ -2299,6 +2577,7 @@ __attribute((deprecated("Will be removed in new version")))
 - (BOOL)isConsole;
 
 /** 
+ * @hidden
  * @type callback
  * @region 监控
  * @brief 输出更多的调试信息
@@ -2309,7 +2588,6 @@ __attribute((deprecated("Will be removed in new version")))
                          line:(int)line
                  functionName:(NSString * _Nonnull)funcName
                        format:(NSString * _Nonnull)format;
-
 @end
 
 #pragma mark - FileRecording
@@ -2385,7 +2663,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCStreamSycnInfoConfig : NSObject
  * @brief 媒体流信息同步的流类型，见 ByteRTCSyncInfoStreamType{@link #ByteRTCSyncInfoStreamType} 。
  */
 @property(assign, nonatomic) ByteRTCSyncInfoStreamType streamType;
-
 @end
 
 /** 
@@ -2490,4 +2767,36 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCCloudProxyInfo: NSObject
  * @brief 云代理服务器端口
  */
 @property(assign, nonatomic) int cloudProxyPort;
+@end
+
+#pragma mark - ByteRTCDeviceCollection
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @brief 音视频设备相关的信息
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 引擎管理
+ * @author dixing
+ * @brief 获取当前音视频设备数量
+ * @return 音视频设备数量
+ */
+- (int)getCount;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 引擎管理
+ * @author dixing
+ * @brief 根据索引号，获取设备信息
+ * @param index 设备索引号，从 0 开始，注意需小于 GetCount{@link #ByteRTCDeviceCollection#GetCount} 返回值。
+ * @param deviceName 设备名称
+ * @param deviceID 设备 ID
+ * @return  <br>
+ *        + 0：方法调用成功  <br>
+ *        + !0：方法调用失败  <br>
+ */
+- (int)getDevice:(int)index DeviceName:(NSString * _Nonnull * _Nonnull)deviceName DeviceID:(NSString * _Nonnull * _Nonnull) deviceID;
 @end

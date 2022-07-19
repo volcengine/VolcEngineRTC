@@ -26,7 +26,6 @@ BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
  * @brief z 方向向量
  */
 @property(nonatomic, assign) float z;
-
 @end
 
 /**  
@@ -46,7 +45,6 @@ BYTERTC_APPLE_EXPORT @interface HumanOrientation : NSObject
  * @brief 正上方朝向，默认值为 {0,0,1}，即头顶朝向 z 轴正方向
  */
 @property(nonatomic, strong) Orientation* _Nonnull up;
-
 @end
 
 /**  
@@ -103,5 +101,4 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSpatialAudio :NSObject
  *        + 调用本接口关闭朝向功能后，在当前的空间音频实例的生命周期内无法再次开启。
  */
 -(void)disableRemoteOrientation;
-
 @end

@@ -17,10 +17,10 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
      *        此场景适用于对音乐表现力有要求的场景，如音乐直播等。  <br>
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：  <br>
      *        <table>
-     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
      *        </table>
      */
     ByteRTCAudioScenarioMusic = 0,
@@ -30,10 +30,10 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
      *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验，并避免使用蓝牙耳机时音量类型切换导致的听感突变。  <br>
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
-     *           <tr><th></th><th>仅采集音频，不播放音频</th><th>仅播放音频，不采集音频</th><th>采集并播放音频</th> <th>备注</th> </tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>通话音量</td><td>使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
      *        </table>
      */
     ByteRTCAudioScenarioHighqualityCommunication = 1,
@@ -152,6 +152,14 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
      *        游戏场景不建议使用。
      */
     ByteRTCAudioProfileHD = 3,
+    /** 
+     * @brief 标准音质。双声道，采样率为 48 KHz，编码码率最大值为 80 Kbps
+     */
+    ByteRTCAudioProfileStandardStereo = 4,
+    /** 
+     * @brief 音乐音质。单声道，采样率为 48 kHz，编码码率最大值为 128 Kbps
+     */
+    ByteRTCAudioProfileHDMono = 5,
 };
 
 /** 
@@ -490,13 +498,13 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
      */
     ByteRTCAudioMixingErrorInValidVolume,
     /** 
-     * @brief 不支持此混音类型。
-     */
-    ByteRTCAudioMixingErrorIdTypeNotMatch,
-    /** 
      * @brief 已有另一个文件完成了预加载。请先使用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载此前的文件。
      */
     ByteRTCAudioMixingErrorLoadConflict,
+    /** 
+     * @brief 不支持此混音类型。
+     */
+    ByteRTCAudioMixingErrorIdTypeNotMatch,
     /** 
      * @brief 设置混音文件的音调不合法
      */
@@ -581,6 +589,24 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioFrameCallbackMethod) {
      * @brief 订阅的远端每个用户混音前的音频数据回调
      */
     ByteRTCAudioFrameCallbackRemoteUser = 3,
+};
+/** 
+ * @type keytype
+ * @brief 返回给音频处理器的音频类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioFrameMethod) {
+    /** 
+     * 本地采集的音频
+     */
+    ByteRTCAudioFrameProcessorRecord = 0,
+    /** 
+     * 远端音频流的混音音频
+     */
+    ByteRTCAudioFrameProcessorPlayback = 1,
+    /** 
+     * 各个远端音频流
+     */
+    ByteRTCAudioFrameProcessorRemoteUser = 2,
 };
 
 /** 
@@ -668,6 +694,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @brief 返回远端单个用户的音频数据
  * @param streamKey 远端流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
  * @param audioFrame 音频数据，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+ * @notes 此回调在播放线程调用。不要在此回调中做任何耗时的事情，否则可能会影响整个音频播放链路。
  */
 - (void)onRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)streamKey
                     audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
@@ -680,9 +707,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  */
 - (void)onMixedAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
-
-/** 
+ /** 
  * @type keytype
+ * @hidden 
+ * @deprecated since 342, use ByteRTCAudioFrameProcessor instead.
  * @author majun.lvhiei
  * @region 音频处理
  * @brief 自定义音频处理器
@@ -690,6 +718,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 @protocol ByteRTCAudioProcessor <NSObject>
 /** 
  * @type callback
+ * @hidden 
+ * @deprecated since 342, use ByteRTCAudioFrameProcessor instead.
  * @region 音频处理
  * @author majun.lvhiei
  * @brief 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
@@ -702,6 +732,40 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  */
 - (int)processAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 
+@end
+/** 
+ * @type callback
+ * @author majun.lvhiei
+ * @brief 自定义音频处理器
+ */
+@protocol ByteRTCAudioFrameProcessor <NSObject>
+/**  
+* @type callback
+* @author majun.lvhiei
+* @brief 回调本地采集的音频帧地址，供自定义音频处理。
+* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
+* @notes <br>
+*        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。如果开启了耳返功能，那么对耳返音频也会生效。<br>
+*        + 调用 enableAudioProcessor:audioFormat:{@link #RTCVideo#enableAudioProcessor:audioFormat:}，并在参数中选择本地采集的音频时，收到此回调。
+*/
+- (int)onProcessRecordAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
+/**  
+* @type callback
+* @author majun.lvhiei
+* @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
+* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
+* @notes 调用 enableAudioProcessor:audioFormat:{@link #RTCVideo#enableAudioProcessor:audioFormat:},并在参数中选择远端音频流的的混音音频时，收到此回调。
+*/
+- (int)onProcessPlayBackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
+/**  
+* @type callback
+* @author majun.lvhiei
+* @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
+* @param stream_info 音频流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
+* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
+* @notes 调用 enableAudioProcessor:audioFormat:{@link #RTCVideo#enableAudioProcessor:audioFormat:},并在参数中选择各个远端音频流时，收到此回调。
+*/
+- (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)stream_info  audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
 
 #pragma mark - AudioDeviceManager
@@ -724,11 +788,10 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioDeviceEventHandler<NSObject>
  */
 - (void)onRecordingAudioVolumeIndication:(int)volume;
 @end
-
-/**
- * @hidden
+/** 
  * @type api
- * @author dixing
+ * @hidden(iOS)
+ * @brief 音频设备管理类
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
@@ -736,29 +799,292 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  * @type api
  * @author dixing
  */
-- (int)startPlaybackDeviceTest:(NSString *_Nonnull)testAudioFilePath;
-/**
- * @hidden
+- (instancetype _Nonnull )initDeviceManager:(id<ByteRTCAudioDeviceEventHandler> _Nonnull)handler;
+/** 
  * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
  * @author dixing
+ * @brief 获取当前系统内音频播放设备列表。你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
+ * @return 所有音频播放设备的列表，参看 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
+ */
+- (ByteRTCDeviceCollection * _Nonnull)enumerateAudioPlaybackDevices;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取音频采集设备列表。如果后续设备有变更，你需要重新调用本接口以获得新的设备列表。
+ * @return 音频采集设备列表。详见 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
+ */
+- (ByteRTCDeviceCollection * _Nonnull)enumerateAudioCaptureDevices;
+/** 
+ * @type api
+ * @region 音频设备管理
+ * @author liuxiaowu
+ * @brief 设置音频采集路由是否跟随系统。
+ * @param followed <br>
+ *        + true: 跟随。此时，调用 setAudioCaptureDevice:{@link #ByteRTCAudioDeviceManager#setAudioCaptureDevice:} 会失败。
+ *        + false: 不跟随系统。此时，可以调用 setAudioCaptureDevice:{@link #ByteRTCAudioDeviceManager#setAudioCaptureDevice:} 进行设置。
+ */
+- (void)followSystemCaptureDevice:(BOOL)followed;
+/** 
+ * @type api
+ * @region 音频设备管理
+ * @author liuxiaowu
+ * @brief 设置音频播放路由是否跟随系统。
+ * @param followed <br>
+ *        + true: 跟随。此时，调用 setAudioPlaybackDevice:{@link #ByteRTCAudioDeviceManager#setAudioPlaybackDevice:} 会失败。
+ *        + false: 不跟随系统。此时，可以调用 setAudioPlaybackDevice:{@link #ByteRTCAudioDeviceManager#setAudioPlaybackDevice:} 进行设置。
+ */
+- (void)followSystemPlaybackDevice:(BOOL)followed;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 设置音频播放设备。
+ * @param deviceID 音频播放设备 ID，可通过 enumerateAudioPlaybackDevices{@link #ByteRTCAudioDeviceManager#enumerateAudioPlaybackDevices} 获取。
+ * @return   <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes 当你调用 followSystemPlaybackDevice:{@link #ByteRTCAudioDeviceManager#followSystemPlaybackDevice:} 设置音频播放设备跟随系统后，将无法调用此接口设置音频播放设备。
+ */
+- (int)setAudioPlaybackDevice:(NSString * _Nonnull)deviceID;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取当前音频播放设备。
+ * @param deviceID 设备 ID
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int)getAudioPlaybackDevice:(NSString * _Nonnull * _Nonnull) deviceID;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 设置音频采集设备。
+ * @param deviceID 音频采集设备 ID。你可调用 enumerateAudioCaptureDevices{@link #ByteRTCAudioDeviceManager#EnumerateAudioCaptureDevices} 获取可用设备列表。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes 当你调用 followSystemCaptureDevice:{@link #ByteRTCAudioDeviceManager#followSystemCaptureDevice:} 设置音频采集设备跟随系统后，将无法调用此接口设置音频采集设备。
+ */
+- (int)setAudioCaptureDevice:(NSString * _Nonnull)deviceID;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取当前音频采集设备。
+ * @param deviceID 音频采集设备 ID。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int)getAudioCaptureDevice:(NSString *_Nonnull * _Nonnull) deviceID;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 设置当前音频采集设备静音状态，默认为非静音。
+ * @param mute  <br>
+ *       + true：静音  <br>
+ *       + false：非静音  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) setAudioCaptureDeviceMute:(bool)mute;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取当前音频采集设备是否静音的信息。
+ * @param mute  <br>
+ *       + true：静音  <br>
+ *       + false：非静音  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) getAudioCaptureDeviceMute:(bool * _Nonnull)mute;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 设置当前音频播放设备静音状态，默认为非静音。
+ * @param mute  <br>
+ *       + true：静音  <br>
+ *       + false：非静音  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) setAudioPlaybackDeviceMute:(bool)mute;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取当前音频播放设备是否静音的信息。
+ * @param mute  <br>
+ *       + true：静音  <br>
+ *       + false：非静音  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) getAudioPlaybackDeviceMute:(bool * _Nonnull)mute;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 设置当前音频采集设备音量
+ * @param volume 音频采集设备音量，取值范围为 [0,255]。
+ *       + [0,25] 接近无声；  <br>
+ *       + [25,75] 为低音量；  <br>
+ *       + [76,204] 为中音量；  <br>
+ *       + [205,255] 为高音量。  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) setAudioCaptureDeviceVolume:(unsigned int)volume;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取当前音频采集设备音量
+ * @param volume 音频采集设备音量，取值范围是 [0,255] 
+ *       + [0,25] 接近无声；  <br>
+ *       + [25,75] 为低音量；  <br>
+ *       + [76,204] 为中音量；  <br>
+ *       + [205,255] 为高音量。  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) getAudioCaptureDeviceVolume:(unsigned int * _Nonnull)volume;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 设置当前音频播放设备音量
+ * @param volume 音频播放设备音量，取值范围为 [0,255]
+ *       + [0,25] 接近无声；  <br>
+ *       + [25,75] 为低音量；  <br>
+ *       + [76,204] 为中音量；  <br>
+ *       + [205,255] 为高音量。  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) setAudioPlaybackDeviceVolume:(unsigned int)volume;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 获取当前音频播放设备音量
+ * @param volume 音频播放设备音量，取值范围是 [0,255] <br>
+ *       + [0,25] 接近无声；  <br>
+ *       + [25,75] 为低音量；  <br>
+ *       + [76,204] 为中音量；  <br>
+ *       + [205,255] 为高音量。  <br>
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ */
+- (int) getAudioPlaybackDeviceVolume:(unsigned int * _Nonnull)volume;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 启动音频播放设备测试。  <br>
+ *        该方法测试播放设备是否能正常工作。SDK 播放指定的音频文件，测试者如果能听到声音，说明播放设备能正常工作。
+ * @param testAudioFilePath 音频文件的绝对路径，路径字符串使用 UTF-8 编码格式，支持以下音频格式: mp3，aac，m4a，3gp，wav。
+ * @param interval 音频设备播放测试音量回调的间隔
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes  <br>
+ *       + 该方法必须在进房前调用，且不可与其它音频设备测试功能同时应用。  <br>
+ *       + 调用 StopAudioPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#StopAudioPlaybackDeviceTest} 停止测试。  <br>
+ */
+- (int)startPlaybackDeviceTest:(NSString *_Nonnull)testAudioFilePath interval:(int)interval;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 停止音频播放设备测试。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes  调用 StartAudioPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#StartAudioPlaybackDeviceTest} 后，需调用本方法停止测试。
  */
 - (int)stopPlaybackDeviceTest;
-/**
- * @hidden
+/** 
  * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
  * @author dixing
+ * @brief 尝试初始化音频播放设备，以检测设备不存在、权限被拒绝/禁用等异常问题。
+ * @param deviceID 设备索引号
+ * @return 设备状态错误码 <br>
+ *        + 0: 设备检测结果正常 <br>
+ *        + -1: 接口调用失败 <br>
+ *        + -2: 设备无权限，尝试初始化设备失败 <br>
+ *        + -3: 设备不存在，当前没有设备或设备被移除时返回 <br>
+ *        + -4: 设备音频格式不支持 <br>
+ *        + -5: 其它原因错误 <br>
+ * @notes  <br>
+ *        + 该接口需在进房前调用；  <br>
+ *        + 检测成功不代表设备一定可以启动成功，还可能因设备被其他应用进程独占，或 CPU/内存不足等原因导致启动失败。 <br>
  */
-- (int)startAudioRecordingDeviceTest:(unsigned int)indicationInterval;
-/**
- * @hidden
+- (int)initAudioPlaybackDeviceForTest:(NSString * _Nonnull)deviceID;
+/** 
  * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
  * @author dixing
+ * @brief 尝试初始化音频采集设备，以检测设备不存在、权限被拒绝/禁用等异常问题。
+ * @param deviceID 设备索引号
+ * @return 设备状态错误码 <br>
+ *        + 0: 设备检测结果正常 <br>
+ *        + -1: 接口调用失败 <br>
+ *        + -2: 设备无权限，尝试初始化设备失败 <br>
+ *        + -3: 设备不存在，当前没有设备或设备被移除时返回 <br>
+ *        + -4: 设备音频格式不支持 <br>
+ *        + -5: 其它原因错误 <br>
+ * @notes  <br>
+ *        + 该接口需在进房前调用；  <br>
+ *        + 检测成功不代表设备一定可以启动成功，还可能因设备被其他应用进程独占，或 CPU/内存不足等原因导致启动失败。 <br>
  */
-- (int)stopAudioRecordingDeviceTest;
-/**
- * @hidden
+- (int)initAudioCaptureDeviceForTest:(NSString * _Nonnull)deviceID;
+/**  
  * @type api
+ * @hidden(macOS)
+ * @region 音频设备管理
  * @author dixing
+ * @brief 切换音频播放到扬声器或者听筒，默认播放设备是扬声器
+ * @param enable  <br>
+ *       + true：切换至扬声器  <br>
+ *       + false：切换至听筒  <br>
+ * @notes 本方法只在移动设备上有效
  */
 - (void)setEnableSpeakerphone:(bool)enable;
 @end
@@ -888,7 +1214,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
  *        - [0, 25]: 无声 <br>
  *        - [26, 75]: 低音量 <br>
  *        - [76, 204]: 中音量 <br>
- *        - [205, 255]: 高音量
+ *        - [205, 255]: 高音量 <br>
  */
 @property(assign, nonatomic) NSInteger linearVolume;
 /** 
@@ -896,7 +1222,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
  *        - [-127, -60]: 无声 <br>
  *        - [-59, -40]: 低音量 <br>
  *        - [-39, -20]: 中音量 <br>
- *        - [-19, 0]: 高音量
+ *        - [-19, 0]: 高音量 <br>
  */
 @property(assign, nonatomic) NSInteger nonlinearVolume;
 /** 

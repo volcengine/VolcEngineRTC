@@ -50,7 +50,6 @@ BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
  * @brief 检测到 App 正在进行音视频通话时触发此回调。
  */
 - (void)onNotifyAppRunning;
-
 @end
 
 /** 
@@ -91,7 +90,6 @@ BYTE_RTC_EXPORT @interface ByteRtcScreenCapturerExt : NSObject
  * @param sampleBufferType 数据类型
  */
 - (void)processSampleBuffer:(CMSampleBufferRef)sampleBuffer withType:(RPSampleBufferType)sampleBufferType API_AVAILABLE(ios(10));
-
 @end
 
 NS_ASSUME_NONNULL_END

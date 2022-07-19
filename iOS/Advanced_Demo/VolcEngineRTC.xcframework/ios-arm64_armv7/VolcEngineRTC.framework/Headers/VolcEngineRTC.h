@@ -13,4 +13,5 @@
 #import <VolcEngineRTC/objc/rtc/ByteRTCRoom.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCScreenCapturerExt.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCSpatialAudio.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCVideo.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCVideoDefines.h>

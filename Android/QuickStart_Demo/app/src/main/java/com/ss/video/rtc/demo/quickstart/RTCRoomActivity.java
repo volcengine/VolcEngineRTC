@@ -1,8 +1,5 @@
 package com.ss.video.rtc.demo.quickstart;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,21 +11,24 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.RTCRoomConfig;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.VideoStreamDescription;
-import com.ss.bytertc.engine.data.AudioPlaybackDevice;
+import com.ss.bytertc.engine.VideoEncoderConfig;
+import com.ss.bytertc.engine.data.AudioRoute;
 import com.ss.bytertc.engine.data.CameraId;
-import com.ss.bytertc.engine.data.MuteState;
 import com.ss.bytertc.engine.data.RemoteStreamKey;
 import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.data.VideoFrameInfo;
 import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
+import com.ss.bytertc.engine.type.ChannelProfile;
+import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.rtc.demo.quickstart.R;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,11 +54,12 @@ import java.util.Locale;
  * 2.设置编码参数 {@link RTCEngine#setVideoEncoderConfig(List)}
  * 3.开启本地视频采集 {@link RTCEngine#startVideoCapture()}
  * 4.设置本地视频渲染视图 {@link RTCEngine#setLocalVideoCanvas(StreamIndex, VideoCanvas)}
- * 4.加入音视频通话房间 {@link RTCEngine#joinRoom(String, String, UserInfo, RTCEngine.ChannelProfile)}
- * 5.在收到远端用户视频首帧之后，设置用户的视频渲染视图 {@link RTCEngine#setRemoteVideoCanvas(String, StreamIndex, VideoCanvas)}
- * 6.在用户离开房间之后移出用户的视频渲染视图 {@link RTCRoomActivity#removeRemoteView(String)}
- * 7.离开音视频通话房间 {@link RTCEngine#leaveRoom()}
- * 8.销毁引擎 {@link RTCEngine#destroyEngine(RTCEngine)}
+ * 5.加入音视频通话房间 {@link RTCEngine#joinRoom(java.lang.String, java.lang.String,
+ *   com.ss.bytertc.engine.UserInfo, com.ss.bytertc.engine.RTCRoomConfig)}
+ * 6.在收到远端用户视频首帧之后，设置用户的视频渲染视图 {@link RTCEngine#setRemoteVideoCanvas(String, StreamIndex, VideoCanvas)}
+ * 7.在用户离开房间之后移出用户的视频渲染视图 {@link RTCRoomActivity#removeRemoteView(String)}
+ * 8.离开音视频通话房间 {@link RTCEngine#leaveRoom()}
+ * 9.销毁引擎 {@link RTCEngine#destroyEngine(RTCEngine)}
  *
  * 有以下常见的注意事项：
  * 1.创建引擎时，需要注册 RTC 事件回调的接口，类型是 IRTCEngineEventHandler 用户需要持有这个引用，例如本示例中
@@ -71,8 +72,8 @@ import java.util.Locale;
  * 5.SDK 支持同时发布多个参数的视频流，接口是 {@link RTCEngine#setVideoEncoderConfig}
  * 6.加入房间时，需要有有效的 token，加入失败时会通过 {@link IRTCEngineEventHandler#onError(int)} 输出对应的错误码
  * 7.用户可以通过 {@link RTCEngine#joinRoom(java.lang.String, java.lang.String,
- *   com.ss.bytertc.engine.UserInfo, com.ss.bytertc.engine.RTCEngine.ChannelProfile)} 中的 ChannelProfile
- *   来获得不同场景下的性能优化。本示例是音视频通话场景，因此使用 {@link RTCEngine.ChannelProfile#CHANNEL_PROFILE_COMMUNICATION}
+ *   com.ss.bytertc.engine.UserInfo, com.ss.bytertc.engine.RTCRoomConfig)} 中的 ChannelProfile
+ *   来获得不同场景下的性能优化。本示例是音视频通话场景，因此使用 {@link ChannelProfile#CHANNEL_PROFILE_COMMUNICATION}
  * 8.不需要在每次加入/退出房间时销毁引擎。本示例退出房间时销毁引擎是为了展示完整的使用流程
  *
  * 详细的API文档参见{https://www.volcengine.com/docs/6348/70080}
@@ -184,15 +185,15 @@ public class RTCRoomActivity extends AppCompatActivity {
         // 创建引擎
         mInstance = RTCEngine.create(getApplicationContext(), Constants.APPID, mIRtcEngineEventHandler);
         // 设置视频发布参数
-        VideoStreamDescription videoStreamDescription = new VideoStreamDescription(360, 640, 15, 800, 0);
-        mInstance.setVideoEncoderConfig(Collections.singletonList(videoStreamDescription));
+        VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(360, 640, 15, 800, 0);
+        mInstance.setVideoEncoderConfig(videoEncoderConfig);
         setLocalRenderView(userId);
         // 开启本地视频采集
         mInstance.startVideoCapture();
         // 开启本地音频采集
         mInstance.startAudioCapture();
         // 加入房间
-        RTCRoomConfig roomConfig = new RTCRoomConfig(RTCEngine.ChannelProfile.CHANNEL_PROFILE_COMMUNICATION,
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_COMMUNICATION,
                 true, true, true);
         int joinRoom_res = mInstance.joinRoom(Constants.TOKEN, roomId,
                 UserInfo.create(userId, ""), roomConfig);
@@ -272,16 +273,19 @@ public class RTCRoomActivity extends AppCompatActivity {
     private void updateSpeakerStatus() {
         mIsSpeakerPhone = !mIsSpeakerPhone;
         // 设置使用哪种方式播放音频数据
-        mInstance.setAudioPlaybackDevice(
-                mIsSpeakerPhone ? AudioPlaybackDevice.AUDIO_PLAYBACK_DEVICE_SPEAKERPHONE
-                        : AudioPlaybackDevice.AUDIO_PLAYBACK_DEVICE_EARPIECE);
+        mInstance.setAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
+                : AudioRoute.AUDIO_ROUTE_EARPIECE);
         mSpeakerIv.setImageResource(mIsSpeakerPhone ? R.drawable.speaker_on : R.drawable.speaker_off);
     }
 
     private void updateLocalAudioStatus() {
         mIsMuteAudio = !mIsMuteAudio;
         // 开启/关闭本地音频发送
-        mInstance.muteLocalAudio(mIsMuteAudio ? MuteState.MUTE_STATE_ON : MuteState.MUTE_STATE_OFF);
+        if (mIsMuteAudio) {
+            mInstance.unpublishStream(MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO);
+        } else {
+            mInstance.publishStream(MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO);
+        }
         mAudioIv.setImageResource(mIsMuteAudio ? R.drawable.mute_audio : R.drawable.normal_audio);
     }
 
@@ -301,9 +305,7 @@ public class RTCRoomActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(message);
-            builder.setPositiveButton("知道了", (dialog, which) -> {
-                dialog.dismiss();
-            });
+            builder.setPositiveButton("知道了", (dialog, which) -> dialog.dismiss());
             builder.create().show();
         });
     }

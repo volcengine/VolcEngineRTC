@@ -3,9 +3,9 @@
  * @brief VolcEngineRTC Room Internal API
 */
 
-@interface ByteRTCRoom ()
+@interface RTCRoom ()
 
-- (instancetype _Nonnull)initWithRtcRoom:(bytertc::IRtcRoom *_Nonnull)rtcRoom roomId:(NSString *_Nonnull)roomId;
+- (instancetype _Nonnull)initWithRtcRoom:(bytertc::IRTCRoom *_Nonnull)rtcRoom roomId:(NSString *_Nonnull)roomId;
 
 - (void)enableSubscribeSelf:(BOOL)enable;
 

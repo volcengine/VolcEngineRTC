@@ -28,9 +28,15 @@ void ShareViewWnd::setPixMap(const QPixmap& pixmap) { pixmap_ = pixmap; }
 
 void ShareViewWnd::mousePressEvent(QMouseEvent*) { emit sigSelected(); }
 
-void ShareViewWnd::enterEvent(QEvent*) {
-  hover_ = true;
-  update();
+void ShareViewWnd::enterEvent(
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)) 
+    QEnterEvent* event 
+#else 
+    QEvent* event 
+#endif
+) {
+	hover_ = true;
+	update();
 }
 
 void ShareViewWnd::leaveEvent(QEvent*) {

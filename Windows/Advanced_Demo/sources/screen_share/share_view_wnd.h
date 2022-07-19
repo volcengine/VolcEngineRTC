@@ -16,7 +16,14 @@ class ShareViewWnd : public QWidget {
 
  protected:
   void mousePressEvent(QMouseEvent*) override;
-  void enterEvent(QEvent*) override;
+  void enterEvent(
+#if (QT_VERSION >= QT_VERSION_CHECK(6,0,0))
+	 QEnterEvent* event
+#else
+	  QEvent* event
+#endif
+) override;
+  
   void leaveEvent(QEvent*) override;
  signals:
   void sigSelected();
