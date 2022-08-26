@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B2E6147288AAA7F00A9059E /* VolcEngineRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4DFE3A286EDEFA00EE1199 /* VolcEngineRTC.xcframework */; };
+		2B2E6148288AAA7F00A9059E /* VolcEngineRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4DFE3A286EDEFA00EE1199 /* VolcEngineRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2B33B58C288FD4FD00D3E276 /* SystemAuthority.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B33B58A288FD4FD00D3E276 /* SystemAuthority.m */; };
+		2B4DFE27286ED94900EE1199 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */; };
+		2B4DFE2B286ED94900EE1199 /* SampleHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4DFE2A286ED94900EE1199 /* SampleHandler.m */; };
+		2B4DFE2F286ED94900EE1199 /* AdvanceScreenShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 2B4DFE26286ED94900EE1199 /* AdvanceScreenShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2B4DFE36286ED9FD00EE1199 /* SettingSegmentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4DFE35286ED9FD00EE1199 /* SettingSegmentModel.m */; };
+		2B4DFE3F286EDF0200EE1199 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4DFE39286EDEFA00EE1199 /* VolcEngineRTCScreenCapturer.xcframework */; };
+		2B4DFE40286EDF0200EE1199 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4DFE39286EDEFA00EE1199 /* VolcEngineRTCScreenCapturer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2B4DFE41286EDF0900EE1199 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4DFE39286EDEFA00EE1199 /* VolcEngineRTCScreenCapturer.xcframework */; };
 		2B66B3D428379002005BA3BF /* BeautyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B66B3D328379002005BA3BF /* BeautyModel.m */; };
 		2B7F2F8D286ECF1000DAB769 /* effect-sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B7F2F8C286ECF1000DAB769 /* effect-sdk.framework */; platformFilter = ios; };
 		2B7F2F8E286ECF1100DAB769 /* effect-sdk.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B7F2F8C286ECF1000DAB769 /* effect-sdk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -20,8 +30,6 @@
 		2BA8026927E3375E00AFE337 /* ToastComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA8026627E3375E00AFE337 /* ToastComponents.m */; };
 		2BA8026D27E3397500AFE337 /* DeviceInforTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA8026C27E3397500AFE337 /* DeviceInforTool.m */; };
 		2BA8027027E4315A00AFE337 /* PreNotifyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA8026F27E4315A00AFE337 /* PreNotifyViewController.m */; };
-		2BA8027827E4892400AFE337 /* VolcEngineRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA8027527E4891E00AFE337 /* VolcEngineRTC.xcframework */; };
-		2BA8027927E4892400AFE337 /* VolcEngineRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BA8027527E4891E00AFE337 /* VolcEngineRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2BA8028B27E85F9E00AFE337 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2BA8028A27E85F9E00AFE337 /* background.jpg */; };
 		2BC1A97827B6550900DD0557 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A92E27B6550900DD0557 /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		2BC1A97927B6550900DD0557 /* ViewController+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A93727B6550900DD0557 /* ViewController+MASAdditions.m */; };
@@ -56,7 +64,7 @@
 		2BC1A9B827B662B300DD0557 /* BeautyBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9B427B662B300DD0557 /* BeautyBarView.m */; };
 		2BC1A9B927B662B300DD0557 /* EffectButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9B527B662B300DD0557 /* EffectButton.m */; };
 		2BC1A9BD27B662C000DD0557 /* EffectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9BC27B662C000DD0557 /* EffectModel.m */; };
-		2BC1A9C227B66B4200DD0557 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9C127B66B4100DD0557 /* CoreML.framework */; };
+		2BC1A9C227B66B4200DD0557 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9C127B66B4100DD0557 /* CoreML.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		2BC1A9C427B66B6200DD0557 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9C327B66B6200DD0557 /* libz.tbd */; };
 		2BC1A9C627B66B6A00DD0557 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9C527B66B6A00DD0557 /* CoreMotion.framework */; };
 		2BC1A9C827B66B7700DD0557 /* MetalPerformanceShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9C727B66B7700DD0557 /* MetalPerformanceShaders.framework */; };
@@ -79,7 +87,28 @@
 		CC2AE8CD26CB6A24009D594D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2AE8CC26CB6A24009D594D /* main.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2B4DFE2D286ED94900EE1199 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC2AE8AF26CB6A21009D594D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2B4DFE25286ED94900EE1199;
+			remoteInfo = AdvanceScreenShare;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
+		2B4DFE30286ED94900EE1199 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				2B4DFE2F286ED94900EE1199 /* AdvanceScreenShare.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC5DF54726CFB3D000BE223E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -87,7 +116,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				2B7F2F8E286ECF1100DAB769 /* effect-sdk.framework in Embed Frameworks */,
-				2BA8027927E4892400AFE337 /* VolcEngineRTC.xcframework in Embed Frameworks */,
+				2B4DFE40286EDF0200EE1199 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
+				2B2E6148288AAA7F00A9059E /* VolcEngineRTC.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -95,6 +125,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B33B58A288FD4FD00D3E276 /* SystemAuthority.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemAuthority.m; sourceTree = "<group>"; };
+		2B33B58B288FD4FD00D3E276 /* SystemAuthority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemAuthority.h; sourceTree = "<group>"; };
+		2B4DFE26286ED94900EE1199 /* AdvanceScreenShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = AdvanceScreenShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B4DFE29286ED94900EE1199 /* SampleHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SampleHandler.h; sourceTree = "<group>"; };
+		2B4DFE2A286ED94900EE1199 /* SampleHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleHandler.m; sourceTree = "<group>"; };
+		2B4DFE2C286ED94900EE1199 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2B4DFE34286ED9FD00EE1199 /* SettingSegmentModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingSegmentModel.h; sourceTree = "<group>"; };
+		2B4DFE35286ED9FD00EE1199 /* SettingSegmentModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingSegmentModel.m; sourceTree = "<group>"; };
+		2B4DFE38286EDC3700EE1199 /* Advanced.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Advanced.entitlements; sourceTree = "<group>"; };
+		2B4DFE39286EDEFA00EE1199 /* VolcEngineRTCScreenCapturer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTCScreenCapturer.xcframework; sourceTree = "<group>"; };
+		2B4DFE3A286EDEFA00EE1199 /* VolcEngineRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTC.xcframework; sourceTree = "<group>"; };
 		2B66B3D228379002005BA3BF /* BeautyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BeautyModel.h; sourceTree = "<group>"; };
 		2B66B3D328379002005BA3BF /* BeautyModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BeautyModel.m; sourceTree = "<group>"; };
 		2B7F2F8C286ECF1000DAB769 /* effect-sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "effect-sdk.framework"; sourceTree = "<group>"; };
@@ -203,6 +244,7 @@
 		2BC1A9D527B66BBD00DD0557 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
 		2BC1A9D927B66D2500DD0557 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
+		2BDEFC3A2872BE59001A91E5 /* Advanced_Test.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Advanced_Test.entitlements; sourceTree = "<group>"; };
 		2BE077DE27E0810700166688 /* SettingButtonModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingButtonModel.h; sourceTree = "<group>"; };
 		2BE077DF27E0810700166688 /* SettingButtonModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingButtonModel.m; sourceTree = "<group>"; };
 		2BE077E127E0866800166688 /* PreJoinNetViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreJoinNetViewController.h; sourceTree = "<group>"; };
@@ -223,17 +265,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2B4DFE23286ED94900EE1199 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B4DFE27286ED94900EE1199 /* ReplayKit.framework in Frameworks */,
+				2B4DFE41286EDF0900EE1199 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC2AE8B426CB6A21009D594D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				2BC1A9D827B66BC200DD0557 /* ReplayKit.framework in Frameworks */,
 				2BC1A9D627B66BBD00DD0557 /* SystemConfiguration.framework in Frameworks */,
-				2BA8027827E4892400AFE337 /* VolcEngineRTC.xcframework in Frameworks */,
 				2BC1A9D427B66BB800DD0557 /* CoreTelephony.framework in Frameworks */,
+				2B2E6147288AAA7F00A9059E /* VolcEngineRTC.xcframework in Frameworks */,
 				2BC1A9D227B66BAC00DD0557 /* VideoToolbox.framework in Frameworks */,
 				2B7F2F8D286ECF1000DAB769 /* effect-sdk.framework in Frameworks */,
 				2BC1A9D027B66BA200DD0557 /* AVFoundation.framework in Frameworks */,
+				2B4DFE3F286EDF0200EE1199 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
 				2BC1A9CE27B66B9800DD0557 /* AudioToolbox.framework in Frameworks */,
 				2BC1A9CC27B66B8E00DD0557 /* Accelerate.framework in Frameworks */,
 				2BC1A9CA27B66B8300DD0557 /* GLKit.framework in Frameworks */,
@@ -248,6 +300,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2B33B589288FD4FD00D3E276 /* SystemAuthority */ = {
+			isa = PBXGroup;
+			children = (
+				2B33B58A288FD4FD00D3E276 /* SystemAuthority.m */,
+				2B33B58B288FD4FD00D3E276 /* SystemAuthority.h */,
+			);
+			path = SystemAuthority;
+			sourceTree = "<group>";
+		};
+		2B4DFE28286ED94900EE1199 /* AdvanceScreenShare */ = {
+			isa = PBXGroup;
+			children = (
+				2BDEFC3A2872BE59001A91E5 /* Advanced_Test.entitlements */,
+				2B4DFE38286EDC3700EE1199 /* Advanced.entitlements */,
+				2B4DFE29286ED94900EE1199 /* SampleHandler.h */,
+				2B4DFE2A286ED94900EE1199 /* SampleHandler.m */,
+				2B4DFE2C286ED94900EE1199 /* Info.plist */,
+			);
+			path = AdvanceScreenShare;
+			sourceTree = "<group>";
+		};
 		2B66B3D128378FE7005BA3BF /* BeautyModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,6 +401,7 @@
 		2BC1A92B27B6550900DD0557 /* Vender */ = {
 			isa = PBXGroup;
 			children = (
+				2B33B589288FD4FD00D3E276 /* SystemAuthority */,
 				2BA8026A27E3397500AFE337 /* DeviceInforTool */,
 				2BA8026327E3375E00AFE337 /* ToastComponents */,
 				2BC1A92C27B6550900DD0557 /* Masonry */,
@@ -497,6 +571,8 @@
 				2B893A4027E1C9A7001A1B9E /* SettingLabelModel.m */,
 				2BE077E427E0893A00166688 /* SettingTextFieldModel.h */,
 				2BE077E527E0893A00166688 /* SettingTextFieldModel.m */,
+				2B4DFE34286ED9FD00EE1199 /* SettingSegmentModel.h */,
+				2B4DFE35286ED9FD00EE1199 /* SettingSegmentModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -558,6 +634,7 @@
 			isa = PBXGroup;
 			children = (
 				CC2AE8B926CB6A21009D594D /* Advanced */,
+				2B4DFE28286ED94900EE1199 /* AdvanceScreenShare */,
 				CC2AE8B826CB6A21009D594D /* Products */,
 				CC2AE90826CCF39A009D594D /* Frameworks */,
 				C5E107788B84D7333CC3453E /* Pods */,
@@ -568,6 +645,7 @@
 			isa = PBXGroup;
 			children = (
 				CC2AE8B726CB6A21009D594D /* Advanced.app */,
+				2B4DFE26286ED94900EE1199 /* AdvanceScreenShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -594,6 +672,8 @@
 		CC2AE90826CCF39A009D594D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B4DFE3A286EDEFA00EE1199 /* VolcEngineRTC.xcframework */,
+				2B4DFE39286EDEFA00EE1199 /* VolcEngineRTCScreenCapturer.xcframework */,
 				2B7F2F8C286ECF1000DAB769 /* effect-sdk.framework */,
 				2BA8027527E4891E00AFE337 /* VolcEngineRTC.xcframework */,
 				2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */,
@@ -616,6 +696,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2B4DFE25286ED94900EE1199 /* AdvanceScreenShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2B4DFE33286ED94900EE1199 /* Build configuration list for PBXNativeTarget "AdvanceScreenShare" */;
+			buildPhases = (
+				2B4DFE22286ED94900EE1199 /* Sources */,
+				2B4DFE23286ED94900EE1199 /* Frameworks */,
+				2B4DFE24286ED94900EE1199 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AdvanceScreenShare;
+			productName = AdvanceScreenShare;
+			productReference = 2B4DFE26286ED94900EE1199 /* AdvanceScreenShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		CC2AE8B626CB6A21009D594D /* Advanced */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC2AE8D026CB6A24009D594D /* Build configuration list for PBXNativeTarget "Advanced" */;
@@ -625,10 +722,12 @@
 				CC2AE8B426CB6A21009D594D /* Frameworks */,
 				CC2AE8B526CB6A21009D594D /* Resources */,
 				CC5DF54726CFB3D000BE223E /* Embed Frameworks */,
+				2B4DFE30286ED94900EE1199 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2B4DFE2E286ED94900EE1199 /* PBXTargetDependency */,
 			);
 			name = Advanced;
 			productName = quickstart;
@@ -643,6 +742,9 @@
 			attributes = {
 				LastUpgradeCheck = 1300;
 				TargetAttributes = {
+					2B4DFE25286ED94900EE1199 = {
+						CreatedOnToolsVersion = 13.4;
+					};
 					CC2AE8B626CB6A21009D594D = {
 						CreatedOnToolsVersion = 12.5.1;
 					};
@@ -662,11 +764,19 @@
 			projectRoot = "";
 			targets = (
 				CC2AE8B626CB6A21009D594D /* Advanced */,
+				2B4DFE25286ED94900EE1199 /* AdvanceScreenShare */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2B4DFE24286ED94900EE1199 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC2AE8B526CB6A21009D594D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -711,6 +821,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2B4DFE22286ED94900EE1199 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B4DFE2B286ED94900EE1199 /* SampleHandler.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC2AE8B326CB6A21009D594D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -730,12 +848,14 @@
 				2BC1A98B27B6550900DD0557 /* SettingSliderModel.m in Sources */,
 				CC2AE8CD26CB6A24009D594D /* main.m in Sources */,
 				2BC1A98E27B6550900DD0557 /* SettingBaseModel.m in Sources */,
+				2B4DFE36286ED9FD00EE1199 /* SettingSegmentModel.m in Sources */,
 				2BC1A97927B6550900DD0557 /* ViewController+MASAdditions.m in Sources */,
 				2BC1A97C27B6550900DD0557 /* MASLayoutConstraint.m in Sources */,
 				2BC1A98127B6550900DD0557 /* MASViewAttribute.m in Sources */,
 				2BC1A98627B6550900DD0557 /* CustomFrameRender.m in Sources */,
 				2BA8026927E3375E00AFE337 /* ToastComponents.m in Sources */,
 				2B66B3D428379002005BA3BF /* BeautyModel.m in Sources */,
+				2B33B58C288FD4FD00D3E276 /* SystemAuthority.m in Sources */,
 				2BC1A98A27B6550900DD0557 /* SettingOptionArrayModel.m in Sources */,
 				2BE077E027E0810700166688 /* SettingButtonModel.m in Sources */,
 				2BC1A98F27B6550900DD0557 /* SettingSwitchModel.m in Sources */,
@@ -764,6 +884,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		2B4DFE2E286ED94900EE1199 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2B4DFE25286ED94900EE1199 /* AdvanceScreenShare */;
+			targetProxy = 2B4DFE2D286ED94900EE1199 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		CC2AE8C326CB6A21009D594D /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -784,6 +912,66 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		2B4DFE31286ED94900EE1199 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_ENTITLEMENTS = AdvanceScreenShare/Advanced.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XXHND5J98K;
+				ENABLE_BITCODE = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AdvanceScreenShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AdvanceScreenShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 5.0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.screenShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = RTCAdvancedScreenshareDis;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2B4DFE32286ED94900EE1199 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_ENTITLEMENTS = AdvanceScreenShare/Advanced_Test.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XXHND5J98K;
+				ENABLE_BITCODE = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AdvanceScreenShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = AdvanceScreenShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 5.0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.screenShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = RTCAdvancedScreenshareDis;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		CC2AE8CE26CB6A24009D594D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -912,7 +1100,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Advanced/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -965,6 +1153,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AdvanceScreenShare/Advanced_Test.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = XXHND5J98K;
@@ -975,7 +1164,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Advanced/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1024,6 +1213,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2B4DFE33286ED94900EE1199 /* Build configuration list for PBXNativeTarget "AdvanceScreenShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2B4DFE31286ED94900EE1199 /* Debug */,
+				2B4DFE32286ED94900EE1199 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CC2AE8B226CB6A21009D594D /* Build configuration list for PBXProject "Advanced" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

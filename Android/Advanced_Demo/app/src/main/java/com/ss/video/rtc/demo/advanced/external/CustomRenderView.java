@@ -24,9 +24,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Renderer, IVideoSink {
     private final static String TAG = CustomRenderView.class.getCanonicalName();
 
-    private int mBufferWidthY, mBufferHeightY, mBufferWidthUV, mBufferHeightUV;
     private volatile ByteBuffer mBuffer;
-    private int mBufferPositionY, mBufferPositionU, mBufferPositionV;
 
     private volatile boolean mIsRendering = false;
     private volatile int mFrameWidth;
@@ -41,7 +39,7 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
             0, 1, 2,
             2, 3, 0};
 
-    private FloatBuffer mTriangleVertices;
+    private final FloatBuffer mTriangleVertices;
     private final ShortBuffer mIndices;
 
     private static final String VERTEX_SHADER_SOURCE =
@@ -76,14 +74,13 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
     private int muSamplerYHandle;
     private int muSamplerUHandle;
     private int muSamplerVHandle;
-    private int[] mTextureY = new int[1];
-    private int[] mTextureU = new int[1];
-    private int[] mTextureV = new int[1];
+    private final int[] mTextureY = new int[1];
+    private final int[] mTextureU = new int[1];
+    private final int[] mTextureV = new int[1];
 
     private boolean mSurfaceCreated;
     private boolean mSurfaceDestroyed;
-    private int mViewWidth, mViewHeight, mViewX, mViewY;
-    private boolean mFullScreenRequired = true;
+    private int mViewWidth, mViewHeight;
 
     public CustomRenderView(Context context) {
         super(context);
@@ -96,10 +93,10 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
 
         // 原图
         float[] triangleVerticesData = {
-                1, -1, 0, 1, 0,
-                1, 1, 0, 1, 1,
-                -1, 1, 0, 0, 1,
-                -1, -1, 0, 0, 0
+                1, -1, 0, 1, 1,
+                1, 1, 0, 1, 0,
+                -1, 1, 0, 0, 0,
+                -1, -1, 0, 0, 1
         };
 
         mTriangleVertices = ByteBuffer.allocateDirect(triangleVerticesData.length
@@ -109,27 +106,6 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
         mIndices = ByteBuffer.allocateDirect(INDICES_DATA.length * SHORT_SIZE_BYTES)
                 .order(ByteOrder.nativeOrder()).asShortBuffer();
         mIndices.put(INDICES_DATA).position(0);
-    }
-
-    public void setParams(boolean fullScreenRequired, ByteBuffer buffer, int bufferWidth,
-                          int bufferHeight, int fps) {
-        mFullScreenRequired = fullScreenRequired;
-
-        setBuffer(buffer, bufferWidth, bufferHeight);
-    }
-
-    public void setBuffer(ByteBuffer buffer, int bufferWidth, int bufferHeight) {
-
-        mBuffer = buffer;
-        mBufferWidthY = bufferWidth;
-        mBufferHeightY = bufferHeight;
-
-        mBufferWidthUV = (mBufferWidthY >> 1);
-        mBufferHeightUV = (mBufferHeightY >> 1);
-
-        mBufferPositionY = 0;
-        mBufferPositionU = (mBufferWidthY * mBufferHeightY);
-        mBufferPositionV = (mBufferPositionU + (mBufferWidthUV * mBufferHeightUV));
     }
 
     public boolean isReady() {
@@ -322,17 +298,8 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
 
     private void setViewport(int width, int height) {
         Log.d(TAG, "setViewport: " + width + "  " + height);
-        if (mFullScreenRequired) {
-            mViewWidth = width;
-            mViewHeight = height;
-            mViewX = mViewY = 0;
-        } else {
-            float fRatio = ((float) mBufferWidthY / (float) mBufferHeightY);
-            mViewWidth = (int) ((float) width / fRatio) > height ? (int) ((float) height * fRatio) : width;
-            mViewHeight = Math.min((int) (mViewWidth / fRatio), height);
-            mViewX = ((width - mViewWidth) >> 1);
-            mViewY = ((height - mViewHeight) >> 1);
-        }
+        mViewWidth = width;
+        mViewHeight = height;
     }
 
     private void checkGlError(String op) {
@@ -359,10 +326,17 @@ public class CustomRenderView extends GLSurfaceView implements GLSurfaceView.Ren
         int width = frame.getRotation().value() % 180 == 0 ? frame.getWidth() : frame.getHeight();
         int height = frame.getRotation().value() % 180 == 0 ? frame.getHeight() : frame.getWidth();
 
-        YuvHelper.I420Rotate(frame.getPlaneData(0), frame.getPlaneStride(0),
-                frame.getPlaneData(1), frame.getPlaneStride(1),
-                frame.getPlaneData(2), frame.getPlaneStride(2),
-                mBuffer, frame.getWidth(), frame.getHeight(), 360 - frame.getRotation().value());
+        if (frame.getRotation().value() == 0) {
+            YuvHelper.I420Copy(frame.getPlaneData(0), frame.getPlaneStride(0),
+                    frame.getPlaneData(1), frame.getPlaneStride(1),
+                    frame.getPlaneData(2), frame.getPlaneStride(2),
+                    mBuffer, width, height);
+        } else {
+            YuvHelper.I420Rotate(frame.getPlaneData(0), frame.getPlaneStride(0),
+                    frame.getPlaneData(1), frame.getPlaneStride(1),
+                    frame.getPlaneData(2), frame.getPlaneStride(2),
+                    mBuffer, frame.getWidth(), frame.getHeight(), frame.getRotation().value());
+        }
 
         frame.release();
 

@@ -10,6 +10,10 @@ import com.ss.video.rtc.demo.basic_module.utils.SafeToast;
 import com.ss.video.rtc.demo.basic_module.utils.Utilities;
 
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class CommonUtil {
 
@@ -63,4 +67,17 @@ public class CommonUtil {
         return ret;
     }
 
+    public static String byteBufferToString(ByteBuffer buffer) {
+        CharBuffer charBuffer;
+        try {
+            Charset charset = StandardCharsets.UTF_8;
+            CharsetDecoder decoder = charset.newDecoder();
+            charBuffer = decoder.decode(buffer);
+            buffer.flip();
+            return charBuffer.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 }

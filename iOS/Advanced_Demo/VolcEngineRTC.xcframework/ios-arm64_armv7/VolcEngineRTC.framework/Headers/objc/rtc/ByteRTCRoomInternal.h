@@ -3,7 +3,7 @@
  * @brief VolcEngineRTC Room Internal API
 */
 
-@interface RTCRoom ()
+@interface ByteRTCRoom ()
 
 - (instancetype _Nonnull)initWithRtcRoom:(bytertc::IRTCRoom *_Nonnull)rtcRoom roomId:(NSString *_Nonnull)roomId;
 

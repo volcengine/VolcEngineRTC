@@ -2,10 +2,9 @@
 //  NotifyCommon.h
 //  Advanced
 //
-//  Created by bytedance on 2022/3/17.
 //
 
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCRoom.h>
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
@@ -25,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithType:(NotifyStatus)notiftStatus
                    superView:(UIView *)superView
-                      rtcKit:(ByteRTCEngineKit *)rtcKit;
+                     rtcRoom:(ByteRTCRoom *)rtcRoom;
 
 @end
 

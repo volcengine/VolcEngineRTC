@@ -28,10 +28,15 @@
     <string name="message_room">发送实时消息</string>
     <string name="message_setting_p2p">点对点消息</string>
     <string name="message_setting_room">广播消息</string>
+    <string name="video_source">视频源</string>
+    <string name="video_source_camera">摄像头</string>
+    <string name="video_source_screen">屏幕共享</string>
 
     <string name="beauty_vendor_text">美颜方案</string>
     <string name="beauty_vendor_huoshan">火山美颜</string>
     <string name="beauty_vendor_third">通用第三方</string>
 
     <string name="local_video_mirror_type">镜像模式</string>
+
+    <string name="effect_dialog_title">特效</string>
 </resources>

@@ -300,7 +300,7 @@ enum RoomMessageSendResult {
  */
 enum ConnectionState {
     /** 
-     * @brief 连接断开超过 12 秒
+     * @brief 连接断开，且断开时长超过 12s，SDK 会自动重连。
      */
     kConnectionStateDisconnected = 1,
     /** 
@@ -322,9 +322,13 @@ enum ConnectionState {
      */
     kConnectionStateReconnected = 5,
     /** 
-     * @brief 处于 `DISCONNECTED` 状态超过 10 秒，且期间重连未成功。
+     * @brief 处于 `kConnectionStateDisconnected` 状态超过 10 秒，且期间重连未成功。SDK 仍将继续尝试重连。
      */
     kConnectionStateLost = 6,
+    /** 
+     * @brief 连接失败，服务端状态异常。SDK 不会自动重连，请重新进房，或联系技术支持。
+     */
+    kConnectionStateFailed = 7,
 };
 
 /** 
@@ -513,26 +517,25 @@ enum NetworkType {
 
 /** 
  * @type keytype
- * @brief 房间模式
+ * @brief 房间模式<br>
+ *        根据所需场景，选择合适的房间模式，应用不同的音视频算法、视频参数和网络配置 <br>
+ *        调用 `setAudioProfile` 改变音频参数配置
  */
 enum RoomProfileType {
     /** 
-     * @brief 普通音视频通话模式。<br>
-     *        单声道，采样率为 48kHz。 <br>
-     *        你应在 1V1 音视频通话时，使用此设置。 <br>
-     *        此设置下，弱网抗性较好。
+     * @brief 默认场景，通用模式
      */
     kRoomProfileTypeCommunication = 0,
     /** 
+     * @deprecated since 342.1, use kRoomProfileTypeInteractivePodcast instead
+     * @hidden
      * @brief 直播模式。<br>
-     *        单声道，采样率为 48kHz。 <br>
      *        当你对音视频通话的音质和画质要求较高时，应使用此设置。<br>
      *        此设置下，当用户使用蓝牙耳机收听时，蓝牙耳机使用媒体模式。
      */
     kRoomProfileTypeLiveBroadcasting = 1,
     /** 
-     * @brief 游戏语音模式。<br>
-     *        单声道，采样率为 16kHz。 <br>
+     * @brief 游戏语音模式，低功耗、低流量消耗。<br>
      *        低端机在此模式下运行时，进行了额外的性能优化：<br>
      *            + 部分低端机型配置编码帧长 40/60 <br>
      *            + 部分低端机型关闭软件 3A 音频处理 <br>
@@ -541,72 +544,77 @@ enum RoomProfileType {
     kRoomProfileTypeGame = 2,
     /** 
      * @brief 云游戏模式。<br>
-     *        单声道，采样率为 48kHz。 <br>
-     *        如果你需要低延迟、高码率的设置时，你可以使用此设置。<br>
+     *        如果你的游戏场景需要低延迟的配置，使用此设置。<br>
      *        此设置下，弱网抗性较差。
      */
     kRoomProfileTypeCloudGame = 3,
     /** 
-     * @brief 低时延模式。SDK 会使用低延时设置。  <br>
-     *        当你的场景非游戏或云游戏场景，又需要极低延时的体验时，可以使用该模式。 <br>
+     * @brief 云渲染模式。超低延时配置。  <br>
+     *        如果你的应用并非游戏但又对延时要求较高时，选用此模式 <br>
      *        该模式下，音视频通话延时会明显降低，但同时弱网抗性、通话音质等均会受到一定影响。  <br>
-     *        在使用此模式前，强烈建议咨询技术支持同学。
      */
     kRoomProfileTypeLowLatency = 4,
     /** 
-     * @brief 适用于 1 vs 1 纯语音通话
+     * @brief 适用于 1 vs 1 音视频通话
      */
     kRoomProfileTypeChat = 5,
     /** 
-     * @brief 适用于 2 人以上纯语音通话
+     * @brief 适用于 3 人及以上纯语音通话<br>
+     *        音视频通话为媒体模式，上麦时切换为通话模式
      */
     kRoomProfileTypeChatRoom = 6,
     /** 
-     * @brief 适用于 “一起看” 或 “一起听” 场景
+     * @brief 实现多端同步播放音视频，适用于 “一起看” 或 “一起听” 场景。<br>
+     *        该场景中，使用 RTC 信令同步播放进度，共享的音频内容不通过 RTC 进行传输。
      */
     kRoomProfileTypeLwTogether = 7,
     /** 
-     * @brief 适用于对音质要求较高的游戏场景
+     * @brief 适用于对音质要求较高的游戏场景，优化音频 3A 策略，只通过媒体模式播放音频
      */
     kRoomProfileTypeGameHD = 8,
     /** 
-     * @brief 适用于直播中主播之间连麦的业务场景
+     * @brief 适用于直播中主播之间连麦的业务场景。<br>
+     *        直播时通过 CDN，发起连麦 PK 时使用 RTC。
      */
     kRoomProfileTypeCoHost = 9,
     /** 
-     * @brief 适用于互动直播
+     * @brief 适用于单主播和观众进行音视频互动的直播。通话模式，上下麦不会有模式切换，避免音量突变现象
      */
     kRoomProfileTypeInteractivePodcast = 10,
     /** 
-     * @brief 适合线上 KTV 场景，满足高音质，低延迟
+     * @brief 线上 KTV 场景，音乐音质，低延迟<br>
+     *        使用 RTC 传输伴奏音乐，混音后的歌声，适合独唱或单通合唱
      */
     kRoomProfileTypeKTV = 11,
     /** 
-     * @brief 适合在线合唱场景
+     * @brief 适合在线实时合唱场景，高音质，超低延迟。使用本配置前请联系技术支持进行协助完成其他配置。
      */
     kRoomProfileTypeChorus = 12,
     /** 
-     * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声
+     * @hidden
+     * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声。345之后支持
      */
     kRoomProfileTypeVRChat = 13,
     /** 
-     * @brief 适用于 1 vs 1 游戏串流
+     * @brief 适用于 1 vs 1 游戏串流，支持公网或局域网。
      */
     kRoomProfileTypeGameStreaming = 14,
     /** 
-     * @brief 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率
+     * @brief 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率<br>
+     *        需要在局域网配置私有化部署媒体服务器。
      */
     kRoomProfileTypeLanLiveStreaming = 15,
     /** 
-     * @brief 适用于云端会议
+     * @brief 适用于云端会议中的个人设备
      */
     kRoomProfileTypeMeeting = 16,
     /** 
-     * @brief 线下会议室
+     * @brief 适用于云端会议中的会议室终端
      */
     kRoomProfileTypeMeetingRoom = 17,
     /** 
-     * @brief 适用于课堂互动
+     * @brief 适用于课堂互动，房间内所有成员都可以进行音视频互动<br>
+     *        当你的场景中需要同时互动的成员超过 10人时使用此模式
      */
     kRoomProfileTypeClassroom = 18,
 };
@@ -624,7 +632,11 @@ struct AudioRoomConfig {
      * @brief 是否自动订阅音频流，默认为自动订阅。
      */
     bool is_auto_subscribe_audio = true;
-    
+    /** 
+     * @brief 是否自动发布音视频流，默认为自动发布。 <br>
+     *        若调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。  <br>
+     *        多房间场景下，若已在其中一个房间成功设置了自动发布，其他房间的自动发布设置均不会生效。
+     */
     bool is_auto_publish_audio = false;
 };
 
@@ -935,7 +947,7 @@ enum SubscribeFallbackOption {
     kSubscribeFallbackOptionDisable = 0,
     /** 
      * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看性能回退文档。 <br>
-     *        该设置仅对发布端调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启发送多路流功能的情况生效。
+     *        该设置仅对发布端调用 enableSimulcastMode{@link #IRTCVideo#enableSimulcastMode} 开启发送多路流功能的情况生效。
      */
     kSubscribeFallbackOptionVideoStreamLow = 1,
     /** 
@@ -1058,7 +1070,7 @@ enum ErrorCode {
      */
     kErrorCodeDuplicateLogin = -1004,
     /** 
-     * @brief 服务端调用 OpenAPI 将当前用户踢出房间 
+     * @brief 服务端调用 OpenAPI 将当前用户踢出房间
      */
     kErrorCodeKickedOut = -1006,
     /** 
@@ -1079,7 +1091,7 @@ enum ErrorCode {
     kErrorCodeRoomDismiss = -1011,
     /** 
      * @brief 加入房间错误。 <br>
-     *        调用 joinRoom{@link #IRtcEngine#joinRoom} 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
+     *        进房时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
      */
     kErrorCodeJoinRoomWithoutLicenseAuthenticateSDK = -1012,
     /** 
@@ -1112,6 +1124,11 @@ enum ErrorCode {
      *        单个音频源不支持与多个视频源同时同步。
      */
     kErrorCodeInvalidAudioSyncUidRepeated = -1083,
+    /** 
+     * @brief 服务端异常状态导致退出房间。  <br>
+     *        SDK与信令服务器断开，并不再自动重连，可联系技术支持。  <br>
+     */
+    kErrorCodeAbnormalServerStatus = -1084,
 };
 
 /** 
@@ -1193,36 +1210,43 @@ enum WarningCode {
      */
     kWarningCodeNoCameraPermission = -5001,
     /** 
+     * @hidden
      * @brief 麦克风权限异常，当前应用没有获取麦克风权限。
      * @deprecated since 333.1, use MediaDeviceWarning instead
      */
     kWarningCodeNoMicrophonePermission = -5002,
-   /** 
+    /** 
+     * @hidden
      * @brief 音频采集设备启动失败，当前设备可能被其他应用占用。
      * @deprecated since 333.1, use MediaDeviceWarning instead
      */
     kWarningCodeRecodingDeviceStartFailed = -5003,
     /** 
+     * @hidden
      * @brief 音频播放设备启动失败警告，可能由于系统资源不足，或参数错误。
      * @deprecated since 333.1, use MediaDeviceWarning instead
      */
     kWarningCodePlayoutDeviceStartFailed = -5004,
     /** 
+     * @hidden
      * @brief 无可用音频采集设备，请插入可用的音频采集设备。
      * @deprecated since 333.1, use MediaDeviceWarning instead
      */
     kWarningCodeNoRecordingDevice = -5005,
     /** 
+     * @hidden
      * @brief 无可用音频播放设备，请插入可用的音频播放设备。
      * @deprecated since 333.1, use MediaDeviceWarning instead
      */
     kWarningCodeNoPlayoutDevice = -5006,
     /** 
+     * @hidden
      * @brief 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
      * @deprecated since 333.1, use MediaDeviceWarning instead
      */
     kWarningCodeRecordingSilence = -5007,
     /** 
+     * @hidden
      * @brief 媒体设备误操作警告。  <br>
      *        使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。
      * @deprecated since 333.1, use MediaDeviceWarning instead
@@ -1252,7 +1276,7 @@ enum WarningCode {
     kWarningCodeInvalidCallForExtAudio = -5013,
     /** 
      * @brief 指定的内部渲染画布句柄无效。  <br>
-     *        当你调用 setLocalVideoCanvas{@link #IRtcEngine#setLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
+     *        当你调用 setLocalVideoCanvas{@link #IRTCVideo#setLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
      */
     kWarningCodeInvalidCanvasHandle = -6001,
     /** 
@@ -1578,7 +1602,6 @@ enum RemoteVideoStateChangeReason {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 黑帧视频流状态
  */
@@ -1734,16 +1757,15 @@ struct RtcRoomStats {
  */
 enum VideoCodecType {
     /** 
-     * @hidden
      * @brief 未知类型
      */
     kVideoCodecTypeUnknown = 0,
     /** 
-     * @brief 标准 H264 编码器
+     * @brief 标准 H264 编码格式
      */
     kVideoCodecTypeH264 = 1,
     /** 
-     * @brief 标准 ByteVC1 编码器
+     * @brief ByteVC1 编码格式
      */
     kVideoCodecTypeByteVC1 = 2,
 };
@@ -1882,7 +1904,7 @@ struct RemoteAudioStats {
  */
 struct LocalVideoStats {
     /** 
-     * @brief 发送码率。此次统计周期内实际发送的分辨率最大的视频流的发送码率，单位为 Kbps 
+     * @brief 发送码率。此次统计周期内实际发送的分辨率最大的视频流的发送码率，单位为 Kbps
      */
     int sent_kbitrate;
     /** 
@@ -1946,8 +1968,8 @@ struct LocalVideoStats {
 
 /** 
  * @type keytype
- * @brief 远端音频流统计信息，统计周期为 2s 。  <br>
- *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 `onRemoteStreamStats`
+ * @brief 远端视频流统计信息，统计周期为 2s 。  <br>
+ *        本地用户订阅远端视频流成功后，SDK 会周期性地通过 `onRemoteStreamStats`
  *        通知本地用户订阅的远端视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 struct RemoteVideoStats {
@@ -2005,6 +2027,10 @@ struct RemoteVideoStats {
      */
     int frozen_rate;
     /** 
+     * @brief 视频的编码类型，具体参考 VideoCodecType{@link #VideoCodecType} 。
+     */
+    VideoCodecType codec_type;
+    /** 
      * @brief 对应多种分辨率的流的下标，详见 VideoSolutionDescription{@link #VideoSolutionDescription}
      */
     int video_index;
@@ -2055,7 +2081,7 @@ struct LocalStreamStats {
  */
 struct RemoteStreamStats {
     /** 
-     * @brief 用户 ID 。音频来源的远端用户 ID 。  <br>
+     * @brief 用户 ID 。音/视频来源的远端用户 ID 。  <br>
      */
     const char* uid;
     /** 
@@ -2948,7 +2974,7 @@ enum class EchoTestResult {
     kInternalError
 };
 
-/**  
+/** 
  * @type keytype
  * @brief 音视频回路测试参数
  */
@@ -2960,8 +2986,8 @@ struct EchoTestConfig {
     /** 
      * @brief 是否检测音频。检测设备为系统默认音频设备。  <br>
      *        + true：是  <br>
-     *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioPropertiesReportInterval 值大于 0 时触发 onLocalAudioPropertiesReport{@link #IRtcEngineEventHandler#onLocalAudioPropertiesReport} 回调，你可以根据该回调判断麦克风的工作状态  <br>
-     *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame{@link #IRtcEngine#pushExternalAudioFrame} 将采集到的音频推送给 SDK  <br>
+     *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioPropertiesReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
+     *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame{@link #IRTCVideo#pushExternalAudioFrame} 将采集到的音频推送给 SDK  <br>
      *        + flase：否  <br>
      */
     bool enableAudio;
@@ -2969,7 +2995,7 @@ struct EchoTestConfig {
      * @brief 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
      *        + true：是  <br>
      *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
-     *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame{@link #IRtcEngine#pushExternalVideoFrame} 将采集到的视频推送给 SDK  <br>
+     *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame{@link #IRTCVideo#pushExternalVideoFrame} 将采集到的视频推送给 SDK  <br>
      *        + flase：否  <br>
      * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
      */

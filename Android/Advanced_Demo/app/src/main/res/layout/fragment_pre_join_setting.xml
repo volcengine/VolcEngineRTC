@@ -15,6 +15,10 @@
         layout="@layout/layout_subtitle" />
 
     <include
+        android:id="@+id/video_source"
+        layout="@layout/layout_item_video_source" />
+
+    <include
         android:id="@+id/custom_capture"
         layout="@layout/layout_tip_item_switch" />
 

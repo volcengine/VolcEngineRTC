@@ -18,7 +18,7 @@ namespace bytertc {
  * @brief 自定义用户角色
  * @notes  必须在joinChannel之前调用
  */
-BYTERTC_API void setCustomUserRole(IRtcEngine* engine, const char* role);
+BYTERTC_API void setCustomUserRole(void* engine, const char* role);
 
 /** 
  * @brief 设置 ByteRTC SDK 默认开启使用QUIC获取配置
@@ -49,7 +49,6 @@ struct VideoStreamDescription {
     unsigned int height;
     unsigned int frame_rate;
     unsigned int max_kbps;
-    VideoStreamScaleMode scale_mode;
 };
 
 enum class PixelFormat {
@@ -99,7 +98,7 @@ public:
  * @notes 必须在join channel前调用该函数
  */
 BYTERTC_API void setEngineInternalEventHandler(
-      IRtcEngine *engine,
+      void *engine,
       IEngineInternalEventHandler* handler);
       
 }  // namespace bytertc

@@ -2,8 +2,6 @@
 //  PreJoinSetting.h
 //  Advanced
 //
-//  Created by bytedance on 2021/12/6.
-//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -29,6 +27,9 @@ typedef NS_ENUM(NSUInteger, EffectsMode) {
 @property (nonatomic, assign) RenderMode remoteRenderMode;
 
 @property (nonatomic, assign) EffectsMode effectsMode;
+
+@property (nonatomic, assign) BOOL isScreenShare;
+
 @end
 
 NS_ASSUME_NONNULL_END

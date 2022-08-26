@@ -13,14 +13,22 @@
 #include <stdarg.h>
 #include <memory>
 #include "bytertc_defines.h"
-#include "bytertc_rtcvideo_interface.h"
 #include "bytertc_engine_event_handler.h"
+#include "bytertc_camera_control_interface.h"
 #include "bytertc_video_frame.h"
 #include "bytertc_audio_frame.h"
+#include "bytertc_video_device_manager.h"
+#include "bytertc_video_effect_interface.h"
+#include "bytertc_audio_frame.h"
+#include "byte_rtc_asr_engine_event_handler.h"
+#include "bytertc_audio_mixing_manager.h"
+#include "bytertc_video_processor_interface.h"
+#include "bytertc_transcoder_interface.h"
+#include "bytertc_publicstream_interface.h"
+#include "bytertc_range_audio_interface.h"
+#include "bytertc_spatial_audio_interface.h"
 
 namespace bytertc {
-
-class IRTCRoomEventHandler;
 /** 
  * @type api
  * @brief 引擎API
@@ -88,9 +96,9 @@ public:
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #IRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>  <br>
      * @notes  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onError{@link #IRtcEngineEventHandler#onError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
-     *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged}} 回调通知。  <br>
+     *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身设为可见后加入房间，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged}} 回调通知；如果加入房间的用户可见，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知；如果加入房间的用户可见，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
      */
      virtual int joinRoom(const char* token, const char* room_id, const UserInfo& user_info, const RTCRoomConfig& room_config) = 0;
 
@@ -127,7 +135,7 @@ public:
      * @hidden(Linux)
      * @type api
      * @region 音频管理
-     * @brief 调节本地播放的所有远端用户混音后的音量
+     * @brief 调节本地播放的所有远端用户混音后的音量。播放音频前或播放音频时，你都可以使用此接口设定播放音量。
      * @param [in] volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
      *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
      *       + 0: 静音  <br>
@@ -276,7 +284,7 @@ public:
     /** 
      * @type api
      * @region 音频管理
-     * @brief 设置音质档位。你应根据业务场景需要选择适合的音质档位。  <br>
+     * @brief 设置音质档位。当所选的 RoomProfileType{@link #RoomProfileType} 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。
      * @param [in] audio_profile 音质档位，参看 AudioProfileType{@link #AudioProfileType}
      * @notes  <br>
      *        + 该方法在进房前后均可调用；  <br>
@@ -341,7 +349,6 @@ public:
      * @notes  <br>
      *       + 推送自定义采集的音频数据前，必须先调用 enableExternalAudioDevice{@link #IRtcEngine#enableExternalAudioDevice} 开启自定义采集。<br>
      *       + 你必须每 10 us 推送一次数据
-     *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
      */
      virtual bool pushExternalAudioFrame(int8_t* data, int samples) = 0;
 
@@ -366,64 +373,13 @@ public:
      */
     virtual bool pullExternalAudioFrame(int8_t* data, int samples) = 0;
 
-    /** 
-     * @type api
-     * @region 自定义音频采集渲染
-     * @brief  切换音频采集方式
-     * @param [in] type 音频数据源，详见 AudioSourceType{@link #AudioSourceType}。<br>
-     *             默认使用内部音频采集。音频采集和渲染方式无需对应。
-     * @return  方法调用结果：  <br>
-     *        + >0: 切换成功。<br>
-     *        + -1：切换失败。
-     * @notes  <br>
-     *      + 进房前后调用此方法均有效。<br>
-     *      + 如果你调用此方法由内部采集切换至自定义采集，SDK 会自动关闭内部采集。然后，调用 pushExternalAudioFrame{@link #IRtcEngine#pushExternalAudioFrame} 推送自定义采集的音频数据到 RTC SDK 用于传输。 <br>
-     *      + 如果你调用此方法由自定义采集切换至内部采集，你必须再调用 startAudioCapture{@link #IRtcEngine#startAudioCapture} 手动开启内部采集。 <br>
-     */
+
     virtual int setAudioSourceType (AudioSourceType type) = 0;
 
-    /** 
-     * @type api
-     * @region 自定义音频采集渲染
-     * @brief  切换音频渲染方式
-     * @param [in] type 音频输出类型，详见 AudioRenderType{@link #AudioRenderType} <br>
-     *             默认使用内部音频渲染。音频采集和渲染方式无需对应。
-     * @return  方法调用结果：  <br>
-     *        + >0: 切换成功。<br>
-     *        + -1：切换失败。
-     * @notes  <br>
-     *      + 进房前后调用此方法均有效。<br>
-     *      + 如果你调用此方法切换至自定义渲染，调用 pullExternalAudioFrame{@link #IRtcEngine#pullExternalAudioFrame} 获取音频数据。 <br>
-     */
     virtual int setAudioRenderType (AudioRenderType type) = 0;
 
-    /** 
-     * @type api
-     * @region 自定义音频采集渲染
-     * @brief 推送自定义音频数据。
-     * @param [in] audioFrame 10 ms 对应的音频数据。详见 IAudioFrame{@link #IAudioFrame}。
-     * @return  方法调用结果  <br>
-     *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
-     * @notes  <br>
-     *       + 推送自定义采集的音频数据前，必须先调用 setAudioSourceType{@link #IRtcEngine#setAudioSourceType} 开启自定义采集。<br>
-     *       + 你必须每 10 ms 推送一次数据。<br>
-     *       + 该函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
-     */
     virtual bool pushExternalAudioFrame(IAudioFrame* audioFrame) = 0;
 
-    /** 
-     * @region 自定义音频采集渲染
-     * @brief 拉取远端音频数据。可用于自定义音频渲染。
-     * @param [out] audioFrame 获取的 10 ms 内的音频数据。详见 IAudioFrame{@link #IAudioFrame}。
-     * @return  方法调用结果：  <br>
-     *        + true: 方法调用成功  <br>
-     *        + false：方法调用失败  <br>
-     * @notes  <br>
-     *       + 获取音频数据用于自定义渲染前，必须先调用 setAudioRenderType{@link #IRtcEngine#setAudioRenderType} 开启自定义渲染。<br>
-     *       + 每隔 10 ms 获取一次音频数据。<br>
-     *       + 该函数运行在用户调用线程内，是一个同步函数。  <br>
-     */
     virtual bool pullExternalAudioFrame(IAudioFrame* audioFrame) = 0;
 
     /** 
@@ -954,7 +910,6 @@ public:
      *        + 0: 成功 <br>
      *        + <0: 失败
      * @notes <br>
-     *        + 开启推送多路流前请联系技术支持人员通过配置下发开启该功能。  <br>
      *        + 你应在进房前或进房后但未发布流时，调用此方法。  <br>
      *        + 开启推送多路视频流模式后，你可以调用 [SetVideoEncoderConfig](#IRtcEngineLite-setvideoencoderconfig-1) 为多路视频流分别设置编码参数。  <br>
      *        + 该功能关闭时，或该功能开启但未设置多路流参数时，默认只发一路视频流，该流的编码参数为：分辨率 640px × 360px，帧率 15fps。
@@ -972,25 +927,9 @@ public:
      *        + 0：成功  <br>
      *        + !0：失败  <br>
      * @notes  <br>
-     *        + 若调用该方法设置了期望发布的最大分辨率的流参数之前，已调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启发布多路视频流的模式，SDK 会根据订阅端的设置自动调整发布的流数以及各路流的参数，其中最大分辨率为设置的分辨率，流数最多 4 条，具体参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档；否则仅发布该条最大分辨率的视频流。 <br>
+     *        + 若调用该方法设置了期望发布的最大分辨率的流参数之前，已调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启发布多路视频流的模式，SDK 会根据订阅端的设置自动调整发布的流数以及各路流的参数，其中最大分辨率为设置的分辨率，流数最多 4 条，具体参看[推送多路流](70139)文档；否则仅发布该条最大分辨率的视频流。 <br>
      *        + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  <br>
-     *        + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 setScreenVideoEncoderConfig{@link #IRtcEngine#setScreenVideoEncoderConfig}}。
-     */
-    /**
-     * {en}
-     * @type api
-     * @region Video Management
-     * @brief <span id="IRtcEngineLite-setvideoencoderconfig-1"></span>
-     *        Video publisher call this API to set the parameters of the maximum resolution video stream that is expected to be published, including resolution, frame rate, bitrate, scale mode, and fallback strategy in poor network conditions.
-     *        You can only set configuration for one stream with this API. If you want to set configuration for multiple streams, Call [SetVideoEncoderConfig](#IRtcEngineLite-setvideoencoderconfig-2).
-     * @param [in] max_solution The maximum video encoding parameter. See VideoEncoderConfig{@link #VideoEncoderConfig}.
-     * @return  API call result: <br>
-     *        + 0: Success <br>
-     *        + ! 0: Failure <br>
-     * @notes   <br>
-     *        + If you call this API after enabling the mode of publishing multiple streams with enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode}, SDK will automatically adjust the number of streams published and the parameters of each published stream according to the settings of subscribers. Up to 4 streams will be published, and the resolution you set in this API will be considered as the largest resolution among these 4 streams, see [Publish Multiple Streams](https://www.volcengine.com/docs/6348/70139) for details. Until you enable the mode of publishing multiple streams, SDK will only publish the stream you set.  <br>
-     *        + Without calling this API, SDK will only publish one stream for you with a resolution of 640px × 360px and a frame rate of 15fps.  <br>
-     *        + This API is applicable to the video stream captured by the camera, see setScreenVideoEncoderConfig{@link #IRtcEngine#setScreenVideoEncoderConfig}} for setting parameters for screen sharing video stream.
+     *        + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 setScreenVideoEncoderConfig{@link #IRtcEngine#setScreenVideoEncoderConfig}。
      */
     virtual int setVideoEncoderConfig(const VideoEncoderConfig& max_solution) = 0;
 
@@ -1007,8 +946,8 @@ public:
      * @notes  <br>
      *        + 该方法是否生效取决于是否同时调用了 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 默认发布分辨率最大的一条流，多个分辨率的设置会在开启推送多路流模式之后生效。  <br>
      *        + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  <br>
-     *        + 调用该方法设置分辨率不同的多条流后，SDK 会根据订阅端设置的期望订阅参数自动匹配发送的流，具体规则参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。  <br>
-     *        + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 setScreenVideoEncoderConfig{@link #IRtcEngine#setScreenVideoEncoderConfig}}。
+     *        + 调用该方法设置分辨率不同的多条流后，SDK 会根据订阅端设置的期望订阅参数自动匹配发送的流，具体规则参看[推送多路流](70139)文档。  <br>
+     *        + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 setScreenVideoEncoderConfig{@link #IRtcEngine#setScreenVideoEncoderConfig}。
      */
     virtual int setVideoEncoderConfig(const VideoEncoderConfig* channel_solutions, int solution_num) = 0;
 
@@ -1132,7 +1071,7 @@ public:
      * @param [in] required_format video_sink 适用的视频帧编码格式，参看 PixelFormat{@link #PixelFormat}
      * @notes  <br>
      *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
-     *        + 如果需要解除绑定，必须将 video_sink 设置为 null。进退房操作不会影响绑定状态。
+     *        + 如果需要解除绑定，必须将 video_sink 设置为 null。退房时将清除绑定状态。
      *        + 一般在收到 onFirstLocalVideoFrameCaptured{@link #IRtcEngineEventHandler#onFirstLocalVideoFrameCaptured} 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
      */
     virtual void setLocalVideoSink(
@@ -1149,7 +1088,7 @@ public:
      * @notes  <br>
      *        + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
      *        + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调获取到远端流信息之后，再调用该方法。
-     *        + 如果需要解除绑定，必须将 video_sink 设置为 null。进退房操作不会影响绑定状态。
+     *        + 如果需要解除绑定，必须将 video_sink 设置为 null。退房时将清除绑定状态。
      */
     virtual void setRemoteVideoSink(RemoteStreamKey stream_key, IVideoSink* video_sink,
                                    IVideoSink::PixelFormat required_format) = 0;
@@ -1536,12 +1475,11 @@ public:
 #endif
 
     /** 
-     * @hidden(macOS,Windows)
+     * @hidden(macOS,Windows,Linux)
      * @type api
      * @region 音频设备管理
      * @brief 设置音频播放设备，默认使用扬声器。  <br>
-     *        音频播放设备发生变化时，会收到 onAudioPlaybackDeviceChanged{@link
-     * #IRtcEngineLiteEventHandler#onAudioPlaybackDeviceChanged} 回调。
+     *        音频播放设备发生变化时，会收到 onAudioPlaybackDeviceChanged{@link #IRtcEngineLiteEventHandler#onAudioPlaybackDeviceChanged} 回调。
      * @param [in] device 音频播放设备。参看 AudioPlaybackDevice{@link #AudioPlaybackDevice} <br>
      * @return 方法调用结果  <br>
      *        + 0: 方法调用成功  <br>
@@ -1560,18 +1498,15 @@ public:
     /** 
      * @hidden(macOS,Windows)
      * @type api
-     * @region 音频设备管理
-     * @brief  音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link
-     * #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
-     * @param [in] device 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
-     * @return 方法调用结果  <br>
+     * @region 音频管理
+     * @brief 设置当前音频播放路由。默认使用 setDefaultAudioRoute{@link #IRtcEngine#setDefaultAudioRoute} 中设置的音频路由。  <br>
+     *        音频播放路由发生变化时，会收到 onAudioRouteChanged{@link #IRtcEngineEventHandler#onAudioRouteChanged} 回调。  <br>
+     * @param [in] route 音频播放路由，参见 AudioRoute{@link #AudioRoute}。不支持 `kAudioRouteUnknown`。<br>
+     *        当音量类型为媒体音量时，此参数不可设置为 `kAudioRouteEarpiece`；当音量模式为通话音量时，此参数不可设置为 `kAudioRouteHeadsetBluetooth` 或 `kAudioRouteHeadsetUSB`。
+     * @return  <br>
      *        + 0: 方法调用成功  <br>
-     *        + < 0: 方法调用失败  <br>
-     * @notes  <br>
-     *       + 1. 该接口仅适用于移动设备。  <br>
-     *       + 2. 该方法只可以communication scenario 调用，支持主动切换到任一可用的设备上
-     *       + 3. 仅通话中调用该方法。
-     *       + 4. 设置kAudioRouteUnknown时将会失败。 <br>
+     *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
+     * @notes 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 AudioScenarioType{@link #AudioScenarioType}。
      */
     virtual int setAudioRoute(AudioRoute route) = 0;
 
@@ -1579,22 +1514,14 @@ public:
      * @hidden(macOS,Windows)
      * @type api
      * @region 音频设备管理
-     * @brief 设置音频播放设备，默认使用扬声器。  <br>
-     *        音频播放设备发生变化时，会收到 OnAudioRouteChanged{@link
-     * #IRtcEngineLiteEventHandler#OnAudioRouteChanged} 回调。
-     * @param [in] device 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
+     * @brief 将默认的音频播放设备设置为听筒或扬声器。  <br>
+     * @param [in] route 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
      * @return 方法调用结果  <br>
-     *        + 0: 方法调用成功  <br>
-     *        + < 0: 方法调用失败  <br>
-     * @notes  <br>
-     *       + 1. 该接口仅适用于移动设备。  <br>
-     *       + 2. 该方法只支持将音视频播放设备设置为听筒或者扬声器。当 App 连接有线或蓝牙音频播放设备时，SDK
-     * 会自动切换到有线或蓝牙音频播放设备。主动设置为有线或蓝牙音频播放设备，会返回调用失败。  <br>
-     *       + 3.
-     * 若连接有线或者蓝牙音频播放设备时，将音频播放设备设置为扬声器或听筒将调用成功，但不会立马切换到扬声器或听筒，会在有线或者蓝牙音频播放设备移除后，根据设置自动切换到听筒或者扬声器。
-     * <br>
-     *       + 4. 通话前和通话中都可以调用该方法。
-     *       + 5. 设置kAudioRouteDeviceUnknown时将会失败。 <br>
+     *        + 0: 方法调用成功。立即生效。当所有音频外设移除后，音频路由将被切换到默认设备。<br>
+     *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
+     * @notes    <br>
+     *        + 进房前后都可以调用。 <br>
+     *        + 更多注意事项参见[音频路由](https://www.volcengine.com/docs/6348/117386)。
      */
     virtual int setDefaultAudioRoute(AudioRoute route) = 0;
 
@@ -1624,7 +1551,7 @@ public:
      * @notes  <br>
      *        + 该方法仅在调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启了发送多路视频流的情况下生效。  <br>
      *        + 该方法必须在进房前设置，进房后设置或更改设置无效。  <br>
-     *        + 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 onSimulcastSubscribeFallback{@link #IRtcEngineEventHandler#onSimulcastSubscribeFallback}} 回调通知。  <br>
+     *        + 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 onSimulcastSubscribeFallback{@link #IRtcEngineEventHandler#onSimulcastSubscribeFallback} 回调通知。  <br>
      *        + 你可以调用客户端 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
      */
     virtual int setPublishFallbackOption(PublishFallbackOption option) = 0;
@@ -1640,7 +1567,7 @@ public:
      *        + < 0：失败
      *  @notes  <br>
      *        + 你必须在进房前设置，进房后设置或更改设置无效。  <br>
-     *        + 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 onSimulcastSubscribeFallback{@link #IRtcEngineEventHandler#onSimulcastSubscribeFallback}} 和 onRemoteVideoSizeChanged{@link #IRtcEngineEventHandler#onRemoteVideoSizeChanged} 回调通知。  <br>
+     *        + 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 onSimulcastSubscribeFallback{@link #IRtcEngineEventHandler#onSimulcastSubscribeFallback} 和 onRemoteVideoSizeChanged{@link #IRtcEngineEventHandler#onRemoteVideoSizeChanged} 回调通知。  <br>
      *        + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
      */
     virtual int setSubscribeFallbackOption(SubscribeFallbackOption option) = 0;
@@ -1830,6 +1757,8 @@ public:
      */
     virtual void setCustomizeEncryptHandler(IEncryptHandler* handler) = 0;
 
+    virtual void setVideoOrientation(VideoOrientation orientation) = 0;
+
     /** 
     * @type api
     * @region 音频数据回调
@@ -1968,7 +1897,6 @@ public:
      *        + 你可以通过此接口对 RTC SDK 内部采集的视频帧添加 SEI。对于采用自定义采集获得的视频帧：如果原视频帧中没有添加 SEI 数据，那么你可以调用此接口为其中添加 SEI 信息后，进行编码传输；如果原视频帧中已添加了 SEI 数据，那么，调用此接口不生效。<br>
      *        + 如果调用此接口之后的 2s 内，没有可带 SEI 的视频帧（比如没有开启视频采集和传输），那么，SEI 数据不会被加进视频帧中。
      *        + 消息发送成功后，远端会收到 onSEIMessageReceived{@link #IRtcEngineEventHandler#onSEIMessageReceived} 回调。
-     *        + 用视频黑帧发送 SEI 信息时 请以 15/repeatCount FPS 频率调用本函数
      */
     virtual int sendSEIMessage(StreamIndex stream_index, const uint8_t* message, int length, int repeat_count) = 0;
 
@@ -2151,7 +2079,9 @@ public:
      *        + `0`：成功<br>
      *        + `-1`：失败。无效参数<br>
      *        + `-2`：无效调用。用户已经登录。成功登录后再次调用本接口将收到此返回值 <br>
-     * @notes 本地用户调用此方法登录后，会收到 onLoginResult{@link #IRtcEngineEventHandler#onLoginResult}} 回调通知登录结果，远端用户不会收到通知。
+     * @notes  <br>
+     *       + 在调用本接口登录后，如果想要登出，需要调用 logout{@link #IRtcEngine#logout}。  <br>
+     *       + 本地用户调用此方法登录后，会收到 onLoginResult{@link #IRtcEngineEventHandler#onLoginResult} 回调通知登录结果，远端用户不会收到通知。
      */
     virtual int64_t login(const char* token, const char* uid) = 0;
     /** 
@@ -2179,8 +2109,8 @@ public:
     /** 
      * @type api
      * @region 实时消息通信
-     *        客户端调用 sendServerMessage{@link #IRtcEngine#sendServerMessage} 或 sendServerBinaryMessage{@link #IRtcEngine#sendServerBinaryMessage} 发送消息给业务服务器之前，必须设置有效签名和业务服务器地址。
      * @brief 设置应用服务器参数  <br>
+     *        客户端调用 sendServerMessage{@link #IRtcEngine#sendServerMessage} 或 sendServerBinaryMessage{@link #IRtcEngine#sendServerBinaryMessage} 发送消息给业务服务器之前，必须设置有效签名和业务服务器地址。
      * @param [in] signature  <br>
      *        动态签名  <br>
      *        应用服务器会使用该签名对请求进行鉴权验证。
@@ -2211,7 +2141,7 @@ public:
      *        消息接收用户的 ID
      * @param [in] message  <br>
      *        发送的文本消息内容  <br>
-     *        消息不超过 62KB。
+     *        消息不超过 64 KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
@@ -2251,7 +2181,7 @@ public:
      * @brief 客户端给应用服务器发送文本消息（P2Server）
      * @param [in] message  <br>
      *        发送的文本消息内容  <br>
-     *        消息不超过 62KB。
+     *        消息不超过 64 KB。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
      *        + -1：发送失败，RtcEngine 实例未创建
@@ -2290,7 +2220,7 @@ public:
      * @param [in] expected_downlink_biterate  期望下行带宽，单位：kbps<br>范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。
      * @return 开启通话前网络探测结果，详见 NetworkDetectionStartReturn{@link #NetworkDetectionStartReturn}
      * @notes  <br>
-     *       + 成功调用本接口后，每 2s 会收到一次 onNetworkDetectionResult{@link #IRtcEngineEventHandler#onNetworkDetectionResult} 回调，通知探测结果；  <br>
+     *       + 成功调用本接口后，会在 3s 内收到一次 onNetworkDetectionResult{@link #IRtcEngineEventHandler#onNetworkDetectionResult} 回调，此后每 2s 会收到一次该回调，通知探测结果；  <br>
      *       + 若探测停止，则会收到一次 onNetworkDetectionStopped{@link #IRtcEngineEventHandler#onNetworkDetectionStopped} 通知探测停止。
      */
     virtual NetworkDetectionStartReturn startNetworkDetection(bool is_test_uplink, int expected_uplink_bitrate,
@@ -2326,13 +2256,13 @@ public:
      * @brief 在屏幕共享时，设置屏幕音频流和麦克风采集到的音频流的混流方式
      * @param [in] index 混流方式，参看 StreamIndex{@link #StreamIndex} <br>
      *        + `kStreamIndexMain`: 将屏幕音频流和麦克风采集到的音频流混流 <br>
-     *        + `kStreamIndexScreen`: 将屏幕音频流和麦克风采集到的音频流分为两路音频流
+     *        + `kStreamIndexScreen`: 默认值，将屏幕音频流和麦克风采集到的音频流分为两路音频流
      * @notes 你应该在 publishScreen{@link #IRTCRoom#publishScreen} 之前，调用此方法。否则，你将收到 onWarning{@link #IRtcEngineEventHandler#onWarning} `的报错：kWarningCodeSetScreenAudioStreamIndexFailed`
      */
     virtual void setScreenAudioStreamIndex(StreamIndex index) = 0;
 
     /** 
-     * @hidden(Android,iOS,Linux)
+     * @hidden(Android, iOS, Linux, macOs)
      * @type api
      * @region 屏幕共享
      * @brief 在屏幕共享时，开始使用 RTC SDK 内部采集方式，采集屏幕音频
@@ -2342,14 +2272,26 @@ public:
      */
     virtual void startScreenAudioCapture() = 0;
 
-   /** 
-    * @hidden(Android,iOS,Linux)
-    * @type api
-    * @region 屏幕共享
-    * @brief 在屏幕共享时，停止使用 RTC SDK 内部采集方式，采集屏幕音频。
-    * @notes 要开始屏幕音频内部采集，调用 startScreenAudioCapture{@link #IRtcEngine#startScreenAudioCapture}。
-    */
-   virtual void stopScreenAudioCapture() = 0;
+    /** 
+     * @hidden(Android,iOS,Linux,Windows)
+     * @type api
+     * @region 屏幕共享
+     * @brief 在屏幕共享时，开始使用 RTC SDK 内部采集方式，采集屏幕音频
+     * @param  [in] device_id 虚拟设备 ID
+     * @notes <br>
+     *        + 采集后，你还需要调用 publishScreen{@link #IRtcRoom#publishScreen} 将采集到的屏幕音频推送到远端。<br>
+     *        + 要关闭屏幕音频内部采集，调用 stopScreenAudioCapture{@link #IRtcEngine#stopScreenAudioCapture}。
+     */
+    virtual void startScreenAudioCapture(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
+
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 在屏幕共享时，停止使用 RTC SDK 内部采集方式，采集屏幕音频。
+     * @notes 要开始屏幕音频内部采集，调用 startScreenAudioCapture{@link #IRtcEngine#startScreenAudioCapture}。
+     */
+    virtual void stopScreenAudioCapture() = 0;
 
     /** 
      * @type api
@@ -2363,7 +2305,6 @@ public:
      *        + 调用此接口推送屏幕共享时的自定义采集的音频数据前，必须调用 setScreenAudioSourceType{@link #IRtcEngine#setScreenAudioSourceType} 开启屏幕音频自定义采集。  <br>
      *        + 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。  <br>
      *        + 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 samples × frame.channel × 2。  <br>
-     *        + 此函数运行在用户级线程内。若同时运行其他进程，将导致本进程中断。  <br>
      *        + 调用此接口将自定义采集的音频帧推送到 RTC SDK 后，你必须调用 publishScreen{@link #IRTCRoom#publishScreen} 将采集到的屏幕音频推送到远端。在调用 publishScreen{@link #IRTCRoom#publishScreen} 前，推送到 RTC SDK 的音频帧信息会丢失。
      */
     virtual int pushScreenAudioFrame(IAudioFrame* frame) = 0;
@@ -2632,31 +2573,8 @@ public:
     virtual void setPublicStreamVideoSink(const char* public_streamid, IVideoSink* video_sink,
                                           IVideoSink::PixelFormat format) = 0;
 
-    /** 
-     * @hidden(Linux)
-     * @type api
-     * @region 音视频处理
-     * @brief 在指定视频流上添加水印。
-     * @param [in] index 需要添加水印的视频流属性，参看 StreamIndex{@link #StreamIndex}。
-     * @param [in] image_path 水印图片路径，支持本地文件绝对路径和Asset 资源路径（/assets/xx.png），长度限制为 512 字节。  <br>
-     *          水印图片为 PNG 或 JPG 格式。
-     * @param [in] config 水印参数，参看 RTCWatermarkConfig{@link #RTCWatermarkConfig}。
-     * @notes  <br>
-     *        + 调用 clearVideoWatermark{@link #IRtcEngine#clearVideoWatermark} 移除指定视频流的水印。  <br>
-     *        + 同一路流只能设置一个水印，新设置的水印会代替上一次的设置。你可以多次调用本方法来设置不同流的水印。  <br>
-     *        + 进入房间前后均可调用此方法。  <br>
-     *        + 若开启本地预览镜像，或开启本地预览和编码传输镜像，则远端水印均不镜像；在开启本地预览水印时，本端水印会镜像。  <br>
-     *        + 开启大小流后，水印对大小流均生效，且针对小流进行等比例缩小。
-     */
     virtual void setVideoWatermark(StreamIndex index, const char * image_path, RTCWatermarkConfig config) = 0;
 
-    /** 
-     * @hidden(Linux)
-     * @type api
-     * @region 音视频处理
-     * @brief 移除指定视频流的水印。
-     * @param [in] index 需要移除水印的视频流属性，参看 StreamIndex{@link #StreamIndex}。
-     */
     virtual void clearVideoWatermark(StreamIndex index) = 0;
 
   /** 
@@ -2718,13 +2636,10 @@ public:
      * @type api
      * @brief 更新 Token。  <br>
      *        用于加入房间的 Token 有一定的有效期。在 Token 过期前 30 秒，会收到 onTokenWillExpire{@link #IRTCRoomEventHandler#onTokenWillExpire} 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 <br>
-     *        调用 joinRoom{@link #IRTCRoom#joinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged}} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
-     * @param token 有效的 Token。  <br>
+     *        调用 joinRoom{@link #IRTCRoom#joinRoom} 方法加入房间或断网重连进入房间时，如果 Token 过期或无效，将导致加入房间失败，并会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 更新 Token 后，SDK 会自动加入房间。 <br>
+     * @param [in] token 有效的 Token。  <br>
      *        如果传入的 Token 无效，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN`。
-     * @return 方法调用结果。  <br>
-     *         +  0: 方法调用成功  <br>
-     *         + < 0: 方法调用失败  <br>
-     * @notes 当 Token 过期时，用户将被移出房间并将收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged}} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 joinRoom{@link #IRTCRoom#joinRoom} 重新加入房间。
+     * @notes 当 Token 过期时，用户将被移出房间并将收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调， `ERROR_CODE_EXPIRED_TOKEN`，此时需要重新获取 Token，并调用 joinRoom{@link #IRTCRoom#joinRoom} 重新加入房间。
      */
     virtual void updateToken(const char* token) = 0;
     /** 
@@ -2733,8 +2648,8 @@ public:
      * @brief 给房间内的所有其他用户发送广播消息。
      * @param [in] uid 消息接收用户的 ID
      * @param [in] message  <br>
-     *        用户发送的广播消息  <br>
-     *        消息不超过 62KB。
+     *        发送的文本消息内容。  <br>
+     *        消息不超过 64 KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 joinRoom{@link #IRTCRoom#joinRoom} 加入房间。  <br>
@@ -2767,7 +2682,7 @@ public:
      * @brief 给房间内的所有其他用户发送广播消息。
      * @param [in] message  <br>
      *        用户发送的广播消息  <br>
-     *        消息不超过 62KB。
+     *        消息不超过 64 KB。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 joinRoom{@link #IRTCRoom#joinRoom} 加入房间。  <br>
      *       + 调用该函数后，会收到一次 onRoomMessageSendResult{@link #IRTCRoomEventHandler#onRoomMessageSendResult} 回调。  <br>
@@ -2809,7 +2724,7 @@ public:
      * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
      * @param [in] type 媒体流类型，用于指定发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
      * @notes <br>
-     *        + 多房间模式下默认不自动发布流，你需调用该方法手动发布流。  <br>
+     *        + 如果你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，则无需再调用本接口。<br>
      *        + 调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
      *        + 如果你需要发布屏幕共享流，调用 publishScreen{@link #IRTCRoom#publishScreen}。<br>
      *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms}。  <br>
@@ -2887,6 +2802,7 @@ public:
      * @brief 在当前所在房间内发布本地屏幕共享音视频流
      * @param [in] type 媒体流类型，用于指定发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}。
      * @notes <br>
+     *        + 如果你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，则无需再调用本接口。<br>
      *        + 调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
      *        + 调用该方法后，房间中的所有远端用户会收到 onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen} 回调，其中成功收到音频流的远端用户会收到 onFirstRemoteAudioFrame{@link #IRtcEngineEventHandler#onFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 onFirstRemoteVideoFrameDecoded{@link #IRtcEngineEventHandler#onFirstRemoteVideoFrameDecoded} 回调。<br>
      *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms}。  <br>
@@ -2966,18 +2882,17 @@ public:
      *        + 该方法仅在发布端调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启了发送多路视频流的情况下生效，此时订阅端将收到来自发布端与期望设置的参数最相近的一路流；否则订阅端只会收到一路参数为分辨率 640px × 360px、帧率 15fps 的视频流。  <br>
      *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
      *        + 该方法需在进房后调用，若想进房前设置，你需调用 joinRoom{@link #IRTCRoom#joinRoom}，并对 `room_config` 中的 `remote_video_config` 进行设置。  <br>
-     *        + 该方法在订阅前后都可调用，订阅后的设置会在重新订阅该流时生效。 <br>
      *        + SDK 会根据发布端和所有订阅端的设置灵活调整视频流的参数，具体调整策略详见[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。
      */
     virtual void setRemoteVideoConfig(const char *user_id,const RemoteVideoConfig &remote_video_config) = 0;
     /** 
      * @type api
      * @region 房间管理
-     * @brief 订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br>
-     *        该方法对自动订阅和手动订阅模式均适用。
+     * @brief 订阅房间内指定的通过摄像头/麦克风采集的媒体流，或更新对指定远端用户的订阅选项
      * @param [in] user_id 指定订阅的远端发布音视频流的用户 ID。
      * @param [in] type 媒体流类型，用于指定订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
      * @notes  <br>
+     *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
@@ -2998,11 +2913,11 @@ public:
     /** 
      * @type api
      * @region 房间管理
-     * @brief 订阅房间内指定的远端屏幕共享音视频流。  <br>
-     *        该方法对自动订阅和手动订阅模式均适用。
+     * @brief 订阅房间内指定的远端屏幕共享音视频流，或更新对指定远端用户的订阅选项
      * @param [in] user_id 指定订阅的远端发布屏幕流的用户 ID。
      * @param [in] type 媒体流类型，用于指定订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
      * @notes  <br>
+     *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知流的订阅结果。  <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
@@ -3038,7 +2953,7 @@ public:
     virtual void enableSubscribeLocalStream(bool enable) = 0;
     /** 
      * @hidden
-     * @deprecated since 323.1, use onUserStartAudioCapture instead
+     * @deprecated since 323.1, use enableAudioPropertiesReport instead
      * @type api
      * @region 多房间
      * @brief 开启/关闭音量提示。默认关闭。<br>
@@ -3054,10 +2969,10 @@ public:
      * @type api
      * @region 多房间
      * @brief 调节来自远端用户的音频播放音量
-     * @param user_id 音频来源的远端用户 ID
-     * @param volume  播放音量，取值范围： [0,400]  <br>
+     * @param [in] user_id 音频来源的远端用户 ID
+     * @param [in] volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。为保证更好的通话质量，建议将 volume 值设为 [0,100]。 <br>
      *              + 0: 静音  <br>
-     *              + 100: 原始音量  <br>
+     *              + 100: 原始音量，默认值  <br>
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
      */
     virtual void setRemoteAudioPlaybackVolume(const char* user_id, int volume) = 0;
@@ -3119,7 +3034,7 @@ public:
      * @notes <br>
      *        + 该方法在进房前后均可调用。  <br>
      *        + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  <br>
-     *        + 调用该接口后音画同步状态发生改变时，你会收到 onAVSyncStateChange{@link #IRTCRoomEventHandler#onAVSyncStateChange}} 回调。  <br>
+     *        + 调用该接口后音画同步状态发生改变时，你会收到 onAVSyncStateChange{@link #IRTCRoomEventHandler#onAVSyncStateChange} 回调。  <br>
      *        + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  <br>
      *        + 如需更换同步音频源，再次调用该接口传入新的 `audio_user_id` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
      */
@@ -3129,7 +3044,7 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 新增转推直播任务，并设置合流的视频视图布局和音频属性。  <br>
+     * @brief 新增转推直播任务，并设置合流的图片、视频视图布局和音频属性。  <br>
      *        同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。
      * @param [in] task_id 转推直播任务 ID。<br>
      *               你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。
@@ -3137,14 +3052,14 @@ public:
      * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。  <br>
      *        通过注册 observer 接收转推直播相关的回调。
      * @notes  <br>
-     *       + 调用该方法后，关于启动结果和推流过程中的错误，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent}} 回调。
-     *       + 调用 stopLiveTranscoding{@link #IRtcEngine#stopLiveTranscoding}} 停止转推直播。
+     *       + 调用该方法后，关于启动结果和推流过程中的错误，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent} 回调。
+     *       + 调用 stopLiveTranscoding{@link #IRtcEngine#stopLiveTranscoding} 停止转推直播。
      */
     virtual void startLiveTranscoding(const char* task_id, ITranscoderParam* param, ITranscoderObserver* observer) = 0;
     /** 
      * @type api
      * @region 多房间
-     * @brief 停止转推直播。<br>
+     * @brief 停止转推直播。，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent} 回调。  <br>
      *        关于启动转推直播，参看 startLiveTranscoding{@link #IRtcEngine#startLiveTranscoding}}。
      * @param [in] task_id 转推直播任务 ID。可以指定想要停止的转推直播任务。
      */
@@ -3152,7 +3067,7 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 更新转推直播参数。  <br>
+     * @brief 更新转推直播参数，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent} 回调。  <br>
      *        使用 startLiveTranscoding{@link #IRtcEngine#startLiveTranscoding}} 启用转推直播功能后，使用此方法更新功能配置参数。
      * @param [in] task_id 转推直播任务 ID。指定想要更新参数设置的转推直播任务。
      * @param [in] param 配置参数，参看 ITranscoderParam{@link #ITranscoderParam}。
@@ -3391,7 +3306,7 @@ public:
      * @type api
      * @region 云代理
      * @brief 关闭云代理
-     * @notes 要开启云代理，调用 startCloudProxy{@link #IRtcEngine#startCloudProxy}}。
+     * @notes 要开启云代理，调用 startCloudProxy{@link #IRtcEngine#startCloudProxy}。
      */
     virtual void stopCloudProxy() = 0;
 

@@ -8,6 +8,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class VideoConfigEntity {
 
+    public static final int VIDEO_SOURCE_TYPE_CAMERA = 1;
+    public static final int VIDEO_SOURCE_TYPE_SCREEN = 2;
+
+    @SerializedName("mVideoSource")
+    public int mVideoSource = VIDEO_SOURCE_TYPE_CAMERA;
+
     @SerializedName("index")
     public int index = 0;
 
@@ -37,7 +43,6 @@ public class VideoConfigEntity {
 
     @SerializedName("localVideoMirrorType")
     public int mLocalVideoMirrorType = 1;
-
 
     public static String[] getResolutions() {
         String[] resolutions = Utilities.getApplicationContext()
@@ -103,22 +108,22 @@ public class VideoConfigEntity {
     }
 
     public String[] getLocalVideoMirrorTypes() {
-        String[] frameRates = Utilities.getApplicationContext()
+        String[] mirrorType = Utilities.getApplicationContext()
                 .getResources().getStringArray(R.array.local_video_mirror_types);
-        for (int i = 0; i < frameRates.length; i++) {
-            frameRates[i] = frameRates[i].trim();
+        for (int i = 0; i < mirrorType.length; i++) {
+            mirrorType[i] = mirrorType[i].trim();
         }
-        return frameRates;
+        return mirrorType;
     }
 
     public String getLocalVideoMirrorType() {
-        String[] frameRates = Utilities.getApplicationContext()
+        String[] mirrorType = Utilities.getApplicationContext()
                 .getResources().getStringArray(R.array.local_video_mirror_types);
-        return frameRates[mLocalVideoMirrorType];
+        return mirrorType[mLocalVideoMirrorType];
     }
 
-    public void setLocalVideoMirrorType(int frameRate) {
-        mLocalVideoMirrorType = frameRate;
+    public void setLocalVideoMirrorType(int mirrorType) {
+        mLocalVideoMirrorType = mirrorType;
     }
 
 }

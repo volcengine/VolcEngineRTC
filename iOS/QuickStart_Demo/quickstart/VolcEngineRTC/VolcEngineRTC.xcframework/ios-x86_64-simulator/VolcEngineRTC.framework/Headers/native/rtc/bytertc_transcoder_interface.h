@@ -71,7 +71,28 @@ public:
      */
     virtual ~ITranscoderObserver() = default;
 };
-
+/** 
+ * @hidden not available in 343
+ * @type callback
+ * @region 转推直播
+ * @brief 单流转推直播观察者。  <br>
+ */
+class IPushSingleStreamToCDNObserver {
+ public:
+     /** 
+     * @type callback
+     * @region 转推直播
+     * @brief 单流转推直播状态回调
+     * @param event 任务状态, 参看 SingleStreamPushEvent{@link #SingleStreamPushEvent}
+     * @param task_id 任务 ID
+     * @param error 错误码，参看 TransCodingError{@link #TransCodingError}
+     */
+    virtual void onStreamPushEvent(SingleStreamPushEvent event, const char *task_id, int error) = 0;
+    /**
+     * @hidden
+     */
+    virtual ~IPushSingleStreamToCDNObserver() = default;
+};
 /**  
  * @hidden
  * @type api

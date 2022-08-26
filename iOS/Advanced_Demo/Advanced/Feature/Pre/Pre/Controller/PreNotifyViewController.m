@@ -2,7 +2,6 @@
 //  PreNotifyViewController.m
 //  Advanced
 //
-//  Created by bytedance on 2022/3/18.
 //
 
 #import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>

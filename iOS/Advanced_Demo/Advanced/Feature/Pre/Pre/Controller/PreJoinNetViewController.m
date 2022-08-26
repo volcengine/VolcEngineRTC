@@ -2,7 +2,6 @@
 //  PreJoinNetViewController.m
 //  Advanced
 //
-//  Created by bytedance on 2022/3/15.
 //
 
 #import "PreJoinNetViewController.h"

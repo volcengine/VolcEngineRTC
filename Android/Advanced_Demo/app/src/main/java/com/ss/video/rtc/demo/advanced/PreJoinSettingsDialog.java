@@ -2,6 +2,7 @@ package com.ss.video.rtc.demo.advanced;
 
 import static com.ss.bytertc.engine.type.MessageConfig.MessageConfigReliableOrdered;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,6 +17,8 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +33,10 @@ import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.ss.bytertc.engine.RTCEngine;
+import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
+import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
 import com.ss.bytertc.engine.type.NetworkDetectionLinkType;
 import com.ss.bytertc.engine.type.NetworkDetectionStartReturn;
 import com.ss.rtc.demo.advanced.R;
@@ -80,18 +85,42 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_pre_join_setting, container, false);
+        //titlebar
         ImageView backArrow = rootView.findViewById(R.id.title_bar_left_iv);
         backArrow.setImageResource(R.mipmap.back_arrow);
         backArrow.setOnClickListener(v -> dismiss());
         TextView title = rootView.findViewById(R.id.title_bar_title_tv);
         title.setText(R.string.setting);
-        View captureView = rootView.findViewById(R.id.custom_capture);
-        TextView externalVideoTv = captureView.findViewById(R.id.left_tv);
-        externalVideoTv.setText(R.string.pre_join_setting_external_video_source);
 
+        //采集渲染设定
         View capLayout = rootView.findViewById(R.id.sub_title_cap_layout);
         TextView capTitle = capLayout.findViewById(R.id.title);
         capTitle.setText(R.string.sub_title_cap);
+        //视频源
+        View videoSource = rootView.findViewById(R.id.video_source);
+        TextView videoSourceTv = videoSource.findViewById(R.id.left_tv);
+        videoSourceTv.setText(R.string.video_source);
+        RadioGroup videoSourceRG = videoSource.findViewById(R.id.video_source_rg);
+        RadioButton cameraSource = videoSource.findViewById(R.id.video_source_camera_rb);
+        cameraSource.setText(R.string.video_source_camera);
+        cameraSource.setChecked(mVideoConfig.mVideoSource == VideoConfigEntity.VIDEO_SOURCE_TYPE_CAMERA);
+        RadioButton screenSource = videoSource.findViewById(R.id.video_source_screen_rb);
+        screenSource.setText(R.string.video_source_screen);
+        screenSource.setChecked(mVideoConfig.mVideoSource == VideoConfigEntity.VIDEO_SOURCE_TYPE_SCREEN);
+        videoSourceRG.setOnCheckedChangeListener((group, checkedId) -> {
+            int targetSource = checkedId == R.id.video_source_camera_rb
+                    ? VideoConfigEntity.VIDEO_SOURCE_TYPE_CAMERA
+                    : VideoConfigEntity.VIDEO_SOURCE_TYPE_SCREEN;
+            if (mVideoConfig.mVideoSource != targetSource) {
+                mHasChanged = true;
+                mVideoConfig.mVideoSource = targetSource;
+            }
+        });
+        //外部源采集
+        View captureView = rootView.findViewById(R.id.custom_capture);
+        TextView externalVideoTv = captureView.findViewById(R.id.left_tv);
+        externalVideoTv.setText(R.string.pre_join_setting_external_video_source);
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch externalVideoSwitch = captureView.findViewById(R.id.switch_lg);
         externalVideoSwitch.setChecked(mVideoConfig.mCustomCapture);
         externalVideoSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
@@ -99,9 +128,11 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             mHasChanged = true;
             mVideoConfig.mCustomCapture = customCaptureEnable;
         });
+        //外部源渲染
         View renderView = rootView.findViewById(R.id.custom_render);
         TextView externalRenderTv = renderView.findViewById(R.id.left_tv);
         externalRenderTv.setText(R.string.pre_join_setting_external_render);
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch externalRenderSwitch = renderView.findViewById(R.id.switch_lg);
         externalRenderSwitch.setChecked(mVideoConfig.mCustomRender);
         externalRenderSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
@@ -109,7 +140,12 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             mHasChanged = true;
             mVideoConfig.mCustomRender = customRenderEnable;
         });
+        //本地视图填充模式
+        handleLocalVideoFillMode();
+        //远端视图填充模式
+        handleRemoteVideoFillMode();
 
+        //进房前检测
         View networkQualityLayout = rootView.findViewById(R.id.sub_title_network_quality_layout);
         TextView networkQualityTitle = networkQualityLayout.findViewById(R.id.title);
         networkQualityTitle.setText(R.string.sub_title_network_quality);
@@ -121,6 +157,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             dialog.show();
         });
 
+        //消息
         SubTitleLayout rtmLayout = rootView.findViewById(R.id.subtitle_rtm_message);
         rtmLayout.setTitle("消息");
         ValueLayout rtmMessage = rootView.findViewById(R.id.rtm_message);
@@ -129,9 +166,6 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             RTMDialog dialog = new RTMDialog(getContext());
             dialog.show();
         });
-
-        handleLocalVideoFillMode();
-        handleRemoteVideoFillMode();
         return rootView;
     }
 
@@ -220,7 +254,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
     public static class NetworkQualityDialog extends AppCompatDialog {
 
-        private RTCEngine mRTCEngine;
+        private RTCVideo mRTCVideo;
         private boolean mEnableUplinkDetection = true;
         private int mUplinkDetectionTarget = 10000;
         private boolean mEnableDownlinkDetection = true;
@@ -245,7 +279,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
         private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
-        private final IRTCEngineEventHandler mIRTCEngineEventHandler = new IRTCEngineEventHandler() {
+        private final IRTCVideoEventHandler mIRTCEngineEventHandler = new IRTCVideoEventHandler() {
             @Override
             public void onNetworkDetectionResult(NetworkDetectionLinkType type, int quality, int rtt, double lostRate, int bitrate, int jitter) {
                 super.onNetworkDetectionResult(type, quality, rtt, lostRate, bitrate, jitter);
@@ -387,7 +421,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
                 switchStatus(true);
                 showOrHideStats();
                 NetworkDetectionStartReturn startReturn
-                        = mRTCEngine.startNetworkDetection(mEnableUplinkDetection, mUplinkDetectionTarget,
+                        = mRTCVideo.startNetworkDetection(mEnableUplinkDetection, mUplinkDetectionTarget,
                         mEnableDownlinkDetection, mDownlinkDetectionTarget);
                 SafeToast.show(getContext(), "网络监测开启结果: " + startReturn.toString(), Toast.LENGTH_SHORT);
             });
@@ -444,7 +478,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             TextView stopDetectionBtn = mStopLayout.findViewById(R.id.stop_detection_btn);
             stopDetectionBtn.setOnClickListener(v -> {
                 switchStatus(false);
-                mRTCEngine.stopNetworkDetection();
+                mRTCVideo.stopNetworkDetection();
             });
 
             switchStatus(false);
@@ -453,14 +487,15 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
         @Override
         public void show() {
             super.show();
-            mRTCEngine = RTCEngine.createEngine(Utilities.getApplicationContext(),
+            mRTCVideo = RTCVideo.createRTCVideo(Utilities.getApplicationContext(),
                     Constants.APPID, mIRTCEngineEventHandler, null, null);
         }
 
         @Override
         public void dismiss() {
             super.dismiss();
-            RTCEngine.destroyEngine(mRTCEngine);
+            RTCVideo.destroyRTCVideo();
+            mRTCVideo = null;
         }
 
         private void switchStatus(boolean isNetworkDetection) {

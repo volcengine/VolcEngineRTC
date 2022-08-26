@@ -2,8 +2,6 @@
 //  SettingBaseModel.h
 //  Advanced
 //
-//  Created by bytedance on 2021/12/7.
-//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,6 +13,7 @@ typedef NS_ENUM(NSUInteger, SettingTableViewCellType) {
     SettingTableViewCellType_Button,
     SettingTableViewCellType_Label,
     SettingTableViewCellType_TextField,
+    SettingTableViewCellType_Segment,
 };
 
 NS_ASSUME_NONNULL_BEGIN

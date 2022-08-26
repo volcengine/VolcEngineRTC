@@ -2,8 +2,6 @@
 //  ToastComponents.m
 //  quickstart
 //
-//  Created by bytedance on 2021/4/1.
-//  Copyright © 2021 . All rights reserved.
 //
 
 #import "ToastComponents.h"

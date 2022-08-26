@@ -172,7 +172,7 @@ public:
      * 获取。
      * @return   <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      * @notes 当你调用 followSystemPlaybackDevice{@link #IAudioDeviceManager#followSystemPlaybackDevice} 设置音频播放设备跟随系统后，将无法调用此接口设置音频播放设备。
      */
     virtual int setAudioPlaybackDevice(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
@@ -183,7 +183,7 @@ public:
      * @param [in] device_id 音频采集设备 ID，可通过 enumerateAudioCaptureDevices{@link #enumerateAudioCaptureDevices} 获取。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      * @notes 当你调用 followSystemCaptureDevice{@link #IAudioDeviceManager#followSystemCaptureDevice} 设置音频采集设备跟随系统后，将无法调用此接口设置音频采集设备。
      */
     virtual int setAudioCaptureDevice(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
@@ -198,7 +198,7 @@ public:
      *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int setAudioPlaybackDeviceVolume(unsigned int volume) = 0;
     /** 
@@ -212,7 +212,7 @@ public:
      *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int getAudioPlaybackDeviceVolume(unsigned int* volume) = 0;
     /** 
@@ -226,7 +226,7 @@ public:
      *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int setAudioCaptureDeviceVolume(unsigned int volume) = 0;
     /** 
@@ -240,7 +240,7 @@ public:
      *       + [205,255] 为高音量。  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int getAudioCaptureDeviceVolume(unsigned int* volume) = 0;
     /** 
@@ -252,7 +252,7 @@ public:
      *       + false：非静音  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int setAudioPlaybackDeviceMute(bool mute) = 0;
     /** 
@@ -264,7 +264,7 @@ public:
      *       + false：非静音  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int getAudioPlaybackDeviceMute(bool* mute) = 0;
     /** 
@@ -276,7 +276,7 @@ public:
      *       + false：非静音  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int setAudioCaptureDeviceMute(bool mute) = 0;
     /** 
@@ -288,7 +288,7 @@ public:
      *       + false：非静音  <br>
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int getAudioCaptureDeviceMute(bool* mute) = 0;
     /** 
@@ -298,7 +298,7 @@ public:
      * @param [out] device_id 音频播放设备 ID
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int getAudioPlaybackDevice(char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 
@@ -308,7 +308,7 @@ public:
      * @param [out] device_id 音频采集设备 ID，使用方负责按 MAX_DEVICE_ID_LENGTH 大小，分配与释放内存
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      */
     virtual int getAudioCaptureDevice(char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 
@@ -347,15 +347,15 @@ public:
     /** 
      * @type api
      * @region 音频设备管理
-     * @brief 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 onAudioPlaybackDeviceTestVolume{@link #IRtcEngineEventHandler#onAudioPlaybackDeviceTestVolume} 回调播放时的音量信息。
+     * @brief 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 `onAudioPlaybackDeviceTestVolume` 回调播放时的音量信息。
      * @param [in] test_audio_file_path 指定播放设备检测的音频文件网络地址。支持的格式包括 mp3，aac，m4a，3gp 和 wav。
-     * @param [in] indication_interval 设置 onAudioPlaybackDeviceTestVolume{@link #IRtcEngineEventHandler#onAudioPlaybackDeviceTestVolume} 音量回调的时间间隔，推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 10 毫秒。 
+     * @param [in] indication_interval 设置 `onAudioPlaybackDeviceTestVolume` 音量回调的时间间隔，推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 10 毫秒。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      * @notes  <br>
      *       + 该方法可在进房前和进房后调用，不可与其它音频设备测试功能同时应用。  <br>
-     *       + 调用 stopAudioPlaybackDeviceTest{@link #IAudioDeviceManager#stopAudioPlaybackDeviceTest} 可以停止测试。  
+     *       + 调用 stopAudioPlaybackDeviceTest{@link #IAudioDeviceManager#stopAudioPlaybackDeviceTest} 可以停止测试。
      */
     virtual int startAudioPlaybackDeviceTest(const char* test_audio_file_path, int indication_interval) = 0;
 
@@ -365,7 +365,7 @@ public:
     * @brief 停止音频播放测试。  <br>
     * @return  方法调用结果  <br>
     *        + 0：方法调用成功  <br>
-    *        + < 0：方法调用失败  <br>
+    *        + < 0：方法调用失败
     * @notes 调用 startAudioPlaybackDeviceTest{@link #IAudioDeviceManager#startAudioPlaybackDeviceTest} 后，调用本方法停止测试。
     */
     virtual int stopAudioPlaybackDeviceTest() = 0;
@@ -374,11 +374,11 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 开始音频采集设备和音频播放设备测试。<br>
-     *        建议提前调用 enableAudioPropertiesReport{@link #IRtcEngine#enableAudioPropertiesReport} 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 `onLocalAudioPropertiesReport` 获取采集音量。<br>
+     *        建议提前调用 `enableAudioPropertiesReport` 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 `onLocalAudioPropertiesReport` 获取采集音量。<br>
      * @param [in] indication_interval 测试录音播放时触发 `onLocalAudioPropertiesReport` 播放音量回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
      * @return  方法调用结果  <br>
      *       + 0：方法调用成功  <br>
-     *       + < 0：方法调用失败  <br>
+     *       + < 0：方法调用失败
      * @notes  <br>
      *       + 该方法在进房前后均可调用。且不可与其它音频设备测试功能同时应用。  <br>
      *       + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 stopAudioDeviceRecordAndPlayTest{@link #IAudioDeviceManager#stopAudioDeviceRecordAndPlayTest}  来停止采集并开始播放此前采集到的声音。<br>
@@ -394,7 +394,7 @@ public:
      * 调用 startAudioDeviceRecordTest{@link #IAudioDeviceManager#startAudioDeviceRecordTest} 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  <br>
+     *        + < 0：方法调用失败
      * @notes 调用本接口开始播放录音后，可以在播放过程中调用 stopAudioDevicePlayTest{@link #IAudioDeviceManager#stopAudioDevicePlayTest} 停止播放。
      */
     virtual int stopAudioDeviceRecordAndPlayTest() = 0;
@@ -406,7 +406,7 @@ public:
      *        在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
-     *        + < 0：方法调用失败  
+     *        + < 0：方法调用失败
      */
     virtual int stopAudioDevicePlayTest() = 0;
 

@@ -37,8 +37,9 @@
     </string-array>
 
     <string-array name="video_fill_mode">
-        <item>视窗填满优先-1</item>
-        <item>视频帧内容全部显示优先-2</item>
+        <item>填充(Hidden)-1</item>
+        <item>适应(Fit)-2</item>
+        <item>拉伸(Fill)-3</item>
     </string-array>
 
     <string-array name="local_video_mirror_types">

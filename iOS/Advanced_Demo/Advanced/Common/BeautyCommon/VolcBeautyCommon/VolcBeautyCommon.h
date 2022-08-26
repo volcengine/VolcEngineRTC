@@ -2,20 +2,19 @@
 //  VolcBeautyCommon.h
 //  Advanced
 //
-//  Created by bytedance on 2022/2/11.
 //
 
 #import <Foundation/Foundation.h>
 #import "EffectResource.h"
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface VolcBeautyCommon : NSObject
 
 /// 初始化
-/// @param rtcKit RTC 引擎
-- (instancetype)initWithRtcKit:(ByteRTCEngineKit *)rtcKit;
+/// @param rtcVideo RTC 引擎
+- (instancetype)initWithRtcKit:(ByteRTCVideo *)rtcVideo;
 
 /// 选择贴纸
 /// @param path 贴纸路径

@@ -22,12 +22,12 @@ enum VirtualBackgroundSourceType {
      */
     kVirtualBackgroundSourceColor = 0,
     /** 
-     * @brief 使用自定义图片背景替换视频原有背景。
+     * @brief 使用自定义图片替换视频原有背景。
      */
     kVirtualBackgroundSourceImage = 1,
 };
 
-/**  
+/** 
  * @hidden
  * @type keytype
  * @brief 人像属性检测参数
@@ -70,10 +70,12 @@ struct VirtualBackgroundSource{
      */
     uint32_t source_color = 0xFFFFFFFF;
     /** 
-     * @brief 自定义图片背景使用的图片的绝对路径。
-     * @notes  <br>
-     *       + 支持的格式为 jpg、jpeg、和 png。<br>
-     *       + 分辨率超过 1080P 时，图片会被等比缩放。背景图片和视频分辨率不一致时，图片会被裁剪缩放。<br>
+     * @brief 自定义背景图片的绝对路径。
+     *       + 支持的格式为 jpg、jpeg、png。  <br>
+     *       + 图片分辨率超过 1080P 时，图片会被等比缩放至和视频一致。  <br>
+     *       + 图片和视频宽高比一致时，图片会被直接缩放至和视频一致。  <br>
+     *       + 图片和视频长宽比不一致时，为保证图片内容不变形，图片按短边缩放至与视频帧一致，使图片填满视频帧，对多出的高或宽进行剪裁。  <br>
+     *       + 自定义图片带有局部透明效果时，透明部分由纯白色代替。
      */
     const char* source_path = nullptr;
 };
@@ -110,7 +112,7 @@ struct FaceDetectResult {
     int image_height = 0;
 };
 
-/**  
+/** 
  * @hidden
  * @type keytype
  * @brief 人像属性检测信息
@@ -160,7 +162,7 @@ struct ExpressionDetectInfo {
  * @brief 人像属性检测结果
  */
 struct ExpressionDetectResult {
-    /** 
+    /**
      * @hidden
      */
     static const int max_face_num = 10;
@@ -204,7 +206,7 @@ public:
      * @param [in] result 人像属性检测结果, 参看 ExpressionDetectResult{@link #ExpressionDetectResult}。
      */
     virtual void onExpressionDetectResult(const ExpressionDetectResult& result) = 0;
-    
+
 };
 
 /** 
@@ -249,7 +251,7 @@ public:
     /** 
      * @type api
      * @region 视频特效
-     * @hidden (iOS, Android)
+     * @hidden(iOS, Android)
      * @brief 从特效 SDK 获取授权消息，用于获取在线许可证。
      * @param [in] ppmsg 授权消息字符串地址
      * @param [in] len 授权消息字符串的长度
@@ -260,8 +262,7 @@ public:
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      * @notes <br>
      *        + 使用视频特效的功能前，你必须获取特效 SDK 的在线许可证。  <br>
-     *          通过此接口获取授权消息后，你必须参考 [在线授权说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99798/)。 <br>
-     *          自行实现获取在线许可证的业务逻辑。获取许可证后，你必须调用 checkLicense{@link #checkLicense} 确认许可证有效。然后，你才可以使用 CV 功能。  <br>
+     *        + 通过此接口获取授权消息后，你必须参考 [在线授权说明](https://www.volcengine.com/docs/6705/102012) 自行实现获取在线许可证的业务逻辑。获取许可证后，你必须调用 checkLicense{@link #checkLicense} 确认许可证有效。然后，你才可以使用 CV 功能。  <br>
      *        + 获取授权消息后，调用 freeAuthMessage{@link #freeAuthMessage} 释放内存。
      */
     virtual int getAuthMessage(char ** ppmsg, int * len) = 0;
@@ -300,7 +301,7 @@ public:
      * @param [in] modelPath 模型路径
      */
     virtual void setAlgoModelPath(const char* modelPath) = 0;
-    
+
     /** 
      * @hidden
      * @type api
@@ -314,7 +315,7 @@ public:
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
     virtual int setVideoEffectExpressionDetect(const VideoEffectExpressionDetectConfig& expressionDetectConfig) = 0;
-    
+
     /** 
      * @type api
      * @region 视频特效
@@ -330,13 +331,13 @@ public:
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      */
     virtual int setEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
-    
+
     /** 
      * @hidden
      * @type api
      * @region 视频特效
      * @brief  叠加视频特效素材包。
-     * @param [in] effectNodePaths 特效素材包路径数组。 
+     * @param [in] effectNodePaths 特效素材包路径数组。
      * @param [in] nodeNum   特效素材包个数。
      * @return  <br>
      *      + 0: 调用成功。  <br>
@@ -346,13 +347,13 @@ public:
      * @notes  该接口会在 setEffectNodes{@link #IVideoEffect#setEffectNodes} 设置的特效基础上叠加特效。
      */
     virtual int appendEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
-    
+
     /** 
      * @hidden
      * @type api
      * @region 视频特效
      * @brief  移除指定的视频特效资源。
-     * @param [in] effectNodePaths 特效素材包路径数组。 
+     * @param [in] effectNodePaths 特效素材包路径数组。
      * @param [in] nodeNum   特效素材包个数。
      * @return  <br>
      *      + 0: 调用成功。  <br>
@@ -410,6 +411,8 @@ public:
     virtual int setColorFilterIntensity(float intensity) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 3.44, use setBackgroundSticker instead.
      * @type api
      * @region 视频特效
      * @brief 虚拟背景功能初始化。
@@ -427,6 +430,8 @@ public:
     virtual int initVirtualBackground(void* androidContext, void* jnienv, const char* licensePath,const char* modelPath) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 3.44, use setBackgroundSticker instead.
      * @type api
      * @region 视频特效
      * @brief 开启虚拟背景。
@@ -445,6 +450,8 @@ public:
     virtual int enableVirtualBackground(const VirtualBackgroundSource& source) = 0;
 
     /** 
+     * @hidden
+     * @deprecated since 3.44, use setBackgroundSticker instead.
      * @type api
      * @region 视频特效
      * @brief 关闭虚拟背景。
@@ -459,14 +466,32 @@ public:
      * @type api
      * @region 视频特效
      * @brief 注册人脸检测结果回调观察者 <br>
-     *        注册此观察者后，你会周期性收到 onFaceDetectResult{@link #IFaceDetectionObserver#onFaceDetectResult}} 回调。
+     *        注册此观察者后，你会周期性收到 onFaceDetectResult{@link #IFaceDetectionObserver#onFaceDetectResult} 回调。
      * @param [in] observer 人脸检测结果回调观察者，参看 IFaceDetectionObserver{@link #IFaceDetectionObserver}。
-     * @param [in] interval_ms 时间间隔。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval + 视频采集帧间隔`。
+     * @param [in] interval_ms 时间间隔，必须大于 0。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval + 视频采集帧间隔`。
      * @return <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败  <br>
      */
     virtual int registerFaceDetectionObserver(IFaceDetectionObserver * observer, int interval_ms) = 0;
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 视频特效
+     * @brief 将摄像头采集画面中的人像背景替换为指定图片或纯色背景。
+     *        若要取消背景特效，将背景贴纸特效素材路径设置为null。
+     * @param [in] modelPath 传入背景贴纸特效素材路径。  <br>
+     * @param [in] source 设置背景特效图片的本地路径。参看 VirtualBackgroundSource{@link #VirtualBackgroundSource}。  <br>
+     * @return  <br>
+     *        + 0：调用成功。  <br>
+     *        + 1000：未集成特效 SDK。  <br>
+     *        + 1001：特效 SDK 不支持该功能。  <br>
+     *        + < 0：调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。
+     * @notes  <br>
+     *        调用此接口前需依次调用以下接口：1、检查视频特效许可证 checkLicense{@link #IVideoEffect#checkLicense}；2、设置视频特效算法模型路径 setAlgoModelPath{@link #IVideoEffect#setAlgoModelPath}；3、开启视频特效 enableEffect {@link #IVideoEffect#enableEffect}。
+     */
+    virtual int setBackgroundSticker(const char* modelPath, const VirtualBackgroundSource& source) = 0;
+
 };
 
 }  // namespace bytertc

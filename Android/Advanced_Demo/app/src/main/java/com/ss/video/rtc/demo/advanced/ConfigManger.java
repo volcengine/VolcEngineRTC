@@ -10,7 +10,7 @@ import java.util.List;
 public class ConfigManger {
     public static final String SP_KEY_VIDEO_CONFIG = "video_config";
     private VideoConfigEntity videoConfig;
-    private List<ConfigObserver> observers = new ArrayList<>(1);
+    private final List<ConfigObserver> observers = new ArrayList<>(1);
 
     private static class Inner {
         private static final ConfigManger sInstance = new ConfigManger();

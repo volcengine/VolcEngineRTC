@@ -14,7 +14,7 @@
 #import "RoomViewController.h"
 #import "Masonry.h"
 #import "Constants.h"
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
 #import <AVFoundation/AVCaptureDevice.h>
 
 
@@ -191,7 +191,7 @@
         _versionLabel = [[UILabel alloc] init];
         _versionLabel.textAlignment = NSTextAlignmentCenter;
         /// 获取当前SDK的版本号
-        NSString *SDKVersion = [ByteRTCEngineKit getSdkVersion];
+        NSString *SDKVersion = [ByteRTCVideo getSdkVersion];
         _versionLabel.text = [NSString stringWithFormat:@"VolcEngineRTC v %@",SDKVersion];
     }
     return _versionLabel;

@@ -22,7 +22,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.ss.bytertc.engine.RTCEngine;
+import com.ss.bytertc.engine.RTCRoom;
+import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
@@ -42,11 +43,13 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
     private boolean mHasConfigChanged;
     private CommonListDialog mLocalVideoMirrorSelectDialog;
 
-    private RTCEngine mRTCEngine;
+    private RTCVideo mRTCVideo;
+    private RTCRoom mRTCRoom;
     private String mSEIMessage;
 
-    public void setConfig(RTCEngine rtcEngine) {
-        this.mRTCEngine = rtcEngine;
+    public void setConfig(RTCVideo rtcVideo, RTCRoom rtcRoom) {
+        this.mRTCVideo = rtcVideo;
+        this.mRTCRoom = rtcRoom;
     }
 
     @Override
@@ -217,7 +220,7 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
         roomTv.setText(R.string.message_room);
         roomMessage.setOnClickListener((v) -> {
             BottomDialog bottomDialog = new BottomDialog(getActivity());
-            bottomDialog.setConfig(mRTCEngine);
+            bottomDialog.setConfig(mRTCVideo, mRTCRoom);
             bottomDialog.show();
         });
     }
@@ -261,7 +264,7 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
                     count = 0;
                 }
                 byte[] message = TextUtils.isEmpty(mSEIMessage) ? new byte[0] : mSEIMessage.getBytes();
-                mRTCEngine.sendSEIMessage(StreamIndex.STREAM_INDEX_MAIN, message, count);
+                mRTCVideo.sendSEIMessage(StreamIndex.STREAM_INDEX_MAIN, message, count);
             }
         };
         LinkedList<PreJoinSettingsDialog.CommonInputDialog.IInputCallback> callbacks = new LinkedList<>();
@@ -302,7 +305,8 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
 
     static class BottomDialog extends AppCompatDialog {
 
-        private RTCEngine mRTCEngine;
+        private RTCVideo mRTCVideo;
+        private RTCRoom mRTCRoom;
 
         public BottomDialog(Context context) {
             super(context);
@@ -325,7 +329,7 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             if (binaryMessage != null) {
                 binaryMessage.setOnClickListener((v) -> {
                     RoomMessageDialog dialog = new RoomMessageDialog(getContext());
-                    dialog.setConfig(true, mRTCEngine);
+                    dialog.setConfig(true, mRTCVideo, mRTCRoom);
                     dialog.show();
                     dismiss();
                 });
@@ -334,21 +338,23 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             if (textMessage != null) {
                 textMessage.setOnClickListener((v) -> {
                     RoomMessageDialog dialog = new RoomMessageDialog(getContext());
-                    dialog.setConfig(false, mRTCEngine);
+                    dialog.setConfig(false, mRTCVideo, mRTCRoom);
                     dialog.show();
                     dismiss();
                 });
             }
         }
 
-        public void setConfig(RTCEngine rtcEngine) {
-            this.mRTCEngine = rtcEngine;
+        public void setConfig(RTCVideo rtcVideo, RTCRoom rtcRoom) {
+            this.mRTCVideo = rtcVideo;
+            this.mRTCRoom = rtcRoom;
         }
     }
 
     static class RoomMessageDialog extends AppCompatDialog {
 
-        private RTCEngine mRTCEngine;
+        private RTCVideo mRTCVideo;
+        private RTCRoom mRTCRoom;
         private boolean mIsBinary = false;
 
         public RoomMessageDialog(Context context) {
@@ -387,7 +393,7 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             roomTv.setText(R.string.message_setting_p2p);
             roomMessage.setOnClickListener((v) -> {
                 SendP2pMessageDialog sendP2pMessageDialog = new SendP2pMessageDialog(getContext());
-                sendP2pMessageDialog.setConfig(mIsBinary, mRTCEngine);
+                sendP2pMessageDialog.setConfig(mIsBinary, mRTCVideo, mRTCRoom);
                 sendP2pMessageDialog.show();
                 dismiss();
             });
@@ -402,21 +408,23 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             roomTv.setText(R.string.message_setting_room);
             roomMessage.setOnClickListener((v) -> {
                 SendRoomMessageDialog sendRoomMessageDialog = new SendRoomMessageDialog(getContext());
-                sendRoomMessageDialog.setConfig(mIsBinary, mRTCEngine);
+                sendRoomMessageDialog.setConfig(mIsBinary, mRTCVideo, mRTCRoom);
                 sendRoomMessageDialog.show();
                 dismiss();
             });
         }
 
-        public void setConfig(boolean isBinary, RTCEngine rtcEngine) {
+        public void setConfig(boolean isBinary, RTCVideo rtcVideo, RTCRoom rtcRoom) {
             this.mIsBinary = isBinary;
-            this.mRTCEngine = rtcEngine;
+            this.mRTCVideo = rtcVideo;
+            this.mRTCRoom = rtcRoom;
         }
     }
 
     static class SendP2pMessageDialog extends AppCompatDialog {
 
-        private RTCEngine mRTCEngine;
+        private RTCVideo mRTCVideo;
+        private RTCRoom mRTCRoom;
         private boolean mIsBinary = false;
 
         public SendP2pMessageDialog(Context context) {
@@ -451,11 +459,11 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
                     if (contentEt != null) {
                         content = contentEt.getText().toString().trim();
                     }
-                    if (mRTCEngine != null) {
+                    if (mRTCVideo != null) {
                         if (mIsBinary) {
-                            mRTCEngine.sendUserBinaryMessage(userId, content.getBytes(), MessageConfigReliableOrdered);
+                            mRTCRoom.sendUserBinaryMessage(userId, content.getBytes(), MessageConfigReliableOrdered);
                         } else {
-                            mRTCEngine.sendUserMessage(userId, content, MessageConfigReliableOrdered);
+                            mRTCRoom.sendUserMessage(userId, content, MessageConfigReliableOrdered);
                         }
                     }
                     dismiss();
@@ -467,15 +475,17 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             }
         }
 
-        public void setConfig(boolean isBinary, RTCEngine rtcEngine) {
+        public void setConfig(boolean isBinary, RTCVideo rtcEngine, RTCRoom rtcRoom) {
             this.mIsBinary = isBinary;
-            this.mRTCEngine = rtcEngine;
+            this.mRTCVideo = rtcEngine;
+            this.mRTCRoom = rtcRoom;
         }
     }
 
     static class SendRoomMessageDialog extends AppCompatDialog {
 
-        private RTCEngine mRTCEngine;
+        private RTCVideo mRTCVideo;
+        private RTCRoom mRTCRoom;
         private boolean mIsBinary = false;
 
         public SendRoomMessageDialog(Context context) {
@@ -505,11 +515,11 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
                     if (contentEt != null) {
                         content = contentEt.getText().toString().trim();
                     }
-                    if (mRTCEngine != null) {
+                    if (mRTCVideo != null) {
                         if (mIsBinary) {
-                            mRTCEngine.sendRoomBinaryMessage(content.getBytes());
+                            mRTCRoom.sendRoomBinaryMessage(content.getBytes());
                         } else {
-                            mRTCEngine.sendRoomMessage(content);
+                            mRTCRoom.sendRoomMessage(content);
                         }
                     }
                     dismiss();
@@ -521,9 +531,10 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             }
         }
 
-        public void setConfig(boolean isBinary, RTCEngine rtcEngine) {
+        public void setConfig(boolean isBinary, RTCVideo rtcVideo, RTCRoom rtcRoom) {
             this.mIsBinary = isBinary;
-            this.mRTCEngine = rtcEngine;
+            this.mRTCVideo = rtcVideo;
+            this.mRTCRoom = rtcRoom;
         }
     }
 }

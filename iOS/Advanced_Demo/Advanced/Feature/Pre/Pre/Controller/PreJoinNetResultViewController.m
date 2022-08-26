@@ -2,7 +2,6 @@
 //  PreJoinNetResultViewController.m
 //  Advanced
 //
-//  Created by bytedance on 2022/3/16.
 //
 
 #import "PreJoinNetResultViewController.h"

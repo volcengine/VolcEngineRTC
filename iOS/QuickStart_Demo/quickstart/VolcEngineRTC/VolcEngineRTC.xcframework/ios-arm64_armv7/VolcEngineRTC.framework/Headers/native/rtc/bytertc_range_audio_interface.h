@@ -43,6 +43,26 @@ struct RangeAudioInfo {
 };
 
 /** 
+ * @type keytype
+ * @brief 空间音频音量随距离衰减模式
+ */
+ enum AttenuationType {
+    /** 
+     * @brief 不随距离衰减
+     */
+    kAttenuationTypeNone = 0,
+    /** 
+     * @brief 线性衰减，音量随距离增大而线性减小
+     */
+    kAttenuationTypeLinear = 1,
+    /** 
+     * @brief 指数型衰减，音量随距离增大进行指数衰减
+     */
+    kAttenuationTypeExponential = 2,
+};
+
+/** 
+ * @hidden(Linux)
  * @type callback
  * @brief 范围语音衰减系数监测器
  */
@@ -66,6 +86,7 @@ public:
 };
 
 /** 
+ * @hidden(Linux)
  * @type api
  * @brief 范围语音接口实例
  */
@@ -115,6 +136,19 @@ public:
      * @notes 该方法仅适用于手动订阅模式，自动订阅无需设置。
      */
     virtual void registerRangeAudioObserver(IRangeAudioObserver* observer) = 0;
+    /** 
+     * @type api
+     * @region 范围语音
+     * @brief 设置范围语音的音量衰减模式。<br>
+     *        衰减模式更改后，onRangeAudioInfo{@link #IRangeAudioObserver#onRangeAudioInfo} 回调将根据最后设置的衰减模式进行计算并返回音量衰减数值
+     * @param type 音量衰减模式。默认为线性衰减。详见 AttenuationType{@link #AttenuationType}。
+     * @param coefficient 指数衰减模式下的音量衰减系数，默认值为 1。范围 [0.1,100]，推荐设置为 `50`。数值越大，音量的衰减速度越快。
+     * @return 调用是否成功<br>
+     *         + `0`:调用成功<br>
+     *         + `-1`:调用失败。失败原因为，在调用 enableRangeAudio{@link #IRangeAudio#enableRangeAudio} 开启范围语音前或进房前调用本接口
+     * @notes 音量衰减范围通过 updateReceiveRange{@link #IRangeAudio#updateReceiveRange} 进行设置。
+     */
+    virtual int setAttenuationModel(AttenuationType type, float coefficient) = 0;
     /**
      * @hidden
      */

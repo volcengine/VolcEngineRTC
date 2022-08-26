@@ -11,6 +11,25 @@
 
 /** 
  * @type keytype
+ * @brief 空间音频音量随距离衰减模式
+ */
+ typedef NS_ENUM(NSInteger, AttenuationType) {
+    /** 
+     * @brief 不随距离衰减
+     */
+    AttenuationTypeNone = 0,
+    /** 
+     * @brief 线性衰减，音量随距离增大而线性减小
+     */
+    AttenuationTypeLinear = 1,
+    /** 
+     * @brief 指数型衰减，音量随距离增大进行指数衰减
+     */
+    AttenuationTypeExponential = 2
+};
+
+/** 
+ * @type keytype
  * @brief 本地用户能收听到、且具有衰减效果的音频接收范围
  */
 BYTERTC_APPLE_EXPORT @interface ReceiveRange : NSObject
@@ -54,6 +73,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCRangeAudioObserver <NSObject>
  * @author chuzhongtao
  * @brief 关于当前范围语音衰减系数的回调。  <br>
  *        手动订阅的场景下，房间内任一用户调用 updatePosition:{@link #ByteRTCRangeAudio#updatePosition:} 更新自身位置或调用 updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} 更新语音接收范围时，该用户与房间内其他用户的相对距离都会发生改变，据此计算的衰减系数也会发生改变，并通过该回调通知用户。 <br>
+ *        调用 setAttenuationModel:coefficient:{@link #ByteRTCRangeAudio#setAttenuationModel:coefficient:} 更新音量衰减模式时，衰减系数将发生变化，通过该回调通知用户。<br>
  *        你可以通过关注该回调中包含的远端用户的衰减系数决定是否订阅该远端用户的流。
  * @param rangeAudioInfo 包含范围语音流信息的数组，参看 ByteRTCRangeAudioInfo{@link #ByteRTCRangeAudioInfo}
  * @notes 更新自身位置或语音接收范围后，并不会马上触发该回调。SDK 会每 500 ms 计算一次衰减系数，并且只在计算结果与上次不同，或结果相同但是距离上次计算已超过 3 秒的时候推送回调。
@@ -116,5 +136,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @notes 该方法仅适用于手动订阅模式，自动订阅无需设置。
  */
 - (void)registerRangeAudioObserver:(_Nullable id<ByteRTCRangeAudioObserver>) observer;
+/** 
+ * @type api
+ * @region 范围语音
+ * @author huangshouqin
+ * @brief 设置范围语音的音量衰减模式。<br>
+ *        衰减模式更改后，onRangeAudioInfo:{@link #ByteRTCRangeAudioObserver#onRangeAudioInfo:} 回调将根据最后设置的衰减模式进行计算并返回音量衰减数值
+ * @param type 音量衰减模式。默认为线性衰减。详见 AttenuationType{@link #AttenuationType}。
+ * @param coefficient 指数衰减模式下的音量衰减系数，默认值为 1。范围 [0.1,100]，推荐设置为 `50`。数值越大，音量的衰减速度越快。
+ * @return 调用是否成功<br>
+ *         + `0`:调用成功<br>
+ *         + `-1`:调用失败。失败原因为，在调用 enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} 开启范围语音前或进房前调用本接口
+ * @notes 音量衰减范围通过 updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} 进行设置。
+ */
+- (int)setAttenuationModel:(AttenuationType) type coefficient:(float)coefficient;
 
 @end

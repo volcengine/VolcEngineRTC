@@ -40,9 +40,10 @@
 #import "Masonry.h"
 #import "UserLiveView.h"
 #import "Constants.h"
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
+#import <VolcEngineRTC/objc/ByteRTCRoom.h>
 
-@interface RoomViewController ()<ByteRTCEngineDelegate>
+@interface RoomViewController ()<ByteRTCRoomDelegate, ByteRTCVideoDelegate>
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong) UIButton *switchCameraBtn;
 @property (nonatomic, strong) UILabel *roomIdLabel;
@@ -59,16 +60,18 @@
 @property (nonatomic, strong) UserLiveView *secondRemoteView;
 @property (nonatomic, strong) UserLiveView *thirdRemoteView;
 
-@property (nonatomic, strong) ByteRTCEngineKit *rtcKit;
+// RTC SDK 引擎
+@property (nonatomic, strong) ByteRTCVideo *rtcVideo;
+@property (nonatomic, strong) ByteRTCRoom *rtcRoom;
 @end
 
 @implementation RoomViewController
 
 - (void)dealloc{
     /// 销毁引擎
-    [self.rtcKit destroyEngine];
-    
-    self.rtcKit = nil;
+    [ByteRTCVideo destroyRTCVideo];
+    self.rtcVideo = nil;
+    self.rtcRoom = nil;
 }
 
 - (void)viewDidLoad {
@@ -175,20 +178,23 @@
 
 - (void)initEngineAndJoinRoom{
     /// 创建引擎
-    self.rtcKit = [[ByteRTCEngineKit alloc] initWithAppId:APPID delegate:self parameters:nil];
+    self.rtcVideo = [ByteRTCVideo createRTCVideo:APPID delegate:self parameters:@{}];
     /// 设置视频发布参数
-    ByteRTCVideoSolution *solution = [[ByteRTCVideoSolution alloc] init];
-    solution.videoSize = CGSizeMake(360, 640);
+    ByteRTCVideoEncoderConfig *solution = [[ByteRTCVideoEncoderConfig alloc] init];
+    solution.width = 360;
+    solution.height = 640;
     solution.frameRate = 15;
-    solution.maxKbps = 800;
-    [self.rtcKit setVideoEncoderConfig:@[solution]];
+    solution.maxBitrate = 800;
+    [self.rtcVideo SetMaxVideoEncoderConfig:solution];
     [self setLocalRenderView];
     /// 开启本地视频采集
-    [self.rtcKit startVideoCapture];
+    [self.rtcVideo startVideoCapture];
 
     /// 开启本地音频采集
-    [self.rtcKit startAudioCapture];
+    [self.rtcVideo startAudioCapture];
     
+    self.rtcRoom =[self.rtcVideo createRTCRoom:self.roomID];
+    [self.rtcRoom setDelegate:self];
     ByteRTCUserInfo *userInfo = [[ByteRTCUserInfo alloc] init];
     userInfo.userId = self.userID;
     /// 加入房间
@@ -196,7 +202,7 @@
     roomConfig.isAutoPublish = true;
     roomConfig.isAutoSubscribeAudio = true;
     roomConfig.isAutoSubscribeVideo = true;
-    [self.rtcKit joinRoomByKey:TOKEN roomId:self.roomID userInfo:userInfo rtcRoomConfig:roomConfig];
+    [self.rtcRoom joinRoomByToken:TOKEN userInfo:userInfo roomConfig:roomConfig];
 }
 
 - (void)setLocalRenderView{
@@ -205,62 +211,56 @@
     canvas.renderMode = ByteRTCRenderModeHidden;
     self.localView.uid = self.userID;
     /// 设置本地视频渲染视图
-    [self.rtcKit setLocalVideoCanvas:ByteRTCStreamIndexMain withCanvas:canvas];
+    [self.rtcVideo setLocalVideoCanvas:ByteRTCStreamIndexMain withCanvas:canvas];
 }
 
-- (void)setupRemoteView:(UserLiveView *)userLiveView uid:(NSString *)uid{
+- (void)setupRemoteView:(UserLiveView *)userLiveView roomId:(NSString*)roomId uid:(NSString *)uid{
     ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
     canvas.view = userLiveView.liveView;
     canvas.renderMode = ByteRTCRenderModeHidden;
+    canvas.uid = uid;
+    canvas.roomId = roomId;
     userLiveView.uid = uid;
     /// 设置远端用户视频渲染视图
-    [self.rtcKit setRemoteVideoCanvas:uid withIndex:ByteRTCStreamIndexMain withCanvas:canvas];
+    [self.rtcVideo setRemoteVideoCanvas:uid withIndex:ByteRTCStreamIndexMain withCanvas:canvas];
 }
 
 #pragma mark - RTC delegate
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onJoinRoomResult:(NSString *)roomId withUid:(NSString *)uid errorCode:(NSInteger)errorCode joinType:(NSInteger)joinType elapsed:(NSInteger)elapsed{
-    if (errorCode == 0) {
-        NSLog(@"self join room %@ success",roomId);
-    } else {
-        [self showAlert:[NSString stringWithFormat:@"error:%ld", (long)errorCode]];
-    }
-}
-
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onFirstRemoteVideoFrameDecoded:(ByteRTCRemoteStreamKey *)streamKey withFrameInfo:(ByteRTCVideoFrameInfo *)frameInfo{
+- (void)rtcEngine:(ByteRTCVideo *)engine onFirstRemoteVideoFrameDecoded:(ByteRTCRemoteStreamKey *)streamKey withFrameInfo:(ByteRTCVideoFrameInfo *)frameInfo{
     NSLog(@"%@,%s",[NSThread currentThread],__func__);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if ([self.firstRemoteView.uid isEqualToString:streamKey.userId]) {
-            [self setupRemoteView:self.firstRemoteView uid:streamKey.userId];
+            [self setupRemoteView:self.firstRemoteView roomId:streamKey.roomId uid:streamKey.userId];
             return;
         }else if ([self.secondRemoteView.uid isEqualToString:streamKey.userId]) {
-            [self setupRemoteView:self.secondRemoteView uid:streamKey.userId];
+            [self setupRemoteView:self.secondRemoteView roomId:streamKey.roomId uid:streamKey.userId];
             return;
         }else if ([self.thirdRemoteView.uid isEqualToString: streamKey.userId]) {
-            [self setupRemoteView:self.thirdRemoteView uid:streamKey.userId];
+            [self setupRemoteView:self.thirdRemoteView roomId:streamKey.roomId uid:streamKey.userId];
             return;
         }else{
             
         }
         
         if (self.firstRemoteView.uid.length == 0) {
-            [self setupRemoteView:self.firstRemoteView uid:streamKey.userId];
+            [self setupRemoteView:self.firstRemoteView roomId:streamKey.roomId uid:streamKey.userId];
         }else if (self.secondRemoteView.uid.length == 0) {
-            [self setupRemoteView:self.secondRemoteView uid:streamKey.userId];
+            [self setupRemoteView:self.secondRemoteView roomId:streamKey.roomId uid:streamKey.userId];
         }else if (self.thirdRemoteView.uid.length == 0) {
-            [self setupRemoteView:self.thirdRemoteView uid:streamKey.userId];
+            [self setupRemoteView:self.thirdRemoteView roomId:streamKey.roomId uid:streamKey.userId];
         }else{
             
         }
     });
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onUserJoined:(ByteRTCUserInfo *)userInfo elapsed:(NSInteger)elapsed{
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserJoined:(ByteRTCUserInfo *)userInfo elapsed:(NSInteger)elapsed {
     NSLog(@"%@,%s",[NSThread currentThread],__func__);
 
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onUserLeave:(NSString *)uid reason:(ByteRTCUserOfflineReason)reason{
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserLeave:(NSString *)uid reason:(ByteRTCUserOfflineReason)reason{
     NSLog(@"%@,%s",[NSThread currentThread],__func__);
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -272,11 +272,11 @@
     });
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onWarning:(ByteRTCWarningCode)Code{
+- (void)rtcEngine:(ByteRTCVideo *)engine onWarning:(ByteRTCWarningCode)Code {
     NSLog(@"warningCode = %ld", (long)Code);
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onError:(ByteRTCErrorCode)errorCode{
+- (void)rtcEngine:(ByteRTCVideo *)engine onError:(ByteRTCErrorCode)errorCode {
     NSLog(@"errorCode = %ld",(long)errorCode);
     [self showAlert:[NSString stringWithFormat:@"error:%ld", (long)errorCode]];
 }
@@ -302,17 +302,17 @@
         cameraID = ByteRTCCameraIDBack;
     }
     /// 切换前置/后置摄像头（默认使用前置摄像头）
-    [self.rtcKit switchCamera:button.selected];
+    [self.rtcVideo switchCamera:button.selected];
 }
 
 - (void)switchAudioRoute:(UIButton *)button{
     button.selected = !button.selected;
     if (button.selected) {
         /// 设置使用听筒播放音频数据
-        [self.rtcKit setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceEarpiece];
+        [self.rtcVideo setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceEarpiece];
     }else{
         /// 设置使用扬声器播放音频数据
-        [self.rtcKit setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceSpeakerphone];
+        [self.rtcVideo setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceSpeakerphone];
     }
 }
 
@@ -320,10 +320,10 @@
     button.selected = !button.selected;
     if (button.selected) {
         /// 关闭本地音频发送
-        [self.rtcKit muteLocalAudio:ByteRTCMuteStateOn];
+        [self.rtcRoom unpublishStream:ByteRTCMediaStreamTypeAudio];
     }else{
         /// 开启本地音频发送
-        [self.rtcKit muteLocalAudio:ByteRTCMuteStateOff];
+        [self.rtcRoom publishStream:ByteRTCMediaStreamTypeAudio];
     }
 }
 
@@ -331,18 +331,16 @@
     button.selected = !button.selected;
     if (button.selected) {
         /// 关闭视频采集
-        [self.rtcKit stopVideoCapture];
+        [self.rtcVideo stopVideoCapture];
     }else{
         /// 开启视频采集
-        [self.rtcKit startVideoCapture];
+        [self.rtcVideo startVideoCapture];
     }
 }
 
 - (void)hangUp:(UIButton *)button{
     /// 离开房间
-    [self.rtcKit leaveRoom:^(ByteRTCRoomStats * _Nonnull stat) {
-        
-    }];
+    [self.rtcRoom leaveRoom];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }

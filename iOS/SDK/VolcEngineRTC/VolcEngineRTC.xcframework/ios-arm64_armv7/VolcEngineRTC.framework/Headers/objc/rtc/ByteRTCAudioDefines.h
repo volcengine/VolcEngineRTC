@@ -125,39 +125,38 @@ typedef NS_ENUM(NSInteger, ByteRTCVoiceReverbType) {
 /** 
  * @type keytype
  * @brief 音质档位
- *        调用 `setAudioProfile:` 设置的音质档位
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
     /** 
-     * @brief 默认音质
+     * @brief 默认音质<br>
      *        服务器下发或客户端已设置的 ByteRTCRoomProfile{@link #ByteRTCRoomProfile} 的音质配置
      */
     ByteRTCAudioProfileDefault = 0,
     /** 
      * @brief 流畅音质。  <br>
-     *        单声道，采样率为 16kHz，编码码率为 24kbps。 <br>
-     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS 等游戏中的小队语音、组队语音、国战语音等。
+     *        单声道，采样率为 16kHz，编码码率为 24 Kbps。 <br>
+     *        流畅优先、低功耗、低流量消耗，适用于大部分游戏场景，如小队语音、组队语音、国战语音等。
      */
     ByteRTCAudioProfileFluent = 1,
     /** 
-     * @brief 标准音质。  <br>
-     *        单声道，采样率为 48kHz，编码码率为 48kbps。 <br>
-     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和 Sirius 等狼人杀类游戏。
+     * @brief 单声道标准音质。  <br>
+     *        采样率为 48kHz，编码码率为 48 Kbps。 <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和狼人杀等游戏。
      */
     ByteRTCAudioProfileStandard = 2,
     /** 
-     * @brief 高清音质  <br>
-     *        双声道，采样率为 48kHz，编码码率为 128kbps。 <br>
+     * @brief 双声道音乐音质  <br>
+     *        采样率为 48kHz，编码码率为 128kbps。 <br>
      *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。 <br>
      *        游戏场景不建议使用。
      */
     ByteRTCAudioProfileHD = 3,
     /** 
-     * @brief 标准音质。双声道，采样率为 48 KHz，编码码率最大值为 80 Kbps
+     * @brief 双声道标准音质。采样率为 48 KHz，编码码率最大值为 80 Kbps
      */
     ByteRTCAudioProfileStandardStereo = 4,
     /** 
-     * @brief 音乐音质。单声道，采样率为 48 kHz，编码码率最大值为 128 Kbps
+     * @brief 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 128 Kbps
      */
     ByteRTCAudioProfileHDMono = 5,
 };
@@ -596,15 +595,15 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioFrameCallbackMethod) {
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioFrameMethod) {
     /** 
-     * 本地采集的音频
+     * @brief 本地采集的音频
      */
     ByteRTCAudioFrameProcessorRecord = 0,
     /** 
-     * 远端音频流的混音音频
+     * @brief 远端音频流的混音音频
      */
     ByteRTCAudioFrameProcessorPlayback = 1,
     /** 
-     * 各个远端音频流
+     * @brief 各个远端音频流
      */
     ByteRTCAudioFrameProcessorRemoteUser = 2,
 };
@@ -746,7 +745,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
 * @notes <br>
 *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。如果开启了耳返功能，那么对耳返音频也会生效。<br>
-*        + 调用 enableAudioProcessor:audioFormat:{@link #RTCVideo#enableAudioProcessor:audioFormat:}，并在参数中选择本地采集的音频时，收到此回调。
+*        + 调用 `enableAudioProcessor`，并在参数中选择本地采集的音频时，收到此回调。
 */
 - (int)onProcessRecordAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /**  
@@ -754,7 +753,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 * @author majun.lvhiei
 * @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
 * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
-* @notes 调用 enableAudioProcessor:audioFormat:{@link #RTCVideo#enableAudioProcessor:audioFormat:},并在参数中选择远端音频流的的混音音频时，收到此回调。
+* @notes 调用 `enableAudioProcessor`,并在参数中选择远端音频流的的混音音频时，收到此回调。
 */
 - (int)onProcessPlayBackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /**  
@@ -763,7 +762,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 * @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
 * @param stream_info 音频流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
 * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
-* @notes 调用 enableAudioProcessor:audioFormat:{@link #RTCVideo#enableAudioProcessor:audioFormat:},并在参数中选择各个远端音频流时，收到此回调。
+* @notes 调用 `enableAudioProcessor`,并在参数中选择各个远端音频流时，收到此回调。
 */
 - (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)stream_info  audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
@@ -805,7 +804,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  * @hidden(iOS)
  * @region 音频设备管理
  * @author dixing
- * @brief 获取当前系统内音频播放设备列表。你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
+ * @brief 获取当前系统内音频播放设备列表。你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
  * @return 所有音频播放设备的列表，参看 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
  */
 - (ByteRTCDeviceCollection * _Nonnull)enumerateAudioPlaybackDevices;
@@ -1022,7 +1021,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + < 0：方法调用失败  <br>
  * @notes  <br>
  *       + 该方法必须在进房前调用，且不可与其它音频设备测试功能同时应用。  <br>
- *       + 调用 StopAudioPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#StopAudioPlaybackDeviceTest} 停止测试。  <br>
+ *       + 调用 stopPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#stopPlaybackDeviceTest} 停止测试。  <br>
  */
 - (int)startPlaybackDeviceTest:(NSString *_Nonnull)testAudioFilePath interval:(int)interval;
 /** 
@@ -1034,9 +1033,54 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  * @return  方法调用结果  <br>
  *        + 0：方法调用成功  <br>
  *        + < 0：方法调用失败  <br>
- * @notes  调用 StartAudioPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#StartAudioPlaybackDeviceTest} 后，需调用本方法停止测试。
+ * @notes  调用 startPlaybackDeviceTest:interval:{@link #ByteRTCAudioDeviceManager#startPlaybackDeviceTest:interval:} 后，需调用本方法停止测试。
  */
 - (int)stopPlaybackDeviceTest;
+/** 
+ * @hidden(iOS)
+ * @type api
+ * @region 音频设备管理
+ * @brief 开始音频采集设备和音频播放设备测试。<br>
+ * 建议提前调用 enableAudioPropertiesReport:{@link #ByteRTCVideo#enableAudioPropertiesReport:} 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 获取采集音量。<br>
+ * @param interval 测试录音播放时触发 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 播放音量回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
+ * @return  方法调用结果  <br>
+ *       + 0：方法调用成功  <br>
+ *       + < 0：方法调用失败  <br>
+ * @notes  <br>
+ *       + 该方法依赖 rtc 引擎，只有通过成员方法getAudioDeviceManager{@link #ByteRTCVideo#getAudioDeviceManager}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *       + 该方法在进房前后均可调用。且不可与其它音频设备测试功能同时应用。  <br>
+ *       + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 stopAudioDeviceRecordAndPlayTest{@link #ByteRTCAudioDeviceManager#stopAudioDeviceRecordAndPlayTest}  来停止采集并开始播放此前采集到的声音。<br>
+ *       + 调用 stopAudioDevicePlayTest{@link #ByteRTCAudioDeviceManager#stopAudioDevicePlayTest} 可以停止音频设备采集和播放测试。<br>
+ *       + 该方法仅在本地进行音频设备测试，不涉及网络连接。  <br>
+ */
+- (int)startAudioDeviceRecordTest:(int)interval;
+/** 
+ * @hidden(iOS)
+ * @type api
+ * @region 音频设备管理
+ * @brief 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>
+ * 调用 startAudioDeviceRecordTest:{@link #ByteRTCAudioDeviceManager#startAudioDeviceRecordTest:} 30s 内调用本接口来停止采集并开始播放此前采集到的声音。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes  <br>
+ *        + 该方法依赖 rtc 引擎，只有通过成员方法getAudioDeviceManager{@link #ByteRTCVideo#getAudioDeviceManager}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *        + 调用本接口开始播放录音后，可以在播放过程中调用 stopAudioDevicePlayTest{@link #ByteRTCAudioDeviceManager#stopAudioDevicePlayTest} 停止播放。
+ */
+- (int)stopAudioDeviceRecordAndPlayTest;
+/** 
+ * @hidden(iOS)
+ * @type api
+ * @region 音频设备管理
+ * @brief 停止由调用 startAudioDeviceRecordTest:{@link #ByteRTCAudioDeviceManager#startAudioDeviceRecordTest:} 开始的音频播放设备测试。<br>
+ *        在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败
+ * @notes  <br>
+ *        + 该方法依赖 rtc 引擎，只有通过成员方法getAudioDeviceManager{@link #ByteRTCVideo#getAudioDeviceManager}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ */
+- (int)stopAudioDevicePlayTest;
 /** 
  * @type api
  * @hidden(iOS)
@@ -1087,6 +1131,70 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  * @notes 本方法只在移动设备上有效
  */
 - (void)setEnableSpeakerphone:(bool)enable;
+
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 启动音频采集设备测试。  <br>
+ *        该方法测试音频采集设备是否能正常工作。启动测试后，会收到 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 回调上报的音量信息。
+ * @param indicationInterval 获取回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。小于10 毫秒行为未定义。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes  <br>
+ *       + 该方法不依赖 rtc 引擎，只有通过静态方法 createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:} 创建的 ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *       + 该方法必须在进房前调用，且不可与其它音频设备测试功能同时应用。  <br>
+ *       + 你需调用 stopAudioRecordingDeviceTest{@link #ByteRTCAudioDeviceManager#stopAudioRecordingDeviceTest} 停止测试。  <br>
+ */
+- (int)startAudioRecordingDeviceTest:(unsigned int)indicationInterval;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 停止音频采集设备测试。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes  <br>
+ *        + 该方法不依赖 rtc 引擎，只有通过静态方法createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *        + 调用 startAudioRecordingDeviceTest:{@link #ByteRTCAudioDeviceManager#startAudioRecordingDeviceTest:} 后，需调用本方法停止测试。 <br>
+ */
+- (int)stopAudioRecordingDeviceTest;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 开始音频设备回路测试。  <br>
+ *        该方法测试音频采集设备和音频播放设备是否能正常工作。一旦测试开始，音频采集设备会采集本地声音并通过音频播放设备播放出来，同时会收到 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:}。
+ * @param indicationInterval 收到回调的时间间隔，单位为 ms。建议设置到大于 200 ms。最小不得少于 10 ms。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes  <br>
+ *       + 该方法不依赖 rtc 引擎，只有通过静态方法createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *       + 该方法必须在进房前调用。且不可与其它音频设备测试功能同时应用。  <br>
+ *       + 你需调用 stopAudioDeviceLoopbackTest{@link #ByteRTCAudioDeviceManager#stopAudioDeviceLoopbackTest} 停止测试。  <br>
+ *       + 该方法仅在本地进行音频设备测试，不涉及网络连接。  <br>
+ */
+- (int)startAudioDeviceLoopbackTest:(unsigned int)indicationInterval;
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 音频设备管理
+ * @author dixing
+ * @brief 停止音频设备回路测试。
+ * @return  方法调用结果  <br>
+ *        + 0：方法调用成功  <br>
+ *        + < 0：方法调用失败  <br>
+ * @notes   <br>
+ *        + 该方法不依赖 rtc 引擎，只有通过静态方法createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *        + 调用 startAudioDeviceLoopbackTest:{@link #ByteRTCAudioDeviceManager#startAudioDeviceLoopbackTest:} 后，需调用本方法停止测试。<br>
+ */
+- (int)stopAudioDeviceLoopbackTest;
 @end
 
 /** 

@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIView  *liveView;
 @property (nonatomic, strong) CustomVideoRenderView *customRenderView;
 
+- (void)replaceCanvasView:(UIView *)view;
+
 @end
 
 NS_ASSUME_NONNULL_END

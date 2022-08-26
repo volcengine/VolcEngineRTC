@@ -15,7 +15,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ss.bytertc.engine.RTCEngine;
+import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
+import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.VideoEncoderConfig;
@@ -25,6 +27,7 @@ import com.ss.bytertc.engine.data.RemoteStreamKey;
 import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.data.VideoFrameInfo;
 import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
+import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
 import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.rtc.demo.quickstart.R;
@@ -94,18 +97,10 @@ public class RTCRoomActivity extends AppCompatActivity {
     private final TextView[] mUserIdTvArray = new TextView[3];
     private final String[] mShowUidArray = new String[3];
 
-    private RTCEngine mInstance;
-    private IRTCEngineEventHandler mIRtcEngineEventHandler = new IRTCEngineEventHandler() {
+    private RTCVideo mRTCVideo;
+    private RTCRoom mRTCRoom;
 
-        /**
-         * SDK收到第一帧远端视频解码数据后，用户收到此回调。
-         */
-        @Override
-        public void onFirstRemoteVideoFrameDecoded(RemoteStreamKey remoteStreamKey, VideoFrameInfo frameInfo) {
-            super.onFirstRemoteVideoFrameDecoded(remoteStreamKey, frameInfo);
-            Log.d("IRtcEngineEventHandler", "onFirstRemoteVideoFrame: " + remoteStreamKey.toString());
-            runOnUiThread(() -> setRemoteView(remoteStreamKey.getUserId()));
-        }
+    private RTCRoomEventHandlerAdapter mIRtcRoomEventHandler = new RTCRoomEventHandlerAdapter() {
 
         /**
          * 远端主播角色用户加入房间回调。
@@ -113,7 +108,7 @@ public class RTCRoomActivity extends AppCompatActivity {
         @Override
         public void onUserJoined(UserInfo userInfo, int elapsed) {
             super.onUserJoined(userInfo, elapsed);
-            Log.d("IRtcEngineEventHandler", "onUserJoined: " + userInfo.getUid());
+            Log.d("IRTCRoomEventHandler", "onUserJoined: " + userInfo.getUid());
         }
 
         /**
@@ -122,8 +117,21 @@ public class RTCRoomActivity extends AppCompatActivity {
         @Override
         public void onUserLeave(String uid, int reason) {
             super.onUserLeave(uid, reason);
-            Log.d("IRtcEngineEventHandler", "onUserOffline: " + uid);
+            Log.d("IRTCRoomEventHandler", "onUserLeave: " + uid);
             runOnUiThread(() -> removeRemoteView(uid));
+        }
+    };
+
+    private IRTCVideoEventHandler mIRtcVideoEventHandler = new IRTCVideoEventHandler() {
+
+        /**
+         * SDK收到第一帧远端视频解码数据后，用户收到此回调。
+         */
+        @Override
+        public void onFirstRemoteVideoFrameDecoded(RemoteStreamKey remoteStreamKey, VideoFrameInfo frameInfo) {
+            super.onFirstRemoteVideoFrameDecoded(remoteStreamKey, frameInfo);
+            Log.d("IRTCVideoEventHandler", "onFirstRemoteVideoFrame: " + remoteStreamKey.toString());
+            runOnUiThread(() -> setRemoteView(remoteStreamKey.getRoomId(), remoteStreamKey.getUserId()));
         }
 
         /**
@@ -132,7 +140,7 @@ public class RTCRoomActivity extends AppCompatActivity {
         @Override
         public void onWarning(int warn) {
             super.onWarning(warn);
-            Log.d("IRtcEngineEventHandler", "onWarning: " + warn);
+            Log.d("IRTCVideoEventHandler", "onWarning: " + warn);
         }
 
         /**
@@ -141,7 +149,7 @@ public class RTCRoomActivity extends AppCompatActivity {
         @Override
         public void onError(int err) {
             super.onError(err);
-            Log.d("IRtcEngineEventHandler", "onError: " + err);
+            Log.d("IRTCVideoEventHandler", "onError: " + err);
             showAlertDialog(String.format(Locale.US, "error: %d", err));
         }
     };
@@ -183,21 +191,23 @@ public class RTCRoomActivity extends AppCompatActivity {
 
     private void initEngineAndJoinRoom(String roomId, String userId) {
         // 创建引擎
-        mInstance = RTCEngine.create(getApplicationContext(), Constants.APPID, mIRtcEngineEventHandler);
+        mRTCVideo = RTCVideo.createRTCVideo(getApplicationContext(), Constants.APPID, mIRtcVideoEventHandler, null, null);
         // 设置视频发布参数
-        VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(360, 640, 15, 800, 0);
-        mInstance.setVideoEncoderConfig(videoEncoderConfig);
+        VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(360, 640, 15, 800);
+        mRTCVideo.setVideoEncoderConfig(videoEncoderConfig);
         setLocalRenderView(userId);
         // 开启本地视频采集
-        mInstance.startVideoCapture();
+        mRTCVideo.startVideoCapture();
         // 开启本地音频采集
-        mInstance.startAudioCapture();
+        mRTCVideo.startAudioCapture();
         // 加入房间
+        mRTCRoom = mRTCVideo.createRTCRoom(roomId);
+        mRTCRoom.setRTCRoomEventHandler(mIRtcRoomEventHandler);
         RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_COMMUNICATION,
                 true, true, true);
-        int joinRoom_res = mInstance.joinRoom(Constants.TOKEN, roomId,
+        int joinRoomRes = mRTCRoom.joinRoom(Constants.TOKEN,
                 UserInfo.create(userId, ""), roomConfig);
-        Log.i("TAG", "initEngineAndJoinRoom: " + joinRoom_res);
+        Log.i("TAG", "initEngineAndJoinRoom: " + joinRoomRes);
     }
 
     private void setLocalRenderView(String uid) {
@@ -213,10 +223,10 @@ public class RTCRoomActivity extends AppCompatActivity {
         videoCanvas.isScreen = false;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        mInstance.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        mRTCVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
     }
 
-    private void setRemoteRenderView(String uid, FrameLayout container) {
+    private void setRemoteRenderView(String roomId, String uid, FrameLayout container) {
         TextureView renderView = new TextureView(this);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -226,14 +236,15 @@ public class RTCRoomActivity extends AppCompatActivity {
 
         VideoCanvas videoCanvas = new VideoCanvas();
         videoCanvas.renderView = renderView;
+        videoCanvas.roomId = roomId;
         videoCanvas.uid = uid;
         videoCanvas.isScreen = false;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置远端用户视频渲染视图
-        mInstance.setRemoteVideoCanvas(uid, StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        mRTCVideo.setRemoteVideoCanvas(uid, StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
     }
 
-    private void setRemoteView(String uid) {
+    private void setRemoteView(String roomId, String uid) {
         int emptyInx = -1;
         for (int i = 0; i < mShowUidArray.length; i++) {
             if (TextUtils.isEmpty(mShowUidArray[i]) && emptyInx == -1) {
@@ -247,7 +258,7 @@ public class RTCRoomActivity extends AppCompatActivity {
         }
         mShowUidArray[emptyInx] = uid;
         mUserIdTvArray[emptyInx].setText(String.format("UserId:%s", uid));
-        setRemoteRenderView(uid, mRemoteContainerArray[emptyInx]);
+        setRemoteRenderView(roomId, uid, mRemoteContainerArray[emptyInx]);
     }
 
     private void removeRemoteView(String uid) {
@@ -267,13 +278,13 @@ public class RTCRoomActivity extends AppCompatActivity {
         } else {
             mCameraID = CameraId.CAMERA_ID_FRONT;
         }
-        mInstance.switchCamera(mCameraID);
+        mRTCVideo.switchCamera(mCameraID);
     }
 
     private void updateSpeakerStatus() {
         mIsSpeakerPhone = !mIsSpeakerPhone;
         // 设置使用哪种方式播放音频数据
-        mInstance.setAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
+        mRTCVideo.setAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
                 : AudioRoute.AUDIO_ROUTE_EARPIECE);
         mSpeakerIv.setImageResource(mIsSpeakerPhone ? R.drawable.speaker_on : R.drawable.speaker_off);
     }
@@ -282,9 +293,9 @@ public class RTCRoomActivity extends AppCompatActivity {
         mIsMuteAudio = !mIsMuteAudio;
         // 开启/关闭本地音频发送
         if (mIsMuteAudio) {
-            mInstance.unpublishStream(MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO);
+            mRTCRoom.unpublishStream(MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO);
         } else {
-            mInstance.publishStream(MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO);
+            mRTCRoom.publishStream(MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO);
         }
         mAudioIv.setImageResource(mIsMuteAudio ? R.drawable.mute_audio : R.drawable.normal_audio);
     }
@@ -293,10 +304,10 @@ public class RTCRoomActivity extends AppCompatActivity {
         mIsMuteVideo = !mIsMuteVideo;
         if (mIsMuteVideo) {
             // 关闭视频采集
-            mInstance.stopVideoCapture();
+            mRTCVideo.stopVideoCapture();
         } else {
             // 开启视频采集
-            mInstance.startVideoCapture();
+            mRTCVideo.startVideoCapture();
         }
         mVideoIv.setImageResource(mIsMuteVideo ? R.drawable.mute_video : R.drawable.normal_video);
     }
@@ -314,10 +325,15 @@ public class RTCRoomActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         // 离开房间
-        mInstance.leaveRoom();
+        if (mRTCRoom != null) {
+            mRTCRoom.leaveRoom();
+            mRTCRoom.destroy();
+        }
+        mRTCRoom = null;
         // 销毁引擎
-        RTCEngine.destroyEngine(mInstance);
-        mIRtcEngineEventHandler = null;
-        mInstance = null;
+        RTCVideo.destroyRTCVideo();
+        mIRtcVideoEventHandler = null;
+        mIRtcRoomEventHandler = null;
+        mRTCVideo = null;
     }
 }

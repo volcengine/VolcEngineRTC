@@ -2,7 +2,6 @@
 //  NotifyCommon.m
 //  Advanced
 //
-//  Created by bytedance on 2022/3/17.
 //
 
 #import "NotifyCommon.h"
@@ -12,7 +11,7 @@
 
 @property (nonatomic, strong) SettingView *settingView;
 @property (nonatomic, strong) UIButton *backButton;
-@property (nonatomic, weak) ByteRTCEngineKit *rtcKit;
+@property (nonatomic, weak) ByteRTCRoom *rtcRoom;
 
 @end
 
@@ -22,10 +21,10 @@
 
 - (instancetype)initWithType:(NotifyStatus)notiftStatus
                    superView:(UIView *)superView
-                      rtcKit:(nonnull ByteRTCEngineKit *)rtcKit {
+                     rtcRoom:(nonnull ByteRTCRoom *)rtcRoom {
     self = [super init];
     if (self) {
-        _rtcKit = rtcKit;
+        _rtcRoom = rtcRoom;
         self.backgroundColor = [UIColor whiteColor];
         NSMutableArray *dataList = [[NSMutableArray alloc] init];
 
@@ -101,22 +100,22 @@
 
 - (void)sendUserMessage:(NSString *)message
                     uid:(NSString *)uid {
-    [_rtcKit sendUserMessage:uid message:message config:0];
+    [_rtcRoom sendUserMessage:uid message:message config:0];
 }
 
 - (void)sendUserBinaryMessage:(NSString *)message
                           uid:(NSString *)uid {
     NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [_rtcKit sendUserBinaryMessage:uid message:data config:0];
+    [_rtcRoom sendUserBinaryMessage:uid message:data config:0];
 }
 
 - (void)sendRoomMessage:(NSString *)message {
-    [_rtcKit sendRoomMessage:message];
+    [_rtcRoom sendRoomMessage:message];
 }
 
 - (void)sendRoomBinaryMessage:(NSString *)message {
     NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [_rtcKit sendRoomBinaryMessage:data];
+    [_rtcRoom sendRoomBinaryMessage:data];
 }
 
 - (void)backButtonAction {

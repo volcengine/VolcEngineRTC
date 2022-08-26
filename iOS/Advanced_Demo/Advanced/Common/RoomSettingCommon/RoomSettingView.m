@@ -2,8 +2,6 @@
 //  RoomSettingView.m
 //  Advanced
 //
-//  Created by bytedance on 2021/12/7.
-//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "NotifyCommon.h"
@@ -18,7 +16,8 @@
 
 @implementation RoomSettingView
 
-- (instancetype)initWithRtcKit:(ByteRTCEngineKit *)rtcKit {
+- (instancetype)initWithRtcKit:(ByteRTCVideo *)rtcVideo
+                       rtcRoom:(ByteRTCRoom *)rtcRoom{
     if (self = [super init]) {
         self.backgroundColor = [UIColor whiteColor];
 
@@ -98,7 +97,7 @@
           if (index == 0) {
               notifyMessage = valueStr;
           } else if (index == 1) {
-              [wself sendSEIMessageRtcKit:rtcKit
+              [wself sendSEIMessageRtcKit:rtcVideo
                                   message:notifyMessage
                               repeatCount:[valueStr intValue]];
           }
@@ -108,7 +107,7 @@
         timeModel.title = @"发送实时消息";
         timeModel.describe = @"文本信息（如文字，用户名等，大小<62KB）\n二进制信息（如二维码，图片等，大小<46KB）";
         [timeModel setDidSelectedIndex:^(NSInteger index, NSString *_Nonnull title) {
-          NotifyCommon *notifyCommon = [[NotifyCommon alloc] initWithType:(index == 0) ? NotifyStatusData : NotifyStatusText superView:wself rtcKit:rtcKit];
+          NotifyCommon *notifyCommon = [[NotifyCommon alloc] initWithType:(index == 0) ? NotifyStatusData : NotifyStatusText superView:wself rtcRoom:rtcRoom];
           [wself addSubview:notifyCommon];
           [notifyCommon mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(wself);
@@ -210,11 +209,11 @@
 
 #pragma mark - Private Action
 
-- (void)sendSEIMessageRtcKit:(ByteRTCEngineKit *)rtcKit
+- (void)sendSEIMessageRtcKit:(ByteRTCVideo *)rtcVideo
                      message:(NSString *)message
                  repeatCount:(int)repeatCount {
     NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
-    [rtcKit sendSEIMessage:ByteRTCStreamIndexMain andMessage:data andRepeatCount:repeatCount];
+    [rtcVideo sendSEIMessage:ByteRTCStreamIndexMain andMessage:data andRepeatCount:repeatCount];
 }
 
 #pragma mark - getter

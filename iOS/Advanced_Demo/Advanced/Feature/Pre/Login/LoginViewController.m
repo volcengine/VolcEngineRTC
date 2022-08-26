@@ -17,7 +17,8 @@
 #import "PreJoinSettingsViewController.h"
 #import "RoomViewController.h"
 #import <AVFoundation/AVCaptureDevice.h>
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
+#import "SystemAuthority.h"
 
 @interface LoginViewController () <UITextFieldDelegate>
 @property (nonatomic, strong) UIImageView *logoImageView;
@@ -28,6 +29,7 @@
 @property (nonatomic, strong) UIButton *settingButton;
 
 @property (nonatomic, strong) PreJoinSetting *preJoinSetting;
+
 @end
 
 @implementation LoginViewController
@@ -96,29 +98,13 @@
 }
 
 - (void)requestCameraAndAudioPermissions {
-    AVAuthorizationStatus videoStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-    if (videoStatus == AVAuthorizationStatusAuthorized) {
-        NSLog(@"Login- has camera permission");
-    } else {
-        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
-                                 completionHandler:^(BOOL granted) {
-                                   if (granted) {
-                                       NSLog(@"Login- request camera permission success.");
-                                   }
-                                 }];
-    }
-
-    AVAuthorizationStatus audioStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
-    if (audioStatus == AVAuthorizationStatusAuthorized) {
-        NSLog(@"Login- has audio permission");
-    } else {
-        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
-                                 completionHandler:^(BOOL granted) {
-                                   if (granted) {
-                                       NSLog(@"Login- request audio permission success.");
-                                   }
-                                 }];
-    }
+    [SystemAuthority authorizationStatusWithType:AuthorizationTypeAudio block:^(BOOL isAuthorize) {
+        
+    }];
+    
+    [SystemAuthority authorizationStatusWithType:AuthorizationTypeCamera block:^(BOOL isAuthorize) {
+        
+    }];
 }
 
 #pragma mark - action
@@ -229,7 +215,7 @@
         _versionLabel = [[UILabel alloc] init];
         _versionLabel.textAlignment = NSTextAlignmentCenter;
         /// 获取当前SDK的版本号
-        NSString *SDKVersion = [ByteRTCEngineKit getSdkVersion];
+        NSString *SDKVersion = [ByteRTCVideo getSdkVersion];
         _versionLabel.text = [NSString stringWithFormat:@"VolcEngineRTC v %@", SDKVersion];
     }
     return _versionLabel;

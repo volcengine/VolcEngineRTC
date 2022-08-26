@@ -2,7 +2,6 @@
 //  BeautyModel.h
 //  Advanced
 //
-//  Created by bytedance on 2022/5/20.
 //
 
 #import <Foundation/Foundation.h>

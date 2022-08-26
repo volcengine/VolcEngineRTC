@@ -2,15 +2,16 @@
 //  SettingTableViewCell.m
 //  Advanced
 //
-//  Created by bytedance on 2021/12/7.
-//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "SettingTableViewCell.h"
 
 @interface SettingTableViewCell ()
+
 @property (nonatomic, strong) UISwitch *switchView;
 @property (nonatomic, strong) UISlider *slider;
+@property (nonatomic, strong) UISegmentedControl *segmentControl;
+
 @end
 
 @implementation SettingTableViewCell
@@ -27,8 +28,26 @@
 - (void)setModel:(SettingBaseModel *)model {
     _model = model;
     self.textLabel.text = model.title;
-
+    self.textLabel.font = [UIFont systemFontOfSize:16];
     switch (model.cellType) {
+        case SettingTableViewCellType_Segment: {
+            self.accessoryType = UITableViewCellAccessoryNone;
+            self.accessoryView = self.segmentControl;
+            self.slider.hidden = YES;
+            self.detailTextLabel.text = @"";
+            
+            SettingSegmentModel *segmentModel = (SettingSegmentModel *)model;
+            
+            [self.segmentControl removeAllSegments];
+            for (int i = 0; i < segmentModel.actionTitles.count; i++) {
+                [self.segmentControl insertSegmentWithTitle:segmentModel.actionTitles[i] atIndex:i animated:NO];
+            }
+            self.segmentControl.frame = CGRectMake(0, 0, 70 * segmentModel.actionTitles.count, 30);
+            
+            self.segmentControl.selectedSegmentIndex = segmentModel.selectedIndex;
+        }
+            break;
+
         case SettingTableViewCellType_Switch: {
             self.accessoryType = UITableViewCellAccessoryNone;
             self.accessoryView = self.switchView;
@@ -97,6 +116,18 @@
     }
 }
 
+- (void)segmentControlValueChanged:(UISegmentedControl *)segmentControl {
+    if (self.model.cellType == SettingTableViewCellType_Segment) {
+        SettingSegmentModel *model = (SettingSegmentModel *)self.model;
+        model.selectedIndex = segmentControl.selectedSegmentIndex;
+        if (model.segmentDidChangeSelectedIndex) {
+            model.segmentDidChangeSelectedIndex(model.selectedIndex);
+        }
+    }
+}
+
+
+
 - (void)sliderValueDidChanged:(UISlider *)slider {
     if (self.model.cellType == SettingTableViewCellType_Slider) {
         SettingSliderModel *sliderModel = (SettingSliderModel *)self.model;
@@ -144,4 +175,13 @@
     }
     return _slider;
 }
+
+- (UISegmentedControl *)segmentControl {
+    if (!_segmentControl) {
+        _segmentControl = [[UISegmentedControl alloc] init];
+        [_segmentControl addTarget:self action:@selector(segmentControlValueChanged:) forControlEvents:UIControlEventValueChanged];
+    }
+    return _segmentControl;
+}
+
 @end

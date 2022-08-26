@@ -14,6 +14,26 @@ typedef NSView   ByteRTCView;
 typedef NSImage  ByteRTCImage;
 #endif
 
+#ifdef __APPLE__
+#define _BYTERTC_PLATFORM_APPLE 1
+#include <TargetConditionals.h>
+#if TARGET_OS_IPHONE
+#define _BYTERTC_PLATFORM_MAC 0
+#define _BYTERTC_PLATFORM_IOS 1
+#elif TARGET_IPHONE_SIMULATOR
+#define _BYTERTC_PLATFORM_MAC 0
+#define _BYTERTC_PLATFORM_IOS 1
+#elif TARGET_OS_MAC
+#define _BYTERTC_PLATFORM_MAC 1
+#define _BYTERTC_PLATFORM_IOS 0
+#else
+#error "Unknown Apple platform"
+#endif
+#endif
+
+#define BYTERTC_TARGET_MAC (_BYTERTC_PLATFORM_MAC == 1)
+#define BYTERTC_TARGET_IOS (_BYTERTC_PLATFORM_IOS == 1)
+
 #define BYTERTC_APPLE_EXPORT __attribute__((visibility("default")))
 
 /** 
@@ -73,100 +93,104 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamRemoveReason) {
 
 /** 
  * @type keytype
- * @brief 房间模式
+ * @brief 房间模式<br>
+ *        根据所需场景，选择合适的房间模式，应用不同的音视频算法、视频参数和网络配置 <br>
+ *        调用 `setAudioProfile` 改变音频参数配置
  */
 typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
-  /** 
-    * @brief 普通音视频通话模式。<br>
-    *        单声道，采样率为 48kHz
-    *        你应在 1V1 音视频通话时，使用此设置。<br>
-    *        此设置下，弱网抗性较好。
-    */
+    /** 
+     * @brief 默认场景，通用模式
+     */
     ByteRTCRoomProfileCommunication = 0,
     /** 
+     * @deprecated since 342.1, use kRoomProfileTypeInteractivePodcast instead
+     * @hidden
      * @brief 直播模式。<br>
-     *        单声道，采样率为 48kHz。 <br>
      *        当你对音视频通话的音质和画质要求较高时，应使用此设置。<br>
      *        此设置下，当用户使用蓝牙耳机收听时，蓝牙耳机使用媒体模式。
      */
     ByteRTCRoomProfileLiveBroadcasting = 1,
     /** 
-    * @brief 游戏语音模式。<br>
-    *        单声道，采样率为 16kHz。 <br>
-    *        低端机在此模式下运行时，进行了额外的性能优化：<br>
-    *            + 部分低端机型配置编码帧长 40/60 <br>
-    *            + 部分低端机型关闭软件 3A 音频处理 <br>
-    *        增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。
-    */
+     * @brief 游戏语音模式，低功耗、低流量消耗。<br>
+     *        低端机在此模式下运行时，进行了额外的性能优化：<br>
+     *            + 部分低端机型配置编码帧长 40/60 <br>
+     *            + 部分低端机型关闭软件 3A 音频处理 <br>
+     *        增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。
+     */
     ByteRTCRoomProfileGame = 2,
     /** 
      * @brief 云游戏模式。<br>
-     *        单声道，采样率为 48kHz。 <br>
-     *        如果你需要低延迟、高码率的设置时，你可以使用此设置。<br>
+     *        如果你的游戏场景需要低延迟的配置，使用此设置。<br>
      *        此设置下，弱网抗性较差。
      */
     ByteRTCRoomProfileCloudGame = 3,
     /** 
-     * @brief 低时延模式。SDK 会使用低延时设置。  <br>
-     *        当你的场景非游戏或云游戏场景，又需要极低延时的体验时，可以使用该模式。 <br>
+     * @brief 云渲染模式。超低延时配置。  <br>
+     *        如果你的应用并非游戏但又对延时要求较高时，选用此模式 <br>
      *        该模式下，音视频通话延时会明显降低，但同时弱网抗性、通话音质等均会受到一定影响。  <br>
-     *        在使用此模式前，强烈建议咨询技术支持同学。
      */
     ByteRTCRoomProfileLowLatency = 4,
     /** 
-     * @brief 适用于 1 vs 1 纯语音通话
+     * @brief 适用于 1 vs 1 音视频通话
      */
     ByteRTCRoomProfileChat = 5,
     /** 
-     * @brief 适用于 2 人以上纯语音通话
+     * @brief 适用于 3 人及以上纯语音通话<br>
+     *        音视频通话为媒体模式，上麦时切换为通话模式
      */
     ByteRTCRoomProfileChatRoom = 6,
     /** 
-     * @brief 适用于 “一起看” 或 “一起听” 场景
+     * @brief 实现多端同步播放音视频，适用于 “一起看” 或 “一起听” 场景。<br>
+     *        该场景中，使用 RTC 信令同步播放进度，共享的音频内容不通过 RTC 进行传输。
      */
     ByteRTCRoomProfileLwTogether = 7,
     /** 
-     * @brief 适用于对音质要求较高的游戏场景
+     * @brief 适用于对音质要求较高的游戏场景，优化音频 3A 策略，只通过媒体模式播放音频
      */
     ByteRTCRoomProfileGameHD = 8,
     /** 
-     * @brief 适用于直播中主播之间连麦的业务场景
+     * @brief 适用于直播中主播之间连麦的业务场景。<br>
+     *        该场景中，直播时通过 CDN，发起连麦 PK 时使用 RTC。
      */
     ByteRTCRoomProfileCoHost = 9,
     /** 
-     * @brief 适用于互动直播
+     * @brief 适用于单主播和观众进行音视频互动的直播。通话模式，上下麦不会有模式切换，避免音量突变现象
      */
     ByteRTCRoomProfileInteractivePodcast = 10,
     /** 
-     * @brief 适合线上 KTV 场景，满足高音质，低延迟
+     * @brief 线上 KTV 场景，音乐音质，低延迟<br>
+     *        使用 RTC 传输伴奏音乐，混音后的歌声，适合独唱或单通合唱
      */
     ByteRTCRoomProfileKTV = 11,
     /** 
-     * @brief 适合在线合唱场景
+     * @brief 适合在线实时合唱场景，高音质，超低延迟。使用本配置前请联系技术支持进行协助完成其他配置。
      */
     ByteRTCRoomProfileChorus = 12,
     /** 
-     * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声
+     * @hidden 
+     * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声。345之后支持
      */
     ByteRTCRoomProfileVRChat = 13,
     /** 
-     * @brief 适用于 1 vs 1 游戏串流
+     * @brief 适用于 1 vs 1 游戏串流，支持公网或局域网。
      */
     ByteRTCRoomProfileGameStreaming = 14,
     /** 
-     * @brief 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率
+     * @brief 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率<br>
+     *        需要在局域网配置私有化部署媒体服务器。
      */
     ByteRTCRoomProfileLanLiveStreaming = 15,
     /** 
-     * @brief 适用于云端会议
+     * @brief 适用于云端会议中的个人设备
      */
     ByteRTCRoomProfileMeeting = 16,
     /** 
-     * @brief 线下会议室
+     * @brief 适用于云端会议中的会议室终端
      */
     ByteRTCRoomProfileMeetingRoom = 17,
     /** 
-     * @brief 适用于课堂互动
+     * @brief 适用于课堂互动，房间内所有成员都可以进行音视频互动<br>
+     *        当你的场景中需要同时互动的成员超过 10人时使用此模式
      */
     ByteRTCRoomProfileClassroom = 18,
 };
@@ -192,7 +216,7 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
  */
 typedef NS_ENUM(NSInteger, ByteRTCConnectionState) {
     /** 
-     * @brief 连接断开超过 12 秒
+     * @brief 连接断开，且断开时长超过 12s，SDK 会自动重连。
      */
     ByteRTCConnectionStateDisconnected = 1,
     /** 
@@ -214,9 +238,13 @@ typedef NS_ENUM(NSInteger, ByteRTCConnectionState) {
      */
     ByteRTCConnectionStateReconnected = 5,
     /** 
-     * @brief 处于 `DISCONNECTED` 状态超过 10 秒，且期间重连未成功。
+     * @brief 处于 `ByteRTCConnectionStateDisconnected` 状态超过 10 秒，且期间重连未成功。SDK 仍将继续尝试重连。
      */
     ByteRTCConnectionStateLost = 6,
+    /** 
+     * @brief 连接失败，服务端状态异常。SDK 不会自动重连，请重新进房，或联系技术支持。
+     */
+    ByteRTCConnectionStateFailed = 7,
 };
 
 /** 
@@ -456,6 +484,11 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      *        单个音频源不支持与多个视频源同时同步。
      */
     ByteRTCErrorCodInvalidAudioSyncUidRepeated = -1083,
+    /** 
+     * @brief 服务端异常状态导致退出房间。  <br>
+     *        SDK与信令服务器断开，并不再自动重连，可联系技术支持。  <br>
+     */
+    ByteRTCErrorCodeAbnormalServerStatus = -1084,
 };
 
 /** 
@@ -528,7 +561,7 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
     /** 
      * @hidden
      * @brief 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br>
-     *        你需在进房前调用 enableAutoSubscribe:videoMode:{@link #ByteRTCEngineKit#enableAutoSubscribe:videoMode:} 方法关闭自动订阅模式，再调用 subscribeStream:subscribeConfig:{@link #ByteRTCEngineKit#subscribeStream:subscribeConfig:} 方法手动订阅音视频流。
+     *        你需在进房前调用 enableAutoSubscribe:videoMode:{@link #ByteRTCVideo#enableAutoSubscribe:videoMode:} 方法关闭自动订阅模式，再调用 subscribeStream:subscribeConfig:{@link #ByteRTCVideo#subscribeStream:subscribeConfig:} 方法手动订阅音视频流。
      */
     ByteRTCWarningCodeSubscribeStreamForbiden = -2010,
     /** 
@@ -562,40 +595,47 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeNoCameraPermission            = -5001,
     /** 
+     * @hidden
      * @brief 麦克风权限异常，当前应用没有获取麦克风权限
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
      */
     ByteRTCWarningCodeNoMicrophonePermission        = -5002,
     /** 
+     * @hidden
      * @brief 音频采集设备启动失败。  <br>
      *        启动音频采集设备失败，当前设备可能被其他应用占用。
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
      */
     ByteRTCWarningCodeAudioDeviceManagerRecordingStartFail     = -5003,
     /** 
+     * @hidden
      * @brief 音频播放设备启动失败警告。  <br>
      *        可能由于系统资源不足，或参数错误。
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
      */
     ByteRTCWarningCodeAudioDeviceManagerPlayoutStartFail = -5004,
     /** 
+     * @hidden
      * @brief 无可用音频采集设备。  <br>
      *        启动音频采集设备失败，请插入可用的音频采集设备。
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
      */
     ByteRTCWarningCodeNoRecordingDevice = -5005,
     /** 
+     * @hidden
      * @brief 无可用音频播放设备。  <br>
      *        启动音频播放设备失败，请插入可用的音频播放设备。
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
      */
     ByteRTCWarningCodeNoPlayoutDevice = -5006,
     /** 
+     * @hidden
      * @brief 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
      */
     ByteRTCWarningCodeRecordingSilence = -5007,
     /** 
+     * @hidden
      * @brief 媒体设备误操作警告。  <br>
      *        使用自定义采集时，不可调用内部采集开关，调用时触发此警告。
      * @deprecated since 333.1, use ByteRTCMediaDeviceWarning instead
@@ -620,7 +660,7 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
     ByteRTCWarningInvalidCallForExtAudio = -5013,
     /** 
      * @brief 指定的内部渲染画布句柄无效。  <br>
-     *        当你调用 setLocalVideoCanvas:withCanvas:{@link #ByteRTCEngineKit#setLocalVideoCanvas:withCanvas:} 或 setRemoteVideoCanvas:withIndex:withCanvas:{@link #ByteRTCEngineKit#setRemoteVideoCanvas:withIndex:withCanvas:} 时指定了无效的画布句柄，触发此回调。
+     *        当你调用 setLocalVideoCanvas:withCanvas:{@link #ByteRTCVideo#setLocalVideoCanvas:withCanvas:} 或 setRemoteVideoCanvas:withIndex:withCanvas:{@link #ByteRTCVideo#setRemoteVideoCanvas:withIndex:withCanvas:} 时指定了无效的画布句柄，触发此回调。
      */
     ByteRTCWarningCodeInvalidCanvasHandle = -6001
 };
@@ -1472,7 +1512,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
      */
     ByteRTCMediaDeviceWarningCaptureDetectHowling = 16,
     /** 
-     * @hidden(Mac)
+     * @hidden(macOS)
      * @brief 当前 AudioScenario 不支持更改音频路由，设置音频路由失败
      */
     ByteRTCMediaDeviceWarningSetAudioRouteInvalidScenario = 20,
@@ -1482,7 +1522,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
      */
     ByteRTCMediaDeviceWarningSetAudioRouteNotExists = 21,
     /** 
-     * @hidden(Mac)
+     * @hidden(macOS)
      * @brief 音频路由被系统或其他应用占用，设置音频路由失败
      */
     ByteRTCMediaDeviceWarningSetAudioRouteFailedByPriority = 22,
@@ -1492,7 +1532,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
      */
     ByteRTCMediaDeviceWarningSetAudioRouteNotVoipMode = 23,
     /** 
-     * @hidden(Mac)
+     * @hidden(macOS)
      * @brief 音频设备未启动，设置音频路由失败
      */
     ByteRTCMediaDeviceWarningSetAudioRouteDeviceNotStart = 24
@@ -1558,23 +1598,20 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
 };
 
 /** 
- * @hidden
- * @brief 342 需求，缺注释，需补齐
+ * @type keytype
+ * @brief 通话质量反馈预设问题列表
  */
 BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemOption: NSObject
 /** 
- * @hidden
- * @brief 342 需求，缺注释，需补齐
+ * @brief 初始化 ByteRTCProblemOption
  */
 - (instancetype _Nonnull)initWithOption:(ByteRTCProblemFeedbackOption)option;
 /** 
- * @hidden
- * @brief 342 需求，缺注释，需补齐
+ * @brief 读取音视频质量反馈问题类型，参看 ByteRTCProblemFeedbackOption{@link #ByteRTCProblemFeedbackOption}。
  */
 @property(nonatomic, assign, readonly) ByteRTCProblemFeedbackOption option;
 /** 
- * @hidden
- * @brief 342 需求，缺注释，需补齐
+ * @brief 读取 ByteRTCProblemOption 类对应的文字描述
  */
 @property(nonatomic, copy, readonly) NSString * _Nonnull desc;
 @end
@@ -1655,11 +1692,11 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoCodecType) {
      */
     ByteRTCVideoCodecTypeUnknown = 0,
     /** 
-     * @brief 标准 H264 编码器
+     * @brief 标准 H264 编码格式
      */
     ByteRTCVideoCodecTypeH264 = 1,
     /** 
-     * @brief 标准 ByteVC1 编码器
+     * @brief ByteVC1 编码器
      */
     ByteRTCVideoCodecTypeByteVC1 = 2,
 };
@@ -1680,21 +1717,20 @@ typedef NS_ENUM(NSInteger, ByteRTCMuteState) {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 黑帧视频流状态
  */
 typedef NS_ENUM(NSInteger,  ByteSEIStreamEventType) {
     /** 
      * @brief 远端用户发布黑帧视频流。  <br>
-     *        纯语音通话场景下，远端用户调用 sendSEIMessage:andMessage:andRepeatCount:{@link #RTCVideo#sendSEIMessage:andMessage:andRepeatCount:} 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。
+     *        纯语音通话场景下，远端用户调用 sendSEIMessage:andMessage:andRepeatCount:{@link #ByteRTCVideo#sendSEIMessage:andMessage:andRepeatCount:} 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。
      */
     ByteSEIStreamEventTypeStreamAdd = 0,
     /** 
      * @brief 远端黑帧视频流移除。该回调的触发时机包括：  <br>
      *        + 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br>
-     *        + 远端用户调用 sendSEIMessage:andMessage:andRepeatCount:{@link #RTCVideo#sendSEIMessage:andMessage:andRepeatCount:} 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br>
-     *        + 远端用户调用 setVideoSourceType:WithStreamIndex:{@link #RTCVideo#setVideoSourceType:WithStreamIndex:} 切换至自定义视频采集时，黑帧视频流停止发布。
+     *        + 远端用户调用 sendSEIMessage:andMessage:andRepeatCount:{@link #ByteRTCVideo#sendSEIMessage:andMessage:andRepeatCount:} 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br>
+     *        + 远端用户调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 切换至自定义视频采集时，黑帧视频流停止发布。
      */
      ByteSEIStreamEventTypeStreamRemove = 1,
 };
@@ -1951,8 +1987,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
 /** 
  * @brief 是否检测音频。检测设备为系统默认音频设备。  <br>
  *        + true：是  <br>
- *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCEngineDelegate#rtcEngine:onLocalAudioPropertiesReport:} 回调，你可以根据该回调判断麦克风的工作状态  <br>
- *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame:{@link #ByteRTCEngineKit#pushExternalAudioFrame:} 将采集到的音频推送给 SDK  <br>
+ *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
+ *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame:{@link #ByteRTCVideo#pushExternalAudioFrame:} 将采集到的音频推送给 SDK  <br>
  *        + flase：否  <br>
  */
 @property(assign, nonatomic) BOOL enableAudio;
@@ -1960,7 +1996,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
  * @brief 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
  *        + true：是  <br>
  *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
- *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame:time:{@link #ByteRTCEngineKit#pushExternalVideoFrame:time:} 将采集到的视频推送给 SDK  <br>
+ *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame:time:{@link #ByteRTCVideo#pushExternalVideoFrame:time:} 将采集到的视频推送给 SDK  <br>
  *        + flase：否  <br>
  * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
  */
@@ -2195,8 +2231,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
 
 /** 
  * @type keytype
- * @brief 远端音频流统计信息，统计周期为 2s 。  <br>
- *        本地用户订阅远端音频流成功后，SDK 会周期性地通过 `onRemoteStreamStats`
+ * @brief 远端视频流统计信息，统计周期为 2s 。  <br>
+ *        本地用户订阅远端视频流成功后，SDK 会周期性地通过 `onRemoteStreamStats`
  *        通知本地用户订阅的远端视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。  <br>
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
@@ -2257,6 +2293,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
  * @brief 远端用户在进房后发生视频卡顿的累计时长占视频总有效时长的百分比（%）。视频有效时长是指远端用户进房发布视频流后，除停止发送视频流和禁用视频模块之外的视频时长。
  */
 @property(assign, nonatomic) NSInteger frozenRate;
+/** 
+ * @brief 编码类型。参看 ByteRTCVideoCodecType{@link #ByteRTCVideoCodecType} 类型。  
+ */
+@property(nonatomic) ByteRTCVideoCodecType codecType;
 /** 
  * @brief SDK 订阅的远端视频流的分辨率下标。  <br>
  */
@@ -2412,13 +2452,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
 /** 
  * @hidden
  * @brief 所属用户的媒体流上行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
- * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCEngineDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
+ * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCVideoDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
  */
 @property(assign, nonatomic) ByteRTCNetworkQuality tx_quality;
 /** 
  * @hidden
  * @brief 所属用户的媒体流下行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
- * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCEngineDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
+ * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCVideoDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
  */
 @property(assign, nonatomic) ByteRTCNetworkQuality rx_quality;
 /** 
@@ -2449,13 +2489,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
 /** 
  * @hidden
  * @brief 所属用户的媒体流上行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
- * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCEngineDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
+ * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCVideoDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
  */
 @property(assign, nonatomic) ByteRTCNetworkQuality tx_quality;
 /** 
  * @hidden
  * @brief 所属用户的媒体流下行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
- * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCEngineDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
+ * @deprecated since 336.1, use rtcEngine:onNetworkQuality:remoteQualities:{@link #ByteRTCVideoDelegate#rtcEngine:onNetworkQuality:remoteQualities:} instead
  */
 @property(assign, nonatomic) ByteRTCNetworkQuality rx_quality;
 /** 
@@ -2544,6 +2584,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamKey : NSObject
 @end
 
 /** 
+ * @hidden
  * @type callback
  * @region 监控
  * @brief 非业务相关的监控事件回调
@@ -2791,7 +2832,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
  * @region 引擎管理
  * @author dixing
  * @brief 根据索引号，获取设备信息
- * @param index 设备索引号，从 0 开始，注意需小于 GetCount{@link #ByteRTCDeviceCollection#GetCount} 返回值。
+ * @param index 设备索引号，从 0 开始，注意需小于 getCount{@link #ByteRTCDeviceCollection#getCount} 返回值。
  * @param deviceName 设备名称
  * @param deviceID 设备 ID
  * @return  <br>

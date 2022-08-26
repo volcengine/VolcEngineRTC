@@ -2,7 +2,6 @@
 //  PreJoinNetResultViewController.h
 //  Advanced
 //
-//  Created by bytedance on 2022/3/16.
 //
 
 #import <UIKit/UIKit.h>

@@ -184,10 +184,6 @@ struct VideoSolution {
      */
     int max_send_kbps = SEND_KBPS_AUTO_CALCULATE;
     /** 
-     * @brief 视频帧缩放模式。你可以设置缩放以适应视窗，参看 VideoStreamScaleMode{@link #VideoStreamScaleMode}
-     */
-    VideoStreamScaleMode scale_mode = VideoStreamScaleMode::kVideoStreamScaleModeAuto;
-    /** 
      * @brief 视频编码质量策略，参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
@@ -216,11 +212,7 @@ struct VideoEncoderConfig {
      */
     int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
     /** 
-     * @brief 视频帧缩放模式。你可以设置缩放以适应视窗，参看 VideoStreamScaleMode{@link #VideoStreamScaleMode}
-     */
-    VideoStreamScaleMode scaleMode = VideoStreamScaleMode::kVideoStreamScaleModeAuto;
-    /** 
-     * @brief 视频编码质量策略，参看 VideoEncodePreference{@link #VideoEncodePreference}
+     * @brief 视频编码质量策略，默认质量优先，参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
     VideoEncodePreference encoderPreference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
 };
@@ -231,19 +223,24 @@ struct VideoEncoderConfig {
  */
 struct VideoSolutionDescription {
     /** 
-     * @brief 宽（像素）
+     * @brief 宽（像素）<br>
+     *        默认值为 `1920` <br>
+     *        为 `0` 时，保持源的宽。
      */
     int width;
     /** 
-     * @brief 高（像素）
+     * @brief 高（像素）<br>
+     *        默认值为 `1080` <br>
+     *        为 `0` 时，保持源的高。
      */
     int height;
     /** 
-     * @brief 视频帧率
+     * @brief 视频帧率(fps)，默认为 15 fps
      */
     int fps;
     /** 
-     * @brief 最大发送速率（千比特每秒）
+     * @brief 最大发送速率（千比特每秒）。<br>
+     *        默认为 `-1`，适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率
      */
     int max_send_kbps;
     /** 
@@ -320,7 +317,6 @@ enum VideoPixelFormat {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 视频内容类型
  */
@@ -551,10 +547,7 @@ public:
      */
     virtual VideoPixelFormat pixelFormat() const = 0;
     /** 
-     * @hidden
-     * @type api
-     * @brief 获取视频内容类型
-     * @return 视频内容类型，参看 VideoContentType{@link #VideoContentType}。
+     * @brief 获取视频内容类型，参看 VideoContentType{@link #VideoContentType}。
      */
     virtual VideoContentType videoContentType() const = 0;
 

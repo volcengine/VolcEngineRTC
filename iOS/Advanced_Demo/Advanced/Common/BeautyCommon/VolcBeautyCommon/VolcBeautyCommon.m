@@ -2,7 +2,6 @@
 //  VolcBeautyCommon.m
 //  Advanced
 //
-//  Created by bytedance on 2022/2/11.
 //
 
 #import "EffectResource.h"
@@ -11,21 +10,21 @@
 
 @interface VolcBeautyCommon ()
 
-@property (nonatomic, weak) ByteRTCEngineKit *rtcKit;
+@property (nonatomic, weak) ByteRTCVideo *rtcVideo;
 @property (nonatomic, strong) NSArray *makeupNodes;
 
 @end
 
 @implementation VolcBeautyCommon
 
-- (instancetype)initWithRtcKit:(ByteRTCEngineKit *)rtcKit {
+- (instancetype)initWithRtcKit:(ByteRTCVideo *)rtcVideo {
     self = [super init];
     if (self) {
-        self.rtcKit = rtcKit;
+        self.rtcVideo = rtcVideo;
         
         /// license 验证
         NSString *licensePath = [EffectResource licensePath];
-        int errorCode = [self.rtcKit checkVideoEffectLicense:licensePath];
+        int errorCode = [self.rtcVideo checkVideoEffectLicense:licensePath];
         if (errorCode == 0) {
             NSLog(@"VolcBeautyCommon check license success");
         } else {
@@ -35,12 +34,12 @@
         /// 注册视频特效算法模型
         NSString *modelPath = [EffectResource modelPath];
         if (modelPath) {
-            [self.rtcKit setVideoEffectAlgoModelPath:modelPath];
+            [self.rtcVideo setVideoEffectAlgoModelPath:modelPath];
         }
         
         /// 背景分割初始化
         NSString *portraitPath = [EffectResource getByteEffectPortraitPath];
-        int virtualResult = [self.rtcKit initVirtualBackground:licensePath
+        int virtualResult = [self.rtcVideo initVirtualBackground:licensePath
                                                      withModel:portraitPath];
         if (virtualResult == 0) {
             NSLog(@"VolcBeautyCommon init virtual success");
@@ -49,7 +48,7 @@
         }
 
         /// 创建视频特效引擎
-        int isEnable = [self.rtcKit enableVideoEffect:YES];
+        int isEnable = [self.rtcVideo enableVideoEffect:YES];
         if (isEnable == 0) {
             NSLog(@"VolcBeautyCommon enable video effect success");
         } else {
@@ -60,7 +59,7 @@
         NSString *beautyPath = [EffectResource beautyCameraPath];
         NSString *resharppath = [EffectResource reshapeCameraPath];
         self.makeupNodes = @[ beautyPath, resharppath ];
-        int isEffectNodes = [self.rtcKit setVideoEffectNodes:self.makeupNodes];
+        int isEffectNodes = [self.rtcVideo setVideoEffectNodes:self.makeupNodes];
         if (isEffectNodes == 0) {
             NSLog(@"VolcBeautyCommon enable effect nodes success");
         } else {
@@ -74,20 +73,20 @@
                        selected:(BOOL)isSelected {
     if (isSelected) {
         NSArray *allNodes = [self.makeupNodes arrayByAddingObject:path];
-        [self.rtcKit setVideoEffectNodes:allNodes];
+        [self.rtcVideo setVideoEffectNodes:allNodes];
     } else {
-        [self.rtcKit setVideoEffectNodes:self.makeupNodes];
+        [self.rtcVideo setVideoEffectNodes:self.makeupNodes];
     }
 }
 
 - (void)didClickedFilterEffect:(NSString *)path
                          value:(CGFloat)value {
-    [self.rtcKit setVideoEffectColorFilter:path];
-    [self.rtcKit setVideoEffectColorFilterIntensity:value];
+    [self.rtcVideo setVideoEffectColorFilter:path];
+    [self.rtcVideo setVideoEffectColorFilterIntensity:value];
 }
 
 - (void)didChangeFilterEffect:(CGFloat)value {
-    [self.rtcKit setVideoEffectColorFilterIntensity:value];
+    [self.rtcVideo setVideoEffectColorFilterIntensity:value];
 }
 
 - (void)didClickedVirtualEffect:(NSString *)type
@@ -104,12 +103,12 @@
             source.sourceType = ByteRTCVirtualBackgroundSourceTypeColor;
             source.sourceColor = 0xff1678ff;
         }
-        int result = [self.rtcKit enableVirtualBackground:source];
+        int result = [self.rtcVideo enableVirtualBackground:source];
         if (result != 0) {
             [[ToastComponents shareToastComponents] showWithMessage:@"开启背景分割失败"];
         }
     } else {
-        [self.rtcKit disableVirtualBackground];
+        [self.rtcVideo disableVirtualBackground];
     }
 }
 
@@ -117,7 +116,7 @@
                         value:(CGFloat)value  {
     // 美颜
     NSString *path = [EffectResource beautyCameraPath];
-    [self.rtcKit updateVideoEffectNode:path
+    [self.rtcVideo updateVideoEffectNode:path
                                nodeKey:key
                              nodeValue:value];
 }
@@ -126,14 +125,14 @@
                          value:(CGFloat)value {
     // 美形
     NSString *path = [EffectResource reshapeCameraPath];
-    [self.rtcKit updateVideoEffectNode:path
+    [self.rtcVideo updateVideoEffectNode:path
                                nodeKey:key
                              nodeValue:value];
 }
 
 - (void)didDefaultSetting {
-    [self.rtcKit setVideoEffectColorFilter:[EffectResource filterPathWithName:@"Filter_06_03"]];
-    [self.rtcKit setVideoEffectColorFilterIntensity:0.0];
+    [self.rtcVideo setVideoEffectColorFilter:[EffectResource filterPathWithName:@"Filter_06_03"]];
+    [self.rtcVideo setVideoEffectColorFilterIntensity:0.0];
 }
 
 @end

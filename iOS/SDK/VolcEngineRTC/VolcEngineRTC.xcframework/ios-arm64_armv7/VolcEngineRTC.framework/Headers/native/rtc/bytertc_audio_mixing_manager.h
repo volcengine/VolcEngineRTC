@@ -121,6 +121,7 @@ public:
     virtual void unloadAudioMixing(int mix_id) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 调节混音的音量大小，包括音频文件混音和 PCM 混音。
@@ -134,6 +135,7 @@ public:
     virtual void setAudioMixingVolume(int mix_id, int volume, AudioMixingType type) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 获取音乐文件时长
@@ -159,6 +161,7 @@ public:
      */
     virtual int getAudioMixingCurrentPosition(int mix_id) = 0;
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 设置音频文件的起始播放位置
@@ -170,6 +173,7 @@ public:
     virtual void setAudioMixingPosition(int mix_id, int position) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 设置当前音频文件的声道模式
@@ -180,8 +184,9 @@ public:
      *        + 此方法对 enableAudioMixingFrame{@link #IAudioMixingManager#enableAudioMixingFrame} 播放的音乐无效。
      */
     virtual void setAudioMixingDualMonoMode(int mix_id, AudioMixingDualMonoMode mode) = 0;
-    
+
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
@@ -209,6 +214,7 @@ public:
     virtual int setAudioMixingPlaybackSpeed(int mix_id, int speed) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 设置混音时音频文件播放进度回调的间隔
@@ -223,6 +229,7 @@ public:
     virtual void setAudioMixingProgressInterval(int mix_id, int64_t interval) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 如果你需要使用 `enableVocalInstrumentBalance` 对混音使音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
@@ -234,6 +241,7 @@ public:
     virtual void setAudioMixingLoudness(int mix_id, float loudness) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 启动外部音频流混音
@@ -250,6 +258,7 @@ public:
     virtual void enableAudioMixingFrame(int mix_id, AudioMixingType type) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 关闭 PCM 混音
@@ -258,6 +267,7 @@ public:
     virtual void disableAudioMixingFrame(int mix_id) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 推送 PCM 音频帧数据用于混音
@@ -273,6 +283,7 @@ public:
     virtual int pushAudioMixingFrame(int mix_id, IAudioFrame* audio_frame) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 获取当前音频文件的音轨索引
@@ -287,6 +298,7 @@ public:
     virtual int getAudioTrackCount(int mix_id) = 0;
 
     /** 
+     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 指定当前音频文件的播放音轨
@@ -299,7 +311,7 @@ public:
      */
     virtual void selectAudioTrack(int mix_id, int audio_track_index) = 0;
 
-    /**  
+    /** 
      * @hidden
      * @brief 析构函数
      */

@@ -31,6 +31,7 @@
 
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
+              contentType:(ByteRTCVideoContentType)contentType
              extendedData:(NSData * _Nullable)extendedData {
     [CustomFrameRender renderImageBuffer:pixelBuffer
                                  forView:self.renderImageView

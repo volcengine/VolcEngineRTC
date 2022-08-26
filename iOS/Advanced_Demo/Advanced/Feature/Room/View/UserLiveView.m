@@ -50,6 +50,16 @@
     }
 }
 
+- (void)replaceCanvasView:(UIView *)view {
+    [self.liveView removeFromSuperview];
+    self.liveView = view;
+    [self addSubview:view];
+    [view mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.right.equalTo(self);
+        make.height.equalTo(self).offset(-30);
+    }];
+}
+
 - (void)setUid:(NSString *)uid {
     _uid = uid;
     self.label.text = uid;

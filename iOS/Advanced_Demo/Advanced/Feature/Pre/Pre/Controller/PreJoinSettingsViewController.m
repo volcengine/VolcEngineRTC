@@ -2,8 +2,6 @@
 //  PreJoinSettingsViewController.m
 //  Advanced
 //
-//  Created by bytedance on 2021/12/6.
-//  Copyright © 2021 bytedance. All rights reserved.
 //
 
 #import "PreJoinSettingsViewController.h"
@@ -35,11 +33,19 @@
         }
         make.top.mas_equalTo(topInset + 44 + 30);
         make.left.right.equalTo(self.view);
-        make.height.mas_equalTo(220);
+        make.height.mas_equalTo(275);
     }];
     self.settingView.title = @"采集渲染设定";
     
     __weak typeof(self) weakSelf = self;
+    
+    NSInteger selectedIndex = self.preJoinSetting.isScreenShare ? 1 : 0;
+    SettingSegmentModel *segmentModel = [[SettingSegmentModel alloc] initWithDefaultSelectedIndex:selectedIndex];
+    segmentModel.actionTitles = @[@"摄像头", @"屏幕共享"];
+    segmentModel.title = @"视频源";
+    [segmentModel setSegmentDidChangeSelectedIndex:^(NSInteger index) {
+        weakSelf.preJoinSetting.isScreenShare = index == 1;
+    }];
     
     BOOL useCustomCapture = self.preJoinSetting.useCustomCapture;
     SettingSwitchModel *externalSourceModel = [[SettingSwitchModel alloc] initWithDefaultStatus:useCustomCapture];
@@ -70,7 +76,7 @@
         weakSelf.preJoinSetting.remoteRenderMode = index;
     }];
     
-    self.settingView.dataArray = @[externalSourceModel,externalRenderModel,localRenderModeModel,remoteRenderModeModel];
+    self.settingView.dataArray = @[segmentModel, externalSourceModel,externalRenderModel,localRenderModeModel,remoteRenderModeModel];
     
     // 特效
     [self.view addSubview:self.effectsView];

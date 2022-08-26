@@ -2,11 +2,9 @@
 //  RoomSettingView.h
 //  Advanced
 //
-//  Created by bytedance on 2021/12/7.
-//  Copyright © 2021 bytedance. All rights reserved.
 //
 
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
 #import <UIKit/UIKit.h>
 #import "RoomSetting.h"
 
@@ -14,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RoomSettingView : UIView
 
-- (instancetype)initWithRtcKit:(ByteRTCEngineKit *)rtcKit;
+- (instancetype)initWithRtcKit:(ByteRTCVideo *)rtcVideo
+                rtcRoom:(ByteRTCRoom *)rtcRoom;
 
 @property (nonatomic, strong) RoomSetting *roomSetting;
 

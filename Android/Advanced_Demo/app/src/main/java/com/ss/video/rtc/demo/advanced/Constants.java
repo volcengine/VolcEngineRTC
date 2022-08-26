@@ -20,6 +20,4 @@ public class Constants {
 
 
     public static final String SP_FILE_NAME = "advanced_start";
-
-    public static final String LICENSE_NAME = "";
 }
