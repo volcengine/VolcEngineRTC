@@ -44,8 +44,7 @@ set(VolcEngineRTC_Lib "VolcEngineRTC")
 include_directories(${CMAKE_SOURCE_DIR})
 
 #link VolcEngineRTC lib
-include_directories(${CMAKE_SOURCE_DIR}/${VolcEngineRTC_Lib}/include/rtc)
-include_directories(${CMAKE_SOURCE_DIR}/${VolcEngineRTC_Lib}/include/rts)
+include_directories(${CMAKE_SOURCE_DIR}/${VolcEngineRTC_Lib}/include)
 
 set(CMAKE_AUTOMOC TRUE)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)

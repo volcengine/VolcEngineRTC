@@ -239,7 +239,15 @@ public:
         (void)device_state;
         (void)device_error;
     }
-
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 音频设备状态回调。提示音频采集、音频播放等设备设备的状态。
+     * @param [in] device_id 设备 ID。
+     * @param [in] device_type 设备类型，详见 RTCAudioDeviceType{@link #RTCAudioDeviceType}
+     * @param [in] device_state 设备状态，详见 MediaDeviceState{@link #MediaDeviceState}
+     * @param [in] device_error 设备错误类型，详见 MediaDeviceError{@link #MediaDeviceError}
+     */
     virtual void onAudioDeviceStateChanged(const char* device_id, bytertc::RTCAudioDeviceType device_type,
             bytertc::MediaDeviceState device_state, bytertc::MediaDeviceError device_error) {
         (void)device_id;
@@ -247,7 +255,15 @@ public:
         (void)device_state;
         (void)device_error;
     }
-
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 视频频设备状态回调。提示摄像头视频采集、屏幕视频采集等设备的状态。
+     * @param [in] device_id 设备 ID。采集屏幕共享流时，设备 ID 为固定字符串 `screen_capture_video`
+     * @param [in] device_type 设备类型，详见 RTCVideoDeviceType{@link #RTCVideoDeviceType}
+     * @param [in] device_state 设备状态，详见 MediaDeviceState{@link #MediaDeviceState}
+     * @param [in] device_error 设备错误类型，详见 MediaDeviceError{@link #MediaDeviceError}
+     */
     virtual void onVideoDeviceStateChanged(const char* device_id, bytertc::RTCVideoDeviceType device_type,
             bytertc::MediaDeviceState device_state, bytertc::MediaDeviceError device_error) {
         (void)device_id;
@@ -272,15 +288,29 @@ public:
         (void)device_type;
         (void)device_warning;
     }
-
-    virtual void onAudioDeviceWarning(const char* device_id, bytertc::RTCAudioDeviceType device_type,
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 音频设备警告回调。音频设备包括音频采集设备和音频渲染设备。
+     * @param [in] device_id 设备 ID
+     * @param [in] device_type 详见 RTCAudioDeviceType{@link #RTCAudioDeviceType}
+     * @param [in] device_warning 详见 MediaDeviceWarning{@link #MediaDeviceWarning}
+     */
+     virtual void onAudioDeviceWarning(const char* device_id, bytertc::RTCAudioDeviceType device_type,
             bytertc::MediaDeviceWarning device_warning) {
         (void)device_id;
         (void)device_type;
         (void)device_warning;
     }
-
-    virtual void onVideoDeviceWarning(const char* device_id, bytertc::RTCVideoDeviceType device_type,
+    /** 
+     * @type callback
+     * @region 引擎管理
+     * @brief 视频设备警告回调，包括视频采集设备等。
+     * @param [in] device_id 设备 ID
+     * @param [in] device_type 详见 RTCVideoDeviceType{@link #RTCVideoDeviceType}
+     * @param [in] device_warning 详见 MediaDeviceWarning{@link #MediaDeviceWarning}
+     */
+     virtual void onVideoDeviceWarning(const char* device_id, bytertc::RTCVideoDeviceType device_type,
             bytertc::MediaDeviceWarning device_warning) {
         (void)device_id;
         (void)device_type;
@@ -391,7 +421,7 @@ public:
      * @param [in] error <br>
      *        设置结果  <br>
      *        + 返回 200，设置成功  <br>
-     *        + 返回其他，设置失败
+     *        + 返回其他，设置失败，详见 UserMessageSendResult{@link #UserMessageSendResult}
      * @notes 调用 setServerParams{@link #IRtcEngine#setServerParams} 后，会收到此回调。
      */
     virtual void onServerParamsSetResult(int error) {
@@ -535,6 +565,7 @@ public:
         (void)audio_properties_info_number;
     }
     /** 
+     * @hidden(Linux)
      * @type callback
      * @region 音频设备管理
      * @brief 回调音频设备测试时的播放音量
@@ -676,7 +707,7 @@ public:
      *              + !0: 失败，具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
      * @param [in] extra_info 额外信息。
      *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
-     *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCRoom#joinRoom}} 到加入房间成功所经历的时间间隔，单位为 ms。
+     *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
      */
     virtual void onRoomStateChanged(
             const char* room_id, const char* uid, int state, const char* extra_info) {
@@ -790,7 +821,7 @@ public:
      * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
      * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
      * @param reason 用户离开房间的原因：  <br>
-     *              + 0: 远端用户调用 leaveRoom{@link #IRTCRoom#leaveRoom}} 主动退出房间。  <br>
+     *              + 0: 远端用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 主动退出房间。  <br>
      *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
      *              + 2: 远端用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 切换至不可见状态。 <br>
      *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
@@ -855,7 +886,7 @@ public:
      * @param [in] enabled 该用户是否开启了音频设备采集  <br>
      *       + true: 该用户开启了音频设备采集  <br>
      *       + false: 该用户关闭了音频设备采集  <br>
-     *       + 该接口已废弃，请使用 OnUserStartAudioCapture{@link #IRTCRoomEventHandler#OnUserStartAudioCapture} 以及 onUserStopAudioCapture{@link #IRTCRoomEventHandler#onUserStopAudioCapture} <br>
+     *       + 该接口已废弃，请使用 OnUserStartAudioCapture{@link #IRtcEngineEventHandler#OnUserStartAudioCapture} 以及 onUserStopAudioCapture{@link #IRTCRoomEventHandler#onUserStopAudioCapture} <br>
      */
     virtual void onUserEnableLocalAudio(const char* uid, bool enabled) {
         (void)uid;
@@ -1438,7 +1469,7 @@ public:
     /** 
      * @type callback
      * @region 视频管理
-     * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
+     * @brief 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
      * @param [in] uid 被禁用/解禁的视频流用户 ID
      * @param [in] banned 视频流发送状态 <br>
      *        + true: 视频流发送被禁用 <br>
@@ -1460,7 +1491,7 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @brief 通过调用服务端 MuteUser/UnmuteUser 方法禁用/解禁指定房间内指定用户视音频流的发送时，触发此回调。
+     * @brief 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。
      * @param [in] uid 被禁用/解禁的音频流用户 ID
      * @param [in] banned 音频流发送状态 <br>
      *        + true: 音频流发送被禁用 <br>
@@ -1547,7 +1578,7 @@ public:
     }
     /** 
      * @type callback
-     * @brief 调用 startCloudProxy{@link #IRtcEngine#startCloudProxy}} 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
+     * @brief 调用 startCloudProxy{@link #IRtcEngine#startCloudProxy} 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
      * @param [in] interval 从开启云代理到连接成功经过的时间，单位为 ms
      */
     virtual void onCloudProxyConnected(int interval) {

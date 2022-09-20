@@ -385,7 +385,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
  *        + < 0: 方法调用失败 <br>
  * @notes <br>
  *       + 可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知；  <br>
- *       + 调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
  */
  - (int)leaveRoom;
 /** 
@@ -442,6 +441,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
  * @param userId 指定订阅的远端发布音频流的用户 ID。
  * @notes  <br>
  *        + 你必须先通过 rtcRoom:onUserPublishStream:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onUserPublishStream:} 回调获取当前房间里的远端摄像头音频流信息，然后调用本方法按需订阅。  <br>
+ *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #ByteRTCAudioRoom#unsubscribeStream} 取消订阅或本端用户退房。 <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCAudioRoom#rtcRoom:onRoomStateChanged:withUid:state:xtraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeStream:(NSString *_Nonnull)userId;
@@ -490,6 +490,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
   * @param message  <br>
   *        发送的文本消息内容。  <br>
   *        消息不超过 64 KB。
+    * @param config   <br>
+    *        消息发送的可靠/有序类型，参看 ByteRTCMessageConfig{@link #ByteRTCMessageConfig}  <br>
+    * @notes  <br>
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
   *      + 在发送房间内文本消息前，必须先调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 加入房间。  <br>

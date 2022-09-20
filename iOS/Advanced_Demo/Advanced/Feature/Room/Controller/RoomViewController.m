@@ -6,33 +6,38 @@
  * - 创建引擎
  * - 设置视频发布参数
  * - 渲染自己的视频数据
+ * - 创建房间
  * - 加入音视频通话房间
- * - 切换前置/后置摄像头
  * - 打开/关闭麦克风
  * - 打开/关闭摄像头
- * - 切换听筒/扬声器
  * - 渲染远端用户的视频数据
  * - 离开房间
  * - 销毁引擎
  *
  * 实现一个基本的音视频通话的流程如下：
- * 1.创建引擎 initWithAppId:delegate:parameters:
- * 2.设置编码参数 setVideoEncoderConfig:
- * 3.开启本地视频采集 startVideoCapture:、startPreview:
- * 4.设置本地视频渲染视图 setLocalVideoCanvas:withCanvas:
- * 4.加入音视频通话房间 joinRoomByKey:roomId:roomProfile:userInfo:
- * 5.在收到远端用户视频首帧之后，设置用户的视频渲染视图 setRemoteVideoCanvas:withIndex:withCanvas:
- * 6.离开音视频通话房间 leaveRoom:
- * 7.销毁引擎 destroyEngine:
- *
- * 有以下常见的注意事项：
- * 1.本示例中，我们在 onFirstRemoteVideoFrameDecoded:withFrameInfo: 这个事件中给远端用户设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在 onUserJoined:elapsed: 回调中设置远端用户视频渲染视图
- * 2.SDK 回调不在主线程，UI 操作需要切换线程
- * 3.用户成功加入房间后，SDK 会通过 onUserJoined:elapsed: 回调已经在房间的用户信息
- * 4.SDK 支持同时发布多个参数的视频流，接口是 setVideoEncoderConfig:
- * 5.加入房间时，需要有有效的 token，加入失败时会通过 onError: 输出对应的错误码
- * 6.用户可以通过 ByteRTCEngineKit 实例的joinRoomByKey:roomId:roomProfile:userInfo: 中的 roomProfile 来获得不同场景下的性能优化。本示例是音视频通话场景，因此使用 ByteRTCRoomProfileCommunication
- * 7.不需要在每次加入/退出房间时销毁引擎。本示例退出房间时销毁引擎是为了展示完整的使用流程
+ * 1.创建 IRTCVideo 实例。
+ *   + (ByteRTCVideo * _Nullable) createRTCVideo:(NSString * _Nonnull)appId
+ *                                      delegate:(id<ByteRTCVideoDelegate> _Nullable)delegate
+ *                                    parameters:(NSDictionary * _Nonnull)parameters;
+ * 2.视频发布端设置期望发布的最大分辨率视频流参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+ *   - (int)SetMaxVideoEncoderConfig:(ByteRTCVideoEncoderConfig * _Nullable) max_solution;
+ * 3.开启本地视频采集。 - (void)startVideoCapture;
+ * 4.设置本地视频渲染时，使用的视图，并设置渲染模式。
+ *   - (int)setLocalVideoCanvas:(ByteRTCStreamIndex)streamIndex
+ *                   withCanvas:(ByteRTCVideoCanvas * _Nullable)canvas;
+ * 5.创建房间。- ( ByteRTCRoom * _Nullable)createRTCRoom:(NSString * _Nonnull)roomId;
+ * 6.加入音视频通话房间。
+ *   - (int)joinRoomByToken:(NSString *_Nullable)token
+ *                 userInfo:(ByteRTCUserInfo *_Nonnull)userInfo
+ *               roomConfig:(ByteRTCRoomConfig *_Nonnull)roomConfig;
+ * 7.SDK 接收并解码远端视频流首帧后，设置用户的视频渲染视图。
+ *   - (int)setRemoteVideoCanvas:(NSString * _Nonnull)uid
+ *                     withIndex:(ByteRTCStreamIndex)streamIndex
+ *                    withCanvas:(ByteRTCVideoCanvas * _Nullable)canvas;
+ * 8.在用户离开房间之后移出用户的视频渲染视图。
+ * 9.离开音视频通话房间，- (int)leaveRoom;
+ * 10.调用 ByteRTCRoom 实例的 - (void)destroy; 销毁房间对象。
+ * 11.调用 ByteRTCVideo  + (void)destroyRTCVideo; 销毁引擎。
  *
  * 详细的API文档参见: https://www.volcengine.com/docs/6348/70086
  */

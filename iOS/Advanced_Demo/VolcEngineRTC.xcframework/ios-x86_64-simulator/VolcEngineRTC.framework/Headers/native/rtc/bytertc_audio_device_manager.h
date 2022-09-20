@@ -374,7 +374,7 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 开始音频采集设备和音频播放设备测试。<br>
-     *        建议提前调用 `enableAudioPropertiesReport` 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 `onLocalAudioPropertiesReport` 获取采集音量。<br>
+     *        建议提前调用 `enableAudioPropertiesReport` 启用音频信息提示，测试开始后，音频设备开始采集本地声音，可以通过 `onLocalAudioPropertiesReport` 获取采集音量。<br>
      * @param [in] indication_interval 测试录音播放时触发 `onLocalAudioPropertiesReport` 播放音量回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
      * @return  方法调用结果  <br>
      *       + 0：方法调用成功  <br>

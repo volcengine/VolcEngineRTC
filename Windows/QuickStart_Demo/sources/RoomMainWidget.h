@@ -3,13 +3,16 @@
 #include <QtWidgets/QMainWindow>
 #include <QSharedPointer>
 #include "ui_RoomMainWidget.h"
-#include "bytertc_engine_interface.h"
+#include "bytertc_video.h"
+#include "bytertc_room.h"
+#include "bytertc_video_event_handler.h"
+#include "bytertc_room_event_handler.h"
 
 class LoginWidget;
 
 class OperateWidget;
 
-class RoomMainWidget : public QWidget, public bytertc::IRtcEngineEventHandler {
+class RoomMainWidget : public QWidget, public bytertc::IRTCRoomEventHandler, public bytertc::IRTCVideoEventHandler {
     Q_OBJECT
 
 public:
@@ -82,7 +85,8 @@ private:
     QPoint m_prevGlobalPoint;
     QSharedPointer <LoginWidget> m_loginWidget;
     QSharedPointer <OperateWidget> m_operateWidget;
-    bytertc::IRtcEngine *m_byteEngine = nullptr;
+    bytertc::IRTCVideo* m_rtc_video = nullptr;
+    bytertc::IRTCRoom* m_rtc_room = nullptr;
     std::string m_uid;
     std::string m_roomId;
     QList<VideoWidget *> m_videoWidgetList;

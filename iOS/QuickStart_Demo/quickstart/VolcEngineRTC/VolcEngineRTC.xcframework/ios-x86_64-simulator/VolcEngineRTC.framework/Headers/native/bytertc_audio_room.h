@@ -39,7 +39,7 @@ public:
      * @author shenpengliang
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
-     *        进房后重复调用无效，用户必须调用 `leaveRoom` 退出当前房间后，才能加入下一个房间。  <br>
+     *        进房后重复调用无效。  <br>
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
      *       + 使用不同 App ID 的 App 是不能互通的。  <br>
@@ -68,8 +68,7 @@ public:
      * @notes  <br>
      *       + 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 onLeaveRoom{@link #IRTCAudioRoomEventHandler#onLeaveRoom} 回调通知。  <br>
      *       + 可见的用户离开房间后，房间内其他用户会收到 onUserLeave{@link #IRTCAudioRoomEventHandler#onUserLeave} 回调通知。  <br>
-     *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 onLeaveRoom{@link #IRTCAudioRoomEventHandler#onLeaveRoom} 回调。  <br>
-     *       + 调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
+     *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 onLeaveRoom{@link #IRTCAudioRoomEventHandler#onLeaveRoom} 回调。
      */
     virtual void leaveRoom() = 0;
 
@@ -227,6 +226,7 @@ public:
      * @param [in] user_id 指定订阅的远端发布音频流的用户 ID。
      * @notes  <br>
      *        + 你必须先通过 onUserPublishStream{@link #IRTCAudioRoomEventHandler#onUserPublishStream} 回调获取当前房间里的远端音频流信息，然后调用本方法按需订阅。  <br>
+     *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #IRTCAudioRoom#unsubscribeStream} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCAudioRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void subscribeStream(const char* user_id) = 0;
@@ -350,7 +350,7 @@ public:
      * @notes 首次调用该方法须在创建房间后、加入房间前。
      */
     virtual IRangeAudio* getRangeAudio() = 0;
-    
+
     /** 
      * @type api
      * @region 空间音频

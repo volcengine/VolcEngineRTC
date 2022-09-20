@@ -3,7 +3,10 @@
 #include <QPainter>
 #include "RoomMainWidget.h"
 #include <QDebug>
+#include <QJsonObject>
 #include <QJsonDocument>
+#include <QRandomGenerator>
+#include <QMessageAuthenticationCode>
 #include "http.h"
 #include <QFile>
 #include "Constants.h"

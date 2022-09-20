@@ -47,9 +47,6 @@ public:
      * @param enable 设置用户是否对房间内其他用户可见：  <br>
      *        + true: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br>
      *        + false: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
-     * @return  <br>
-     *         + 0: 方法调用成功  <br>
-     *         + < 0: 方法调用失败  <br>
      * @notes  <br>
      *       + 该方法在加入房间前后均可调用。 <br>
      *       + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
@@ -76,7 +73,6 @@ public:
      * @author shenpengliang
      * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
      *        同一房间内的用户间可以相互通话。  <br>
-     *        进房后重复调用无效，用户必须调用 leaveRoom{@link #IRTCRoom#leaveRoom} 退出当前房间后，才能加入下一个房间。  <br>
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
      *       + 使用不同 App ID 的 App 是不能互通的。  <br>
@@ -106,7 +102,6 @@ public:
      * @notes  <br>
      *       + 可见的用户离开房间后，房间内其他用户会收到 onUserLeave{@link #IRTCRoomEventHandler#onUserLeave} 回调通知。  <br>
      *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 onLeaveRoom{@link #IRTCRoomEventHandler#onLeaveRoom} 回调。  <br>
-     *       + 调用 joinRoom{@link #IRTCRoom#joinRoom} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
      */
      virtual void leaveRoom() = 0;
 
@@ -281,6 +276,7 @@ public:
      * @param [in] user_id 期望订阅的远端视频流发布用户的 ID。
      * @param [in] remote_video_config 期望订阅的远端视频流参数，参看 RemoteVideoConfig{@link #RemoteVideoConfig}。
      * @notes <br>
+     *        + 若使用 342 及以前版本的 SDK，调用该方法前请联系技术支持人员通过配置下发开启按需订阅功能。  <br>
      *        + 该方法仅在发布端调用 enableSimulcastMode{@link #IRTCVideo#enableSimulcastMode} 开启了发送多路视频流的情况下生效，此时订阅端将收到来自发布端与期望设置的参数最相近的一路流；否则订阅端只会收到一路参数为分辨率 640px × 360px、帧率 15fps 的视频流。  <br>
      *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
      *        + 该方法需在进房后调用，若想进房前设置，你需调用 joinRoom{@link #IRTCRoom#joinRoom}，并对 `room_config` 中的 `remote_video_config` 进行设置。  <br>
@@ -299,6 +295,7 @@ public:
      *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream}} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
+     *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #IRTCRoom#unsubscribeStream} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void subscribeStream(const char *user_id,MediaStreamType type) = 0;
@@ -312,7 +309,7 @@ public:
      * @param [in] user_id 指定取消订阅的远端发布音视频流的用户 ID。
      * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
      * @notes  <br>
-     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知流的退订结果。  <br>
+     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void unsubscribeStream(const char *user_id,MediaStreamType type) = 0;
@@ -327,7 +324,8 @@ public:
      * @notes  <br>
      *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen}} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
-     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知流的订阅结果。  <br>
+     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
+     *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeScreen{@link #IRTCRoom#unsubscribeScreen} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void subscribeScreen(const char *user_id,MediaStreamType type) = 0;
@@ -341,7 +339,7 @@ public:
      * @param [in] user_id 指定取消订阅的远端发布屏幕流的用户 ID。
      * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
      * @notes  <br>
-     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知流的退订结果。  <br>
+     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void unsubscribeScreen(const char *user_id,MediaStreamType type) = 0;

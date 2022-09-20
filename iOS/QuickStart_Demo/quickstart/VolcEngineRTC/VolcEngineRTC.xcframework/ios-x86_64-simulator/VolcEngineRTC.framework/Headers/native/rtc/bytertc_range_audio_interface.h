@@ -118,7 +118,7 @@ public:
      * @type api
      * @region 范围语音
      * @brief 更新本地用户在房间内空间直角坐标系中的位置坐标。
-     * @param [in] pos 三维坐标的值，默认为 [0, 0, 0]，参看 Position{@link #Position}。
+     * @param [in] pos 三维坐标的值，默认为 [0, 0, 0]，参看 [Position](70098#position-2)
      * @return 方法调用结果： <br>
      *        + 0：成功；  <br>
      *        + !0：失败。

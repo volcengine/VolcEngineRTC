@@ -105,7 +105,8 @@ public:
      *        进房后调用该方法，房间中的其他用户会收到 onUserStartAudioCapture{@link #IRTCAudioEventHandler#onUserStartAudioCapture} 的回调。
      * @notes  <br>
      *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 onWarning{@link #IRTCAudioEventHandler#onWarning} 回调。  <br>
-     *       + 调用 stopAudioCapture{@link #stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+     *       + 调用 stopAudioCapture{@link #IRTCAudio#stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+     *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link #IRTCAudio#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publish{@link #IRTCAudio#publish}/unpublish{@link #IRTCAudio#unpublish} 实现临时闭麦和重新开麦。
      *       + 无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
      *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
      */

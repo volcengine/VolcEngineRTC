@@ -382,7 +382,7 @@ enum AudioMixingError {
      */
     kAudioMixingErrorInValidVolume,
     /** 
-     * @brief 已有另一个文件完成了预加载。请先使用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载此前的文件。
+     * @brief 播放的文件与预加载的文件不一致。请先使用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载此前的文件。
      */
     kAudioMixingErrorLoadConflict,
     /** 
@@ -461,7 +461,7 @@ enum AudioRenderType {
 
 /** 
  * @type keytype
- * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务服务相关同学
+ * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务相关人员
  */
 enum ASRAuthorizationType {
     /** 
@@ -555,11 +555,11 @@ enum AudioMixingType {
      */
     kAudioMixingTypePlayout,
     /** 
-     * @brief 仅发送到远端
+     * @brief 仅远端播放
      */
     kAudioMixingTypePublish,
     /** 
-     * @brief 在本地播放并发送到远端
+     * @brief 本地和远端同时播放
      */
     kAudioMixingTypePlayoutAndPublish
 };
@@ -585,9 +585,9 @@ struct AudioMixingConfig {
       */
      int position;
      /** 
-      * @brief 设置音频文件播放进度回调的时间间隔，单位毫秒，并按照设置的值触发 `onAudioMixingPlayingProgress` 回调，默认不回调。  <br>
-      *        + 该值应为大于 0 的 10 的倍数，当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
-      *        + 传入的值小于等于 0 时，不会触发进度回调。  <br>
+      * @brief 设置音频文件播放进度回调的时间间隔，参数为大于 0 的 10 的倍数，单位为毫秒，设置后 SDK 将按照设置的值触发 `onAudioMixingPlayingProgress` 回调，默认不回调。  <br>
+      *        + 当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
+      *        + 当传入的值小于等于 0 时，不会触发进度回调。  <br>
       */
      int64_t callback_on_progress_interval = 0;
 };
@@ -716,20 +716,20 @@ enum AudioProfileType {
      */
     kAudioProfileTypeDefault = 0,
     /** 
-     * @brief 流畅音质。  <br>
-     *        单声道，采样率为 16kHz，编码码率为 24 Kbps。 <br>
+     * @brief 流畅  <br>
+     *        单声道，采样率为 16 kHz，编码码率为 32 Kbps。 <br>
      *        流畅优先、低功耗、低流量消耗，适用于大部分游戏场景，如小队语音、组队语音、国战语音等。
      */
     kAudioProfileTypeFluent = 1,
     /** 
      * @brief 单声道标准音质。  <br>
-     *        采样率为 48kHz，编码码率为 48 Kbps。 <br>
+     *        采样率为 24 kHz，编码码率为 48 Kbps。 <br>
      *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和狼人杀等游戏。
      */
     kAudioProfileTypeStandard = 2,
     /** 
      * @brief 双声道音乐音质  <br>
-     *        采样率为 48kHz，编码码率为 128kbps。 <br>
+     *        采样率为 48 kHz，编码码率为 128 kbps。 <br>
      *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。 <br>
      *        游戏场景不建议使用。
      */
@@ -739,7 +739,7 @@ enum AudioProfileType {
      */
     kAudioProfileTypeStandardStereo = 4,
     /** 
-     * @brief 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 128 Kbps
+     * @brief 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 64 Kbps
      */
     kAudioProfileTypeHDMono = 5,
 };

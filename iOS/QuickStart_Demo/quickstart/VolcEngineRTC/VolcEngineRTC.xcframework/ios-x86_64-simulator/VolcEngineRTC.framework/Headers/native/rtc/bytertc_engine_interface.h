@@ -210,12 +210,13 @@ public:
      * @type api
      * @region 音频管理
      * @brief 开启内部音频采集。默认为关闭状态。  <br>
-     *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+     *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
      *        调用该方法开启后，本地用户会收到 onAudioDeviceStateChanged{@link #IRtcEngineEventHandler#onAudioDeviceStateChanged} 的回调。 <br>
      *        非隐身用户进房后调用该方法，房间中的其他用户会收到 onUserStartAudioCapture{@link #IRtcEngineEventHandler#onUserStartAudioCapture} 的回调。
      * @notes  <br>
      *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 onWarning{@link #IRtcEngineEventHandler#onWarning} 回调。  <br>
-     *       + 调用 stopAudioCapture{@link #stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+     *       + 调用 stopAudioCapture{@link IRtcEngine#stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+     *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link IRtcEngine#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publish{@link IRtcEngine#publish}/unpublish{@link IRtcEngine#unpublish} 实现临时闭麦和重新开麦。
      *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
      *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 setAudioSourceType{@link #IRtcEngine#setAudioSourceType} 关闭自定义采集，再调用此方法手动开启内部采集。
      */
@@ -226,7 +227,7 @@ public:
      * @type api
      * @region 音频管理
      * @brief 立即关闭内部音频采集。默认为关闭状态。  <br>
-     *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+     *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
      *        调用该方法，本地用户会收到 onAudioDeviceStateChanged{@link #IRtcEngineEventHandler#onAudioDeviceStateChanged} 的回调。  <br>
      *        非隐身用户进房后调用该方法后，房间中的其他用户会收到 onUserStopAudioCapture{@link #IRtcEngineEventHandler#onUserStopAudioCapture} 的回调。
      * @notes  <br>
@@ -978,6 +979,7 @@ public:
      *        + 0：成功  <br>
      *        + !0：失败  <br>
      * @notes  <br>
+     *       + 该接口已废弃，请使用同名新接口代替；若仍需使用该旧接口，请注意无需先调用 `enableSimulcastMode` 开启推送多路流模式。
      *       + 当使用内部采集时，视频采集的分辨率、帧率会根据最大的编码分辨率、帧率进行适配<br>
      *       + 默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
      *       + 变更编码分辨率后马上生效，可能会引发相机重启。<br>
@@ -1462,7 +1464,7 @@ public:
      * @brief 发送外部源视频数据
      * @param [in] frame 设置视频帧，参看 IVideoFrame{@link #IVideoFrame}。  <br>
      * @notes  <br>
-     *       + 暂时只支持 YUV420P 格式的视频帧。  <br>
+     *       + 支持格式：I420, NV12, RGBA, BGRA, ARGB  <br>
      *       + 该函数运行在用户调用线程内  <br>
      * @notes 推送外部视频帧前，必须调用 setVideoSourceType{@link #setVideoSourceType} 开启外部视频源采集。
      */
@@ -1506,7 +1508,9 @@ public:
      * @return  <br>
      *        + 0: 方法调用成功  <br>
      *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
-     * @notes 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 AudioScenarioType{@link #AudioScenarioType}。
+     * @notes<br>
+     *          + 你需要调用 setAudioScenario{@link #IRtcEngine#setAudioScenario} 将音频场景切换为 `kAudioScenarioTypeCommunication` 后再调用本接口。<br>
+     *          + 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 AudioScenarioType{@link #AudioScenarioType}。
      */
     virtual int setAudioRoute(AudioRoute route) = 0;
 
@@ -1521,7 +1525,7 @@ public:
      *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
      * @notes    <br>
      *        + 进房前后都可以调用。 <br>
-     *        + 更多注意事项参见[音频路由](https://www.volcengine.com/docs/6348/117386)。
+     *        + 更多注意事项参见[音频路由](117836)。
      */
     virtual int setDefaultAudioRoute(AudioRoute route) = 0;
 
@@ -1884,7 +1888,7 @@ public:
     /** 
      * @type api
      * @region 视频管理
-     * @brief 在视频通信时，通过视频帧发送 SEI 数据。StreamMain 流当是内部源且摄像头处于关闭状态时调用本函数，SDK engine 会构造一个视频黑帧发送 SEI 信息
+     * @brief 在视频通信时，通过视频帧发送 SEI 数据。
      * @param [in] stream_index 媒体流类型，参看 StreamIndex{@link #StreamIndex}
      * @param [in] message SEI 消息。长度不超过 4 kB。<br>
      * @param [in] length SEI 消息长度。<br>
@@ -2471,7 +2475,7 @@ public:
      * @param [in] key 远端流信息，即对哪一路视频流进行解码方式设置，参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] config 视频解码方式，参看 VideoDecoderConfig{@link #VideoDecoderConfig}。
      * @notes  <br>
-     *        + 该方法近适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
+     *        + 该方法仅适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
      *        + 当你想要对远端流进行自定义解码时，你需要先调用 registerRemoteEncodedVideoFrameObserver{@link #IRtcEngine#registerRemoteEncodedVideoFrameObserver} 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 onRemoteEncodedVideoFrame{@link #IRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame} 回调出来。
      */
     virtual void setVideoDecoderConfig(RemoteStreamKey key, VideoDecoderConfig config) = 0;
@@ -2608,9 +2612,6 @@ public:
      * @param enable 设置用户是否对房间内其他用户可见：  <br>
      *        + true: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br>
      *        + false: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
-     * @return  <br>
-     *         + 0: 方法调用成功  <br>
-     *         + < 0: 方法调用失败  <br>
      * @notes  <br>
      *       + 该方法在加入房间前后均可调用。 <br>
      *       + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
@@ -2879,6 +2880,7 @@ public:
      * @param [in] user_id 期望订阅的远端视频流发布用户的 ID。
      * @param [in] remote_video_config 期望订阅的远端视频流参数，参看 RemoteVideoConfig{@link #RemoteVideoConfig}。
      * @notes <br>
+     *        + 若使用 342 及以前版本的 SDK，调用该方法前请联系技术支持人员通过配置下发开启按需订阅功能。  <br>
      *        + 该方法仅在发布端调用 enableSimulcastMode{@link #IRtcEngine#enableSimulcastMode} 开启了发送多路视频流的情况下生效，此时订阅端将收到来自发布端与期望设置的参数最相近的一路流；否则订阅端只会收到一路参数为分辨率 640px × 360px、帧率 15fps 的视频流。  <br>
      *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
      *        + 该方法需在进房后调用，若想进房前设置，你需调用 joinRoom{@link #IRTCRoom#joinRoom}，并对 `room_config` 中的 `remote_video_config` 进行设置。  <br>
@@ -2895,6 +2897,7 @@ public:
      *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
+     *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #RTCEngine#unsubscribeStream} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void subscribeStream(const char *user_id,MediaStreamType type) = 0;
@@ -2920,6 +2923,7 @@ public:
      *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知流的订阅结果。  <br>
+     *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeScreen{@link #RTCEngine#unsubscribeScreen} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void subscribeScreen(const char *user_id,MediaStreamType type) = 0;

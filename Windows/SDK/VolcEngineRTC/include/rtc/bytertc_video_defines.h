@@ -464,19 +464,18 @@ struct MediaStreamInfo {
     bool has_audio;
     /** 
      * @brief 视频流的属性。  <br>
-     *        当远端用户调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
+     *        当远端用户调用 setVideoEncoderConfig{@link #IRTCVideo#setVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
      *        参看 VideoSolutionDescription{@link #VideoSolutionDescription}。
      */
     VideoSolutionDescription* profiles;
     /** 
      * @brief 不同配置流的个数。  <br>
-     *        当远端用户调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
+     *        当远端用户调用 setVideoEncoderConfig{@link #IRTCVideo#setVideoEncoderConfig} 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
      */
     int profile_count;
 
     /** 
      * @brief 最大视频流的属性。  <br>
-     *        since 336版本
      *        当远端用户开启带通道划分的大小流时，回调最大视频流属性信息。用户可以使用新的订阅方式，订阅任意不超过该分辨率的流。
      *        最终接收到的流，会受房间内其他用户的订阅行为的影响，综合确定一个最接近用户请求的分辨率的流。
      */
@@ -490,7 +489,7 @@ struct MediaStreamInfo {
 struct SubscribeVideoConfig {
     /** 
      * @brief 订阅的视频流分辨率下标。  <br>
-     *        当远端用户通过调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+     *        当远端用户通过调用 setVideoEncoderConfig{@link #IRTCVideo#setVideoEncoderConfig} 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
      *        默认值为 0，即订阅第一路流。  <br>
      *        如果不想更改之前的设置，可以输入 -1。  <br>
      */
@@ -540,12 +539,12 @@ struct SubscribeConfig {
     bool sub_audio;
     /** 
      * @brief 订阅的视频流分辨率下标。  <br>
-     *        用户可以通过调用 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+     *        用户可以通过调用 setVideoEncoderConfig{@link #IRTCVideo#setVideoEncoderConfig} 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
      */
     int video_index;
     /** 
      * @brief 远端用户的需求优先级，参看 RemoteUserPriority{@link #RemoteUserPriority}，默认值为 0 。  <br>
-     *        当开启了订阅流回退选项功能（详见 setSubscribeFallbackOption{@link #IRtcEngine#setSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
+     *        当开启了订阅流回退选项功能（详见 setSubscribeFallbackOption{@link #IRTCVideo#setSubscribeFallbackOption} 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
      */
     int priority = 0;
     /** 
@@ -662,7 +661,7 @@ enum VideoStreamType {
 /** 
  * @type keytype
  * @brief 视频帧渲染设置。<br>
- *        调用 setLocalVideoCanvas{@link #IRtcEngine#setLocalVideoCanvas} 将视频流绑定到本地视图。
+ *        调用 setLocalVideoCanvas{@link #IRTCVideo#setLocalVideoCanvas} 将视频流绑定到本地视图。
  */
 struct VideoCanvas {
     /** 
@@ -794,7 +793,7 @@ struct ScreenParameters {
  */
 enum ContentHint {
     /** 
-     * @brief 细节内容。当共享文档、图片时，建议使用该内容类型。
+     * @brief 细节内容。当共享文档、图片时，建议使用该内容类型。默认值。
      */
     kContentHintDetails = 0,
     /** 
@@ -1059,7 +1058,6 @@ enum VideoDecoderConfig {
 };
 
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief 视频采集配置参数。<br>
  */
@@ -1079,7 +1077,7 @@ struct VideoCaptureConfig {
         */
        KManual = 1,
        /** 
-        * @brief 采集参数与编码参数一致，即在 setVideoEncoderConfig{@link #IRtcEngine#setVideoEncoderConfig} 中设置的参数。
+        * @brief 采集参数与编码参数一致，即在 setVideoEncoderConfig{@link #IRTCVideo#setVideoEncoderConfig} 中设置的参数。
         */
        KAutoPerformance = 2,
     };
@@ -1224,41 +1222,19 @@ struct RTCRoomConfig {
     /** 
      * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为 `kRoomProfileTypeCommunication`，进房后不可更改。
      */
-     RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
+    RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /** 
      * @brief 是否自动发布音视频流，默认为自动发布。 <br>
+     *        创建和加入多房间时，只能将其中一个房间设置为自动发布。<br>
      *        若调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
      */
    bool is_auto_publish = true;
     /** 
      * @brief 是否自动订阅音频流，默认为自动订阅。
      */
-     bool is_auto_subscribe_audio = true;
-    /** 
-     * @brief 是否自动订阅主视频流，默认为自动订阅。  <br>
-     *        屏幕流始终自动订阅，不受该方法影响。
-     */
-    bool is_auto_subscribe_video = true;
-    /** 
-     * @brief 远端视频流参数，参看 RemoteVideoConfig{@link #RemoteVideoConfig}
-     */
-    RemoteVideoConfig remote_video_config;
-};
-/** 
- * @type keytype
- * @brief 多房间参数配置
- */
-struct MultiRoomConfig {
-    /** 
-     * @brief 房间模式，参看 RoomProfileType{@link #RoomProfileType}，默认为普通音视频通话模式，进房后不可更改。
-     */
-    RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
-    /** 
-     * @brief 是否自动订阅音频流，默认为自动订阅
-     */
     bool is_auto_subscribe_audio = true;
     /** 
-     * @brief 是否自动订阅视频流，默认为自动订阅
+     * @brief 是否自动订阅主视频流，默认为自动订阅。  
      */
     bool is_auto_subscribe_video = true;
     /** 
@@ -1340,7 +1316,7 @@ struct VideoDeviceInfo {
         this->device_pid = 0;
         this->transport_type = DeviceTransportType::kDeviceTransportTypeUnknown;
     };
-    
+
     /**
      * @hidden
      */
@@ -1354,9 +1330,347 @@ struct VideoDeviceInfo {
             device_pid = src.device_pid;
             transport_type = src.transport_type;
         }
-        
+
         return *this;
     }
 };
+
+/** 
+ * @hidden
+ * @type keytype
+ * @brief 视频帧朝向
+ */
+enum VideoOrientation {
+    /** 
+     * @brief （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。
+     */
+    kVideoOrientationAdaptive = 0,
+    /** 
+     * @brief 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。
+     */
+    kVideoOrientationPortrait = 1,
+    /** 
+     * @brief 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。
+     */
+    kVideoOrientationLandscape = 2
+};
+
+
+/** 
+ * @type keytype
+ * @brief 屏幕采集对象的类型
+ */
+enum ScreenCaptureSourceType {
+    /** 
+     * @brief 类型未知
+     */
+    kScreenCaptureSourceTypeUnknown,
+
+    /** 
+     * @brief 应用程序的窗口
+     */
+    kScreenCaptureSourceTypeWindow,
+
+    /** 
+     * @brief 桌面
+     */
+    kScreenCaptureSourceTypeScreen
+};
+
+/** 
+ * @type keytype
+ * @brief 屏幕共享对象的详细信息
+ */
+struct ScreenCaptureSourceInfo {
+    /** 
+     * @brief 屏幕共享对象的类型，参看 ScreenCaptureSourceType{@link #ScreenCaptureSourceType}
+     */
+    ScreenCaptureSourceType type = kScreenCaptureSourceTypeUnknown;
+
+    /** 
+     * @brief 屏幕共享对象的 ID
+     */
+    view_t source_id = nullptr;
+    /** 
+     * @brief 屏幕共享对象的名称<br>
+     *        调用 release{@link #IScreenCaptureSourceList#release} 时将被释放，请及时转为 string 对象保存
+     */
+    const char* source_name = nullptr;
+    /** 
+     * @brief 共享的应用窗体所属应用的名称<br>
+     *        当共享对象为应用窗体时有效 <br>
+     *        调用 release{@link #IScreenCaptureSourceList#release} 时将被释放，请及时转为 string 对象保存<br>
+     */
+    const char* application = nullptr;
+    /** 
+     * @brief 共享的应用窗体所属应用进程的 pid<br>
+     *        当共享对象为应用窗体时有效 <br>
+     */
+     int pid;
+    /** 
+     * @brief 共享的屏幕是否为主屏。<br>
+     *        当共享对象为屏幕时有效 <br>
+     */
+     bool primaryMonitor = false;
+    /** 
+     * @brief 屏幕共享对象的坐标。多显示器的场景下，屏幕坐标系统以主屏左上角为原点 (0, 0)，向右向下扩展。详见 Rectangle{@link #Rectangle}。
+     */
+    Rectangle region_rect;
+};
+
+/** 
+ * @hidden(Linux)
+ * @type api
+ * @region 屏幕共享
+ * @brief 屏幕共享对象信息列表
+ * 共享对象相关数据将在调用 release{@link #IScreenCaptureSourceList#release} 后被释放。
+ */
+class IScreenCaptureSourceList {
+public:
+  /**
+   * @hidden
+   */
+    virtual ~IScreenCaptureSourceList() {
+    }
+    /** 
+     * @type api
+     * @region 屏幕共享
+     * @brief 获取列表长度
+     * @return 可共享对象数量
+     */
+    virtual int32_t getCount() = 0;
+
+    /** 
+     * @type api
+     * @region 屏幕共享
+     * @brief 根据索引号，获取屏幕共享列表中的元素
+     * @param [in] index 列表索引号
+     * @return 屏幕源类型信息，详见 ScreenCaptureSourceInfo{@link #ScreenCaptureSourceInfo}。
+     */
+    virtual ScreenCaptureSourceInfo getSourceInfo(int32_t index) = 0;
+
+    /** 
+     * @type api
+     * @region 屏幕共享
+     * @brief IScreenCaptureSourceList{@link #IScreenCaptureSourceList} 使用结束后，调用本接口删除对象，清空和释放内存。
+     */
+    virtual void release() = 0;
+};
+
+/** 
+ * @type callback
+ * @brief 自定义编码帧回调类
+ */
+class IExternalVideoEncoderEventHandler {
+public:
+    /** 
+     * @hidden
+     * @brief 析构函数
+     */
+    virtual ~IExternalVideoEncoderEventHandler(){}
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 提示自定义编码帧可以开始推送的回调。  <br>
+     *        收到该回调后，你即可调用 pushExternalEncodedVideoFrame{@link #IRTCVideo#pushExternalEncodedVideoFrame} 向 SDK 推送自定义编码视频帧
+     * @param [in] index 可以推送的编码流的属性，参看 StreamIndex{@link #StreamIndex}
+     */
+    virtual void onStart(StreamIndex index) = 0;
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 当收到该回调时，你需停止向 SDK 推送自定义编码视频帧
+     * @param [in] index 需停止推送的编码流的属性，参看 StreamIndex{@link #StreamIndex}
+     */
+    virtual void onStop(StreamIndex index) = 0;
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 当自定义编码流的帧率或码率发生变化时，触发该回调
+     * @param [in] index 发生变化的编码流的属性，参看 StreamIndex{@link #StreamIndex}
+     * @param [in] video_index 对应编码流的下标
+     * @param [in] info 变化后的编码流信息，参看 VideoRateInfo{@link #VideoRateInfo}
+     */
+    virtual void onRateUpdate(StreamIndex index, int32_t video_index, VideoRateInfo info) = 0;
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 提示流发布端需重新生成关键帧的回调
+     * @param [in] index 远端编码流的属性，参看 StreamIndex{@link #StreamIndex}
+     * @param [in] video_index 对应编码流的下标
+     */
+    virtual void onRequestKeyFrame(StreamIndex index, int32_t video_index) = 0;
+};
+
+/** 
+ * @type callback
+ * @region 视频数据回调
+ * @brief 本地视频帧监测器
+ */
+class ILocalEncodedVideoFrameObserver {
+public:
+    /** 
+     * @hidden
+     * @brief 析构函数
+     */
+    virtual ~ILocalEncodedVideoFrameObserver() {
+    }
+    /** 
+     * @type callback
+     * @region 视频数据回调
+     * @brief 调用 registerLocalEncodedVideoFrameObserver{@link #IRTCVideo#registerLocalEncodedVideoFrameObserver} 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。
+     * @param [in] type 本地视频帧类型，参看 StreamIndex{@link #StreamIndex}
+     * @param [in] video_stream 本地视频帧信息，参看 IEncodedVideoFrame{@link #IEncodedVideoFrame}
+     */
+    virtual void onLocalEncodedVideoFrame(StreamIndex type, const IEncodedVideoFrame& video_stream) = 0;
+};
+
+/** 
+ * @type callback
+ * @region 视频管理
+ * @brief 远端编码后视频数据监测器
+ */
+class IRemoteEncodedVideoFrameObserver {
+public:
+    /** 
+     * @hidden
+     * @brief 析构函数
+     */
+    virtual ~IRemoteEncodedVideoFrameObserver() {
+    }
+    /** 
+     * @type callback
+     * @region 视频数据回调
+     * @brief 调用 registerRemoteEncodedVideoFrameObserver{@link #IRTCVideo#registerRemoteEncodedVideoFrameObserver} 后，SDK 监测到远端编码后视频数据时，触发该回调
+     * @param [in] stream_info 收到的远端流信息，参看 RemoteStreamKey{@link #RemoteStreamKey}
+     * @param [in] video_stream 收到的远端视频帧信息，参看 IEncodedVideoFrame{@link #IEncodedVideoFrame}
+     */
+    virtual void onRemoteEncodedVideoFrame(const RemoteStreamKey& stream_info, const IEncodedVideoFrame& video_stream) = 0;
+};
+
+/** 
+ * @type keytype
+ * @brief 视频帧中包含的 metadata 信息
+ */
+struct VideoMetadataBuffer {
+    /** 
+     * @brief 接收或者发送的 metadata
+     */
+    char* data;
+    /** 
+     * @brief 接收或者发送的 metadata 数据大小，不能超过 1024
+     */
+    int size;
+    /** 
+     * @brief 包含 metadata 视频帧的时间戳，单位微秒
+     */
+    int64_t timestamp_us;
+};
+
+/** 
+ * @hidden
+ * @deprecated since 326.1, use sendSEIMessage instead
+ * @type callback
+ * @region 视频数据回调
+ * @brief metadata 观察者，可以接收媒体流中的 metadata， 或者向媒体流中添加 metadata
+ */
+class IMetadataObserver {
+public:
+    /**
+     * @hidden
+     */
+    virtual ~IMetadataObserver() {
+    }
+
+    /** 
+     * @type callback
+     * @region 视频数据回调
+     * @brief 当 SDK 准备发送一个视频帧时，会回调该事件，以确定是否需要在该视频帧中添加 metadata。
+     * @param [in/out] metadata 待发送的数据，把数据拷贝到 data 字段中，并将 size 设置为真实的大小。
+     * @return  <br>
+     *        + true：需要向视频帧中添加 metadata  <br>
+     *        + false：不需要向视频帧中添加 metadata  <br>
+     * @notes  <br>
+     *        + metadata 的大小不能超过1024字节  <br>
+     *        + metadata 中的 timestampUs 是输入字段，代表视频帧的时间戳，做同步使用，不需要修改。  <br>
+     *        + 回调中不能有耗时操作，以免影响视频卡顿  <br>
+     */
+    virtual bool onReadyToSendMetadata(VideoMetadataBuffer* metadata) = 0;
+
+    /** 
+     * @type callback
+     * @region 视频数据回调
+     * @brief 当 SDK 收到一个视频帧时，并且其中包含 medatada 时，会回调该事件。
+     * @param [in] roomid 当前帧所属的房间 ID。
+     * @param [in] uid 当前帧所属的用户 ID。
+     * @param [in] metadata 视频帧中包含的 metadata 信息。参看 VideoMetadataBuffer{@link #VideoMetadataBuffer}。
+     * @notes 回调中不能有耗时操作，以免影响视频卡顿。
+     */
+    virtual void onMetadataReceived(const char* roomid, const char* uid, const VideoMetadataBuffer& metadata) = 0;
+};
+
+/** 
+ * @type callback
+ * @region 视频管理
+ * @brief 视频数据回调观察者
+ */
+class IVideoFrameObserver {
+public:
+    /** 
+     * @hidden
+     * @brief 析构函数
+     */
+    virtual ~IVideoFrameObserver() = default;
+
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 获取采集成功的本地屏幕视频帧，用于自定义处理或渲染。
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     */
+    virtual bool onLocalScreenFrame(IVideoFrame* videoFrame) = 0;
+
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 获取采集成功的本地摄像头流视频帧，用于自定义处理或渲染。
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     */
+    virtual bool onLocalVideoFrame(IVideoFrame* videoFrame) = 0;
+
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 获取采集成功的远端屏幕视频帧，用于自定义处理或渲染。
+     * @param [in] roomid 房间 ID。
+     * @param [in] uid 远端用户 ID。
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     */
+    virtual bool onRemoteScreenFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
+
+    /** 
+     * @type callback
+     * @region 视频管理
+     * @brief 获取采集成功的远端摄像头流视频帧，用于自定义处理或渲染。
+     * @param [in] roomid 房间 ID。
+     * @param [in] uid 远端用户 ID。
+     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     */
+    virtual bool onRemoteVideoFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
+
+    /** 
+     * @hidden
+     * @type callback
+     * @region 视频管理
+     * @brief 拼接视频数据回调
+     * @param [in] roomid 房间 id
+     * @param [in] uid 远端用户ID
+     * @param [in] videoFrame 视频数据，详见 IVideoFrame{@link #IVideoFrame}
+     */
+    virtual bool onMergeFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) {
+        return false;
+    }
+};
+
 
 }  // namespace bytertc

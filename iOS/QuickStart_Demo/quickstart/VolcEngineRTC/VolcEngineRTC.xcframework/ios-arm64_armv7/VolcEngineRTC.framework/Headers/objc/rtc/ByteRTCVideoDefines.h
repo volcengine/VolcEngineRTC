@@ -1198,7 +1198,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCanvas : NSObject
  */
 @property(strong, nonatomic) NSString* _Nullable uid;
 /** 
- * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x0000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+ * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x0000000, 0xFFFFFFFF]`,格式为 BGR。默认值是 `0x00000000`。其中，透明度设置无效。
  */
 @property(assign, nonatomic) NSInteger backgroundColor;
 @end
@@ -2112,7 +2112,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVirtualBackgroundSource: NSObject
  *       + 图片分辨率超过 1080P 时，图片会被等比缩放至和视频一致。  <br>
  *       + 图片和视频宽高比一致时，图片会被直接缩放至和视频一致。  <br>
  *       + 图片和视频长宽比不一致时，为保证图片内容不变形，图片按短边缩放至与视频帧一致，使图片填满视频帧，对多出的高或宽进行剪裁。  <br>
- *       + 自定义图片带有局部透明效果时，透明部分由纯白色代替。
+ *       + 自定义图片带有局部透明效果时，透明部分由黑色代替。
  */
 @property(nonatomic) NSString* _Nullable sourcePath;
 @end
@@ -2377,9 +2377,9 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 - (void)receiveVideoFrameFromUID:(NSString * _Nonnull)uid
     withExtendedData:(NSData* _Nullable)extendedData atTimestamp:(NSTimeInterval)timestamp;
 @end
-/** 
+/**  
  * @type keytype
- * @brief 视频参数
+ * @brief 视频编码配置。参考 [设置视频发布参数](https://www.volcengine.com/docs/6348/70122)
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
 /** 
@@ -2396,8 +2396,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
 @property(nonatomic, assign) NSInteger frameRate;
 /** 
  * @brief 最大编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。  <br>
- *        内部采集模式下默认值为 -1，即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。 <br>
- *        设为 0 则不对视频流进行编码发送。
+ *        设为 -1 即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。 <br>
+ *        设为 0 则不对视频流进行编码发送。<br>
+ *        344 及以上版本，内部采集时默认值为 -1，344 以前版本无默认值，需手动设置。
  */
 @property(nonatomic, assign) NSInteger maxBitrate;
 /** 
@@ -2446,8 +2447,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
  */
 @property(assign, nonatomic) BOOL isAutoSubscribeAudio;
 /** 
- * @brief 是否自动订阅主视频流，默认为自动订阅。  <br>
- *        屏幕流始终自动订阅，不受该方法影响。
+ * @brief 是否自动订阅主视频流，默认为自动订阅。 
  */
 @property(assign, nonatomic) BOOL isAutoSubscribeVideo;
 /** 

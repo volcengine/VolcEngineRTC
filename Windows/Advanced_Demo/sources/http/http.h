@@ -1,47 +1,53 @@
-#ifndef HTTP_H
-#define HTTP_H
+#pragma once
 
-#include <QtNetwork>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
-#include "httpreply.h"
-#include "httprequest.h"
-
-class Http {
-public:
-    static Http &instance();
-    static const QMap<QByteArray, QByteArray> &getDefaultRequestHeaders();
-    static void setDefaultReadTimeout(int timeout);
-
-    Http();
-
-    void setRequestHeaders(const QMap<QByteArray, QByteArray> &headers);
-    QMap<QByteArray, QByteArray> &getRequestHeaders();
-    void addRequestHeader(const QByteArray &name, const QByteArray &value);
-
-    void setReadTimeout(int timeout);
-    int getReadTimeout() { return readTimeout; }
-
-    int getMaxRetries() const;
-    void setMaxRetries(int value);
-
-    QNetworkReply *networkReply(const HttpRequest &req);
-    virtual HttpReply *request(const HttpRequest &req);
-    HttpReply *
-    request(const QUrl &url,
-            QNetworkAccessManager::Operation operation = QNetworkAccessManager::GetOperation,
-            const QByteArray &body = QByteArray(),
-            uint offset = 0);
-    HttpReply *get(const QUrl &url);
-    HttpReply *head(const QUrl &url);
-    HttpReply *post(const QUrl &url, const QMap<QString, QString> &params);
-    HttpReply *post(const QUrl &url, const QByteArray &body, const QByteArray &contentType);
-    HttpReply *put(const QUrl &url, const QByteArray &body, const QByteArray &contentType);
-    HttpReply *deleteResource(const QUrl &url);
-
-private:
-    QMap<QByteArray, QByteArray> requestHeaders;
-    int readTimeout;
-    int maxRetries;
+struct HttpRequestData {
+    QUrl url;
+    QByteArray body;
+    QNetworkAccessManager::Operation operation;
+    QMap<QByteArray, QByteArray> headers;
 };
 
-#endif // HTTP_H
+class HttpReply : public QObject {
+    Q_OBJECT
+
+public:
+    HttpReply(const HttpRequestData& request);
+    int statusCode() const;
+    QString reasonPhrase() const;
+    QByteArray body() const;
+    int isSuccessful() const;
+
+private slots:
+    void replyFinished();
+    void replyError(QNetworkReply::NetworkError);
+
+signals:
+    void error(const QString& message);
+    void finished(const HttpReply& reply);
+
+private:
+    QNetworkReply* getNetworkReply(const HttpRequestData& request);
+    QMap<QByteArray, QByteArray> getDefaultRequestHeaders();
+    void initReplyConnections();
+    void emitError();
+    void emitFinished();
+
+    HttpRequestData req_;
+    QNetworkReply* reply_;
+    QByteArray bytes_;
+};
+
+class Http {
+
+public:
+    static Http& instance();
+    Http() = default;
+    ~Http() = default;
+
+    HttpReply* get(const QUrl& url);
+    HttpReply* post(const QUrl& url, const QByteArray& body, const QByteArray& contentType);
+};

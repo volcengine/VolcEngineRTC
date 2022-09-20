@@ -1,185 +1,126 @@
 ﻿#include "http.h"
 
-#include "networkhttpreply.h"
-
-namespace {
-
-QNetworkAccessManager *networkAccessManager() {
-    static thread_local QNetworkAccessManager *nam = [] {
-        auto nam = new QNetworkAccessManager();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
-        nam->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
-#endif
-        return nam;
-    }();
-    return nam;
+HttpReply::HttpReply(const HttpRequestData& request)
+    :req_(request) {
+    if (req_.url.isEmpty()) {
+        qWarning() << "URL is empty";
+    }
+    reply_ = getNetworkReply(req_);
+    initReplyConnections();
 }
 
-int defaultReadTimeout = 10000;
-int defaultMaxRetries = 3;
-} // namespace
+QNetworkReply* HttpReply::getNetworkReply(const HttpRequestData& request) {
+    QNetworkRequest req(request.url);
 
-Http::Http()
-    : requestHeaders(getDefaultRequestHeaders()), readTimeout(defaultReadTimeout),
-      maxRetries(defaultMaxRetries) {}
+    auto& headers = getDefaultRequestHeaders();
+    if (!request.headers.isEmpty()) headers = request.headers;
 
-void Http::setRequestHeaders(const QMap<QByteArray, QByteArray> &headers) {
-    requestHeaders = headers;
-}
+    for (auto& it = headers.cbegin(); it != headers.cend(); ++it) {
+        req.setRawHeader(it.key(), it.value());
+    }
 
-QMap<QByteArray, QByteArray> &Http::getRequestHeaders() {
-    return requestHeaders;
-}
+    QNetworkAccessManager* manager = new QNetworkAccessManager();
+    manager->setRedirectPolicy(QNetworkRequest::NoLessSafeRedirectPolicy);
+    if (manager->networkAccessible() == QNetworkAccessManager::NotAccessible) {
+        manager->setNetworkAccessible(QNetworkAccessManager::Accessible);
+    }
 
-void Http::addRequestHeader(const QByteArray &name, const QByteArray &value) {
-    requestHeaders.insert(name, value);
-}
-
-void Http::setReadTimeout(int timeout) {
-    readTimeout = timeout;
-}
-
-Http &Http::instance() {
-    static Http i;
-    return i;
-}
-
-const QMap<QByteArray, QByteArray> &Http::getDefaultRequestHeaders() {
-    static const QMap<QByteArray, QByteArray> defaultRequestHeaders = [] {
-        QMap<QByteArray, QByteArray> h;
-        h.insert("Accept-Charset", "utf-8");
-        h.insert("Connection", "Keep-Alive");
-        return h;
-    }();
-    return defaultRequestHeaders;
-}
-
-void Http::setDefaultReadTimeout(int timeout) {
-    defaultReadTimeout = timeout;
-}
-
-QNetworkReply *Http::networkReply(const HttpRequest &req) {
-    QNetworkRequest request(req.url);
-
-    QMap<QByteArray, QByteArray> &headers = requestHeaders;
-    if (!req.headers.isEmpty()) headers = req.headers;
-
-    QMap<QByteArray, QByteArray>::const_iterator it;
-    for (it = headers.constBegin(); it != headers.constEnd(); ++it)
-        request.setRawHeader(it.key(), it.value());
-
-    if (req.offset > 0)
-        request.setRawHeader("Range", QStringLiteral("bytes=%1-").arg(req.offset).toUtf8());
-
-    QNetworkAccessManager *manager = networkAccessManager();
- 
-    QNetworkReply *networkReply = nullptr;
-    switch (req.operation) {
+    QNetworkReply* networkReply = nullptr;
+    switch (request.operation) {
     case QNetworkAccessManager::GetOperation:
-        networkReply = manager->get(request);
+        networkReply = manager->get(req);
         break;
-
-    case QNetworkAccessManager::HeadOperation:
-        networkReply = manager->head(request);
-        break;
-
     case QNetworkAccessManager::PostOperation:
-        networkReply = manager->post(request, req.body);
+        networkReply = manager->post(req, request.body);
         break;
-
-    case QNetworkAccessManager::PutOperation:
-        networkReply = manager->put(request, req.body);
-        break;
-
-    case QNetworkAccessManager::DeleteOperation:
-        networkReply = manager->deleteResource(request);
-        break;
-
     default:
-        qWarning() << "Unknown operation:" << req.operation;
+        qWarning() << "not handle this operation:" << request.operation;
     }
 
     return networkReply;
 }
 
-HttpReply *Http::request(const HttpRequest &req) {
-    return new NetworkHttpReply(req, *this);
+QMap<QByteArray, QByteArray> HttpReply::getDefaultRequestHeaders() {
+    QMap<QByteArray, QByteArray> heads;
+    heads.insert("Accept-Charset", "utf-8");
+    heads.insert("Connection", "Keep-Alive");
+    return heads;
 }
 
-HttpReply *Http::request(const QUrl &url,
-                         QNetworkAccessManager::Operation operation,
-                         const QByteArray &body,
-                         uint offset) {
-    HttpRequest req;
-    req.url = url;
-    req.operation = operation;
-    req.body = body;
-    req.offset = offset;
-    return request(req);
+void HttpReply::initReplyConnections() {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(reply_, &QNetworkReply::errorOccurred, this, &HttpReply::replyError,
+        Qt::UniqueConnection);
+#else
+    connect(reply_, SIGNAL(error(QNetworkReply::NetworkError)),
+        SLOT(replyError(QNetworkReply::NetworkError)), Qt::UniqueConnection);
+#endif
+    connect(reply_, &QNetworkReply::finished, this, &HttpReply::replyFinished, Qt::UniqueConnection);
 }
 
-HttpReply *Http::get(const QUrl &url) {
-    return request(url, QNetworkAccessManager::GetOperation);
+void HttpReply::emitError() {
+    const QString msg = req_.url.toString() + " " + QString::number(statusCode()) + " " + reasonPhrase();
+    qDebug() << "Http:" << msg;
+    if (!req_.body.isEmpty()) qDebug() << "Http:" << req_.body;
+    emit error(msg);
+    emitFinished();
 }
 
-HttpReply *Http::head(const QUrl &url) {
-    return request(url, QNetworkAccessManager::HeadOperation);
+void HttpReply::emitFinished() {
+    reply_->disconnect();
+    emit finished(*this);
+    reply_->deleteLater();
 }
 
-HttpReply *Http::post(const QUrl &url, const QMap<QString, QString> &params) {
-    QByteArray body;
-    QMapIterator<QString, QString> i(params);
-    while (i.hasNext()) {
-        i.next();
-        body += QUrl::toPercentEncoding(i.key()) + '=' + QUrl::toPercentEncoding(i.value()) + '&';
+void HttpReply::replyFinished() {
+    if (isSuccessful()) {
+        bytes_ = reply_->readAll();
     }
-    HttpRequest req;
-    req.url = url;
-    req.operation = QNetworkAccessManager::PostOperation;
-    req.body = body;
-    req.headers = requestHeaders;
-    req.headers.insert("Content-Type", "application/x-www-form-urlencoded");
-    return request(req);
+    emitFinished();
 }
 
-HttpReply *Http::post(const QUrl &url, const QByteArray &body, const QByteArray &contentType) {
-    HttpRequest req;
+int HttpReply::isSuccessful() const {
+    return statusCode() >= 200 && statusCode() < 300;
+}
+
+void HttpReply::replyError(QNetworkReply::NetworkError code) {
+    Q_UNUSED(code);
+    emitError();
+    return;
+}
+
+int HttpReply::statusCode() const {
+    return reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+}
+
+QString HttpReply::reasonPhrase() const {
+    return reply_->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+}
+
+QByteArray HttpReply::body() const {
+    return bytes_;
+}
+
+Http& Http::instance() {
+    static Http ins;
+    return ins;
+}
+
+HttpReply* Http::get(const QUrl& url) {
+    HttpRequestData req;
     req.url = url;
-    req.operation = QNetworkAccessManager::PostOperation;
+    req.operation = QNetworkAccessManager::Operation::GetOperation;
+    return new HttpReply(req);
+}
+
+HttpReply* Http::post(const QUrl& url, const QByteArray& body, const QByteArray& contentType) {
+    HttpRequestData req;
+    req.url = url;
     req.body = body;
-    req.headers = requestHeaders;
+    req.operation = QNetworkAccessManager::Operation::PostOperation;
+
     QByteArray cType = contentType;
     if (cType.isEmpty()) cType = "application/x-www-form-urlencoded";
     req.headers.insert("Content-Type", cType);
-    return request(req);
-}
-
-
-HttpReply *Http::put(const QUrl &url, const QByteArray &body, const QByteArray &contentType) {
-	HttpRequest req;
-	req.url = url;
-	req.operation = QNetworkAccessManager::PutOperation;
-	req.body = body;
-	req.headers = requestHeaders;
-	QByteArray cType = contentType;
-	if (cType.isEmpty()) cType = "application/x-www-form-urlencoded";
-	req.headers.insert("Content-Type", cType);
-	return request(req);
-}
-
-
-HttpReply *Http::deleteResource(const QUrl &url) {
-	HttpRequest req;
-	req.url = url;
-	req.operation = QNetworkAccessManager::DeleteOperation;
-	req.headers = requestHeaders;
-	return request(req);
-}
-
-int Http::getMaxRetries() const {
-    return maxRetries;
-}
-
-void Http::setMaxRetries(int value) {
-    maxRetries = value;
+    return new HttpReply(req);
 }

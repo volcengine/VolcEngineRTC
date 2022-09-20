@@ -397,7 +397,8 @@
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。<br>
+ *        + 同一房间解散后再次创建，房间内状态清空。
  */
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onVideoStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
@@ -415,7 +416,8 @@
  *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
+ *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。<br>
+ *        + 同一房间解散后再次创建，房间内状态清空。
  */
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onAudioStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
 
@@ -454,7 +456,9 @@
  * @type api
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
-
+/**
+ * @hidden
+ */
 @property(nonatomic, weak) id<ByteRTCRoomDelegate> _Nullable delegate;
 
 #pragma mark - Core Methods
@@ -481,7 +485,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @type api
  * @region 多房间
  * @author shenpengliang
- * @brief 通过设置 RTCRoomDelegate{@link #ByteRTCRoomDelegate} 代理，可以监听此 `ByteRTCRoom` 对象对应的回调事件。
+ * @brief 通过设置 ByteRTCRoomDelegate{@link #ByteRTCRoomDelegate} 代理，可以监听此 `ByteRTCRoom` 对象对应的回调事件。
  * @param roomDelegate 参见 RTCRoomDelegate{@link #ByteRTCRoomDelegate}。
  */
 - (void)setRtcRoomDelegate:(id<ByteRTCRoomDelegate> _Nullable)roomDelegate;
@@ -572,7 +576,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *  @notes  <br>
  *        + 用户离开房间后，本地会收到 onLeaveRoomWithStats:{@link #ByteRTCRoomDelegate#rtcRoom:onLeaveRoomWithStats:} 的回调；  <br>
  *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设为可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
- *        + 调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
  */
 - (int)leaveRoom;
 
@@ -704,6 +707,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
  *        + 你必须先通过 rtcRoom:onUserPublishStream:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishStream:type:} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
+ *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unSubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unSubscribeStream:mediaStreamType:} 取消订阅或本端用户退房。 <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
@@ -716,7 +720,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @param userId 指定取消订阅的远端发布音视频流的用户 ID。
  * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
  * @notes  <br>
- *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)unSubscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
@@ -730,7 +734,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @notes  <br>
  *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
  *        + 你必须先通过 rtcRoom:onUserPublishScreen:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishScreen:type:} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
- *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的订阅结果。  <br>
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
+ *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unSubscribeScreen:mediaStreamType:{@link #ByteRTCRoom#unSubscribeScreen:mediaStreamType:} 取消订阅或本端用户退房。 <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
@@ -743,7 +748,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @param userId 指定取消订阅的远端发布屏幕流的用户 ID。
  * @param mediaStreamType 媒体流类型，用于指定取消订阅音频/视频。参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
  * @notes  <br>
- *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知流的退订结果。  <br>
+ *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体失败原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)unSubscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
@@ -804,7 +809,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
   *        发送的二进制消息内容  <br>
   *        消息不超过 46KB。
   * @param config   <br>
-  *        消息发送的可靠/有序类型，参看 ByteRTCMessageConfig{@link #ByteRTCMessageConfig}  <br>
+  *        消息发送的可靠/有序类型，参看 ByteRTCMessageConfig{@link #ByteRTCMessageConfig}。  <br>
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
   *      + 在发送房间内二进制消息前，必须先调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。  <br>

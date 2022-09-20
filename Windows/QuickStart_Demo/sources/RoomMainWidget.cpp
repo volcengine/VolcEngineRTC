@@ -11,12 +11,13 @@
 
 /**
  * VolcEngineRTC 视频通话的主页面
- * 本示例不限制房间内最大用户数；同时最多渲染四个用户的视频数据（自己和三个远端用户视频数据）；
+ * 本示例不限制房间内最大用户数；同时最多渲染四个用户的视频数据 (自己和三个远端用户视频数据)
  *
  * 包含如下简单功能：
  * - 创建引擎
  * - 设置视频发布参数
  * - 渲染自己的视频数据
+ * - 创建房间
  * - 加入音视频通话房间
  * - 打开/关闭麦克风
  * - 打开/关闭摄像头
@@ -25,31 +26,32 @@
  * - 销毁引擎
  *
  * 实现一个基本的音视频通话的流程如下：
- * 1.创建引擎 bytertc::createRtcEngine(const char* app_id,bytertc::IRtcEngineEventHandler* event_handler,
- *   const char* parameters)
- * 2.设置编码参数 IRtcEngine->setVideoEncoderConfig(const VideoSolution* solutions, int solution_num)
- * 3.开启本地视频采集 IRtcEngine->enableLocalVideo(bool enable)，IRtcEngine->StartPreview()
- * 4.设置本地视频渲染视图 IRtcEngine->setLocalVideoCanvas(StreamIndex index, const VideoCanvas& canvas)
- * 4.加入音视频通话房间 IRtcEngine->joinRoom(const char* token, const UserInfo& user_info, RoomProfileType profile_type)
- * 5.在收到远端用户视频首帧之后，设置用户的视频渲染视图 IRtcEngine->
- *   setRemoteVideoCanvas(const char* user_id, StreamIndex index, const VideoCanvas& canvas)
- * 6.在用户离开房间之后移出用户的视频渲染视图
- * 7.离开音视频通话房间 IRtcEngine->leaveRoom()
- * 8.销毁引擎 bytertc::destroyRtcEngine(bytertc::IRtcEngine* engine)
- *
- * 有以下常见的注意事项：
- * 1.本示例中，我们在 IRtcEngineEventHandler->onFirstRemoteVideoFrameDecoded(const RemoteStreamKey key,
- *   const VideoFrameInfo& info) 这个事件中给远端用户设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在
- *   IRtcEngineEventHandler->onUserJoined(const UserInfo& user_info, const char* team_id,
- *   const RangeAudioMode send_mode, int elapsed) 回调中设置远端用户视频渲染视图
- * 2.SDK 回调不在主线程，UI 操作需要切换线程
- * 3.用户成功加入房间后，SDK 会通过 IRtcEngineEventHandler->onUserJoined(const UserInfo& user_info, const char* team_id,
- *   const RangeAudioMode send_mode, int elapsed) 回调已经在房间的用户信息
- * 4.SDK 支持同时发布多个参数的视频流，接口是 IRtcEngine->setVideoEncoderConfig(const VideoSolution* solutions, int solution_num)
- * 5.加入房间时，需要有有效的 token，加入失败时会通过 IRtcEngine->onRoomError(int err) 输出对应的错误码
- * 6.用户可以通过 joinRoom(const char* token, const UserInfo& userInfo, RoomProfileType profile_type) 中的 profile_type
- *   来获得不同场景下的性能优化。本示例是音视频通话场景，因此使用 bytertc::kRoomProfileTypeCommunication
- * 7.不需要在每次加入/退出房间时销毁引擎。本示例退出房间时销毁引擎是为了展示完整的使用流程
+ * 1.创建 IRTCVideo 实例。 bytertc::IRTCVideo* bytertc::createRTCVideo(
+ *                          const char* app_id,
+ *                          bytertc::IRTCVideoEventHandler *event_handler,
+ *                          const char* parameters)
+ * 2.视频发布端设置推送多路流时各路流的参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+ *   bytertc::IRTCVideo::setVideoEncoderConfig(
+ *       const VideoEncoderConfig* channel_solutions,
+ *       int solution_num)
+ * 3.开启本地视频采集。 bytertc::IRTCVideo::startVideoCapture()
+ * 4.设置本地视频渲染时，使用的视图，并设置渲染模式。
+ *   bytertc::IRTCVideo::setLocalVideoCanvas(
+ *       StreamIndex index,
+ *       const VideoCanvas& canvas)
+ * 5.创建房间。IRTCRoom* bytertc::IRTCVideo::createRTCRoom(const char* room_id)
+ * 6.加入音视频通话房间。 bytertc::IRTCRoom::joinRoom(
+ *                         const char* token,
+ *                         const UserInfo& user_info,
+ *                         const RTCRoomConfig& config)
+ * 7.SDK 接收并解码远端视频流首帧后，设置用户的视频渲染视图。
+ *   bytertc::IRTCVideo::setRemoteStreamVideoCanvas(
+ *       RemoteStreamKey stream_key,
+ *       const VideoCanvas& canvas)
+ * 8.在用户离开房间之后移出用户的视频渲染视图。
+ * 9.离开音视频通话房间。 bytertc::IRTCRoom::leaveRoom()
+ * 10.销毁房间。 bytertc::IRTCRoom::destroy()
+ * 11.销毁引擎。 bytertc::destroyRTCVideo()
  *
  * 详细的API文档参见: https://www.volcengine.com/docs/6348/70095
  */
@@ -110,29 +112,29 @@ void RoomMainWidget::slotOnEnterRoom(const QString &roomID, const QString &userI
     toggleShowFloatWidget(true);
 
     // 创建引擎
-    m_byteEngine = bytertc::createRtcEngine(Constants::APP_ID.c_str(), this, nullptr);
-    if (m_byteEngine == nullptr) {
+    m_rtc_video = bytertc::createRTCVideo(Constants::APP_ID.c_str(), this, nullptr);
+    if (m_rtc_video == nullptr) {
         qWarning() << "create engine failed";
         return;
     }
 
-    std::vector <bytertc::VideoSolution> solutions;
-    bytertc::VideoSolution s;
-    s.fps = 15;
-    s.width = 360;
-    s.height = 640;
-    s.max_send_kbps = 800;
-    solutions.push_back(s);
+    bytertc::VideoSolution video_solution;
+    video_solution.fps = 15;
+    video_solution.width = 360;
+    video_solution.height = 640;
+    video_solution.max_send_kbps = 800;
     // 设置视频发布参数
-    m_byteEngine->setVideoEncoderConfig(solutions.data(), solutions.size());
+    m_rtc_video->setVideoEncoderConfig(bytertc::StreamIndex::kStreamIndexMain, &video_solution, 1);
 
     setRenderCanvas(true, (void *) ui.localWidget->getVideoWidget()->winId(), m_uid.c_str());
     ui.localWidget->showVideo(m_uid.c_str());
     // 开启本地视频采集
-    m_byteEngine->startVideoCapture();
+    m_rtc_video->startVideoCapture();
     // 开启本地音频采集
-    m_byteEngine->startAudioCapture();
+    m_rtc_video->startAudioCapture();
 
+    m_rtc_room = m_rtc_video->createRTCRoom(m_roomId.c_str());
+    m_rtc_room->setRTCRoomEventHandler(this);
     bytertc::UserInfo userInfo;
     userInfo.uid = m_uid.c_str();
     userInfo.extra_info = nullptr;
@@ -143,9 +145,7 @@ void RoomMainWidget::slotOnEnterRoom(const QString &roomID, const QString &userI
     roomConfig.is_auto_subscribe_video = true;
     roomConfig.room_profile_type = bytertc::kRoomProfileTypeCommunication;
     // 加入房间
-    m_byteEngine->joinRoom(Constants::TOKEN.c_str(),
-                           m_roomId.c_str(), userInfo,
-                           roomConfig);
+    m_rtc_room->joinRoom(Constants::TOKEN.c_str(), userInfo, roomConfig);
 }
 
 void RoomMainWidget::toggleShowFloatWidget(bool isEnterRoom) {
@@ -156,13 +156,15 @@ void RoomMainWidget::toggleShowFloatWidget(bool isEnterRoom) {
 
 void RoomMainWidget::slotOnHangup() {
     toggleShowFloatWidget(false);
-    if (m_byteEngine) {
+    if (m_rtc_room) {
         // 离开房间
-        m_byteEngine->leaveRoom();
-        // 销毁引擎
-        bytertc::destroyRtcEngine(m_byteEngine);
-        m_byteEngine = nullptr;
+        m_rtc_room->leaveRoom();
+        m_rtc_room->destroy();
+        m_rtc_room = nullptr;
     }
+    // 销毁引擎
+    bytertc::destroyRTCVideo();
+    m_rtc_video = nullptr;
 	if (m_operateWidget) 
 	{
 		m_operateWidget->reset();
@@ -195,8 +197,8 @@ void RoomMainWidget::onFirstRemoteVideoFrameDecoded(
     emit sigUserEnter(key.user_id);
 }
 
-void RoomMainWidget::setRenderCanvas(bool isLocal, void *view, const std::string &id) {
-    if (m_byteEngine == nullptr) {
+void RoomMainWidget::setRenderCanvas(bool isLocal, void *view, const std::string &user_id) {
+    if (m_rtc_video == nullptr) {
         qDebug() << "byte engine is null ptr";
     }
 
@@ -206,10 +208,14 @@ void RoomMainWidget::setRenderCanvas(bool isLocal, void *view, const std::string
 
     if (isLocal) {
         // 设置本地视频渲染视图
-        m_byteEngine->setLocalVideoCanvas(bytertc::kStreamIndexMain, canvas);
+        m_rtc_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, canvas);
     } else {
         // 设置远端用户视频渲染视图
-        m_byteEngine->setRemoteVideoCanvas(id.c_str(), bytertc::kStreamIndexMain, canvas);
+        bytertc::RemoteStreamKey remote_stream_key;
+        remote_stream_key.room_id = m_roomId.c_str();
+        remote_stream_key.user_id = user_id.c_str();
+        remote_stream_key.stream_index = bytertc::kStreamIndexMain;
+        m_rtc_video->setRemoteStreamVideoCanvas(remote_stream_key, canvas);
     }
 }
 
@@ -246,25 +252,26 @@ void RoomMainWidget::setupSignals() {
     });
 
     connect(m_operateWidget.get(), &OperateWidget::sigMuteAudio, this, [this](bool bMute) {
-        if (m_byteEngine) {
+        if (m_rtc_room) {
             if (bMute) {
-                // 开启本地音频发送
-                m_byteEngine->muteLocalAudio(bytertc::kMuteStateOn);
-            } else {
                 // 关闭本地音频发送
-                m_byteEngine->muteLocalAudio(bytertc::kMuteStateOff);
+                m_rtc_room->unpublishStream(bytertc::kMediaStreamTypeAudio);
+            }
+            else {
+                // 开启本地音频发送
+                m_rtc_room->publishStream(bytertc::kMediaStreamTypeAudio);
             }
         }
     });
 
     connect(m_operateWidget.get(), &OperateWidget::sigMuteVideo, this, [this](bool bMute) {
-        if (m_byteEngine) {
+        if (m_rtc_video) {
             if (bMute) {
                 // 关闭视频采集
-                m_byteEngine->stopVideoCapture();
+                m_rtc_video->stopVideoCapture();
             } else {
                 // 开启视频采集
-                m_byteEngine->startVideoCapture();
+                m_rtc_video->startVideoCapture();
             }
             QTimer::singleShot(10, this, [=] {
                 ui.localWidget->update();

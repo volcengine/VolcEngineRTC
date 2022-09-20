@@ -38,7 +38,7 @@ typedef NSImage  ByteRTCImage;
 
 /** 
  *  @type keytype
- *  @brief 用户离开房间的原因。  <br>
+ *  @brief 远端用户离开房间的原因。  <br>
  */
 typedef NS_ENUM(NSUInteger, ByteRTCUserOfflineReason) {
     /** 
@@ -573,8 +573,8 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeCodeUserNotifyStop = -2013,
     /** 
-         * @brief 用户已经在其他房间发布过流，或者用户正在发布公共流。
-         */
+     * @brief 用户已经在其他房间发布过流，或者用户正在发布公共流。
+     */
     ByteRTCWarningCodeUserInPublish = -2014,
     /** 
      * @brief 同样roomid的房间已经存在了
@@ -667,7 +667,7 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
 
 /** 
  * @type keytype
- * @brief 性能回退或者恢复的原因
+ * @brief 性能相关告警的原因
  */
 typedef NS_ENUM(NSInteger, ByteRTCPerformanceAlarmReason) {
     /** 
@@ -947,7 +947,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCPublishFallbackOption) {
      */
     ByteRTCPublishFallbackOptionDisabled = 0,
     /** 
-     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配从大流开始做降级处理，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。
+     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。
      */
     ByteRTCPublishFallbackOptionSimulcast = 1,
 };
@@ -1164,7 +1164,7 @@ typedef NS_ENUM(NSInteger, ByteRTCLocalVideoStreamError) {
      */
     ByteRTCLocalVideoStreamErrorDeviceNoPermission = 2,
     /** 
-     * @brief 本地视频采集设备被占用
+     * @brief 本地视频采集设备已被占用
      */
     ByteRTCLocalVideoStreamErrorDeviceBusy = 3,
     /** 
@@ -1180,7 +1180,7 @@ typedef NS_ENUM(NSInteger, ByteRTCLocalVideoStreamError) {
      */
     ByteRTCLocalVideoStreamErrorEncodeFailure = 6,
     /** 
-     * @brief 本地视频采集设备被移除
+     * @brief 通话过程中本地视频采集设备被其他程序抢占，导致设备连接中断
      */
     ByteRTCLocalVideoStreamErrorDeviceDisconnected = 7,
 };
@@ -1343,6 +1343,8 @@ typedef NS_ENUM(NSInteger, ByteRTCRemoteVideoStateChangeReason) {
 };
 
 /** 
+ * @hidden
+ * @deprecated since 337
  * @type keytype
  * @brief 当前媒体设备类型
  */
@@ -1453,7 +1455,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceError) {
      */
     ByteRTCMediaDeviceErrorUNSupportFormat = 7,
     /** 
-     * @brief ios 屏幕采集没有 group id 参数
+     * @brief iOS 屏幕采集没有 group Id 参数
      */
     ByteRTCMediaDeviceErrorNotFindGroupId = 8
 };
@@ -1642,15 +1644,15 @@ typedef NS_ENUM(NSUInteger, ByteRTCFirstFrameSendState) {
  */
 typedef NS_ENUM(NSUInteger, ByteRTCFirstFramePlayState) {
     /** 
-     * 播放中
+     * @brief 播放中
      */
     ByteRTCFirstFramePlayStatePlaying = 0,
     /** 
-     * 播放成功
+     * @brief 播放成功
      */
     ByteRTCFirstFramePlayStatePlay = 1,
     /** 
-     * 播放失败
+     * @brief 播放失败
      */
     ByteRTCFirstFramePlayStateEnd = 2,
 };
@@ -1996,9 +1998,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
  * @brief 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
  *        + true：是  <br>
  *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
- *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame:time:{@link #ByteRTCVideo#pushExternalVideoFrame:time:} 将采集到的视频推送给 SDK  <br>
- *        + flase：否  <br>
- * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
+ *            - If you choose custom capture, you also need to call pushExternalVideoFrame:time:{@link #ByteRTCVideo#pushExternalVideoFrame:time:} to push the captured video to the SDK.  <br>
+ *        + false: No  <br>
+ * @notes The video is published with fixed parameters: resolution 640px × 360px, frame rate 15fps.
  */
 @property(assign, nonatomic) BOOL enableVideo;
 /** 
@@ -2109,9 +2111,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
  * @brief 系统下行网络抖动（ms）
  */
 @property(assign, nonatomic) NSInteger rxJitter;
-
+/** 
+ * @brief 蜂窝路径发送的码率 (kbps)，为获取该数据时的瞬时值
+ */
 @property(assign, nonatomic) NSInteger tx_cellular_kbitrate;
-
+/** 
+ * @brief 蜂窝路径接收码率 (kbps)，为获取该数据时的瞬时值
+ */
 @property(assign, nonatomic) NSInteger rx_cellular_kbitrate;
 @end
 
@@ -2188,7 +2194,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
 @property(assign, nonatomic) NSInteger rendererOutputFrameRate;
 /** 
  * @brief 统计间隔，单位为 ms 。
- * @notes 此字段用于设置回调的统计周期，默认设置为 2s 。
+ *        此字段用于设置回调的统计周期，默认设置为 2s 。
  */
 @property(assign, nonatomic) NSInteger statsInterval;
 /** 
@@ -2282,7 +2288,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
 @property(assign, nonatomic) BOOL isScreen;
 /** 
  * @brief 统计间隔，此次统计周期的间隔，单位为 ms 。  <br>
- * @notes 此字段用于设置回调的统计周期，目前设置为 2s 。
+ *        此字段用于设置回调的统计周期，目前设置为 2s 。
  */
 @property(assign, nonatomic) NSInteger statsInterval;
 /** 
@@ -2328,7 +2334,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioStats : NSObject
 @property(assign, nonatomic) NSInteger recordSampleRate;
 /** 
  * @brief 统计间隔。此次统计周期的间隔，单位为 ms 。  <br>
- * @notes 此字段用于设置回调的统计周期，默认设置为 2s 。
+ *        此字段用于设置回调的统计周期，默认设置为 2s 。
  */
 @property(assign, nonatomic) NSInteger statsInterval;
 /** 

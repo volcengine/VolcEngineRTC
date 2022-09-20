@@ -3,15 +3,17 @@
 #include <QtWidgets/QMainWindow>
 #include <QSharedPointer>
 #include "ui_RoomMainWidget.h"
-#include "bytertc_engine_interface.h"
-#include "bytertc_advance.h"
+#include "bytertc_video.h"
+#include "bytertc_room.h"
+#include "bytertc_video_event_handler.h"
+#include "bytertc_room_event_handler.h"
 #include "model.h"
 
 class LoginWidget;
 class OperateWidget;
 class BeautySettingWidget;
 
-class RoomMainWidget : public QWidget, public bytertc::IRtcEngineEventHandler {
+class RoomMainWidget : public QWidget, public bytertc::IRTCRoomEventHandler, public bytertc::IRTCVideoEventHandler {
     Q_OBJECT
 
 public:
@@ -43,13 +45,13 @@ protected:
 
 	void onUserPublishScreen(const char* uid, bytertc::MediaStreamType type) override;
 
-    void onUserUnPublishStream(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)override;
+    void onUserUnpublishStream(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)override;
 
-    void onUserUnPublishScreen(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason) override;
+    void onUserUnpublishScreen(const char* uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason) override;
 	
-	void onUserStartVideoCapture(const char* user_id)  override;
+	void onUserStartVideoCapture(const char* room_id, const char* user_id)  override;
 
-	void onUserStopVideoCapture(const char* user_id) override;
+	void onUserStopVideoCapture(const char* room_id, const char* user_id) override;
  
 public slots:
     void slotOnEnterRoom(
@@ -89,7 +91,7 @@ private:
 
     void leaveRoom();
 
-    void setRenderCanvas(bool isLocal, void *view, const std::string &id, bytertc::StreamIndex index = bytertc::kStreamIndexMain);
+    void setRenderCanvas(bool isLocal, void* view, const std::string& user_id,bytertc::StreamIndex index = bytertc::kStreamIndexMain);
 
     void clearVideoView();
 
@@ -102,7 +104,8 @@ private:
     QSharedPointer <OperateWidget> m_operateWidget;
 	QSharedPointer <BeautySettingWidget> m_beautySettingWidget;
 
-    bytertc::IRtcEngine *m_byteEngine = nullptr;
+    bytertc::IRTCVideo *m_rtc_video = nullptr;
+    bytertc::IRTCRoom* m_rtc_room = nullptr;
     std::string m_uid;
     std::string m_roomId;
     QList<VideoWidget *> m_videoWidgetList;

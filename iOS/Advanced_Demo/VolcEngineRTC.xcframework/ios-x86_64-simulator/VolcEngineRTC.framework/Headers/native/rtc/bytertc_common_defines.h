@@ -641,6 +641,8 @@ struct AudioRoomConfig {
 };
 
 /** 
+ * @hidden
+ * @deprecated since 337
  * @type keytype
  * @brief 媒体设备类型
  */
@@ -771,6 +773,7 @@ enum MediaDeviceError {
      */
     kMediaDeviceErrorDeviceUNSupportFormat = 7,
     /** 
+     * @hidden
      * @brief ios 屏幕采集没有 group id 参数
      */
     kMediaDeviceErrorDeviceNotFindGroupId = 8,
@@ -932,7 +935,7 @@ enum PublishFallbackOption {
      */
     kPublishFallbackOptionDisabled = 0,
     /** 
-     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配从大流开始做降级处理，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。
+     * @brief 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。
      */
     kPublishFallbackOptionSimulcast = 1,
 };
@@ -1001,7 +1004,7 @@ enum FallbackOrRecoverReason {
 
 /** 
  * @type keytype
- * @brief `onPerformanceAlarms` 告警的原因
+ * @brief 性能相关告警的原因
  */
 enum PerformanceAlarmReason {
     /** 
@@ -1428,7 +1431,7 @@ enum LocalVideoStreamError {
      */
     kLocalVideoStreamErrorDeviceNoPermission,
     /** 
-     * @brief 本地视频采集设备被占用
+     * @brief 本地视频采集设备已被占用
      */
     kLocalVideoStreamErrorDeviceBusy,
     /** 
@@ -1444,7 +1447,7 @@ enum LocalVideoStreamError {
      */
     kLocalVideoStreamErrorEncodeFailure,
     /** 
-     * @brief 本地视频采集设备被移除
+     * @brief 通话过程中本地视频采集设备被其他程序抢占，导致设备连接中断
      */
     kLocalVideoStreamErrorDeviceDisconnected
 };
@@ -1742,11 +1745,11 @@ struct RtcRoomStats {
      */
     int rx_jitter;
     /** 
-     * @brief 蜂窝路径发送的码率 (kbps)，获取该数据时的瞬时值
+     * @brief 蜂窝路径发送的码率 (kbps)，为获取该数据时的瞬时值
      */
     unsigned short tx_cellular_kbitrate;
     /** 
-     * @brief 蜂窝路径接收码率 (kbps)，获取该数据时的瞬时值
+     * @brief 蜂窝路径接收码率 (kbps)，为获取该数据时的瞬时值
      */
     unsigned short rx_cellular_kbitrate;
 };
@@ -1791,7 +1794,7 @@ struct LocalAudioStats {
     int record_sample_rate;
     /** 
      * @brief 统计间隔。此次统计周期的间隔，单位为 ms 。  <br>
-     * @notes 此字段用于设置回调的统计周期，默认设置为 2s 。
+     *        此字段用于设置回调的统计周期，默认设置为 2s 。
      */
     int stats_interval;
     /** 
@@ -2015,7 +2018,7 @@ struct RemoteVideoStats {
     bool is_screen;
     /** 
      * @brief 统计间隔，此次统计周期的间隔，单位为 ms 。  <br>
-     * @notes 此字段用于设置回调的统计周期，目前设置为 2s 。
+     *        此字段用于设置回调的统计周期，目前设置为 2s 。
      */
     int stats_interval;
     /** 
@@ -2031,11 +2034,11 @@ struct RemoteVideoStats {
      */
     VideoCodecType codec_type;
     /** 
-     * @brief 对应多种分辨率的流的下标，详见 VideoSolutionDescription{@link #VideoSolutionDescription}
+     * @brief 对应多种分辨率的流的下标。
      */
     int video_index;
     /** 
-     * @brief 视频下行网络抖动，单位为 ms 。  <br>
+     * @brief 视频下行网络抖动，单位为 ms。  <br>
      */
     int jitter;
 };

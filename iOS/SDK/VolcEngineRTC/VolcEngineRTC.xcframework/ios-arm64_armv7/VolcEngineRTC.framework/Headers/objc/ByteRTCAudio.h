@@ -204,7 +204,7 @@
  * @author dixing
  * @brief 音频播放路由变化时，收到该回调。
  * @param device 新的音频播放路由，详见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}
- * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCAudio#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](https://www.volcengine.com/docs/6348/117386) 。
+ * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCAudio#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](117836) 。
  */
 - (void)rtcEngine:(ByteRTCAudio *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRoute)device;
 
@@ -603,9 +603,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @notes  <br>
  *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 rtcEngine:onWarning:{@link #ByteRTCAudioDelegate#rtcEngine:onWarning:} 回调。  <br>
  *       + 调用 stopAudioCapture{@link #ByteRTCAudio#stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+ *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link #ByteRTCAudio#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publish{@link #ByteRTCAudio#publish}/unpublish{@link #ByteRTCAudio#unpublish} 实现临时闭麦和重新开麦。
  *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
  *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
-  *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 disableExternalAudioDevice{@link #ByteRTCAudioEngineDelegatedisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
+ *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 disableExternalAudioDevice{@link #ByteRTCAudioEngineDelegatedisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
  */
 - (void)startAudioCapture;
  /** 
@@ -683,26 +684,27 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  */
 - (void)enableAudioPropertiesReport:(ByteRTCAudioPropertiesConfig* _Nonnull)config;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 音频管理
- * @author dixing
- * @brief 开启/关闭耳返功能
- * @param mode 是否开启耳返功能，参看 ByteRTCEarMonitorMode{@link #ByteRTCEarMonitorMode}
+ * @author luoyi.007
+ * @brief 开启/关闭耳返功能。
+ * @param mode 是否开启耳返功能，参看 ByteRTCEarMonitorMode{@link #ByteRTCEarMonitorMode}。
  * @notes <br>
- *        + 你必须在使用 RTC SDK 提供的内部音频采集功能时，使用耳返功能。<br>
- *        + 耳返功能仅在连接了有线耳机时有效。<br>
+ *        + 耳返功能仅适用于由 RTC SDK 内部采集的音频。  <br>
+ *        + 使用耳返必须佩戴耳机。为保证低延时耳返最佳体验，建议佩戴有线耳机。  <br>
  *        + 受 iOS 平台限制，RTC 仅支持软件耳返功能。
  */
 - (void)setEarMonitorMode:(ByteRTCEarMonitorMode)mode;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 音频管理
  * @author dixing
- * @brief 设置耳返的音量
+ * @brief 设置耳返的音量。
  * @param volume 耳返的音量，取值范围：[0,100]，单位：%
  * @notes <br>
- *        + 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。<br>
- *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
+ *        + 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。  
  */
 - (void)setEarMonitorVolume:(NSInteger)volume;
 /** 
@@ -778,9 +780,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @return  <br>
  *        + 0: 方法调用成功  <br>
  *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
- * @notes
- * 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。<br>
- * 不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
+ * @notes <br>
+ *          + 你需要调用 setAudioScenario:{@link #ByteRTCAudio#setAudioScenario:} 将音频场景切换为 `ByteRTCAudioScenarioCommunication` 后再调用本接口。<br>
+ *          + 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。<br>
+ *          + 不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
  */
 - (int)setAudioRoute:(ByteRTCAudioRoute)audioRoute;
 /** 
@@ -793,7 +796,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @return 方法调用结果  <br>
  *        + 0: 方法调用成功。立即生效。当所有音频外设移除后，音频路由将被切换到默认设备。<br>
  *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
- * @notes 更多注意事项参见[音频路由](https://www.volcengine.com/docs/6348/117386)。
+ * @notes 更多注意事项参见[音频路由](117836)。
  */
 - (int)setDefaultAudioRoute:(ByteRTCAudioRoute)audioRoute;
 /** 

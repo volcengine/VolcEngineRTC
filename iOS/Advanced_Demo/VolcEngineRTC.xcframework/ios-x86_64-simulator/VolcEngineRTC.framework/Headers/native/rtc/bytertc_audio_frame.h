@@ -85,6 +85,7 @@ public:
      * @region 音频管理
      * @brief 获取音频通道数。参看 AudioChannel{@link #AudioChannel}
      * @return 音频通道数
+     * @notes 双声道的情况下，左右声道的音频帧数据以 LRLRLR 形式排布。
      */
     virtual AudioChannel channel() const = 0;
     /** 

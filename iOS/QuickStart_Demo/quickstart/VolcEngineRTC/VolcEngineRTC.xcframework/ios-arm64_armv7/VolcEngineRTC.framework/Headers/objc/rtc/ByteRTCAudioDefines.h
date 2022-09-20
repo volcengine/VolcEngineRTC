@@ -133,20 +133,20 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
      */
     ByteRTCAudioProfileDefault = 0,
     /** 
-     * @brief 流畅音质。  <br>
-     *        单声道，采样率为 16kHz，编码码率为 24 Kbps。 <br>
+     * @brief 流畅  <br>
+     *        单声道，采样率为 16 kHz，编码码率为 32 Kbps。 <br>
      *        流畅优先、低功耗、低流量消耗，适用于大部分游戏场景，如小队语音、组队语音、国战语音等。
      */
     ByteRTCAudioProfileFluent = 1,
     /** 
      * @brief 单声道标准音质。  <br>
-     *        采样率为 48kHz，编码码率为 48 Kbps。 <br>
+     *        采样率为 24 kHz，编码码率为 48 Kbps。 <br>
      *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和狼人杀等游戏。
      */
     ByteRTCAudioProfileStandard = 2,
     /** 
      * @brief 双声道音乐音质  <br>
-     *        采样率为 48kHz，编码码率为 128kbps。 <br>
+     *        采样率为 48 kHz，编码码率为 128 kbps。 <br>
      *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。 <br>
      *        游戏场景不建议使用。
      */
@@ -156,7 +156,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
      */
     ByteRTCAudioProfileStandardStereo = 4,
     /** 
-     * @brief 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 128 Kbps
+     * @brief 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 64 Kbps
      */
     ByteRTCAudioProfileHDMono = 5,
 };
@@ -333,7 +333,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioPlaybackDevice) {
 
 /** 
  * @type keytype
- * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务服务相关同学
+ * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务相关人员
  */
 typedef NS_ENUM(NSInteger, ByteRTCASRAuthorizationType) {
     /** 
@@ -397,11 +397,11 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingType) {
      */
     ByteRTCAudioMixingTypePlayout = 0,
     /** 
-     * @brief 仅发送到远端
+     * @brief 仅远端播放
      */
     ByteRTCAudioMixingTypePublish = 1,
     /** 
-     * @brief 在本地播放并发送到远端
+     * @brief 本地和远端同时播放
      */
     ByteRTCAudioMixingTypePlayoutAndPublish = 2
 };
@@ -497,7 +497,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
      */
     ByteRTCAudioMixingErrorInValidVolume,
     /** 
-     * @brief 已有另一个文件完成了预加载。请先使用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载此前的文件。
+     * @brief 播放的文件与预加载的文件不一致。请先使用 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载此前的文件。
      */
     ByteRTCAudioMixingErrorLoadConflict,
     /** 
@@ -553,16 +553,17 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioRenderType) {
 };
 
 /** 
+ * @hidden(macOS)
  * @type keytype
- * @brief 开启/关闭耳返功能
+ * @brief 开启/关闭耳返功能。
  */
 typedef NS_ENUM(NSInteger, ByteRTCEarMonitorMode) {
     /** 
-     * @brief 不开启耳返功能
+     * @brief 关闭耳返功能。
      */
     ByteRTCEarMonitorModeOff = 0,
     /** 
-     * @brief 开启耳返功能
+     * @brief 开启耳返功能。
      */
     ByteRTCEarMonitorModeOn = 1,
 };
@@ -657,6 +658,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 @property(assign, nonatomic) int samples;
 /** 
  * @brief 音频声道，参看 ByteRTCAudioChannel{@link #ByteRTCAudioChannel}。
+ *        双声道的情况下，左右声道的音频帧数据以 LRLRLR 形式排布。
  */
 @property(assign, nonatomic) ByteRTCAudioChannel channel;
 /** 
@@ -708,7 +710,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 @end
  /** 
  * @type keytype
- * @hidden 
+ * @hidden
  * @deprecated since 342, use ByteRTCAudioFrameProcessor instead.
  * @author majun.lvhiei
  * @region 音频处理
@@ -717,7 +719,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 @protocol ByteRTCAudioProcessor <NSObject>
 /** 
  * @type callback
- * @hidden 
+ * @hidden
  * @deprecated since 342, use ByteRTCAudioFrameProcessor instead.
  * @region 音频处理
  * @author majun.lvhiei
@@ -738,7 +740,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @brief 自定义音频处理器
  */
 @protocol ByteRTCAudioFrameProcessor <NSObject>
-/**  
+/** 
 * @type callback
 * @author majun.lvhiei
 * @brief 回调本地采集的音频帧地址，供自定义音频处理。
@@ -748,7 +750,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 *        + 调用 `enableAudioProcessor`，并在参数中选择本地采集的音频时，收到此回调。
 */
 - (int)onProcessRecordAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-/**  
+/** 
 * @type callback
 * @author majun.lvhiei
 * @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
@@ -756,7 +758,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 * @notes 调用 `enableAudioProcessor`,并在参数中选择远端音频流的的混音音频时，收到此回调。
 */
 - (int)onProcessPlayBackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-/**  
+/** 
 * @type callback
 * @author majun.lvhiei
 * @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
@@ -965,7 +967,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  * @region 音频设备管理
  * @author dixing
  * @brief 获取当前音频采集设备音量
- * @param volume 音频采集设备音量，取值范围是 [0,255] 
+ * @param volume 音频采集设备音量，取值范围是 [0,255]
  *       + [0,25] 接近无声；  <br>
  *       + [25,75] 为低音量；  <br>
  *       + [76,204] 为中音量；  <br>
@@ -1119,7 +1121,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + 检测成功不代表设备一定可以启动成功，还可能因设备被其他应用进程独占，或 CPU/内存不足等原因导致启动失败。 <br>
  */
 - (int)initAudioCaptureDeviceForTest:(NSString * _Nonnull)deviceID;
-/**  
+/** 
  * @type api
  * @hidden(macOS)
  * @region 音频设备管理
@@ -1144,7 +1146,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + 0：方法调用成功  <br>
  *        + < 0：方法调用失败  <br>
  * @notes  <br>
- *       + 该方法不依赖 rtc 引擎，只有通过静态方法 createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:} 创建的 ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *       + 该方法不依赖 rtc 引擎 <br>
  *       + 该方法必须在进房前调用，且不可与其它音频设备测试功能同时应用。  <br>
  *       + 你需调用 stopAudioRecordingDeviceTest{@link #ByteRTCAudioDeviceManager#stopAudioRecordingDeviceTest} 停止测试。  <br>
  */
@@ -1159,7 +1161,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + 0：方法调用成功  <br>
  *        + < 0：方法调用失败  <br>
  * @notes  <br>
- *        + 该方法不依赖 rtc 引擎，只有通过静态方法createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *        + 该方法不依赖 rtc 引擎 <br>
  *        + 调用 startAudioRecordingDeviceTest:{@link #ByteRTCAudioDeviceManager#startAudioRecordingDeviceTest:} 后，需调用本方法停止测试。 <br>
  */
 - (int)stopAudioRecordingDeviceTest;
@@ -1175,7 +1177,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + 0：方法调用成功  <br>
  *        + < 0：方法调用失败  <br>
  * @notes  <br>
- *       + 该方法不依赖 rtc 引擎，只有通过静态方法createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *       + 该方法不依赖 rtc 引擎 <br>
  *       + 该方法必须在进房前调用。且不可与其它音频设备测试功能同时应用。  <br>
  *       + 你需调用 stopAudioDeviceLoopbackTest{@link #ByteRTCAudioDeviceManager#stopAudioDeviceLoopbackTest} 停止测试。  <br>
  *       + 该方法仅在本地进行音频设备测试，不涉及网络连接。  <br>
@@ -1191,7 +1193,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + 0：方法调用成功  <br>
  *        + < 0：方法调用失败  <br>
  * @notes   <br>
- *        + 该方法不依赖 rtc 引擎，只有通过静态方法createAudioDeviceManager:{@link #ByteRTCVideo#createAudioDeviceManager:}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
+ *        + 该方法不依赖 rtc 引擎 <br>
  *        + 调用 startAudioDeviceLoopbackTest:{@link #ByteRTCAudioDeviceManager#startAudioDeviceLoopbackTest:} 后，需调用本方法停止测试。<br>
  */
 - (int)stopAudioDeviceLoopbackTest;
@@ -1283,9 +1285,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
  */
 @property(assign, nonatomic) NSInteger position;
 /** 
- * @brief 设置音频文件播放进度回调的时间间隔，单位毫秒，并按照设置的值触发 `rtcEngine:onAudioMixingPlayingProgress:progress:` 回调，默认不回调。  <br>
- *        + 该值应为大于 0 的 10 的倍数，当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
- *        + 传入的值小于等于 0 时，不会触发进度回调。  <br>
+ * @brief 设置音频文件播放进度回调的时间间隔，参数为为大于 0 的 10 的倍数，单位为毫秒，设置后 SDK 将按照设置的值触发 `rtcEngine:onAudioMixingPlayingProgress:progress:` 回调，默认不回调。  <br>
+ *        + 当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
+ *        + 当传入的值小于等于 0 时，不会触发进度回调。  <br>
  */
 @property(assign, nonatomic) NSInteger callbackOnProgressInterval;
 

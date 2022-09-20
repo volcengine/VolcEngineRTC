@@ -66,11 +66,11 @@ enum VideoRotation {
 
 /** 
  * @type keytype
- * @brief 视频帧缩放模式
+ * @brief 视频帧缩放模式，默认值为 FitWithCropping。
  */
 enum VideoStreamScaleMode {
     /** 
-     * @brief 自动模式，默认值为 FitWithCropping。
+     * @brief 自动模式
      */
     kVideoStreamScaleModeAuto = 0,
     /** 
@@ -167,11 +167,11 @@ enum CameraID {
  */
 struct VideoSolution {
     /** 
-     * @brief 宽（像素）
+     * @brief 视频宽度，单位：像素
      */
     int width;
     /** 
-     * @brief 高（像素）
+     * @brief 视频高度，单位：像素
      */
     int height;
     /** 
@@ -179,8 +179,7 @@ struct VideoSolution {
      */
     int fps;
     /** 
-     * @brief 最高编码码率（千比特每秒）<br>
-     *        建议使用默认设置。
+     * @brief 最大发送编码码率（kbps），建议使用默认的自动码率。<li>-1: 自动码率</li><li>0: 不开启上限</li><li>>0: 填写预估码率<li>
      */
     int max_send_kbps = SEND_KBPS_AUTO_CALCULATE;
     /** 
@@ -188,9 +187,9 @@ struct VideoSolution {
      */
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
 };
-/** 
+/**  
  * @type keytype
- * @brief 视频参数
+ * @brief 视频编码配置。参考 [设置视频发布参数](https://www.volcengine.com/docs/6348/70122)
  */
 struct VideoEncoderConfig {
     /** 

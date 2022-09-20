@@ -516,6 +516,7 @@ public:
         (void)length;
     }
     /** 
+     * @hidden
      * @type callback
      * @region 消息
      * @brief 黑帧视频流发布状态回调。  <br>

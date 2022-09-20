@@ -71,7 +71,7 @@ public:
      * @region 音频管理
      * @author dixing
      * @brief 设置耳返的音量
-     * @param [in] volume 耳返的音量，取值范围：[0,100]，单位：%
+     * @param [in] volume 耳返的音量相对原始音量的比值，取值范围：[0,100]，单位：%
      * @notes <br>
      *        + 设置耳返音量前，你必须先调用 setEarMonitorMode{@link #setEarMonitorMode} 打开耳返功能。<br>
      *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
@@ -83,12 +83,13 @@ public:
      * @region 音频管理
      * @author dixing
      * @brief 开启内部音频采集。默认为关闭状态。  <br>
-     *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+     *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
      *        调用该方法开启后，本地用户会收到 onAudioDeviceStateChanged{@link #IRTCVideoEventHandler#onAudioDeviceStateChanged} 的回调。 <br>
      *        非隐身用户进房后调用该方法，房间中的其他用户会收到 onUserStartAudioCapture{@link #IRTCVideoEventHandler#onUserStartAudioCapture} 的回调。
      * @notes  <br>
      *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 onWarning{@link #IRTCVideoEventHandler#onWarning} 回调。  <br>
-     *       + 调用 stopAudioCapture{@link #stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+     *       + 调用 stopAudioCapture{@link #IRTCVideo#stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+     *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link #IRTCVideo#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publishStream{@link #IRTCRoom#publishStream}/unpublishStream{@link #IRTCRoom#unpublishStream} 实现临时闭麦和重新开麦。
      *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
      *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 setAudioSourceType{@link #IRTCVideo#setAudioSourceType} 关闭自定义采集，再调用此方法手动开启内部采集。
      */
@@ -99,7 +100,7 @@ public:
      * @region 音频管理
      * @author dixing
      * @brief 立即关闭内部音频采集。默认为关闭状态。  <br>
-     *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+     *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
      *        调用该方法，本地用户会收到 onAudioDeviceStateChanged{@link #IRTCVideoEventHandler#onAudioDeviceStateChanged} 的回调。  <br>
      *        非隐身用户进房后调用该方法后，房间中的其他用户会收到 onUserStopAudioCapture{@link #IRTCVideoEventHandler#onUserStopAudioCapture} 的回调。
      * @notes  <br>
@@ -272,7 +273,7 @@ public:
     *        + < 0: 失败；  <br>
     * @notes  <br>
     * + 本接口在引擎创建后可调用，调用后立即生效。建议在调用 startVideoCapture{@link #IRTCVideo#startVideoCapture} 前调用本接口。
-    * + 建议同一设备上的不同 Engine 使用相同的视频采集参数。
+    * + 建议同一设备上的不同引擎使用相同的视频采集参数。
     * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 Auto 模式。
     */
    virtual int setVideoCaptureConfig(const VideoCaptureConfig& videoCaptureConfig) = 0;
@@ -301,7 +302,7 @@ public:
      * @author zhaomingliang
      * @brief <span id="IRTCVideo-setvideoencoderconfig-1"></span>
      *        视频发布端设置期望发布的最大分辨率视频流参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。  <br>
-     *        该接口支持设置一路视频流参数，设置多路参数请使用重载 API：[SetVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig-2)。
+     *        该接口支持设置一路视频流参数，设置多路参数请使用重载 API：[setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig-2)。
      * @param [in] max_solution 期望发布的最大分辨率视频流参数。参看 VideoEncoderConfig{@link #VideoEncoderConfig}。
      * @return 方法调用结果： <br>
      *        + 0：成功  <br>
@@ -318,7 +319,7 @@ public:
      * @author zhaomingliang
      * @brief <span id="IRTCVideo-setvideoencoderconfig-1"></span>
      *        Video publisher call this API to set the parameters of the maximum resolution video stream that is expected to be published, including resolution, frame rate, bitrate, scale mode, and fallback strategy in poor network conditions.
-     *        You can only set configuration for one stream with this API. If you want to set configuration for multiple streams, Call [SetVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig-2).
+     *        You can only set configuration for one stream with this API. If you want to set configuration for multiple streams, Call [setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig-2).
      * @param [in] max_solution The maximum video encoding parameter. See VideoEncoderConfig{@link #VideoEncoderConfig}.
      * @return  API call result: <br>
      *        + 0: Success <br>
@@ -378,6 +379,7 @@ public:
      *        + 0：成功  <br>
      *        + !0：失败  <br>
      * @notes  <br>
+     *       + 该接口已废弃，请使用同名新接口代替；若仍需使用该旧接口，请注意无需先调用 `enableSimulcastMode` 开启推送多路流模式。
      *       + 当使用内部采集时，视频采集的分辨率、帧率会根据最大的编码分辨率、帧率进行适配<br>
      *       + 默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
      *       + 变更编码分辨率后马上生效，可能会引发相机重启。<br>
@@ -672,9 +674,9 @@ public:
      * @brief 发送外部源视频数据
      * @param [in] frame 设置视频帧，参看 IVideoFrame{@link #IVideoFrame}。  <br>
      * @notes  <br>
-     *       + 暂时只支持 YUV420P 格式的视频帧。  <br>
+     *       + 支持格式：I420, NV12, RGBA, BGRA, ARGB  <br>
      *       + 该函数运行在用户调用线程内  <br>
-     * @notes 推送外部视频帧前，必须调用 setVideoSourceType{@link #setVideoSourceType} 开启外部视频源采集。
+     *       + 推送外部视频帧前，必须调用 setVideoSourceType{@link #setVideoSourceType} 开启外部视频源采集。
      */
     virtual bool pushExternalVideoFrame(IVideoFrame* frame) = 0;
 
@@ -722,8 +724,7 @@ public:
      */
     virtual int setAudioRoute(AudioRoute route) = 0;
 
-    /**
-     * {zh}
+    /** 
      * @hidden(macOS,Windows,Linux)
      * @type api
      * @region 音频设备管理
@@ -735,20 +736,7 @@ public:
      *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
      * @notes    <br>
      *        + 进房前后都可以调用。 <br>
-     *        + 更多注意事项参见[音频路由](https://www.volcengine.com/docs/6348/117386)。
-     */
-    /**
-     * {en}
-     * @hidden(macOS,Windows,Linux)
-     * @type api
-     * @region Audio Facility Management
-     * @author liuxiaowu
-     * @brief Set the speaker or earpiece as the default audio playback device.   <br>
-     * @param  [in] route Audio playback device. Refer to AudioRoute{@link #AudioRoute} <br>
-     * @return <br>
-     *         + 0: Success. The setting takes effect immediately. However, the audio route will not switch to the default device until all the audio peripheral devices are disconnected. <br>
-     *         + < 0: failure. It fails when the device designated is neither a speaker nor an earpiece.
-     * @notes You can call this API whether the user is in or outside a room.
+     *        + 更多注意事项参见[音频路由](117836)。
      */
     virtual int setDefaultAudioRoute(AudioRoute route) = 0;
 
@@ -1124,8 +1112,8 @@ public:
      * @param repeat_count 消息发送重复次数。取值范围是 [0, 30]。<br>
      *                    调用此接口后，SEI 数据会添加到从当前视频帧开始的连续 `repeat_count` 个视频帧中。
      * @return <br>
-     *        + `>=0`: 将被添加到视频帧中的 SEI 的数量  <br>
-     *        + `<0`: 发送失败
+     *        + >=0: 将被添加到视频帧中的 SEI 的数量  <br>
+     *        + <0: 发送失败
      * @notes <br>
      *        + 语音通话场景中，仅支持在内部采集模式下调用该接口发送 SEI 数据，且调用频率需为 15/repeat_count FPS。  <br>
      *        + 视频帧仅携带前后 2s 内收到的 SEI 数据；语音通话场景下，若调用此接口后 1min 内未有 SEI 数据发送，则 SDK 会自动取消发布视频黑帧。  <br>
@@ -1242,7 +1230,7 @@ public:
      * @author chenweiming.push
      * @brief 将用户反馈的问题上报到 RTC
      * @param [in] type 预设问题列表，参看 ProblemFeedbackOption{@link #ProblemFeedbackOption}
-     * @param [in] count `problemDesc` 的长度
+     * @param [in] count ProblemFeedbackOption 数组长度
      * @param [in] problemDesc 预设问题以外的其他问题的具体描述
      * @return <br>
      *         + 0: 上报成功  <br>
@@ -1711,6 +1699,7 @@ public:
       *       开启提示后，你可以：  <br>
       *       + 通过 onLocalAudioPropertiesReport{@link #IRTCVideoEventHandler#onLocalAudioPropertiesReport} 回调获取本地麦克风和屏幕音频流采集的音频信息；  <br>
       *       + 通过 onRemoteAudioPropertiesReport{@link #IRTCVideoEventHandler#onRemoteAudioPropertiesReport} 回调获取订阅的远端用户的音频信息。  <br>
+      *       + 通过 onActiveSpeaker{@link #IRTCVideoEventHandler#onActiveSpeaker} 回调获取房间内的最活跃用户信息。
       */
      virtual void enableAudioPropertiesReport(const AudioPropertiesConfig& config) = 0;
 
@@ -1809,7 +1798,7 @@ public:
      * @param [in] key 远端流信息，即对哪一路视频流进行解码方式设置，参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] config 视频解码方式，参看 VideoDecoderConfig{@link #VideoDecoderConfig}。
      * @notes  <br>
-     *        + 该方法近适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
+     *        + 该方法仅适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
      *        + 当你想要对远端流进行自定义解码时，你需要先调用 registerRemoteEncodedVideoFrameObserver{@link #IRTCVideo#registerRemoteEncodedVideoFrameObserver} 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 onRemoteEncodedVideoFrame{@link #IRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame} 回调出来。
      */
     virtual void setVideoDecoderConfig(RemoteStreamKey key, VideoDecoderConfig config) = 0;
@@ -1920,7 +1909,6 @@ public:
                                           IVideoSink::PixelFormat format) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 音视频处理
      * @author yanjing
@@ -1932,14 +1920,12 @@ public:
      * @notes  <br>
      *        + 调用 clearVideoWatermark{@link #IRTCVideo#clearVideoWatermark} 移除指定视频流的水印。  <br>
      *        + 同一路流只能设置一个水印，新设置的水印会代替上一次的设置。你可以多次调用本方法来设置不同流的水印。  <br>
-     *        + 进入房间前后均可调用此方法。  <br>
      *        + 若开启本地预览镜像，或开启本地预览和编码传输镜像，则远端水印均不镜像；在开启本地预览水印时，本端水印会镜像。  <br>
      *        + 开启大小流后，水印对大小流均生效，且针对小流进行等比例缩小。
      */
     virtual void setVideoWatermark(StreamIndex streamIndex, const char* image_path, RTCWatermarkConfig config) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 音视频处理
      * @author yanjing

@@ -771,7 +771,7 @@
  * @author dixing
  * @brief 音频播放路由变化时，收到该回调。
  * @param device 新的音频播放路由，详见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}
- * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCEngineKit#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](https://www.volcengine.com/docs/6348/117386) 。
+ * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCEngineKit#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](117836) 。
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRoute)device;
 
@@ -801,7 +801,6 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onRoomBinaryMessageReceived:(NSString * _Nonnull)uid message:(NSData * _Nonnull)message;
 
 /** 
- * @hidden
  * @type callback
  * @region 视频管理
  * @author wangjunlin.3182
@@ -813,6 +812,7 @@
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onSEIMessageReceived:(ByteRTCRemoteStreamKey* _Nonnull)remoteStreamKey andMessage:(NSData* _Nonnull)message;
 
 /** 
+ * @hidden
  * @type callback
  * @region 消息
  * @brief 黑帧视频流发布状态回调。  <br>
@@ -1913,15 +1913,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use leaveRoom");
  * @region 音频管理
  * @author dixing
  * @brief 开启内部音频采集。默认为关闭状态。  <br>
- *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+ *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
  *        调用该方法开启后，本地用户会收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 的回调。  <br>
  *        非隐身用户进房后调用该方法，房间中的其他用户会收到 rtcEngine:onUserStartAudioCapture:{@link #ByteRTCEngineDelegate#rtcEngine:onUserStartAudioCapture:} 的回调。
  * @notes  <br>
  *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 rtcEngine:onWarning:{@link #ByteRTCEngineDelegate#rtcEngine:onWarning:} 回调。  <br>
  *       + 调用 stopAudioCapture{@link #ByteRTCEngineKit#stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+ *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link #ByteRTCEngineKit#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publish{@link #ByteRTCEngineKit#publish}/unpublish{@link #ByteRTCEngineKit#unpublish} 实现临时闭麦和重新开麦。
  *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
  *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
-  *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 disableExternalAudioDevice{@link #ByteRTCEngineKitdisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
+ *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 disableExternalAudioDevice{@link #ByteRTCEngineKitdisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
  */
 - (void)startAudioCapture;
 
@@ -1930,7 +1931,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use leaveRoom");
   * @region 音频管理
   * @author dixing
   * @brief 关闭内部音频采集。默认为关闭状态。  <br>
-  *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+  *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
   *        调用该方法，本地用户会收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 的回调。  <br>
   *        非隐身用户进房后调用该方法，房间中的其他用户会收到 rtcEngine:onUserStopAudioCapture:{@link #ByteRTCEngineDelegate#rtcEngine:onUserStopAudioCapture:} 的回调。
   * @notes  <br>
@@ -2341,6 +2342,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
  *        + 0：成功  <br>
  *        + !0：失败  <br>
  * @notes  <br>
+ *       + 该接口已废弃，请使用同名新接口代替；若仍需使用该旧接口，请注意无需先调用 `enableSimulcastMode` 开启推送多路流模式。
  *       + 当使用内部采集时，视频采集的分辨率、帧率会根据最大的编码分辨率、帧率进行适配<br>
  *       + 默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
  *       + 变更编码分辨率后马上生效，可能会引发相机重启。<br>
@@ -2372,6 +2374,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use setRemoteVideoSink");
  * @param userId 期望订阅的远端视频流发布用户的 ID。
  * @param remoteVideoConfig 期望订阅的远端视频流参数，参看 ByteRTCRemoteVideoConfig{@link #ByteRTCRemoteVideoConfig}。
  * @notes <br>
+ *        + 若使用 342 及以前版本的 SDK，调用该方法前请联系技术支持人员通过配置下发开启按需订阅功能。  <br>
  *        + 该方法仅在发布端调用 enableSimulcastMode:{@link #ByteRTCEngineKit#enableSimulcastMode:} 开启了发送多路视频流的情况下生效，此时订阅端将收到来自发布端与期望设置的参数最相近的一路流；否则订阅端只会收到一路参数为分辨率 640px × 360px、帧率 15fps 的视频流。  <br>
  *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
  *        + 该方法需在进房后调用，若想进房前设置，你需调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:}，并对 `rtcRoomConfig` 中的 `remoteVideoConfig` 进行设置。  <br>
@@ -3130,7 +3133,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use pauseAllSubscribedStream or resumeAllSubscr
  * @type api
  * @region 视频管理
  * @author wangjunlin.3182
- * @brief 在视频通信时，通过视频帧发送 SEI 数据。StreamMain 流当是内部源且摄像头处于关闭状态时调用本函数，SDK engine 会构造一个视频黑帧发送 SEI 信息
+ * @brief 在视频通信时，通过视频帧发送 SEI 数据。
  * @param streamIndex 媒体流类型，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
  * @param message SEI 消息。长度不超过 4 kB。
  * @param repeatCount 消息发送重复次数。取值范围是 [0, 30]。<br>
@@ -3274,6 +3277,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
  *        + 你必须先通过 rtcEngine:onUserPublishStream:type:{@link #ByteRTCEngineDelegate#rtcEngine:onUserPublishStream:type:} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcEngine:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCEngineDelegate#rtcEngine:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
+ *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unSubscribeStream:mediaStreamType:{@link #ByteRTCEngineKit#unSubscribeStream:mediaStreamType:} 取消订阅或本端用户退房。 <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeStream:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
@@ -3301,6 +3305,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
  *        + 你必须先通过 rtcEngine:onUserPublishScreen:type:{@link #ByteRTCEngineDelegate #rtcEngine:onUserPublishScreen:type:} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcEngine:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCEngineDelegate#rtcEngine:onStreamSubscribed:userId:subscribeConfig:} 通知流的订阅结果。  <br>
+ *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unSubscribeScreen:mediaStreamType:{@link #ByteRTCEngineKit#unSubscribeScreen:mediaStreamType:} 取消订阅或本端用户退房。 <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
  */
 - (void)subscribeScreen:(NSString *_Nonnull)userId mediaStreamType:(ByteRTCMediaStreamType)mediaStreamType;
@@ -3369,6 +3374,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + 0: 方法调用成功  <br>
  *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
  * @notes <br>
+ *      + 你需要调用 setAudioScenario:{@link #ByteRTCEngineKit#setAudioScenario:} 将音频场景切换为 `ByteRTCAudioScenarioCommunication` 后再调用本接口。<br>
  *      + 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备。<br>
  *      + 移除后，音频设备会自动切换回原设备。<br>
  *      + 不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
@@ -3386,7 +3392,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
  * @notes    <br>
  *        + 进房前后都可以调用。 <br>
- *        + 更多注意事项参见[音频路由](https://www.volcengine.com/docs/6348/117386)。
+ *        + 更多注意事项参见[音频路由](117836)。
  */
 /**
  * {en}
@@ -3689,7 +3695,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
+ * @notes <br>
+ *       + 支持的格式：NV12, BGRA, ARGB<br>
+ *       + 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts;
 
@@ -3704,7 +3712,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
+ * @notes <br>
+ *       + 支持的格式：NV12, BGRA, ARGB<br>
+ *       + 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts rotation:(ByteRTCVideoRotation)rotation;
 
@@ -3721,7 +3731,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
+ * @notes <br>
+ *       + 支持的格式：NV12, BGRA, ARGB<br>
+ *       + 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCEngineKit#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts
                                                              rotation:(ByteRTCVideoRotation)rotation
@@ -5456,7 +5468,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @param key 远端流信息，指定对哪一路视频流进行解码方式设置，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
  * @param config 视频解码方式，参看 ByteRTCVideoDecoderConfig{@link #ByteRTCVideoDecoderConfig}。
  * @notes  <br>
- *        + 该方法近适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
+ *        + 该方法仅适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
  *        + 当你想要对远端流进行自定义解码时，你需要先调用 registerRemoteEncodedVideoFrameObserver:{@link #ByteRTCEngineKit#registerRemoteEncodedVideoFrameObserver:} 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 onRemoteEncodedVideoFrame:withEncodedVideoFrame:{@link #ByteRTCRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame:withEncodedVideoFrame:} 回调出来。
  */
 - (void)setVideoDecoderConfig:(ByteRTCRemoteStreamKey * _Nonnull)key

@@ -35,126 +35,141 @@ enum StreamMixingEvent {
      */
     kStreamMixingBase = 0,
     /** 
-     *  请求发起转推直播任务
+     * @brief 请求发起转推直播任务
      */
     kStreamMixingStart = 1,
     /** 
-     *  发起转推直播任务成功
+     * @brief 发起转推直播任务成功
      */
     kStreamMixingStartSuccess = 2,
     /** 
-     *  发起转推直播任务失败
+     * @brief 发起转推直播任务失败
      */
     kStreamMixingStartFailed = 3,
     /** 
-     *  请求更新转推直播任务配置
+     * @brief 请求更新转推直播任务配置
      */
     kStreamMixingUpdate = 4,
     /** 
-     *  成功更新转推直播任务配置
+     * @brief 成功更新转推直播任务配置
      */
     kStreamMixingUpdateSuccess = 5,
     /** 
-     *  更新转推直播任务配置失败
+     * @brief 更新转推直播任务配置失败
      */
     kStreamMixingUpdateFailed = 6,
     /** 
-     *  请求结束转推直播任务
+     * @brief 请求结束转推直播任务
      */
     kStreamMixingStop = 7,
     /** 
-     *  结束转推直播任务成功
+     * @brief 结束转推直播任务成功
      */
     kStreamMixingStopSuccess = 8,
     /** 
-     *  结束转推直播任务失败
+     * @brief 结束转推直播任务失败
      */
     kStreamMixingStopFailed = 9,
     /** 
-     *  更新转推直播任务配置的请求超时
+     * @brief 更新转推直播任务配置的请求超时
      */
     kStreamMixingChangeMixType = 10,
     /** 
-     *  得到客户端合流音频首帧
+     * @brief 得到客户端合流音频首帧
      */
     kStreamMixingFirstAudioFrameByClientMix = 11,
     /** 
-     *  收到客户端合流视频首帧
+     * @brief 收到客户端合流视频首帧
      */
     kStreamMixingFirstVideoFrameByClientMix = 12,
     /** 
-     *  更新转推直播任务配置超时
+     * @brief 更新转推直播任务配置超时
      */
     kStreamMixingUpdateTimeout = 13,
     /** 
-     *  发起转推直播任务配置超时
+     * @brief 发起转推直播任务配置超时
      */
     kStreamMixingStartTimeout = 14,
     /** 
-     *  合流布局参数错误
+     * @brief 合流布局参数错误
      */
     kStreamMixingRequestParamError = 15,
     /** 
-    * @hidden
-    *  合流加图片
+    * @brief 合流加图片
     */
     kStreamMixingMixImageEvent = 16,
 };
+
+
+/** 
+ * @hidden
+ * @brief 343 需求，缺注释，需补齐
+ */
+enum SingleStreamPushEvent {
+    kSingleStreamPushBase = 0,
+    kSingleStreamPushStart = 1,
+    kSingleStreamPushSuccess = 2,
+    kSingleStreamPushFailed = 3,
+    kSingleStreamPushStop = 4,
+    kSingleStreamPushTimeout = 5,
+    kSingleStreamPushParamError = 6,
+};
+
 /** 
  * @type errorcode
  * @brief 转推直播错误码
  */
 enum StreamMixingErrorCode {
     /** 
-     * 推流成功。
+     * @brief 推流成功。
      */
     kStreamMixingErrorOK = 0,
     /** 
-     * 未定义的合流错误
+     * @brief 未定义的合流错误
      */
     kStreamMixingErrorBase= 1090,
     /** 
-     *  客户端 SDK 检测到无效推流参数。
+     * @brief 客户端 SDK 检测到无效推流参数。
      */
     kStreamMixingErrorInvalidParam = 1091,
     /** 
-     *  状态错误，需要在状态机正常状态下发起操作
+     * @brief 状态错误，需要在状态机正常状态下发起操作
      */
     kStreamMixingErrorInvalidState = 1092,
     /** 
-     *  无效操作
+     * @brief 无效操作
      */
     kStreamMixingErrorInvalidOperator = 1093,
     /** 
-     *  转推直播任务处理超时，请检查网络状态并重试
+     * @brief 转推直播任务处理超时，请检查网络状态并重试
      */
     kStreamMixingErrorTimeout = 1094,
     /** 
-     * 服务端检测到错误的推流参数
+     * @brief 服务端检测到错误的推流参数
      */
     kStreamMixingErrorInvalidParamByServer = 1095,
     /** 
-     *  对流的订阅超时
+     * @brief 对流的订阅超时
      */
     kStreamMixingErrorSubTimeoutByServer = 1096,
     /** 
-     *  合流服务端内部错误。
+     * @brief 合流服务端内部错误。
      */
     kStreamMixingErrorInvalidStateByServer = 1097,
     /** 
-     *  合流服务端推 CDN 失败。
+     * @brief 合流服务端推 CDN 失败。
      */
     kStreamMixingErrorAuthenticationByCDN  = 1098,
     /** 
-     *  服务端接收信令超时，请检查网络状态并重试。
+     * @brief 服务端接收信令超时，请检查网络状态并重试。
      */
     kStreamMixingErrorTimeoutBySignaling = 1099,
     /** 
-     *  图片合流失败。
+     * @brief 图片合流失败。
      */
     kStreamMixingErrorMixImageFail = 1100,
     /** 
-     *  服务端未知错误。
+     * @brief 服务端未知错误。
      */
     kStreamMixingErrorUnKnownByServer = 1101,
     /**
@@ -257,7 +272,6 @@ enum TranscoderRenderMode {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 合流布局区域类型
  */
@@ -273,7 +287,6 @@ enum TranscoderLayoutRegionType {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 图片合流相关参数
  */
@@ -337,8 +350,8 @@ typedef struct IDataFrame {
 
 /** 
  * @type keytype
- * @brief 单个视频流在合流中的布局信息。  <br>
- *        开启转推直播功能后，在多路视频流合流时，你可以设置其中一路视频流在合流中的预设布局信息。
+ * @brief 单个图片或视频流在合流中的布局信息。  <br>
+ *        开启转推直播功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
  */
 typedef struct TranscoderLayoutRegion {
     /** 
@@ -346,8 +359,8 @@ typedef struct TranscoderLayoutRegion {
      */
     const char* region_id;
    /** 
-     * @brief 媒体流所在房间的房间 ID。<br>
-     *        如果此媒体流是通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms}} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+     * @brief 图片或视频流所在房间的房间 ID。<br>
+     *        如果此图片或视频流是通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id;
     /** 
@@ -395,19 +408,16 @@ typedef struct TranscoderLayoutRegion {
      */
     TranscoderRenderMode render_mode;
     /** 
-     * @hidden
      * @type keytype
      * @brief 合流布局区域类型，参看 TranscoderLayoutRegionType{@link #TranscoderLayoutRegionType}。
      */
     TranscoderLayoutRegionType type;
     /** 
-     * @hidden
      * @type keytype
      * @brief 图片合流布局区域类型对应的数据。类型为图片时传入图片 RGBA 数据，当类型为视频流时传空。
      */
     uint8_t* data;
     /** 
-     * @hidden
      * @type keytype
      * @brief 合流布局区域数据的对应参数。当类型为视频流时传空，类型为图片时传入对应图片的参数，参看 TranscoderLayoutRegionDataParam{@link #TranscoderLayoutRegionDataParam}。
      */
@@ -439,7 +449,7 @@ typedef struct TranscoderAudioParam {
 
 /** 
  * @type keytype
- * @brief 合流视频参数
+ * @brief 合流视频转码参数
  */
 typedef struct TranscoderVideoParam {
     /** 
@@ -521,8 +531,8 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 获取合流视频参数
-     * @return 合流视频参数内容，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
+     * @brief 获取合流视频转码参数
+     * @return 合流视频转码参数内容，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
      */
     virtual TranscoderVideoParam videoParam() = 0;
     /** 
@@ -634,5 +644,27 @@ public:
      */
     virtual ~ITranscoderParam() = default;
 };
-
+/** 
+ * @hidden not available in 343
+ * @type keytype
+ * @brief 单流转推直播配置参数。
+ */
+typedef struct PushSingleStreamParam {
+    /** 
+     * @brief 媒体流所在的房间 ID
+     */
+    const char* room_id;
+    /** 
+     * @brief 媒体流所属的用户 ID
+     */
+    const char* user_id;
+    /** 
+     * @brief 推流地址
+     */
+    const char* uri;
+    /** 
+     * @brief 媒体流是否为屏幕流。
+     */
+    const bool is_screen_stream;
+}PushSingleStreamParam;
 }  // namespace bytertc

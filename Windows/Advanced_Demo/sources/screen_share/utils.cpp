@@ -72,13 +72,13 @@ int getIdxFromResolution(const VideoResolution& resolution) {
 }
 
 
-int getVideoCaptureDevices(bytertc::IRtcEngine * engine, std::vector<RtcDevice>& devices) {
+int getVideoCaptureDevices(bytertc::IRTCVideo* rtc_video, std::vector<RtcDevice>& devices) {
     std::string strSelectedDeviceId;
     char szName[512], szId[512];
     int devIdx = 0;
 
     // enum video capture devices
-    auto video_device_manager = engine->getVideoDeviceManager();
+    auto video_device_manager = rtc_video->getVideoDeviceManager();
 
     bytertc::IDeviceCollection* pVideoRecordCollection =
         video_device_manager->enumerateVideoCaptureDevices();
@@ -116,38 +116,38 @@ int getVideoCaptureDevices(bytertc::IRtcEngine * engine, std::vector<RtcDevice>&
     return 0;
 }
 
-int setVideoCaptureDevice(bytertc::IRtcEngine* engine, const std::string device_id)
+int setVideoCaptureDevice(bytertc::IRTCVideo* rtc_video, const std::string device_id)
 {
-    auto video_device_manager = engine->getVideoDeviceManager();
+    auto video_device_manager = rtc_video->getVideoDeviceManager();
     video_device_manager->setVideoCaptureDevice(device_id.c_str());
     return 0;
 }
 
-int setVideoCaptureDevice(bytertc::IRtcEngine* engine, const std::string & device_id) {
-    auto video_device_manager = engine->getVideoDeviceManager();
+int setVideoCaptureDevice(bytertc::IRTCVideo* rtc_video, const std::string & device_id) {
+    auto video_device_manager = rtc_video->getVideoDeviceManager();
     return video_device_manager->setVideoCaptureDevice(device_id.c_str());
 }
 
-static int SetVideoEncoderConfig(bytertc::IRtcEngine* engine,bytertc::StreamIndex index, int width, int height, int fps, int kbps) {
+static int SetVideoEncoderConfig(bytertc::IRTCVideo* rtc_video,bytertc::StreamIndex index, int width, int height, int fps, int kbps) {
     bytertc::VideoSolution video_solution;
     video_solution.fps = fps;
     video_solution.width = width;
     video_solution.height = height;
     video_solution.max_send_kbps = kbps;
-    return engine->setVideoEncoderConfig(index,
+    return rtc_video->setVideoEncoderConfig(index,
         &video_solution, 1);
 }
 
-int setScreenProfile(bytertc::IRtcEngine* engine,int width,int height,int fps,int kbps) {
-  return SetVideoEncoderConfig(engine, bytertc::StreamIndex::kStreamIndexScreen, width, height, fps, kbps);
+int setScreenProfile(bytertc::IRTCVideo* rtc_video,int width,int height,int fps,int kbps) {
+  return SetVideoEncoderConfig(rtc_video, bytertc::StreamIndex::kStreamIndexScreen, width, height, fps, kbps);
 }
 
-int setVideoProfile(bytertc::IRtcEngine* engine, int width, int height,
+int setVideoProfile(bytertc::IRTCVideo* rtc_video, int width, int height,
                      int fps, int kbps) {
-    return SetVideoEncoderConfig(engine, bytertc::StreamIndex::kStreamIndexMain, width, height, fps, kbps);
+    return SetVideoEncoderConfig(rtc_video, bytertc::StreamIndex::kStreamIndexMain, width, height, fps, kbps);
 }
 
-int getShareList(bytertc::IRtcEngine* engine, std::vector<SnapshotAttr>& list) {
+int getShareList(bytertc::IRTCVideo* rtc_video, std::vector<SnapshotAttr>& list) {
 
     int display_index = 0;
     SnapshotAttr snapshot;
@@ -156,7 +156,7 @@ int getShareList(bytertc::IRtcEngine* engine, std::vector<SnapshotAttr>& list) {
         "桌面六", "桌面七", "桌面八", "桌面九", "桌面十",
     };
 
-    auto sourcelist = engine->getScreenCaptureSourceList();
+    auto sourcelist = rtc_video->getScreenCaptureSourceList();
     int count = sourcelist->getCount();
     for (int i = 0; i < count; ++i) {
         auto source = sourcelist->getSourceInfo(i);
@@ -194,7 +194,7 @@ int getShareList(bytertc::IRtcEngine* engine, std::vector<SnapshotAttr>& list) {
     return 0;
 }
 
-QPixmap getThumbnail(bytertc::IRtcEngine* engine,
+QPixmap getThumbnail(bytertc::IRTCVideo* rtc_video,
                      SnapshotAttr::SnapshotType type,
     void* source_id, int max_width,
     int max_height) {
@@ -211,47 +211,47 @@ QPixmap getThumbnail(bytertc::IRtcEngine* engine,
     default:
         break;
     }
-    auto p = engine->getThumbnail(s_type, source_id, max_width, max_height);
+    auto p = rtc_video->getThumbnail(s_type, source_id, max_width, max_height);
 
     QImage img(reinterpret_cast<uchar*>(p->getPlaneData(0)), p->width(),
         p->height(), QImage::Format::Format_RGB32);
     return QPixmap::fromImage(img);
 }
 
-void StartScreenAudioCapture(bytertc::IRtcEngine* engine) {
-    engine->startScreenAudioCapture();
+void StartScreenAudioCapture(bytertc::IRTCVideo* rtc_video) {
+    rtc_video->startScreenAudioCapture();
 }
 
-void StopScreenAudioCapture(bytertc::IRtcEngine* engine) {
-    engine->stopScreenAudioCapture();
+void StopScreenAudioCapture(bytertc::IRTCVideo* rtc_video) {
+    rtc_video->stopScreenAudioCapture();
 }
 
 
-static void StartScreenVideoCapture(bytertc::IRtcEngine* engine, bytertc::ScreenCaptureSourceType type, void* source_id)
+static void StartScreenVideoCapture(bytertc::IRTCVideo* rtc_video, bytertc::IRTCRoom* rtc_room, bytertc::ScreenCaptureSourceType type, void* source_id)
 {
     bytertc::ScreenCaptureSourceInfo info;
     bytertc::ScreenCaptureParameters param;
     info.type = type;
     info.source_id = source_id;
     param.capture_mouse_cursor = bytertc::MouseCursorCaptureState::kMouseCursorCaptureStateOn;
-    int ret = engine->startScreenVideoCapture(info, param);
-    engine->publishScreen();
+    int ret = rtc_video->startScreenVideoCapture(info, param);
+    rtc_room->publishScreen(bytertc::MediaStreamType::kMediaStreamTypeBoth);
 }
 
 
-void StartScreenCapture(bytertc::IRtcEngine* engine ,void * source_id) {
-    StartScreenVideoCapture(engine, bytertc::ScreenCaptureSourceType::kScreenCaptureSourceTypeScreen,source_id);
+void StartScreenCapture(bytertc::IRTCVideo* rtc_video, bytertc::IRTCRoom* rtc_room, void * source_id) {
+    StartScreenVideoCapture(rtc_video, rtc_room,  bytertc::ScreenCaptureSourceType::kScreenCaptureSourceTypeScreen,source_id);
     
 }
 
-void StartWindowCapture(bytertc::IRtcEngine* engine, void* source_id)
+void StartWindowCapture(bytertc::IRTCVideo* rtc_video, bytertc::IRTCRoom* rtc_room, void* source_id)
 {
-    StartScreenVideoCapture(engine, bytertc::ScreenCaptureSourceType::kScreenCaptureSourceTypeWindow, source_id);
+    StartScreenVideoCapture(rtc_video, rtc_room, bytertc::ScreenCaptureSourceType::kScreenCaptureSourceTypeWindow, source_id);
 }
 
-void StopScreenCapture(bytertc::IRtcEngine* engine) {
-    engine->unpublishScreen();
-    engine->stopScreenVideoCapture();
+void StopScreenCapture(bytertc::IRTCVideo* rtc_video, bytertc::IRTCRoom* rtc_room) {
+    rtc_room->unpublishScreen(bytertc::MediaStreamType::kMediaStreamTypeBoth);
+    rtc_video->stopScreenVideoCapture();
 }
 
 }  // namespace utils

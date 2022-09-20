@@ -505,7 +505,6 @@ public:
     }
 
     /** 
-     * @hidden
      * @type callback
      * @region 视频管理
      * @brief 收到通过 sendSEIMessage{@link #IRtcEngine#sendSEIMessage} 发送的带有 SEI 消息的视频帧时，收到此回调
@@ -520,6 +519,7 @@ public:
     }
 
     /** 
+     * @hidden
      * @type callback
      * @region 消息
      * @brief 黑帧视频流发布状态回调。  <br>

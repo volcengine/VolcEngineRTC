@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "model.h"
-#include "bytertc_engine_interface.h"
+#include "bytertc_video.h"
 
 namespace Ui {
 class ShareScreenWidget;
@@ -16,7 +16,7 @@ class ShareScreenWidget : public QDialog {
   explicit ShareScreenWidget(QWidget *parent = nullptr);
   ~ShareScreenWidget();
 
-  void updateData(bytertc::IRtcEngine* engine,const std::vector<SnapshotAttr>& vec);
+  void updateData(bytertc::IRTCVideo* rtc_video,const std::vector<SnapshotAttr>& vec);
  signals:
   void sigScreenShare(SnapshotAttr attr);
   void sigWndShare(SnapshotAttr attr);

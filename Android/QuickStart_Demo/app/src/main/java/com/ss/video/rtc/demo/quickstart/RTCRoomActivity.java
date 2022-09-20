@@ -43,41 +43,32 @@ import java.util.Locale;
  * - 创建引擎
  * - 设置视频发布参数
  * - 渲染自己的视频数据
+ * - 创建房间
  * - 加入音视频通话房间
- * - 切换前置/后置摄像头
  * - 打开/关闭麦克风
  * - 打开/关闭摄像头
- * - 切换听筒/扬声器
  * - 渲染远端用户的视频数据
  * - 离开房间
  * - 销毁引擎
  *
  * 实现一个基本的音视频通话的流程如下：
- * 1.创建引擎 {@link RTCEngine#create(Context, String, IRTCEngineEventHandler)}
- * 2.设置编码参数 {@link RTCEngine#setVideoEncoderConfig(List)}
- * 3.开启本地视频采集 {@link RTCEngine#startVideoCapture()}
- * 4.设置本地视频渲染视图 {@link RTCEngine#setLocalVideoCanvas(StreamIndex, VideoCanvas)}
- * 5.加入音视频通话房间 {@link RTCEngine#joinRoom(java.lang.String, java.lang.String,
- *   com.ss.bytertc.engine.UserInfo, com.ss.bytertc.engine.RTCRoomConfig)}
- * 6.在收到远端用户视频首帧之后，设置用户的视频渲染视图 {@link RTCEngine#setRemoteVideoCanvas(String, StreamIndex, VideoCanvas)}
- * 7.在用户离开房间之后移出用户的视频渲染视图 {@link RTCRoomActivity#removeRemoteView(String)}
- * 8.离开音视频通话房间 {@link RTCEngine#leaveRoom()}
- * 9.销毁引擎 {@link RTCEngine#destroyEngine(RTCEngine)}
- *
- * 有以下常见的注意事项：
- * 1.创建引擎时，需要注册 RTC 事件回调的接口，类型是 IRTCEngineEventHandler 用户需要持有这个引用，例如本示例中
- *   将其作为 Activity 成员变量。因为这个引用在引擎内部是弱引用，可能会被系统回收导致收不到回调事件
- * 2.本示例中，我们在 {@link IRTCEngineEventHandler#onFirstRemoteVideoFrameDecoded} 这个事件中给远端用户
- *   设置远端用户视频渲染视图，这个回调表示的是收到了远端用户的视频第一帧。当然也可以在
- *   {@link IRTCEngineEventHandler#onUserJoined} 回调中设置远端用户视频渲染视图
- * 3.SDK 回调不在主线程，UI 操作需要切换线程
- * 4.用户成功加入房间后，SDK 会通过 {@link IRTCEngineEventHandler#onUserJoined} 回调已经在房间的用户信息
- * 5.SDK 支持同时发布多个参数的视频流，接口是 {@link RTCEngine#setVideoEncoderConfig}
- * 6.加入房间时，需要有有效的 token，加入失败时会通过 {@link IRTCEngineEventHandler#onError(int)} 输出对应的错误码
- * 7.用户可以通过 {@link RTCEngine#joinRoom(java.lang.String, java.lang.String,
- *   com.ss.bytertc.engine.UserInfo, com.ss.bytertc.engine.RTCRoomConfig)} 中的 ChannelProfile
- *   来获得不同场景下的性能优化。本示例是音视频通话场景，因此使用 {@link ChannelProfile#CHANNEL_PROFILE_COMMUNICATION}
- * 8.不需要在每次加入/退出房间时销毁引擎。本示例退出房间时销毁引擎是为了展示完整的使用流程
+ * 1.创建 IRTCVideo 实例。
+ *   RTCVideo.createRTCVideo(Context context, String appId, IRTCVideoEventHandler handler,
+ *     Object eglContext, JSONObject parameters)
+ * 2.视频发布端设置期望发布的最大分辨率视频流参数，包括分辨率、帧率、码率、缩放模式、网络不佳时的回退策略等。
+ *   RTCVideo.setVideoEncoderConfig(VideoEncoderConfig maxSolution)
+ * 3.开启本地视频采集。 RTCVideo.startVideoCapture()
+ * 4.设置本地视频渲染时，使用的视图，并设置渲染模式。
+ *   RTCVideo.setLocalVideoCanvas(StreamIndex streamIndex, VideoCanvas videoCanvas)
+ * 5.创建房间。RTCVideo.createRTCRoom(String roomId)
+ * 6.加入音视频通话房间。
+ *   RTCRoom.joinRoom(String token, UserInfo userInfo, RTCRoomConfig roomConfig)
+ * 7.SDK 接收并解码远端视频流首帧后，设置用户的视频渲染视图。
+ *   RTCVideo.setRemoteVideoCanvas(String userId, StreamIndex streamIndex, VideoCanvas videoCanvas)
+ * 8.在用户离开房间之后移出用户的视频渲染视图。
+ * 9.离开音视频通话房间。RTCRoom.leaveRoom()
+ * 10.调用 RTCRoom.destroy() 销毁房间对象。
+ * 11.调用 RTCVideo.destroyRTCVideo() 销毁引擎。
  *
  * 详细的API文档参见{https://www.volcengine.com/docs/6348/70080}
  */

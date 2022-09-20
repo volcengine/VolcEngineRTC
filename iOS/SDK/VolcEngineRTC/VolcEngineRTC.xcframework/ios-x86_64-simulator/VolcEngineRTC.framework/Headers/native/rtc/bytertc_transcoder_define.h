@@ -360,7 +360,7 @@ typedef struct TranscoderLayoutRegion {
     const char* region_id;
    /** 
      * @brief 图片或视频流所在房间的房间 ID。<br>
-     *        如果此图片或视频流是通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms}} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+     *        如果此图片或视频流是通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id;
     /** 
@@ -449,7 +449,7 @@ typedef struct TranscoderAudioParam {
 
 /** 
  * @type keytype
- * @brief 合流视频参数
+ * @brief 合流视频转码参数
  */
 typedef struct TranscoderVideoParam {
     /** 
@@ -531,8 +531,8 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 获取合流视频参数
-     * @return 合流视频参数内容，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
+     * @brief 获取合流视频转码参数
+     * @return 合流视频转码参数内容，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
      */
     virtual TranscoderVideoParam videoParam() = 0;
     /** 

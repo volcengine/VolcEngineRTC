@@ -17,7 +17,7 @@
 
 /** 
  * @type callback
- * @brief ByteRTCEngineDelegate 协议包含了SDK提供的回调方法，SDK通过代理向应用程序上报一些运行时事件
+ * @brief ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理向应用程序上报一些运行时事件
  */
 @protocol ByteRTCVideoDelegate <NSObject>
 @optional
@@ -482,7 +482,7 @@
  * @author dixing
  * @brief 音频播放路由变化时，收到该回调。
  * @param device 新的音频播放路由，详见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}
- * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCVideo#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](https://www.volcengine.com/docs/6348/117386) 。
+ * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCVideo#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](117836) 。
  */
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRoute)device;
 #pragma mark custom message Delegate Methods
@@ -498,6 +498,7 @@
  */
 - (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onSEIMessageReceived:(ByteRTCRemoteStreamKey* _Nonnull)remoteStreamKey andMessage:(NSData* _Nonnull)message;
 /** 
+ * @hidden
  * @type callback
  * @region 消息
  * @brief 黑帧视频流发布状态回调。  <br>
@@ -963,7 +964,9 @@ onPlayPublicStreamResult:(NSString *_Nonnull)publicStreamId
  * @brief SDK 回调给应用层的 delegate 对象，详见 ByteRTCVideoDelegate{@link #ByteRTCVideoDelegate}
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
-
+/**
+ * @hidden
+ */
 @property (nonatomic, weak) id<ByteRTCVideoDelegate> _Nullable delegate;
 /**
  * @hidden
@@ -1067,12 +1070,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @region 音频管理
  * @author dixing
  * @brief 开启内部音频采集。默认为关闭状态。  <br>
- *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+ *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
  *        调用该方法开启后，本地用户会收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 的回调。  <br>
  *        非隐身用户进房后调用该方法，房间中的其他用户会收到 rtcEngine:onUserStartAudioCapture:uid:{@link #ByteRTCVideoDelegate#rtcEngine:onUserStartAudioCapture:uid:} 的回调。
  * @notes  <br>
  *       + 若未取得当前设备的麦克风权限，调用该方法后会触发 rtcEngine:onWarning:{@link #ByteRTCVideoDelegate#rtcEngine:onWarning:} 回调。  <br>
  *       + 调用 stopAudioCapture{@link #ByteRTCVideo#stopAudioCapture} 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  <br>
+ *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link #ByteRTCVideo#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publishStream:{@link #ByteRTCRoom#publishStream:}/unpublishStream:{@link #ByteRTCRoom#unpublishStream:} 实现临时闭麦和重新开麦。
  *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
  *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
   *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 disableExternalAudioDevice{@link #RTCVideodisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
@@ -1083,7 +1087,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
   * @region 音频管理
   * @author dixing
   * @brief 关闭内部音频采集。默认为关闭状态。  <br>
-  *        内部采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
+  *        内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
   *        调用该方法，本地用户会收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 的回调。  <br>
   *        非隐身用户进房后调用该方法，房间中的其他用户会收到 rtcEngine:onUserStopAudioCapture:uid:{@link #ByteRTCVideoDelegate#rtcEngine:onUserStopAudioCapture:uid:} 的回调。
   * @notes  <br>
@@ -1180,6 +1184,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  *        开启提示后，你可以：  <br>
  *       + 通过 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 回调获取本地麦克风和屏幕音频流采集的音频信息；  <br>
  *       + 通过 rtcEngine:onRemoteAudioPropertiesReport:totalRemoteVolume:{@link #ByteRTCVideoDelegate#rtcEngine:onRemoteAudioPropertiesReport:totalRemoteVolume:} 回调获取订阅的远端用户的音频信息。  <br>
+ *       + 通过 rtcEngine:onActiveSpeaker:uid:{@link #ByteRTCVideoDelegate#rtcEngine:onActiveSpeaker:uid:} 回调获取房间内的最活跃用户信息。
  */
 - (void)enableAudioPropertiesReport:(ByteRTCAudioPropertiesConfig* _Nonnull)config;
 /** 
@@ -1198,26 +1203,27 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
                            remoteUid:(NSString *_Nonnull)uid
                           playVolume:(NSInteger)volume;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 音频管理
- * @author dixing
- * @brief 开启/关闭耳返功能
- * @param mode 是否开启耳返功能，参看 ByteRTCEarMonitorMode{@link #ByteRTCEarMonitorMode}
+ * @author luoyi.007
+ * @brief 开启/关闭耳返功能。
+ * @param mode 是否开启耳返功能，参看 ByteRTCEarMonitorMode{@link #ByteRTCEarMonitorMode}。
  * @notes <br>
- *        + 你必须在使用 RTC SDK 提供的内部音频采集功能时，使用耳返功能。<br>
- *        + 耳返功能仅在连接了有线耳机时有效。<br>
+ *        + 耳返功能仅适用于由 RTC SDK 内部采集的音频。  <br>
+ *        + 使用耳返必须佩戴耳机。为保证低延时耳返最佳体验，建议佩戴有线耳机。  <br>
  *        + 受 iOS 平台限制，RTC 仅支持软件耳返功能。
  */
 - (void)setEarMonitorMode:(ByteRTCEarMonitorMode)mode;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 音频管理
- * @author dixing
- * @brief 设置耳返的音量
+ * @author luoyi.007
+ * @brief 设置耳返的音量。
  * @param volume 耳返的音量，取值范围：[0,100]，单位：%
  * @notes <br>
- *        + 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。<br>
- *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
+ *        + 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。  
  */
 - (void)setEarMonitorVolume:(NSInteger)volume;
 /** 
@@ -1290,7 +1296,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
          withPixelFormat:(ByteRTCVideoSinkPixelFormat)requiredFormat;
 /** 
  * @hidden
- * @deprecated since 336, using setRemoteVideoConfig:remoteVideoConfig: instead
+ * @deprecated since 337, using setRemoteVideoConfig:remoteVideoConfig: instead
  * @type api
  * @region 视频管理
  * @author wangzhanqiang
@@ -1303,6 +1309,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  *        + 0：成功  <br>
  *        + !0：失败  <br>
  * @notes  <br>
+ *       + 该接口已废弃，请使用同名新接口代替；若仍需使用该旧接口，请注意无需先调用 `enableSimulcastMode` 开启推送多路流模式。
  *       + 当使用内部采集时，视频采集的分辨率、帧率会根据最大的编码分辨率、帧率进行适配<br>
  *       + 默认的视频编码参数为：分辨率 640px × 360px，帧率 15fps。<br>
  *       + 变更编码分辨率后马上生效，可能会引发相机重启。<br>
@@ -1383,7 +1390,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  *        + < 0: 失败；  <br>
  * @notes  <br>
  * + 本接口在引擎创建后可调用，调用后立即生效。建议在调用 startVideoCapture{@link #ByteRTCVideo#startVideoCapture} 前调用本接口。
- * + 建议同一设备上的不同 Engine 使用相同的视频采集参数。
+ * + 建议同一设备上的不同引擎使用相同的视频采集参数。
  * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 Auto 模式。
  */
 - (int)setVideoCaptureConfig:(ByteRTCVideoCaptureConfig * _Nullable)captureConfig;
@@ -1441,6 +1448,18 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
                   withIndex:(ByteRTCStreamIndex)streamIndex
              withCanvas:(ByteRTCVideoCanvas * _Nullable)canvas;
 
+/** 
+ * @type api
+ * @region 视频管理
+ * @author wangfujun.911
+ * @brief 修改远端视频渲染模式和背景色。
+ * @param roomid 房间 ID
+ * @param uid 用户 ID
+ * @param streamIndex 远端流信息。参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}。
+ * @param renderMode 渲染模式，参看 ByteRTCRenderMode{@link #ByteRTCRenderMode}
+ * @param backgroundColor 背景颜色，参看 ByteRTCVideoCanvas{@link #ByteRTCVideoCanvas}.backgroundColor
+ * @notes 你可以在远端视频渲染过程中，调用此接口。调用结果会实时生效。
+ */
 - (int)updateRemoteStreamVideoCanvas:(NSString * _Nonnull)roomid
                 withUserId:(NSString * _Nonnull)uid
                 withIndex:(ByteRTCStreamIndex)streamIndex
@@ -1521,6 +1540,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (void)setVideoOrientation:(ByteRTCVideoOrientation) orientation;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 视频管理
  * @author zhangzhenyu.samuel
@@ -1676,7 +1696,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @author zhushufan.ref
  * @brief 设置特效强度
  * @param nodePath 特效素材包路径。
- * @param nodeKey 需要设置的素材 key 名称。参看 [素材key对应说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99769/)。
+ * @param nodeKey 需要设置的素材 key 名称。参看 [素材key对应说明](https://www.volcengine.com/docs/6705/102041)。
  * @param nodeValue 需要设置的强度值。取值范围为 [0,1]，超出该范围设置无效。
  * @return  <br>
   *      + 0: 调用成功。  <br>
@@ -1891,6 +1911,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (int) setCameraTorch: (ByteRTCTorchState)torch_state;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 视频管理
  * @author zhangzhenyu.samuel
@@ -1902,6 +1923,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (bool)isCameraFocusPositionSupported;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 视频管理
  * @author zhangzhenyu.samuel
@@ -1917,6 +1939,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (int)setCameraFocusPosition:(CGPoint)position;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 视频管理
  * @author zhangzhenyu.samuel
@@ -1928,6 +1951,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (bool)isCameraExposurePositionSupported;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 视频管理
  * @author zhangzhenyu.samuel
@@ -1943,6 +1967,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (int)setCameraExposurePosition:(CGPoint)position;
 /** 
+ * @hidden(macOS)
  * @type api
  * @region 视频管理
  * @author zhangzhenyu.samuel
@@ -1983,8 +2008,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @param repeatCount 消息发送重复次数。取值范围是 [0, 30]。<br>
  *                    调用此接口后，SEI 数据会添加到从当前视频帧开始的连续 `repeatCount` 个视频帧中。
  * @return <br>
- *        + `>=0`: 将被添加到视频帧中的 SEI 的数量  <br>
- *        + `<0`: 发送失败
+ *        + >=0: 将被添加到视频帧中的 SEI 的数量  <br>
+ *        + <0: 发送失败
  * @notes <br>
  *        + 语音通话场景中，仅支持在内部采集模式下调用该接口发送 SEI 数据，且调用频率需为 15/repeat_count FPS。  <br>
  *        + 视频帧仅携带前后 2s 内收到的 SEI 数据；语音通话场景下，若调用此接口后 1min 内未有 SEI 数据发送，则 SDK 会自动取消发布视频黑帧。  <br>
@@ -2077,6 +2102,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  *        + 0: 方法调用成功  <br>
  *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
  * @notes <br>
+ *        + 你需要调用 setAudioScenario:{@link #ByteRTCVideo#setAudioScenario:} 将音频场景切换为 `ByteRTCAudioScenarioCommunication` 后再调用本接口。<br>
  *        + 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备。<br>
  *        + 移除后，音频设备会自动切换回原设备。<br>
  *        + 不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 ByteRTCAudioScenarioType{@link #ByteRTCAudioScenarioType} 。
@@ -2115,7 +2141,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
  * @notes    <br>
  *        + 进房前后都可以调用。 <br>
- *        + 更多注意事项参见[音频路由](https://www.volcengine.com/docs/6348/117386)。
+ *        + 更多注意事项参见[音频路由](117836)。
  */
 - (int)setDefaultAudioRoute:(ByteRTCAudioRoute)audioRoute;
 #pragma mark Combined to Push
@@ -2245,9 +2271,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  *        + !0: 失败。当参数不合法或参数为空，调用失败。<br>
  * @notes  <br>
  *        + 在调用本接口之前，建议先绑定渲染视图。<br>
- *              - 调用 setPublicStreamVideoCanvas:withCanvas:{@link #ByteRTCVideo#setPublicStreamVideoCanvas:withCanvas:} 绑定内部渲染视图：<br>
+ *              - 调用 setPublicStreamVideoCanvas:withCanvas:{@link #ByteRTCVideo#setPublicStreamVideoCanvas:withCanvas:} 绑定内部渲染视图。<br>
  *              - 调用 setPublicStreamVideoSink:withSink:withPixelFormat:{@link #ByteRTCVideo#setPublicStreamVideoSink:withSink:withPixelFormat:} 绑定自定义渲染视图：<br>
- *        + 调用本接口后，可以通过 rtcEngine:onFirstPublicStreamVideoFrameDecoded:withFrameInfo:{@link #ByteRTCVideoDelegate#rtcEngine:onFirstPublicStreamVideoFrameDecoded:withFrameInfo:} 和 rtcEngine:onFirstPublicStreamAudioFrameDecoded:{@link #ByteRTCVideoDelegate#rtcEngine:onFirstPublicStreamAduioFrameDecoded:} 回调公共流的视频和音频首帧解码情况。<br>
+ *        + 调用本接口后，可以通过 rtcEngine:onFirstPublicStreamVideoFrameDecoded:withFrameInfo:{@link #ByteRTCVideoDelegate#rtcEngine:onFirstPublicStreamVideoFrameDecoded:withFrameInfo:} 和 rtcEngine:onFirstPublicStreamAudioFrame:{@link #ByteRTCVideoDelegate#rtcEngine:onFirstPublicStreamAudioFrame:} 回调公共流的视频和音频首帧解码情况。<br>
  *        + 调用本接口后，可以通过 rtcEngine:onPublicStreamSEIMessageReceived:andMessage:{@link #ByteRTCVideoDelegate#rtcEngine:onPublicStreamSEIMessageReceived:andMessage:} 回调公共流中包含的 SEI 信息。<br>
  *        + 订阅公共流之后，可以通过调用 stopPlayPublicStream:{@link ByteRTCVideo#stopPlayPublicStream:} 接口取消订阅公共流。
  */
@@ -2304,7 +2330,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
+ * @notes <br>
+ *       + 支持的格式：NV12, BGRA, ARGB<br>
+ *       + 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts;
 /** 
@@ -2318,7 +2346,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
+ * @notes <br>
+ *       + 支持的格式：NV12, BGRA, ARGB<br>
+ *       + 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts rotation:(ByteRTCVideoRotation)rotation;
 /** 
@@ -2334,7 +2364,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @return  <br>
  *         + YES 推送成功  <br>
  *         + NO 推送失败  <br>
- * @notes 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
+ * @notes <br>
+ *       + 支持的格式：NV12, BGRA, ARGB<br>
+ *       + 推送外部视频帧前，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 开启外部视频源采集。
  */
 - (BOOL)pushExternalVideoFrame:(CVPixelBufferRef _Nonnull )frame time:(CMTime)pts
                                                              rotation:(ByteRTCVideoRotation)rotation
@@ -2812,7 +2844,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  */
 - (void)sendScreenCaptureExtensionMessage:(NSData *_Nonnull) messsage;
 /** 
- * @hidden(iOS)
+ * @hidden
  * @type api
  * @author dixing
  * @brief 音频设备管理接口创建，该接口不依赖引擎
@@ -3302,7 +3334,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideo : NSObject
  * @param key 远端流信息，指定对哪一路视频流进行解码方式设置，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
  * @param config 视频解码方式，参看 ByteRTCVideoDecoderConfig{@link #ByteRTCVideoDecoderConfig}。
  * @notes  <br>
- *        + 该方法近适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
+ *        + 该方法仅适用于手动订阅模式，并且在订阅远端流之前使用。  <br>
  *        + 当你想要对远端流进行自定义解码时，你需要先调用 registerRemoteEncodedVideoFrameObserver:{@link #ByteRTCVideo#registerRemoteEncodedVideoFrameObserver:} 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 onRemoteEncodedVideoFrame:withEncodedVideoFrame:{@link #ByteRTCRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame:withEncodedVideoFrame:} 回调出来。
  */
 - (void)setVideoDecoderConfig:(ByteRTCRemoteStreamKey * _Nonnull)key

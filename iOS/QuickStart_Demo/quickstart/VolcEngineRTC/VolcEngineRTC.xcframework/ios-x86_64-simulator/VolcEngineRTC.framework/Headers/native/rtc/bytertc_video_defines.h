@@ -476,7 +476,6 @@ struct MediaStreamInfo {
 
     /** 
      * @brief 最大视频流的属性。  <br>
-     *        since 336版本
      *        当远端用户开启带通道划分的大小流时，回调最大视频流属性信息。用户可以使用新的订阅方式，订阅任意不超过该分辨率的流。
      *        最终接收到的流，会受房间内其他用户的订阅行为的影响，综合确定一个最接近用户请求的分辨率的流。
      */
@@ -1235,8 +1234,7 @@ struct RTCRoomConfig {
      */
     bool is_auto_subscribe_audio = true;
     /** 
-     * @brief 是否自动订阅主视频流，默认为自动订阅。  <br>
-     *        屏幕流始终自动订阅，不受该方法影响。
+     * @brief 是否自动订阅主视频流，默认为自动订阅。  
      */
     bool is_auto_subscribe_video = true;
     /** 

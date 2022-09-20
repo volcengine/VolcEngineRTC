@@ -180,7 +180,6 @@ enum AudioPlaybackDevice {
  * @type keytype
  * @brief 音频场景类型。<br>
  *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。<br>
- *        你可以调用 setAudioScenario{@link #setAudioScenario} 设置音频场景。<br>
  *        如果预设的音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
  */
 enum AudioScenarioType {
@@ -383,7 +382,7 @@ enum AudioMixingError {
      */
     kAudioMixingErrorInValidVolume,
     /** 
-     * @brief 已有另一个文件完成了预加载。请先使用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载此前的文件。
+     * @brief 播放的文件与预加载的文件不一致。请先使用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载此前的文件。
      */
     kAudioMixingErrorLoadConflict,
     /** 
@@ -462,7 +461,7 @@ enum AudioRenderType {
 
 /** 
  * @type keytype
- * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务服务相关同学
+ * @brief 语音识别服务鉴权方式，详情请咨询语音识别服务相关人员
  */
 enum ASRAuthorizationType {
     /** 
@@ -556,11 +555,11 @@ enum AudioMixingType {
      */
     kAudioMixingTypePlayout,
     /** 
-     * @brief 仅发送到远端
+     * @brief 仅远端播放
      */
     kAudioMixingTypePublish,
     /** 
-     * @brief 在本地播放并发送到远端
+     * @brief 本地和远端同时播放
      */
     kAudioMixingTypePlayoutAndPublish
 };
@@ -586,9 +585,9 @@ struct AudioMixingConfig {
       */
      int position;
      /** 
-      * @brief 设置音频文件播放进度回调的时间间隔，单位毫秒，并按照设置的值触发 `onAudioMixingPlayingProgress` 回调，默认不回调。  <br>
-      *        + 该值应为大于 0 的 10 的倍数，当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
-      *        + 传入的值小于等于 0 时，不会触发进度回调。  <br>
+      * @brief 设置音频文件播放进度回调的时间间隔，参数为大于 0 的 10 的倍数，单位为毫秒，设置后 SDK 将按照设置的值触发 `onAudioMixingPlayingProgress` 回调，默认不回调。  <br>
+      *        + 当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
+      *        + 当传入的值小于等于 0 时，不会触发进度回调。  <br>
       */
      int64_t callback_on_progress_interval = 0;
 };
@@ -709,39 +708,38 @@ struct LocalAudioPropertiesInfo {
 /** 
  * @type keytype
  * @brief 音质档位
- *        调用 `setAudioProfile` 设置的音质档位
  */
 enum AudioProfileType {
     /** 
-     * @brief 默认音质
+     * @brief 默认音质<br>
      *        服务器下发或客户端已设置的 RoomProfileType{@link #RoomProfileType} 的音质配置
      */
     kAudioProfileTypeDefault = 0,
     /** 
-     * @brief 流畅音质。  <br>
-     *        单声道，采样率为 16kHz，编码码率为 24kbps。 <br>
-     *        流畅优先、低延迟、低功耗、低流量消耗，适用于大部分游戏场景，如 MMORPG、MOBA、FPS 等游戏中的小队语音、组队语音、国战语音等。
+     * @brief 流畅  <br>
+     *        单声道，采样率为 16 kHz，编码码率为 32 Kbps。 <br>
+     *        流畅优先、低功耗、低流量消耗，适用于大部分游戏场景，如小队语音、组队语音、国战语音等。
      */
     kAudioProfileTypeFluent = 1,
     /** 
-     * @brief 标准音质。  <br>
-     *        单声道，采样率为 48kHz，编码码率为 48kbps。 <br>
-     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和 Sirius 等狼人杀类游戏。
+     * @brief 单声道标准音质。  <br>
+     *        采样率为 24 kHz，编码码率为 48 Kbps。 <br>
+     *        适用于对音质有一定要求的场景，同时延时、功耗和流量消耗相对适中，适合教育场景和狼人杀等游戏。
      */
     kAudioProfileTypeStandard = 2,
     /** 
-     * @brief 高清音质  <br>
-     *        双声道，采样率为 48kHz，编码码率为 128kbps。 <br>
+     * @brief 双声道音乐音质  <br>
+     *        采样率为 48 kHz，编码码率为 128 kbps。 <br>
      *        超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。 <br>
      *        游戏场景不建议使用。
      */
     kAudioProfileTypeHD = 3,
     /** 
-     * @brief 标准音质。双声道，采样率为 48 KHz，编码码率最大值为 80 Kbps
+     * @brief 双声道标准音质。采样率为 48 KHz，编码码率最大值为 80 Kbps
      */
     kAudioProfileTypeStandardStereo = 4,
     /** 
-     * @brief 音乐音质。单声道，采样率为 48 kHz，编码码率最大值为 128 Kbps
+     * @brief 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 64 Kbps
      */
     kAudioProfileTypeHDMono = 5,
 };
@@ -841,9 +839,10 @@ struct AudioDeviceInfo {
         this->volume_settable = AudioAbilityType::kAudioAbilityTypeUnknown;
         this->is_system_default = false;
     }
-    
-    /**
+
+    /** 
      * @hidden
+     * @brief 342需求，缺注释，需补齐
      */
     AudioDeviceInfo& operator=(const AudioDeviceInfo& src) {
         if (this != &src) {

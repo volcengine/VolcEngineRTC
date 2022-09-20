@@ -89,11 +89,11 @@ public:
     /** 
      * @type api
      * @region 混音
-     * @brief 预加载指定音频文件到内存中，以避免频繁播放时的重复加载。
+     * @brief 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
      * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
      *        如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br>
      *        如果先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing}，再使用相同的 ID 调用本方法 ，会先回调 `onAudioMixingStateChanged` 通知上一个混音停止，然后加载后一个混音。  <br>
-     *        使用一个 ID 调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 播放 B.mp3，请先调用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载 A.mp3。
+     *        调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 播放 B.mp3，请先调用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载 A.mp3。
      * @param [in] file_path 混音文件路径。<br>
      *        支持在线文件的 URL，和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。预加载的文件长度不得超过 20s。<br>
      *        不同平台支持的音频文件格式: <br>
@@ -232,7 +232,7 @@ public:
      * @hidden(Linux)
      * @type api
      * @region 混音
-     * @brief 如果你需要使用 `enableVocalInstrumentBalance` 对混音使音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
+     * @brief 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
      * @param [in] mixId 混音 ID
      * @param [in] loudness 原始响度，单位：lufs，取值范围为 [-70.0, 0.0]。  <br>
      *        当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音均衡处理。默认值为 1.0lufs，即不做处理。

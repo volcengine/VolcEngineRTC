@@ -1,8 +1,8 @@
 #pragma once
 #include <QWidget>
+#include <QGridLayout>
 
 #include "model.h"
-#include "flowlayout.h"
 #include "share_view_wnd.h"
 
 class ShareViewContainer : public QWidget {
@@ -17,6 +17,7 @@ class ShareViewContainer : public QWidget {
   void sigItemPressed(SnapshotAttr item);
 
  private:
-  FlowLayout* lay_;
+  QGridLayout* lay_;
+  int item_count_ = 0;
   std::vector<std::pair<ShareViewWnd*, SnapshotAttr>> share_wnds_;
 };
