@@ -24,7 +24,6 @@
 <br>
 
 # Solution Demo 体验
-场景化 Demo 源码：[场景化 Demo（Solution Demo）GitHub 仓库](https://github.com/volcengine/VolcEngineRTC_Solution_Demo)
 
 ### 移动端
 ![image.png](https://p-vcloud.byteimg.com/tos-cn-i-em5hxbkur4/4e894f813a46431990373c9c8fca4a12~tplv-em5hxbkur4-noop.image)
