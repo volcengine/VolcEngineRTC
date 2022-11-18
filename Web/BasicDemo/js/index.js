@@ -1,12 +1,11 @@
 'use strict';
 
-
 let rtc = new RtcClient({
   config,
   streamOptions,
   handleStreamAdd,
   handleStreamRemove,
-  handleEventError
+  handleEventError,
 });
 
 /**
@@ -16,10 +15,9 @@ $('.player').hide();
 $('#control').hide();
 $('#room-id-text').text('');
 $('#user-id-text').text('');
-$('#header-version').text(`${rtc.SDKVERSION}`);
+$('#header-version').text(`RTC版本 v${rtc.SDKVERSION}`);
 checkRoomIdAndUserId('room-id');
 checkRoomIdAndUserId('user-id');
-
 /**
  *
  * @param {String} type video / mic
@@ -38,11 +36,9 @@ const changeMicOrVideoIconUrl = (type, statusTag, offIconUrl, onIconUrl) => {
  * by the user.
  */
 
-$('#header-version').text(`${rtc.SDKVERSION}`);
-
 $('#submit').on('click', async () => {
-  if(checkReg('room-id') || checkReg('user-id')){
-    return
+  if (checkReg('room-id') || checkReg('user-id')) {
+    return;
   }
   config.roomId = $('#room-id').val();
   config.uid = $('#user-id').val();
@@ -50,10 +46,10 @@ $('#submit').on('click', async () => {
   $('.player').show();
   $('#pannel').hide();
   try {
-    rtc.bindEngineEvents()
+    rtc.bindEngineEvents();
     /*
-    * before join a room, you should create a room,then you can join it with `engine.join(token,roomId,uid, onSuccessFunc, onFailFunc)`
-    */
+     * before join a room, you should create a room,then you can join it with `engine.join(token,roomId,uid, onSuccessFunc, onFailFunc)`
+     */
     await rtc.join((config.token || {})[config.uid], config.roomId, config.uid);
     $('#header-version').text(`${config.roomId}`);
     $('#local-player').show();
@@ -62,6 +58,7 @@ $('#submit').on('click', async () => {
   } catch (err) {
     $('#control').hide();
     $('#pannel').show();
+    console.log(err);
   }
 });
 
@@ -118,7 +115,7 @@ const actionChangeVideoState = () => {
  */
 const actionToLeave = () => {
   // leave the room
-  rtc.leave()
+  rtc.leave();
   // off the event
   rtc.removeEventListener();
   $('#header-version').text(`RTC版本 v${rtc.SDKVERSION}`);
@@ -134,9 +131,9 @@ const actionToLeave = () => {
 
 /*------------------------- common handler start ----------------*/
 /*
-*  These procedures use RTC SDK for Web to enable local and remote
-*  users to join and leave a room managed by RTC Platform.
-*/
+ *  These procedures use RTC SDK for Web to enable local and remote
+ *  users to join and leave a room managed by RTC Platform.
+ */
 // const engine = VERTC.createEngine(config.appId);
 // bindEngineEvents();
 
@@ -144,37 +141,43 @@ const actionToLeave = () => {
  * Add a user who has subscribed to the live room to the local interface.
  * @param {*} event
  */
-async function handleStreamAdd({ stream }) {
-  const remoteUserId = stream.userId
-  const currentLength = $('.player-wrapper').length;
-  // Player doms are created when there are no more than four in a room
-  if (currentLength < 4) {
-    const player = $(`
-    <div id="player-wrapper-${remoteUserId}" class="player-wrapper re-player">
-      <p class="player-name">${remoteUserId}</p>
-    </div>
-  `);
-    $('#player-list').append(player);
-    rtc.setRemoteVideoPlayer(remoteUserId, player[0], stream);
+async function handleStreamAdd(stream) {
+  const { userId, mediaType } = stream;
+  const remoteUserId = userId;
+  if (mediaType & rtc.MediaType.VIDEO) {
+    const currentLength = $('.player-wrapper').length;
+    // Player doms are created when there are no more than four in a room
+    if (currentLength < 4) {
+      const player = $(`
+      <div id="player-wrapper-${remoteUserId}" class="player-wrapper re-player">
+        <p class="player-name">${remoteUserId}</p>
+      </div>
+    `);
+      $('#player-list').append(player);
+      rtc.setRemoteVideoPlayer(remoteUserId, player[0], stream);
+    }
   }
-};
+}
 
 /**
  * Remove the user specified from the room in the local and clear the unused dom
  * @param {*} event
  */
-function handleStreamRemove({ stream }) {
-  const remoteUserId = stream.userId
-  if (remoteUserId === config.uid) {
-    $('#local-player').hide();
-    $('#local-player-name').text('');
+function handleStreamRemove(stream) {
+  const { userId, mediaType } = stream;
+  const remoteUserId = userId;
+
+  if (mediaType & rtc.MediaType.VIDEO) {
+    if (remoteUserId === config.uid) {
+      $('#local-player').hide();
+      $('#local-player-name').text('');
+    }
+    $(`#player-wrapper-${remoteUserId}`).remove();
   }
-  $(`#player-wrapper-${remoteUserId}`).remove();
-};
+}
 /*------------------------- common handler end ----------------*/
 
-
-function handleEventError(e, VERTC){
+function handleEventError(e, VERTC) {
   if (e.errorCode === VERTC.ErrorCode.DUPLICATE_LOGIN) {
     actionToLeave();
     alert('你的账号被其他人顶下线了');

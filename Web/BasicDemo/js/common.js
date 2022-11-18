@@ -15,9 +15,10 @@ let isVideoOn = false; // control the video
  * On initiation. `engine` is not attached to any project or room for any specific user.
  */
 const config = {
-  appId: 'xxxx',
-  roomId: '',
-  token: {},
+  appId: 'YourAppId',
+  token: {
+    YourUserId: 'YourToken',
+  },
 };
 
 /**
@@ -46,7 +47,7 @@ const streamOptions = {
   video: true,
 };
 
-function checkReg(name){
+function checkReg(name) {
   const inputValue = $(`#${name}`).val();
   let hasError = false;
   if (!inputValue) {
@@ -62,12 +63,11 @@ function checkReg(name){
     $(`#${name}`).css('border-color', '#d9d9d9');
     hasError = false;
   }
-  return hasError
+  return hasError;
 }
-
 
 function checkRoomIdAndUserId(name) {
   $(`#${name}`).keyup(() => {
-    checkReg(name)
+    checkReg(name);
   });
 }

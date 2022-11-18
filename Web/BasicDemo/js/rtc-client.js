@@ -1,34 +1,31 @@
-class RtcClient{
+class RtcClient {
   constructor(props) {
     this.config = props.config;
     this.streamOptions = props.streamOptions;
     this.engine = VERTC.createEngine(props.config.appId);
-    this.handleStreamAdd = props.handleStreamAdd
-    this.handleStreamRemove = props.handleStreamRemove
-    this.handleEventError = props.handleEventError
+    this.handleStreamAdd = props.handleStreamAdd;
+    this.handleStreamRemove = props.handleStreamRemove;
+    this.handleEventError = props.handleEventError;
     this.setRemoteVideoPlayer = this.setRemoteVideoPlayer.bind(this);
   }
-  SDKVERSION = VERTC.getSdkVersion()
-  bindEngineEvents(){
-    this.engine.on(VERTC.events.onStreamAdd, this.handleStreamAdd);
-    this.engine.on(VERTC.events.onStreamRemove, this.handleStreamRemove);
+  SDKVERSION = VERTC.getSdkVersion();
+  MediaType = VERTC.MediaType;
+  bindEngineEvents() {
+    this.engine.on(VERTC.events.onUserPublishStream, this.handleStreamAdd);
+    this.engine.on(VERTC.events.onUserUnpublishStream, this.handleStreamRemove);
     this.engine.on(VERTC.events.onError, (e) =>
-      this.handleEventError(e, VERTC),
+      this.handleEventError(e, VERTC)
     );
   }
-  async setRemoteVideoPlayer(remoteUserId, dom, stream){
+  async setRemoteVideoPlayer(remoteUserId, dom, stream) {
     // 如果进房的config有自动订阅，这里就不需要订阅了
-    await this.engine.subscribeUserStream(
+    await this.engine.subscribeStream(
       remoteUserId,
-      VERTC.SubscribeMediaType.AUDIO_AND_VIDEO,
-      stream.isScreen
-        ? VERTC.StreamIndex.STREAM_INDEX_SCREEN
-        : VERTC.StreamIndex.STREAM_INDEX_MAIN
+      VERTC.MediaType.AUDIO_AND_VIDEO
     );
+
     await this.engine.setRemoteVideoPlayer(
-      stream.isScreen
-        ? VERTC.StreamIndex.STREAM_INDEX_SCREEN
-        : VERTC.StreamIndex.STREAM_INDEX_MAIN,
+      VERTC.StreamIndex.STREAM_INDEX_MAIN,
       {
         userId: remoteUserId,
         renderDom: dom,
@@ -37,46 +34,54 @@ class RtcClient{
     );
   }
   /**
-  * remove the listeners when `createengine`
-  */
-  removeEventListener(){
-    this.engine.off(VERTC.events.onStreamAdd, this.handleStreamAdd);
-    this.engine.off(VERTC.events.onStreamRemove, this.handleStreamRemove);
+   * remove the listeners when `createEngine`
+   */
+  removeEventListener() {
+    this.engine.off(VERTC.events.onUserPublishStream, this.handleStreamAdd);
+    this.engine.off(
+      VERTC.events.onUserUnpublishStream,
+      this.handleStreamRemove
+    );
   }
-  join(token, roomId, uid){
-    return this.engine.joinRoom(token, roomId, {
-      userId: uid,
-    }, {
-      // 默认值全为false
-      isAutoPublish: false,
-      isAutoSubscribeAudio: false,
-      isAutoSubscribeVideo: false,
-    })
+  join(token, roomId, uid) {
+    return this.engine.joinRoom(
+      null,
+      roomId,
+      {
+        userId: uid,
+      },
+      {
+        // 默认值全为true
+        isAutoPublish: true,
+        isAutoSubscribeAudio: true,
+        isAutoSubscribeVideo: true,
+      }
+    );
   }
   // check permission of browser
-  checkPermission(){
+  checkPermission() {
     return VERTC.enableDevices();
-  };
+  }
   /**
-  * get the devices
-  * @returns
-  */
-  async getDevices(){
+   * get the devices
+   * @returns
+   */
+  async getDevices() {
     return {
-      audioInputs: await VERTC.getMicrophones(),
-      videoInputs: await VERTC.getCameras(),
-    }
-  };
+      audioInputs: await VERTC.enumerateAudioCaptureDevices(),
+      videoInputs: await VERTC.enumerateVideoCaptureDevices(),
+    };
+  }
   /**
-  * create the local stream with the config and publish the local stream
-  * @param {*} callback
-  */
-  async createLocalStream(callback){
+   * create the local stream with the config and publish the local stream
+   * @param {*} callback
+   */
+  async createLocalStream(callback) {
     const permissions = await this.checkPermission();
     const devices = await this.getDevices();
     const devicesStatus = {
       video: 1,
-      audio: 1
+      audio: 1,
     };
     if (!devices.audioInputs.length && !devices.videoInputs.length) {
       alert('设备获取失败');
@@ -86,13 +91,13 @@ class RtcClient{
       await this.engine.startAudioCapture();
     } else {
       devicesStatus['video'] = 0;
-      this.engine.muteLocalAudio(VERTC.MuteState.MUTE_STATE_OFF);
+      this.engine.unpublishStream(VERTC.MediaType.AUDIO);
     }
     if (streamOptions.video && permissions.video) {
       await this.engine.startVideoCapture();
     } else {
       devicesStatus['audio'] = 0;
-      this.engine.muteLocalVideo(VERTC.MuteState.MUTE_STATE_OFF);
+      this.engine.unpublishStream(VERTC.MediaType.VIDEO);
     }
 
     this.engine.setLocalVideoPlayer(VERTC.StreamIndex.STREAM_INDEX_MAIN, {
@@ -101,21 +106,26 @@ class RtcClient{
     });
 
     // 如果joinRoom的config设置了自动发布，这里就不需要发布了
-    this.engine.publish();
+    this.engine.publishStream(VERTC.MediaType.AUDIO_AND_VIDEO);
 
-    callback && callback({
-      code: 0,
-      msg: '设备获取失败',
-      devicesStatus,
-    });
+    callback &&
+      callback({
+        code: 0,
+        msg: '设备获取失败',
+        devicesStatus,
+      });
   }
-  changeAudioState(isMicOn){
-    !isMicOn ? this.engine.stopAudioCapture() : this.engine.startAudioCapture()
+  changeAudioState(isMicOn) {
+    !isMicOn
+      ? this.engine.unpublishStream(VERTC.MediaType.AUDIO)
+      : this.engine.publishStream(VERTC.MediaType.AUDIO);
   }
-  changeVideoState(isVideoOn){
-    !isVideoOn ? this.engine.stopVideoCapture() : this.engine.startVideoCapture();
+  changeVideoState(isVideoOn) {
+    !isVideoOn
+      ? this.engine.unpublishStream(VERTC.MediaType.VIDEO)
+      : this.engine.publishStream(VERTC.MediaType.VIDEO);
   }
-  leave(){
+  leave() {
     this.engine.leaveRoom();
     VERTC.destroyEngine(this.engine);
   }
