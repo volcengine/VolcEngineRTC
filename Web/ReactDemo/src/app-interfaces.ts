@@ -13,8 +13,8 @@ export interface AudioStats {
 export interface RTCClient {
   init: (...args: any[]) => void;
   join: (...args: any[]) => any;
-  publish: (...args: any[]) => Promise<void>;
-  unpublish: (...args: any[]) => Promise<void>;
+  publishStream: (...args: any[]) => Promise<void>;
+  unpublishStream: (...args: any[]) => Promise<void>;
   subscribe: (...args: any[]) => void;
   leave: (...args: any[]) => void;
   on: (...args: any[]) => void;
@@ -28,13 +28,12 @@ export interface RTCClient {
   bindEngineEvents: (...args: any[]) => void;
 }
 
-
 export interface Stream {
   userId: string;
   hasAudio: boolean;
   hasVideo: boolean;
   isScreen: boolean;
-  videoStreamDescriptions: any[]
+  videoStreamDescriptions: any[];
   stream: {
     screen: boolean;
   };

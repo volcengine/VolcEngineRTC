@@ -7,6 +7,7 @@ const config = {
   roomId: 'YourRoomId',
   token: {
     YourUserId: 'YourToken',
-  }
+  },
+  uid: '',
 };
 export default config;

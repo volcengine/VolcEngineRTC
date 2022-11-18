@@ -1,8 +1,4 @@
-import VERTC, {
-  SubscribeMediaType,
-  StreamIndex,
-  MuteState,
-} from '@volcengine/rtc';
+import VERTC, { MediaType, StreamIndex } from '@volcengine/rtc';
 
 export default class RtcClient {
   constructor(props) {
@@ -16,36 +12,29 @@ export default class RtcClient {
   }
   SDKVERSION = VERTC.getSdkVersion();
   bindEngineEvents() {
-    this.engine.on(VERTC.events.onStreamAdd, this.handleStreamAdd);
-    this.engine.on(VERTC.events.onStreamRemove, this.handleStreamRemove);
-    this.engine.on(VERTC.events.onError, (e) =>
-      this.handleEventError(e, VERTC),
-    );
+    this.engine.on(VERTC.events.onUserPublishStream, this.handleStreamAdd);
+    this.engine.on(VERTC.events.onUserUnpublishStream, this.handleStreamRemove);
+    this.engine.on(VERTC.events.onError, e => this.handleEventError(e, VERTC));
   }
   async setRemoteVideoPlayer(remoteUserId, domId, stream) {
     // 如果进房的config有自动订阅，这里就不需要订阅了
-    await this.engine.subscribeUserStream(
-      remoteUserId,
-      SubscribeMediaType.AUDIO_AND_VIDEO,
-      stream.isScreen ? StreamIndex.STREAM_INDEX_SCREEN : StreamIndex.STREAM_INDEX_MAIN
-    );
-    await this.engine.setRemoteVideoPlayer(
-      stream.isScreen
-        ? StreamIndex.STREAM_INDEX_SCREEN
-        : StreamIndex.STREAM_INDEX_MAIN,
-      {
-        userId: remoteUserId,
-        renderDom: domId,
-        isScreen: stream.isScreen,
-      }
-    );
+    await this.engine.subscribeStream(remoteUserId, MediaType.AUDIO_AND_VIDEO);
+
+    await this.engine.setRemoteVideoPlayer(StreamIndex.STREAM_INDEX_MAIN, {
+      userId: remoteUserId,
+      renderDom: domId,
+      isScreen: stream.isScreen,
+    });
   }
   /**
-   * remove the listeners when `createengine`
+   * remove the listeners when `createEngine`
    */
   removeEventListener() {
-    this.engine.off(VERTC.events.onStreamAdd, this.handleStreamAdd);
-    this.engine.off(VERTC.events.onStreamRemove, this.handleStreamRemove);
+    this.engine.off(VERTC.events.onUserPublishStream, this.handleStreamAdd);
+    this.engine.off(
+      VERTC.events.onUserUnpublishStream,
+      this.handleStreamRemove,
+    );
   }
   join(token, roomId, uid) {
     return this.engine.joinRoom(
@@ -55,10 +44,10 @@ export default class RtcClient {
         userId: uid,
       },
       {
-        // 默认值全为false
-        isAutoPublish: false,
-        isAutoSubscribeAudio: false,
-        isAutoSubscribeVideo: false,
+        // 默认值全为true
+        isAutoPublish: true,
+        isAutoSubscribeAudio: true,
+        isAutoSubscribeVideo: true,
       },
     );
   }
@@ -72,8 +61,8 @@ export default class RtcClient {
    */
   async getDevices() {
     return {
-      audioInputs: await VERTC.getMicrophones(),
-      videoInputs: await VERTC.getCameras(),
+      audioInputs: await VERTC.enumerateAudioCaptureDevices(),
+      videoInputs: await VERTC.enumerateVideoCaptureDevices(),
     };
   }
   /**
@@ -102,13 +91,13 @@ export default class RtcClient {
       await this.engine.startAudioCapture(devices.audioInputs[0].deviceId);
     } else {
       devicesStatus['video'] = 0;
-      this.engine.muteLocalAudio(MuteState.MUTE_STATE_OFF);
+      this.engine.unpublishStream(MediaType.AUDIO);
     }
     if (this.streamOptions.video && permissions.video) {
       await this.engine.startVideoCapture(devices.videoInputs[0].deviceId);
     } else {
       devicesStatus['audio'] = 0;
-      this.engine.muteLocalVideo(MuteState.MUTE_STATE_OFF);
+      this.engine.unpublishStream(MediaType.VIDEO);
     }
 
     this.engine.setLocalVideoPlayer(StreamIndex.STREAM_INDEX_MAIN, {
@@ -117,7 +106,7 @@ export default class RtcClient {
     });
 
     // 如果joinRoom的config设置了自动发布，这里就不需要发布了
-    this.engine.publish();
+    this.engine.publishStream(MediaType.AUDIO_AND_VIDEO);
 
     callback &&
       callback({
@@ -127,12 +116,14 @@ export default class RtcClient {
       });
   }
   changeAudioState(isMicOn) {
-    isMicOn ? this.engine.startAudioCapture() : this.engine.stopAudioCapture();
+    isMicOn
+      ? this.engine.publishStream(MediaType.AUDIO)
+      : this.engine.unpublishStream(MediaType.AUDIO);
   }
   changeVideoState(isVideoOn) {
     isVideoOn
-      ? this.engine.startVideoCapture()
-      : this.engine.stopVideoCapture();
+      ? this.engine.publishStream(MediaType.VIDEO)
+      : this.engine.unpublishStream(MediaType.VIDEO);
   }
   leave() {
     this.engine.leaveRoom();

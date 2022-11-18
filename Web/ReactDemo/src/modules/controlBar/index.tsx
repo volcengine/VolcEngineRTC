@@ -13,11 +13,11 @@ const ControlBar: React.FC<IControlBarProps> =(props)=>{
   const attchModules = () => {
     return (
       <>
-        {moduleConf.map((item) => {
+        {moduleConf.map((item, index) => {
           const {visible = true, moduleProps = {}} = item || {};
           const Comp = ControlModules[item.moduleName];
           return visible && Comp ? (
-            <Comp RClient={RClient} {...moduleProps} />
+            <Comp RClient={RClient} {...moduleProps} key={index}/>
           ) : null;
         })}
       </>
@@ -27,11 +27,11 @@ const ControlBar: React.FC<IControlBarProps> =(props)=>{
   const attchSystem = () => {
     return (
       <>
-        {systemConf.map((item) => {
+        {systemConf.map((item, index) => {
           const {visible = true, moduleProps = {}} = item || {};
           const Comp = SystemModules[item.moduleName];
           return visible && Comp ? (
-            <Comp RClient={RClient} {...moduleProps} />
+            <Comp RClient={RClient} {...moduleProps} key={index}/>
           ) : null;
         })}
       </>

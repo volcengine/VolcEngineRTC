@@ -2104,10 +2104,12 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
-"@volcengine/rtc@^4.36.0":
-  version "4.36.0"
-  resolved "https://registry.yarnpkg.com/@volcengine/rtc/-/rtc-4.36.0.tgz#a71b2f8611ff1a6757a0c5e08d6be4bfc13634cf"
-  integrity sha512-yqaNXdY9o4TPqJUjFdISLUG7/y2cSGxRQQpmndsy8yQK1VqTliOY7S07S+YA7Vjcfk6eQCJ7G0TZTrSz3za/tg==
+"@volcengine/rtc@4.44.0":
+  version "4.44.0"
+  resolved "https://registry.yarnpkg.com/@volcengine/rtc/-/rtc-4.44.0.tgz#aab293696b1cecc0974a816e5b2426807e549303"
+  integrity sha512-DRLbFanatGoLMm6owma2YkFQAp8b52XOTwI8G57o7Zq6l5zaHdvbI7QQRsvOlfrKi25sln4vfWbI6VHCnLgvcw==
+  dependencies:
+    eventemitter3 "^4.0.7"
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
@@ -4983,7 +4985,7 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-eventemitter3@^4.0.0:
+eventemitter3@^4.0.0, eventemitter3@^4.0.7:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==

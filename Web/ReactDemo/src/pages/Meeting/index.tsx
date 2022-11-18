@@ -7,11 +7,12 @@ import React, {
 } from 'react';
 import { message } from 'antd';
 import styled from 'styled-components';
+import { MediaType } from '@volcengine/rtc';
 import { ControlBar } from '../../modules';
-import {Context} from '../../context';
+import { Context } from '../../context';
 
 import RTCComponent from '../../sdk/rtc-component';
-import {RTCClient, Stream} from '../../app-interfaces';
+import { RTCClient, Stream } from '../../app-interfaces';
 import { streamOptions } from './constant';
 import config from '../../config';
 import MediaPlayer from '../../components/MediaPlayer';
@@ -33,7 +34,7 @@ const Item = styled.div`
 `;
 
 const Meeting: React.FC<Record<string, unknown>> = () => {
-  const {roomId, userId, setJoin} = useContext(Context);
+  const { roomId, userId, setJoin } = useContext(Context);
   const [isMicOn, setMicOn] = useState<boolean>(true);
   const [isVideoOn, setVideoOn] = useState<boolean>(true);
   const rtc = useRef<RTCClient>();
@@ -63,41 +64,48 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     };
   }, [leaveRoom]);
 
-  const handleStreamAdd = useCallback((event: any) => {
-    const stream = event.stream;
-    const userId = stream.userId;
-
-    if (count.current < 3) {
-      if (remoteStreams[userId]) return;
-      remoteStreams[userId] = stream;
-      stream.playerComp = (
-        <MediaPlayer
-          userId={userId}
-          stream={stream}
-          setRemoteVideoPlayer={rtc?.current?.setRemoteVideoPlayer}
-        />
-      );
-      setRemoteStreams({
-        ...remoteStreams,
-      });
-      count.current += 1;
-    }
-  }, [remoteStreams]);
+  const handleStreamAdd = useCallback(
+    (stream: any) => {
+      const userId = stream.userId;
+      const mediaType = stream.mediaType;
+      if (mediaType & MediaType.VIDEO) {
+        if (count.current < 3) {
+          if (remoteStreams[userId]) return;
+          remoteStreams[userId] = stream;
+          stream.playerComp = (
+            <MediaPlayer
+              userId={userId}
+              stream={stream}
+              setRemoteVideoPlayer={rtc?.current?.setRemoteVideoPlayer}
+            />
+          );
+          setRemoteStreams({
+            ...remoteStreams,
+          });
+          count.current += 1;
+        }
+      }
+    },
+    [remoteStreams],
+  );
 
   /**
    * @brief remove stream & update remote streams list
    * @param {Event} event
    */
   const handleStreamRemove = useCallback(
-    (event: any) => {
-      const uid = event.stream.userId;
-      if (remoteStreams[uid]) {
-        delete remoteStreams[uid];
+    (event: { userId: string; mediaType: MediaType }) => {
+      const uid = event.userId;
+      const mediaType = event.mediaType;
+      if (mediaType & MediaType.VIDEO) {
+        if (remoteStreams[uid]) {
+          delete remoteStreams[uid];
+        }
+        setRemoteStreams({
+          ...remoteStreams,
+        });
+        count.current--;
       }
-      setRemoteStreams({
-        ...remoteStreams,
-      });
-      count.current--;
     },
     [remoteStreams],
   );
@@ -110,18 +118,11 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
         .join((config.token as any)?.[userId] || null, roomId, userId)
         .then(() =>
           rtc?.current?.createLocalStream((res: any) => {
-            const {code, msg, devicesStatus} = res;
+            const { code, msg, devicesStatus } = res;
             if (code === -1) {
               alert(msg);
               setMicOn(false);
               setVideoOn(false);
-            } else {
-              if (devicesStatus['audio'] === 0) {
-                setMicOn(false);
-              }
-              if (devicesStatus['video'] === 0) {
-                setMicOn(false);
-              }
             }
           }),
         )
@@ -186,7 +187,7 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
             </span>
           </div>
         </Item>
-        {Object.keys(remoteStreams)?.map((key) => {
+        {Object.keys(remoteStreams)?.map(key => {
           const Comp = remoteStreams[key].playerComp;
           return <Item key={key}>{Comp}</Item>;
         })}
