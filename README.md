@@ -9,8 +9,8 @@
 | --- | --- | --- | --- | --- |
 | Android | [下载](https://www.volcengine.com/docs/6348/75707#%E4%B8%8B%E8%BD%BD-sdk) | [文档](https://www.volcengine.com/docs/6348/70129) | [文档](https://www.volcengine.com/docs/6348/70079) | - |
 | iOS     | [下载](https://www.volcengine.com/docs/6348/75707#%E4%B8%8B%E8%BD%BD-sdk) | [文档](https://www.volcengine.com/docs/6348/70128) | [文档](https://www.volcengine.com/docs/6348/70084) | - |
-| Windows | [下载](https://www.volcengine.com/docs/6348/75707#%E4%B8%8B%E8%BD%BD-sdk) | [文档](https://www.volcengine.com/docs/6348/70127) | [文档](https://www.volcengine.com/docs/6348/70094) | - |
-| macOS   | [下载](https://www.volcengine.com/docs/6348/75707#%E4%B8%8B%E8%BD%BD-sdk) | [文档](https://www.volcengine.com/docs/6348/70125) | [文档](https://www.volcengine.com/docs/6348/70090) | - |
+| Windows | [下载](https://www.volcengine.com/docs/6348/75707#%E4%B8%8B%E8%BD%BD-sdk) | [文档](https://www.volcengine.com/docs/6348/70125) | [文档](https://www.volcengine.com/docs/6348/70094) | - |
+| macOS   | [下载](https://www.volcengine.com/docs/6348/75707#%E4%B8%8B%E8%BD%BD-sdk) | [文档](https://www.volcengine.com/docs/6348/70127) | [文档](https://www.volcengine.com/docs/6348/70090) | - |
 | Flutter | [下载](https://pub.dev/packages/volc_engine_rtc/versions) | [文档](https://www.volcengine.com/docs/6348/132234) | [文档](https://pub.dev/documentation/volc_engine_rtc/latest/) |[GitHub 链接](https://github.com/volcengine/VolcEngineRTC_Flutter_SDK)|
 
 <br>
