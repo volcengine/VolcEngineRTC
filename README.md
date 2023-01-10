@@ -18,7 +18,7 @@
 # Demo分类
 | **快速开始Demo（QuickStart Demo）**  | **场景化Demo（Solution Demo）**  |
 | --- | --- |
-| [GitHub 链接](https://github.com/volcengine/VolcEngineRTC) | [GitHub 链接](https://github.com/volcengine/VolcengineRTC_Solution_Demo) |
+| [GitHub 链接](https://github.com/volcengine/VolcEngineRTC) | [GitHub 链接](https://github.com/volcengine/RTC_VoiceChat_Demo) |
 | 为初次接触 RTC 的用户展示基本 API 调用，实现一个基本音视频通话应用，提供 **快速接入**  **RTC**   **服务** 的指导。 | 针对会议、教育、互娱等场景推出的最佳实践场景化解决方案。提供“开箱即用”式的客户端和服务端 **参考代码，** 赋能客户超低成本构建其自有应用。 |
 
 <br>
