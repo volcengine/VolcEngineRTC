@@ -52,6 +52,10 @@ const RoomId = styled.div`
   font-weight: 600;
   line-height: 64px;
   color: #ffffff;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 /**

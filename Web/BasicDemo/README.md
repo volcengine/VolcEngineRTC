@@ -7,13 +7,15 @@
 1. 全局安装 node、yarn
 2. 进入工程目录，修改 AppID。使用控制台获取的 AppID 覆盖 js 文件夹下 common.js 里的 appId 值
 3. 进入工程目录，修改 Token。临时 Token 覆盖 js 文件下 common.js 里的 token 值
-```js
+
+```
 const config = {
   appId: 'YourAppId',
+  roomId: 'YourRoomId',
   token: {
-    'YourUserId1': 'YourToken1', // "test_user1": "test_tokenxxxxxxxxx"
-    'YourUserId2': 'YourToken2',
-  }
+    YourUserId: 'YourToken', // "test_user1": "test_tokenxxxxxxxxx"
+  },
+
 };
 ```
 

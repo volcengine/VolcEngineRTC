@@ -8,6 +8,5 @@ const config = {
   token: {
     YourUserId: 'YourToken',
   },
-  uid: '',
 };
 export default config;

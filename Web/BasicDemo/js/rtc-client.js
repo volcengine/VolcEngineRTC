@@ -3,49 +3,53 @@ class RtcClient {
     this.config = props.config;
     this.streamOptions = props.streamOptions;
     this.engine = VERTC.createEngine(props.config.appId);
-    this.handleStreamAdd = props.handleStreamAdd;
-    this.handleStreamRemove = props.handleStreamRemove;
+    this.handleUserPublishStream = props.handleUserPublishStream;
+    this.handleUserUnpublishStream = props.handleUserUnpublishStream;
+    this.handleUserStartVideoCapture = props.handleUserStartVideoCapture;
+    this.handleUserStopVideoCapture = props.handleUserStopVideoCapture;
     this.handleEventError = props.handleEventError;
+    this.handleUserJoin = props.handleUserJoin;
+    this.handleUserLeave = props.handleUserLeave;
+
     this.setRemoteVideoPlayer = this.setRemoteVideoPlayer.bind(this);
   }
   SDKVERSION = VERTC.getSdkVersion();
   MediaType = VERTC.MediaType;
   bindEngineEvents() {
-    this.engine.on(VERTC.events.onUserPublishStream, this.handleStreamAdd);
-    this.engine.on(VERTC.events.onUserUnpublishStream, this.handleStreamRemove);
-    this.engine.on(VERTC.events.onError, (e) =>
-      this.handleEventError(e, VERTC)
-    );
-  }
-  async setRemoteVideoPlayer(remoteUserId, dom, stream) {
-    // 如果进房的config有自动订阅，这里就不需要订阅了
-    await this.engine.subscribeStream(
-      remoteUserId,
-      VERTC.MediaType.AUDIO_AND_VIDEO
-    );
+    this.engine.on(VERTC.events.onUserPublishStream, this.handleUserPublishStream);
+    this.engine.on(VERTC.events.onUserUnpublishStream, this.handleUserUnpublishStream);
+    this.engine.on(VERTC.events.onUserStartVideoCapture, this.handleUserStartVideoCapture);
+    this.engine.on(VERTC.events.onUserStopVideoCapture, this.handleUserStopVideoCapture);
+    this.engine.on(VERTC.events.onUserJoined, this.handleUserJoin);
+    this.engine.on(VERTC.events.onUserLeave, this.handleUserLeave);
 
-    await this.engine.setRemoteVideoPlayer(
-      VERTC.StreamIndex.STREAM_INDEX_MAIN,
-      {
-        userId: remoteUserId,
-        renderDom: dom,
-        isScreen: stream.isScreen,
-      }
-    );
+    this.engine.on(VERTC.events.onError, this.handleEventError);
+  }
+  async setRemoteVideoPlayer(remoteUserId, dom) {
+    // 如果进房的config有自动订阅，这里就不需要订阅了
+    await this.engine.subscribeStream(remoteUserId, VERTC.MediaType.AUDIO_AND_VIDEO);
+
+    await this.engine.setRemoteVideoPlayer(VERTC.StreamIndex.STREAM_INDEX_MAIN, {
+      userId: remoteUserId,
+      renderDom: dom,
+    });
   }
   /**
    * remove the listeners when `createEngine`
    */
   removeEventListener() {
-    this.engine.off(VERTC.events.onUserPublishStream, this.handleStreamAdd);
-    this.engine.off(
-      VERTC.events.onUserUnpublishStream,
-      this.handleStreamRemove
-    );
+    this.engine.off(VERTC.events.onUserPublishStream, this.handleUserPublishStream);
+    this.engine.off(VERTC.events.onUserUnpublishStream, this.handleUserUnpublishStream);
+    this.engine.off(VERTC.events.onUserStartVideoCapture, this.handleUserStartVideoCapture);
+    this.engine.off(VERTC.events.onUserStopVideoCapture, this.handleUserStopVideoCapture);
+    this.engine.off(VERTC.events.onUserJoined, this.handleUserJoin);
+    this.engine.off(VERTC.events.onUserLeave, this.handleUserLeave);
+
+    this.engine.off(VERTC.events.onError, this.handleEventError);
   }
   join(token, roomId, uid) {
     return this.engine.joinRoom(
-      null,
+      token,
       roomId,
       {
         userId: uid,
@@ -115,18 +119,25 @@ class RtcClient {
         devicesStatus,
       });
   }
-  changeAudioState(isMicOn) {
-    !isMicOn
-      ? this.engine.unpublishStream(VERTC.MediaType.AUDIO)
-      : this.engine.publishStream(VERTC.MediaType.AUDIO);
+  async changeAudioState(isMicOn) {
+    if (isMicOn) {
+      await this.engine.publishStream(VERTC.MediaType.AUDIO);
+    } else {
+      await this.engine.unpublishStream(VERTC.MediaType.AUDIO);
+    }
   }
-  changeVideoState(isVideoOn) {
-    !isVideoOn
-      ? this.engine.unpublishStream(VERTC.MediaType.VIDEO)
-      : this.engine.publishStream(VERTC.MediaType.VIDEO);
+  async changeVideoState(isVideoOn) {
+    if (isVideoOn) {
+      await this.engine.startVideoCapture();
+    } else {
+      await this.engine.stopVideoCapture();
+    }
   }
-  leave() {
-    this.engine.leaveRoom();
-    VERTC.destroyEngine(this.engine);
+  async leave() {
+    await this.engine.stopVideoCapture();
+    await this.engine.stopAudioCapture();
+    await this.engine.unpublishStream(VERTC.MediaType.AUDIO);
+    await this.engine.leaveRoom();
+    // VERTC.destroyEngine(this.engine);
   }
 }

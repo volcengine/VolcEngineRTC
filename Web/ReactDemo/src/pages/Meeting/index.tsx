@@ -1,13 +1,7 @@
-import React, {
-  useState,
-  useContext,
-  useEffect,
-  useCallback,
-  useRef,
-} from 'react';
+import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import styled from 'styled-components';
-import { MediaType } from '@volcengine/rtc';
+import { MediaType, onUserJoinedEvent, onUserLeaveEvent } from '@volcengine/rtc';
 import { ControlBar } from '../../modules';
 import { Context } from '../../context';
 
@@ -22,14 +16,16 @@ const Container = styled.div`
   height: 100%;
   display: flex;
   flex-wrap: wrap;
+  padding: 8px;
+  gap: 8px;
 `;
 
 const Item = styled.div`
   flex: 1;
-  width: 50%;
-  min-width: 50%;
-  max-width: 50%;
-  height: 50%;
+  width: calc(50% - 8px);
+  min-width: calc(50% - 8px);
+  max-width: calc(50% - 8px);
+  height: calc(50% - 8px);
   position: relative;
 `;
 
@@ -39,17 +35,19 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
   const [isVideoOn, setVideoOn] = useState<boolean>(true);
   const rtc = useRef<RTCClient>();
 
-  const count = useRef<number>(0);
   const [remoteStreams, setRemoteStreams] = useState<{
-    [key: string]: Stream;
+    [key: string]: {
+      playerComp: React.ReactNode;
+    };
   }>({});
 
   const leaveRoom = useCallback(() => {
     if (!rtc.current) return;
-    rtc.current.leave();
 
     // off the event
     rtc.current.removeEventListener();
+
+    rtc.current.leave();
     setJoin(false);
   }, [rtc, setJoin]);
 
@@ -64,51 +62,76 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     };
   }, [leaveRoom]);
 
-  const handleStreamAdd = useCallback(
-    (stream: any) => {
+  const handleUserPublishStream = useCallback(
+    (stream: { userId: string; mediaType: MediaType }) => {
       const userId = stream.userId;
-      const mediaType = stream.mediaType;
-      if (mediaType & MediaType.VIDEO) {
-        if (count.current < 3) {
-          if (remoteStreams[userId]) return;
-          remoteStreams[userId] = stream;
-          stream.playerComp = (
-            <MediaPlayer
-              userId={userId}
-              stream={stream}
-              setRemoteVideoPlayer={rtc?.current?.setRemoteVideoPlayer}
-            />
-          );
-          setRemoteStreams({
-            ...remoteStreams,
-          });
-          count.current += 1;
+      if (stream.mediaType & MediaType.VIDEO) {
+        if (remoteStreams[userId]) {
+          rtc.current?.setRemoteVideoPlayer(userId, `remoteStream_${userId}`);
         }
       }
     },
-    [remoteStreams],
+    [remoteStreams]
   );
 
   /**
    * @brief remove stream & update remote streams list
    * @param {Event} event
    */
-  const handleStreamRemove = useCallback(
-    (event: { userId: string; mediaType: MediaType }) => {
-      const uid = event.userId;
-      const mediaType = event.mediaType;
-      if (mediaType & MediaType.VIDEO) {
-        if (remoteStreams[uid]) {
-          delete remoteStreams[uid];
-        }
-        setRemoteStreams({
-          ...remoteStreams,
-        });
-        count.current--;
-      }
-    },
-    [remoteStreams],
-  );
+  const handleUserUnpublishStream = (event: { userId: string; mediaType: MediaType }) => {
+    const { userId, mediaType } = event;
+
+    if (mediaType & MediaType.VIDEO) {
+      rtc.current?.setRemoteVideoPlayer(userId, undefined);
+    }
+  };
+
+  const handleUserStartVideoCapture = (event: { userId: string }) => {
+    const { userId } = event;
+
+    if (remoteStreams[userId]) {
+      rtc.current?.setRemoteVideoPlayer(userId, `remoteStream_${userId}`);
+    }
+  };
+
+  /**
+   * Remove the user specified from the room in the local and clear the unused dom
+   * @param {*} event
+   */
+  const handleUserStopVideoCapture = (event: { userId: string }) => {
+    const { userId } = event;
+
+    rtc.current?.setRemoteVideoPlayer(userId, undefined);
+  };
+
+  const handleUserJoin = (e: onUserJoinedEvent) => {
+    console.log('handleUserJoin', e);
+
+    const { userInfo } = e;
+    const remoteUserId = userInfo.userId;
+
+    if (Object.keys(remoteStreams).length < 3) {
+      if (remoteStreams[remoteUserId]) return;
+      remoteStreams[remoteUserId] = {
+        playerComp: <MediaPlayer userId={remoteUserId} />,
+      };
+
+      setRemoteStreams({
+        ...remoteStreams,
+      });
+    }
+  };
+
+  const handleUserLeave = (e: onUserLeaveEvent) => {
+    const { userInfo } = e;
+    const remoteUserId = userInfo.userId;
+    if (remoteStreams[remoteUserId]) {
+      delete remoteStreams[remoteUserId];
+    }
+    setRemoteStreams({
+      ...remoteStreams,
+    });
+  };
 
   useEffect(() => {
     (async () => {
@@ -117,14 +140,14 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
       rtc.current
         .join((config.token as any)?.[userId] || null, roomId, userId)
         .then(() =>
-          rtc?.current?.createLocalStream((res: any) => {
+          rtc?.current?.createLocalStream(userId, (res: any) => {
             const { code, msg, devicesStatus } = res;
             if (code === -1) {
               alert(msg);
               setMicOn(false);
               setVideoOn(false);
             }
-          }),
+          })
         )
         .catch((err: any) => console.log('err', err));
     })();
@@ -159,8 +182,12 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
           uid: '',
         }}
         streamOptions={streamOptions}
-        handleStreamAdd={handleStreamAdd}
-        handleStreamRemove={handleStreamRemove}
+        handleUserPublishStream={handleUserPublishStream}
+        handleUserUnpublishStream={handleUserUnpublishStream}
+        handleUserStartVideoCapture={handleUserStartVideoCapture}
+        handleUserStopVideoCapture={handleUserStopVideoCapture}
+        handleUserJoin={handleUserJoin}
+        handleUserLeave={handleUserLeave}
         handleEventError={handleEventError}
       />
       <Container>
@@ -181,13 +208,17 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
                 bottom: 0,
                 right: 0,
                 zIndex: 1000,
+                maxWidth: 120,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
               {userId}
             </span>
           </div>
         </Item>
-        {Object.keys(remoteStreams)?.map(key => {
+        {Object.keys(remoteStreams)?.map((key) => {
           const Comp = remoteStreams[key].playerComp;
           return <Item key={key}>{Comp}</Item>;
         })}

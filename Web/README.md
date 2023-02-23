@@ -7,7 +7,9 @@
 │  │─ ReactDemo                 // 快速开始，基于React
 │  │  ├─ public                 // 图片等静态资源
 │  │  ├─ src                    // 进房、通信等基础模块
+│  │  ├─ README.md              // 项目跑通指南
 │  │─ BasicDemo                 // 快速开始，基于原生JS
 │  │  ├─ assets                 // 图片等静态资源
 │  │  ├─ lib                    // vrtc sdk
+│  │  ├─ README.md              // 项目跑通指南
 ```

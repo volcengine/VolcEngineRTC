@@ -9,13 +9,14 @@ const TEXTMAP = {
   'room-id': '房间ID',
   'user-id': '用户ID',
 };
-let isMicOn = false; // control the mic
-let isVideoOn = false; // control the video
+let isMicOn = true; // control the mic
+let isVideoOn = true; // control the video
 /*
  * On initiation. `engine` is not attached to any project or room for any specific user.
  */
 const config = {
   appId: 'YourAppId',
+  roomId: 'YourRoomId',
   token: {
     YourUserId: 'YourToken',
   },

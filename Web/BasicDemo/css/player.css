@@ -4,6 +4,10 @@
   right: 5px;
   color: #fff;
   z-index: 1;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .player {
   width: 100vw;
@@ -15,14 +19,20 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+
+  gap: 8px;
+  padding: 8px;
+
 }
 
 .remote-player {
   width: 100%;
+  background: #000;
+
 }
 .player-wrapper {
   position: relative;
-  width: 50%;
+  width:  calc(50% - 12px);
   height: 100%;
   flex: 0 0 auto;
 }

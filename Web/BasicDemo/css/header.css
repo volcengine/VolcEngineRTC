@@ -28,4 +28,8 @@
     line-height: 64px;
     font-weight: bold;
     font-family: PingFang SC;
+	max-width: 120px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
