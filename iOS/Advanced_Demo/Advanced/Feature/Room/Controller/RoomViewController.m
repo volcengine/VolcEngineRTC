@@ -244,6 +244,7 @@
         /// 默认是内部采集，不需要手动调用
         [self.rtcVideo setVideoSourceType:ByteRTCVideoSourceTypeInternal WithStreamIndex:ByteRTCStreamIndexMain];
         /// 开启本地视频采集
+        [self.rtcVideo setVideoOrientation:ByteRTCVideoOrientationPortrait];
         [self.rtcVideo startVideoCapture];
     }
 }
@@ -340,7 +341,7 @@
 
 }
 
-- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserUnPublishScreen:(NSString *)userId type:(ByteRTCMediaStreamType)type reason:(ByteRTCStreamRemoveReason)reason {
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserUnpublishScreen:(NSString *)userId type:(ByteRTCMediaStreamType)type reason:(ByteRTCStreamRemoveReason)reason {
     if (type != ByteRTCMediaStreamTypeAudio) {
         dispatch_async(dispatch_get_main_queue(), ^{
             
@@ -353,7 +354,7 @@
     }
 }
 
-- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserUnPublishStream:(NSString *)userId type:(ByteRTCMediaStreamType)type reason:(ByteRTCStreamRemoveReason)reason {
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserUnpublishStream:(NSString *)userId type:(ByteRTCMediaStreamType)type reason:(ByteRTCStreamRemoveReason)reason {
     if (type != ByteRTCMediaStreamTypeAudio) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (UserLiveView *liveView in self.containerView.subviews) {
@@ -569,12 +570,13 @@
 }
 
 - (void)showBeautyBar:(UIButton *)button{
-    if (self.preJoinSetting.effectsMode == EffectsMode_None) {
-        [self showAlert:@"当前已关闭美颜"];
-        return;
-    }
     self.beautyBarView.hidden = !self.beautyBarView.hidden;
-    self.roomSettingView.hidden = YES;
+    
+    if (!self.roomSettingView.hidden) {
+        self.roomSettingView.hidden = YES;
+        [self updateVideoConfig];
+    }
+
 }
 
 - (void)screenShareButtonClick:(UIButton *)button {

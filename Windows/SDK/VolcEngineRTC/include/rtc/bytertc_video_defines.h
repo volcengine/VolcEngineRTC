@@ -442,6 +442,8 @@ enum DivideMode {
 };
 
 /** 
+ * @hidden
+ * @deprecated since 336.1 along with onStreamAdd
  * @type keytype
  * @brief 流属性。  <br>
  */
@@ -522,7 +524,7 @@ struct SubscribeVideoConfig {
 
 /** 
  * @type keytype
- * @brief 手动订阅流的配置信息。  <br>
+ * @brief 手动订阅流的配置信息。  
  */
 struct SubscribeConfig {
     /** 
@@ -698,30 +700,30 @@ typedef void* view_t;
 
 /** 
  * @type keytype
- * @brief 矩形区域，用于指定屏幕区域
+ * @brief 矩形区域，用于指定屏幕区域。
  */
 struct Rectangle {
     /** 
-     * @brief 矩形区域左上角的 x 坐标
+     * @brief 矩形区域左上角的 x 坐标。
      */
     int x = 0;
     /** 
-     * @brief 矩形区域左上角的 y 坐标
+     * @brief 矩形区域左上角的 y 坐标。
      */
     int y = 0;
     /** 
-     * @brief 矩形宽度
+     * @brief 矩形宽度。
      */
     int width = 0;
     /** 
-     * @brief 矩形高度
+     * @brief 矩形高度。
      */
     int height = 0;
 };
 
 /** 
  * @type keytype
- * @brief 屏幕共享时的边框高亮设置
+ * @brief 屏幕共享时的边框高亮设置。
  */
 struct HighlightConfig {
     /** 
@@ -729,25 +731,25 @@ struct HighlightConfig {
      */
     bool enable_highlight = true;
     /** 
-     * @brief 边框的颜色, 颜色格式为十六进制 ARGB:  0xAARRGGBB
+     * @brief 边框的颜色, 颜色格式为十六进制 ARGB:  0xAARRGGB。
      */
     uint32_t border_color = 0xFF29CCA3;
     /** 
-     * @brief 边框的宽度，单位：像素
+     * @brief 边框的宽度，单位：像素。
      */
     int border_width = 4;
 };
 
 /** 
  * @type keytype
- * @brief 抓取屏幕时排除指定窗口，默认不排除任何窗体
+ * @brief 抓取屏幕时排除指定窗口，默认不排除任何窗体。
  */
 struct ScreenFilterConfig {
     /** 
      * @brief 抓取屏幕时排除窗口列表。这个参数仅在抓取屏幕时生效。
      */
     view_t* excluded_window_list = nullptr;
-    /** 
+   /** 
      * @brief 排除窗口的数量。
      */
     int excluded_window_num = 0;
@@ -756,15 +758,15 @@ struct ScreenFilterConfig {
 /** 
  * @type keytype
  * @region 屏幕共享
- * @brief 内部采集屏幕视频流时，是否采集鼠标信息
+ * @brief 内部采集屏幕视频流时，是否采集鼠标信息。
  */
 enum MouseCursorCaptureState {
     /** 
-     * @brief 采集鼠标信息
+     * @brief 采集鼠标信息。
      */
     kMouseCursorCaptureStateOn,
     /** 
-     * @brief 不采集鼠标信息
+     * @brief 不采集鼠标信息。
      */
     kMouseCursorCaptureStateOff,
 };
@@ -780,8 +782,8 @@ struct ScreenParameters {
      * @brief 编码帧率,单位为 fps
      */
     int frame_rate = 15;
-    /** 
-     * @brief 编码码率，小于 0 时 SDK 会根据高宽自适应码率, 单位 kbps
+    /**  
+     * @brief 屏幕采集编码码率, `-1` 为自动码率, SDK 会根据宽高信息选择合适的码率，单位 kbps
      */
     int kbitrate = -1;
 };
@@ -820,7 +822,7 @@ struct ScreenCaptureParameters {
      */
     MouseCursorCaptureState capture_mouse_cursor;
     /** 
-     * @brief 屏幕过滤设置，参看 ScreenFilterConfig{@link #ScreenFilterConfig}。
+     * @brief 屏幕过滤设置，填写不需要采集的窗口 ID，参看 ScreenFilterConfig{@link #ScreenFilterConfig}。
      */
     ScreenFilterConfig filter_config;
     /** 
@@ -831,19 +833,19 @@ struct ScreenCaptureParameters {
 
 /** 
  * @type keytype
- * @brief 屏幕共享的编码参数配置
+ * @brief 屏幕共享的编码参数配置。
  */
 struct DesktopCaptureParameters {
     /** 
-     * @brief 屏幕采集编码最大宽度
+     * @brief 屏幕采集编码最大宽度，单位 px。
      */
     int max_width = 1920;
     /** 
-     * @brief 屏幕采集编码最大高度
+     * @brief 屏幕采集编码最大高度，单位 px。
      */
     int max_height = 1080;
     /** 
-     * @brief 屏幕采集编码帧率, 单位 fps
+     * @brief 屏幕采集编码帧率, 单位 fps。
      */
     int frame_rate = 15;
     /** 
@@ -863,7 +865,7 @@ struct DesktopCaptureParameters {
      */
     int excluded_window_num = 0;
     /** 
-     * @brief 高亮边框的配置
+     * @brief 高亮边框的配置。
      */
     HighlightConfig highlight_config;
 };
@@ -1216,7 +1218,7 @@ struct RemoteVideoConfig {
 };
 /** 
  * @type keytype
- * @brief 房间参数配置
+ * @brief 房间参数配置。房间是 RTC 通话的抽象概念。在同一个房间中的用户可以进行音视频通话。
  */
 struct RTCRoomConfig {
     /** 
@@ -1230,11 +1232,13 @@ struct RTCRoomConfig {
      */
    bool is_auto_publish = true;
     /** 
-     * @brief 是否自动订阅音频流，默认为自动订阅。
+     * @brief 是否自动订阅音频流，默认为自动订阅。<br>
+     *        包含主流和屏幕流。 
      */
     bool is_auto_subscribe_audio = true;
     /** 
-     * @brief 是否自动订阅主视频流，默认为自动订阅。  
+     * @brief 是否自动订阅主视频流，默认为自动订阅。<br>
+     *        包含主流和屏幕流。 
      */
     bool is_auto_subscribe_video = true;
     /** 
@@ -1336,27 +1340,6 @@ struct VideoDeviceInfo {
 };
 
 /** 
- * @hidden
- * @type keytype
- * @brief 视频帧朝向
- */
-enum VideoOrientation {
-    /** 
-     * @brief （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。
-     */
-    kVideoOrientationAdaptive = 0,
-    /** 
-     * @brief 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。
-     */
-    kVideoOrientationPortrait = 1,
-    /** 
-     * @brief 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。
-     */
-    kVideoOrientationLandscape = 2
-};
-
-
-/** 
  * @type keytype
  * @brief 屏幕采集对象的类型
  */
@@ -1413,7 +1396,7 @@ struct ScreenCaptureSourceInfo {
      */
      bool primaryMonitor = false;
     /** 
-     * @brief 屏幕共享对象的坐标。多显示器的场景下，屏幕坐标系统以主屏左上角为原点 (0, 0)，向右向下扩展。详见 Rectangle{@link #Rectangle}。
+     * @brief 屏幕共享对象的坐标。多显示器的场景下，屏幕坐标以主屏左上角为原点 (0, 0)，向右向下扩展。详见 Rectangle{@link #Rectangle}。
      */
     Rectangle region_rect;
 };
@@ -1655,6 +1638,7 @@ public:
      * @param [in] roomid 房间 ID。
      * @param [in] uid 远端用户 ID。
      * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     * @notes 不同的平台上（macOS, Windows, Linux）上获取的视频帧的 pixelFormat 可能不同。
      */
     virtual bool onRemoteVideoFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
 
@@ -1671,6 +1655,40 @@ public:
         return false;
     }
 };
-
+/**  
+ * @hidden(Linux)
+ * @type callback
+ * @brief 截图的回调。
+ */
+class ISnapshotResultCallback {
+public:
+    virtual ~ISnapshotResultCallback() = default;
+    /**  
+     * @hidden(Linux)
+     * @type callback
+     * @brief 调用 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 截取视频画面时，收到此回调。
+     * @param [in] taskId 本地截图任务的编号。和 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 的返回值一致。
+     * @param [in] streamIndex 截图的视频流的属性，参看 StreamIndex{@link #StreamIndex}。
+     * @param [in] image 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。
+     * @param [in] errorCode 截图错误码：<br>
+     *        + 0: 成功 <br>
+     *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
+     *        + -2: 截图错误。流无效。
+     */
+    virtual void onTakeLocalSnapshotResult(long taskId, StreamIndex streamIndex, IVideoFrame* image, int errorCode) = 0;
+    /**  
+     * @hidden(Linux)
+     * @type callback
+     * @brief 调用 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 截取视频画面时，收到此回调。
+     * @param [in] taskId 远端截图任务的编号。和 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 的返回值一致。
+     * @param [in] streamKey 截图的视频流，参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] image 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。
+     * @param [in] errorCode 截图错误码：<br>
+     *        + 0: 成功 <br>
+     *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
+     *        + -2: 截图错误。流无效。
+     */
+    virtual void onTakeRemoteSnapshotResult(long taskId, RemoteStreamKey streamKey, IVideoFrame* image, int errorCode) = 0;
+};
 
 }  // namespace bytertc

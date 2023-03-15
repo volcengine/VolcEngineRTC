@@ -11,7 +11,7 @@
 
 namespace bytertc {
 
-/**  
+/** 
  * @type callback
  * @region 转推直播
  * @brief 推流 Observer
@@ -24,7 +24,7 @@ public:
     virtual bool isSupportClientPushStream() {
         return false;
     }
-    /**  
+    /** 
      * @type callback
      * @region 转推直播
      * @brief 转推直播状态回调
@@ -36,7 +36,7 @@ public:
     virtual void onStreamMixingEvent(
             StreamMixingEvent event, const char* task_id, StreamMixingErrorCode error, StreamMixingType mix_type) = 0;
 
-    /**  
+    /** 
      * @type callback
      * @region 转推直播
      * @brief 合流视频回调，运行在视频回调线程
@@ -46,7 +46,7 @@ public:
      */
     virtual void onStreamMixingVideoFrame(const char* task_id, IVideoFrame* video_frame) = 0;
 
-    /**  
+    /** 
      * @type callback
      * @region 转推直播
      * @brief 合流音频回调，运行在音频回调线程
@@ -56,7 +56,7 @@ public:
      */
     virtual void onStreamMixingAudioFrame(const char* task_id, IAudioFrame* audio_frame) = 0;
 
-    /**  
+    /** 
      * @type callback
      * @region 转推直播
      * @brief 视频 SEI 帧回调，运行在视频回调线程
@@ -65,14 +65,14 @@ public:
      */
     virtual void onStreamMixingDataFrame(const char* task_id, IDataFrame* data_frame) = 0;
 
-    /**  
+    /** 
      * @hidden
      * @brief 析构函数
      */
     virtual ~ITranscoderObserver() = default;
 };
 /** 
- * @hidden not available in 343
+ * @hidden(Linux)
  * @type callback
  * @region 转推直播
  * @brief 单流转推直播观察者。  <br>
@@ -93,10 +93,11 @@ class IPushSingleStreamToCDNObserver {
      */
     virtual ~IPushSingleStreamToCDNObserver() = default;
 };
-/**  
- * @hidden
+/** 
  * @type api
- * @brief 创建合流参数实例
+ * @brief 创建合流转推参数实例。
+ * @return 创建的 ITranscoderParam{@link #ITranscoderParam} 实例。
+ * @notes 该接口创建的实例需在使用完毕后手动调用 delete 销毁。
  */
 BYTERTC_API ITranscoderParam* createTranscoderParam();
 

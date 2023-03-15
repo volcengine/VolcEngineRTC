@@ -107,9 +107,9 @@
     self.bottomView.clickMicBlock = ^(BOOL enable) {
         /// 开启/关闭本地音频发送
         if (enable) {
-            [wself.videoEngine startAudioCapture];
+            [wself.room publishStream:ByteRTCMediaStreamTypeAudio];
         } else {
-            [wself.videoEngine stopAudioCapture];
+            [wself.room unpublishStream:ByteRTCMediaStreamTypeAudio];
         }
     };
 
@@ -121,7 +121,7 @@
     config.maxBitrate = 800;
     config.encoderPreference = ByteRTCVideoEncoderPreferenceDisabled;
 
-    [self.videoEngine SetVideoEncoderConfig:@[ config ]];
+    [self.videoEngine SetMaxVideoEncoderConfig:config];
 
     self.renderView.currentUid = self.currentUid;
     [self.renderView addUser:self.currentUid roomid:self.currentRoomID];
@@ -246,6 +246,8 @@
 }
 
 - (void)dealloc {
+    /// 销毁房间
+    [self.room destroy];
     /// 销毁引擎
     [ByteRTCVideo destroyRTCVideo];
     self.videoEngine = nil;

@@ -4,7 +4,7 @@
  * 包含如下简单功能：
  * - 该页面用来跳转至音视频通话主页面
  * - 校验房间名和用户名
- * - 展示当前 SDK 使用的版本号 ByteRTCEngineKit getSdkVersion:
+ * - 展示当前 SDK 使用的版本号 ByteRTCVideo getSdkVersion:
  *
  * 有以下常见的注意事项：
  * 1.SDK 对房间名、用户名的限制是：非空且最大长度不超过128位的数字、大小写字母、@ . _ \ -

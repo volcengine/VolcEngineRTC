@@ -32,21 +32,20 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
+import com.ss.bytertc.engine.handler.AppExecutors;
 import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
 import com.ss.bytertc.engine.type.NetworkDetectionLinkType;
 import com.ss.bytertc.engine.type.NetworkDetectionStartReturn;
 import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
 import com.ss.video.rtc.demo.basic_module.ui.CommonListDialog;
-import com.ss.video.rtc.demo.basic_module.utils.SafeToast;
 import com.ss.video.rtc.demo.basic_module.utils.Utilities;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -279,7 +278,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
         private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
-        private final IRTCVideoEventHandler mIRTCEngineEventHandler = new IRTCVideoEventHandler() {
+        private final IRTCVideoEventHandler mRTCVideoEventHandler = new IRTCVideoEventHandler() {
             @Override
             public void onNetworkDetectionResult(NetworkDetectionLinkType type, int quality, int rtt, double lostRate, int bitrate, int jitter) {
                 super.onNetworkDetectionResult(type, quality, rtt, lostRate, bitrate, jitter);
@@ -423,7 +422,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
                 NetworkDetectionStartReturn startReturn
                         = mRTCVideo.startNetworkDetection(mEnableUplinkDetection, mUplinkDetectionTarget,
                         mEnableDownlinkDetection, mDownlinkDetectionTarget);
-                SafeToast.show(getContext(), "网络监测开启结果: " + startReturn.toString(), Toast.LENGTH_SHORT);
+                Toast.makeText(getContext(), "网络监测开启结果: " + startReturn.toString(), Toast.LENGTH_SHORT).show();
             });
 
             mUplinkStatLayout = mStopLayout.findViewById(R.id.uplink_stat_layout);
@@ -488,7 +487,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
         public void show() {
             super.show();
             mRTCVideo = RTCVideo.createRTCVideo(Utilities.getApplicationContext(),
-                    Constants.APPID, mIRTCEngineEventHandler, null, null);
+                    Constants.APPID, mRTCVideoEventHandler, null, null);
         }
 
         @Override
@@ -521,31 +520,32 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
     public static class RTMDialog extends AppCompatDialog {
 
-        private RTCEngine mRTCEngine;
-        private final IRTCEngineEventHandler mIRTCEngineEventHandler = new IRTCEngineEventHandler() {
+        private RTCVideo mRTCVideo;
+        private final IRTCVideoEventHandler mRTCVideoEventHandler = new IRTCVideoEventHandler() {
             @Override
             public void onUserBinaryMessageReceivedOutsideRoom(String uid, ByteBuffer message) {
-                super.onUserBinaryMessageReceivedOutsideRoom(uid, message);
-                showMessage("接收到房间外实时消息", uid, message.array().toString());
+                showMessage("接收到房间外实时消息", uid, Arrays.toString(message.array()));
             }
 
             @Override
             public void onUserMessageReceivedOutsideRoom(String uid, String message) {
-                super.onUserMessageReceivedOutsideRoom(uid, message);
                 showMessage("接收到房间外实时消息", uid, message);
             }
 
             @Override
             public void onUserMessageSendResultOutsideRoom(long msgid, int error) {
-                super.onUserMessageSendResultOutsideRoom(msgid, error);
                 String tip;
                 if (error != 0) {
-                    tip = String.format(Locale.US, "点对点消息发送失败(%d)", error);
+                    tip = String.format(Locale.ENGLISH, "点对点消息发送失败(%d)", error);
                 } else {
                     tip = "点对点消息发送成功";
                 }
-                new Handler(Looper.getMainLooper()).post(() ->
-                        SafeToast.show(getContext(), tip, Toast.LENGTH_SHORT));
+                AppExecutors.getInstance()
+                        .mainThread()
+                        .execute(() -> {
+                            Context context = Utilities.getApplicationContext();
+                            Toast.makeText(context, tip, Toast.LENGTH_SHORT).show();
+                        });
             }
 
             @Override
@@ -593,8 +593,8 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
                     void action(String input) {
                         mLoginUid = input;
                         mLoginLayout.setValue(input);
-                        mRTCEngine.logout();
-                        mRTCEngine.login("", input);
+                        mRTCVideo.logout();
+                        mRTCVideo.login("", input);
                     }
                 };
                 CommonInputDialog dialog = new CommonInputDialog(getContext(), "Login UserID",
@@ -633,7 +633,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
                     @Override
                     void action(String input) {
-                        mRTCEngine.sendUserMessageOutsideRoom(mSendUid, input, MessageConfigReliableOrdered);
+                        mRTCVideo.sendUserMessageOutsideRoom(mSendUid, input, MessageConfigReliableOrdered);
                     }
                 };
                 LinkedList<CommonInputDialog.IInputCallback> callbacks = new LinkedList<>();
@@ -648,14 +648,14 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
         @Override
         public void show() {
             super.show();
-            mRTCEngine = RTCEngine.createEngine(Utilities.getApplicationContext(),
-                    Constants.APPID, mIRTCEngineEventHandler, null, null);
+            mRTCVideo = RTCVideo.createRTCVideo(Utilities.getApplicationContext(),
+                    Constants.APPID, mRTCVideoEventHandler, null, null);
         }
 
         @Override
         public void dismiss() {
             super.dismiss();
-            RTCEngine.destroyEngine(mRTCEngine);
+            RTCVideo.destroyRTCVideo();
         }
 
         private void showMessage(String title, String uid, String message) {

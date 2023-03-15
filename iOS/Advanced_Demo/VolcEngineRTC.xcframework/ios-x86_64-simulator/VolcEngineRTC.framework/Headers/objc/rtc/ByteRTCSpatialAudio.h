@@ -15,15 +15,15 @@
  */
 BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
 /** 
- * @brief x 方向向量
+ * @brief x 坐标
  */
 @property(nonatomic, assign) float x;
 /** 
- * @brief y 方向向量
+ * @brief y 坐标
  */
 @property(nonatomic, assign) float y;
 /** 
- * @brief z 方向向量
+ * @brief z 坐标
  */
 @property(nonatomic, assign) float z;
 @end

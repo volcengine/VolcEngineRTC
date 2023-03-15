@@ -18,6 +18,7 @@ import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.effects.EffectNodeCallback;
 import com.ss.video.rtc.demo.advanced.effects.model.EffectSection;
 import com.ss.video.rtc.demo.advanced.effects.model.EffectNode;
+import com.ss.video.rtc.demo.advanced.effects.model.FilterEffectNode;
 import com.ss.video.rtc.demo.advanced.effects.model.StickerEffectNode;
 import com.ss.video.rtc.demo.advanced.effects.model.VirtualBackgroundEffectNode;
 import com.ss.video.rtc.demo.advanced.effects.view.EffectLayout;
@@ -73,6 +74,7 @@ public class VideoEffectDialog extends BottomSheetDialog {
                 effectLayout.setTag(section.title);
                 effectLayout.setEffectSection(section, mEffectNodeCallback);
                 effectLayout.setSupportUnSelected(isSupportUnSelected(section));
+                effectLayout.setClearOtherSelected(isClearOtherSelected(section));
                 FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 mBeautyLayoutContainer.addView(effectLayout, layoutParams);
@@ -111,6 +113,12 @@ public class VideoEffectDialog extends BottomSheetDialog {
         window.setDimAmount(0);
     }
 
+    /**
+     * 是否支持反选
+     * 贴纸和虚拟背景效果支持反选，否则不支持
+     * @param section 美颜效果组
+     * @return 是否支持
+     */
     private boolean isSupportUnSelected(EffectSection section) {
         if (section == null) {
             return false;
@@ -122,6 +130,27 @@ public class VideoEffectDialog extends BottomSheetDialog {
             if (effectNode != null) {
                 return effectNode instanceof StickerEffectNode
                         || effectNode instanceof VirtualBackgroundEffectNode;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 新选中的值是否支持清楚之前选中项的值
+     * 仅滤镜选过需要清楚
+     * @param section 美颜效果组
+     * @return 支持
+     */
+    private boolean isClearOtherSelected(EffectSection section) {
+        if (section == null) {
+            return false;
+        }
+        if (section.effectNodes == null || section.effectNodes.isEmpty()) {
+            return false;
+        }
+        for (EffectNode effectNode : section.effectNodes) {
+            if (effectNode != null) {
+                return effectNode instanceof FilterEffectNode;
             }
         }
         return false;

@@ -60,7 +60,7 @@ public:
      *        错误码  <br>
      *        详见 AudioMixingError{@link #AudioMixingError}
      * @notes  <br>
-     *       + 此回调会被触发的时机汇总如下：  <br>
+     *       此回调会被触发的时机汇总如下：  <br>
      *       + 1. 音乐文件类型： <br>
      *       + 当调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
      *       + 当使用相同的 ID 重复调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。  <br>
@@ -131,7 +131,8 @@ public:
      * @region 引擎管理
      * @author hanchenchen.c
      * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
-     * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}
+     * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}。
+     * @notes 更多信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
      */
     virtual void onConnectionStateChanged(bytertc::ConnectionState state) {
     }
@@ -488,12 +489,12 @@ public:
      * @type callback
      * @region 实时消息通信
      * @author hanchenchen.c
-     * @brief 给应用服务器发送消息的回调
-     * @param [in] msgid 本条消息的 ID  <br>
+     * @brief 给应用服务器发送消息的回调。
+     * @param [in] msgid 本条消息的 ID。
      *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
      * @param [in] error 消息发送结果，详见 UserMessageSendResult{@link #UserMessageSendResult}。
-     * @param [in] message 应用服务器收到 HTTP 请求后，在 ACK 中返回的信息。
-     * @notes 当调用 sendServerMessage{@link #IRTCVideo#sendServerMessage} 或 sendServerBinaryMessage{@link #IRTCVideo#sendServerBinaryMessage} 发送消息后，会收到此回调。
+     * @param [in] msg 应用服务器收到 HTTP 请求后，在 ACK 中返回的信息。消息不超过 64 KB。
+     * @notes 本回调为异步回调。当调用 sendServerMessage{@link #IRTCVideo#sendServerMessage} 或 sendServerBinaryMessage{@link #IRTCVideo#sendServerBinaryMessage} 接口发送消息后，会收到此回调。
      */
     virtual void onServerMessageSendResult(int64_t msgid, int error, const bytertc::ServerACKMsg& msg) {
         (void)msgid;
@@ -573,6 +574,22 @@ public:
      */
     virtual void onAudioPlaybackDeviceTestVolume(int volume) {
         (void)volume;
+    }
+
+    /** 
+     * @hidden(Android,iOS)
+     * @type callback
+     * @region 设备管理
+     * @author caocun
+     * @brief 音频设备音量改变回调。当通过系统设置，改变音频设备音量或静音状态时，触发本回调。本回调无需手动开启。
+     * @param device_type 设备类型，包括麦克风和扬声器，参阅 ByteRTCAudioDeviceType{@link #ByteRTCAudioDeviceType}。
+     * @param volume 音量值，[0, 255]。当 volume 变为 0 时，muted 会变为 True。注意：在 Windows 端，当麦克风 volume 变为 0 时，muted 值不变。
+     * @param muted 是否禁音状态。扬声器被设置为禁音时，muted 为 True，但 volume 保持不变。
+     */
+    virtual void onAudioDeviceVolumeChanged(bytertc::RTCAudioDeviceType device_type, int volume, bool muted) {
+        (void)device_type;
+        (void)volume;
+        (void)muted;
     }
 
     /** 
@@ -688,8 +705,7 @@ public:
      * @brief 订阅公共流的结果回调<br>
      *        通过 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 订阅公共流后，可以通过本回调获取订阅结果。
      * @param [in] public_stream_id 公共流的 ID
-     * @param [in] errorCode 公共流订阅结果状态码。<br>
-     *             `200`: 订阅成功
+     * @param [in] errorCode 公共流订阅结果状态码。详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}。
      */
     virtual void onPlayPublicStreamResult(const char* public_stream_id, int errorCode) {
         (void)public_stream_id;
@@ -964,12 +980,14 @@ public:
         (void)user;
         (void)state;
     }
+
     /** 
      * @type callback
      * @region 音频事件回调
      * @author wangjunzheng
-     * @brief 本地采集到第一帧音频帧时，收到该回调
+     * @brief 发布音频流时，采集到第一帧音频帧，收到该回调。
      * @param [in] index 音频流属性, 参看 StreamIndex{@link #StreamIndex}
+     * @notes 如果发布音频流时，未开启本地音频采集，SDK 会推送静音帧，也会收到此回调。
      */
     virtual void onFirstLocalAudioFrame(StreamIndex index) {
         (void)index;
@@ -979,10 +997,15 @@ public:
      * @type callback
      * @brief 公共流发布结果回调。<br>
      *        调用 startPushPublicStream{@link #IRTCVideo#startPushPublicStream} 接口发布公共流后，启动结果通过此回调方法通知用户。
-     * @param [in] room_id 流的发布房间的 ID
+     * @param [in] room_id 公共流的发布房间的 ID
      * @param [in] public_streamid 公共流 ID
      * @param [in] errorCode 公共流发布结果状态码。<br>
-     *             `200`: 发布成功
+     *             `200`: 发布成功<br>
+     *             `1191`: 推流参数存在异常 <br>
+     *             `1192`: 当前状态异常，通常为无法发起任务<br>
+     *             `1193`: 服务端错误，不可恢复<br>
+     *             `1195`: 服务端调用发布接口返回失败<br>
+     *             `1196`: 超时无响应。推流请求发送后 10s 没有收到服务端的结果回调。客户端将每隔 10s 重试，3 次重试失败后停止。
      */
     virtual void onPushPublicStreamResult(const char* room_id, const char* public_streamid, int errorCode) {
         (void)room_id;
@@ -1024,6 +1047,7 @@ public:
     virtual void onEchoTestResult(EchoTestResult result) {
         (void)result;
     };
+
 };
 
 } // namespace bytertc

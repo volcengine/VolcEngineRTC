@@ -16,6 +16,7 @@
     [super windowDidLoad];
     
     self.window.styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable;
+    self.window.title = @"";
     
     LoginViewController *loginViewController = [[LoginViewController alloc]
                                            initWithNibName:@"LoginViewController"

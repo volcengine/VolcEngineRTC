@@ -29,12 +29,14 @@ public:
      * @type callback
      * @region 多房间
      * @author shenpengliang
-     * @brief 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
+     * @brief 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。
      * @param [in] room_id 房间 ID。
      * @param [in] uid 用户 ID。
      * @param [in] state 房间状态码。  <br>
      *              + 0: 成功。  <br>
-     *              + !0: 失败，具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
+     *              + !0: 失败或异常退房。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。异常退出房间，具体原因包括<br>
+     *               - -1004：相同 ID 用户在其他端进房； <br>
+     *               - -1006：用户被踢出当前房间。
      * @param [in] extra_info 额外信息。
      *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
      *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
@@ -69,7 +71,7 @@ public:
      * @author shenpengliang
      * @brief 离开房间回调。  <br>
      *        用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
-     * @param [in] stats 本次通话的统计数据，参看 RtcRoomStats{@link #RtcRoomStats} 。  <br>
+     * @param [in] stats 保留参数，目前为空。
      * @notes  <br>
      *       + 用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 方法离开房间后，若立即调用 destroyRTCVideo{@link #destroyRTCVideo} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
      *       + 离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
@@ -168,9 +170,9 @@ public:
      * @author shenpengliang
      * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
      * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
-     * @param reason 用户离开房间的原因：  <br>
+     * @param reason 用户离开房间的原因，详见 UserOfflineReason{@link #UserOfflineReason}。 <br>
      *              + 0: 远端用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 主动退出房间。  <br>
-     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 详细信息请参看[连接状态提示](hhttps://www.volcengine.com/docs/6348/95376)<br>
      *              + 2: 远端用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 切换至不可见状态。 <br>
      *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
@@ -500,10 +502,9 @@ public:
      *        + false: 视频流发送被解禁
      * @notes  <br>
      *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
-     *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
-     *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+     *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
+     *        + 在控制台开启大会模式后，只有被封禁/解禁用户会收到该回调。  <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void onVideoStreamBanned(const char* uid, bool banned) {
@@ -532,10 +533,9 @@ public:
      *        + false: 音频流发送被解禁
      * @notes  <br>
      *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
-     *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
-     *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+     *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。   <br>
+     *        + 在控制台开启大会模式后，只有被封禁/解禁用户会收到该回调。   <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void onAudioStreamBanned(const char* uid, bool banned) {

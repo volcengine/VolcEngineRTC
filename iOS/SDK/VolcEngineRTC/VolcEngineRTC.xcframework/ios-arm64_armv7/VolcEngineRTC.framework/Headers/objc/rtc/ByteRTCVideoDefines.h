@@ -53,12 +53,12 @@ typedef NS_ENUM(NSUInteger, ByteRTCTranscoderContentControlType) {
  * @brief 合流布局区域类型
  */
 typedef NS_ENUM(NSUInteger, ByteRTCTranscoderLayoutRegionType) {
-    
+
     /** 
      * @brief 合流布局区域类型为视频。
      */
     ByteRTCTranscoderLayoutRegionTypeVideoStream = 0,
-    
+
     /** 
      * @brief 合流布局区域类型为图片。
      */
@@ -301,23 +301,23 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoPictureType) {
 
 /** 
  * @type keytype
- * @brief 编码策略偏好
+ * @brief 编码策略偏好。
  */
 typedef NS_ENUM(NSInteger, ByteRTCVideoEncoderPreference) {
     /** 
-     * @brief 无偏好
+     * @brief 无偏好。不降低帧率和分辨率。
      */
     ByteRTCVideoEncoderPreferenceDisabled          = 0,
     /** 
-     * @brief 帧率优先
+     * @brief （默认值）帧率优先。
      */
     ByteRTCVideoEncoderPreferenceMaintainFramerate = 1,
     /** 
-     * @brief 质量优先
+     * @brief 分辨率优先。
      */
     ByteRTCVideoEncoderPreferenceMaintainQuality   = 2,
     /** 
-     * @brief 平衡质量与帧率
+     * @brief 平衡帧率与分辨率。
      */
     ByteRTCVideoEncoderPreferenceBalance           = 3,
 };
@@ -607,8 +607,8 @@ typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingEvent) {
 };
 
 /** 
- * @hidden
- * @brief 343 需求，缺注释，需补齐
+ * @type errorcode
+ * @brief 单流转推直播错误码
  */
 typedef NS_ENUM(NSUInteger, ByteRTCSingleStreamPushEvent) {
     /**
@@ -616,33 +616,27 @@ typedef NS_ENUM(NSUInteger, ByteRTCSingleStreamPushEvent) {
      */
     ByteRTCSingleStreamPushEventBase = 0,
     /** 
-     * @hidden
-     * @brief 343 需求，缺注释，需补齐
-     */
-    ByteRTCSingleStreamPushEventStart = 1,
+    * @brief 开始推流。
+    */
+   ByteRTCSingleStreamPushEventStart = 1,
     /** 
-     * @hidden
-     * @brief 343 需求，缺注释，需补齐
-     */
-    ByteRTCSingleStreamPushEventStartSuccess = 2,
+    * @brief 推流成功。
+    */
+   ByteRTCSingleStreamPushEventStartSuccess = 2,
     /** 
-     * @hidden
-     * @brief 343 需求，缺注释，需补齐
-     */
-    ByteRTCSingleStreamPushEventStartFailed = 3,
+    * @brief 推流失败。
+    */
+   ByteRTCSingleStreamPushEventStartFailed = 3,
     /** 
-     * @hidden
-     * @brief 343 需求，缺注释，需补齐
+     * @brief 停止推流。
      */
     ByteRTCSingleStreamPushEventStop = 4,
     /** 
-     * @hidden
-     * @brief 343 需求，缺注释，需补齐
-     */
-    ByteRTCSingleStreamPushEventTimeout = 5,
+    * @brief 单流转推直播任务处理超时，请检查网络状态并重试。
+    */
+   ByteRTCSingleStreamPushEventTimeout = 5,
     /** 
-     * @hidden
-     * @brief 343 需求，缺注释，需补齐
+     * @brief 参数错误。
      */
     ByteRTCSingleStreamPushEventParamError = 6,
 };
@@ -769,7 +763,7 @@ typedef NS_ENUM(NSInteger, ByteRTCVirtualBackgroundSourceType){
 
 /** 
  * @type keytype
- * @brief 移动端摄像头
+ * @brief 摄像头类型
  */
 typedef NS_ENUM(NSInteger, ByteRTCCameraID) {
     /** 
@@ -911,21 +905,22 @@ typedef NS_ENUM(NSUInteger, ByteRTCScreenCaptureSourceType) {
 };
 /** 
  * @type keytype
- * @brief 内部采集屏幕视频流时，是否采集鼠标信息
+ * @region 屏幕共享
+ * @brief 内部采集屏幕视频流时，是否采集鼠标信息。
  */
 typedef NS_ENUM(NSUInteger, ByteRTCMouseCursorCaptureState) {
     /** 
-     * @brief 采集鼠标信息
+     * @brief 采集鼠标信息。
      */
     ByteRTCMouseCursorCaptureStateOn,
     /** 
-     * @brief 不采集鼠标信息
+     * @brief 不采集鼠标信息。
      */
     ByteRTCMouseCursorCaptureStateOff,
 };
 /** 
  * @type keytype
- * @brief 屏幕共享时的边框高亮设置
+ * @brief 屏幕共享时的边框高亮设置。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCHighlightConfig: NSObject
 /** 
@@ -933,11 +928,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCHighlightConfig: NSObject
  */
 @property (assign, nonatomic) BOOL enableHighlight;
 /** 
- * @brief 边框的颜色, 颜色格式为十六进制 ARGB:  0xAARRGGBB
+ * @brief 边框的颜色, 颜色格式为十六进制 ARGB: 0xAARRGGB。
  */
 @property (assign, nonatomic) uint32_t borderColor;
 /** 
- * @brief 边框的宽度，单位：像素
+ * @brief 边框的宽度，单位：像素。
  */
 @property (assign, nonatomic) int borderWidth;
 @end
@@ -1131,23 +1126,23 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectResult : NSObject
 
 /** 
  * @type keytype
- * @brief 矩形区域
+ * @brief 矩形区域，用于指定屏幕区域。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCRectangle : NSObject
 /** 
- * @brief 矩形区域左上角的 x 坐标
+ * @brief 矩形区域左上角的 x 坐标。
  */
 @property(assign, nonatomic) int x;
 /** 
- * @brief 矩形区域左上角的 y 坐标
+ * @brief 矩形区域左上角的 y 坐标。
  */
 @property(assign, nonatomic) int y;
 /** 
- * @brief 矩形宽度 (px)
+ * @brief 矩形宽度，单位：px。
  */
 @property(assign, nonatomic) int width;
 /** 
- * @brief 矩形高度(px)
+ * @brief 矩形高度，单位：px。
  */
 @property(assign, nonatomic) int height;
 @end
@@ -1159,7 +1154,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
 /** 
  * @brief 人脸检测结果 <br>
  *        + 0：检测成功 <br>
- *        + !0：检测失败。详见[CV 错误码](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+ *        + !0：检测失败。详见[CV 错误码](https://www.volcengine.com/docs/6705/102042)。
  */
 @property(assign, nonatomic) int detectResult;
 /** 
@@ -1194,7 +1189,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCanvas : NSObject
  */
 @property(strong, nonatomic) NSString* _Nullable roomId;
 /** 
- * @brief 用户 ID
+ * @brief 用户 ID，必填。
  */
 @property(strong, nonatomic) NSString* _Nullable uid;
 /** 
@@ -1225,6 +1220,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFrameExtendedData : NSObject
 NS_ASSUME_NONNULL_BEGIN
 
 /** 
+ * @hidden
+ * @deprecated since 337 along with setVideoEncoderConfig:config:
  * @type keytype
  * @brief 视频流参数
  */
@@ -1245,6 +1242,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoSolution: NSObject
  * @brief 视频编码质量策略，参见 ByteRTCVideoEncoderPreference{@link #ByteRTCVideoEncoderPreference}
  */
 @property(nonatomic, assign) ByteRTCVideoEncoderPreference encoderPreference;
+/** 
+ * @brief 将视频编码为横屏帧（Landscape）或者竖屏帧（Portrait）,默认与发送端横竖屏保持一致（Adaptive）
+ */
+@property(nonatomic, assign) ByteRTCVideoOrientation orientation;
 @end
 
 /** 
@@ -1268,6 +1269,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCaptureConfig: NSObject
 @end
 
 /** 
+ * @hidden
+ * @deprecated since 337 along with setVideoEncoderConfig:config:
  * @type keytype
  * @brief 流属性。
  */
@@ -1301,6 +1304,8 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 @end
 
 /** 
+ * @hidden
+ * @deprecated since 337 along with setVideoEncoderConfig:config:
  * @type keytype
  * @brief 流信息
  */
@@ -1530,7 +1535,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  */
 @property(copy, nonatomic) NSString * _Nonnull uid;
 /** 
- * @brief 图片或视频流所在房间的房间 ID。<br>
+ * @brief 图片或视频流所在房间的房间 ID。必填。<br>
  *        如果此图片或视频流是通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
  */
 @property(copy, nonatomic) NSString * _Nonnull roomId;
@@ -1657,7 +1662,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
  */
 @property(copy, nonatomic) NSString * _Nonnull codec;
 /** 
- * @brief 音频采样率，单位 kHz。可取 32Khz、44.1Khz、48Khz，默认值为 48Khz。
+ * @brief 音频采样率，单位 Hz。可取 32000Hz、44100Hz、48000Hz，默认值为 48000Hz。
  */
 @property(assign, nonatomic) NSInteger sampleRate;
 /** 
@@ -1720,7 +1725,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 /** 
  * @brief 推流用户 ID。
  */
-@property(copy, nonatomic) NSString * _Nullable userId;
+@property(copy, nonatomic) NSString * _Nonnull userId;
 /** 
  * @brief 获取默认转推直播配置参数。
  * @return 转推直播配置参数，参看 ByteRTCLiveTranscoding{@link #ByteRTCLiveTranscoding}。
@@ -1728,7 +1733,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 + (instancetype _Nonnull)defaultTranscoding;
 @end
 /** 
- * @hidden not available in 343
+ * @hidden(macOS)
  * @type keytype
  * @brief 单流转推直播配置参数。
  */
@@ -2292,7 +2297,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrameInfo : NSObject
 
 @end
 /** 
- * @hidden not available in 343
+ * @hidden(macOS)
  * @type callback
  * @region 转推直播
  * @brief 单流转推直播观察者。  <br>
@@ -2377,7 +2382,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaMetadataObserver <NSObject>
 - (void)receiveVideoFrameFromUID:(NSString * _Nonnull)uid
     withExtendedData:(NSData* _Nullable)extendedData atTimestamp:(NSTimeInterval)timestamp;
 @end
-/**  
+/** 
  * @type keytype
  * @brief 视频编码配置。参考 [设置视频发布参数](https://www.volcengine.com/docs/6348/70122)
  */
@@ -2402,9 +2407,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
  */
 @property(nonatomic, assign) NSInteger maxBitrate;
 /** 
- * @brief 视频编码质量策略，参见 ByteRTCVideoEncoderPreference{@link #ByteRTCVideoEncoderPreference}
+ * @brief 编码策略偏好，默认为帧率优先。参看 ByteRTCVideoEncoderPreference{@link #ByteRTCVideoEncoderPreference}。
  */
 @property(nonatomic, assign) ByteRTCVideoEncoderPreference encoderPreference;
+/** 
+ * @brief 设置视频编码器输出的画面为横屏或竖屏显示。具体模式参看 ByteRTCVideoOrientation{@link #ByteRTCVideoOrientation}。
+ * @notes 该设置仅影响远端。若希望本地预览画面的横竖屏模式与远端保持一致，则本地需调用 setVideoCaptureConfig:{@link #ByteRTCVideo#setVideoCaptureConfig:}，将 CapturePreference 设置为 “AUTO_PERFORMANCE” 用编码参数进行采集。如果你为多路流设置了不同的显示模式，则本地预览默认与大流的模式保持一致。
+ */
+@property(nonatomic, assign) ByteRTCVideoOrientation orientation;
 @end
 /** 
  * @type keytype
@@ -2443,11 +2453,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
  */
 @property(assign, nonatomic) BOOL isAutoPublish;
 /** 
- * @brief 是否自动订阅音频流，默认为自动订阅。
+ * @brief 是否自动订阅音频流，默认为手动订阅。<br>
+ *        包含主流和屏幕流。 
  */
 @property(assign, nonatomic) BOOL isAutoSubscribeAudio;
 /** 
- * @brief 是否自动订阅主视频流，默认为自动订阅。 
+ * @brief 是否自动订阅主视频流，默认为手动订阅。<br>
+ *        包含主流和屏幕流。 
  */
 @property(assign, nonatomic) BOOL isAutoSubscribeVideo;
 /** 
@@ -2461,19 +2473,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCSourceCropInfo : NSObject
 /** 
- * @brief 裁剪后得到的视频帧左上角横坐标相对于裁剪前整体画面的归一化比例，取值范围[0.0, 1.0)
+ * @brief 裁剪后得到的视频帧左上角横坐标相对于裁剪前整体画面的比例，取值范围[0.0, 1.0)
  */
 @property(assign, nonatomic) CGFloat LocationX;
 /** 
- * @brief 裁剪后得到的视频帧左上角纵坐标相对于裁剪前整体画面的归一化比例，取值范围[0.0, 1.0)
+ * @brief 裁剪后得到的视频帧左上角纵坐标相对于裁剪前整体画面的比例，取值范围[0.0, 1.0)
  */
 @property(assign, nonatomic) CGFloat LocationY;
 /** 
- * @brief 裁剪后得到的视频帧宽度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]
+ * @brief 裁剪后得到的视频帧宽度相对于裁剪前整体画面的比例，取值范围(0.0, 1.0]
  */
 @property(assign, nonatomic) CGFloat WidthProportion;
 /** 
- * @brief 裁剪后得到的视频帧高度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]
+ * @brief 裁剪后得到的视频帧高度相对于裁剪前整体画面的比例，取值范围(0.0, 1.0]
  */
 @property(assign, nonatomic) CGFloat HeightProportion;
 @end
@@ -2483,11 +2495,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSourceCropInfo : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamRegion : NSObject
 /** 
- * @brief 用户 ID
+ * @brief 用户 ID。必填。  <br>
+ * 服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。
  */
 @property(copy, nonatomic) NSString * _Nonnull userId;
 /** 
- * @brief 房间 ID
+ * @brief 房间 ID必填。  <br>
+ *        服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。
  */
 @property(copy, nonatomic) NSString * _Nonnull roomId;
 /** 
@@ -2515,7 +2529,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamRegion : NSObject
  */
 @property(assign, nonatomic) NSInteger zOrder;
 /** 
- * @brief 透明度，范围 [0.0, 1.0]
+ * @brief 透明度，必填。可选范围为 [0.0, 1.0]。
  */
 @property(assign, nonatomic) CGFloat alpha;
 /** 
@@ -2528,34 +2542,38 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamRegion : NSObject
 /** 
  * @brief 推流媒体类型<br>
  *        0：普通音视频流<br>
- *        1:   屏幕流
+ *        1: 屏幕流
  */
 @property(assign, nonatomic) NSInteger streamType;
 /** 
- * @brief 视频显示模式
+ * @brief 视频显示模式。详见 ByteRTCRenderMode{@link #ByteRTCRenderMode} 数据类型。  <br>
  */
 @property(assign, nonatomic) ByteRTCRenderMode renderMode;
 /** 
- * @brief 视频裁剪信息
+ * @brief 视频裁剪信息。 详见 ByteRTCSourceCropInfo{@link #ByteRTCSourceCropInfo}。
  */
 @property(strong, nonatomic) ByteRTCSourceCropInfo * _Nonnull sourceCrop;
 @end
 
 /** 
  * @type keytype
- * @brief 公共流的合流布局
+ * @brief 公共流的合流布局。必填
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamLayout : NSObject
 /** 
- * @brief 布局模式，目前只支持用户自定义模式，值为 `2`
+ * @brief 布局模式，必填。<br>
+ *        + `0`: 自动模式。默认值。 <br>
+ *        + `2`: 自定义模式。
  */
 @property(assign, nonatomic) NSInteger layoutMode;
 /** 
- * @brief 插帧模式。0: 插入上一帧，!0: 插黑帧
+ * @brief 插帧模式。<br>
+ *         + `0`: 补最后一帧<br>
+ *         + `1`: 补背景图片，如果没有设置背景图片则补黑帧
  */
 @property(assign, nonatomic) NSInteger interpolationMode;
 /** 
- * @brief 背景颜色
+ * @brief 画布的背景颜色。格式为 RGB 定义下的 Hex 值，如 #FFB6C1 表示浅粉色。默认值 #000000，表示为黑色
  */
 @property(copy, nonatomic) NSString *_Nonnull backgroundColor;
 /** 
@@ -2563,49 +2581,56 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamLayout : NSObject
  */
 @property(copy, nonatomic) NSString *_Nonnull backgroundImage;
 /** 
- * @brief 用户布局信息列表
+ * @brief 用户布局信息列表。每一个该类型对象为一路单独的视频流的布局信息。
  */
 @property(copy, nonatomic) NSArray<ByteRTCPublicStreamRegion *> * _Nonnull regions;
 @end
 
 /** 
  * @type keytype
- * @brief 公共流的视频参数
+ * @brief 公共流的视频编码参数
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamVideoConfig : NSObject
 /** 
- * @brief 视频宽度
+ * @brief 公共流视频宽度，必填。单位为 px，范围为 [2, 1920]，必须是偶数。
  */
 @property(assign, nonatomic) NSInteger width;
 /** 
- * @brief 视频高度
+ * @brief 公共流视频高度，必填。单位为 px，范围为 [16, 1280]，必须是偶数。
  */
 @property(assign, nonatomic) NSInteger height;
 /** 
- * @brief 视频帧率
+ * @brief 公共流视频帧率。必填<br>
+ *        范围：[1, 60] <br>
  */
 @property(assign, nonatomic) NSInteger fps;
 /** 
- * @brief 视频码率(kbps)
+ * @brief 视频码率，必填<br>
+ *        范围：[1,10000000]
+ *        单位为 bps
  */
 @property(assign, nonatomic) NSInteger bitrate;
 @end
 
 /** 
+ * @hidden currently not available
  * @type keytype
- * @brief 公共流视频参数
+ * @brief 公共流的音频编码参数
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamAudioConfig : NSObject
 /** 
- * @brief 音频采样率；  16k, 32k, 44.1k, 48k
+ * @brief 音频采样率，必填。单位为 Hz。可选取值：16000, 32000, 44100 和 48000
  */
 @property(assign, nonatomic) NSInteger sampleRate;
 /** 
- * @brief 声道数
+ * @brief 音频声道数，必填。<br>
+ * + 1: 单声道<br>
+ * + 2: 双声道
  */
 @property(assign, nonatomic) NSInteger channels;
 /** 
- * @brief 音频码率(kbps); 16kbsp, 32kbps, 64kbps
+ * @brief 音频码率，必填。单位为 kbps。<br>
+ * 正整数，可选取值：16, 32, 64。
  */
 @property(assign, nonatomic) NSInteger bitrate;
 @end
@@ -2658,23 +2683,26 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoWatermarkConfig: NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreaming : NSObject
 /** 
- * @brief 用户布局信息，参看 ByteRTCPublicStreamLayout{@link #ByteRTCPublicStreamLayout}
+ * @brief 视频流公共流整体布局参数，必填。详见 ByteRTCPublicStreamLayout{@link #ByteRTCPublicStreamLayout}
  */
 @property(strong, nonatomic) ByteRTCPublicStreamLayout * _Nonnull layout;
 /** 
- * @brief 视频参数。详见 ByteRTCPublicStreamVideoConfig{@link #ByteRTCPublicStreamVideoConfig}。
+ * @brief 公共流视频编码参数。详见 ByteRTCPublicStreamVideoConfig{@link #ByteRTCPublicStreamVideoConfig}。
  */
 @property(strong, nonatomic) ByteRTCPublicStreamVideoConfig * _Nonnull video;
 /** 
- * @brief 音频参数。详见 ByteRTCPublicStreamAudioConfig{@link #ByteRTCPublicStreamAudioConfig}
+ * @hidden currently not available
+ * @brief 公共流音频编码参数。详见 ByteRTCPublicStreamAudioConfig{@link #ByteRTCPublicStreamAudioConfig}
  */
 @property(strong, nonatomic) ByteRTCPublicStreamAudioConfig * _Nonnull audio;
 /** 
- * @brief 推公共流的房间ID
+ * @hidden currently not available
+ * @brief 设置媒体流所在房间的房间 ID。服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。必填。
  */
 @property(copy, nonatomic) NSString * _Nullable roomId;
 /** 
- * @brief 获取默认合流参数
+ * @brief 获取默认的公共流转码配置属性。
+ * @return 包含默认配置的 ByteRTCPublicStreaming{@link #ByteRTCPublicStreaming} 结构体
  */
 + (instancetype _Nonnull)defaultPublicStreaming;
 @end
@@ -2718,4 +2746,43 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
  *        + !0：方法调用失败  <br>
  */
 - (int)setVideoCaptureDevice:(NSString* _Nonnull)deviceID;
+
 @end
+/**  
+ * @type callback
+ * @author wangfujun.911
+ */
+BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSnapshotCallbackDelegate <NSObject>
+@required
+/**  
+ * @type callback
+ * @brief 调用 takeLocalSnapshot:callback:{@link #ByteRTCVideo#takeLocalSnapshot:callback:} 截取视频画面时，收到此回调。
+ * @param taskId 本地截图任务的编号。和 takeLocalSnapshot:callback:{@link #ByteRTCVideo#takeLocalSnapshot:callback:} 的返回值一致。
+ * @param streamIndex 截图的视频流的属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}。
+ * @param image 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。
+ * @param errorCode 截图错误码：<br>
+ *        + 0: 成功 <br>
+ *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
+ *        + -2: 截图错误。流无效。
+ */
+- (void)onTakeLocalSnapshotResult:(NSInteger) taskId
+                      streamIndex:(ByteRTCStreamIndex)streamIndex
+                            image:(ByteRTCImage * _Nullable)image
+                        errorCode:(NSInteger)errorCode;
+/**  
+ * @type callback
+ * @brief 调用 takeRemoteSnapshot:callback:{@link #ByteRTCVideo#takeRemoteSnapshot:callback:} 截取视频画面时，收到此回调。
+ * @param taskId 远端截图任务的编号。和 takeRemoteSnapshot:callback:{@link #ByteRTCVideo#takeRemoteSnapshot:callback:} 的返回值一致。
+ * @param streamKey 截图的视频流，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
+ * @param image 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。
+ * @param errorCode 截图错误码：<br>
+ *        + 0: 成功 <br>
+ *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
+ *        + -2: 截图错误。流无效。
+ */
+- (void)onTakeRemoteSnapshotResult:(NSInteger)taskId
+                         streamKey:(ByteRTCRemoteStreamKey * _Nonnull)streamKey
+                             image:(ByteRTCImage * _Nullable)image
+                         errorCode:(NSInteger)errorCode;
+@end
+

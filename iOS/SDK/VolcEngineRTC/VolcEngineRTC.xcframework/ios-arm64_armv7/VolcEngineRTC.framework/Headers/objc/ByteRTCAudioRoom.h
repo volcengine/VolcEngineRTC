@@ -24,13 +24,15 @@
   * @type callback
   * @region 多房间
   * @author shenpengliang
-  * @brief 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
+  * @brief 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。
   * @param rtcRoom ByteRTCAudioRoom 实例
   * @param roomId 房间 ID。
   * @param uid 用户 ID。
   * @param state 房间状态码。  <br>
   *              + 0: 成功。  <br>
-  *              + !0: 失败，具体原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。
+  *              + !0: 失败或异常退房。具体原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。异常退出房间，具体原因包括<br>
+  *               - -1004：相同 ID 用户在其他端进房； <br>
+  *               - -1006：用户被踢出当前房间。
   * @param extraInfo 额外信息。
   *                  `joinType`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
   *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 到加入房间成功所经历的时间间隔，单位为 ms。
@@ -60,7 +62,7 @@
  * @brief 离开房间成功回调。  <br>
  *        用户调用 leaveRoom{@link #ByteRTCAudioRoom#leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并释放所有通话相关的音频资源。SDK 完成所有的资源释放后通过此回调通知用户。  <br>
  * @param rtcRoom  RTCRoom 对象。  <br>
- * @param stats 本次通话的统计数据，详见数据结构 ByteRTCRoomStats{@link #ByteRTCRoomStats} 。  <br>
+ * @param stats 保留参数，目前为空。
  * @notes  <br>
  *       + 用户调用 leaveRoom{@link #ByteRTCAudioRoom#leaveRoom} 方法离开房间后，如果立即销毁 RTC 引擎，则将无法收到此回调事件。  <br>
  *       + 离开房间结束通话后，如果 App 需要使用系统音频设备，则建议在收到此回调后再初始化音频设备，否则可能由于 SDK 占用了导致 App 初始化音频设备失败。  <br>
@@ -107,7 +109,7 @@
  * @param uid 离开房间，或切至隐身的远端用户 ID 。  <br>
  * @param reason 用户离开房间的原因，参看 ByteRTCUserOfflineReason{@link #ByteRTCUserOfflineReason}。  <br>
  *        + 0: 远端用户调用 leaveRoom{@link #ByteRTCAudioRoom#leaveRoom} 主动退出房间。  <br>
- *        + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+ *        + 1: 远端用户因 Token 过期或网络原因等掉线。 详细信息请参看[连接状态提示](hhttps://www.volcengine.com/docs/6348/95376)<br>
  *        + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCAudioRoom#setUserVisibility:} 切换至不可见状态。 <br>
  *        + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
  */
@@ -169,10 +171,10 @@
  *        + false: 音频流发送被解禁
  * @notes  <br>
  *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
- *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
- *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+ *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
+ *        + 在控制台开启大会模式后，只有被封禁/解禁用户会收到该回调。<br>
+ *        + 同一房间解散后再次创建，房间内状态清空。
  */
 - (void)rtcRoom:(ByteRTCAudioRoom * _Nonnull)rtcRoom
         onAudioStreamBanned:(NSString * _Nonnull)uid isBanned:(BOOL)banned;
@@ -269,6 +271,16 @@
  */
 - (void)rtcRoom:(ByteRTCAudioRoom * _Nonnull)rtcRoom
         onForwardStreamEvent:(NSArray<ForwardStreamEventInfo *> * _Nonnull)infos;
+
+/** 
+ * @type callback
+ * @brief 网络质量回调
+ * @param rtcRoom ByteRTCAudioRoom 对象
+ * @param localQuality 本端网络质量，详见 ByteRTCNetworkQualityStats{@link #ByteRTCNetworkQualityStats}。
+ * @param remoteQualities 已订阅用户的网络质量，详见 ByteRTCNetworkQualityStats{@link #ByteRTCNetworkQualityStats}。
+ * @note 更多通话中的监测接口，详见[通话中质量监测](https://www.volcengine.com/docs/6348/106866)
+ */
+- (void)rtcRoom:(ByteRTCAudioRoom * _Nonnull)rtcRoom onNetworkQuality:(ByteRTCNetworkQualityStats *_Nonnull)localQuality remoteQualities:(NSArray<ByteRTCNetworkQualityStats*> *_Nonnull)remoteQualities;
 @end
 
 #pragma mark - Other
@@ -283,7 +295,8 @@ BYTERTC_APPLE_EXPORT @interface AudioRoomConfig : NSObject
  */
 @property(nonatomic) ByteRTCRoomProfile profile;
 /** 
- * @brief 是否自动订阅音频流，默认为自动订阅
+ * @brief 是否自动订阅音频流，默认为手动订阅<br>
+ *        包含主流和屏幕流。 
  */
 @property(assign, nonatomic) BOOL isAutoSubscribeAudio;
 /** 
@@ -309,8 +322,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
  * @type api
  * @region 多房间
  * @author shenpengliang
- * @brief 销毁房间
- * @notes 退出并销毁调用 createRTCRoom:{@link #ByteRTCAudio#createRTCRoom:} 所创建的房间。
+ * @brief 退出并销毁调用 createRTCRoom:{@link #ByteRTCAudio#createRTCRoom:} 所创建的房间实例。
  */
 - (void)destroy;
 /** 
@@ -347,10 +359,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
  *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom{@link #ByteRTCAudioRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
  *        + -3: room 为空 <br>
  * @notes  <br>
- *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCAudioDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
- *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCAudioRoom#rtcRoom:onRoomStateChanged:withUid:state:xtraInfo:} 回调通知。  <br>
+ *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCAudioRoom#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知，错误类型为重复登录 ByteRTCErrorCodeDuplicateLogin。  <br>
+ *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCAudioRoom#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。  <br>
  *        + 本地用户调用 setUserVisibility:{@link #ByteRTCAudioRoom#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
- *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。  <br>
+ *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCAudioRoom#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。如果加入房间的用户可见，远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onUserJoined:elapsed:}。
  */
 - (int)joinRoom:(NSString *_Nullable)token userInfo:(ByteRTCUserInfo * _Nonnull)userInfo
             roomConfig:(AudioRoomConfig * _Nonnull)roomConfig;
@@ -509,7 +521,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
   *        消息接收用户的 ID
   * @param message  <br>
   *        发送的二进制消息内容  <br>
-  *        消息不超过 46KB。
+  *        消息不超过 64KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
   *      + 在发送房间内二进制消息前，必须先调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 加入房间。  <br>
@@ -539,7 +551,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
   * @brief 给房间内的所有其他用户发送二进制消息。
   * @param message  <br>
   *        用户发送的二进制广播消息  <br>
-  *        消息不超过 46KB。
+  *        消息不超过 64KB。
   * @return 这次发送消息的编号，从 1 开始递增。
   * @notes  <br>
   *      + 在房间内广播二进制消息前，必须先调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 加入房间。  <br>
@@ -626,7 +638,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRoom : NSObject
  * @return 方法调用结果： <br>
  *        + ByteRTCRangeAudio：成功，返回一个 ByteRTCRangeAudio{@link #ByteRTCRangeAudio} 实例。  <br>
  *        + NULL：失败，当前 SDK 不支持范围语音功能。
- * @notes 首次调用该方法须在创建房间后、加入房间前。
+ * @notes 首次调用该方法须在创建房间后、加入房间前。范围语音相关 API 和调用时序详见[范围语音](https://www.volcengine.com/docs/6348/114727)。 
  */
 - (ByteRTCRangeAudio *_Nullable)getRangeAudio;
 

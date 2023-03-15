@@ -91,7 +91,7 @@ struct FaceDetectResult {
     /** 
      * @brief 人脸检测结果 <br>
      *        + 0：检测成功 <br>
-     *        + !0：检测失败。详见[CV 错误码](http://ailab-cv-sdk.bytedance.com/docs/2036/99783/)。
+     *        + !0：检测失败。详见[CV 错误码](https://www.volcengine.com/docs/6705/102042)。
      */
     int detect_result = 0;
     /** 
@@ -226,7 +226,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int setAlgoModelResourceFinder(uintptr_t finder, uintptr_t deleter) = 0;
 
@@ -243,7 +243,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      * @notes 开始使用视频特效前，你必须先调用这个方法进行许可证验证
      */
     virtual int checkLicense(void* androidContext, void* jnienv, const char* licensePath) = 0;
@@ -259,7 +259,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      * @notes <br>
      *        + 使用视频特效的功能前，你必须获取特效 SDK 的在线许可证。  <br>
      *        + 通过此接口获取授权消息后，你必须参考 [在线授权说明](https://www.volcengine.com/docs/6705/102012) 自行实现获取在线许可证的业务逻辑。获取许可证后，你必须调用 checkLicense{@link #checkLicense} 确认许可证有效。然后，你才可以使用 CV 功能。  <br>
@@ -276,7 +276,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int freeAuthMessage(char * pmsg) = 0;
 
@@ -289,8 +289,8 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     * @notes 在调用CheckLicense{@link #checkLicense}和SetAlgoModelPath{@link #setAlgoModelPath}后调用此方法
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
+     * @notes 在调用 checkLicense{@link #IVideoEffect#checkLicense} 和 setAlgoModelPath{@link #IVideoEffect#setAlgoModelPath} 后调用此方法。
      */
     virtual int enableEffect(bool enabled) = 0;
 
@@ -312,7 +312,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int setVideoEffectExpressionDetect(const VideoEffectExpressionDetectConfig& expressionDetectConfig) = 0;
 
@@ -328,7 +328,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int setEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
 
@@ -343,7 +343,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      * @notes  该接口会在 setEffectNodes{@link #IVideoEffect#setEffectNodes} 设置的特效基础上叠加特效。
      */
     virtual int appendEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
@@ -359,7 +359,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      * @notes 移除 setEffectNodes{@link #IVideoEffect#SetEffectNodes} 或 appendEffectNodes{@link #IVideoEffect#appendEffectNodes} 设置的视频特效资源。
      */
     virtual int removeEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
@@ -378,7 +378,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int updateNode(const char* nodePath, const char* nodeKey, float nodeValue) = 0;
 
@@ -392,7 +392,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int setColorFilter(const char* resPath) = 0;
 
@@ -406,7 +406,7 @@ public:
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
      *      + 1001: 特效 SDK 不支持该功能。  <br>
-     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int setColorFilterIntensity(float intensity) = 0;
 
@@ -424,8 +424,8 @@ public:
      *        + 0: 调用成功。  <br>
      *        + 1000: 未集成特效 SDK。  <br>
      *        + 1001: 特效 SDK 不支持该功能。  <br>
-     *        + > 40000: 调用失败，特效 SDK 授权错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
-     *        + < 0: 调用失败，特效 SDK 内部错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *        + > 40000: 调用失败，特效 SDK 授权错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
+     *        + < 0: 调用失败，特效 SDK 内部错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
     virtual int initVirtualBackground(void* androidContext, void* jnienv, const char* licensePath,const char* modelPath) = 0;
 
@@ -438,7 +438,7 @@ public:
      * @param [in] source 虚拟背景对象，详见 VirtualBackgroundSource{@link #VirtualBackgroundSource} 。
      * @return  <br>
      *        + 0: 调用成功。  <br>
-     *        + < 0: 调用失败，特效 SDK 内部错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *        + < 0: 调用失败，特效 SDK 内部错误，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      *        + -1: 调用失败，未调用 initVirtualBackground{@link #IVideoEffect#initVirtualBackground} 或调用失败，导致 license 验证失败。  <br>
      *        + -4: 调用失败，自定义背景图片打开失败。  <br>
      *        + -37: 调用失败，自定义背景图片解码失败。  <br>
@@ -457,7 +457,7 @@ public:
      * @brief 关闭虚拟背景。
      * @return  <br>
      *        + 0: 调用成功。  <br>
-     *        + < 0: 调用失败，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
+     *        + < 0: 调用失败，具体错误码请参考 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      * @notes 调用 enableVirtualBackground{@link #enableVirtualBackground} 开启虚拟背景后，可以调用此接口关闭虚拟背景。
      */
     virtual int disableVirtualBackground() = 0;
@@ -486,9 +486,12 @@ public:
      *        + 0：调用成功。  <br>
      *        + 1000：未集成特效 SDK。  <br>
      *        + 1001：特效 SDK 不支持该功能。  <br>
-     *        + < 0：调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/5889/61813)。
+     *        + < 0：调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes  <br>
-     *        调用此接口前需依次调用以下接口：1、检查视频特效许可证 checkLicense{@link #IVideoEffect#checkLicense}；2、设置视频特效算法模型路径 setAlgoModelPath{@link #IVideoEffect#setAlgoModelPath}；3、开启视频特效 enableEffect {@link #IVideoEffect#enableEffect}。
+     *        调用此接口前需依次调用以下接口：<br>
+     *        1、检查视频特效许可证 checkLicense{@link #IVideoEffect#checkLicense}；<br>
+     *        2、设置视频特效算法模型路径 setAlgoModelPath{@link #IVideoEffect#setAlgoModelPath}；<br>
+     *        3、开启视频特效 enableEffect{@link #IVideoEffect#enableEffect}。
      */
     virtual int setBackgroundSticker(const char* modelPath, const VirtualBackgroundSource& source) = 0;
 

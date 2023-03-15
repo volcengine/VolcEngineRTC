@@ -112,24 +112,44 @@ enum VideoCodecMode {
 };
 
 /** 
+ * @hidden
  * @type keytype
- * @brief 编码策略偏好
+ * @brief 视频帧朝向
+ */
+enum VideoOrientation {
+    /** 
+     * @brief （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。
+     */
+    kVideoOrientationAdaptive = 0,
+    /** 
+     * @brief 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。
+     */
+    kVideoOrientationPortrait = 1,
+    /** 
+     * @brief 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。
+     */
+    kVideoOrientationLandscape = 2
+};
+
+/** 
+ * @type keytype
+ * @brief 编码策略偏好。
  */
 enum VideoEncodePreference {
     /** 
-     * @brief 无偏好
+     * @brief 无偏好。不降低帧率和分辨率。
      */
     kVideoEncodePreferenceDisabled = 0,
     /** 
-     * @brief 帧率优先
+     * @brief （默认值）帧率优先。
      */
     kVideoEncodePreferenceFramerate,
     /** 
-     * @brief 质量优先
+     * @brief 分辨率优先。
      */
     kVideoEncodePreferenceQuality,
     /** 
-     * @brief 平衡质量与帧率
+     * @brief 平衡帧率与分辨率。
      */
     kVideoEncodePreferenceBalance,
 };
@@ -162,6 +182,8 @@ enum CameraID {
 #define SEND_KBPS_DISABLE_VIDEO_SEND 0
 
 /** 
+ * @hidden
+ * @deprecated since 336 along with setVideoEncoderConfig(StreamIndex index, const VideoSolution* solutions, int solution_num) = 0;
  * @type keytype
  * @brief 视频流参数
  */
@@ -186,6 +208,10 @@ struct VideoSolution {
      * @brief 视频编码质量策略，参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
+    /** 
+     * @brief 将视频编码为横屏帧（Landscape）或者竖屏帧（Portrait）,默认与发送端横竖屏保持一致（Adaptive）
+     */
+    VideoOrientation orientation = VideoOrientation::kVideoOrientationAdaptive;
 };
 /**  
  * @type keytype
@@ -211,12 +237,20 @@ struct VideoEncoderConfig {
      */
     int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
     /** 
-     * @brief 视频编码质量策略，默认质量优先，参看 VideoEncodePreference{@link #VideoEncodePreference}
+     * @brief 编码策略偏好，默认为帧率优先。参看 VideoEncodePreference{@link #VideoEncodePreference}。
      */
     VideoEncodePreference encoderPreference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
+    /** 
+     * @hidden
+     * @brief 设置视频编码器输出的画面为横屏或竖屏显示。具体模式参看 VideoOrientation{@link #VideoOrientation}。
+     * @notes 该设置仅影响远端。若希望本地预览画面的横竖屏模式与远端保持一致，则本地需调用 setVideoCaptureConfig{@link #IRTCVideo#setVideoCaptureConfig}，将 CapturePreference 设置为 “KAutoPerformance” 用编码参数进行采集。如果你为多路流设置了不同的显示模式，则本地预览默认与大流的模式保持一致。
+     */
+    VideoOrientation orientation = VideoOrientation::kVideoOrientationAdaptive;
 };
 
 /** 
+ * @hidden
+ * @deprecated since 336.1, along with onUserUnPublishStream and onUserUnPublishScreen.
  * @type keytype
  * @brief 视频属性
  */
@@ -258,6 +292,10 @@ struct VideoSolutionDescription {
      * @brief 视频编码质量偏好策略。参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
+    /** 
+     * @brief 将视频编码为横屏帧（Landscape）或者竖屏帧（Portrait）,默认与发送端横竖屏保持一致（Adaptive）
+     */
+    VideoOrientation orientation = VideoOrientation::kVideoOrientationAdaptive;
 };
 
 

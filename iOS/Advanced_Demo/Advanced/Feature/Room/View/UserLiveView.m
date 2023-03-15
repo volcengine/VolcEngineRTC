@@ -62,7 +62,12 @@
 
 - (void)setUid:(NSString *)uid {
     _uid = uid;
-    self.label.text = uid;
+    if (uid.length > 0) {
+        self.label.text = [@"UserID：" stringByAppendingString:uid];
+    } else {
+        self.label.text = @"";
+        [[self.liveView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    }
 }
 
 - (UIView *)liveView {

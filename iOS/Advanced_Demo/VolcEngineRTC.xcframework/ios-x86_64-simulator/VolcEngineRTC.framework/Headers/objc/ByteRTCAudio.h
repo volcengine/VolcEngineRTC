@@ -44,7 +44,8 @@
  * @author hanchenchen.c
  * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
  * @param engine ByteRTCAudio 对象。
- * @param state 当前 SDK 与信令服务器的连接状态，详见 ByteRTCConnectionState{@link #ByteRTCConnectionState}
+ * @param state 当前 SDK 与信令服务器的连接状态，详见 ByteRTCConnectionState{@link #ByteRTCConnectionState}。
+ * @notes 更多信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
  */
 - (void)rtcEngine:(ByteRTCAudio * _Nonnull)engine onConnectionStateChanged:(ByteRTCConnectionState)state;
 /** 
@@ -93,8 +94,10 @@
 * @type callback
 * @region 多房间
 * @author wangjunzheng
-* @brief 本地采集到第一帧音频帧时，收到该回调。
+* @brief 发布音频流时，采集到第一帧音频帧，收到该回调。
 * @param engine ByteRTCAudio 对象
+* @param streamIndex 音频流属性, 详见 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}
+*  @notes 如果发布音频流时，未开启本地音频采集，SDK 会推送静音帧，也会收到此回调。
 */
 - (void)rtcEngine:(ByteRTCAudio * _Nonnull)engine onFirstLocalAudioFrame:(ByteRTCStreamIndex) streamIndex;
 /** 
@@ -204,7 +207,7 @@
  * @author dixing
  * @brief 音频播放路由变化时，收到该回调。
  * @param device 新的音频播放路由，详见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}
- * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCAudio#setAudioRoute:} 都可能触发音频路由切换，详见[音频路由](117836) 。
+ * @notes 插拔音频外设，或调用 setAudioRoute:{@link #ByteRTCAudio#setAudioRoute:} 都可能触发音频路由切换，详见[移动端设置音频路由](https://www.volcengine.com/docs/6348/117836) 。
  */
 - (void)rtcEngine:(ByteRTCAudio *_Nonnull)engine onAudioRouteChanged:(ByteRTCAudioRoute)device;
 
@@ -339,11 +342,13 @@
  * @type callback
  * @region 实时消息通信
  * @author hanchenchen.c
- * @brief 给应用服务器发送消息的回调
- * @param engine ByteRTCAudio 对象
- * @param msgid 本条消息的 ID。所有的 P2P 和 P2Server 消息共用一个 ID 序列。
+ * @brief 给应用服务器发送消息的回调。
+ * @param engine ByteRTCAudio 对象。
+ * @param msgid 本条消息的 ID。
+ *              所有的 P2P 和 P2Server 消息共用一个 ID 序列。
  * @param error 消息发送结果。详见 ByteRTCUserMessageSendResult{@link #ByteRTCUserMessageSendResult}。
- * @notes 当调用 sendServerMessage:{@link #ByteRTCAudio#sendServerMessage:} 或 sendServerBinaryMessage:{@link #ByteRTCAudio#sendServerBinaryMessage:} 接口发送消息后，会收到此回调。
+ * @param message 应用服务器收到 HTTP 请求后，在 ACK 中返回的信息。消息不超过 64 KB。
+ * @notes 本回调为异步回调。当调用 sendServerMessage:{@link #ByteRTCAudio#sendServerMessage:} 或 sendServerBinaryMessage:{@link #ByteRTCAudio#sendServerBinaryMessage:} 接口发送消息后，会收到此回调。
  */
 - (void)rtcEngine:(ByteRTCAudio * _Nonnull)engine onServerMessageSendResult:(int64_t)msgid
             error:(ByteRTCUserMessageSendResult)error message:(NSData * _Nonnull)message;
@@ -393,7 +398,7 @@
  * @param state 混音状态，参看 ByteRTCAudioMixingState{@link #ByteRTCAudioMixingState}。
  * @param error 错误码，参看 ByteRTCAudioMixingError{@link #ByteRTCAudioMixingError}。
  * @notes  <br>
- *       + 此回调会被触发的时机汇总如下：  <br>
+ *       此回调会被触发的时机汇总如下：  <br>
  *       + 当调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 方法成功后，会触发 state 值为 ByteRTCAudioMixingStatePlaying 回调；否则触发 state 值为 ByteRTCAudioMixingStateFailed 的回调。  <br>
  *       + 当使用相同的 ID 重复调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 后，后一次会覆盖前一次，且本回调会以 ByteRTCAudioMixingStateStopped 通知前一次混音已停止。  <br>
  *       + 当调用 pauseAudioMixing:{@link #ByteRTCAudioMixingManager#pauseAudioMixing:} 方法暂停播放成功后，会触发 state 值为 ByteRTCAudioMixingStatePaused 回调；否则触发 state 值为 ByteRTCAudioMixingStateFailed 的回调。  <br>
@@ -509,8 +514,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @region 引擎管理
  * @author chenweiming.push
  * @brief 创建引擎对象。<br>
- *        如果当前线程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音音频能力。  <br>
- *        如果当前线程中已创建了引擎实例，再次调用此方法时，会创建另一个独立的引擎实例。
+ *        如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音音频能力。  <br>
+ *        如果当前进程中已创建了引擎实例，再次调用此方法时，会创建另一个独立的引擎实例。
  * @param appId 每个应用的唯一标识符，由 RTC 控制台随机生成的。
  *              不同的 AppId 生成的实例在 RTC 中进行音音频通话完全独立，无法互通。
  * @param delegate SDK 回调给应用层的 delegate，详见 ByteRTCAudioDelegate{@link #ByteRTCAudioDelegate}
@@ -584,10 +589,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  */
 - (int)feedback:(NSArray<ByteRTCProblemOption *> * _Nullable)types desc:(NSString* _Nullable)desc;
 /** 
- * @hidden
  * @type api
  * @brief 设置运行时的参数
  * @param parameters 保留参数
+ * @notes 该接口需在 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 和 startAudioCapture{@link #ByteRTCAudio#startAudioCapture} 之前调用。
  */
 - (void)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
 
@@ -606,7 +611,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  *       + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture{@link #ByteRTCAudio#stopAudioCapture} 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publish{@link #ByteRTCAudio#publish}/unpublish{@link #ByteRTCAudio#unpublish} 实现临时闭麦和重新开麦。
  *       + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  <br>
  *       + 尚未进房并且已使用自定义采集时，关闭自定义采集后并不会自动开启内部采集。你需调用此方法手动开启内部采集。
- *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 disableExternalAudioDevice{@link #ByteRTCAudioEngineDelegatedisableExternalAudioDevice} 关闭自定义采集，再调用此方法手动开启内部采集。
+ *       + 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 setAudioSourceType:{@link #ByteRTCAudio#setAudioSourceType:} 关闭自定义采集，再调用此方法手动开启内部采集。
  */
 - (void)startAudioCapture;
  /** 
@@ -623,6 +628,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
   */
  - (void)stopAudioCapture;
 /** 
+ * @hidden(MacOS)
  * @type api
  * @region 音频管理
  * @author dixing
@@ -703,8 +709,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @author dixing
  * @brief 设置耳返的音量。
  * @param volume 耳返的音量，取值范围：[0,100]，单位：%
- * @notes <br>
- *        + 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。  
+ * @notes 设置耳返音量前，你必须先调用 setEarMonitorMode:{@link #setEarMonitorMode:} 打开耳返功能。  
  */
 - (void)setEarMonitorVolume:(NSInteger)volume;
 /** 
@@ -742,6 +747,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  */
 - (void)enablePlaybackDucking:(BOOL)enable;
 /** 
+ * @hidden
  * @type api
  * @region 媒体流管理
  * @author yangpan
@@ -771,12 +777,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @hidden(macOS)
  * @type api
  * @region 音频管理
- * @author liuxiaowu
- * @brief 设置当前音频播放路由。默认使用 setDefaultAudioRoute:{@link #ByteRTCAudio#setDefaultAudioRoute:} 中设置的音频路由。  <br>
- *        音频播放路由发生变化时，会收到 rtcEngine:onAudioRouteChanged:{@link #ByteRTCAudioDelegate#rtcEngine:onAudioRouteChanged:} 回调。  <br>
- * @param audioRoute 音频播放路由，参见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}。不支持 `ByteRTCAudioRouteUnknown`。<br>
- *        当音量类型为媒体音量时，此参数不可设置为 `ByteRTCAudioRouteEarpiece`；当音量模式为通话音量时，此参数不可设置为 `ByteRTCAudioRouteHeadsetBluetooth` 或
- * `ByteRTCAudioRouteHeadsetUSB`。
+ * @author yezijian.me
+ * @brief 设置当前音频播放路由。默认使用 setDefaultAudioRoute:{@link #ByteRTCAudio#setDefaultAudioRoute:} 中设置的音频路由。
+ *        音频播放路由发生变化时，会收到 rtcEngine:onAudioRouteChanged:{@link #ByteRTCAudioDelegate#rtcEngine:onAudioRouteChanged:} 回调。
+ * @param audioRoute 音频播放路由，参见 ByteRTCAudioRoute{@link #ByteRTCAudioRoute}。不支持 `ByteRTCAudioRouteUnknown`。
  * @return  <br>
  *        + 0: 方法调用成功  <br>
  *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
@@ -796,10 +800,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @return 方法调用结果  <br>
  *        + 0: 方法调用成功。立即生效。当所有音频外设移除后，音频路由将被切换到默认设备。<br>
  *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
- * @notes 更多注意事项参见[音频路由](117836)。
+ * @notes 参见[移动端设置音频路由](https://www.volcengine.com/docs/6348/117836)。
  */
 - (int)setDefaultAudioRoute:(ByteRTCAudioRoute)audioRoute;
 /** 
+ * @hidden(MacOS)
  * @type api
  * @region 音频管理
  * @author dixing
@@ -830,7 +835,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @param repeatCount 消息发送重复次数。取值范围是 [0, 30]。
  * @return  <br>
  *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
- *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
+ *        + -1: 消息发送失败。消息长度大于 255 字节。  <br>
  *        + -2: 消息发送失败。传入的消息内容为空。  <br>
  *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
  *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ByteRTCErrorCode{@link #ByteRTCErrorCode}。  <br>
@@ -850,7 +855,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  *        + 对 RTC SDK 内部采集的音频和自定义采集的音频都生效。 <br>
  *        + 只对单声道音频生效。<br>
  *        + 只在包含美声特效能力的 SDK 中有效。<br>
- *        + 与 setVoiceReverbType:{@link #setVoiceReverbType:} 互斥，后设置的特效会覆盖先设置的特效。 <br>
+ *        + 与 setVoiceReverbType:{@link #setVoiceReverbType:} 互斥，后设置的特效会覆盖先设置的特效。
  */
 - (void)setVoiceChangerType:(ByteRTCVoiceChangerType)voiceChanger;
 /** 
@@ -912,7 +917,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @notes  <br>
  *       + 推送外部音频数据前，必须先调用 setAudioSourceType:{@link #ByteRTCAudio#setAudioSourceType:} 开启自定义采集。<br>
  *       + 你必须每隔 10 毫秒推送一次外部采集的音频数据。单次推送的 samples (音频采样点个数）应该为 audioFrame.sampleRate / 100。比如设置采样率为 48000 时， 每次应该推送 480 个采样点。  <br>
- *       + 本方法中设置的 sampleRate（音频采样率） 和 channel（音频声道） 必须与 setAudioSourceType:{@link #ByteRTCAudio#setAudioSourceType:} 中设置的一致。  <br>
  *       + 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。  <br>
  */
  - (int)pushExternalAudioFrame:(ByteRTCAudioFrame * _Nonnull) audioFrame;
@@ -981,19 +985,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
 */
 - (BOOL)registerAudioProcessor:(_Nullable id<ByteRTCAudioFrameProcessor>)processor;
 /** 
-* @type api
-* @author majun.lvhiei
-* @brief 获取本地采集的音频帧或接收到的远端音频帧，进行自定义处理。
-* @param method 音频帧类型，参看 ByteRTCAudioFrameMethod{@link #ByteRTCAudioFrameMethod}。通过多次调用此接口，可以对不同的音频帧进行自定义处理。<br>
-*        选择不同的值时，收到的回调不同：<br>
-*        + 选择本地采集的音频时，会收到 onProcessRecordAudioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessRecordAudioFrame:} <br>
-*        + 选择远端音频流的混音音频时，会收到 onProcessPlayBackAudioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessPlayBackAudioFrame:} <br>
-*        + 选择远端音频流时，会收到 onProcessRemoteUserAudioFrame:audioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessRemoteUserAudioFrame:audioFrame:} <br>
-* @param format 设定自定义处理时获取的音频帧格式，参看 ByteRTCAudioFormat{@link #ByteRTCAudioFormat}。
-* @notes <br>
-*        + 在调用此接口前，你需要调用 registerAudioProcessor:{@link #ByteRTCAudio#registerAudioProcessor:} 注册自定义音频处理器。<br>
-*        + 要关闭音频自定义处理，调用 disableAudioProcessor:{@link #ByteRTCAudio#disableAudioProcessor:}。
-*/
+ * @type api
+ * @author majun.lvhiei
+ * @brief 获取音频帧，进行自定义处理。
+ * @param method 音频帧类型，参看 ByteRTCAudioFrameMethod{@link #ByteRTCAudioFrameMethod}。可多次调用此接口，处理不同类型的音频帧。  <br>
+ *        选择不同类型的音频帧将收到对应的回调：  <br>
+ *        + 选择本地采集的音频时，会收到 onProcessRecordAudioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessRecordAudioFrame:}。<br>
+ *        + 选择远端音频流的混音音频时，会收到 onProcessPlayBackAudioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessPlayBackAudioFrame:}。 <br>
+ *        + 选择远端音频流时，会收到 onProcessRemoteUserAudioFrame:audioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessRemoteUserAudioFrame:audioFrame:}。 <br>
+ *        + 选择软件耳返音频时，会收到 onProcessEarMonitorAudioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessEarMonitorAudioFrame:}。(仅适用于 iOS 平台)
+ *        + 选择屏幕共享音频流时，会收到 onProcessScreenAudioFrame:{@link #ByteRTCAudioFrameProcessor#onProcessScreenAudioFrame:}。
+ * @param format 设定自定义处理时获取的音频帧格式，参看 ByteRTCAudioFormat{@link #ByteRTCAudioFormat}。
+ * @notes <br>
+ *        + 在调用此接口前，你需要调用 registerAudioProcessor:{@link #ByteRTCAudio#registerAudioProcessor:} 注册自定义音频处理器。<br>
+ *        + 要关闭音频自定义处理，调用 disableAudioProcessor:{@link #ByteRTCAudio#disableAudioProcessor:}。
+ */
 - (void)enableAudioProcessor:(ByteRTCAudioFrameMethod)method
                  audioFormat:(ByteRTCAudioFormat *_Nullable)format;
 /** 
@@ -1041,18 +1047,22 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
 #pragma mark - Multi-room Methods
 /** 
  * @type api
- * @region 多房间
+ * @region 房间管理
  * @author shenpengliang
- * @brief 创建并获取一个 ByteRTCAudioRoom 对象  <br>
- *        用户可以多次调用此方法创建多个 ByteRTCAudioRoom 实例，再分别调用各 ByteRTCAudioRoom 对象的 joinRoom:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoom:userInfo:roomConfig:} 方法，实现同时加入多个房间。多房间模式下，用户可以同时订阅各房间的音音频流。  <br>
+ * @brief 创建房间实例。
+ *        调用此方法仅返回一个房间实例，你仍需调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoomByToken:userInfo:roomConfig:} 才能真正地创建/加入房间。
+ *        多次调用此方法以创建多个 ByteRTCAudioRoom{@link #ByteRTCAudioRoom} 实例。分别调用各 ByteRTCAudioRoom 实例中的 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoomByToken:userInfo:roomConfig:} 方法，同时加入多个房间。
+ *        多房间模式下，用户可以同时订阅各房间的音视频流。
  * @param roomId 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
- *       + 26 个大写字母 A ~ Z  <br>
- *       + 26 个小写字母 a ~ z  <br>
- *       + 10 个数字 0 ~ 9  <br>
- *       + 下划线 "_", at 符 "@", 减号 "-"  <br>
- *        多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则会导致创建房间失败。  <br>
- * @return `ByteRTCAudioRoom` 实例 <br>
- * @notes 如果你需要在多个房间发布音音频流，无须创建多房间，直接调用 startForwardStreamToRooms:{@link #ByteRTCAudioRoom#startForwardStreamToRooms:}。
+ *       + 26 个大写字母 A ~ Z； <br>
+ *       + 26 个小写字母 a ~ z； <br>
+ *       + 10 个数字 0 ~ 9；  <br>
+ *       + 下划线 "_", at 符 "@", 减号 "-"。
+ * @return 创建的 ByteRTCAudioRoom{@link #ByteRTCAudioRoom} 房间实例。
+ * @notes <br>
+ *        + 如果需要加入的房间已存在，你仍需先调用本方法来获取 ByteRTCAudioRoom 实例，再调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCAudioRoom#joinRoomByToken:userInfo:roomConfig:} 加入房间。
+ *        + 多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则新创建的房间实例会替换旧房间实例。
+ *        + 加入多个房间后，用户可以同时订阅各房间的音频流，同一时间仅能在一个房间内发布音频流。
  */
 - (ByteRTCAudioRoom * _Nullable)createRTCRoom:(NSString * _Nonnull)roomId;
 
@@ -1216,7 +1226,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  *        消息接收用户的 ID
  * @param messageStr  <br>
  *        发送的二进制消息内容  <br>
- *        消息不超过 46KB。
+ *        消息不超过 64KB。
  * @param config 消息类型，参看 ByteRTCMessageConfig{@link #ByteRTCMessageConfig}。
  * @return  <br>
  *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
@@ -1252,7 +1262,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudio : NSObject
  * @brief 客户端给应用服务器发送二进制消息（P2Server）
  * @param messageStr  <br>
  *        发送的二进制消息内容  <br>
- *        消息不超过 46KB。
+ *        消息不超过 64KB。
  * @return  <br>
  *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
  *        + -1：发送失败，RtcEngine 实例未创建

@@ -475,9 +475,9 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
             }
         }
 
-        public void setConfig(boolean isBinary, RTCVideo rtcEngine, RTCRoom rtcRoom) {
+        public void setConfig(boolean isBinary, RTCVideo rtcVideo, RTCRoom rtcRoom) {
             this.mIsBinary = isBinary;
-            this.mRTCVideo = rtcEngine;
+            this.mRTCVideo = rtcVideo;
             this.mRTCRoom = rtcRoom;
         }
     }

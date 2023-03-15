@@ -7,14 +7,14 @@
 #import "PreJoinNetResultViewController.h"
 #import "SettingView.h"
 #import "Constants.h"
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
 
-@interface PreJoinNetResultViewController () <ByteRTCEngineDelegate>
+@interface PreJoinNetResultViewController () <ByteRTCVideoDelegate>
 
 @property (nonatomic, strong) SettingView *upLinkView;
 @property (nonatomic, strong) SettingView *downLinkView;
 @property (nonatomic, strong) UIButton *endButton;
-@property (nonatomic, strong) ByteRTCEngineKit *rtcKit;
+@property (nonatomic, strong) ByteRTCVideo *rtcKit;
 
 @end
 
@@ -75,7 +75,7 @@
     }];
     
     // 开启检测
-    self.rtcKit = [[ByteRTCEngineKit alloc] initWithAppId:APPID delegate:self parameters:nil];
+    self.rtcKit = [ByteRTCVideo createRTCVideo:APPID delegate:self parameters:@{}];
     ByteRTCNetworkDetectionStartReturn startReturn = [self.rtcKit startNetworkDetection:_isUplink
                        uplinkBandwidth:(int)_uplinkBandwidth
                               downlink:_isDownlink
@@ -114,9 +114,9 @@
     [self back];
 }
 
-#pragma mark - ByteRTCEngineDelegate
+#pragma mark - ByteRTCVideoDelegate
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onNetworkDetectionResult:(ByteRTCNetworkDetectionLinkType)type quality:(ByteRTCNetworkQuality)quality rtt:(int)rtt lostRate:(double)lost_rate bitrate:(int)bitrate jitter:(int)jitter {
+- (void)rtcEngine:(ByteRTCVideo *)engine onNetworkDetectionResult:(ByteRTCNetworkDetectionLinkType)type quality:(ByteRTCNetworkQuality)quality rtt:(int)rtt lostRate:(double)lost_rate bitrate:(int)bitrate jitter:(int)jitter {
     dispatch_async(dispatch_get_main_queue(), ^{
         BOOL isUpLink = (type == ByteRTCNetworkDetectionLinkTypeUp) ? YES : NO;
         
@@ -248,7 +248,7 @@
 }
 
 - (void)dealloc {
-    [self.rtcKit destroyEngine];
+    [ByteRTCVideo destroyRTCVideo];
     self.rtcKit = nil;
 }
 

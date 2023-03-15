@@ -26,13 +26,14 @@ public:
     /** 
      * @type api
      * @region 混音
-     * @brief 开始播放音频文件。<br>
+     * @brief 开始播放音频文件。
      *        可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
      * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
      *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。
-     * @param [in] file_path 用于混音文件路径。<br>
-     *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br>
-     *        不同平台支持的音频文件格式: <br>
+     * @param [in] file_path 用于混音文件路径。
+     *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。
+     *        推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。
+     *        不同平台支持的音频文件格式:
      *        <table>
      *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
      *           <tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr>
@@ -121,16 +122,33 @@ public:
     virtual void unloadAudioMixing(int mix_id) = 0;
 
     /** 
-     * @hidden(Linux)
+     * @hidden
      * @type api
      * @region 混音
-     * @brief 调节混音的音量大小，包括音频文件混音和 PCM 混音。
-     * @param mix_id 混音 ID
+     * @brief 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
      * @param volume 混音音量相对原音量的比值。范围为 `[0, 400]`，建议范围是 `[0, 100]`。  <br>
      *        + 0：静音  <br>
      *        + 100：原始音量（默认值）  <br>
      *        + 400: 最大可调音量 (自带溢出保护)
      * @param type 混音类型。是否本地播放、以及是否发送到远端，详见 AudioMixingType{@link #AudioMixingType}。
+     * @notes <br>
+     *        + 该功能适用于移动端。<br>
+     *        + 该接口的优先级低于 setAudioMixingVolume{@link #IAudioMixingManager#setAudioMixingVolume}，即通过 setAudioMixingVolume{@link #IAudioMixingManager#setAudioMixingVolume} 单独设置了音量的混音 ID，不受该接口设置的影响。
+     */
+    virtual void setAllAudioMixingVolume(int volume, AudioMixingType type) = 0;
+
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 混音
+     * @brief 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
+     * @param mix_id 需调节音量的混音 ID
+     * @param volume 混音音量相对原音量的比值。范围为 `[0, 400]`，建议范围是 `[0, 100]`。  <br>
+     *        + 0：静音  <br>
+     *        + 100：原始音量（默认值）  <br>
+     *        + 400: 最大可调音量 (自带溢出保护)
+     * @param type 混音类型。是否本地播放、以及是否发送到远端，详见 AudioMixingType{@link #AudioMixingType}。
+     * @notes 该方法仅对指定混音 ID 生效。移动端提供 `setAllAudioMixingVolume` 接口调节全部混音文件播放音量。
      */
     virtual void setAudioMixingVolume(int mix_id, int volume, AudioMixingType type) = 0;
 
@@ -160,6 +178,22 @@ public:
      * @notes 调用本方法获取音乐文件播放进度前，需要先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音乐文件。
      */
     virtual int getAudioMixingCurrentPosition(int mix_id) = 0;
+    
+    /** 
+     * @hidden(Linux)
+     * @type api
+    * @region 混音
+    * @brief 获取混音音频文件的实际播放时长（单位：毫秒）。
+    * @param [in] mixId 混音 ID。
+    * @return  <br>
+    *        + >0: 实际播放时长。 <br>
+    *        + < 0: 失败。
+    * @notes <br>  
+    *        + 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。  <br>
+    *        + 调用本接口前，需要先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放指定音频文件。
+    */
+   virtual int getAudioMixingPlaybackDuration(int mix_id) = 0;
+    
     /** 
      * @hidden(Linux)
      * @type api

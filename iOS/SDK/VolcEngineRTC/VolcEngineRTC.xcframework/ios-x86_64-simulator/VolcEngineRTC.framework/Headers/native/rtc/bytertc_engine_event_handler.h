@@ -181,7 +181,8 @@ public:
      * @type callback
      * @region 引擎管理
      * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
-     * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}
+     * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}。
+     * @notes 更多信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
      */
     virtual void onConnectionStateChanged(bytertc::ConnectionState state) {
     }
@@ -575,6 +576,22 @@ public:
     virtual void onAudioPlaybackDeviceTestVolume(int volume) {
         (void)volume;
     }
+
+    /** 
+     * @hidden(Android,iOS)
+     * @type callback
+     * @region 设备管理
+     * @brief 音频设备音量回调。
+     * @param [in] device_type 设备类型，有关详细信息，请参阅 RTCAudioDeviceType{@link #RTCAudioDeviceType}。
+     * @param [in] volume 音量值，[0,  255]。
+     * @param [in] muted 是否禁音状态，{true, false}。
+     */
+    virtual void onAudioDeviceVolumeChanged(bytertc::RTCAudioDeviceType device_type, int volume, bool muted) {
+        (void)device_type;
+        (void)volume;
+        (void)muted;
+    }
+
     /** 
      * @type callback
      * @region 音频管理
@@ -699,12 +716,14 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @brief 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
+     * @brief 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。
      * @param [in] room_id 房间 ID。
      * @param [in] uid 用户 ID。
      * @param [in] state 房间状态码。  <br>
      *              + 0: 成功。  <br>
-     *              + !0: 失败，具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
+     *              + !0: 失败或异常退房。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。异常退出房间，具体原因包括<br>
+     *               - -1004：相同 ID 用户在其他端进房； <br>
+     *               - -1006：用户被踢出当前房间。
      * @param [in] extra_info 额外信息。
      *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
      *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
@@ -822,7 +841,7 @@ public:
      * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 主动退出房间。  <br>
-     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](hhttps://www.volcengine.com/docs/6348/95376) <br>
      *              + 2: 远端用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 切换至不可见状态。 <br>
      *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
@@ -1476,8 +1495,7 @@ public:
      *        + false: 视频流发送被解禁
      * @notes  <br>
      *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
-     *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
-     *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+     *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
      *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
@@ -1498,8 +1516,7 @@ public:
      *        + false: 音频流发送被解禁
      * @notes  <br>
      *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
-     *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
-     *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+     *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
      *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。   <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
@@ -1547,7 +1564,12 @@ public:
      *        调用 startPushPublicStream{@link #IRtcEngine#startPushPublicStream} 接口发布公共流后，启动结果通过此回调方法通知用户。
      * @param [in] public_streamid 公共流 ID
      * @param [in] errorCode 公共流发布结果状态码。<br>
-     *             `200`: 发布成功
+     *             `200`: 发布成功<br>
+     *             `1191`: 推流参数存在异常 <br>
+     *             `1192`: 当前状态异常，通常为无法发起任务<br>
+     *             `1193`: 服务端错误，不可恢复<br>
+     *             `1195`: 服务端调用发布接口返回失败<br>
+     *             `1196`: 超时无响应。推流请求发送后 10s 没有收到服务端的结果回调。客户端将每隔 10s 重试，3 次重试失败后停止。
      */
     virtual void onPushPublicStreamResult(const char* public_streamid, int errorCode) {
         (void)public_streamid;

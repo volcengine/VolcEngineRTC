@@ -29,7 +29,7 @@ public:
      * @type api
      * @region 多房间
      * @author shenpengliang
-     * @brief 销毁房间，该接口实现上会先执行退房操作，然后释放房间处理回调指针
+     * @brief 退出并销毁调用 createRTCRoom{@link #IRTCAudio#createRTCRoom} 所创建的房间实例。
      */
     virtual void destroy() = 0;
 
@@ -51,10 +51,10 @@ public:
      *        + -1：room_id / user_info.uid 包含了无效的参数。  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 `leaveRoom` 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
      * @notes  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onError{@link #IRTCAudioEventHandler#onError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onRoomStateChanged{@link #IRTCAudioRoomEventHandler#onRoomStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
      *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCAudioRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 setUserVisibility{@link #IRTCAudioRoom#setUserVisibility} 将自身设为可见后加入房间，远端用户会收到 onUserJoined{@link #IRTCAudioRoomEventHandler#onUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCAudioRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCAudioRoomEventHandler#onRoomStateChanged} 回调通知。如果加入房间的用户可见，远端用户会收到 onUserJoined{@link #IRTCAudioRoomEventHandler#onUserJoined}。 
      */
     virtual int joinRoom(const char* token, const UserInfo& user_info, const AudioRoomConfig& room_config) = 0;
 
@@ -148,7 +148,7 @@ public:
      *        二进制字符串的长度。
      * @param [in] message   <br>
      *        二进制消息的内容。
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @param [in] config   <br>
      *        消息发送的可靠/有序类型，参看 MessageConfig{@link #MessageConfig}  <br>
      * @return 这次发送消息的编号，从 1 开始递增。
@@ -163,7 +163,7 @@ public:
      * @type api
      * @region 多房间
      * @author hanchenchen.c
-     * @brief 给房间内的所有其他用户发送广播消息。
+     * @brief 给房间内的所有其他用户群发文本消息。
      * @param [in] message  <br>
      *        用户发送的广播消息  <br>
      *        消息不超过 64 KB。
@@ -178,12 +178,12 @@ public:
      * @type api
      * @region 多房间
      * @author hanchenchen.c
-     * @brief 给房间内的所有其他用户发送广播消息。
+     * @brief 给房间内的所有其他用户群发二进制消息。
      * @param [in] size  <br>
      *        发送的二进制消息长度
      * @param [in] message  <br>
      *        用户发送的二进制广播消息  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 加入房间。  <br>
@@ -347,7 +347,7 @@ public:
      * @return 方法调用结果： <br>
      *        + IRangeAudio：成功，返回一个 IRangeAudio{@link #IRangeAudio} 实例。  <br>
      *        + nullptr：失败，当前 SDK 不支持范围语音功能。
-     * @notes 首次调用该方法须在创建房间后、加入房间前。
+     * @notes 首次调用该方法须在创建房间后、加入房间前。范围语音相关 API 和调用时序详见[范围语音](https://www.volcengine.com/docs/6348/114727)。 
      */
     virtual IRangeAudio* getRangeAudio() = 0;
 

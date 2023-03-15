@@ -42,6 +42,8 @@ public class EffectLayout extends ConstraintLayout {
 
     // 是否支持反选
     private boolean mIsSupportUnSelected = false;
+    // 是否清楚之前选中的结果
+    private boolean mClearOtherSelected = false;
 
     private TextView mBeautySeekbarTitle;
     private SeekBar mBeautySeekbar;
@@ -58,6 +60,10 @@ public class EffectLayout extends ConstraintLayout {
                     temp.selected = TextUtils.equals(temp.key, node.key) && temp.selected;
                 } else {
                     temp.selected = TextUtils.equals(temp.key, node.key);
+                }
+
+                if (!temp.selected && mClearOtherSelected) {
+                    temp.value = 0;
                 }
             }
 
@@ -78,7 +84,7 @@ public class EffectLayout extends ConstraintLayout {
                 if (node.selected) {
                     node.value = ((float) progress) / 100;
                     EffectNodeCallback callback = mEffectNodeCallback;
-                    if (callback != null) {
+                    if (callback != null && fromUser) {
                         callback.onEffectValueChanged(node);
                     }
                     break;
@@ -148,9 +154,21 @@ public class EffectLayout extends ConstraintLayout {
         mEffectNodeCallback = effectNodeCallback;
     }
 
+    /**
+     * 设置是否支持反选
+     * @param isSupportUnSelected true：支持反选
+     */
     @SuppressLint("unused")
     public void setSupportUnSelected(boolean isSupportUnSelected) {
         this.mIsSupportUnSelected = isSupportUnSelected;
+    }
+
+    /**
+     * 设置新选中的事件会清空之前选中项的值
+     * @param isClearOtherSelected true：新选中的事件会清空之前选中项的值
+     */
+    public void setClearOtherSelected(boolean isClearOtherSelected) {
+        this.mClearOtherSelected = isClearOtherSelected;
     }
 
     private static class EffectNodeAdapter extends RecyclerView.Adapter<BeautyNodeViewHolder> {

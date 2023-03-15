@@ -55,7 +55,7 @@ public:
      *        错误码  <br>
      *        详见 AudioMixingError{@link #AudioMixingError}
      * @notes  <br>
-     *       + 此回调会被触发的时机汇总如下：  <br>
+     *       此回调会被触发的时机汇总如下：  <br>
      *       + 1. 音乐文件类型： <br>
      *       + 当调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。  <br>
      *       + 当使用相同的 ID 重复调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。  <br>
@@ -133,7 +133,8 @@ public:
      * @region 引擎管理
      * @author hanchenchen.c
      * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
-     * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}
+     * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}。
+     * @notes 更多信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
      */
     virtual void onConnectionStateChanged(bytertc::ConnectionState state) {
         (void)state;
@@ -385,16 +386,12 @@ public:
      * @type callback
      * @region 实时消息通信
      * @author hanchenchen.c
-     * @brief 给应用服务器发送消息的回调
-     * @param [in] msgid  <br>
-     *        本条消息的 ID  <br>
+     * @brief 给应用服务器发送消息的回调。
+     * @param [in] msgid 本条消息的 ID。
      *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
-     * @param [in] error  <br>
-     *        消息发送结果  <br>
-     *        详见 UserMessageSendResult{@link #UserMessageSendResult}。
-     * @param [in] msg  <br>
-     *        业务服务器返回的消息。
-     * @notes 当调用 sendServerMessage{@link #IRTCAudio#sendServerMessage} 或 sendServerBinaryMessage{@link #IRTCAudio#sendServerBinaryMessage} 接口发送消息后，会收到此回调。
+     * @param [in] error 消息发送结果，详见 UserMessageSendResult{@link #UserMessageSendResult}。
+     * @param [in] msg 应用服务器收到 HTTP 请求后，在 ACK 中返回的信息。消息不超过 64 KB。
+     * @notes 本回调为异步回调。当调用 sendServerMessage{@link #IRTCAudio#sendServerMessage} 或 sendServerBinaryMessage{@link #IRTCAudio#sendServerBinaryMessage} 接口发送消息后，会收到此回调。
      */
     virtual void onServerMessageSendResult(int64_t msgid, int error, const bytertc::ServerACKMsg& msg) {
         (void)msgid;
@@ -448,6 +445,22 @@ public:
      */
     virtual void onAudioPlaybackDeviceTestVolume(int volume) {
         (void)volume;
+    }
+
+    /** 
+     * @hidden(Android,iOS)
+     * @type callback
+     * @region 设备管理
+     * @author caocun
+     * @brief 音频设备音量改变回调。当通过系统设置，改变音频设备音量或静音状态时，触发本回调。本回调无需手动开启。
+     * @param device_type 设备类型，包括麦克风和扬声器，参阅 ByteRTCAudioDeviceType{@link #ByteRTCAudioDeviceType}。
+     * @param volume 音量值，[0, 255]。当 volume 变为 0 时，muted 会变为 True。注意：在 Windows 端，当麦克风 volume 变为 0 时，muted 值不变。
+     * @param muted 是否禁音状态。扬声器被设置为禁音时，muted 为 True，但 volume 保持不变。
+     */
+    virtual void onAudioDeviceVolumeChanged(bytertc::RTCAudioDeviceType device_type, int volume, bool muted) {
+        (void)device_type;
+        (void)volume;
+        (void)muted;
     }
 
     /** 
@@ -539,7 +552,8 @@ public:
      * @type callback
      * @region 音频事件回调
      * @author wangjunzheng
-     * @brief 本地采集到第一帧音频帧时，收到该回调
+     * @brief 发布音频流时，采集到第一帧音频帧，收到该回调。
+     * @notes 如果发布音频流时，未开启本地音频采集，SDK 会推送静音帧，也会收到此回调。
      */
     virtual void onFirstLocalAudioFrame() {}
 
@@ -575,8 +589,7 @@ public:
      * @brief 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。
      * @param [in] key 远端流信息, 参看 RemoteStreamKey{@link #RemoteStreamKey}
      * @param [in] state 远端音频流状态，参看 RemoteAudioState{@link #RemoteAudioState}
-     * @param [in] reason 远端音频流状态改变的原因，参看 RemoteAudioStateChangeReason{@link
-     * #RemoteAudioStateChangeReason}
+     * @param [in] reason 远端音频流状态改变的原因，参看 RemoteAudioStateChangeReason{@link #RemoteAudioStateChangeReason}
      */
     virtual void onRemoteAudioStateChanged(
             const RemoteStreamKey& key, RemoteAudioState state, RemoteAudioStateChangeReason reason) {
@@ -624,6 +637,7 @@ public:
    virtual void onCloudProxyConnected(int interval) {
         (void)interval;
     }
+
 };
 
 }  // namespace bytertc

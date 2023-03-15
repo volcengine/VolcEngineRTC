@@ -22,6 +22,10 @@ namespace bytertc {
  */
 enum StreamLayoutMode {
     /** 
+     * @brief 自动布局
+     */
+    kLayoutAutoMode = 0,
+    /** 
      * @brief 自定义
      */
     kLayoutCustomerMode = 2
@@ -82,58 +86,65 @@ typedef struct SourceCrop {
 } SourceCrop;
 /** 
  * @type keytype
- * @brief 公共流视频参数
+ * @brief 公共流视频编码参数
  */
 typedef struct PublicStreamVideoParam {
     /** 
-     * @brief 宽度，单位：px。  <br>
-     *        仅支持设为偶数，如果设为奇数，将导致公共流发布失败。
+     * @brief 公共流视频宽度，必填。单位为 px，范围为 [2, 1920]，必须是偶数。
      */
     int32_t width;
     /** 
-     * @brief 高度，单位：px。  <br>
-     *        仅支持设为偶数，如果设为奇数，后处理会直接拒绝，导致公共流失败。
+     * @brief 公共流视频高度，必填。单位为 px，范围为 [16, 1280]，必须是偶数。
      */
     int32_t height;
     /** 
-     * @brief 帧率，单位：fps
+     * @brief 公共流视频帧率。必填<br>
+     *        范围：[1, 60] 
      */
     int32_t fps;
     /** 
-     * @brief 码率，单位：kbps
+     * @brief 视频码率，必填<br>
+     *        范围：[1,10000000]<br>
+     *        单位为 bps
      */
     int32_t bitrate_kpbs;
 } PublicStreamVideoParam;
 /** 
+ * @hidden currently not available
  * @type keytype
- * @brief 公共流音频参数
+ * @brief 公共流音频编码参数
  */
 typedef struct PublicStreamAudioParam {
     /** 
-     * @brief 音频采样率，包括 16k, 32k, 44.1k, 48k
+     * @brief 音频采样率，必填。单位为 Hz。可选取值：16000, 32000, 44100 和 48000
      */
     int32_t sample_rate;
     /** 
-     * @brief 声道数
+     * @brief 音频声道数，必填。
+     * + 1: 单声道<br>
+     * + 2: 双声道
      */
     int32_t channel_num;
     /** 
-     * @brief 音频码率，单位：kbps，包括 16kbps, 32kbps, 64kbps
+     * @brief 音频码率，必填。单位为 kbps。<br>
+     * 正整数，可选取值：16, 32, 64。
      */
     int32_t bitrate_kbps;
 } PublicStreamAudioParam;
 /** 
  * @type keytype
  * @brief 单个视频流在公共流中的布局信息。  <br>
- *        在多路视频流公共流时，你可以设置其中一路视频流在公共流中的预设布局信息。
+ *        在多路视频流公共流时，你需要设置每一路视频流在公共流中的布局信息。
  */
 typedef struct PublicStreamLayoutRegion {
     /** 
-     * @brief 目标公共流用户的 ID
+     * @brief 目标公共流用户的 ID。必填。  <br>
+     *        服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。
      */
     const char* user_id = "";
     /** 
-     * @brief 跨房间订阅流时，目标流所在的房间 ID
+     * @brief 跨房间订阅流时，目标流所在的房间 ID。 必填。  <br>
+     *        服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。
      */
     const char* room_id = "";
     /** 
@@ -141,31 +152,31 @@ typedef struct PublicStreamLayoutRegion {
      */
     const char* alternate_image_uri = "";
     /** 
-     * @brief 用户视频布局相对画布左侧的偏移量，取值的范围为 [0.0, 1.0)
+     * @brief 用户视频布局相对画布左侧的偏移量，取值的范围为 [0.0, 1.0)。必填。  
      */
     float x;
     /** 
-     * @brief 用户视频布局相对画布顶端的偏移量，取值的范围为 [0.0, 1.0)
+     * @brief 用户视频布局相对画布顶端的偏移量，取值的范围为 [0.0, 1.0)。必填。
      */
     float y;
     /** 
-     * @brief 用户视频宽度相对画布宽度的比例，取值的范围为 (0.0, 1.0]
+     * @brief 用户视频宽度相对画布宽度的比例，取值的范围为 (0.0, 1.0]。必填。
      */
     float width;
     /** 
-     * @brief 用户视频高度相对画布高度的比例，取值的范围为 (0.0, 1.0]
+     * @brief 用户视频高度相对画布高度的比例，取值的范围为 (0.0, 1.0]。必填。
      */
     float height;
     /** 
-     * @brief 透明度，取值范围 [0，255]
+     * @brief 透明度，取值范围 [0，255], 0 为全透明，255 为不透明
      */
     float alpha;
     /** 
-     * @brief 用户视频布局在画布中的层级，取值范围 [0，100]，0 为底层，值越大层级越高
+     * @brief 用户视频布局在画布中的层级，取值范围 [0，100]，0(默认）为底层，100 为顶层。
      */
     int32_t z_order;
     /** 
-     * @brief 媒体流类型：  <br>
+     * @brief 必填。媒体流类型：  <br>
      *        + 0: 普通流（默认设置）  <br>
      *        + 1: 屏幕流
      */
@@ -175,7 +186,7 @@ typedef struct PublicStreamLayoutRegion {
      */
     TranscoderContentControlType media_type;
     /** 
-     * @brief 渲染时，视频内容缩放模式，参看 RenderMode{@link #RenderMode}
+     * @brief 渲染时，视频内容缩放模式，必填。参看 RenderMode{@link #RenderMode}
      */
     RenderMode render_mode;
     /** 
@@ -189,11 +200,15 @@ typedef struct PublicStreamLayoutRegion {
  */
 struct PublicStreamLayout {
     /** 
-     * @brief 布局模式
+     * @brief 布局模式。必填。<br>
+     *        + `0`: 自动模式。默认值。 <br>
+     *        + `2`: 自定义模式。
      */
     int layoutMode;
     /** 
-     * @brief 插帧模式
+     * @brief 插帧模式<br>
+     *         + `0`: 补最后一帧<br>
+     *         + `1`: 补背景图片，如果没有设置背景图片则补黑帧
      */
     int interMode;
     /** 
@@ -201,11 +216,11 @@ struct PublicStreamLayout {
      */
     const char* background_image = nullptr;
     /** 
-     * @brief 公共流视频的背景颜色，默认值 #000000，表示为黑色。
+     * @brief 公共流视频的背景颜色，格式为 RGB 定义下的 Hex 值，如 #FFB6C1 表示浅粉色。默认值 #000000，表示为黑色
      */
     const char* background_color = nullptr;
     /** 
-     * @brief 公共流布局信息。详见 PublicStreamLayoutRegion{@link #PublicStreamLayoutRegion}
+     * @brief 各路流的布局信息列表。每一个该类型对象为一路单独的视频流的布局信息。详见 PublicStreamLayoutRegion{@link #PublicStreamLayoutRegion}
      */
     PublicStreamLayoutRegion* regions = nullptr;
     /** 
@@ -223,53 +238,55 @@ struct PublicStreamConfig {
      */
     const char* stream_id = nullptr;
     /** 
-     * @brief 公共流视频配置。详见 PublicStreamVideoParam{@link #PublicStreamVideoParam}
+     * @brief 公共流视频编码参数配置，必填。详见 PublicStreamVideoParam{@link #PublicStreamVideoParam}
      */
     PublicStreamVideoParam video_config;
     /** 
-     * @brief 公共流音频配置。详见 PublicStreamAudioParam{@link #PublicStreamAudioParam}
+     * @brief 公共流音频编码参数配置，必填。详见 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
     PublicStreamAudioParam audio_config;
     /** 
-     * @brief 公共流流布局设置。详见 PublicStreamLayout{@link #PublicStreamLayout}
+     * @brief 公共流流布局设置，必填。详见 PublicStreamLayout{@link #PublicStreamLayout}
      */
     PublicStreamLayout layout;
 };
 /** 
  * @type keytype
  * @brief 公共流参数
+ *        本类型继承了 ITranscoderParamBase{@link #ITranscoderParamBase} 中的所有接口。
  */
 class IPublicStreamParam : public ITranscoderParamBase {
 public:
     /** 
      * @type api
-     * @brief 设置公共流的布局模式，目前只支持 `kLayoutCustomerMode` 模式
+     * @brief 获取公共流的布局模式，多路媒体流将按照指定的布局模式，合成为一路公共流。目前只支持 `kLayoutCustomerMode` 模式
      * @return 公共流的布局模式，参看 StreamLayoutMode{@link #StreamLayoutMode}
+     *          `2`：自定义
      */
     virtual StreamLayoutMode layoutMode() = 0;
     /** 
      * @type api
      * @brief 获取补帧模式
      * @return 补帧模式<br>
-     *         `0`: 补最后一帧<br>
-     *         `1`: 补背景图片或者黑帧
+     *         + `0`: 补最后一帧<br>
+     *         + `1`: 补背景图片，如果没有设置背景图片则补黑帧
      */
     virtual int interpolationMode() = 0;
     /** 
      * @type api
-     * @brief 获取背景图片地址
-     * @return 背景图片的地址
+     * @brief 获取背景图片链接
+     * @return 背景图片链接
      */
     virtual const char* backgroundImageUri() = 0;
     /** 
      * @type api
-     * @brief 获取公共流音频参数
-     * @return 公共流音频参数内容，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
+     * @brief 获取公共流音频编码参数
+     * @return 公共流音频编码参数内容，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
     virtual PublicStreamAudioParam audioParam() = 0;
     /** 
      * @type api
-     * @brief 获取公共流视频参数
+     * @brief 获取公共流视频编码参数
      * @return 公共流视频参数内容，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
      */
     virtual PublicStreamVideoParam videoParam() = 0;
@@ -284,8 +301,8 @@ public:
      * @type api
      * @brief 设置补帧模式
      * @param [in] mode 补帧模式<br>
-     *         `0`: 补最后一帧<br>
-     *         `1`: 补背景图片或者黑帧
+     *         + `0`: 补最后一帧<br>
+     *         + `1`: 补背景图片，如果没有设置背景图片则补黑帧
      */
     virtual void setInterpolationMode(int mode) = 0;
     /** 
@@ -295,24 +312,25 @@ public:
      */
     virtual void setBackgroundImageUri(const char* uri) = 0;
     /** 
+     * @hidden currently not available
      * @type api
-     * @brief 设置音频参数
+     * @brief 设置音频编码参数
      * @param [in] PublicStreamAudioParam 音频参数，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
     virtual void setAudioParam(const PublicStreamAudioParam&) = 0;
     /** 
      * @type api
-     * @brief 设置视频参数
-     * @param [in] PublicStreamVideoParam 音频参数，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
+     * @brief 设置视频编码参数
+     * @param [in] PublicStreamVideoParam 视频编码参数，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
      */
     virtual void setVideoParam(const PublicStreamVideoParam&) = 0;
     /** 
      * @type api
      * @brief 设置公共流布局参数
-     * @param [in] regions[] 公共流布局参数，参看 PublicStreamLayoutRegion{@link #PublicStreamLayoutRegion}
-     * @param [in] regions_size 公共流视窗数量
-     * @param [in] bg_color 公共流背景颜色
-     * @param [in] mode 布局参数，参看 StreamLayoutMode{@link #StreamLayoutMode}
+     * @param [in] regions[] 必填。公共流布局参数，参看 PublicStreamLayoutRegion{@link #PublicStreamLayoutRegion}
+     * @param [in] regions_size 必填。公共流视窗数量
+     * @param [in] bg_color 公共流背景颜色。格式为 RGB 定义下的 Hex 值，如 #FFB6C1 表示浅粉色。默认值 #000000，表示为黑色
+     * @param [in] mode 必填。布局参数，参看 StreamLayoutMode{@link #StreamLayoutMode}
      */
     virtual void setLayoutParam(
                 PublicStreamLayoutRegion regions[], int32_t regions_size, const char* bg_color,

@@ -14,7 +14,6 @@
         self.useCustomRender = NO;
         self.localRenderMode = RenderMode_Hidden;
         self.remoteRenderMode = RenderMode_Hidden;
-        self.effectsMode = EffectsMode_Volc;
     }
     return self;
 }

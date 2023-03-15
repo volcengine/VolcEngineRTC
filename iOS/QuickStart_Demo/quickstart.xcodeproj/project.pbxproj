@@ -422,6 +422,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = X46375UBYG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/quickstart/VolcEngineRTC\"";
 				INFOPLIST_FILE = quickstart/Info.plist;
@@ -438,6 +439,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.quickstart.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = QuickStartInHouse.dist;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = QuickStartInHouse.dist;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -450,6 +452,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = X46375UBYG;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/quickstart/VolcEngineRTC\"";
 				INFOPLIST_FILE = quickstart/Info.plist;
@@ -466,6 +469,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.quickstart.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = QuickStartInHouse.dist;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = QuickStartInHouse.dist;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

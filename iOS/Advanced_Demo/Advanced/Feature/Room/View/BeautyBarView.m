@@ -67,8 +67,8 @@
 - (void)loadData {
     NSMutableArray *jsonList = [NSMutableArray array];
     [jsonList addObject:[BeautyModel beautyList]];
-    [jsonList addObject:[BeautyModel stickerList]];
     [jsonList addObject:[BeautyModel filterList]];
+    [jsonList addObject:[BeautyModel stickerList]];
     [jsonList addObject:[BeautyModel virtualBackgroundList]];
     
     for (int i = 0; i < jsonList.count; i++) {
@@ -103,22 +103,22 @@
 - (void)buttonClicked:(UIButton *)button {
     for (EffectButton *subButton in self.buttonListView.subviews) {
         if (subButton == button) {
-            if (self.segment.selectedSegmentIndex == 1) {
-                //贴纸
-                subButton.selected = !subButton.selected;
-                subButton.model.selected = subButton.selected;
-            } else if (self.segment.selectedSegmentIndex == 2) {
+            if (self.segment.selectedSegmentIndex == 0) {
+                //美颜
+                subButton.selected = YES;
+                subButton.model.selected = YES;
+                self.slider.value = subButton.model.value;
+            } else if (self.segment.selectedSegmentIndex == 1) {
                 //滤镜
                 subButton.selected = YES;
                 subButton.model.selected = YES;
                 subButton.model.value = 0;
                 self.slider.value = subButton.model.value;
-            } else if (self.segment.selectedSegmentIndex == 0) {
-                //美颜
-                subButton.selected = YES;
-                subButton.model.selected = YES;
-                self.slider.value = subButton.model.value;
-            } else if (self.segment.selectedSegmentIndex == 3) {
+            } else if (self.segment.selectedSegmentIndex == 2) {
+                //贴纸
+                subButton.selected = !subButton.selected;
+                subButton.model.selected = subButton.selected;
+            } else   if (self.segment.selectedSegmentIndex == 3) {
                 //背景分割
                 subButton.selected = !subButton.selected;
                 subButton.model.selected = subButton.selected;
@@ -193,20 +193,7 @@
             self.slider.value = model.value;
 
         } break;
-        case 1: //贴纸
-        {
-            [self.buttonListView mas_updateConstraints:^(MASConstraintMaker *make) {
-              make.top.equalTo(self.segment.mas_bottom).offset(36);
-            }];
-
-            self.sliderLabel.hidden = YES;
-            self.slider.hidden = YES;
-
-            for (EffectButton *button in self.buttonListView.subviews) {
-                button.selected = button.model.selected;
-            }
-        } break;
-        case 2: //滤镜
+        case 1: //滤镜
         {
             [self.buttonListView mas_updateConstraints:^(MASConstraintMaker *make) {
               make.top.equalTo(self.segment.mas_bottom).offset(90);
@@ -233,6 +220,19 @@
 
                 EffectModel *model = modelArray[0];
                 self.slider.value = model.value;
+            }
+        } break;
+        case 2: //贴纸
+        {
+            [self.buttonListView mas_updateConstraints:^(MASConstraintMaker *make) {
+              make.top.equalTo(self.segment.mas_bottom).offset(36);
+            }];
+
+            self.sliderLabel.hidden = YES;
+            self.slider.hidden = YES;
+
+            for (EffectButton *button in self.buttonListView.subviews) {
+                button.selected = button.model.selected;
             }
         } break;
         case 3: //背景分割

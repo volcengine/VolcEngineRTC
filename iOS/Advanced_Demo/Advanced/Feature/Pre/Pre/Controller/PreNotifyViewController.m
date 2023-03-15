@@ -4,16 +4,16 @@
 //
 //
 
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
 #import "PreNotifyViewController.h"
 #import "SettingView.h"
 #import "Constants.h"
 
-@interface PreNotifyViewController () <ByteRTCEngineDelegate>
+@interface PreNotifyViewController () <ByteRTCVideoDelegate>
 
 @property (nonatomic, strong) SettingView *settingView;
 
-@property (nonatomic, strong) ByteRTCEngineKit *rtcKit;
+@property (nonatomic, strong) ByteRTCVideo *rtcKit;
 
 @end
 
@@ -22,7 +22,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.rtcKit = [[ByteRTCEngineKit alloc] initWithAppId:APPID delegate:self parameters:nil];
+        self.rtcKit = [ByteRTCVideo createRTCVideo:APPID delegate:self parameters:@{}];
     }
     return self;
 }
@@ -98,9 +98,9 @@
     [_rtcKit logout];
 }
 
-#pragma mark - ByteRTCEngineDelegate
+#pragma mark - ByteRTCVideoDelegate
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onUserMessageSendResultOutsideRoom:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error {
+- (void)rtcEngine:(ByteRTCVideo *)engine onUserMessageSendResultOutsideRoom:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error {
     NSString *message = @"";
     if (error == ByteRTCUserMessageSendResultSuccess) {
         message = @"点对点消息发送成功";
@@ -111,12 +111,12 @@
     [[ToastComponents shareToastComponents] showWithMessage:message];
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onUserMessageReceivedOutsideRoom:(NSString * _Nonnull)uid message:(NSString * _Nonnull)message {
+- (void)rtcEngine:(ByteRTCVideo *)engine onUserMessageReceivedOutsideRoom:(NSString *)uid message:(NSString *)message {
     NSString *str = [NSString stringWithFormat:@"接收到房间外实时消息：%@：%@",uid,message];
     [[ToastComponents shareToastComponents] showWithMessage:str];
 }
 
-- (void)rtcEngine:(ByteRTCEngineKit *)engine onLoginResult:(NSString *)uid errorCode:(ByteRTCLoginErrorCode)errorCode elapsed:(NSInteger)elapsed {
+- (void)rtcEngine:(ByteRTCVideo *)engine onLoginResult:(NSString *)uid errorCode:(ByteRTCLoginErrorCode)errorCode elapsed:(NSInteger)elapsed {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSString *message = @"";
         if (errorCode == ByteRTCLoginErrorCodeSuccess) {
@@ -132,7 +132,7 @@
     });
 }
 
-- (void)rtcEngineOnLogout:(ByteRTCEngineKit *)engine {
+- (void)rtcEngineOnLogout:(ByteRTCVideo *)engine {
     dispatch_async(dispatch_get_main_queue(), ^{
         SettingTextFieldModel *userIDFieldModel = self.settingView.dataArray[0];
         userIDFieldModel.describe = @"";
@@ -152,7 +152,7 @@
 }
 
 - (void)dealloc {
-    [self.rtcKit destroyEngine];
+    [ByteRTCVideo destroyRTCVideo];
     self.rtcKit = nil;
 }
 

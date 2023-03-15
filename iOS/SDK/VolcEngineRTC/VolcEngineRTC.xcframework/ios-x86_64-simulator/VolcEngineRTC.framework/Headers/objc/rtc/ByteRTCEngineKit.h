@@ -79,12 +79,14 @@
  * @type callback
  * @region 房间管理
  * @author shenpengliang
- * @brief 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
+ * @brief 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。
  * @param roomId 房间 ID。
  * @param uid 用户 ID。
  * @param state 房间状态码。  <br>
  *              + 0: 成功。  <br>
- *              + !0: 失败，具体原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。
+ *              + !0: 失败或异常退房。具体原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。异常退出房间，具体原因包括<br>
+ *               - -1004：相同 ID 用户在其他端进房； <br>
+ *               - -1006：用户被踢出当前房间。
  * @param extraInfo 额外信息。
  *                  `joinType`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
  *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 到加入房间成功所经历的时间间隔，单位为 ms。
@@ -147,7 +149,7 @@
      * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 leaveRoom{@link #ByteRTCEngineKit#leaveRoom} 主动退出房间。  <br>
-     *              + 1: 远端用户因 Token 过期或网络原因等掉线。 <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](hhttps://www.volcengine.com/docs/6348/95376) <br>
      *              + 2: 远端用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 切换至不可见状态。<br>
      *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
@@ -290,6 +292,18 @@
  * @notes 调用 startAudioPlaybackDeviceTest{@link #IAudioDeviceManager#startAudioPlaybackDeviceTest} 或 startAudioDeviceRecordTest{@link #IAudioDeviceManager#startAudioDeviceRecordTest}，开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
  */
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onAudioPlaybackDeviceTestVolume:(int)volume;
+
+/** 
+ * @hidden(iOS)
+ * @type callback
+ * @region 设备管理
+ * @author caocun
+ * @brief 音频设备音量回调。
+ * @param [in] device_type 设备类型，有关详细信息，请参阅 RTCAudioDeviceType{@link #RTCAudioDeviceType}。
+ * @param [in] volume 音量值，[0,  255]。
+ * @param [in] muted 是否禁音状态，{true, false}。
+ */
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onAudioDeviceVolumeChanged:(ByteRTCAudioDeviceType)device_type volume:(int)volume muted:(bool)muted;
 
  /** 
   * @type callback
@@ -725,8 +739,7 @@
  *        + false: 视频流发送被解禁
  * @notes  <br>
  *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
- *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
- *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+ *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
  *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
  *        + 同一房间解散后再次创建，房间内状态清空。
@@ -742,8 +755,7 @@
  *        + false: 音频流发送被解禁
  * @notes  <br>
  *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
- *        + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
- *        + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。  <br>
+ *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
  *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
  *        + 同一房间解散后再次创建，房间内状态清空。
@@ -1207,7 +1219,7 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
  *        错误码  <br>
  *        详见 ByteRTCAudioMixingError{@link #ByteRTCAudioMixingError}。
  * @notes  <br>
- *       + 此回调会被触发的时机汇总如下：  <br>
+ *       此回调会被触发的时机汇总如下：  <br>
  *       + 当调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 方法成功后，会触发 state 值为 ByteRTCAudioMixingStatePlaying 回调；否则触发 state 值为 ByteRTCAudioMixingStateFailed 的回调。  <br>
  *       + 当使用相同的 ID 重复调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 后，后一次会覆盖前一次，且本回调会以 ByteRTCAudioMixingStateStopped 通知前一次混音已停止。  <br>
  *       + 当调用 pauseAudioMixing:{@link #ByteRTCAudioMixingManager#pauseAudioMixing:} 方法暂停播放成功后，会触发 state 值为 ByteRTCAudioMixingStatePaused 回调；否则触发 state 值为 ByteRTCAudioMixingStateFailed 的回调。  <br>
@@ -1377,7 +1389,13 @@ withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
  *        接口或直接在服务端启动推公共流功能后，你会通过此回调收到启动结果和推流过程中的错误。
  * @param engine engine 实例
  * @param publicStreamId 公共流ID。
- * @param errorCode 公共流发布结果状态码。 ByteRTCTranscodingError{@link #ByteRTCTranscodingError}。
+ * @param errorCode 公共流发布结果状态码。 <br>
+ *             `200`: 发布成功<br>
+ *             `1191`: 推流参数存在异常 <br>
+ *             `1192`: 当前状态异常，通常为无法发起任务<br>
+ *             `1193`: 服务端错误，不可恢复<br>
+ *             `1195`: 服务端调用发布接口返回失败<br>
+ *             `1196`: 超时无响应。推流请求发送后 10s 没有收到服务端的结果回调。客户端将每隔 10s 重试，3 次重试失败后停止。
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine
 onPushPublicStreamResult:(NSString *_Nonnull)publicStreamId
@@ -1390,7 +1408,8 @@ onPushPublicStreamResult:(NSString *_Nonnull)publicStreamId
  *        调用 startPlayPublicStream:{@link #ByteRTCEngineKit#startPlayPublicStream:} 接口拉公共流后，你会通过此回调收到启动结果和拉流过程中的错误。
  * @param engine engine 实例
  * @param publicStreamId 公共流ID。
- * @param errorCode 公共流订阅结果状态码。详见枚举类型 ByteRTCTranscodingError{@link #ByteRTCTranscodingError}。
+ * @param errorCode 公共流订阅结果状态码。 <br>
+ *             `200`: 成功
  */
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine
 onPlayPublicStreamResult:(NSString *_Nonnull)publicStreamId
@@ -1828,8 +1847,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEngineKit : NSObject
  *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom{@link #ByteRTCEngineKit#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
  *        + -3: 失败engine 为空 <br>
  * @notes  <br>
- *       + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcEngine:onError:{@link #ByteRTCEngineDelegate#rtcEngine:onError:} 回调通知，错误类型为重复登录 BRERR_DUPLICATE_LOGIN。  <br>
- *       + 本地用户调用此方法加入房间成功后，会收到 rtcEngine:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。  <br>
+ *       + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知，错误类型为重复登录 ByteRTCErrorCodeDuplicateLogin。  <br>
+ *       + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。  <br>
  *       + 本地用户调用 setUserVisibility:{@link #ByteRTCEngineKit#setUserVisibility:} 将自身设为可见后加入房间，远端用户会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:} 回调通知。  <br>
  *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 rtcEngine:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onRoomStateChanged:withUid:state:extraInfo:} 回调通知；如果加入房间的用户可见，远端用户会收到 rtcEngine:onUserJoined:elapsed:{@link #ByteRTCEngineDelegate#rtcEngine:onUserJoined:elapsed:}。  <br>
  */
@@ -3515,9 +3534,9 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @type api
  * @author qipengxiang
  * @brief 发布一路公共流<br>
- *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 `appID` 的用户，可以调用 startPlayPublicStream:{@link #ByteRTCEngineKit#startPlayPublicStream:} 获取和播放指定的公共流。
+ *        用户可以指定房间内多个用户发布的媒体流合成一路公共流。使用同一 `appID` 的用户，可以调用 startPlayPublicStream:{@link #ByteRTCEngineKit#startPlayPublicStream:} 获取和播放指定的公共流。
  * @param publicStreamId 公共流 ID。<br>
- * @param publicStreamParam 公共流参数。详见 ByteRTCPublicStreaming{@link #ByteRTCPublicStreaming}。<br>
+ * @param publicStreamParam ByteRTCPublicStreaming{@link #ByteRTCPublicStreaming}。<br>
  *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
  *              如果指定的媒体流还未发布，则公共流将在指定流开始发布后实时更新。
  * @return
@@ -3527,7 +3546,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *        + 同一用户使用同一公共流 ID 多次调用本接口无效。如果你希望更新公共流参数，调用 updatePublicStreamParam:withLayout:{@link #ByteRTCEngineKit#updatePublicStreamParam:withLayout:} 接口。<br>
  *        + 不同用户使用同一公共流 ID 多次调用本接口时，RTC 将使用最后一次调用时传入的参数更新公共流。<br>
  *        + 使用不同的 ID 多次调用本接口可以发布多路公共流。<br>
- *        + 调用 stopPushPublicStream:{@link #ByteRTCEngineKit#stopPushPublicStream:} 停止发布公共流。
+ *        + 调用 stopPushPublicStream:{@link #ByteRTCEngineKit#stopPushPublicStream:} 停止发布公共流。<br>
+ *        + 关于公共流功能的介绍，详见[发布和订阅公共流](https://www.volcengine.com/docs/6348/108930)
  */
 - (int)startPushPublicStream:(NSString * _Nonnull)publicStreamId withLayout:(ByteRTCPublicStreaming *_Nullable)publicStreamParam;
 
@@ -3549,6 +3569,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  * @author qipengxiang
  * @brief 更新公共流参数<br>
  *        关于发布公共流，查看 startPushPublicStream:withLayout:{@link #ByteRTCEngineKit#startPushPublicStream:withLayout:}。
+ *        建议调用更新公共流前判断公共流是否已经成功启动，相关回调详见：onPushPublicStreamResult{@link #IRTCVideoEventHandler#onPushPublicStreamResult}。  
  * @param publicStreamId 公共流ID<br>
  *              指定的流必须为当前用户所发布的。
  * @param publicStreamParam 推公共流配置参数。详见 ByteRTCPublicStreaming{@link #ByteRTCPublicStreaming}。
@@ -4030,7 +4051,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @brief 给房间内的所有其他用户发送二进制消息。
  * @param message  <br>
  *        用户发送的二进制广播消息  <br>
- *        消息不超过 46KB。
+ *        消息不超过 64KB。
  * @return 这次发送消息的编号，从 1 开始递增。
  * @notes  <br>
  *      + 在房间内广播二进制消息前，必须先调用 joinRoomByKey:roomId:userInfo:rtcRoomConfig:{@link #ByteRTCEngineKit#joinRoomByKey:roomId:userInfo:rtcRoomConfig:} 加入房间。  <br>
@@ -4287,7 +4308,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        消息接收用户的 ID
  * @param message  <br>
  *        发送的二进制消息内容  <br>
- *        消息不超过 46KB。
+ *        消息不超过 64KB。
  * @param config 消息类型，参看 ByteRTCMessageConfig{@link #ByteRTCMessageConfig}。
  * @return 这次发送消息的编号，从 1 开始递增。
  * @notes  <br>
@@ -5043,7 +5064,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        + -1: 失败  <br>
  * @notes  <br>
  *       + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 publishScreen:{@link #ByteRTCRoom#publishScreen:}。<br>
- *       + 调用 stopScreenCapture{@link #ByteRTCEngineKit#stopScreenCapture} 关闭屏幕视频源采集，。  <br>
+ *       + 调用 stopScreenCapture{@link #ByteRTCEngineKit#stopScreenCapture} 关闭屏幕视频源采集。  <br>
  *       + 本地用户通过 rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCEngineDelegate#rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:} 的回调获取屏幕采集状态，包括开始、暂停、恢复、错误等。  <br>
  *       + 调用成功后，本端会收到 rtcEngine:onFirstLocalVideoFrameCaptured:withFrameInfo:{@link #ByteRTCEngineDelegate#rtcEngine:onFirstLocalVideoFrameCaptured:withFrameInfo:} 回调。  <br>
  *       + 调用此接口前，你可以调用 SetScreenVideoEncoderConfig:{@link #ByteRTCEngineKit#SetScreenVideoEncoderConfig:} 设置屏幕视频流的采集帧率和编码分辨率。  <br>
@@ -5295,7 +5316,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  *        消息接收用户的 ID
  * @param messageStr  <br>
  *        发送的二进制消息内容  <br>
- *        消息不超过 46KB。
+ *        消息不超过 64KB。
  * @param config 消息类型，参看 ByteRTCMessageConfig{@link #ByteRTCMessageConfig}。
  * @return  <br>
  *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
@@ -5331,7 +5352,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @brief 客户端给应用服务器发送二进制消息（P2Server）
  * @param messageStr  <br>
  *        发送的二进制消息内容  <br>
- *        消息不超过 46KB。
+ *        消息不超过 64KB。
  * @return  <br>
  *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
  *        + -1：发送失败，RtcEngine 实例未创建
@@ -5509,7 +5530,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @param config 媒体流信息同步的相关配置，详见 ByteRTCStreamSycnInfoConfig{@link #ByteRTCStreamSycnInfoConfig} 。
  * @return  <br>
  *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
- *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
+ *        + -1: 消息发送失败。消息长度大于 255 字节。  <br>
  *        + -2: 消息发送失败。传入的消息内容为空。  <br>
  *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
  *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ByteRTCErrorCode{@link #ByteRTCErrorCode}。  <br>
@@ -5588,6 +5609,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
     - (void)resumeForwardStreamToAllRooms;
 
 /** 
+ * @hidden
  * @type api
  * @region 媒体流管理
  * @author yangpan

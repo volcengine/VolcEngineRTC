@@ -10,8 +10,8 @@
 
 + (NSArray *)sectionList {
     return @[ @"美颜",
-              @"贴纸",
               @"滤镜",
+              @"贴纸",
               @"背景分割" ];
 }
 
@@ -69,7 +69,11 @@
                            @"key"   : @"manhualian",
                            @"name"  : @"漫画脸",
     };
-    return @[ dic1, dic2, dic3, dic4, dic5, dic6, dic7 ];
+    NSDictionary *dic8 = @{@"index" : @(7),
+                           @"key"   : @"zhukeai",
+                           @"name"  : @"猪可爱",
+    };
+    return @[ dic1, dic2, dic3, dic4, dic5, dic6, dic7, dic8 ];
 }
 
 + (NSArray *)filterList {

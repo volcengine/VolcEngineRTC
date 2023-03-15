@@ -36,6 +36,7 @@ typedef NSImage  ByteRTCImage;
 
 #define BYTERTC_APPLE_EXPORT __attribute__((visibility("default")))
 
+
 /** 
  *  @type keytype
  *  @brief 远端用户离开房间的原因。  <br>
@@ -135,8 +136,8 @@ typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
      */
     ByteRTCRoomProfileChat = 5,
     /** 
-     * @brief 适用于 3 人及以上纯语音通话<br>
-     *        音视频通话为媒体模式，上麦时切换为通话模式
+     * @brief 适用于 3 人及以上纯语音通话。<br>
+     *        通话中，闭麦时为是媒体模式，上麦后切换为通话模式。
      */
     ByteRTCRoomProfileChatRoom = 6,
     /** 
@@ -185,7 +186,7 @@ typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
      */
     ByteRTCRoomProfileMeeting = 16,
     /** 
-     * @brief 适用于云端会议中的会议室终端
+     * @brief 适用于云端会议中的会议室终端设备，例如 Rooms，投屏盒子等。
      */
     ByteRTCRoomProfileMeetingRoom = 17,
     /** 
@@ -216,7 +217,7 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
  */
 typedef NS_ENUM(NSInteger, ByteRTCConnectionState) {
     /** 
-     * @brief 连接断开，且断开时长超过 12s，SDK 会自动重连。
+     * @brief 连接断开超过 12s，此时 SDK 会尝试自动重连。
      */
     ByteRTCConnectionStateDisconnected = 1,
     /** 
@@ -388,6 +389,12 @@ typedef NS_ENUM(NSUInteger, ByteRTCNetworkQuality) {
      * @brief 网络质量非常差，基本不能沟通。
      */
     ByteRTCNetworkQualityVeryBad = 5,
+    /** 
+     * @brief 12 s 内无应答，代表网络断开，将返回本枚举值。
+     * 你也可以通过 rtcEngine:onConnectionStateChanged: 监听 ByteRTCConnectionStateDisconnected = 1 感知网络断开。
+     * 更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
+     */
+    ByteRTCNetworkQualityDisconnected = 6,
 };
 
 /** 
@@ -577,12 +584,13 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeUserInPublish = -2014,
     /** 
+     * @hidden
      * @brief 同样roomid的房间已经存在了
      */
     ByteRTCWarningCodeRoomAlreadyExist = -2015,
 
     /** 
-     * @brief 新生成的房间已经替换了同样roomId的旧房间
+     * @brief 已存在相同 roomId 的房间，新创建的房间实例已替换旧房间实例。
      */
     ByteRTCWarningCodeOldRoomBeenReplaced = -2016,
 
@@ -977,7 +985,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCSubscribeFallbackOption) {
      */
     ByteRTCSubscribeFallbackOptionDisabled = 0,
     /** 
-     * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看[性能回退](70137)文档。 <br>
+     * @brief 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。 <br>
      *        该设置仅对发布端调用 `enableSimulcastMode:` 开启发送多路流功能的情况生效。
      */
     ByteRTCSubscribeFallbackOptionVideoStreamLow = 1,
@@ -2431,7 +2439,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
  */
 @property(assign, nonatomic) NSInteger decSampleRate;
 /** 
- * @brief 解码时长。对此次统计周期内接收的远端音频流进行解码的总耗时，单位为 s 。  <br>
+ * @brief 此次订阅中，对远端音频流进行解码的累计耗时。单位为 s。
  */
 @property(assign, nonatomic) NSInteger decDuration;
 /** 
@@ -2847,3 +2855,4 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCDeviceCollection : NSObject
  */
 - (int)getDevice:(int)index DeviceName:(NSString * _Nonnull * _Nonnull)deviceName DeviceID:(NSString * _Nonnull * _Nonnull) deviceID;
 @end
+

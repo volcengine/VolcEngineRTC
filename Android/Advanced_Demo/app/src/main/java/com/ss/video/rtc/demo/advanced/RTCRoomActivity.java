@@ -6,7 +6,6 @@ import static com.ss.bytertc.engine.type.AudioScenarioType.AUDIO_SCENARIO_HIGHQU
 import static com.ss.video.rtc.demo.advanced.sharescreen.ShareScreenComponent.REQUEST_CODE_OF_SCREEN_SHARING;
 import static com.ss.video.rtc.demo.advanced.utils.CommonUtil.byteBufferToString;
 
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -30,7 +29,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
 import com.ss.bytertc.engine.RTCVideo;
@@ -42,10 +40,11 @@ import com.ss.bytertc.engine.data.CameraId;
 import com.ss.bytertc.engine.data.MirrorType;
 import com.ss.bytertc.engine.data.RemoteStreamKey;
 import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.data.VideoFrameInfo;
+import com.ss.bytertc.engine.data.VideoOrientation;
 import com.ss.bytertc.engine.data.VideoPixelFormat;
 import com.ss.bytertc.engine.data.VideoRotation;
 import com.ss.bytertc.engine.handler.AppExecutors;
-import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
 import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
@@ -72,7 +71,6 @@ import com.ss.video.rtc.demo.advanced.external.CustomCapture;
 import com.ss.video.rtc.demo.advanced.external.CustomRenderView;
 import com.ss.video.rtc.demo.advanced.sharescreen.ShareScreenComponent;
 import com.ss.video.rtc.demo.advanced.utils.CommonUtil;
-import com.ss.video.rtc.demo.basic_module.utils.SafeToast;
 import com.ss.video.rtc.demo.basic_module.utils.Utilities;
 
 import java.nio.ByteBuffer;
@@ -175,7 +173,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         public void onEffectValueChanged(EffectNode effectNode) {
             RTCVideo rtcVideo = mRTCVideo;
             if (rtcVideo == null) {
-                Log.i("EffectNodeCallback", "onEffectValueChanged() : RTCEngine is null");
+                Log.i("EffectNodeCallback", "onEffectValueChanged() : RTCVideo is null");
                 return;
             }
             if (effectNode instanceof BeautyEffectNode) {
@@ -185,14 +183,14 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
                     mVolcEffectManager.onReshapeEffectChanged(effectNode.key, effectNode.value);
                 }
             } else if (effectNode instanceof FilterEffectNode) {
-                mVolcEffectManager.onFilterEffectChanged(EffectResource.getFilterPathByName(effectNode.key), effectNode.value);
+                mVolcEffectManager.onFilterEffectChanged(effectNode.key, effectNode.value);
             } else {
                 Log.i("EffectNodeCallback", "invalid EffectNode type");
             }
         }
     };
 
-    private IRTCRoomEventHandler mItcRoomEventHandler = new RTCRoomEventHandlerAdapter() {
+    private IRTCRoomEventHandler mRTCRoomEventHandler = new RTCRoomEventHandlerAdapter() {
 
         /**
          * 远端主播角色用户加入房间回调。
@@ -219,8 +217,9 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         @Override
         public void onUserPublishScreen(String uid, MediaStreamType type) {
             Log.d(TAG, "onUserPublishScreen: " + uid);
-            if (type != MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO) {
-                runOnUiThread(() -> setRemoteView(new RemoteStreamKey(mRoomId, uid, StreamIndex.STREAM_INDEX_SCREEN)));
+            if (type == MediaStreamType.RTC_MEDIA_STREAM_TYPE_VIDEO || type == MediaStreamType.RTC_MEDIA_STREAM_TYPE_BOTH) {
+                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(mRoomId, uid, StreamIndex.STREAM_INDEX_SCREEN);
+                runOnUiThread(() -> setRemoteView(remoteStreamKey));
             }
         }
 
@@ -241,8 +240,9 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         @Override
         public void onUserPublishStream(String uid, MediaStreamType type) {
             Log.d(TAG, "onUserPublishStream: " + uid);
-            if (type != MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO) {
-                runOnUiThread(() -> setRemoteView(new RemoteStreamKey(mRoomId, uid, StreamIndex.STREAM_INDEX_MAIN)));
+            if (type == MediaStreamType.RTC_MEDIA_STREAM_TYPE_VIDEO || type == MediaStreamType.RTC_MEDIA_STREAM_TYPE_BOTH) {
+                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(mRoomId, uid, StreamIndex.STREAM_INDEX_MAIN);
+                runOnUiThread(() -> setRemoteView(remoteStreamKey));
             }
         }
 
@@ -290,7 +290,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
             } else {
                 tip = "点对点消息发送成功";
             }
-            runOnUiThread(() -> SafeToast.show(RTCRoomActivity.this, tip, Toast.LENGTH_SHORT));
+            runOnUiThread(() -> Toast.makeText(RTCRoomActivity.this, tip, Toast.LENGTH_SHORT).show());
         }
 
         @Override
@@ -307,7 +307,14 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         }
     };
 
-    private IRTCVideoEventHandler mIRtcEngineEventHandler = new IRTCVideoEventHandler() {
+    private IRTCVideoEventHandler mRTCVideoEventHandler = new IRTCVideoEventHandler() {
+
+        @Override
+        public void onFirstRemoteVideoFrameDecoded(RemoteStreamKey remoteStreamKey, VideoFrameInfo frameInfo) {
+            super.onFirstRemoteVideoFrameDecoded(remoteStreamKey, frameInfo);
+            Log.d(TAG, "onFirstRemoteVideoFrameDecoded: " + remoteStreamKey.getStreamIndex()
+                    + "; uid=" + remoteStreamKey.getUserId());
+        }
 
         @Override
         public void onSEIMessageReceived(RemoteStreamKey remoteStreamKey, ByteBuffer message) {
@@ -439,7 +446,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
 
     private void initEngineAndJoinRoom(String roomId, String userId) {
         // 创建引擎
-        mRTCVideo = RTCVideo.createRTCVideo(getApplicationContext(), Constants.APPID, mIRtcEngineEventHandler, null, null);
+        mRTCVideo = RTCVideo.createRTCVideo(getApplicationContext(), Constants.APPID, mRTCVideoEventHandler, null, null);
         // 设置视频发布参数
         VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(
                 mVideoConfig.getResolution().first,
@@ -447,10 +454,11 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
                 mVideoConfig.getFrameRate(),
                 mVideoConfig.getBitRate());
         mRTCVideo.setVideoEncoderConfig(videoEncoderConfig);
+        // 设置音频场景类型
         mRTCVideo.setAudioScenario(AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION);
         // 加入房间
         mRTCRoom = mRTCVideo.createRTCRoom(roomId);
-        mRTCRoom.setRTCRoomEventHandler(mItcRoomEventHandler);
+        mRTCRoom.setRTCRoomEventHandler(mRTCRoomEventHandler);
         RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_COMMUNICATION,
                 true, true, true);
         int joinRoomRes = mRTCRoom.joinRoom(Constants.TOKEN,
@@ -589,7 +597,12 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
 
     private void updateSpeakerStatus() {
         mIsSpeakerPhone = !mIsSpeakerPhone;
-        // 设置使用哪种方式播放音频数据
+        /*
+        设置使用哪种方式播放音频数据
+        你需要调用 setAudioScenario 将音频场景切换为 AUDIO_SCENARIO_COMMUNICATION 后再调用本接口。
+        连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备。
+        移除后，音频设备会自动切换回原设备。
+         */
         mRTCVideo.setAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
                 : AudioRoute.AUDIO_ROUTE_EARPIECE);
         mSpeakerIv.setImageResource(mIsSpeakerPhone ? R.drawable.speaker_on : R.drawable.speaker_off);
@@ -721,6 +734,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
             mPushStreamHandler = new Handler(mPushStreamThread.getLooper());
             mPushStreamHandler.post(() -> CustomCapture.ins().startCapture(this, mPreviewCallback));
         } else {
+            mRTCVideo.setVideoOrientation(VideoOrientation.Portrait);
             mRTCVideo.startVideoCapture();
         }
     }
@@ -749,8 +763,8 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
     }
 
     @Override
-    public void finish() {
-        super.finish();
+    protected void onDestroy() {
+        super.onDestroy();
         stopVideoCapture();
         if (needShareScreen()) {
             mShareScreenComponent.stopScreenSharing();
@@ -759,13 +773,15 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         if (mRTCRoom != null) {
             mRTCRoom.leaveRoom();
             mRTCRoom.destroy();
+            mRTCRoom = null;
         }
         // 销毁引擎
         RTCVideo.destroyRTCVideo();
-        mIRtcEngineEventHandler = null;
-        mItcRoomEventHandler = null;
+        mRTCVideoEventHandler = null;
+        mRTCRoomEventHandler = null;
         mRTCVideo = null;
         ConfigManger.getInstance().removeObserver(this);
+        ConfigManger.getInstance().getVideoConfig().mLocalVideoMirrorType = 1;
     }
 
     @Override

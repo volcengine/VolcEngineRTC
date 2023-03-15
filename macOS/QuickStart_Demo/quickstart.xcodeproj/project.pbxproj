@@ -28,6 +28,14 @@
 		2BAF493C26CCFD5A0020C84C /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BAF493A26CCFD5A0020C84C /* RoomViewController.xib */; };
 		2BAF494726CD01820020C84C /* BottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF494626CD01820020C84C /* BottomView.m */; };
 		2BAF494E26CD018D0020C84C /* RenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF494D26CD018D0020C84C /* RenderView.m */; };
+		2BDCBC7928D87DE900141042 /* VolcEngineRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7528D87DE800141042 /* VolcEngineRTC.framework */; };
+		2BDCBC7A28D87DE900141042 /* VolcEngineRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7528D87DE800141042 /* VolcEngineRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BDCBC7B28D87DE900141042 /* libbytevc0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7628D87DE900141042 /* libbytevc0.dylib */; };
+		2BDCBC7C28D87DE900141042 /* libbytevc0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7628D87DE900141042 /* libbytevc0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2BDCBC7D28D87DE900141042 /* RTCFFmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7728D87DE900141042 /* RTCFFmpeg.framework */; };
+		2BDCBC7E28D87DE900141042 /* RTCFFmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7728D87DE900141042 /* RTCFFmpeg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2BDCBC7F28D87DE900141042 /* libeffect.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7828D87DE900141042 /* libeffect.dylib */; };
+		2BDCBC8028D87DE900141042 /* libeffect.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDCBC7828D87DE900141042 /* libeffect.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2BECB70226CD0E7900A1600D /* UserRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BECB70126CD0E7900A1600D /* UserRenderView.m */; };
 		9F193DB42497A477003202CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193DB32497A477003202CC /* AppDelegate.m */; };
 		9F193DB92497A47A003202CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F193DB82497A47A003202CC /* Assets.xcassets */; };
@@ -35,14 +43,6 @@
 		9F193DBF2497A47A003202CC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193DBE2497A47A003202CC /* main.m */; };
 		9F193EB22497B8B0003202CC /* LoginView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193E892497B8AF003202CC /* LoginView.m */; };
 		9F4EC6CC24B70F8E00988C24 /* WindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4EC6CB24B70F8E00988C24 /* WindowController.m */; };
-		CCE360B7289B9FED00B8DFCC /* libbytevc0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B3289B9FE800B8DFCC /* libbytevc0.dylib */; };
-		CCE360BA289B9FED00B8DFCC /* libeffect.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B6289B9FED00B8DFCC /* libeffect.dylib */; };
-		CCE360BB289BB05100B8DFCC /* libbytevc0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B3289B9FE800B8DFCC /* libbytevc0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CCE360BC289BB05C00B8DFCC /* RTCFFmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B4289B9FE900B8DFCC /* RTCFFmpeg.framework */; };
-		CCE360BD289BB05D00B8DFCC /* RTCFFmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B4289B9FE900B8DFCC /* RTCFFmpeg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CCE360BE289BB06E00B8DFCC /* VolcEngineRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B5289B9FEB00B8DFCC /* VolcEngineRTC.framework */; };
-		CCE360BF289BB06E00B8DFCC /* VolcEngineRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B5289B9FEB00B8DFCC /* VolcEngineRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CCE360C0289BB09300B8DFCC /* libeffect.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCE360B6289B9FED00B8DFCC /* libeffect.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,10 +69,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CCE360BF289BB06E00B8DFCC /* VolcEngineRTC.framework in Embed Frameworks */,
-				CCE360C0289BB09300B8DFCC /* libeffect.dylib in Embed Frameworks */,
-				CCE360BB289BB05100B8DFCC /* libbytevc0.dylib in Embed Frameworks */,
-				CCE360BD289BB05D00B8DFCC /* RTCFFmpeg.framework in Embed Frameworks */,
+				2BDCBC7C28D87DE900141042 /* libbytevc0.dylib in Embed Frameworks */,
+				2BDCBC8028D87DE900141042 /* libeffect.dylib in Embed Frameworks */,
+				2BDCBC7E28D87DE900141042 /* RTCFFmpeg.framework in Embed Frameworks */,
+				2BDCBC7A28D87DE900141042 /* VolcEngineRTC.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -127,6 +127,10 @@
 		2BAF494626CD01820020C84C /* BottomView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BottomView.m; sourceTree = "<group>"; };
 		2BAF494C26CD018D0020C84C /* RenderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderView.h; sourceTree = "<group>"; };
 		2BAF494D26CD018D0020C84C /* RenderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RenderView.m; sourceTree = "<group>"; };
+		2BDCBC7528D87DE800141042 /* VolcEngineRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VolcEngineRTC.framework; path = Frameworks/VolcEngineRTC.framework; sourceTree = "<group>"; };
+		2BDCBC7628D87DE900141042 /* libbytevc0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbytevc0.dylib; path = Frameworks/libbytevc0.dylib; sourceTree = "<group>"; };
+		2BDCBC7728D87DE900141042 /* RTCFFmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RTCFFmpeg.framework; path = Frameworks/RTCFFmpeg.framework; sourceTree = "<group>"; };
+		2BDCBC7828D87DE900141042 /* libeffect.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libeffect.dylib; path = Frameworks/libeffect.dylib; sourceTree = "<group>"; };
 		2BECB70026CD0E7900A1600D /* UserRenderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserRenderView.h; sourceTree = "<group>"; };
 		2BECB70126CD0E7900A1600D /* UserRenderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserRenderView.m; sourceTree = "<group>"; };
 		9F193DAF2497A477003202CC /* QuickStart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickStart.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,10 +146,6 @@
 		9F193E8A2497B8AF003202CC /* LoginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginView.h; sourceTree = "<group>"; };
 		9F4EC6CA24B70F8E00988C24 /* WindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowController.h; sourceTree = "<group>"; };
 		9F4EC6CB24B70F8E00988C24 /* WindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowController.m; sourceTree = "<group>"; };
-		CCE360B3289B9FE800B8DFCC /* libbytevc0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libbytevc0.dylib; sourceTree = "<group>"; };
-		CCE360B4289B9FE900B8DFCC /* RTCFFmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RTCFFmpeg.framework; sourceTree = "<group>"; };
-		CCE360B5289B9FEB00B8DFCC /* VolcEngineRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VolcEngineRTC.framework; sourceTree = "<group>"; };
-		CCE360B6289B9FED00B8DFCC /* libeffect.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libeffect.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,10 +153,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CCE360B7289B9FED00B8DFCC /* libbytevc0.dylib in Frameworks */,
-				CCE360BA289B9FED00B8DFCC /* libeffect.dylib in Frameworks */,
-				CCE360BC289BB05C00B8DFCC /* RTCFFmpeg.framework in Frameworks */,
-				CCE360BE289BB06E00B8DFCC /* VolcEngineRTC.framework in Frameworks */,
+				2BDCBC7B28D87DE900141042 /* libbytevc0.dylib in Frameworks */,
+				2BDCBC7F28D87DE900141042 /* libeffect.dylib in Frameworks */,
+				2BDCBC7D28D87DE900141042 /* RTCFFmpeg.framework in Frameworks */,
+				2BDCBC7928D87DE900141042 /* VolcEngineRTC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,10 +408,10 @@
 		BA54B357C0037EA9DD7FAAF6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CCE360B3289B9FE800B8DFCC /* libbytevc0.dylib */,
-				CCE360B6289B9FED00B8DFCC /* libeffect.dylib */,
-				CCE360B4289B9FE900B8DFCC /* RTCFFmpeg.framework */,
-				CCE360B5289B9FEB00B8DFCC /* VolcEngineRTC.framework */,
+				2BDCBC7628D87DE900141042 /* libbytevc0.dylib */,
+				2BDCBC7828D87DE900141042 /* libeffect.dylib */,
+				2BDCBC7728D87DE900141042 /* RTCFFmpeg.framework */,
+				2BDCBC7528D87DE800141042 /* VolcEngineRTC.framework */,
 				2B1856CF25C2FC5E00B2DD6C /* CoreFoundation.framework */,
 			);
 			name = Frameworks;
@@ -740,6 +740,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/RTCDemo",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
@@ -755,6 +756,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.quickstart;
@@ -777,6 +779,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/RTCDemo",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
@@ -792,6 +795,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.quickstart;

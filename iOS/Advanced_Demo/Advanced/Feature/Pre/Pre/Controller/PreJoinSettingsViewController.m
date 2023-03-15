@@ -12,7 +12,6 @@
 @interface PreJoinSettingsViewController ()
 
 @property (nonatomic, strong) SettingView *settingView;
-@property (nonatomic, strong) SettingView *effectsView;
 @property (nonatomic, strong) SettingView *detectionView;
 @property (nonatomic, strong) SettingView *notifyView;
 
@@ -78,30 +77,10 @@
     
     self.settingView.dataArray = @[segmentModel, externalSourceModel,externalRenderModel,localRenderModeModel,remoteRenderModeModel];
     
-    // 特效
-    [self.view addSubview:self.effectsView];
-    [self.effectsView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.settingView.mas_bottom).offset(20);
-        make.left.right.equalTo(self.view);
-        make.height.mas_equalTo(84);
-    }];
-    self.effectsView.title = @"特效";
-    
-    NSArray *effectsArray = @[@"火山美颜",@"无美颜"];
-    NSInteger effectsDefault = self.preJoinSetting.effectsMode;
-    SettingOptionArrayModel *effectsModel = [[SettingOptionArrayModel alloc] initWithOptionArray:effectsArray defaultIndex:effectsDefault];
-    effectsModel.title = @"美颜方案";
-    effectsModel.describe = @"火山方案：调用enableVideoEffect开启美颜贴纸特效";
-    [effectsModel setDidSelectedIndex:^(NSInteger index, NSString * _Nonnull title) {
-        weakSelf.preJoinSetting.effectsMode = index;
-    }];
-    
-    self.effectsView.dataArray = @[effectsModel];
-    
     // 进房前检测
     [self.view addSubview:self.detectionView];
     [self.detectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.effectsView.mas_bottom).offset(20);
+        make.top.equalTo(self.settingView.mas_bottom).offset(20);
         make.left.right.equalTo(self.view);
         make.height.mas_equalTo(84);
     }];
@@ -155,13 +134,6 @@
         _settingView = [[SettingView alloc] init];
     }
     return _settingView;
-}
-
-- (SettingView *)effectsView {
-    if (!_effectsView) {
-        _effectsView = [[SettingView alloc] init];
-    }
-    return _effectsView;
 }
 
 - (SettingView *)detectionView {

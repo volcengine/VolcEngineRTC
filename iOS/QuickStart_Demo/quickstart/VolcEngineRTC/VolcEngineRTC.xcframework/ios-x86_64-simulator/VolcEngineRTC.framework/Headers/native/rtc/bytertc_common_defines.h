@@ -23,6 +23,7 @@
 
 namespace bytertc {
 
+
 /** 
  * @type keytype
  * @brief 用户离开房间的原因。  <br>
@@ -239,7 +240,7 @@ enum UserMessageSendResult {
      */
     kUserMessageSendResultNotJoin = 100,
     /** 
-     * @brief 连接未完成初始化
+     * @brief 连接未完成初始化,没有可用的数据传输通道连接
      */
     kUserMessageSendResultInit = 101,
     /** 
@@ -300,7 +301,7 @@ enum RoomMessageSendResult {
  */
 enum ConnectionState {
     /** 
-     * @brief 连接断开，且断开时长超过 12s，SDK 会自动重连。
+     * @brief 连接断开超过 12s，此时 SDK 会尝试自动重连。
      */
     kConnectionStateDisconnected = 1,
     /** 
@@ -432,6 +433,12 @@ enum NetworkQuality {
      * @brief 网络质量非常差，基本不能沟通。
      */
     kNetworkQualityVbad,
+    /** 
+     * @brief 12 s 内无应答，代表网络断开，将返回本枚举值。
+     * 你也可以通过 onConnectionStateChanged 监听 kConnectionStateDisconnected = 1 感知网络断开。
+     * 更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
+     */
+    kNetworkQualityDisconnected,
 };
 
 /** 
@@ -559,8 +566,8 @@ enum RoomProfileType {
      */
     kRoomProfileTypeChat = 5,
     /** 
-     * @brief 适用于 3 人及以上纯语音通话<br>
-     *        音视频通话为媒体模式，上麦时切换为通话模式
+     * @brief 适用于 3 人及以上纯语音通话。<br>
+     *        通话中，闭麦时为是媒体模式，上麦后切换为通话模式。
      */
     kRoomProfileTypeChatRoom = 6,
     /** 
@@ -609,7 +616,7 @@ enum RoomProfileType {
      */
     kRoomProfileTypeMeeting = 16,
     /** 
-     * @brief 适用于云端会议中的会议室终端
+     * @brief 适用于云端会议中的会议室终端设备，例如 Rooms，投屏盒子等。
      */
     kRoomProfileTypeMeetingRoom = 17,
     /** 
@@ -629,7 +636,8 @@ struct AudioRoomConfig {
      */
     RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /** 
-     * @brief 是否自动订阅音频流，默认为自动订阅。
+     * @brief 是否自动订阅音频流，默认为自动订阅。<br>
+     *        包含主流和屏幕流。 
      */
     bool is_auto_subscribe_audio = true;
     /** 
@@ -866,6 +874,17 @@ enum MediaDeviceWarning {
      * @brief setAudioRoute结果回调, 设备没有启动
      */
     kMediaDeviceWarningSetAudioRouteDeviceNotStart = 24,
+    /** 
+     * @hidden(Android,iOS,Linux)
+     * @brief 检测到用户正在使用设备过滤列表中的采集设备。
+     */
+    kMediaDeviceWarningRecordingUseSilentDevice = 25,
+    /** 
+     * @hidden(Android,iOS,Linux)
+     * @brief 检测到用户正在使用设备过滤列表中的播放设备。
+     */
+    kMediaDeviceWarningPlayoutUseSilentDevice = 26,
+
 };
 
 /** 
@@ -1102,6 +1121,16 @@ enum ErrorCode {
      */
     kErrorCodeRoomAlreadyExist = -1013,
     /** 
+     * @brief 加入房间错误。 <br>
+     *        服务端license过期，拒绝进房。
+     */
+    kErrorCodeJoinRoomServerLicenseExpired = -1017,
+    /** 
+     * @brief 加入房间错误。 <br>
+     *        超过服务端license许可的并发量上限，拒绝进房。
+     */
+    kErrorCodeJoinRoomExceedsTheUpperLimit = -1018,
+    /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
      */
@@ -1132,6 +1161,10 @@ enum ErrorCode {
      *        SDK与信令服务器断开，并不再自动重连，可联系技术支持。  <br>
      */
     kErrorCodeAbnormalServerStatus = -1084,
+    /**
+     * @hidden
+     */
+    kErrorCodeInternalDeadLockNotify = -1111,
 };
 
 /** 
@@ -1199,7 +1232,7 @@ enum WarningCode {
     kWarningCodeUserInPublish = -2014,
 
     /** 
-     * @brief 新生成的房间已经替换了同样roomId的旧房间
+     * @brief 已存在相同 roomId 的房间，新创建的房间实例已替换旧房间实例。
      */
     kWarningCodeOldRoomBeenReplaced = -2016,
 
@@ -1336,19 +1369,18 @@ enum LocalAudioStreamState {
      *       + 本地录音设备启动失败，对应错误码 kLocalAudioStreamErrorRecordFailure <br>
      *       + 检测到没有录音设备权限，对应错误码 kLocalAudioStreamErrorDeviceNoPermission <br>
      *       + 音频编码失败，对应错误码 kLocalAudioStreamErrorEncodeFailure
-     * <br>
      */
     kLocalAudioStreamStateFailed,
 
     /** 
      * @brief 本地音频静音成功后回调该状态。
-     *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager#setAudioCaptureDeviceMute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamMute,
 
     /** 
      * @brief 本地音频解除静音成功后回调该状态。
-     *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager-setaudiocapturedevicemute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
+     *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager#setAudioCaptureDeviceMute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
     kLocalAudioStreamUnmute
 };
@@ -1372,6 +1404,7 @@ enum LocalAudioStreamError {
      */
     kLocalAudioStreamErrorDeviceNoPermission,
     /** 
+     * @hidden
      * @brief 本地音频录制设备已经在使用中
      * @notes 该错误码暂未使用
      */
@@ -1461,12 +1494,9 @@ enum RemoteAudioState {
     /** 
      * @brief  不接收远端音频流。 <br>
      *         以下情况下会触发回调 `onRemoteAudioStateChanged`：  <br>
-     *       + 本地用户停止接收远端音频流，对应原因是：kRemoteAudioStateChangeReasonLocalMuted{@link
-     * #RemoteAudioStateChangeReason}  <br>
-     *       + 远端用户停止发送音频流，对应原因是：kRemoteAudioStateChangeReasonRemoteMuted{@link
-     * #RemoteAudioStateChangeReason}  <br>
-     *       + 远端用户离开房间，对应原因是：kRemoteAudioStateChangeReasonRemoteOffline{@link
-     * #RemoteAudioStateChangeReason}  <br>
+     *       + 本地用户停止接收远端音频流，对应原因是：kRemoteAudioStateChangeReasonLocalMuted{@link #RemoteAudioStateChangeReason}  <br>
+     *       + 远端用户停止发送音频流，对应原因是：kRemoteAudioStateChangeReasonRemoteMuted{@link #RemoteAudioStateChangeReason}  <br>
+     *       + 远端用户离开房间，对应原因是：kRemoteAudioStateChangeReasonRemoteOffline{@link #RemoteAudioStateChangeReason}  <br>
      */
     kRemoteAudioStateStopped = 0,
     /** 
@@ -1838,7 +1868,7 @@ struct RemoteAudioStats {
      */
     int stall_duration;
     /** 
-     *@brief 用户体验级别的端到端延时。从发送端采集完成编码开始到接收端解码完成渲染开始的延时，单位为 ms 。  <br>
+     * @brief 用户体验级别的端到端延时。从发送端采集完成编码开始到接收端解码完成渲染开始的延时，单位为 ms 。  <br>
      */
     long e2e_delay;
     /** 
@@ -1858,7 +1888,7 @@ struct RemoteAudioStats {
      */
     int total_rtt;
     /** 
-     * @brief 远端用户发送的音频流质量。值含义参考 NetworkQuality{@link #NetworkQuality} 。  <br>
+     * @brief 远端用户发送的音频流质量。参看 NetworkQuality{@link #NetworkQuality}。
      */
     int quality;
     /** 
@@ -1890,7 +1920,7 @@ struct RemoteAudioStats {
      */
     int dec_sample_rate;
     /** 
-     * @brief 解码时长。对此次统计周期内接收的远端音频流进行解码的总耗时，单位为 s 。  <br>
+     * @brief 此次订阅中，对远端音频流进行解码的累计耗时。单位为 s。
      */
     int dec_duration;
     /** 
@@ -2934,7 +2964,19 @@ enum DeviceTransportType {
     /** 
      * @brief 虚拟设备
      */
-    kDeviceTransportTypeVirtual = 6
+    kDeviceTransportTypeVirtual = 6,
+    /** 
+     * @brief USB设备
+     */
+    kDeviceTransportTypeUSB = 7,
+    /** 
+     * @brief PCI设备
+     */
+    kDeviceTransportTypePCI = 8,
+    /** 
+     * @brief AirPlay设备
+     */
+    kDeviceTransportTypeAirPlay = 9
 };
 
 
@@ -3023,5 +3065,6 @@ struct EchoTestConfig {
      */
     const char* token;
 };
+
 
 }  // namespace bytertc

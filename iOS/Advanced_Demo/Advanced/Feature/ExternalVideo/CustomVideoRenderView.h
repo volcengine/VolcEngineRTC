@@ -3,7 +3,7 @@
 
 
 #import <UIKit/UIKit.h>
-#import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
+#import <VolcEngineRTC/objc/ByteRTCVideo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

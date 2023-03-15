@@ -10,6 +10,7 @@
 namespace bytertc {
 
 /** 
+ * @hidden
  * @type api
  * @region 引擎管理
  * @brief 音视频设备相关的信息
@@ -23,6 +24,7 @@ public:
     IDeviceCollection() {
     }
     /** 
+     * @hidden
      * @type api
      * @region 引擎管理
      * @brief 获取当前系统内音视频设备数量
@@ -30,6 +32,7 @@ public:
      */
     virtual int getCount() = 0;
     /** 
+     * @hidden
      * @type api
      * @region 引擎管理
      * @brief 根据索引号，获取设备信息
@@ -42,6 +45,7 @@ public:
      */
     virtual int getDevice(int index, char device_name[MAX_DEVICE_ID_LENGTH], char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 
+     * @hidden
      * @type api
      * @region 引擎管理
      * @brief 释放当前 IAudioDeviceCollection{@link #IAudioDeviceCollection} 对象占用的资源。
@@ -103,7 +107,7 @@ public:
      * @region 引擎管理
      * @brief 根据索引号，获取设备信息
      * @param [in] index 设备索引号，从 0 开始，注意需小于 getCount{@link #IAudioDeviceCollection#getCount} 返回值。
-     * @param [out] audio_device_info 设备信息
+     * @param [out] audio_device_info 设备信息，详见 AudioDeviceInfo{@link #AudioDeviceInfo}
      * @return  <br>
      *        + 0：方法调用成功  <br>
      *        + !0：方法调用失败  <br>
@@ -132,7 +136,7 @@ public:
     /** 
      * @type api
      * @region 音频设备管理
-     * @brief 获取当前系统内音频播放设备列表。如果后续设备有变更，你会收到 `OnMediaDeviceStateChanged` 回调通知，然后需要重新调用本接口以获得新的设备列表。
+     * @brief 获取当前系统内音频播放设备列表。如果后续设备有变更，你会收到 `onAudioMediaDeviceStateChanged` 回调通知，然后需要重新调用本接口以获得新的设备列表。
      * @return 包含系统中所有音频播放设备的列表，参看 IAudioDeviceCollection{@link #IAudioDeviceCollection}。
      */
     virtual IAudioDeviceCollection* enumerateAudioPlaybackDevices() = 0;
@@ -141,7 +145,6 @@ public:
      * @region 音频设备管理
      * @brief 获取当前系统内音频采集设备列表。如果后续设备有变更，你需要重新调用本接口以获得新的设备列表。
      * @return 一个包含系统中所有音频采集设备列表的对象，详见 IAudioDeviceCollection{@link #IAudioDeviceCollection}。
-     * @notes 当不再使用返回的对象时，你需要调用 release{@link #IAudioDeviceCollection#release} 进行释放。
      */
     virtual IAudioDeviceCollection* enumerateAudioCaptureDevices() = 0;
 

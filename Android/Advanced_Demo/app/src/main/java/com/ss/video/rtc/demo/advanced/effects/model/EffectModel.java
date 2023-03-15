@@ -137,6 +137,8 @@ public class EffectModel {
         BeautyEffectNode node1 = new BeautyEffectNode("磨皮", "smooth", "beauty");
         BeautyEffectNode node2 = new BeautyEffectNode("大眼", "Internal_Deform_Eye", "reshape");
         BeautyEffectNode node3 = new BeautyEffectNode("瘦脸", "Internal_Deform_Overall", "reshape");
+
+        node0.selected = true;
         return Arrays.asList(node0, node1, node2, node3);
     }
 
@@ -157,6 +159,8 @@ public class EffectModel {
         FilterEffectNode node1 = new FilterEffectNode("清透", "Filter_37_L5");
         FilterEffectNode node2 = new FilterEffectNode("夜色", "Filter_35_L3");
         FilterEffectNode node3 = new FilterEffectNode("冷氧", "Filter_30_Po8");
+
+        node0.selected = true;
         return Arrays.asList(node0, node1, node2, node3);
     }
 

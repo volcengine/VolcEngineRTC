@@ -1,6 +1,5 @@
 package com.ss.video.rtc.demo.quickstart;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
 import com.ss.bytertc.engine.RTCVideo;
@@ -26,13 +24,12 @@ import com.ss.bytertc.engine.data.CameraId;
 import com.ss.bytertc.engine.data.RemoteStreamKey;
 import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.data.VideoFrameInfo;
-import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.type.AudioScenarioType;
 import com.ss.bytertc.engine.type.ChannelProfile;
 import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.rtc.demo.quickstart.R;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -183,6 +180,8 @@ public class RTCRoomActivity extends AppCompatActivity {
     private void initEngineAndJoinRoom(String roomId, String userId) {
         // 创建引擎
         mRTCVideo = RTCVideo.createRTCVideo(getApplicationContext(), Constants.APPID, mIRtcVideoEventHandler, null, null);
+        // 设置音频场景类型（需要调用 setAudioScenario 将音频场景切换为 AUDIO_SCENARIO_COMMUNICATION 后再调用 setAudioRoute()）
+        mRTCVideo.setAudioScenario(AudioScenarioType.AUDIO_SCENARIO_COMMUNICATION);
         // 设置视频发布参数
         VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(360, 640, 15, 800);
         mRTCVideo.setVideoEncoderConfig(videoEncoderConfig);
@@ -198,7 +197,7 @@ public class RTCRoomActivity extends AppCompatActivity {
                 true, true, true);
         int joinRoomRes = mRTCRoom.joinRoom(Constants.TOKEN,
                 UserInfo.create(userId, ""), roomConfig);
-        Log.i("TAG", "initEngineAndJoinRoom: " + joinRoomRes);
+        Log.i("RTCRoomActivity", "initEngineAndJoinRoom: " + joinRoomRes);
     }
 
     private void setLocalRenderView(String uid) {
@@ -274,8 +273,13 @@ public class RTCRoomActivity extends AppCompatActivity {
 
     private void updateSpeakerStatus() {
         mIsSpeakerPhone = !mIsSpeakerPhone;
-        // 设置使用哪种方式播放音频数据
-        mRTCVideo.setAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
+        /*
+        设置使用哪种方式播放音频数据
+        你需要调用 setAudioScenario 将音频场景切换为 AUDIO_SCENARIO_COMMUNICATION 后再调用本接口。
+        连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备。
+        移除后，音频设备会自动切换回原设备。
+         */
+        mRTCVideo.setDefaultAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
                 : AudioRoute.AUDIO_ROUTE_EARPIECE);
         mSpeakerIv.setImageResource(mIsSpeakerPhone ? R.drawable.speaker_on : R.drawable.speaker_off);
     }
@@ -313,8 +317,8 @@ public class RTCRoomActivity extends AppCompatActivity {
     }
 
     @Override
-    public void finish() {
-        super.finish();
+    protected void onDestroy() {
+        super.onDestroy();
         // 离开房间
         if (mRTCRoom != null) {
             mRTCRoom.leaveRoom();

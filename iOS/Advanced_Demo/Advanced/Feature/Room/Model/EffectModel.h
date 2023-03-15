@@ -8,8 +8,8 @@
 NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSUInteger, EffectModelType) {
     EffectModelTypeBeauty   = 0,
-    EffectModelTypeSticker  = 1,
-    EffectModelTypeFilter   = 2,
+    EffectModelTypeFilter   = 1,
+    EffectModelTypeSticker  = 2,
     EffectModelTypeVirtual  = 3,
 };
 

@@ -182,6 +182,12 @@
 
     bitRateModel.minValue = minValue;
     bitRateModel.maxValue = maxValue;
+    if (currentValue < minValue) {
+        currentValue = minValue;
+    } else if (currentValue > maxValue) {
+        currentValue = maxValue;
+    }
+    
     bitRateModel.currentValue = currentValue;
 
     self.roomSetting.resolution = resolution;

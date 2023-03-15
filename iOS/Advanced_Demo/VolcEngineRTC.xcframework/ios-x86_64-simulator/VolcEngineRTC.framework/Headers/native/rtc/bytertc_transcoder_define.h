@@ -102,16 +102,37 @@ enum StreamMixingEvent {
 
 
 /** 
- * @hidden
- * @brief 343 需求，缺注释，需补齐
+ * @type errorcode
+ * @brief 单流转推直播错误码
  */
 enum SingleStreamPushEvent {
+    /**
+     * @hidden
+     */
     kSingleStreamPushBase = 0,
-    kSingleStreamPushStart = 1,
-    kSingleStreamPushSuccess = 2,
-    kSingleStreamPushFailed = 3,
+    /** 
+    * @brief 开始推流。
+    */
+   kSingleStreamPushStart = 1,
+    /** 
+    * @brief 推流成功。
+    */
+   kSingleStreamPushSuccess = 2,
+    /** 
+    * @brief 推流失败。
+    */
+   kSingleStreamPushFailed = 3,
+    /** 
+     * @brief 停止推流。
+     */
     kSingleStreamPushStop = 4,
-    kSingleStreamPushTimeout = 5,
+    /** 
+    * @brief 单流转推直播任务处理超时，请检查网络状态并重试。
+    */
+   kSingleStreamPushTimeout = 5,
+    /** 
+     * @brief 参数错误。
+     */
     kSingleStreamPushParamError = 6,
 };
 
@@ -359,7 +380,7 @@ typedef struct TranscoderLayoutRegion {
      */
     const char* region_id;
    /** 
-     * @brief 图片或视频流所在房间的房间 ID。<br>
+     * @brief 图片或视频流所在房间的房间 ID。必填。<br>
      *        如果此图片或视频流是通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id;
@@ -430,7 +451,7 @@ typedef struct TranscoderLayoutRegion {
  */
 typedef struct TranscoderAudioParam {
     /** 
-     * @brief 音频采样率，单位 kHz。可取 32Khz、44.1Khz、48Khz，默认值为 48Khz。
+     * @brief 音频采样率，单位 Hz。可取 32000Hz、44100Hz、48000Hz，默认值为 48000Hz。
      */
     int32_t i32_sample_rate;
     /** 
@@ -453,12 +474,12 @@ typedef struct TranscoderAudioParam {
  */
 typedef struct TranscoderVideoParam {
     /** 
-     * @brief 合流视频宽度，单位：px。  <br>
+     * @brief 合流视频宽度。不超过 1920，单位：px。  <br>
      *        仅支持设为偶数，如果设为奇数，后处理会直接拒绝，导致合流失败。
      */
     int32_t i32_width;
     /** 
-     * @brief 合流视频高度，单位：px。  <br>
+     * @brief 合流视频高度。不超过 1920，单位：px。  <br>
      *        仅支持设为偶数，如果设为奇数，后处理会直接拒绝，导致合流失败。
      */
     int32_t i32_height;
@@ -645,7 +666,7 @@ public:
     virtual ~ITranscoderParam() = default;
 };
 /** 
- * @hidden not available in 343
+ * @hidden(Linux)
  * @type keytype
  * @brief 单流转推直播配置参数。
  */

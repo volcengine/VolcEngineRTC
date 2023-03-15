@@ -35,7 +35,7 @@ public:
      * @type api
      * @region 多房间
      * @author shenpengliang
-     * @brief 退出并销毁调用 createRTCRoom{@link #IRTCVideo#createRTCRoom} 所创建的房间。
+     * @brief 退出并销毁调用 createRTCRoom{@link #IRTCVideo#createRTCRoom} 所创建的房间实例。
      */
     virtual void destroy() = 0;
 
@@ -84,10 +84,10 @@ public:
      *        + -1：room_id / user_info.uid 包含了无效的参数。  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #IRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
      * @notes  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
      *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身设为可见后加入房间，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
-     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
+     *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。如果加入房间的用户可见，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。
      */
     virtual int joinRoom(const char* token, const UserInfo& user_info, const RTCRoomConfig& config) = 0;
 
@@ -150,7 +150,7 @@ public:
      *        二进制字符串的长度。
      * @param [in] message   <br>
      *        二进制消息的内容。
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
@@ -164,7 +164,7 @@ public:
      * @type api
      * @region 多房间
      * @author hanchenchen.c
-     * @brief 给房间内的所有其他用户发送广播消息。
+     * @brief 给房间内的所有其他用户群发文本消息。
      * @param [in] message  <br>
      *        用户发送的广播消息  <br>
      *        消息不超过 64 KB。
@@ -178,12 +178,12 @@ public:
      * @type api
      * @region 多房间
      * @author hanchenchen.c
-     * @brief 给房间内的所有其他用户发送广播消息。
+     * @brief 给房间内的所有其他用户群发二进制消息。
      * @param [in] size  <br>
      *        发送的二进制消息长度
      * @param [in] message  <br>
      *        用户发送的二进制广播消息  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 joinRoom{@link #IRTCRoom#joinRoom} 加入房间。  <br>
@@ -228,11 +228,11 @@ public:
      * @brief 在当前所在房间内发布本地屏幕共享音视频流
      * @param [in] type 媒体流类型，用于指定发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}。
      * @notes <br>
-     *        + 如果你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，则无需再调用本接口。<br>
+     *        + 即使你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，也需要调用本接口。<br>
      *        + 调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
      *        + 调用该方法后，房间中的所有远端用户会收到 onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen} 回调，其中成功收到音频流的远端用户会收到 onFirstRemoteAudioFrame{@link #IRTCVideoEventHandler#onFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 onFirstRemoteVideoFrameDecoded{@link #IRTCVideoEventHandler#onFirstRemoteVideoFrameDecoded} 回调。<br>
-     *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms}。  <br>
-     *        + 调用 unpublishScreen{@link #IRTCRoom#unpublishScreen} 取消发布。
+     *        + 调用 unpublishScreen{@link #IRTCRoom#unpublishScreen} 取消发布。 <br>
+     *        + 查看 [PC 端屏幕共享](https://www.volcengine.com/docs/6348/70144)，获取更多信息。
      */
     virtual void publishScreen(MediaStreamType type) = 0;
 
@@ -299,6 +299,20 @@ public:
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void subscribeStream(const char *user_id,MediaStreamType type) = 0;
+    /** 
+     * @type api
+     * @region 房间管理
+     * @author yejing.luna
+     * @brief 订阅房间内所有通过摄像头/麦克风采集的媒体流，或更新订阅选项。
+     * @param [in] type 媒体流类型，用于指定订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes  <br>
+     *        + 多次调用订阅接口时，将根据末次调用接口和传入的参数，更新订阅配置。<br>
+     *        + 大会模式下，如果房间内的媒体流超过上限，建议通过调用 subscribeStream{@link #IRTCRoom#subscribeStream} 逐一指定需要订阅的媒体流。<br>
+     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
+     *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #IRTCRoom#unsubscribeStream} 取消订阅或本端用户退房。 <br>
+     *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
+     */
+     virtual void subscribeAllStreams(MediaStreamType type) = 0;
 
     /** 
      * @type api
@@ -313,7 +327,18 @@ public:
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
      */
     virtual void unsubscribeStream(const char *user_id,MediaStreamType type) = 0;
-
+    /** 
+     * @type api
+     * @region 房间管理
+     * @author yejing.luna
+     * @brief 取消订阅房间内所有的通过摄像头/麦克风采集的媒体流。  <br>
+     *        自动订阅和手动订阅的流都可以通过本方法取消订阅。
+     * @param [in] type 媒体流类型，用于指定取消订阅音频/视频。参看 MediaStreamType{@link #MediaStreamType}。
+     * @notes  <br>
+     *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
+     *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体失败原因参看 ErrorCode{@link #ErrorCode}。
+     */
+    virtual void unsubscribeAllStreams(MediaStreamType type) = 0;
     /** 
      * @type api
      * @region 房间管理
@@ -489,7 +514,7 @@ public:
      * @return 方法调用结果： <br>
      *        + IRangeAudio：成功，返回一个 IRangeAudio{@link #IRangeAudio} 实例。  <br>
      *        + nullptr：失败，当前 SDK 不支持范围语音功能。
-     * @notes 首次调用该方法须在创建房间后、加入房间前。
+     * @notes 首次调用该方法须在创建房间后、加入房间前。范围语音相关 API 和调用时序详见[范围语音](https://www.volcengine.com/docs/6348/114727)。
      */
     virtual IRangeAudio* getRangeAudio() = 0;
 

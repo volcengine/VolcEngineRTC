@@ -74,24 +74,28 @@ public:
      * @author chenweiming.push
      * @brief 设置运行时的参数
      * @param [in] json_string  json 序列化之后的字符串
-     * @notes
+     * @notes 该接口需在 joinRoom{@link #IRTCRoom#joinRoom} 和 startAudioCapture{@link #IRTCVideo#startAudioCapture} 之前调用。
      */
     virtual void setRuntimeParameters(const char * json_string) = 0;
 
     /** 
      * @type api
-     * @region 多房间
+     * @region 房间管理
      * @author shenpengliang
-     * @brief 创建并获取一个 IRTCAudioRoom{@link #IRTCAudioRoom} 对象  <br>
+     * @brief 创建房间实例。
+     *        调用此方法仅返回一个房间实例，你仍需调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 才能真正地创建/加入房间。
+     *        多次调用此方法以创建多个 IRTCAudioRoom{@link #IRTCAudioRoom} 实例。分别调用各 IRTCAudioRoom 实例中的 joinRoom{@link #IRTCAudioRoom#joinRoom} 方法，同时加入多个房间。
+     *        多房间模式下，用户可以同时订阅各房间的音视频流。
      * @param [in] room_id 标识通话房间的房间 ID，最大长度为 128 字节的非空字符串。支持的字符集范围为:  <br>
-     *       + 26个大写字母 A ~ Z  <br>
-     *       + 26个小写字母 a ~ z  <br>
-     *       + 10个数字 0 ~ 9  <br>
-     *       + 下划线 "_", at 符 "@", 减号 "-"  <br>
-     *        多房间模式下，调用创建房间接口后，请勿调用同样的 roomID 创建房间，否则会导致创建房间失败。  <br>
-     * @notes  <br>
-     *       + 用户可以多次调用此方法创建多个 IRTCAudioRoom{@link #IRTCAudioRoom} 对象，再分别调用各 IRTCRoom 对象的 joinRoom{@link #IRTCAudioRoom#joinRoom} 方法，实现同时加入多个房间；  <br>
-     *       + 加入多个房间后，用户可以同时订阅各房间的音视频流，同一时间仅能在一个房间内发布音视频流。<br>
+     *       + 26 个大写字母 A ~ Z； <br>
+     *       + 26 个小写字母 a ~ z； <br>
+     *       + 10 个数字 0 ~ 9；  <br>
+     *       + 下划线 "_", at 符 "@", 减号 "-"。
+     * @return 创建的 IRTCAudioRoom{@link #IRTCAudioRoom} 房间实例。
+     * @notes <br>
+     *        + 如果需要加入的房间已存在，你仍需先调用本方法来获取 IRTCAudioRoom 实例，再调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 加入房间。
+     *        + 多房间模式下，调用创建房间接口后，请勿调用同样的 room_id 创建房间，否则新创建的房间实例会替换旧房间实例。
+     *        + 加入多个房间后，用户可以同时订阅各房间的音频流，同一时间仅能在一个房间内发布音频流。
      */
     virtual IRTCAudioRoom* createRTCRoom(const char* room_id) = 0;
 
@@ -149,7 +153,7 @@ public:
      * @type api
      * @region 音频管理
      * @author dixing
-     * @brief 设置音质档位。当所选的 RoomProfileType{@link #RoomProfileType} 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。  
+     * @brief 设置音质档位。当所选的 RoomProfileType{@link #RoomProfileType} 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。
      * @param [in] audio_profile 音质档位，参看 AudioProfileType{@link #AudioProfileType}
      * @notes  <br>
      *        + 该方法在进房前后均可调用；  <br>
@@ -180,8 +184,8 @@ public:
      *        为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br>
      *       + 0: 静音  <br>
      *       + 100: 原始音量  <br>
-     *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
-     * @notes 为保证更好的通话质量，建议将 volume 值设为 [0,100]。
+     *       + 400: 最大可为原始音量的 4 倍(自带溢出保护)
+     * @notes 假设某远端用户 A 始终在被调节的目标用户范围内，当该方法与 setRemoteAudioPlaybackVolume{@link #IRTCAudio#setRemoteAudioPlaybackVolume} 或 setRemoteRoomAudioPlaybackVolume{@link #IRTCAudioRoom#setRemoteRoomAudioPlaybackVolume} 共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
      */
     virtual void setPlaybackVolume(int volume) = 0;
 
@@ -238,8 +242,7 @@ public:
      * @region 音频设备管理
      * @author dixing
      * @brief 设置音频播放设备，默认使用扬声器。  <br>
-     *        音频播放设备发生变化时，会收到 onAudioRouteChanged{@link
-     * #IRTCAudioEventHandler#onAudioRouteChanged} 回调。
+     *        音频播放设备发生变化时，会收到 onAudioRouteChanged{@link #IRTCAudioEventHandler#onAudioRouteChanged} 回调。
      * @param [in] device 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
      * @return 方法调用结果  <br>
      *        + 0: 方法调用成功  <br>
@@ -268,22 +271,16 @@ public:
     virtual AudioRoute getAudioRoute() = 0;
 
     /** 
-     * @hidden(macOS,Windows)
+     * @hidden(macOS,Windows,Linux)
      * @type api
      * @region 音频设备管理
-     * @author liuxiaowu
-     * @brief 设置音频播放设备，默认使用扬声器。  <br>
-     *        音频播放设备发生变化时，会收到 onAudioRouteChanged{@link #IRTCAudioEventHandler#onAudioRouteChanged} 回调。
-     * @param [in] device 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
+     * @author yezijian.me
+     * @brief 将默认的音频播放设备设置为听筒或扬声器。  <br>
+     * @param [in] route 音频播放设备。参看 AudioRoute{@link #AudioRoute} <br>
      * @return 方法调用结果  <br>
-     *        + 0: 方法调用成功  <br>
-     *        + < 0: 方法调用失败  <br>
-     * @notes  <br>
-     *       + 1. 该接口仅适用于移动设备。  <br>
-     *       + 2. 该方法只支持将音视频播放设备设置为听筒或者扬声器。当 App 连接有线或蓝牙音频播放设备时，SDK 会自动切换到有线或蓝牙音频播放设备。主动设置为有线或蓝牙音频播放设备，会返回调用失败。  <br>
-     *       + 3. 若连接有线或者蓝牙音频播放设备时，将音频播放设备设置为扬声器或听筒将调用成功，但不会立马切换到扬声器或听筒，会在有线或者蓝牙音频播放设备移除后，根据设置自动切换到听筒或者扬声器。  <br>
-     *       + 4. 通话前和通话中都可以调用该方法。 <br>
-     *       + 5. 设置kAudioRouteDeviceUnknown时将会失败。 <br>
+     *        + 0: 方法调用成功。立即生效。当所有音频外设移除后，音频路由将被切换到默认设备。<br>
+     *        + < 0: 方法调用失败。指定除扬声器和听筒以外的设备将会失败。   <br>
+     * @notes 参见[移动端设置音频路由](https://www.volcengine.com/docs/6348/117836)。
      */
     virtual int setDefaultAudioRoute(AudioRoute route) = 0;
     /** 
@@ -306,11 +303,11 @@ public:
      * @author wangjunzheng
      * @brief 发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 onStreamSyncInfoReceived{@link #IRTCAudioEventHandler#onStreamSyncInfoReceived} 回调。
      * @param [in] data 消息内容。
-     * @param [in] length 消息长度。消息长度必须是 [1,16] 字节。
+     * @param [in] length 消息长度。取值范围是 [1,255] 字节，建议小于 16 字节，否则可能占用较大带宽。
      * @param [in] config 媒体流信息同步的相关配置，详见 StreamSycnInfoConfig{@link #StreamSycnInfoConfig} 。
      * @return  <br>
      *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
-     *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
+     *        + -1: 消息发送失败。消息长度大于 255 字节。  <br>
      *        + -2: 消息发送失败。传入的消息内容为空。  <br>
      *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
      *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
@@ -343,6 +340,7 @@ public:
     virtual void enablePlaybackDucking(bool enable) = 0;
 
     /** 
+     * @hidden
      * @type api
      * @region 媒体流管理
      * @author yangpan
@@ -458,7 +456,7 @@ public:
     virtual void registerAudioFrameObserver(IAudioFrameObserver* observer) = 0;
 
     /** 
-     * @hidden(Windows)
+     * @hidden
      * @type api
      * @region 美声特效管理
      * @author luomingkang
@@ -474,7 +472,7 @@ public:
     virtual int setVoiceChangerType(VoiceChangerType voice_changer) = 0;
 
     /** 
-     * @hidden(Windows)
+     * @hidden
      * @type api
      * @region 美声特效管理
      * @author luomingkang
@@ -502,12 +500,13 @@ public:
    /** 
     * @type api
     * @author majun.lvhiei
-    * @brief 获取本地采集的音频帧或接收到的远端音频帧，进行自定义处理。
-    * @param [in] method 音频帧类型，参看 AudioProcessorMethod{@link #AudioProcessorMethod}。通过多次调用此接口，可以对不同的音频帧进行自定义处理。<br>
-    *        选择不同的值时，收到的回调不同：<br>
-    *        + 选择本地采集的音频时，会收到 onProcessRecordAudioFrame{@link #IAudioFrameProcessor#onProcessRecordAudioFrame} <br>
-    *        + 选择远端音频流的混音音频时，会收到 onProcessPlayBackAudioFrame{@link #IAudioFrameProcessor#onProcessPlayBackAudioFrame} <br>
-    *        + 选择远端音频流时，会收到 onProcessRemoteUserAudioFrame{@link #IAudioFrameProcessor#onProcessRemoteUserAudioFrame} <br>
+    * @brief 获取音频帧，进行自定义处理。
+    * @param [in] method 音频帧类型，参看 AudioProcessorMethod{@link #AudioProcessorMethod}。可多次调用此接口，处理不同类型的音频帧。<br>
+    *        选择不同类型的音频帧将收到对应的回调：  <br>
+    *        + 选择本地采集的音频时，会收到 onProcessRecordAudioFrame{@link #IAudioFrameProcessor#onProcessRecordAudioFrame}。  <br>
+    *        + 选择远端音频流的混音音频时，会收到 onProcessPlayBackAudioFrame{@link #IAudioFrameProcessor#onProcessPlayBackAudioFrame}。  <br>
+    *        + 选择远端音频流时，会收到 onProcessRemoteUserAudioFrame{@link #IAudioFrameProcessor#onProcessRemoteUserAudioFrame}。  <br>
+    *        + 选择屏幕共享音频流时，会收到 onProcessScreenAudioFrame{@link #IAudioFrameProcessor#onProcessScreenAudioFrame}。（Linux 不适用）
     * @param [in] format 设定自定义处理时获取的音频帧格式，参看 AudioFormat{@link #AudioFormat}。
     * @notes <br>
     *        + 在调用此接口前，你需要调用 registerAudioProcessor{@link #IRTCAudio#registerAudioProcessor} 注册自定义音频处理器。<br>
@@ -602,7 +601,7 @@ public:
      * @param [in] key 加密密钥，长度限制为 36 位，超出部分将会被截断
      * @param [in] key_size 参数 key 的长度
      * @notes  <br>
-     *       + 使用传输时内置加密时，使用此方法；如果需要使用传输时自定义加密，参看 onEncryptData{@link #IEncryptHandler#onEncryptData}。 内置加密和自定义加密互斥，根据最后一个调用的方法确定传输是加密的方案。  <br>
+     *       + 使用传输时内置加密时，使用此方法；如果需要使用传输时自定义加密，参看 {@link #IEncryptHandler#onEncryptData}。 内置加密和自定义加密互斥，根据最后一个调用的方法确定传输是加密的方案。  <br>
      *       + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  <br>
      */
     virtual void setEncryptInfo(EncryptType encrypt_type, const char* key, int key_size) = 0;
@@ -731,7 +730,7 @@ public:
      *        二进制字符串的长度
      * @param [in] message  <br>
      *        发送的二进制消息内容  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
@@ -769,7 +768,7 @@ public:
      *        二进制字符串的长度
      * @param [in] message  <br>
      *        发送的二进制消息内容  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
      *        + -1：发送失败，RtcEngine 实例未创建
@@ -836,8 +835,8 @@ public:
  * @region 引擎管理
  * @author chenweiming.push
  * @brief 创建 RTCEngine 实例。  <br>
- *        如果当前线程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br>
- *        如果当前线程中已创建了引擎实例，再次调用此方法时，会创建另一个独立的引擎实例。
+ *        如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br>
+ *        如果当前进程中已创建了引擎实例，再次调用此方法时，会创建另一个独立的引擎实例。
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。只有使用相同的 app_id 生成的实例，才能够进行音视频通信。
  * @param [in] event_handler  <br>

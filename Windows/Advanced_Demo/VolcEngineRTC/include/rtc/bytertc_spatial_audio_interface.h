@@ -16,15 +16,15 @@ namespace bytertc {
  */
 struct Orientation {
     /** 
-     * @brief x 方向向量
+     * @brief x 坐标
      */
     float x;
     /** 
-     * @brief y 方向向量
+     * @brief y 坐标
      */
     float y;
     /** 
-     * @brief z 方向向量
+     * @brief z 坐标
      */
     float z;
 };

@@ -95,7 +95,7 @@ public:
      *        + -1：失败。room_id / user_info.uid 包含了无效的参数  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #IRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>  <br>
      * @notes  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onError{@link #IRtcEngineEventHandler#onError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin  <br>
      *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身设为可见后加入房间，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知；如果加入房间的用户可见，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
@@ -1926,8 +1926,6 @@ public:
      * @region 视频设备管理
      * @brief 创建视频设备管理实例
      * @return 视频设备管理实例，详见IVideoDeviceManager{@link #IVideoDeviceManager}
-     * @notes 当不再使用IVideoDeviceManager实例时，调用该实例的 release{@link #release}
-     * 接口，以免资源泄露
      */
     virtual IVideoDeviceManager* getVideoDeviceManager() = 0;
 
@@ -2167,7 +2165,7 @@ public:
      *        二进制字符串的长度
      * @param [in] message  <br>
      *        发送的二进制消息内容  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
@@ -2203,7 +2201,7 @@ public:
      *        二进制字符串的长度
      * @param [in] message  <br>
      *        发送的二进制消息内容  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
      *        + -1：发送失败，RtcEngine 实例未创建
@@ -2500,7 +2498,7 @@ public:
      * @param [in] config 媒体流信息同步的相关配置，详见 StreamSycnInfoConfig{@link #StreamSycnInfoConfig} 。
      * @return  <br>
      *        + >=0: 消息发送成功。返回成功发送的次数。  <br>
-     *        + -1: 消息发送失败。消息长度大于 16 字节。  <br>
+     *        + -1: 消息发送失败。消息长度大于 255 字节。  <br>
      *        + -2: 消息发送失败。传入的消息内容为空。  <br>
      *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
      *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
@@ -2520,6 +2518,7 @@ public:
     virtual void setLocalVoicePitch(int pitch) = 0;
 
     /** 
+     * @hidden    
      * @type api
      * @region 媒体流管理
      * @brief 控制本地音频流播放状态：播放/不播放  <br>
@@ -2580,6 +2579,11 @@ public:
     virtual void setVideoWatermark(StreamIndex index, const char * image_path, RTCWatermarkConfig config) = 0;
 
     virtual void clearVideoWatermark(StreamIndex index) = 0;
+
+    virtual long takeLocalSnapshot(StreamIndex streamIndex, ISnapshotResultCallback *callback) = 0;
+
+    virtual long takeRemoteSnapshot(RemoteStreamKey streamKey, ISnapshotResultCallback *callback) = 0;
+
 
   /** 
      * @hidden
@@ -2668,7 +2672,7 @@ public:
      *        二进制字符串的长度。
      * @param [in] message   <br>
      *        二进制消息的内容。
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
@@ -2698,7 +2702,7 @@ public:
      *        发送的二进制消息长度
      * @param [in] message  <br>
      *        用户发送的二进制广播消息  <br>
-     *        消息不超过 46KB。
+     *        消息不超过 64KB。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 joinRoom{@link #IRTCRoom#joinRoom} 加入房间。  <br>
      *       + 调用该函数后，会收到一次 onRoomMessageSendResult{@link #IRTCRoomEventHandler#onRoomMessageSendResult} 回调。  <br>
@@ -3220,7 +3224,7 @@ public:
     /** 
      * @type api
      * @brief 发布一路公共流<br>
-     *        公共流是指不属于任何房间，也不属于任何用户的媒体流。使用同一 `appID` 的用户，可以调用 startPlayPublicStream{@link #IRtcEngine#startPlayPublicStream} 获取和播放指定的公共流。
+     *        用户可以指定房间内多个用户发布的媒体流合成一路公共流。使用同一 `appID` 的用户，可以调用 startPlayPublicStream{@link #IRtcEngine#startPlayPublicStream} 获取和播放指定的公共流。
      * @param public_stream_id 公共流 ID
      * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
      *              一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br>
@@ -3232,7 +3236,8 @@ public:
      *        + 同一用户使用同一公共流 ID 多次调用本接口无效。如果你希望更新公共流参数，调用 updatePublicStreamParam{@link #IRtcEngine#updatePublicStreamParam} 接口。<br>
      *        + 不同用户使用同一公共流 ID 多次调用本接口时，RTC 将使用最后一次调用时传入的参数更新公共流。<br>
      *        + 使用不同的 ID 多次调用本接口可以发布多路公共流。<br>
-     *        + 调用 stopPushPublicStream{@link #IRtcEngine#stopPushPublicStream} 停止发布公共流。
+     *        + 调用 stopPushPublicStream{@link #IRtcEngine#stopPushPublicStream} 停止发布公共流。<br>
+     *        + 关于公共流功能的介绍，详见[发布和订阅公共流](https://www.volcengine.com/docs/6348/108930)
      */
     virtual int startPushPublicStream(const char* public_stream_id, IPublicStreamParam* param) = 0;
     /** 
@@ -3250,6 +3255,7 @@ public:
      * @type api
      * @brief 更新公共流参数<br>
      *        关于发布公共流，查看 startPushPublicStream{@link #IRtcEngine#startPushPublicStream}。
+     *        建议调用更新公共流前判断公共流是否已经成功启动，相关回调详见：onPushPublicStreamResult{@link #IRTCVideoEventHandler#onPushPublicStreamResult}。        
      * @param public_stream_id 公共流 ID<br>
      * @param param 公共流参数。详见 IPublicStreamParam{@link #IPublicStreamParam}。<br>
      *              指定的流必须为当前用户所发布的。

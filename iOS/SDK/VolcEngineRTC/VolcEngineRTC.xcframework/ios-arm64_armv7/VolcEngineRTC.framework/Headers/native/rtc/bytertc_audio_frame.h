@@ -252,7 +252,7 @@ public:
 };
 /** 
  * @type callback
- * @brief 自定义音频处理器
+ * @brief 自定义音频处理器。
  */
 class IAudioFrameProcessor{
 public:
@@ -262,7 +262,7 @@ public:
     * @brief 回调本地采集的音频帧地址，供自定义音频处理。
     * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
     * @notes <br>
-    *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。如果开启了耳返功能，那么对耳返音频也会生效。<br>
+    *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。<br>
     *        + 调用 `enableAudioProcessor`，并在参数中选择本地采集的音频时，收到此回调。
     */
    virtual int onProcessRecordAudioFrame(IAudioFrame& audioFrame) = 0;
@@ -283,6 +283,24 @@ public:
     * @notes 调用 `enableAudioProcessor`，并在参数中选择各个远端音频流时，收到此回调。
     */
    virtual int onProcessRemoteUserAudioFrame(const RemoteStreamKey& stream_info, IAudioFrame& audioFrame) = 0;
+    /** 
+     * @hidden(Windows,Linux)
+     * @type callback
+     * @brief 软件耳返音频数据的回调。你可根据此回调自定义处理音频。
+     * @param [in] audioFrame 耳返音频数据。参看 IAudioFrame{@link #IAudioFrame}。
+     * @notes  <br>
+     *        + 此数据处理只影响耳返音频数据。  <br>
+     *        + 调用 enableAudioProcessor{@link #RTCVideo#enableAudioProcessor}，将返回给音频处理器的音频类型设置为耳返音频后，你将收到此回调。
+     */
+    virtual int onProcessEarMonitorAudioFrame(IAudioFrame& audioFrame) = 0;
+    /** 
+     * @hidden(Linux)
+     * @type callback
+     * @brief 屏幕共享的音频帧地址回调。你可根据此回调自定义处理音频。
+     * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}。
+     * @notes 调用 `enableAudioProcessor`，把返回给音频处理器的音频类型设置为屏幕共享音频后，你将收到此回调。
+     */
+    virtual int onProcessScreenAudioFrame(IAudioFrame& audioFrame) = 0;
 };
 
 /** 
@@ -304,8 +322,7 @@ public:
      * @hidden
      * @type callback
      * @region 音频数据回调
-     * @brief 获得单个流的音频数据，此回调通过调用 registerRemoteAudioFrameObserver{@link
-     * #registerRemoteAudioFrameObserver} 触发。
+     * @brief 获得单个流的音频数据，此回调通过调用 registerRemoteAudioFrameObserver{@link #registerRemoteAudioFrameObserver} 触发。
      * @param [in] audio_frame 音频数据, 详见： IAudioFrame{@link #IAudioFrame}
      * @param [in] stream_info 该音频流的业务信息, 详见： RemoteStreamKey{@link #RemoteStreamKey}
      */

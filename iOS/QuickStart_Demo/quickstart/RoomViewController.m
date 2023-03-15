@@ -307,7 +307,7 @@
         cameraID = ByteRTCCameraIDBack;
     }
     /// 切换前置/后置摄像头（默认使用前置摄像头）
-    [self.rtcVideo switchCamera:button.selected];
+    [self.rtcVideo switchCamera:cameraID];
 }
 
 - (void)switchAudioRoute:(UIButton *)button{

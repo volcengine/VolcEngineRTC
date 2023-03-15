@@ -6,9 +6,6 @@ import android.widget.Toast;
 
 import androidx.annotation.StringRes;
 
-import com.ss.video.rtc.demo.basic_module.utils.SafeToast;
-import com.ss.video.rtc.demo.basic_module.utils.Utilities;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -18,19 +15,19 @@ import java.nio.charset.StandardCharsets;
 public class CommonUtil {
 
     public static void showShortToast(Context context, String msg) {
-        SafeToast.show(Utilities.getApplicationContext(), msg, Toast.LENGTH_SHORT);
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
     public static void showShortToast(Context context, @StringRes int msgResId) {
-        SafeToast.show(Utilities.getApplicationContext(), msgResId, Toast.LENGTH_SHORT);
+        Toast.makeText(context, msgResId, Toast.LENGTH_SHORT).show();
     }
 
     public static void showLongToast(Context context, String msg) {
-        SafeToast.show(Utilities.getApplicationContext(), msg, Toast.LENGTH_LONG);
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
     }
 
     public static void showLongToast(Context context, @StringRes int msgResId) {
-        SafeToast.show(Utilities.getApplicationContext(), msgResId, Toast.LENGTH_LONG);
+        Toast.makeText(context, msgResId, Toast.LENGTH_LONG).show();
     }
 
     private static final String DEFAULT_TAG = "CommonUtil";

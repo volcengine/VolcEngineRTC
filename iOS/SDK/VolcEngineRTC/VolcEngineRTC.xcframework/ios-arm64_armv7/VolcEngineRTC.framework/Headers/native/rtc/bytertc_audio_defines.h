@@ -78,21 +78,31 @@ struct AudioFormat {
 };
 /** 
  * @type keytype
- * @brief 返回给音频处理器的音频类型
+ * @brief 返回给音频处理器的音频类型。
  */
 enum AudioProcessorMethod{
     /** 
-     * @brief 本地采集的音频
+     * @brief 本地采集的音频。
      */
     kAudioFrameProcessorRecord = 0,
     /** 
-     * @brief 远端音频流的混音音频
+     * @brief 远端音频流的混音音频。
      */
     kAudioFrameProcessorPlayback = 1,
     /** 
-     * @brief 各个远端音频流
+     * @brief 各个远端音频流。
      */
     kAudioFrameProcessorRemoteUser = 2,
+    /** 
+     * @hidden(Windows,Linux)
+     * @brief 耳返音频。
+     */
+    kAudioFrameProcessorEarMonitor = 3,
+    /** 
+     * @hidden(Linux)
+     * @brief 屏幕共享音频。
+     */
+    kAudioFrameProcessorScreen = 4,
 };
 /** 
  * @type keytype
@@ -190,20 +200,21 @@ enum AudioScenarioType {
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
      *        </table>
      */
     kAudioScenarioTypeMusic = 0,
     /** 
      * @brief 高质量通话场景。<br>
-     *        此场景适用于对音乐表现力有要求的场景。但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。
+     *        此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。
+     *        此场景下，更倾向于使用媒体音量。由此，可能引起开关麦时音量突变。如不希望有此突变，请使用 `kAudioScenarioTypeHighQualityChat`。
      *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验；并尽可能避免使用蓝牙耳机时音量类型切换导致的听感突变。<br>
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
      *        </table>
      */
@@ -219,21 +230,35 @@ enum AudioScenarioType {
      */
     kAudioScenarioTypeCommunication = 2,
     /** 
-     * @brief 纯媒体场景。一般不建议使用。<br>
+     * @brief 纯媒体场景。一般不建议使用。
      *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。
+     *        外放通话时，可能出现回声和啸叫，请联系技术支持人员。
      */
     kAudioScenarioTypeMedia = 3,
     /** 
-     * @brief 游戏媒体场景。仅适合游戏场景。  <br>
+     * @brief 游戏媒体场景。仅适合游戏场景。
      *        此场景下，蓝牙耳机时使用通话音量，其它设备使用媒体音量。
-     *        外放通话且无游戏音效消除优化时，极易出现回声和啸叫。
+     *        若外放通话且无游戏音效消除优化时音质不理想，请联系技术支持人员。
      */
     kAudioScenarioTypeGameStreaming = 4,
+    /** 
+     * @brief 高质量畅聊场景。  <br>
+     *        此场景和 `kAudioScenarioTypeHighQualityCommunication` 高度类似，唯一的差异在于：此场景下，在使用设备自带的麦克风和扬声器/听筒进行通话时，开关麦始终采用通话音量，不会引起音量类型突变。 <br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机/USB 耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *        </table>
+     */
+    kAudioScenarioTypeHighQualityChat = 5,
 };
 
 /** 
+ * @hidden(Linux)
  * @type keytype
- * @brief 变声特效类型
+ * @brief Private method. 变声特效类型
  */
 enum VoiceChangerType {
     /** 
@@ -263,8 +288,9 @@ enum VoiceChangerType {
 };
 
 /** 
+ * @hidden(Linux)
  * @type keytype
- * @brief 混响特效类型
+ * @brief Private method. 混响特效类型
  */
 enum VoiceReverbType {
     /** 
@@ -374,7 +400,7 @@ enum AudioMixingError {
      */
     kAudioMixingErrorIdNotFound,
     /** 
-     * @brief 设置混音文件的播放位置出错
+     * @brief 设置混音文件的播放位置出错
      */
     kAudioMixingErrorSetPositionFailed,
     /** 
@@ -617,7 +643,41 @@ enum AudioMixingDualMonoMode{
 
 /** 
  * @type keytype
- * @brief 音频属性信息提示的相关配置
+ * @brief 音量回调模式。
+ */
+enum AudioReportMode {
+    /** 
+     * @brief 默认始终开启音量回调。
+     */
+    kAudioReportModeNormal,
+    /** 
+     * @brief 可见用户进房并停止推流后，关闭音量回调。
+     */
+    kAudioReportModeDisconnect,
+    /** 
+     * @brief 可见用户进房并停止推流后，开启音量回调，回调值重置为0。
+     */
+    kAudioReportModeReset,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频信息提示中是否包含本地混音音频数据。
+ */
+enum AudioPropertiesMode {
+    /** 
+     * @brief 音频信息提示中，仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
+     */
+    kAudioPropertiesModeMicrophone,
+    /** 
+     * @brief 音频信息提示中，除本地麦克风采集的音频数据和本地屏幕音频采集数据外，还包含本地混音的音频数据。
+     */
+    kAudioPropertiesModeAudioMixing
+};
+
+/** 
+ * @type keytype
+ * @brief 音频属性信息提示的相关配置。
  */
 struct AudioPropertiesConfig {
     /** 
@@ -629,14 +689,25 @@ struct AudioPropertiesConfig {
     int interval;
 
     /** 
-     * @brief 是否开启音频频谱检测
+     * @brief 是否开启音频频谱检测。
      */
     bool enable_spectrum = false;
 
     /** 
-     * @brief 是否开启人声检测 (VAD)
+     * @brief 是否开启人声检测 (VAD)。
      */
     bool enable_vad = false;
+
+    /** 
+     * @brief 音量回调配置模式。详见 AudioReportMode{@link #AudioReportMode}。
+     */
+    AudioReportMode local_main_report_mode = kAudioReportModeNormal;    
+        
+    /** 
+     * @brief 音频信息提示中是否包含本地混音音频数据。参看 AudioPropertiesMode{@link #AudioPropertiesMode}。<br>
+     *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
+     */
+    AudioPropertiesMode audio_report_mode = kAudioPropertiesModeMicrophone;
 };
 /** 
  * @type keytype
@@ -861,6 +932,94 @@ struct AudioDeviceInfo {
 
         return *this;
     }
+};
+/** 
+ * @hidden(Linux)
+ * @type keytype
+ * @brief 标准音高数据
+ */
+struct StandardPitchInfo {
+/** 
+ * @brief 开始时间，单位 ms。
+ */
+int start_time;
+/** 
+ * @brief 持续时间，单位 ms。
+ */
+int duration;
+/** 
+ * @brief 音高。
+ */
+int pitch;
+};
+/** 
+ * @hidden(Linux)
+ * @type keytype
+ * @brief K 歌打分维度。
+ */
+enum MulDimSingScoringMode {
+    /** 
+     * @brief 按照音高进行评分。
+     */
+    kMulDimSingScoringModeNote = 0
+};
+/** 
+ * @hidden(Linux)
+ * @type keytype
+ * @brief K 歌评分配置。
+ */
+struct SingScoringConfig {
+/** 
+ * @brief 音频采样率。仅支持 44100 Hz、48000 Hz。
+ */
+AudioSampleRate sample_rate;
+/** 
+ * @brief 打分维度，详见 MulDimSingScoringMode{@link #MulDimSingScoringMode}。
+ */
+MulDimSingScoringMode mode;
+/** 
+ * @brief 歌词文件路径。打分功能仅支持 KRC 歌词文件。
+ */
+const char* lyrics_filepath;
+/** 
+ * @brief 歌曲 midi 文件路径。
+ */
+const char* midi_filepath;
+};
+/** 
+ * @hidden(Linux)
+ * @type keytype
+ * @brief 实时评分信息。
+ */
+struct SingScoringRealtimeInfo {
+/** 
+ * @brief 当前播放进度。
+ */
+int current_position;
+/** 
+ * @brief 演唱者的音高。
+ */
+int user_pitch;
+/** 
+ * @brief 标准音高。
+ */
+int standard_pitch;
+/** 
+ * @brief 歌词分句索引。
+ */
+int sentence_index;
+/** 
+ * @brief 上一句歌词的评分。
+ */
+int sentence_score;
+/** 
+ * @brief 当前演唱的累计分数。
+ */
+int total_score;
+/** 
+ * @brief 当前演唱的平均分数。
+ */
+int average_score;
 };
 
 

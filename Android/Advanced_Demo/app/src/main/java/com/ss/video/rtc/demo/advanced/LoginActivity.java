@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ss.bytertc.engine.RTCEngine;
+import com.ss.bytertc.engine.RTCVideo;
 import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.utils.CommonUtil;
 
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * - 该页面用来跳转至音视频通话主页面
  * - 申请相关权限
  * - 校验房间名和用户名
- * - 展示当前 SDK 使用的版本号 {@link RTCEngine#getSdkVersion()}
+ * - 展示当前 SDK 使用的版本号 {@link com.ss.bytertc.engine.RTCVideo#getSdkVersion()}
  * <p>
  * 有以下常见的注意事项：
  * 1.SDK必要的权限有：外部内存读写、摄像头权限、麦克风权限，其余完整的权限参见{@link src/main/AndroidManifest.xml}。
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.join_room_btn).setOnClickListener(this);
         findViewById(R.id.setting_btn_tv).setOnClickListener(this);
         // 获取当前SDK的版本号
-        String sdkVersion = RTCEngine.getSdkVersion();
+        String sdkVersion = RTCVideo.getSdkVersion();
         TextView versionTv = findViewById(R.id.version_tv);
         versionTv.setText(String.format("VolcEngineRTC v%s", sdkVersion));
 

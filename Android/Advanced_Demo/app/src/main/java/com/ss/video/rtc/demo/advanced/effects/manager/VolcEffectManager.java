@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 具体调用RTCEngine实现美颜功能类
+ * 具体调用 RTC 实现美颜功能类
  */
 public class VolcEffectManager {
 
