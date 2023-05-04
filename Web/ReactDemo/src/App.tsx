@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import styled from 'styled-components';
 import VERTC from '@volcengine/rtc';
 
