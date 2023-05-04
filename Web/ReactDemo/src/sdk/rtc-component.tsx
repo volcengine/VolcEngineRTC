@@ -11,11 +11,13 @@ interface IProps {
   handleUserStopVideoCapture: any;
   handleUserJoin: any;
   handleUserLeave: any;
+  handleAutoPlayFail: any;
   handleEventError: any;
+  handlePlayerEvent: any;
 }
 
 export default class RtcComponent extends React.Component<IProps, any> {
-  rtc: any;
+  rtc: RtcClient;
   constructor(props: IProps) {
     super(props);
     this.rtc = new RtcClient(props);

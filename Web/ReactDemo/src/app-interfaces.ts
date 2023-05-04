@@ -1,3 +1,4 @@
+import { IRTCEngine } from '@volcengine/rtc';
 export interface AudioStats {
   CodecType: string;
   End2EndDelay: number;
@@ -11,6 +12,7 @@ export interface AudioStats {
 }
 
 export interface RTCClient {
+  engine: IRTCEngine;
   init: (...args: any[]) => void;
   join: (...args: any[]) => any;
   publishStream: (...args: any[]) => Promise<void>;

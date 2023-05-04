@@ -1,19 +1,19 @@
-import React, { FC, useContext }  from 'react';
+import React, { FC, useContext } from 'react';
 import styled from 'styled-components';
-import {StoreValue} from 'rc-field-form/lib/interface';
+import { StoreValue } from 'rc-field-form/lib/interface';
 
 import { Input, Button, Form, Modal } from 'antd';
 import { Context } from '../../context';
+import { setSessionInfo } from '../../utils/index';
 
-type IForm = {roomId: string; userId: string};
-
+type IForm = { roomId: string; userId: string };
 
 const ModalWrapper = styled(Modal)`
   .ant-modal-header {
     border-bottom: none;
     padding: 15px 32px 0px;
   }
-  .ant-modal-body{
+  .ant-modal-body {
     padding: 14px 32px 24px;
   }
   .ant-modal-content {
@@ -54,16 +54,14 @@ const messages = {
 const getLoginFieldRules = (
   value: StoreValue,
   name: 'userId' | 'roomId',
-  regRes: boolean,
+  regRes: boolean
 ): Promise<void | any> | void => {
   const errorTypeKey = name === 'userId' ? 'userIdErrType' : 'roomIdErrType';
 
   let result: Promise<Error | void>;
 
   if (!value || regRes) {
-    const _value = !value
-      ? ERROR_TYPES.EMPTY_STRING
-      : ERROR_TYPES.INVALID_CHARACTERS;
+    const _value = !value ? ERROR_TYPES.EMPTY_STRING : ERROR_TYPES.INVALID_CHARACTERS;
     result = Promise.reject(new Error(messages[errorTypeKey][_value]));
   } else {
     result = Promise.resolve();
@@ -72,33 +70,26 @@ const getLoginFieldRules = (
   return result;
 };
 
-const JoinRoom: FC<{joinRoom: () => void }> = ({joinRoom}) => {
-
+const JoinRoom: FC<{ joinRoom: () => void }> = ({ joinRoom }) => {
   const [form] = Form.useForm<IForm>();
 
-  const {setRoomId, setUserId, userId, roomId } = useContext(Context);
+  const { setRoomId, setUserId, userId, roomId } = useContext(Context);
 
   const onFinish = (value: IForm) => {
-    const {roomId, userId} = value;
+    const { roomId, userId } = value;
     setUserId(userId);
     setRoomId(roomId);
     joinRoom();
-    window.history.replaceState('','',`/?userId=${userId}&roomId=${roomId}`);
+    setSessionInfo({ roomId, uid: userId });
+    window.history.replaceState('', '', `/?userId=${userId}&roomId=${roomId}`);
   };
 
   return (
     <>
-      <ModalWrapper
-        width={390}
-        title='登录'
-        visible={true}
-        closable={false}
-        footer={null}
-        centered
-      >
-        <Form form={form} onFinish={onFinish} initialValues={{userId, roomId}}>
+      <ModalWrapper width={390} title="登录" visible={true} closable={false} footer={null} centered>
+        <Form form={form} onFinish={onFinish} initialValues={{ userId, roomId }}>
           <Form.Item
-            name='roomId'
+            name="roomId"
             rules={[
               {
                 required: true,
@@ -109,10 +100,10 @@ const JoinRoom: FC<{joinRoom: () => void }> = ({joinRoom}) => {
               },
             ]}
           >
-            <Input placeholder='房间ID' size='large' />
+            <Input placeholder="房间ID" size="large" />
           </Form.Item>
           <Form.Item
-            name='userId'
+            name="userId"
             rules={[
               {
                 required: true,
@@ -123,15 +114,15 @@ const JoinRoom: FC<{joinRoom: () => void }> = ({joinRoom}) => {
               },
             ]}
           >
-            <Input placeholder='用户ID' size='large' />
+            <Input placeholder="用户ID" size="large" />
           </Form.Item>
           <Form.Item>
             <Button
-              type='primary'
-              htmlType='submit'
+              type="primary"
+              htmlType="submit"
               block
-              size='large'
-              style={{marginTop: 15, fontWeight: 600}}
+              size="large"
+              style={{ marginTop: 15, fontWeight: 600 }}
             >
               进入房间
             </Button>

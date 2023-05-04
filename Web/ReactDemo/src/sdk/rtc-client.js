@@ -13,6 +13,9 @@ export default class RtcClient {
     this.setRemoteVideoPlayer = this.setRemoteVideoPlayer.bind(this);
     this.handleUserJoin = props.handleUserJoin;
     this.handleUserLeave = props.handleUserLeave;
+    this.handleAutoPlayFail = props.handleAutoPlayFail;
+    this.handlePlayerEvent = props.handlePlayerEvent;
+    this.bindEngineEvents();
   }
   SDKVERSION = VERTC.getSdkVersion();
   bindEngineEvents() {
@@ -23,6 +26,11 @@ export default class RtcClient {
 
     this.engine.on(VERTC.events.onUserJoined, this.handleUserJoin);
     this.engine.on(VERTC.events.onUserLeave, this.handleUserLeave);
+    this.engine.on(VERTC.events.onAutoplayFailed, (events) => {
+      console.log('VERTC.events.onAutoplayFailed', events.userId);
+      this.handleAutoPlayFail(events);
+    });
+    this.engine.on(VERTC.events.onPlayerEvent, this.handlePlayerEvent);
     this.engine.on(VERTC.events.onError, (e) => this.handleEventError(e, VERTC));
   }
   async setRemoteVideoPlayer(remoteUserId, domId) {
@@ -44,7 +52,8 @@ export default class RtcClient {
     this.engine.off(VERTC.events.onUserStopVideoCapture, this.handleUserStopVideoCapture);
     this.engine.off(VERTC.events.onUserJoined, this.handleUserJoin);
     this.engine.off(VERTC.events.onUserLeave, this.handleUserLeave);
-
+    this.engine.off(VERTC.events.onAutoplayFailed, this.handleAutoPlayFail);
+    this.engine.off(VERTC.events.onPlayerEvent, this.handlePlayerEvent);
     this.engine.off(VERTC.events.onError, this.handleEventError);
   }
   join(token, roomId, uid) {
@@ -71,9 +80,11 @@ export default class RtcClient {
    * @returns
    */
   async getDevices() {
+    const devices = await VERTC.enumerateDevices();
+
     return {
-      audioInputs: await VERTC.enumerateAudioCaptureDevices(),
-      videoInputs: await VERTC.enumerateVideoCaptureDevices(),
+      audioInputs: devices.filter((i) => i.deviceId && i.kind === 'audioinput'),
+      videoInputs: devices.filter((i) => i.deviceId && i.kind === 'videoinput'),
     };
   }
   /**
@@ -81,7 +92,6 @@ export default class RtcClient {
    * @param {*} callback
    */
   async createLocalStream(userId, callback) {
-    const permissions = await this.checkPermission();
     const devices = await this.getDevices();
     const devicesStatus = {
       video: 1,
@@ -98,13 +108,13 @@ export default class RtcClient {
       });
       return;
     }
-    if (this.streamOptions.audio && permissions.audio) {
+    if (this.streamOptions.audio && devices.audioInputs.length) {
       await this.engine.startAudioCapture(devices.audioInputs[0].deviceId);
     } else {
       devicesStatus['video'] = 0;
       this.engine.unpublishStream(MediaType.AUDIO);
     }
-    if (this.streamOptions.video && permissions.video) {
+    if (this.streamOptions.video && devices.videoInputs.length) {
       await this.engine.startVideoCapture(devices.videoInputs[0].deviceId);
     } else {
       devicesStatus['audio'] = 0;
@@ -144,10 +154,10 @@ export default class RtcClient {
   }
 
   async leave() {
-    await this.engine.stopVideoCapture();
-    await this.engine.stopAudioCapture();
-    await this.engine.unpublishStream(MediaType.AUDIO);
-    await this.engine.leaveRoom();
+    this.engine.stopVideoCapture();
+    this.engine.stopAudioCapture();
+    this.engine.unpublishStream(MediaType.AUDIO);
+    this.engine.leaveRoom();
     // VERTC.destroyEngine(this.engine);
   }
 }
