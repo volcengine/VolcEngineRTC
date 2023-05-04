@@ -1,15 +1,23 @@
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import styled from 'styled-components';
-import { MediaType, onUserJoinedEvent, onUserLeaveEvent } from '@volcengine/rtc';
-import { ControlBar } from '../../modules';
+import {
+  MediaType,
+  onUserJoinedEvent,
+  onUserLeaveEvent,
+  PlayerEvent,
+  AutoPlayFailedEvent,
+} from '@volcengine/rtc';
+import { ControlBar, AutoPlayModal } from '../../modules';
 import { Context } from '../../context';
+import VConsole from 'vconsole';
 
 import RTCComponent from '../../sdk/rtc-component';
-import { RTCClient, Stream } from '../../app-interfaces';
+import { RTCClient } from '../../app-interfaces';
 import { streamOptions } from './constant';
 import config from '../../config';
 import MediaPlayer from '../../components/MediaPlayer';
+import { removeLoginInfo } from '../../utils';
 
 const Container = styled.div`
   width: 100%;
@@ -29,11 +37,16 @@ const Item = styled.div`
   position: relative;
 `;
 
+const vConsole = new VConsole();
+
 const Meeting: React.FC<Record<string, unknown>> = () => {
   const { roomId, userId, setJoin } = useContext(Context);
   const [isMicOn, setMicOn] = useState<boolean>(true);
   const [isVideoOn, setVideoOn] = useState<boolean>(true);
   const rtc = useRef<RTCClient>();
+  const [autoPlayFailUser, setAutoPlayFailUser] = useState<string[]>([]);
+  const playStatus = useRef<{ [key: string]: { audio: boolean; video: boolean } }>({});
+  const autoPlayFailUserdRef = useRef<string[]>([]);
 
   const [remoteStreams, setRemoteStreams] = useState<{
     [key: string]: {
@@ -41,24 +54,43 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     };
   }>({});
 
-  const leaveRoom = useCallback(() => {
-    if (!rtc.current) return;
+  const leaveRoom = useCallback(
+    (refresh: boolean) => {
+      if (!rtc.current) return;
 
-    // off the event
-    rtc.current.removeEventListener();
+      // off the event
+      rtc.current.removeEventListener();
 
-    rtc.current.leave();
-    setJoin(false);
-  }, [rtc, setJoin]);
+      rtc.current.leave();
+      if (!refresh) {
+        setJoin(false);
+        removeLoginInfo();
+      }
 
+      setAutoPlayFailUser([]);
+    },
+    [rtc, setJoin]
+  );
+  // alert(111);
+
+  // useEffect(() => {
+  //   if (sessionStorage.getItem('store')) {
+  //     const a = sessionStorage.getItem('store');
+  //     a && alert(a);
+  //   }
+  // }, []);
   /**
    * @brief call leaveRoom function when the browser window closes or refreshes
    */
+  const leaveFunc = () => {
+    leaveRoom(true);
+    sessionStorage.setItem('store', JSON.stringify({ test: new Date().toString() }));
+  };
   useEffect(() => {
-    window.addEventListener('beforeunload', leaveRoom);
+    window.addEventListener('pagehide', leaveFunc);
     return () => {
-      leaveRoom();
-      window.removeEventListener('beforeunload', leaveRoom);
+      leaveRoom(true);
+      window.removeEventListener('pagehide', leaveFunc);
     };
   }, [leaveRoom]);
 
@@ -122,6 +154,14 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     }
   };
 
+  useEffect(() => {
+    const streams = Object.keys(remoteStreams);
+    const _autoPlayFailUser = autoPlayFailUser.filter(
+      (item) => streams.findIndex((stream) => stream === item) !== -1
+    );
+    setAutoPlayFailUser([..._autoPlayFailUser]);
+  }, [remoteStreams]);
+
   const handleUserLeave = (e: onUserLeaveEvent) => {
     const { userInfo } = e;
     const remoteUserId = userInfo.userId;
@@ -136,7 +176,7 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
   useEffect(() => {
     (async () => {
       if (!roomId || !userId || !rtc.current) return;
-      rtc.current.bindEngineEvents();
+      // rtc.current.bindEngineEvents();
       rtc.current
         .join((config.token as any)?.[userId] || null, roomId, userId)
         .then(() =>
@@ -168,9 +208,82 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
   const handleEventError = (e: any, VERTC: any) => {
     if (e.errorCode === VERTC.ErrorCode.DUPLICATE_LOGIN) {
       message.error('你的账号被其他人顶下线了');
-      leaveRoom();
+      leaveRoom(false);
     }
   };
+
+  const handleAutoPlayFail = (event: AutoPlayFailedEvent) => {
+    console.log('handleAutoPlayFail', event.userId, event);
+    const { userId, kind } = event;
+
+    let playUser = playStatus.current?.[userId] || {};
+    playUser = { ...playUser, [kind]: false };
+    playStatus.current[userId] = playUser;
+
+    addFailUser(userId);
+  };
+
+  const addFailUser = (userId: string) => {
+    const index = autoPlayFailUser.findIndex((item) => item === userId);
+    if (index === -1) {
+      autoPlayFailUser.push(userId);
+    }
+    setAutoPlayFailUser([...autoPlayFailUser]);
+  };
+
+  const playerFail = (params: { type: 'audio' | 'video'; userId: string }) => {
+    const { type, userId } = params;
+    let playUser = playStatus.current?.[userId] || {};
+
+    console.log('pause', event);
+
+    playUser = { ...playUser, [type]: false };
+
+    const { audio, video } = playUser;
+
+    if (audio === false || video === false) {
+      addFailUser(userId);
+    }
+  };
+
+  const handlePlayerEvent = (event: PlayerEvent) => {
+    const { userId, rawEvent, type } = event;
+
+    console.log('handlePlayerEvent', event, userId, type, rawEvent.type);
+
+    let playUser = playStatus.current?.[userId] || {};
+
+    if (!playStatus.current) return;
+
+    if (rawEvent.type === 'playing') {
+      playUser = { ...playUser, [type]: true };
+      const { audio, video } = playUser;
+      if (audio !== false && video !== false) {
+        const _autoPlayFailUser = autoPlayFailUserdRef.current.filter((item) => item !== userId);
+        setAutoPlayFailUser([..._autoPlayFailUser]);
+      }
+    } else if (rawEvent.type === 'pause') {
+      playerFail({ userId, type });
+    }
+
+    playStatus.current[userId] = playUser;
+    console.log('playStatusplayStatusplayStatus', playStatus);
+  };
+
+  const handleAutoPlay = () => {
+    const users: string[] = autoPlayFailUser;
+    console.log('handleAutoPlay autoPlayFailUser', autoPlayFailUser);
+    if (users && users.length) {
+      users.forEach((user) => {
+        rtc.current?.engine.play(user);
+      });
+    }
+    setAutoPlayFailUser([]);
+  };
+
+  useEffect(() => {
+    autoPlayFailUserdRef.current = autoPlayFailUser;
+  }, [autoPlayFailUser]);
 
   return (
     <>
@@ -189,6 +302,8 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
         handleUserJoin={handleUserJoin}
         handleUserLeave={handleUserLeave}
         handleEventError={handleEventError}
+        handleAutoPlayFail={handleAutoPlayFail}
+        handlePlayerEvent={handlePlayerEvent}
       />
       <Container>
         <Item>
@@ -239,7 +354,7 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
             moduleName: 'HangUpModule',
             moduleProps: {
               changeHooks: () => {
-                leaveRoom();
+                leaveRoom(false);
               },
             },
           },
@@ -263,6 +378,7 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
           },
         ]}
       />
+      <AutoPlayModal handleAutoPlay={handleAutoPlay} autoPlayFailUser={autoPlayFailUser} />
     </>
   );
 };

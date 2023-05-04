@@ -12,16 +12,33 @@ let rtc = new RtcClient({
   handleEventError,
 });
 
-/**
- * hide the voice and mic control pannel
- */
-$('.player').hide();
-$('#control').hide();
-$('#room-id-text').text('');
-$('#user-id-text').text('');
-$('#header-version').text(`RTC版本 v${rtc.SDKVERSION}`);
-checkRoomIdAndUserId('room-id');
-checkRoomIdAndUserId('user-id');
+const { roomId = '' } = getUrlArgs();
+
+const hasLogin = checkLoginInfo();
+
+if (!hasLogin) {
+  /**
+   * hide the voice and mic control pannel
+   */
+  $('.player').hide();
+  $('#control').hide();
+  $('#room-id-text').text('');
+  $('#user-id-text').text('');
+  $('#header-version').text(`RTC版本 v${rtc.SDKVERSION}`);
+  $('#room-id').val(roomId);
+  $('#pannel').show();
+
+  checkRoomIdAndUserId('room-id');
+  checkRoomIdAndUserId('user-id');
+} else {
+  const { roomId, uid } = getSessionInfo();
+
+  config.roomId = roomId;
+  config.uid = uid;
+
+  switchToMeeting(config);
+}
+
 /**
  *
  * @param {String} type video / mic
@@ -41,21 +58,17 @@ const changeMicOrVideoIconUrl = (type, statusTag, offIconUrl, onIconUrl) => {
  * by the user.
  */
 
-$('#submit').on('click', async () => {
-  if (checkReg('room-id') || checkReg('user-id')) {
-    return;
-  }
-  config.roomId = $('#room-id').val();
-  config.uid = $('#user-id').val();
+async function switchToMeeting(config) {
   $('#control').show();
   $('.player').show();
   $('#pannel').hide();
+  $('.control-wrapper').show();
+
   try {
     rtc.bindEngineEvents();
     /*
      * before join a room, you should create a room,then you can join it with `engine.join(token,roomId,uid, onSuccessFunc, onFailFunc)`
      */
-
     await rtc.join((config.token || {})[config.uid], config.roomId, config.uid);
     console.log('join room ');
     $('#header-version').text(`${config.roomId}`);
@@ -65,8 +78,21 @@ $('#submit').on('click', async () => {
   } catch (err) {
     $('#control').hide();
     $('#pannel').show();
+    $('.player').hide();
     console.log(err);
   }
+}
+
+$('#submit').on('click', async () => {
+  if (checkReg('room-id') || checkReg('user-id')) {
+    return;
+  }
+  config.roomId = $('#room-id').val();
+  config.uid = $('#user-id').val();
+  setSessionInfo({ roomId: config.roomId, uid: config.uid });
+  changeUrl(config.roomId);
+
+  switchToMeeting(config);
 });
 
 /**
@@ -93,8 +119,21 @@ $('#leave').click(() => {
 /**
  * When you reload page you can make leave action and keep the next load is fine
  */
-$(window).on('beforeunload unload', () => {
-  actionToLeave();
+// if (sessionStorage.getItem('store')) {
+//   const a = sessionStorage.getItem('store');
+//   a && alert(a);
+// }
+
+window.addEventListener('pagehide', function (event) {
+  // sessionStorage.setItem(
+  //   'store',
+  //   JSON.stringify({ test: new Date().toString() })
+  // );
+
+  // off the event
+  rtc.removeEventListener();
+  // leave the room
+  rtc.leave();
 });
 
 /*---------------------- action handler start --------------------*/
@@ -121,11 +160,13 @@ const actionChangeVideoState = async () => {
  * leave the room and clear the wrapper dom of `engine` and info
  */
 const actionToLeave = async () => {
+  const { roomId = '' } = getUrlArgs();
+
   $('#header-version').text(`RTC版本 v${rtc.SDKVERSION}`);
   $('.remote-player').remove();
   // clear the dom
   $('#user-id').val('');
-  $('#room-id').val('');
+  $('#room-id').val(roomId);
   $('#control').hide();
   $('.player').hide();
   $('#pannel').show();
@@ -137,6 +178,8 @@ const actionToLeave = async () => {
 
   // off the event
   rtc.removeEventListener();
+
+  removeLoginInfo();
   // leave the room
   await rtc.leave();
 };
@@ -170,6 +213,7 @@ function handleUserLeave(e) {
   const { userInfo } = e;
   const remoteUserId = userInfo.userId;
   $(`#player-wrapper-${remoteUserId}`).remove();
+  rtc.checkAutoPlayFailUser(remoteUserId);
 }
 
 /**
@@ -205,6 +249,8 @@ function handleEventError(e) {
   if (e.errorCode === VERTC.ErrorCode.DUPLICATE_LOGIN) {
     actionToLeave();
     alert('你的账号被其他人顶下线了');
+    closeModal();
+    rtc.autoPlayFailUser = [];
   }
 }
 

@@ -72,3 +72,62 @@ function checkRoomIdAndUserId(name) {
     checkReg(name);
   });
 }
+
+function getUrlArgs() {
+  var args = {};
+  var query = window.location.search.substring(1);
+  var pairs = query.split('&');
+  for (var i = 0; i < pairs.length; i++) {
+    var pos = pairs[i].indexOf('=');
+    if (pos == -1) continue;
+    var name = pairs[i].substring(0, pos);
+    var value = pairs[i].substring(pos + 1);
+    value = decodeURIComponent(value);
+    args[name] = value;
+  }
+  return args;
+}
+
+function changeUrl(roomId) {
+  const baseUrl = `${window.location.origin}?roomId=${roomId}`;
+  window.history.replaceState('', '', baseUrl);
+}
+
+function setSessionInfo(params) {
+  Object.keys(params).forEach((key) => {
+    sessionStorage.setItem(key, params[key]);
+  });
+}
+
+function removeLoginInfo() {
+  const variable = ['roomId', 'uid'];
+  variable.forEach((v) => sessionStorage.removeItem(v));
+}
+
+function getSessionInfo() {
+  const roomId = sessionStorage.getItem('roomId');
+  const uid = sessionStorage.getItem('uid');
+  return {
+    roomId,
+    uid,
+  };
+}
+
+function checkLoginInfo() {
+  const { roomId } = getUrlArgs();
+  roomId && setSessionInfo({ roomId });
+
+  const _roomId = roomId;
+  const _uid = sessionStorage.getItem('uid');
+
+  let hasLogin = true;
+  if (!_roomId || !_uid) {
+    hasLogin = false;
+  } else if (
+    !/^[0-9a-zA-Z_\-@.]{1,128}$/.test(_roomId) ||
+    !/^[0-9a-zA-Z_\-@.]{1,128}$/.test(_uid)
+  ) {
+    hasLogin = false;
+  }
+  return hasLogin;
+}

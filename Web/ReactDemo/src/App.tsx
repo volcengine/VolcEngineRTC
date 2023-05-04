@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import 'antd/dist/antd.css';
+import React, { useMemo, useState } from 'react';
+import 'antd/dist/antd.min.css';
 import styled from 'styled-components';
 import VERTC from '@volcengine/rtc';
-
 
 import LogoHeaderImg from 'src/assets/images/header_logo.png';
 import JoinRoom from './pages/JoinRoom';
 import Meeting from './pages/Meeting';
 import { Context } from './context';
-import { getQueryString } from './utils';
+import { getQueryString, checkLoginInfo } from './utils';
 
 const head = '64px';
 
@@ -30,9 +29,9 @@ const ContentWrapper = styled.div`
 `;
 
 const Logo = styled.div`
-  display:flex;
+  display: flex;
   flex-direction: row;
-  height: 60%;
+  height: 38.4px;
   flex: 1;
 `;
 
@@ -63,17 +62,19 @@ const RoomId = styled.div`
  * @module App index
  */
 const App: React.FC<Record<string, unknown>> = () => {
-  const [hasJoin, setJoin] = useState(false);
+  const hasLogin = useMemo(() => {
+    return checkLoginInfo();
+  }, []);
+
+  const [hasJoin, setJoin] = useState(hasLogin);
   const [userId, setUserId] = useState<string>(getQueryString('userId') || '');
   const [roomId, setRoomId] = useState<string>(getQueryString('roomId') || '');
 
   return (
-    <Context.Provider
-      value={{hasJoin, userId, roomId, setUserId, setRoomId, setJoin}}
-    >
+    <Context.Provider value={{ hasJoin, userId, roomId, setUserId, setRoomId, setJoin }}>
       <HeaderWrapper>
         <Logo>
-          <img src={LogoHeaderImg} />
+          <img src={LogoHeaderImg} style={{ height: '100%' }} />
         </Logo>
         {hasJoin ? (
           <RoomId>{roomId}</RoomId>
