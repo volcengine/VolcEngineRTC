@@ -10,6 +10,25 @@
 #include "bytertc_audio_frame.h"
 
 namespace bytertc {
+/** 
+ * @hidden(Linux)
+ * @type callback
+ * @brief 本地音频文件混音的音频帧观察者。
+ */
+class IAudioFileFrameObserver {
+public:
+    /**
+     * @hidden constructor/destructor
+     */
+    virtual ~IAudioFileFrameObserver(){}
+    /** 
+     * @type callback
+     * @brief 当本地音频文件混音时，回调播放的音频帧。
+     * @param mix_id 混音 ID。
+     * @param audio_frame 参看 IAudioFrame{@link #IAudioFrame}。
+     */
+    virtual void onAudioFileFrame(int mix_id, const IAudioFrame& audio_frame) = 0;
+};
 
 /** 
  * @type api
@@ -18,7 +37,7 @@ namespace bytertc {
 class IAudioMixingManager {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     IAudioMixingManager() {
@@ -33,12 +52,19 @@ public:
      * @param [in] file_path 用于混音文件路径。
      *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。
      *        推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。
-     *        不同平台支持的音频文件格式:
+     *        不同平台支持的本地音频文件格式:
      *        <table>
      *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
      *           <tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr>
-     *           <tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
+     *           <tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
      *           <tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
+     *        </table>
+     *        不同平台支持的在线音频文件格式:
+     *        <table>
+     *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
+     *           <tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr>
+     *           <tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr>
+     *           <tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
      *        </table>
      * @param [in] config 混音配置  <br>
      *        可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 AudioMixingConfig{@link #AudioMixingConfig}。
@@ -53,40 +79,74 @@ public:
     /** 
      * @type api
      * @region 混音
-     * @brief 停止播放音乐文件及混音
+     * @brief 停止播放音频文件及混音。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @notes  <br>
-     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音乐文件及混音后，可以调用本方法停止播放音乐文件及混音。  <br>
-     *       + 调用本方法停止播放音乐文件后，SDK 会向本地回调通知已停止混音，见 `onAudioMixingStateChanged`。  <br>
-     *       + 调用本方法停止播放音乐文件后，该音乐文件会被自动卸载。
+     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以调用本方法停止播放音频文件及混音。  <br>
+     *       + 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 `onAudioMixingStateChanged`。  <br>
+     *       + 调用本方法停止播放音频文件后，该音乐文件会被自动卸载。
      */
     virtual void stopAudioMixing(int mix_id) = 0;
+    /** 
+     * @type api
+     * @hidden(Linux)
+     * @region 混音
+     * @brief 停止播放所有音频文件。
+     * @notes  <br>
+     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件后，可以调用本方法停止播放所有音频文件。  <br>
+     *       + 调用本方法停止播放所有音频文件后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放。  <br>
+     *       + 调用本方法停止播放所有音频文件后，该音频文件会被自动卸载。
+     */
+    virtual void stopAllAudioMixing() = 0;
 
     /** 
      * @type api
      * @region 混音
-     * @brief 暂停播放音乐文件及混音
+     * @brief 暂停播放音频文件及混音。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @notes  <br>
-     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音乐文件及混音后，可以通过调用本方法暂停播放音乐文件及混音。  <br>
-     *       + 调用本方法暂停播放音乐文件及混音后，可调用 resumeAudioMixing{@link #IAudioMixingManager#resumeAudioMixing} 方法恢复播放及混音。  <br>
-     *       + 调用本方法暂停播放音乐文件后，SDK 会向本地回调通知已暂停混音，见 `onAudioMixingStateChanged`。
+     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放音频文件及混音。  <br>
+     *       + 调用本方法暂停播放音频文件及混音后，可调用 resumeAudioMixing{@link #IAudioMixingManager#resumeAudioMixing} 方法恢复播放及混音。  <br>
+     *       + 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 `onAudioMixingStateChanged`。
      */
     virtual void pauseAudioMixing(int mix_id) = 0;
+    /** 
+     * @type api
+     * @hidden(Linux)
+     * @region 混音
+     * @brief 暂停播放所有音频文件。
+     * @notes  <br>
+     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件后，可以通过调用本方法暂停播放所有音频文件。  <br>
+     *       + 调用本方法暂停播放所有音频文件后，可调用 resumeAllAudioMixing{@link #IAudioMixingManager#resumeAllAudioMixing} 方法恢复所有播放。  <br>
+     *       + 调用本方法暂停播放所有音频文件后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放。
+     */
+    virtual void pauseAllAudioMixing() = 0;
 
     /** 
      * @type api
      * @region 混音
-     * @brief 恢复播放音乐文件及混音
+     * @brief 恢复播放音频文件及混音。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @notes  <br>
-     *       + 调用 pauseAudioMixing{@link #IAudioMixingManager#pauseAudioMixing} 方法暂停播放音乐文件及混音后，可以通过调用本方法恢复播放及混音。  <br>
-     *       + 调用本方法恢复播放音乐文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 `onAudioMixingStateChanged`。
+     *       + 调用 pauseAudioMixing{@link #IAudioMixingManager#pauseAudioMixing} 方法暂停播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  <br>
+     *       + 调用本方法恢复播放音频文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 `onAudioMixingStateChanged`。
      */
     virtual void resumeAudioMixing(int mix_id) = 0;
+
+    /** 
+     * @type api
+     * @hidden(Linux)
+     * @region 混音
+     * @brief 恢复播放所有音频文件。
+     * @notes  <br>
+     *       + 调用 pauseAllAudioMixing{@link #IAudioMixingManager#pauseAllAudioMixing} 方法暂停所有正在播放音频文件后，可以通过调用本方法恢复播放。  <br>
+     *       + 调用本方法恢复播放所有音频文件后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放。
+     */
+    virtual void resumeAllAudioMixing() = 0;
+
     /** 
      * @type api
      * @region 混音
@@ -114,7 +174,7 @@ public:
     /** 
      * @type api
      * @region 混音
-     * @brief 卸载指定音乐文件
+     * @brief 卸载指定音乐文件。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @notes 不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 `onAudioMixingStateChanged`。
@@ -122,7 +182,7 @@ public:
     virtual void unloadAudioMixing(int mix_id) = 0;
 
     /** 
-     * @hidden
+     * @hidden(Windows,Linux,macOS)
      * @type api
      * @region 混音
      * @brief 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
@@ -153,10 +213,9 @@ public:
     virtual void setAudioMixingVolume(int mix_id, int volume, AudioMixingType type) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
-     * @brief 获取音乐文件时长
+     * @brief 获取音频文件时长。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @return  <br>
@@ -169,7 +228,7 @@ public:
     /** 
      * @type api
      * @region 混音
-     * @brief 获取音乐文件播放进度
+     * @brief 获取音频文件播放进度。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @return  <br>
@@ -178,24 +237,23 @@ public:
      * @notes 调用本方法获取音乐文件播放进度前，需要先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音乐文件。
      */
     virtual int getAudioMixingCurrentPosition(int mix_id) = 0;
-    
+
     /** 
-     * @hidden(Linux)
+     * @hidden(Linux,macOS)
      * @type api
-    * @region 混音
-    * @brief 获取混音音频文件的实际播放时长（单位：毫秒）。
-    * @param [in] mixId 混音 ID。
-    * @return  <br>
-    *        + >0: 实际播放时长。 <br>
-    *        + < 0: 失败。
-    * @notes <br>  
-    *        + 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。  <br>
-    *        + 调用本接口前，需要先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放指定音频文件。
-    */
-   virtual int getAudioMixingPlaybackDuration(int mix_id) = 0;
-    
+     * @region 混音
+     * @brief 获取混音音频文件的实际播放时长（单位：毫秒）。
+     * @param [in] mix_id 混音 ID。
+     * @return  <br>
+     *        + >0: 实际播放时长。 <br>
+     *        + < 0: 失败。
+     * @notes <br>
+     *        + 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。  <br>
+     *        + 调用本接口前，需要先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放指定音频文件。
+     */
+    virtual int getAudioMixingPlaybackDuration(int mix_id) = 0;
+
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 设置音频文件的起始播放位置
@@ -207,7 +265,6 @@ public:
     virtual void setAudioMixingPosition(int mix_id, int position) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 设置当前音频文件的声道模式
@@ -220,7 +277,6 @@ public:
     virtual void setAudioMixingDualMonoMode(int mix_id, AudioMixingDualMonoMode mode) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
@@ -248,7 +304,6 @@ public:
     virtual int setAudioMixingPlaybackSpeed(int mix_id, int speed) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 设置混音时音频文件播放进度回调的间隔
@@ -263,11 +318,10 @@ public:
     virtual void setAudioMixingProgressInterval(int mix_id, int64_t interval) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
-     * @param [in] mixId 混音 ID
+     * @param [in] mix_id 混音 ID
      * @param [in] loudness 原始响度，单位：lufs，取值范围为 [-70.0, 0.0]。  <br>
      *        当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音均衡处理。默认值为 1.0lufs，即不做处理。
      * @notes 建议在 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音频文件之前调用该接口，以免播放过程中的音量突变导致听感体验下降。
@@ -275,10 +329,10 @@ public:
     virtual void setAudioMixingLoudness(int mix_id, float loudness) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
-     * @brief 启动外部音频流混音
+     * @brief 启动 PCM 音频数据混音。<br>
+     *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
      * @param [in] mix_id 混音 ID，用于标识混音，保证混音 ID 唯一性。  <br>
      *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 `onAudioMixingStateChanged` 通知前一次混音已停止。
      * @param [in] type 混音播放类型  <br>
@@ -292,7 +346,6 @@ public:
     virtual void enableAudioMixingFrame(int mix_id, AudioMixingType type) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 关闭 PCM 混音
@@ -301,12 +354,11 @@ public:
     virtual void disableAudioMixingFrame(int mix_id) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 推送 PCM 音频帧数据用于混音
      * @param mix_id 混音 ID。
-     * @param audioFrame 音频帧，详见 IAudioFrame{@link #IAudioFrame}。
+     * @param audio_frame 音频帧，详见 IAudioFrame{@link #IAudioFrame}。
      * @return  <br>
      *       + 0: 成功  <br>
      *       + < 0: 失败
@@ -317,7 +369,6 @@ public:
     virtual int pushAudioMixingFrame(int mix_id, IAudioFrame* audio_frame) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 获取当前音频文件的音轨索引
@@ -332,7 +383,6 @@ public:
     virtual int getAudioTrackCount(int mix_id) = 0;
 
     /** 
-     * @hidden(Linux)
      * @type api
      * @region 混音
      * @brief 指定当前音频文件的播放音轨
@@ -344,9 +394,17 @@ public:
      *       + 此方法对 enableAudioMixingFrame{@link #IAudioMixingManager#enableAudioMixingFrame} 播放的音乐无效。
      */
     virtual void selectAudioTrack(int mix_id, int audio_track_index) = 0;
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @brief 注册本地音频文件混音的音频帧观察者。
+     *        当本地音频文件混音时，会收到相关回调。
+     * @param observer 参看 IAudioFileFrameObserver{@link #IAudioFileFrameObserver}。
+     */
+    virtual void registerAudioFileFrameObserver(IAudioFileFrameObserver* observer) = 0;
 
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IAudioMixingManager() {

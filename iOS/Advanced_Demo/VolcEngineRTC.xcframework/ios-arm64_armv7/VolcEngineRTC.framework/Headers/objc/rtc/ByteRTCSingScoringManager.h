@@ -23,18 +23,20 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCSingScoringDelegate<NSObject>
  * @brief K 歌评分管理接口。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringManager :NSObject
-    /** 
-     * @type api
-     * @brief 初始化 K 歌评分。
-     * @param singScoringAppkey K 歌评分密钥，用于鉴权验证 K 歌功能是否开通。
-     * @param singScoringToken K 歌评分密钥，用于鉴权验证 K 歌功能是否开通。
-     * @param delegate K 歌评分事件回调类，详见 ByteRTCSingScoringDelegate{@link #ByteRTCSingScoringDelegate}。
-     * @notes 输入正确的鉴权信息才可以使用 K 歌评分相关的功能，鉴权方式为离线鉴权，根据包名（bundleID）绑定 Appkey 及 Token，K 歌评分密钥请联系技术支持同学申请。
-     * @return  <br>
-     *        + 0: 成功。
-     *        + < 0: 失败。
-     */
-    -(int)initSingScoring:(NSString * _Nullable)singScoringAppkey
+/** 
+ * @type api
+ * @brief 初始化 K 歌评分。
+ * @param singScoringAppkey K 歌评分密钥，用于鉴权验证 K 歌功能是否开通。
+ * @param singScoringToken K 歌评分密钥，用于鉴权验证 K 歌功能是否开通。
+ * @param delegate K 歌评分事件回调类，详见 ByteRTCSingScoringDelegate{@link #ByteRTCSingScoringDelegate}。
+ * @notes 输入正确的鉴权信息才可以使用 K 歌评分相关的功能，鉴权方式为离线鉴权，根据包名（bundleID）绑定 Appkey 及 Token，K 歌评分密钥请联系技术支持同学申请。
+ * @return  <br>
+ *        + 0：配置成功。
+ *        + -1：接口调用失败。
+ *        + -2：未集成 K 歌评分模块。
+ *        + >0：其他错误，具体参看[错误码表](https://www.volcengine.com/docs/6489/148198)。  
+ */
+-(int)initSingScoring:(NSString * _Nullable)singScoringAppkey
      singScoringToken:(NSString * _Nullable)singScoringToken
              delegate:(id<ByteRTCSingScoringDelegate> _Nullable)delegate;
 /** 
@@ -45,6 +47,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringManager :NSObject
  *        + 0：配置成功。
  *        + -1：接口调用失败。
  *        + -2：未集成K歌评分模块。
+ *        + >0：其他错误，具体参看[错误码表](https://www.volcengine.com/docs/6489/148198)。 
  */
 -(int)setSingScoringConfig:(ByteRTCSingScoringConfig * _Nullable)config;
 /** 
@@ -62,8 +65,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringManager :NSObject
  * @param position 开始评分时，音乐的播放进度，单位：ms。
  * @param scoringInfoInterval 实时回调的时间间隔，单位：ms；默认 50 ms。最低间隔为 20 ms。
  * @return  <br>
- *        + 0：成功。
- *        + <0：失败。
+ *        + 0：配置成功。
+ *        + -1：接口调用失败。
+ *        + -2：未集成K歌评分模块。
+ *        + >0：其他错误，具体参看[错误码表](https://www.volcengine.com/docs/6489/148198)。 
  * @notes  <br>
  *        + 在调用 initSingScoring:singScoringToken:delegate:{@link #ByteRTCSingScoringManager#initSingScoring:singScoringToken:delegate:} 初始化 K 歌评分功能后调用该接口。
  *        + 调用该接口后，将会根据设置的回调时间间隔，收到评分结果 onCurrentScoringInfo:{@link #ByteRTCSingScoringDelegate#onCurrentScoringInfo:} 回调。

@@ -219,7 +219,6 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 /**
  * @type api
  * @region 引擎管理
- * @author chuzhongtao
  * @brief 创建 GameRTCEngine 实例。  <br>
  *        GameRTCEngine 实例成功创建后，你才可以使用 SDK 提供的其他能力。
  * @param config 引擎相关配置信息，参看 GameRTCEngineConfig{@link #GameRTCEngineConfig}。
@@ -388,43 +387,51 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 /**
  * @type api
  * @region 音频管理
- * @brief 控制本地音频采集和发布状态。<br>
- *        改变该状态后，房间内其他用户会收到 rtcEngine:onMicrophoneEnabled:room:uid:{@link #GameRTCEngineDelegate#rtcEngine:onMicrophoneEnabled:room:uid:} 回调。
+ * @brief 设置开始/停止采集并发布本地音频流<br>
+ *        设置后，房间内其他用户会收到 rtcEngine:onMicrophoneEnabled:room:uid:{@link #GameRTCEngineDelegate#rtcEngine:onMicrophoneEnabled:room:uid:} 回调。
  * @param enable 本地音频采集和发布状态：<br>
  *        + true：开始采集本地音频，并向房间内发布。<br>
- *        + false: 停止采集本地音频，并停止发布。
+ *        + false: 默认设置，停止采集本地音频，并停止发布。
  * @param roomId 房间 ID。
  * @return 方法调用结果 <br>
  *         +  0：成功 <br>
  *         + -1：引擎已经被销毁或者未创建，或者是房间 ID 为空
+ * @notes 请注意区分该方法与 enableAudioSend:room:{@link #GameRTCEngineKit#enableAudioSend:room:}： <br>
+ *        + 该方法同时影响本地音频的采集和发布，若有隐私合规要求，建议使用该方法； <br>
+ *        + enableAudioSend:room:{@link #GameRTCEngineKit#enableAudioSend:room:} 只影响本地音频的发布与否，不影响音频的采集，适用于狼人杀等语音类游戏。<br>
+ *        两个方法不可同时调用。
  */
 - (int)enableMicrophone:(BOOL)enable room:(NSString *)roomId;
 
 /**
  * @type api
  * @region 音频管理
- * @brief 控制本地语音的发送状态：发送/不发送  <br>
+ * @brief 设置开始/停止发布本地音频流。  <br>
  *        使用此方法后，房间中的其他用户会收到回调 rtcEngine:onAudioSendEnabled:room:uid:{@link #GameRTCEngineDelegate#rtcEngine:onAudioSendEnabled:room:uid:}。
  * @param enable 发送状态，标识是否发送语音：<br>
  *        + true：发布语音 <br>
- *        + false: 不发布语音
+ *        + false: 默认设置，不发布语音
  * @param roomId 房间 ID
  * @return 方法调用结果  <br>
  *         + 0：方法调用成功  <br>
  *         + < 0：方法调用失败  <br>
- * @notes 初次调用本方法发送本地语音时，会开启本地音频采集功能。
- *        之后再次调用本方法时，仅控制本地音频流的发送状态，不会影响本地音频采集状态。
+ * @notes  <br>
+ *         + 初次调用本方法发送本地语音时，会开启本地音频采集功能；之后再次调用本方法时，仅控制本地音频流的发送状态。<br>
+ *         + 请注意区分该方法与 enableMicrophone:room:{@link #GameRTCEngineKit#enableMicrophone:room:}： <br>
+ *             - 该方法只影响本地音频的发布与否，不影响音频的采集（除首次调用外），适用于狼人杀等语音类游戏； <br>
+ *             - enableMicrophone:room:{@link #GameRTCEngineKit#enableMicrophone:room:} 同时影响本地音频的采集和发布，若有隐私合规要求，建议使用该方法。<br>
+ *             两个方法不可同时调用。
  */
 - (int)enableAudioSend:(BOOL)enable room:(NSString *)roomId;
 
 /**
  * @type api
  * @region 音频管理
- * @brief 设置对来自远端的语音的接收状态。
+ * @brief 设置是否接收所有远端用户的音频流
  *        使用此方法后，房间中的其他用户会收到回调 rtcEngine:onSpeakerphoneEnabled:room:uid:{@link #GameRTCEngineDelegate#rtcEngine:onSpeakerphoneEnabled:room:uid:}。
  * @param enable 接收状态：<br>
  *        + true：接收 <br>
- *        + false: 不接收 <br>
+ *        + false：默认设置，不接收 <br>
  * @param roomId 房间 ID
  * @return 方法调用结果：<br>
  *         +  0：成功 <br>
@@ -436,10 +443,10 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 /**
  * @type api
  * @region 音频管理
- * @brief 设置对来自指定远端用户的语音的接收状态。
+ * @brief 设置是否接收指定远端用户的音频流
  * @param enable 接收状态：<br>
  *        + true：接收 <br>
- *        + false: 不接收 <br>
+ *        + false：默认设置，不接收 <br>
  * @param roomId 房间 ID
  * @param uid 指定远端用户的 ID
  * @return 方法调用结果 <br>
@@ -575,7 +582,6 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 /**
  * @type api
  * @region 音频管理
- * @author dixing
  * @brief 设置音质档位。你应根据业务场景需要选择适合的音质档位。  <br>
  * @param audioProfile 音质档位，参看 GameRTCAudioProfileType{@link #GameRTCAudioProfileType}
  * @notes  <br>
@@ -587,7 +593,6 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 /**
  * @type api
  * @region 美声特效管理
- * @author luomingkang
  * @brief 设置变声特效类型。  <br>
  *        你可以根据你的需要，选择合适的变声特效。  <br>
  *        本方法只在单声道情况下生效，且与setAudioEffect接口互斥，后设置的特效会覆盖先设置的特效  <br>
@@ -602,7 +607,6 @@ GAME_RTC_EXPORT @interface GameRTCEngineKit : NSObject
 /**
  * @type api
  * @region 美声特效管理
- * @author luomingkang
  * @brief 设置混响特效类型。  <br>
  *        你可以根据你的需要，选择合适的混响特效。  <br>
  *        本方法只在单声道情况下生效，且与setVoiceType接口互斥，后设置的特效会覆盖先设置的特效  <br>

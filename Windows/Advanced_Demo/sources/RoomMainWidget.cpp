@@ -273,7 +273,7 @@ void RoomMainWidget::setRenderCanvas(bool isLocal, void *view, const std::string
         remote_stream_key.room_id = m_roomId.c_str();
         remote_stream_key.user_id = user_id.c_str();
         remote_stream_key.stream_index = stream_index;
-        m_rtc_video->setRemoteStreamVideoCanvas(remote_stream_key, canvas);
+        m_rtc_video->setRemoteVideoCanvas(remote_stream_key, canvas);
     }
 }
 

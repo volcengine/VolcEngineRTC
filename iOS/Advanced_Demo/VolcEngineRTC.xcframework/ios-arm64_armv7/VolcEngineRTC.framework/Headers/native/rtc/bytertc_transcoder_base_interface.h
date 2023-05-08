@@ -6,7 +6,7 @@
 
 namespace bytertc {
 /** 
- * @hidden
+ * @hidden for internal use only
  * @type keytype
  * @brief 合流房间状态
  */
@@ -61,7 +61,6 @@ public:
      */
     virtual const char* roomID() = 0;
     /** 
-     * @hidden
      * @type api
      * @region 转推直播
      * @brief 获取 other 数据
@@ -105,7 +104,6 @@ public:
      */
     virtual void setJsonContent(const char* json_content) = 0;
     /** 
-     * @hidden
      * @type api
      * @region 转推直播
      * @brief 设置 other 数据
@@ -125,7 +123,7 @@ public:
      */
     virtual const char* flatten(const char* contentType, const char* action) = 0;
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     ~ITranscoderParamBase() = default;
 };

@@ -14,7 +14,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,9 +70,10 @@ import com.ss.video.rtc.demo.advanced.external.CustomCapture;
 import com.ss.video.rtc.demo.advanced.external.CustomRenderView;
 import com.ss.video.rtc.demo.advanced.sharescreen.ShareScreenComponent;
 import com.ss.video.rtc.demo.advanced.utils.CommonUtil;
-import com.ss.video.rtc.demo.basic_module.utils.Utilities;
 
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -141,6 +141,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
     private RTCVideo mRTCVideo;
     private RTCRoom mRTCRoom;
     private ShareScreenComponent mShareScreenComponent;
+    private final List<WeakReference<CustomRenderView>> mCustomRenderViews = new ArrayList<>();
 
     private final VolcEffectManager mVolcEffectManager = new VolcEffectManager();
     private EffectModel mEffectModel;
@@ -273,6 +274,13 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         public void onRoomMessageReceived(String uid, String message) {
             super.onRoomMessageReceived(uid, message);
             showMessage("收到广播消息", uid, message);
+        }
+
+        @Override
+        public void onRoomStateChanged(String roomId, String uid, int state, String extraInfo) {
+            super.onRoomStateChanged(roomId, uid, state, extraInfo);
+            Log.d(TAG, "onRoomStateChanged: " + state);
+
         }
 
         @Override
@@ -452,7 +460,8 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
                 mVideoConfig.getResolution().first,
                 mVideoConfig.getResolution().second,
                 mVideoConfig.getFrameRate(),
-                mVideoConfig.getBitRate());
+                mVideoConfig.getBitRate(),
+                0);
         mRTCVideo.setVideoEncoderConfig(videoEncoderConfig);
         // 设置音频场景类型
         mRTCVideo.setAudioScenario(AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION);
@@ -491,17 +500,16 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         }
         boolean customRender = ConfigManger.getInstance().isCustomRender();
         if (customRender) {
-            IVideoSink videoSink = new CustomRenderView(this);
+            CustomRenderView videoSink = new CustomRenderView(this);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
+            mCustomRenderViews.add(new WeakReference<>(videoSink));
             mSelfContainer.removeAllViews();
             mSelfContainer.addView((View) videoSink, params);
             mRTCVideo.setLocalVideoSink(StreamIndex.STREAM_INDEX_MAIN, videoSink, IVideoSink.PixelFormat.I420);
         } else {
             VideoCanvas videoCanvas = new VideoCanvas();
-            videoCanvas.uid = uid;
-            videoCanvas.isScreen = false;
             videoCanvas.renderMode = mVideoConfig.mLocalVideoFillMode;
             videoCanvas.renderView = new TextureView(this);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
@@ -544,26 +552,29 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
     private void setRemoteRenderView(boolean sharingScreen, RemoteStreamKey remoteStreamKey, FrameLayout container) {
         boolean customRender = ConfigManger.getInstance().isCustomRender();
         if (customRender && !sharingScreen) {
-            IVideoSink videoSink = new CustomRenderView(this);
+            CustomRenderView videoSink = new CustomRenderView(this);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
+            mCustomRenderViews.add(new WeakReference<>(videoSink));
             container.removeAllViews();
             container.addView((View) videoSink, params);
             mRTCVideo.setRemoteVideoSink(remoteStreamKey, videoSink, IVideoSink.PixelFormat.I420);
         } else {
             VideoCanvas videoCanvas = new VideoCanvas();
-            videoCanvas.renderView = new SurfaceView(Utilities.getApplicationContext());
-            videoCanvas.roomId = remoteStreamKey.getRoomId();
-            videoCanvas.uid = remoteStreamKey.getUserId();
+            videoCanvas.renderView = new TextureView(this);
+
             videoCanvas.renderMode = mVideoConfig.mRemoteVideoFillMode;
+
+            RemoteStreamKey streamKey = new RemoteStreamKey(remoteStreamKey.getRoomId(), remoteStreamKey.getUserId(), remoteStreamKey.getStreamIndex());
+
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             container.removeAllViews();
             container.addView(videoCanvas.renderView, params);
             // 设置远端用户视频渲染视图
-            mRTCVideo.setRemoteVideoCanvas(remoteStreamKey.getUserId(), remoteStreamKey.getStreamIndex(), videoCanvas);
+            mRTCVideo.setRemoteVideoCanvas(streamKey, videoCanvas);
         }
     }
 
@@ -603,7 +614,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备。
         移除后，音频设备会自动切换回原设备。
          */
-        mRTCVideo.setAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
+        mRTCVideo.setDefaultAudioRoute(mIsSpeakerPhone ? AudioRoute.AUDIO_ROUTE_SPEAKERPHONE
                 : AudioRoute.AUDIO_ROUTE_EARPIECE);
         mSpeakerIv.setImageResource(mIsSpeakerPhone ? R.drawable.speaker_on : R.drawable.speaker_off);
     }
@@ -765,6 +776,13 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        for (WeakReference<CustomRenderView> wrf : mCustomRenderViews) {
+            CustomRenderView crView = wrf.get();
+            if (crView != null) {
+                crView.release();
+            }
+        }
+        mCustomRenderViews.clear();
         stopVideoCapture();
         if (needShareScreen()) {
             mShareScreenComponent.stopScreenSharing();
@@ -793,7 +811,8 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
                 mVideoConfig.getResolution().first,
                 mVideoConfig.getResolution().second,
                 mVideoConfig.getFrameRate(),
-                mVideoConfig.getBitRate());
+                mVideoConfig.getBitRate(),
+                0);
         mRTCVideo.setVideoEncoderConfig(videoEncoderConfig);
         int index = config.mLocalVideoMirrorType == 2 ? 3 : config.mLocalVideoMirrorType;
         mRTCVideo.setLocalVideoMirrorType(MirrorType.fromId(index));

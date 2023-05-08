@@ -87,7 +87,7 @@ public:
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。  <br>
      *        请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。  <br>
      * @param [in] room_id 加入的房间 ID。  <br>
-     *        该字符串符合正则表达式：`[a-zA-Z0-9_@\-]{1,128}`
+     *        该字符串符合正则表达式：`[a-zA-Z0-9_@\-\.]{1,128}`
      * @param [in] user_info 用户信息，参看 UserInfo{@link #UserInfo}。  <br>
      * @param [in] room_config 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 RTCRoomConfig{@link #RTCRoomConfig}。  <br>
      * @return  <br>
@@ -95,7 +95,7 @@ public:
      *        + -1：失败。room_id / user_info.uid 包含了无效的参数  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #IRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>  <br>
      * @notes  <br>
-     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin  <br>
+     *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onError{@link #IRtcEngineEventHandler#onError} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
      *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。  <br>
      *       + 本地用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身设为可见后加入房间，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，此时 SDK 将会自动重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知；如果加入房间的用户可见，远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。  <br>
@@ -165,7 +165,16 @@ public:
      *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
      */
     virtual void setEarMonitorVolume(const int volume) = 0;
-
+    
+    /** 
+    * @hidden(macOS,Windows,Linux,Android)
+    * @type api
+    * @region 蓝牙模式化设置
+    * @brief 设置蓝牙模式
+    * @notes 仅在媒体场景下生效。
+    */
+   virtual void setBluetoothMode(BluetoothMode mode) = 0;
+    
     /** 
      * @hidden
      * @deprecated since 327.1, use setScreenAudioStreamIndex instead
@@ -1380,7 +1389,7 @@ public:
     /** 
      * @hidden(Linux)
      * @brief 获取共享对象列表。使用完之后需要调用 release{@link #IScreenCaptureSourceList#release} 接口释放。
-     * @return 共享对象列表，包括应用窗口和屏幕。详见 IScreenCaptureSourceList{@Link #IScreenCaptureSourceList}。由用户选择其中一个共享对象，并在调用 startScreenVideoCapture{@link #IRtcEngine#startScreenVideoCapture} 时作为参数传给 RTC SDK。
+     * @return 共享对象列表，包括应用窗口和屏幕。详见 IScreenCaptureSourceList{@link #IScreenCaptureSourceList}。由用户选择其中一个共享对象，并在调用 startScreenVideoCapture{@link #IRtcEngine#startScreenVideoCapture} 时作为参数传给 RTC SDK。
      * @region 屏幕共享
      * @notes  <br>
      *       + 枚举的窗体可作为开启屏幕共享时的输入参数，详见：StartScreenVideoCapture{@link #IRtcEngine#startScreenVideoCapture} <br>
@@ -1503,11 +1512,11 @@ public:
      * @region 音频管理
      * @brief 设置当前音频播放路由。默认使用 setDefaultAudioRoute{@link #IRtcEngine#setDefaultAudioRoute} 中设置的音频路由。  <br>
      *        音频播放路由发生变化时，会收到 onAudioRouteChanged{@link #IRtcEngineEventHandler#onAudioRouteChanged} 回调。  <br>
-     * @param [in] route 音频播放路由，参见 AudioRoute{@link #AudioRoute}。不支持 `kAudioRouteUnknown`。<br>
+     * @param [in] route 音频播放路由，参见 AudioRoute{@link #AudioRoute}。不支持 `kAudioRouteDefault`。<br>
      *        当音量类型为媒体音量时，此参数不可设置为 `kAudioRouteEarpiece`；当音量模式为通话音量时，此参数不可设置为 `kAudioRouteHeadsetBluetooth` 或 `kAudioRouteHeadsetUSB`。
      * @return  <br>
      *        + 0: 方法调用成功  <br>
-     *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteUnknown` 时将会失败。  <br>
+     *        + < 0: 方法调用失败。失败原因参看 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} 回调。指定为 `kAudioRouteDefault` 时将会失败。  <br>
      * @notes<br>
      *          + 你需要调用 setAudioScenario{@link #IRtcEngine#setAudioScenario} 将音频场景切换为 `kAudioScenarioTypeCommunication` 后再调用本接口。<br>
      *          + 连接有线或者蓝牙音频播放设备后，音频路由将自动切换至此设备；移除后，音频设备会自动切换回原设备。不同音频场景中，音频路由和发布订阅状态到音量类型的映射关系详见 AudioScenarioType{@link #AudioScenarioType}。
@@ -1690,7 +1699,7 @@ public:
      *        + 1004: 正在下载相关资源，下载完成后生效。 <br>
      *        + <0: 调用失败，特效 SDK 内部错误，具体错误码请参考[错误码表](https://www.volcengine.com/docs/5889/61813)。  <br>
      * @notes <br>
-     *        + 本方法不能与高级视频特效接口共用。如已购买高级视频特效，建议调用 enableEffect{@link #IVideoEffect#enableEffect} 使用高级特效、贴纸功能等。 <br>
+     *        + 本方法不能与高级视频特效接口共用。如已购买高级视频特效，建议调用 enableVideoEffect{@link #IVideoEffect#enableVideoEffect} 使用高级特效、贴纸功能等。 <br>
      *        + 使用此功能需要集成特效 SDK，建议使用特效 SDK V4.3.1+ 版本。 <br>
      *        + 调用 setBeautyIntensity{@link #IRtcEngine#setBeautyIntensity} 设置基础美颜强度。若在调用本方法前没有设置美颜强度，则初始美白、磨皮、锐化强度均为 0.5。 <br>
      *        + 本方法仅适用于视频源，不适用于屏幕源。 <br>
@@ -1838,6 +1847,8 @@ public:
     */
    virtual void disableAudioProcessor(AudioProcessorMethod method) = 0;
     /** 
+     * @hidden
+     * @deprecated
      * @type api
      * @region 视频数据回调
      * @brief 注册视频数据回调观察者
@@ -1892,8 +1903,6 @@ public:
      * @param [in] stream_index 媒体流类型，参看 StreamIndex{@link #StreamIndex}
      * @param [in] message SEI 消息。长度不超过 4 kB。<br>
      * @param [in] length SEI 消息长度。<br>
-     * @param [in] repeat_count 消息发送重复次数。取值范围是 [0, 30]。<br>
-     *                    调用此接口后，SEI 数据会添加到当前视频帧开始的连续 `repeatCount` 个视频帧中。
      * @return <br>
      *        + >=0: 将被添加到视频帧中的 SEI 的数量  <br>
      *        + < 0: 发送失败
@@ -1903,6 +1912,7 @@ public:
      *        + 消息发送成功后，远端会收到 onSEIMessageReceived{@link #IRtcEngineEventHandler#onSEIMessageReceived} 回调。
      */
     virtual int sendSEIMessage(StreamIndex stream_index, const uint8_t* message, int length, int repeat_count) = 0;
+    virtual int sendSEIMessage(StreamIndex stream_index, const uint8_t* message, int length, int repeat_count, SEICountPerFrame mode) = 0;
 
     /** 
      * @hidden
@@ -2165,7 +2175,7 @@ public:
      *        二进制字符串的长度
      * @param [in] message  <br>
      *        发送的二进制消息内容  <br>
-     *        消息不超过 64KB。
+     *        消息不超过 46KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
@@ -2201,7 +2211,7 @@ public:
      *        二进制字符串的长度
      * @param [in] message  <br>
      *        发送的二进制消息内容  <br>
-     *        消息不超过 64KB。
+     *        消息不超过 46KB。
      * @return  <br>
      *        + >0：发送成功，返回这次发送消息的编号，从 1 开始递增  <br>
      *        + -1：发送失败，RtcEngine 实例未创建
@@ -2264,7 +2274,17 @@ public:
     virtual void setScreenAudioStreamIndex(StreamIndex index) = 0;
 
     /** 
-     * @hidden(Android, iOS, Linux, macOs)
+     * @hidden(Android,iOS,Linux)
+     * @type api
+     * @region 屏幕共享
+     * @brief 在屏幕共享时，设置屏幕音频流的声道数
+     * @param [in] channel 声道数，参看 AudioChannel{@link #AudioChannel} <br>
+     * @notes 你应该在 joinRoom{@link #IRTCRoom#joinRoom} 之后，调用此方法。
+     */
+    virtual void setScreenAudioChannel(AudioChannel channel) = 0;
+
+    /** 
+     * @hidden(Android,iOS,Linux,macOS)
      * @type api
      * @region 屏幕共享
      * @brief 在屏幕共享时，开始使用 RTC SDK 内部采集方式，采集屏幕音频
@@ -2584,6 +2604,20 @@ public:
 
     virtual long takeRemoteSnapshot(RemoteStreamKey streamKey, ISnapshotResultCallback *callback) = 0;
 
+    /** 
+     * @type api
+     * @region 视频管理
+     * @brief 设置静态图片路径，该图片在用户关闭摄像头后用来推送到远端
+     * @param file_path 静态图片路径，支持本地文件绝对路径和Asset 资源路径（/assets/xx.png），长度限制为 512 字节。   <br>
+     *        静态图片为 BMP, PNG 或 JPG 格式。
+     * @notes  <br>
+     *        + 当设置的路径为空字符串时移除指定的静态图片。  <br>
+     *        + 只有主流能设置静态图片，屏幕流不支持设置。新设置的图片会代替上一次的设置。  <br>
+     *        + 进入房间前后均可调用此方法。  <br>
+     *        + 设置的静态图片不会在本地预览中显示  <br>
+     *        + 开启大小流后，静态图片对大小流均生效，且针对小流进行等比例缩小。
+     */
+    virtual int setDummyCaptureImagePath(const char* file_path) = 0;
 
   /** 
      * @hidden
@@ -2672,7 +2706,7 @@ public:
      *        二进制字符串的长度。
      * @param [in] message   <br>
      *        二进制消息的内容。
-     *        消息不超过 64KB。
+     *        消息不超过 46KB。
      * @param [in] config 消息类型，参看 MessageConfig{@link #MessageConfig}。
      * @return 这次发送消息的编号，从 1 开始递增。
      * @notes  <br>
@@ -2702,7 +2736,7 @@ public:
      *        发送的二进制消息长度
      * @param [in] message  <br>
      *        用户发送的二进制广播消息  <br>
-     *        消息不超过 64KB。
+     *        消息不超过 46KB。
      * @notes  <br>
      *       + 在发送房间内二进制消息前，必须先调用 joinRoom{@link #IRTCRoom#joinRoom} 加入房间。  <br>
      *       + 调用该函数后，会收到一次 onRoomMessageSendResult{@link #IRTCRoomEventHandler#onRoomMessageSendResult} 回调。  <br>
@@ -2984,6 +3018,9 @@ public:
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
      */
     virtual void setRemoteAudioPlaybackVolume(const char* user_id, int volume) = 0;
+
+    virtual void setAudioAlignmentProperty(const RemoteStreamKey& streamKey, AudioAlignmentMode mode) = 0;
+
     /** 
      * @hidden
      * @deprecated since 326.1, use pauseAllSubscribedStream/resumeAllSubscribedStream instead
@@ -3319,6 +3356,24 @@ public:
      * @notes 要开启云代理，调用 startCloudProxy{@link #IRtcEngine#startCloudProxy}。
      */
     virtual void stopCloudProxy() = 0;
+    
+    /** 
+     * @type api
+     * @region cdn
+     * @brief 调用实验性API
+     * @notes 入参 params 格式如下：
+     * {
+     *   "api_name":"startPublish",
+     *   "params":{
+     *     "streamID":"",
+     *     "observer":"",
+     *     "uri":"",
+     *     "option":""
+     *   }
+     * }
+     * @return ret = 0 ? success : failed
+     */
+    virtual int invokeExperimentalAPI(const char* param) = 0;
 
 };
 
@@ -3344,24 +3399,6 @@ BYTERTC_API bytertc::IRtcEngine* createRtcEngine(const char* app_id,
 /** 
  * @hidden
  * @region 引擎管理
- * @brief 创建游戏 RTCEngine 实例。
- * @param [in] app_id  <br>
- *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
- * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
- * @param [in] parameters 保留参数
- * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
- * @notes  <br>
- *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
- *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
- */
-BYTERTC_API bytertc::IRtcEngine* createGameRtcEngine(const char* app_id,
-        bytertc::IRtcEngineEventHandler* event_handler, const char* parameters);
-
-/** 
- * @hidden
- * @region 引擎管理
  * @brief 创建 RTCEngine 实例。
  * @param [in] app_id  <br>
  *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
@@ -3379,24 +3416,6 @@ BYTERTC_API bytertc::IRtcEngine* createRtcEngineWithPtr(
         const char* parameters);
 
 /** 
- * @hidden
- * @region 引擎管理
- * @brief 创建游戏 RTCEngine 实例。
- * @param [in] app_id  <br>
- *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
- * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 。
- * @param [in] parameters 保留参数
- * @return 可用的 IRtcEngine{@link #IRtcEngine} 实例。
- * @notes  <br>
- *        + 该方法创建并初始化 IRtcEngine{@link #IRtcEngine} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRtcEngine{@link #IRtcEngine} 实例通过指定的 IRtcEngineEventHandler{@link #IRtcEngineEventHandler}
- *          通知应用程序引擎运行时的事件。IRtcEngineEventHandler{@link #IRtcEngineEventHandler} 中定义的所有方法都是可选实现的。
- */
-BYTERTC_API bytertc::IRtcEngine* createGameRtcEngineWithPtr(
-        const char* app_id, std::unique_ptr<bytertc::IRtcEngineEventHandler> event_handler,
-        const char* parameters);
-/** 
  * @type api
  * @region 引擎管理
  * @brief 销毁由 createRtcEngine{@link #createRtcEngine} 创建的 RTCEngine 实例，并释放所有相关资源。
@@ -3406,23 +3425,6 @@ BYTERTC_API bytertc::IRtcEngine* createGameRtcEngineWithPtr(
  *        + 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。
  */
 BYTERTC_API void destroyRtcEngine(bytertc::IRtcEngine* engine);
-
-/** 
- * @hidden
- * @region 引擎管理
- * @brief 销毁由 createGameRtcEngine{@link #createGameRtcEngine} 创建的游戏 RTCEngine 实例，并释放所有相关资源。
- * @param [in] engine  <br>
- *        由 createGameRtcEngine{@link #createGameRtcEngine} 返回的实例。
- * @notes  <br>
- *        + 请确保一定是在所有业务场景的最后阶段才调用该方法。  <br>
- *        + 该方法在调用之后，会销毁所有 SDK 相关的内存，并且停止与媒体服务器的任何交互。  <br>
- *        + 在上一次 createGameRtcEngine{@link #createGameRtcEngine} 调用之后对 SDK 进行的任何设置，
- *          将在下一次有效执行 createGameRtcEngine{@link #createGameRtcEngine} 时生效。  <br>
- *        + 本方法为阻塞调用，会阻塞当前线程直到 SDK 彻底完成退出逻辑，因而需要注意不要在回调线程中
- *          直接调用本方法，也需要注意不要在回调方法中等待主线程的执行而同时在主线程调用本方法，从而
- *          造成死锁。
- */
-BYTERTC_API void destroyGameRtcEngine(bytertc::IRtcEngine* engine);
 
 /** 
  * @type api

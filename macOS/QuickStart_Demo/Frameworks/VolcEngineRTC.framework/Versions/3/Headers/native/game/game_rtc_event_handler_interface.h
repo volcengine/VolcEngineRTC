@@ -153,8 +153,34 @@ public:
         (void)speaker_number;
         (void)total_volume;
     }
-    
+
+    /**
+     * @type callback
+     * @region 游戏语音事件回调
+     * @brief 进房权限即将过期
+     * @param [in] room_id 房间 ID
+     */
     virtual void onTokenWillExpire(const char* room_id) {
+        (void)room_id;
+    }
+
+    /**
+     * @type callback
+     * @region 游戏语音事件回调
+     * @brief 发布权限即将过期
+     * @param [in] room_id 房间 ID
+     */
+    virtual void onPublishPrivilegeTokenWillExpire(const char* room_id) {
+        (void)room_id;
+    }
+
+    /**
+     * @type callback
+     * @region 游戏语音事件回调
+     * @brief 订阅权限即将过期
+     * @param [in] room_id 房间 ID
+     */
+    virtual void onSubscribePrivilegeTokenWillExpire(const char* room_id) {
         (void)room_id;
     }
 

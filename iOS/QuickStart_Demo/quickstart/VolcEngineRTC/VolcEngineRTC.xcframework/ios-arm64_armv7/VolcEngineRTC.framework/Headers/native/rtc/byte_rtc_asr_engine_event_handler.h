@@ -5,14 +5,15 @@
 #pragma once
 
 namespace bytertc {
-/**  
- * @type keytype
+/** 
+ * @hidden(Windows,Linux,macOS)
+ * @type callback
  * @brief 语音识别服务使用状态回调
  */
 class IRTCASREngineEventHandler {
 public:
     /**  
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IRTCASREngineEventHandler() {

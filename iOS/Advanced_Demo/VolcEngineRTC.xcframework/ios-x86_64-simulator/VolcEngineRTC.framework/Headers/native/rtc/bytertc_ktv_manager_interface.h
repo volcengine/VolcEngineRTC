@@ -12,8 +12,8 @@ class IKTVEventHandler {
 
 public:
     /**
-     * @hidden
-     * @brief Destructor.
+     * @hidden Constructor/Destructor
+     * @brief Destructor
      */
     virtual ~IKTVEventHandler(){
     }
@@ -115,8 +115,8 @@ public:
 class IKTVPlayerEventHandler {
 public:
     /**
-     * @hidden
-     * @brief Destructor.
+     * @hidden Constructor/Destructor
+     * @brief Destructor
      */
     virtual ~IKTVPlayerEventHandler() {
         
@@ -162,8 +162,8 @@ public:
 class IKTVPlayer {
 public:
     /**
-     * @hidden
-     * @brief  Destructor.
+     * @hidden Constructor/Destructor
+     * @brief Destructor
      */
     virtual ~IKTVPlayer(){}
     
@@ -282,8 +282,8 @@ public:
 class IKTVManager {
 public:
     /**
-     * @hidden
-     * @brief  Destructor.
+     * @hidden Constructor/Destructor
+     * @brief Destructor
      */
     virtual ~IKTVManager(){
     }
@@ -308,7 +308,7 @@ public:
      * @brief 获取歌曲列表。
      * @param [in] page_num 页码，默认从 1 开始。
      * @param [in] page_size 每页显示歌曲的最大数量，取值范围 [1,99]。
-     * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。多个过滤方式可以按位或组合。
+     * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。
      * @notes 调用接口后，你会收到 onMusicListResult{@link #IKTVEventHandler#onMusicListResult} 回调歌曲列表。
      */
     virtual void getMusicList(int page_num, int page_size,  int filters) = 0;
@@ -319,16 +319,16 @@ public:
      * @param [in] key_world 关键词，字符串长度最大为 20 个字符。
      * @param [in] page_num 页码，默认从 1 开始。
      * @param [in] page_size 每页显示歌曲的最大数量，取值范围 [1,99]。
-     * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。多个过滤方式可以按位或组合。
+     * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。
      * @notes 调用接口后，你会收到 onSearchMusicResult{@link #IKTVEventHandler#onSearchMusicResult} 回调歌曲列表。
      */
     virtual void searchMusic(const char* key_world, int page_num, int page_size, int filters) = 0;
 
     /** 
      * @type api
-     * @brief 根据热榜类别获取每个榜单的歌曲列表。
-     * @param [in] hot_types 热榜类别，参看 MusicHotType{@link #MusicHotType}。多个热榜类别可以按位或组合。
-     * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。多个过滤方式可以按位或组合。
+     * @brief 根据榜单类别获取每个榜单的歌曲列表。
+     * @param [in] hot_types 榜单类别，参看 MusicHotType{@link #MusicHotType}。
+     * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。
      * @notes 调用接口后，你会收到 onHotMusicResult{@link #IKTVEventHandler#onHotMusicResult} 回调歌曲列表。
      */
     virtual void getHotMusic(int hot_types, int filters) = 0;

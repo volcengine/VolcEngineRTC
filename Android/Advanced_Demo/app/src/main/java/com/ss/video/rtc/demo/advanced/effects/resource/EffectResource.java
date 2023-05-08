@@ -52,7 +52,7 @@ public class EffectResource {
      * 获取人像模型文件路径
      */
     public static String getEffectPortraitPath() {
-        return getModelPath() + "/mattingmodel/tt_matting_v13.0.model";
+        return getStickerPathByName("matting_bg");
     }
 
     /**

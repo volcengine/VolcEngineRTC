@@ -190,7 +190,8 @@
     solution.height = 640;
     solution.frameRate = 15;
     solution.maxBitrate = 800;
-    [self.rtcVideo SetMaxVideoEncoderConfig:solution];
+    solution.minBitrate = 0;
+    [self.rtcVideo setMaxVideoEncoderConfig:solution];
     [self setLocalRenderView];
     /// 开启本地视频采集
     [self.rtcVideo startVideoCapture];
@@ -207,7 +208,8 @@
     roomConfig.isAutoPublish = true;
     roomConfig.isAutoSubscribeAudio = true;
     roomConfig.isAutoSubscribeVideo = true;
-    [self.rtcRoom joinRoomByToken:TOKEN userInfo:userInfo roomConfig:roomConfig];
+    
+    [self.rtcRoom joinRoom:TOKEN userInfo:userInfo roomConfig:roomConfig];
 }
 
 - (void)setLocalRenderView{
@@ -223,14 +225,21 @@
     ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
     canvas.view = userLiveView.liveView;
     canvas.renderMode = ByteRTCRenderModeHidden;
-    canvas.uid = uid;
-    canvas.roomId = roomId;
     userLiveView.uid = uid;
+
+    ByteRTCRemoteStreamKey *streamKey = [[ByteRTCRemoteStreamKey alloc] init];
+    streamKey.roomId = roomId;
+    streamKey.userId = uid;
+    streamKey.streamIndex = ByteRTCStreamIndexMain;
+    
     /// 设置远端用户视频渲染视图
-    [self.rtcVideo setRemoteVideoCanvas:uid withIndex:ByteRTCStreamIndexMain withCanvas:canvas];
+    [self.rtcVideo setRemoteVideoCanvas:streamKey withCanvas:canvas];
 }
 
 #pragma mark - RTC delegate
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode {
+    [self showAlert:[NSString stringWithFormat:@"error: %ld",(long)errorCode]];
+}
 - (void)rtcEngine:(ByteRTCVideo *)engine onFirstRemoteVideoFrameDecoded:(ByteRTCRemoteStreamKey *)streamKey withFrameInfo:(ByteRTCVideoFrameInfo *)frameInfo{
     NSLog(@"%@,%s",[NSThread currentThread],__func__);
 
@@ -314,10 +323,10 @@
     button.selected = !button.selected;
     if (button.selected) {
         /// 设置使用听筒播放音频数据
-        [self.rtcVideo setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceEarpiece];
+        [self.rtcVideo setDefaultAudioRoute:ByteRTCAudioRouteEarpiece];
     }else{
         /// 设置使用扬声器播放音频数据
-        [self.rtcVideo setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceSpeakerphone];
+        [self.rtcVideo setDefaultAudioRoute:ByteRTCAudioRouteSpeakerphone];
     }
 }
 

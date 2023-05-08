@@ -13,7 +13,7 @@
  * - 展示当前 SDK 使用的版本号 {@link RTCEngine#getSdkVersion()}
  *
  * 有以下常见的注意事项：
- * 1.SDK 对房间名、用户名的限制是：非空且最大长度不超过128位的数字、大小写字母、@ . _ \ -
+ * 1.SDK 对房间名、用户名的限制是：非空且最大长度不超过128位的数字、大小写字母、@ . _  -
  */
 
 LoginWidget::LoginWidget(QWidget *parent)
@@ -64,28 +64,18 @@ void LoginWidget::on_enterRoomBtn_clicked()
 			return false;
 		}
 	
-		for (int i = 0; i < str.size(); i++) 
+		QRegExp re("^[a-zA-Z0-9@._-]{1,128}$");
+		if (re.exactMatch(str))
 		{
-			if (isalpha(str[i].cell())
-				|| isdigit(str[i].cell())
-				|| str[i] == '@'
-				|| str[i] == '.'
-				|| str[i] == '_'
-				|| str[i] == '-'
-				|| str[i] == '\\'
-				) 
-			{
-				continue;
-			}
-			else 
-			{
-				QMessageBox::warning(this, QStringLiteral(u"提示"), 
-					typeName + QStringLiteral(u"含有非法字符！"),
-					QStringLiteral(u"确定"));
-				return false;
-			}
+			return true;
 		}
-		return true;
+		else
+		{
+			QMessageBox::warning(this, QStringLiteral(u"输入不合法"),
+				QStringLiteral(u"只支持数字、大小写字母、@._-"),
+				QStringLiteral(u"确定"));
+			return false;
+		}
 	};
 
 	if (!checkStr(QStringLiteral(u"房间号"),ui.roomIDLineEdit->text()))

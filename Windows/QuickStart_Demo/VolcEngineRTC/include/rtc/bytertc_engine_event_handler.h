@@ -25,38 +25,8 @@ public:
      */
     virtual ~IRtcEngineEventHandler() {
     }
-	
-	/**  
-    * @hidden
-    * @type callback
-    * @region 游戏接口
-    * @brief 游戏场景中，当房间用户的的 sendmode 被修改的时候回调该事件，发送模式只有三种，分别是：静音、向小队发送、向世界发送。
-    * @param [in] uid  <br>
-    *        远端用户 id 。
-    * @param [in] range_audio_mode  <br>
-    *        远端用户的发送模式，详见: RangeAudioMode{@link #RangeAudioMode} 。
-    */
-   virtual void onUserAudioSendModeChange(const char* uid, int range_audio_mode) {
-        (void)uid;
-        (void)range_audio_mode;
-    }
 
-    /**  
-     * @hidden
-     * @type callback
-     * @region 游戏接口
-     *@brief 游戏场景中，当房间用户的的 recvmode 被修改的时候回调该事件，收听模式只有三种，分别是：静音、收听小队、收听世界。
-     *@param [in] uid  <br>
-     *       远端用户 id 。
-     *@param [in] range_audio_mode  <br>
-     *       远端用户的接收模式，详见: RangeAudioMode{@link #RangeAudioMode} 。
-     */
-    virtual void onUserAudioRecvModeChange(const char* uid, int range_audio_mode) {
-        (void)uid;
-        (void)range_audio_mode;
-    }
-
-        /** 
+    /** 
      * @type callback
      * @region 警告码
      * @brief 当内部发生警告事件时触发该回调
@@ -167,7 +137,7 @@ public:
     };
 
     /** 
-     * @hidden(macOS,Windows)
+     * @hidden(macOS, Windows, Linux)
      * @type callback
      * @region 音频事件回调
      * @brief 音频播放设备变化时回调该事件。
@@ -670,10 +640,9 @@ public:
      * @brief 订阅公共流的结果回调<br>
      *        通过 startPlayPublicStream{@link #IRtcEngine#startPlayPublicStream} 订阅公共流后，可以通过本回调获取订阅结果。
      * @param [in] public_stream_id 公共流的 ID
-     * @param [in] errorCode 公共流订阅结果状态码。<br>
-     *             `200`: 订阅成功
+     * @param [in] errorCode 公共流订阅结果状态码。详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}。
      */
-    virtual void onPlayPublicStreamResult(const char* public_stream_id, int errorCode) {
+    virtual void onPlayPublicStreamResult(const char* public_stream_id, PublicStreamErrorCode errorCode) {
         (void)public_stream_id;
         (void)errorCode;
     }
@@ -684,14 +653,19 @@ public:
      * @param [in] public_stream_id 公共流 ID
      * @param [in] message SEI 信息
      * @param [in] message_length SEI 信息的长度
+     * @param [in] source_type SEI 信息类型
      * @notes 当公共流中的多路视频流均包含有 SEI 信息时：<br>
      *       SEI 不互相冲突时，将通过多次回调分别发送；<br>
      *       SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
      */
-    virtual void onPublicStreamSEIMessageReceived(const char* public_stream_id, const uint8_t* message, int message_length) {
+    virtual void onPublicStreamSEIMessageReceived(const char* public_stream_id,
+        const uint8_t* message,
+        int message_length,
+        SEIMessageSourceType source_type) {
         (void)public_stream_id;
         (void)message;
         (void)message_length;
+        (void)source_type;
     }
     /** 
      * @type callback
@@ -841,7 +815,7 @@ public:
      * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
      * @param reason 用户离开房间的原因：  <br>
      *              + 0: 远端用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 主动退出房间。  <br>
-     *              + 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](hhttps://www.volcengine.com/docs/6348/95376) <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](https://www.volcengine.com/docs/6348/95376) <br>
      *              + 2: 远端用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 切换至不可见状态。 <br>
      *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
@@ -1396,6 +1370,18 @@ public:
     /** 
      * @type callback
      * @region 房间管理
+     * @brief 屏幕音频首帧发送状态改变回调
+     * @param [in] user 本地用户信息，详见 RtcUser{@link #RtcUser}
+     * @param [in] state 首帧发送状态，详见 FirstFrameSendState{@link #FirstFrameSendState}
+     */
+    virtual void onScreenAudioFrameSendStateChanged(const RtcUser& user, FirstFrameSendState state) {
+        (void)user;
+        (void)state;
+    }
+
+    /** 
+     * @type callback
+     * @region 房间管理
      * @brief 视频首帧发送状态改变回调
      * @param [in] user 本地用户信息，详见 RtcUser{@link #RtcUser}
      * @param [in] state 首帧发送状态，详见 FirstFrameSendState{@link #FirstFrameSendState}
@@ -1425,6 +1411,18 @@ public:
      * @param [in] state 首帧播放状态，详见 FirstFramePlayState{@link #FirstFramePlayState}
      */
     virtual void onAudioFramePlayStateChanged(const RtcUser& user, FirstFramePlayState state) {
+        (void)user;
+        (void)state;
+    }
+
+    /** 
+     * @type callback
+     * @region 房间管理
+     * @brief 屏幕音频首帧播放状态改变回调
+     * @param [in] user 远端用户信息，详见 RtcUser{@link #RtcUser}
+     * @param [in] state 首帧播放状态，详见 FirstFramePlayState{@link #FirstFramePlayState}
+     */
+    virtual void onScreenAudioFramePlayStateChanged(const RtcUser& user, FirstFramePlayState state) {
         (void)user;
         (void)state;
     }
@@ -1497,7 +1495,6 @@ public:
      *        + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。  <br>
      *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。  <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void onVideoStreamBanned(const char* uid, bool banned) {
@@ -1518,7 +1515,7 @@ public:
      *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
      *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。   <br>
+     *        + 在控制台开启大会模式后，只有被封禁/解禁用户会收到该回调。   <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void onAudioStreamBanned(const char* uid, bool banned) {
@@ -1553,7 +1550,7 @@ public:
      * @param [in] localQuality 本端网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
      * @param [in] remoteQualities 已订阅用户的网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
      * @param [in] remoteQualityNum `remoteQualities` 数组长度
-     * @note 更多通话中的监测接口，详见[通话中质量监测](106866)
+     * @notes 更多通话中的监测接口，详见[通话中质量监测](106866)
      */
     virtual void onNetworkQuality(const NetworkQualityStats& localQuality, const NetworkQualityStats* remoteQualities, int remoteQualityNum) {
     }
@@ -1563,15 +1560,9 @@ public:
      * @brief 公共流发布结果回调。<br>
      *        调用 startPushPublicStream{@link #IRtcEngine#startPushPublicStream} 接口发布公共流后，启动结果通过此回调方法通知用户。
      * @param [in] public_streamid 公共流 ID
-     * @param [in] errorCode 公共流发布结果状态码。<br>
-     *             `200`: 发布成功<br>
-     *             `1191`: 推流参数存在异常 <br>
-     *             `1192`: 当前状态异常，通常为无法发起任务<br>
-     *             `1193`: 服务端错误，不可恢复<br>
-     *             `1195`: 服务端调用发布接口返回失败<br>
-     *             `1196`: 超时无响应。推流请求发送后 10s 没有收到服务端的结果回调。客户端将每隔 10s 重试，3 次重试失败后停止。
+     * @param [in] errorCode 详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}。
      */
-    virtual void onPushPublicStreamResult(const char* public_streamid, int errorCode) {
+    virtual void onPushPublicStreamResult(const char* public_streamid, PublicStreamErrorCode errorCode) {
         (void)public_streamid;
         (void)errorCode;
     }
@@ -1607,6 +1598,22 @@ public:
         (void)interval;
     }
 
+    /*
+     *入参 param 格式如下：
+     * {
+     * "callback_name": "onInfo",
+     *   "params": {
+     *       "stream_id": "123456",
+     *       "uri": "rtmp://xxxx/stream_id/path?xxx",
+     *       "option": "xxxx"
+     *       ……
+     *   },
+     *  }
+     */
+    virtual void onInvokeExperimentalAPI( const char* param ) {
+        //TODO tiannianyi
+        (void)param;
+    }
 
 };
 

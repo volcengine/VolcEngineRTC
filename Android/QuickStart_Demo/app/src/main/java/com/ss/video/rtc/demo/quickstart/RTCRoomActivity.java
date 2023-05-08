@@ -108,6 +108,12 @@ public class RTCRoomActivity extends AppCompatActivity {
             Log.d("IRTCRoomEventHandler", "onUserLeave: " + uid);
             runOnUiThread(() -> removeRemoteView(uid));
         }
+
+        @Override
+        public void onRoomStateChanged(String roomId, String uid, int state, String extraInfo) {
+            super.onRoomStateChanged(roomId, uid, state, extraInfo);
+            Log.d("onRoomStateChanged", "roomid: " + roomId + " ,uid : " + uid + " ,state : " + state + "extraInfo : " + extraInfo);
+        }
     };
 
     private IRTCVideoEventHandler mIRtcVideoEventHandler = new IRTCVideoEventHandler() {
@@ -183,7 +189,7 @@ public class RTCRoomActivity extends AppCompatActivity {
         // 设置音频场景类型（需要调用 setAudioScenario 将音频场景切换为 AUDIO_SCENARIO_COMMUNICATION 后再调用 setAudioRoute()）
         mRTCVideo.setAudioScenario(AudioScenarioType.AUDIO_SCENARIO_COMMUNICATION);
         // 设置视频发布参数
-        VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(360, 640, 15, 800);
+        VideoEncoderConfig videoEncoderConfig = new VideoEncoderConfig(360, 640, 15, 800,0);
         mRTCVideo.setVideoEncoderConfig(videoEncoderConfig);
         setLocalRenderView(userId);
         // 开启本地视频采集
@@ -208,10 +214,10 @@ public class RTCRoomActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT);
         mSelfContainer.removeAllViews();
         mSelfContainer.addView(renderView, params);
+
         videoCanvas.renderView = renderView;
-        videoCanvas.uid = uid;
-        videoCanvas.isScreen = false;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
+
         // 设置本地视频渲染视图
         mRTCVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
     }
@@ -226,12 +232,11 @@ public class RTCRoomActivity extends AppCompatActivity {
 
         VideoCanvas videoCanvas = new VideoCanvas();
         videoCanvas.renderView = renderView;
-        videoCanvas.roomId = roomId;
-        videoCanvas.uid = uid;
-        videoCanvas.isScreen = false;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
+
+        RemoteStreamKey streamKey = new RemoteStreamKey(roomId, uid, StreamIndex.STREAM_INDEX_MAIN);
         // 设置远端用户视频渲染视图
-        mRTCVideo.setRemoteVideoCanvas(uid, StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        mRTCVideo.setRemoteVideoCanvas(streamKey, videoCanvas);
     }
 
     private void setRemoteView(String roomId, String uid) {

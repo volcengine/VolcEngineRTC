@@ -40,7 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
  *       + 音乐播放结束会触发 playState 值为 ByteRTCKTVPlayStateFinished 的回调。
  */
 - (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChange:(NSString *)musicId state:(ByteRTCKTVPlayState)state error:(ByteRTCKTVPlayerError)error;
-
 @end
 
 /** 
@@ -49,9 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
 
-/**
- * @hidden
- */
 @property(nonatomic, weak) id<ByteRTCKTVPlayerDelegate> delegate;
 
 #pragma mark - Core Methods

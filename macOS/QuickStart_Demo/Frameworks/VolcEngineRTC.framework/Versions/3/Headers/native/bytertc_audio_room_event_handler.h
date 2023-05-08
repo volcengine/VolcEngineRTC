@@ -22,19 +22,16 @@ public:
 
     /** 
      * @type callback
-     * @region 房间管理
-     * @author shenpengliang
+     * @region 多房间
      * @brief 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。
      * @param [in] room_id 房间 ID。
      * @param [in] uid 用户 ID。
      * @param [in] state 房间状态码。  <br>
-     *              + 0: 成功。  <br>
-     *              + !0: 失败或异常退房。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。异常退出房间，具体原因包括<br>
-     *               - -1004：相同 ID 用户在其他端进房； <br>
-     *               - -1006：用户被踢出当前房间。
+     *              + 0: 加入房间成功。  <br>
+     *              + !0: 加入房间失败、异常退房、发生房间相关的警告或错误。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
      * @param [in] extra_info 额外信息。
      *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
-     *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
+     *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
      */
     virtual void onRoomStateChanged(const char* room_id, const char* uid,
             int state, const char* extra_info) {
@@ -46,7 +43,6 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 流状态改变回调，发生流相关的警告或错误时会收到此回调。
      * @param [in] room_id 房间 ID。
      * @param [in] uid 用户 ID。
@@ -63,7 +59,6 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 离开房间回调。  <br>
      *        用户调用 leaveRoom{@link #IRTCAudioRoom#leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音频资源后，通过此回调通知用户离开房间成功。  <br>
      * @param [in] stats 保留参数，目前为空。
@@ -77,10 +72,33 @@ public:
 
     /** 
      * @type callback
-     * @brief Token 过期前 30 秒将触发该回调。<br>
-     *        调用 updateToken{@link #IRTCAudioRoom#updateToken} 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行语音通话。
+     * @brief Token 进房权限过期前 30 秒将触发该回调。<br>
+     *        收到该回调后，你需调用 updateToken{@link #IRTCAudioRoom#updateToken} 更新 Token 进房权限。
+     * @notes 若 Token 进房权限过期且未及时更新： <br>
+     *        + 用户此时尝试进房会收到 onRoomStateChanged{@link #IRTCAudioRoomEventHandler#onRoomStateChanged} 回调，提示错误码为 `-1000` Token 无效； <br>
+     *        + 用户已在房间内则会被移出房间，本地用户会收到 onRoomStateChanged{@link #IRTCAudioRoomEventHandler#onRoomStateChanged} 回调，提示错误码为 `-1009` Token 过期，同时远端用户会收到 onUserLeave{@link #IRTCAudioRoomEventHandler#onUserLeave} 回调，提示原因为 `2` Token 进房权限过期。
      */
      virtual void onTokenWillExpire() {
+
+    }
+    /** 
+     * @type callback
+     * @brief Token 发布权限过期前 30 秒将触发该回调。<br>
+     *        收到该回调后，你需调用 updateToken{@link #IRTCAudioRoom#updateToken} 更新 Token 发布权限。
+     * @notes 若收到该回调后未及时更新 Token，Token 发布权限过期后： <br>
+     *        + 此时尝试发布流会收到 onStreamStateChanged{@link #IRTCAudioRoomEventHandler#onStreamStateChanged} 回调，提示错误码为 `-1002` 没有发布权限； <br>
+     *        + 已在发布中的流会停止发布，发布端会收到 onStreamStateChanged{@link #IRTCAudioRoomEventHandler#onStreamStateChanged} 回调，提示错误码为 `-1002` 没有发布权限，同时远端用户会收到 onUserUnPublishStream{@link #IRTCAudioRoomEventHandler#onUserUnPublishStream} 回调，提示原因为 `6` 发流端发布权限过期。
+     */
+    virtual void onPublishPrivilegeTokenWillExpire() {
+
+    }
+    /** 
+     * @type callback
+     * @brief Token 订阅权限过期前 30 秒将触发该回调。<br>
+     *        收到该回调后，你需调用 updateToken{@link #IRTCAudioRoom#updateToken} 更新 Token 订阅权限有效期。
+     * @notes 若收到该回调后未及时更新 Token，Token 订阅权限过期后，尝试新订阅流会失败，已订阅的流会取消订阅，并且会收到 onStreamStateChanged{@link #IRTCAudioRoomEventHandler#onStreamStateChanged} 回调，提示错误码为 `-1003` 没有订阅权限。
+     */
+    virtual void onSubscribePrivilegeTokenWillExpire() {
 
     }
     /** 
@@ -97,7 +115,6 @@ public:
     /** 
      * @type callback
      * @region 数据统计
-     * @author liuzhiqiang.avcoder
      * @brief 发布流成功后，每隔 2s 收到此回调，了解发布的流在此周期内的网络质量信息。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 LocalStreamStats{@link #LocalStreamStats}
      */
@@ -107,7 +124,6 @@ public:
     /** 
      * @type callback
      * @region 数据统计
-     * @author liuzhiqiang.avcoder
      * @brief 每隔 2s 收到此回调，了解订阅的远端用户发布的流在此周期内的网络质量信息。
      * @param [in] stats 当前 RtcEngine 统计数据，详见 RemoteStreamStats{@link #RemoteStreamStats}
      */
@@ -118,14 +134,13 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 远端可见用户加入房间，或房内隐身用户切换为可见的回调。<br>
      *        1. 远端用户调用 setUserVisibility{@link #IRTCAudioRoom#setUserVisibility} 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br>
      *        2. 远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br>
      *        3. 房间内隐身远端用户调用 setUserVisibility{@link #IRTCAudioRoom#setUserVisibility} 方法切换至可见时，房间内其他用户将收到该事件。  <br>
      *        4. 新进房用户会收到进房前已在房内的可见用户的进房回调通知。  <br>
      * @param [in] user_info 用户信息，详见 UserInfo{@link #UserInfo}  <br>
-     * @param [in] elapsed 此参数无意义
+     * @param [in] elapsed 保留字段，无意义。
      */
     virtual void onUserJoined(const UserInfo& user_info, int elapsed) {
         (void)user_info;
@@ -134,12 +149,11 @@ public:
 
     /** 
      * @type callback
-     * @author shenpengliang
      * @brief 远端用户离开房间，或切至不可见时，本地用户会收到此事件
      * @param uid 离开房间，或切至不可见的的远端用户 ID。  <br>
      * @param reason 用户离开房间的原因，详见 UserOfflineReason{@link #UserOfflineReason}。 <br>
      *              + 0: 远端用户调用 leaveRoom{@link #IRTCAudioRoom#leaveRoom} 主动退出房间。  <br>
-     *              + 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](hhttps://www.volcengine.com/docs/6348/95376) <br>
+     *              + 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](https://www.volcengine.com/docs/6348/95376) <br>
      *              + 2: 远端用户调用 setUserVisibility{@link #IRTCAudioRoom#setUserVisibility} 切换至不可见状态。 <br>
      *              + 3: 服务端调用 OpenAPI 将远端用户踢出房间。
      */
@@ -150,7 +164,6 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 房间内新增远端音频流的回调。
      * @param [in] uid 远端流发布用户的用户 ID。
      * @notes 当房间内的远端用户调用 publishStream{@link #IRTCAudioRoom#publishStream} 成功发布音频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 subscribeStream{@link #IRTCAudioRoom#subscribeStream} 订阅此流。
@@ -161,7 +174,6 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 房间内远端音频流移除的回调。
      * @param [in] uid 移除的远端流发布用户的用户 ID。  <br>
      * @param [in] reason 远端流移除的原因，参看 StreamRemoveReason{@link #StreamRemoveReason}。
@@ -315,14 +327,13 @@ public:
 
     /** 
      * @type callback
-     * @brief 加入房间后， 以 2 秒 1 次的频率，报告用户的网络质量信息
+     * @brief 加入房间并发布或订阅流后， 以每 2 秒一次的频率，报告本地用户和已订阅的远端用户的上下行网络质量信息。
      * @param [in] localQuality 本端网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
      * @param [in] remoteQualities 已订阅用户的网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
      * @param [in] remoteQualityNum `remoteQualities` 数组长度
-     * @note 更多通话中的监测接口，详见[通话中质量监测](https://www.volcengine.com/docs/6348/106866)
+     * @notes 更多通话中的监测接口，详见[通话中质量监测](https://www.volcengine.com/docs/6348/106866)。
      */
-    virtual void onNetworkQuality(const NetworkQualityStats& localQuality,
-        const NetworkQualityStats* remoteQualities, int remoteQualityNum) {
+    virtual void onNetworkQuality(const NetworkQualityStats& localQuality, const NetworkQualityStats* remoteQualities, int remoteQualityNum) {
         (void)localQuality;
         (void)remoteQualities;
         (void)remoteQualityNum;

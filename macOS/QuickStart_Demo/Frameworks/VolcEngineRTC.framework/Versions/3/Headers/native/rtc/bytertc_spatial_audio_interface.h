@@ -11,44 +11,6 @@
 namespace bytertc {
 
 /** 
- * @type keytype
- * @brief 方向朝向信息
- */
-struct Orientation {
-    /** 
-     * @brief x 坐标
-     */
-    float x;
-    /** 
-     * @brief y 坐标
-     */
-    float y;
-    /** 
-     * @brief z 坐标
-     */
-    float z;
-};
-
-/** 
- * @type keytype
- * @brief 三维朝向信息，三个向量需要两两垂直。参看 Orientation{@link #Orientation}。
- */
-struct HumanOrientation {
-    /** 
-     * @brief 正前方朝向，默认值为 {1,0,0}，即正前方朝向 x 轴正方向
-     */
-    Orientation forward =  { 1, 0, 0 };
-    /** 
-     * @brief 正右方朝向，默认值为 {0,1,0}，即右手朝向 y 轴正方向
-     */
-    Orientation right = { 0, 1, 0 };
-    /** 
-     * @brief 正上方朝向，默认值为 {0,0,1}，即头顶朝向 z 轴正方向
-     */
-    Orientation up = { 0, 0, 1 };
-};
-
-/** 
  * @hidden(Linux)
  * @type api
  * @brief 空间音频接口实例
@@ -69,8 +31,9 @@ public:
     /** 
      * @type api
      * @region 空间音频
-     * @brief 更新本地用户在房间内空间直角坐标系中的位置坐标。  <br>
-     * @param [in] pos 三维坐标的值，默认为 [0, 0, 0]。参看 Position{@link #Position}
+     * @brief 更新本地用户发声时，在房间内空间直角坐标系中的位置坐标。  <br>
+     *        如果未调用 updateListenerPosition{@link #ISpatialAudio#updateListenerPosition} 设定收听位置，默认的收听位置和发声位置一致。
+     * @param [in] pos 三维坐标的值，默认为 [0, 0, 0]。参看 Position{@link #Position}。
      * @return  <br>
      *        + 0: 成功；  <br>
      *        + !0: 失败。  <br>
@@ -81,30 +44,61 @@ public:
     /** 
      * @type api
      * @region 空间音频
-     * @brief 更新本地用户在空间音频坐标系下的朝向。  <br>
-     * @param [in] orientation 自身朝向信息，参看 HumanOrientation{@link #HumanOrientation}。
+     * @brief 更新本地用户发声时，在空间音频坐标系下的朝向。  <br>
+     *        如果未调用 updateListenerOrientation{@link #ISpatialAudio#updateListenerOrientation} 设定收听朝向，默认的收听位朝向和发声朝向一致。
+     * @param [in] orientation 参看 HumanOrientation{@link #HumanOrientation}。
      * @return 方法调用结果：  <br>
      *        + 0：成功  <br>
      *        + !0：失败
      * @notes  <br>
      *        + 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。<br>
-     *        + 调用 disableRemoteOrientation{@link #ISpatialAudio#disableRemoteOrientation} 可忽略远端用户朝向。
+     *        + 调用 disableRemoteOrientation{@link #ISpatialAudio#disableRemoteOrientation} 关闭此效果。
      */
     virtual int updateSelfOrientation(const HumanOrientation& orientation) = 0;
 
     /** 
      * @type api
      * @region 音频管理
-     * @brief 参与通话的各端调用本接口后，将忽略远端用户的朝向，认为所有远端用户都面向本地用户。<br>
-     *        如果此后调用 updateSelfOrientation{@link #ISpatialAudio#updateSelfOrientation} 更新本地用户朝向，远端用户无法感知这些变化，但本地用户接收音频时可以感知自身朝向改变带来的音频效果变化。
+     * @brief 关闭本地用户朝向对本地用户发声效果的影响。<br>
+     *        调用此接口后，房间内的其他用户收听本地发声时，声源都在收听者正面。
      * @notes <br>
-     *        + 进房前后都可以调用该接口。  <br>
-     *        + 调用本接口关闭朝向功能后，在当前的空间音频实例的生命周期内无法再次开启。
+     *        + 调用本接口关闭朝向功能后，在当前的空间音频实例的生命周期内无法再次开启。<br>
+     *        + 调用此接口不影响本地用户收听朝向的音频效果。要改变本地用户收听朝向，参看 updateSelfOrientation{@link #ISpatialAudio#updateSelfOrientation} 和 updateListenerOrientation{@link #ISpatialAudio#updateListenerOrientation} 。
      */
     virtual void disableRemoteOrientation() = 0;
+    
+    /** 
+     * @type api
+     * @region 空间音频
+     * @brief 更新在房间内收听音频时的位置。<br>
+     *        通过此接口，你可以设定本地发声位置和收听位置不同。
+     * @param [in] pos 空间直角坐标系下的坐标值。参看 Position{@link #Position}。<br>
+     *                 如果未调用此接口设定收听位置，那么默认值为通过 updatePosition{@link #ISpatialAudio#updatePosition} 设定的值。
+     * @return  <br>
+     *        + 0: 成功；  <br>
+     *        + !0: 失败。  <br>
+     * @notes <br>
+     *        + 调用此接口前，你需调用 enableSpatialAudio{@link #ISpatialAudio#enableSpatialAudio} 开启空间音频功能。<br>
+     *        + 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
+     */
+    virtual int updateListenerPosition(const Position &pos) = 0;
+    
+    /** 
+     * @type api
+     * @region 空间音频
+     * @brief 更新在房间内收听音频时的朝向。<br>
+     *        通过此接口，你可以设定本地用户的发声朝向和收听朝向不同。
+     * @param [in] orientation 自身朝向信息，参看 HumanOrientation{@link #HumanOrientation}。<br>
+     *                         如果未调用此接口设定收听朝向，那么默认值为通过 updateSelfOrientation{@link #ISpatialAudio#updateSelfOrientation} 设定的值。
+     * @return 方法调用结果：  <br>
+     *        + 0：成功  <br>
+     *        + !0：失败
+     * @notes 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
+     */
+    virtual int updateListenerOrientation(const HumanOrientation& orientation) = 0;
 
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~ISpatialAudio() = default;

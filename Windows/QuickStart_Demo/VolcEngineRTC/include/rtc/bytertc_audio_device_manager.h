@@ -10,7 +10,7 @@
 namespace bytertc {
 
 /** 
- * @hidden
+ * @deprecated since 3.42 and will be deleted in 3.51, use IAudioDeviceCollection{@link #IAudioDeviceCollection} and IVideoDeviceCollection{@link #IVideoDeviceCollection} instead.
  * @type api
  * @region 引擎管理
  * @brief 音视频设备相关的信息
@@ -18,13 +18,12 @@ namespace bytertc {
 class IDeviceCollection {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     IDeviceCollection() {
     }
     /** 
-     * @hidden
      * @type api
      * @region 引擎管理
      * @brief 获取当前系统内音视频设备数量
@@ -32,7 +31,6 @@ public:
      */
     virtual int getCount() = 0;
     /** 
-     * @hidden
      * @type api
      * @region 引擎管理
      * @brief 根据索引号，获取设备信息
@@ -45,7 +43,6 @@ public:
      */
     virtual int getDevice(int index, char device_name[MAX_DEVICE_ID_LENGTH], char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 
-     * @hidden
      * @type api
      * @region 引擎管理
      * @brief 释放当前 IAudioDeviceCollection{@link #IAudioDeviceCollection} 对象占用的资源。
@@ -53,11 +50,11 @@ public:
      */
     virtual void release() = 0;
 /**
- * @hidden
+ * @hidden constructor/destructor
  */
 protected:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IDeviceCollection() {
@@ -65,6 +62,7 @@ protected:
 };
 
 /** 
+ * @hidden(Android,iOS)
  * @type api
  * @region 引擎管理
  * @brief 音频设备相关的信息
@@ -72,7 +70,7 @@ protected:
 class IAudioDeviceCollection : public IDeviceCollection {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     IAudioDeviceCollection() {};
@@ -115,20 +113,21 @@ public:
     virtual int getDevice(int index, AudioDeviceInfo* audio_device_info) = 0;
 protected:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IAudioDeviceCollection() {};
 };
 
 /** 
+ * @hidden(Android,iOS)
  * @type api
  * @brief 音频设备管理类
  */
 class IAudioDeviceManager {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     IAudioDeviceManager() {
@@ -152,8 +151,8 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 设置音频播放路由是否跟随系统。
-     * @param followed <br>
-     *        + true: 跟随。此时，调用 setAudioPlaybackDevice{@link #IAudioDeviceManager#setAudioPlaybackDevice} 会失败。
+     * @param [in] followed <br>
+     *        + true: 跟随。此时，调用 setAudioPlaybackDevice{@link #IAudioDeviceManager#setAudioPlaybackDevice} 会失败。默认值。
      *        + false: 不跟随系统。此时，可以调用 setAudioPlaybackDevice{@link #IAudioDeviceManager#setAudioPlaybackDevice} 进行设置。
      */
     virtual void followSystemPlaybackDevice(bool followed) = 0;
@@ -162,8 +161,8 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 设置音频采集路由是否跟随系统。
-     * @param followed <br>
-     *        + true: 跟随。此时，调用 setAudioCaptureDevice{@link #IAudioDeviceManager#setAudioCaptureDevice} 会失败。
+     * @param [in] followed <br>
+     *        + true: 跟随。此时，调用 setAudioCaptureDevice{@link #IAudioDeviceManager#setAudioCaptureDevice} 会失败。默认值。
      *        + false: 不跟随系统。此时，可以调用 setAudioCaptureDevice{@link #IAudioDeviceManager#setAudioCaptureDevice} 进行设置。
      */
     virtual void followSystemCaptureDevice(bool followed) = 0;
@@ -363,29 +362,29 @@ public:
     virtual int startAudioPlaybackDeviceTest(const char* test_audio_file_path, int indication_interval) = 0;
 
     /** 
-    * @type api
-    * @region 音频设备管理
-    * @brief 停止音频播放测试。  <br>
-    * @return  方法调用结果  <br>
-    *        + 0：方法调用成功  <br>
-    *        + < 0：方法调用失败
-    * @notes 调用 startAudioPlaybackDeviceTest{@link #IAudioDeviceManager#startAudioPlaybackDeviceTest} 后，调用本方法停止测试。
-    */
+     * @type api
+     * @region 音频设备管理
+     * @brief 停止音频播放测试。  <br>
+     * @return  方法调用结果  <br>
+     *        + 0：方法调用成功  <br>
+     *        + < 0：方法调用失败
+     * @notes 调用 startAudioPlaybackDeviceTest{@link #IAudioDeviceManager#startAudioPlaybackDeviceTest} 后，调用本方法停止测试。
+     */
     virtual int stopAudioPlaybackDeviceTest() = 0;
 
     /** 
      * @type api
      * @region 音频设备管理
      * @brief 开始音频采集设备和音频播放设备测试。<br>
-     *        建议提前调用 `enableAudioPropertiesReport` 启用音频信息提示，测试开始后，音频设备开始采集本地声音，可以通过 `onLocalAudioPropertiesReport` 获取采集音量。<br>
-     * @param [in] indication_interval 测试录音播放时触发 `onLocalAudioPropertiesReport` 播放音量回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
+     * @param indication_interval 测试中会收到 `onLocalAudioPropertiesReport` 回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
      * @return  方法调用结果  <br>
      *       + 0：方法调用成功  <br>
-     *       + < 0：方法调用失败
+     *       + < 0：方法调用失败  <br>
      * @notes  <br>
      *       + 该方法在进房前后均可调用。且不可与其它音频设备测试功能同时应用。  <br>
-     *       + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 stopAudioDeviceRecordAndPlayTest{@link #IAudioDeviceManager#stopAudioDeviceRecordAndPlayTest}  来停止采集并开始播放此前采集到的声音。<br>
+     *       + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 stopAudioDeviceRecordAndPlayTest{@link #IAudioDeviceManager#stopAudioDeviceRecordAndPlayTest} 来停止采集并开始播放此前采集到的声音。<br>
      *       + 调用 stopAudioDevicePlayTest{@link #IAudioDeviceManager#stopAudioDevicePlayTest} 可以停止音频设备采集和播放测试。<br>
+     *       + 你不应在测试过程中，调用 `enableAudioPropertiesReport` 注册音量提示回调。
      *       + 该方法仅在本地进行音频设备测试，不涉及网络连接。  <br>
      */
     virtual int startAudioDeviceRecordTest(int indication_interval) = 0;
@@ -394,7 +393,7 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>
-     * 调用 startAudioDeviceRecordTest{@link #IAudioDeviceManager#startAudioDeviceRecordTest} 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
+     *        调用 startAudioDeviceRecordTest{@link #IAudioDeviceManager#startAudioDeviceRecordTest} 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
      * @return  方法调用结果  <br>
      *        + 0：方法调用成功  <br>
      *        + < 0：方法调用失败
@@ -414,7 +413,19 @@ public:
     virtual int stopAudioDevicePlayTest() = 0;
 
     /** 
-     * @hidden
+     * @type api
+     * @hidden(Android,iOS,Linux)
+     * @region 音频设备管理
+     * @brief 开启/关闭过滤无声设备功能。
+     * @param [in] enable 是否开启过滤无声设备功能:
+     *        + 1: 是
+     *        + 0: 否
+     * @return  + 0：方法调用成功。
+     */
+    virtual int enableFilterSilentDevice(bool enable) = 0;
+
+    /** 
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IAudioDeviceManager() {

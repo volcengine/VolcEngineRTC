@@ -20,30 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
-
-##保证CalledByNative不被混淆
--keep @org.webrtc.CalledByNative class *
-
-#保持webrtc、RtcEngine中的类不被混淆
--keep class org.webrtc.**{*;}
--keep class com.bytedance.**{*;}
--keep class com.ss.bytertc.**{*;}
-
-
-
-#保证所有带有带有CallByNaitve注解方法与类名称不被混淆
--keepclasseswithmembers class * {
-    @org.webrtc.CalledByNative *;
-}
--keepclasseswithmembers class * {
-    @com.bytedance.bae.base.CalledByNative *;
-}
-
--keepattributes Signature
--keepattributes *Annotation*
-
 

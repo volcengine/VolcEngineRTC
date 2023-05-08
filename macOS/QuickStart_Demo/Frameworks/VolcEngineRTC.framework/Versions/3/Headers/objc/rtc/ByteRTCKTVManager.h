@@ -74,7 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param downloadPercentage 下载进度百分比，取值范围 [0,100]。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadMusicProgress:(int)downloadId progress:(int)downloadPercentage;
-
 @end
 
 /** 
@@ -83,9 +82,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCKTVManager : NSObject
 
-/**
- * @hidden
- */
 @property(nonatomic, weak) id<ByteRTCKTVManagerDelegate> delegate;
 
 #pragma mark - Core Methods

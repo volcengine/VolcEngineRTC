@@ -6,20 +6,17 @@
 #import <Foundation/Foundation.h>
 
 /** 
- * @hidden
+ * @hidden for internal use only
  * @type api
  * @region 引擎管理
- * @author weirongbin
  */
 @protocol ByteRTCHttpClientProtocol <NSObject>
 
 @required
 
 /** 
- * @hidden
  * @type api
  * @region 引擎管理
- * @author weirongbin
  * @brief 需要实现的 HTTP 异步 GET 接口。
  * @param url GET 请求地址。
  * @param timeout 超时时间。
@@ -29,10 +26,8 @@
     withCallback:(void(^ _Nullable)(int code, NSString* _Nullable data))callback;
 
 /** 
- * @hidden
  * @type api
  * @region 引擎管理
- * @author weirongbin
  * @brief 需要实现的 HTTP 异步 POST 接口。
  * @param url  POST 请求地址。
  * @param content POST 请求的内容。

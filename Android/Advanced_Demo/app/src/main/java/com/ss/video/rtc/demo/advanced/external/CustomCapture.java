@@ -101,6 +101,7 @@ public class CustomCapture {
         if (!hasVideoPermission(mHostActivity)) {
             return;
         }
+
         if (mHostActivity == null){
             mCamera.setDisplayOrientation(90);
             return;
@@ -137,6 +138,11 @@ public class CustomCapture {
         if (previewCallback == null){
             return;
         }
+
+        if( mCamera == null) {
+            return;
+        }
+
         if (!hasVideoPermission(mHostActivity)) {
             return;
         }
@@ -156,6 +162,11 @@ public class CustomCapture {
         if (!hasVideoPermission(mHostActivity)) {
             return;
         }
+
+        if( mCamera == null) {
+            return;
+        }
+
         mCamera.addCallbackBuffer(mPreviewData);
     }
 

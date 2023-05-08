@@ -43,6 +43,10 @@
 		9F193DBF2497A47A003202CC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193DBE2497A47A003202CC /* main.m */; };
 		9F193EB22497B8B0003202CC /* LoginView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193E892497B8AF003202CC /* LoginView.m */; };
 		9F4EC6CC24B70F8E00988C24 /* WindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4EC6CB24B70F8E00988C24 /* WindowController.m */; };
+		CC2F98F829C1F98600E0B666 /* libbytenn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2F98F529C1F98600E0B666 /* libbytenn.dylib */; };
+		CC2F98F929C1F98600E0B666 /* libAGFX.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CC2F98F629C1F98600E0B666 /* libAGFX.dylib */; };
+		CC2F98FA29C1F98C00E0B666 /* libAGFX.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC2F98F629C1F98600E0B666 /* libAGFX.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CC2F98FB29C1F98E00E0B666 /* libbytenn.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC2F98F529C1F98600E0B666 /* libbytenn.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,7 +73,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CC2F98FA29C1F98C00E0B666 /* libAGFX.dylib in Embed Frameworks */,
 				2BDCBC7C28D87DE900141042 /* libbytevc0.dylib in Embed Frameworks */,
+				CC2F98FB29C1F98E00E0B666 /* libbytenn.dylib in Embed Frameworks */,
 				2BDCBC8028D87DE900141042 /* libeffect.dylib in Embed Frameworks */,
 				2BDCBC7E28D87DE900141042 /* RTCFFmpeg.framework in Embed Frameworks */,
 				2BDCBC7A28D87DE900141042 /* VolcEngineRTC.framework in Embed Frameworks */,
@@ -146,6 +152,8 @@
 		9F193E8A2497B8AF003202CC /* LoginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginView.h; sourceTree = "<group>"; };
 		9F4EC6CA24B70F8E00988C24 /* WindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowController.h; sourceTree = "<group>"; };
 		9F4EC6CB24B70F8E00988C24 /* WindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowController.m; sourceTree = "<group>"; };
+		CC2F98F529C1F98600E0B666 /* libbytenn.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbytenn.dylib; path = Frameworks/libbytenn.dylib; sourceTree = "<group>"; };
+		CC2F98F629C1F98600E0B666 /* libAGFX.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libAGFX.dylib; path = Frameworks/libAGFX.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,9 +162,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2BDCBC7B28D87DE900141042 /* libbytevc0.dylib in Frameworks */,
+				CC2F98F829C1F98600E0B666 /* libbytenn.dylib in Frameworks */,
 				2BDCBC7F28D87DE900141042 /* libeffect.dylib in Frameworks */,
 				2BDCBC7D28D87DE900141042 /* RTCFFmpeg.framework in Frameworks */,
 				2BDCBC7928D87DE900141042 /* VolcEngineRTC.framework in Frameworks */,
+				CC2F98F929C1F98600E0B666 /* libAGFX.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +418,8 @@
 		BA54B357C0037EA9DD7FAAF6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC2F98F629C1F98600E0B666 /* libAGFX.dylib */,
+				CC2F98F529C1F98600E0B666 /* libbytenn.dylib */,
 				2BDCBC7628D87DE900141042 /* libbytevc0.dylib */,
 				2BDCBC7828D87DE900141042 /* libeffect.dylib */,
 				2BDCBC7728D87DE900141042 /* RTCFFmpeg.framework */,

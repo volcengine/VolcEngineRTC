@@ -6,7 +6,16 @@
 
 @implementation EffectResource
 
-#define CVLicenseName @""
+#ifdef DEBUG
+
+#define CVLicenseName @"rtc_test_20230309_20230630_com.ss.rtc.demo.advanced.ios.debug_4.4.3_140.licbag"
+
+#else
+
+#define CVLicenseName @"rtc_test_20230309_20230630_com.ss.rtc.demo.advanced.ios_4.4.3_140.licbag"
+
+#endif
+
 
 + (NSString *)licensePath {
     NSString *bunldePath = [[NSBundle mainBundle] pathForResource:@"LicenseBag" ofType:@"bundle"];
@@ -26,9 +35,9 @@
 }
 
 + (NSString *)getByteEffectPortraitPath {
-    NSString *portraitPrefix = [[NSBundle mainBundle] pathForResource:@"ModelResource" ofType:@"bundle"];
-    NSString *name = @"tt_matting_v13.0.model";
-    NSString *path = [NSString stringWithFormat:@"%@/mattingmodel/%@", portraitPrefix, name];
+    NSString *portraitPrefix = [[NSBundle mainBundle] pathForResource:@"StickerResource" ofType:@"bundle"];
+    NSString *name = @"matting_bg";
+    NSString *path = [NSString stringWithFormat:@"%@/stickers/%@", portraitPrefix, name];
     [self checkPathExsit:path];
 
     return path;

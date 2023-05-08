@@ -67,6 +67,7 @@
     } else {
         self.label.text = @"";
         [[self.liveView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [self.customRenderView removeFromSuperview];
     }
 }
 

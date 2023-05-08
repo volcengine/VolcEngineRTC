@@ -1,6 +1,6 @@
 package com.ss.video.rtc.demo.advanced;
 
-import com.bytedance.bae.base.ThreadUtils;
+import com.bytedance.realx.base.ThreadUtils;
 import com.ss.video.rtc.demo.basic_module.utils.SPUtils;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
 

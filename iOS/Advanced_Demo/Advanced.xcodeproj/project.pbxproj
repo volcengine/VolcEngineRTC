@@ -55,6 +55,11 @@
 		2BC1A99F27B6569400DD0557 /* PreJoinSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A99A27B6569400DD0557 /* PreJoinSettingsViewController.m */; };
 		2BC1A9A027B6569400DD0557 /* PreJoinSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A99D27B6569400DD0557 /* PreJoinSetting.m */; };
 		2BC1A9A527B658BC00DD0557 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9A327B658BC00DD0557 /* LoginViewController.m */; };
+		2BC1A9AF27B6625400DD0557 /* ModelResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AA27B6625400DD0557 /* ModelResource.bundle */; };
+		2BC1A9B027B6625400DD0557 /* ComposeMakeup.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AB27B6625400DD0557 /* ComposeMakeup.bundle */; };
+		2BC1A9B127B6625400DD0557 /* StickerResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AC27B6625400DD0557 /* StickerResource.bundle */; };
+		2BC1A9B227B6625400DD0557 /* LicenseBag.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AD27B6625400DD0557 /* LicenseBag.bundle */; };
+		2BC1A9B327B6625400DD0557 /* FilterResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AE27B6625400DD0557 /* FilterResource.bundle */; };
 		2BC1A9B827B662B300DD0557 /* BeautyBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9B427B662B300DD0557 /* BeautyBarView.m */; };
 		2BC1A9B927B662B300DD0557 /* EffectButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9B527B662B300DD0557 /* EffectButton.m */; };
 		2BC1A9BD27B662C000DD0557 /* EffectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9BC27B662C000DD0557 /* EffectModel.m */; };
@@ -78,6 +83,8 @@
 		CC2AE8C726CB6A24009D594D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC2AE8C626CB6A24009D594D /* Assets.xcassets */; };
 		CC2AE8CA26CB6A24009D594D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC2AE8C826CB6A24009D594D /* LaunchScreen.storyboard */; };
 		CC2AE8CD26CB6A24009D594D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2AE8CC26CB6A24009D594D /* main.m */; };
+		CCA09CB429CB4AAA0048796F /* bytenn.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCA3817529C4996B00872A05 /* bytenn.xcframework */; };
+		CCA09CB529CB4AAA0048796F /* bytenn.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCA3817529C4996B00872A05 /* bytenn.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +116,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				2B065603299DD0390029E3F2 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
+				CCA09CB529CB4AAA0048796F /* bytenn.xcframework in Embed Frameworks */,
 				2B065601299DD0370029E3F2 /* VolcEngineRTC.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -210,6 +218,11 @@
 		2BC1A99E27B6569400DD0557 /* PreJoinSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreJoinSetting.h; sourceTree = "<group>"; };
 		2BC1A9A327B658BC00DD0557 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		2BC1A9A427B658BC00DD0557 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		2BC1A9AA27B6625400DD0557 /* ModelResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ModelResource.bundle; sourceTree = "<group>"; };
+		2BC1A9AB27B6625400DD0557 /* ComposeMakeup.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ComposeMakeup.bundle; sourceTree = "<group>"; };
+		2BC1A9AC27B6625400DD0557 /* StickerResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = StickerResource.bundle; sourceTree = "<group>"; };
+		2BC1A9AD27B6625400DD0557 /* LicenseBag.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = LicenseBag.bundle; sourceTree = "<group>"; };
+		2BC1A9AE27B6625400DD0557 /* FilterResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FilterResource.bundle; sourceTree = "<group>"; };
 		2BC1A9B427B662B300DD0557 /* BeautyBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeautyBarView.m; sourceTree = "<group>"; };
 		2BC1A9B527B662B300DD0557 /* EffectButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EffectButton.m; sourceTree = "<group>"; };
 		2BC1A9B627B662B300DD0557 /* EffectButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectButton.h; sourceTree = "<group>"; };
@@ -246,6 +259,7 @@
 		CC2AE8CB26CB6A24009D594D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC2AE8CC26CB6A24009D594D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CC2AE8D826CB6C9A009D594D /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		CCA3817529C4996B00872A05 /* bytenn.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = bytenn.xcframework; sourceTree = "<group>"; };
 		CF204D15E7C0CD41573D450F /* Pods_Advanced.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Advanced.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -271,6 +285,7 @@
 				2BC1A9D027B66BA200DD0557 /* AVFoundation.framework in Frameworks */,
 				2B065602299DD0390029E3F2 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
 				2BC1A9CE27B66B9800DD0557 /* AudioToolbox.framework in Frameworks */,
+				CCA09CB429CB4AAA0048796F /* bytenn.xcframework in Frameworks */,
 				2BC1A9CC27B66B8E00DD0557 /* Accelerate.framework in Frameworks */,
 				2BC1A9CA27B66B8300DD0557 /* GLKit.framework in Frameworks */,
 				2BC1A9C827B66B7700DD0557 /* MetalPerformanceShaders.framework in Frameworks */,
@@ -485,6 +500,7 @@
 			isa = PBXGroup;
 			children = (
 				2BA8027127E47F9400AFE337 /* VirtualBackgroundImage */,
+				2BC1A9A927B6625400DD0557 /* EffectResource */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -583,6 +599,18 @@
 			path = Pre/Login;
 			sourceTree = "<group>";
 		};
+		2BC1A9A927B6625400DD0557 /* EffectResource */ = {
+			isa = PBXGroup;
+			children = (
+				2BC1A9AA27B6625400DD0557 /* ModelResource.bundle */,
+				2BC1A9AB27B6625400DD0557 /* ComposeMakeup.bundle */,
+				2BC1A9AC27B6625400DD0557 /* StickerResource.bundle */,
+				2BC1A9AD27B6625400DD0557 /* LicenseBag.bundle */,
+				2BC1A9AE27B6625400DD0557 /* FilterResource.bundle */,
+			);
+			path = EffectResource;
+			sourceTree = "<group>";
+		};
 		2BC1A9BA27B662C000DD0557 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -643,6 +671,7 @@
 		CC2AE90826CCF39A009D594D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CCA3817529C4996B00872A05 /* bytenn.xcframework */,
 				2B0655FA299DD0080029E3F2 /* VolcEngineRTC.xcframework */,
 				2B0655FB299DD0080029E3F2 /* VolcEngineRTCScreenCapturer.xcframework */,
 				2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */,
@@ -750,10 +779,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BC1A9B227B6625400DD0557 /* LicenseBag.bundle in Resources */,
 				CC2AE8CA26CB6A24009D594D /* LaunchScreen.storyboard in Resources */,
+				2BC1A9B027B6625400DD0557 /* ComposeMakeup.bundle in Resources */,
+				2BC1A9B327B6625400DD0557 /* FilterResource.bundle in Resources */,
+				2BC1A9AF27B6625400DD0557 /* ModelResource.bundle in Resources */,
 				CC2AE8C726CB6A24009D594D /* Assets.xcassets in Resources */,
 				CC2AE8C526CB6A21009D594D /* Main.storyboard in Resources */,
 				2BA8028B27E85F9E00AFE337 /* background.jpg in Resources */,
+				2BC1A9B127B6625400DD0557 /* StickerResource.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -882,11 +916,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_ENTITLEMENTS = AdvanceScreenShare/Advanced.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
+				DEVELOPMENT_TEAM = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -900,10 +932,9 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 5.0.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.screenShare;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.debug.screenShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCAdvancedScreenshareDis;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1063,10 +1094,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = XXHND5J98K;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)",
@@ -1085,13 +1114,10 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 4.0.0;
-				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCAdvancedDis;
 				STRIP_INSTALLED_PRODUCT = NO;
-				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1126,12 +1152,10 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 4.0.0;
-				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCAdvancedDis;
-				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

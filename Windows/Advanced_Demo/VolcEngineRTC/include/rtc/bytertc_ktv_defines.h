@@ -33,7 +33,7 @@ enum MusicFilterType {
 
 /** 
  * @type keytype
- * @brief 热榜类别。
+ * @brief 榜单类别。
  */
 enum MusicHotType {
     /** 
@@ -210,7 +210,7 @@ struct MusicInfo
  */
 struct HotMusicInfo {
     /** 
-     * @brief 热榜类别，参看 MusicHotType{@link #MusicHotType}。多个热榜类别可以按位或组合。
+     * @brief 榜单类别，参看 MusicHotType{@link #MusicHotType}。
      */
     MusicHotType hot_type;
     /** 

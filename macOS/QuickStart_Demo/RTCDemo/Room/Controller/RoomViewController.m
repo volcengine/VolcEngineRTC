@@ -119,9 +119,11 @@
     config.height = 360;
     config.frameRate = 15;
     config.maxBitrate = 800;
+    config.minBitrate = 0;
+
     config.encoderPreference = ByteRTCVideoEncoderPreferenceDisabled;
 
-    [self.videoEngine SetMaxVideoEncoderConfig:config];
+    [self.videoEngine setMaxVideoEncoderConfig:config];
 
     self.renderView.currentUid = self.currentUid;
     [self.renderView addUser:self.currentUid roomid:self.currentRoomID];
@@ -144,7 +146,7 @@
     self.room = [self.videoEngine createRTCRoom:self.currentRoomID];
     [self.room setDelegate:self];
 
-    int code = [self.room joinRoomByToken:TOKEN userInfo:userInfo roomConfig:roomConfig];
+    int code = [self.room joinRoom:TOKEN userInfo:userInfo roomConfig:roomConfig];
     if (code != 0) {
         [self showAlert:@"加入房间失败"];
     }

@@ -3,7 +3,7 @@
  * @brief ByteRTCRtsDefines
 */
 
-#import "ByteRTCCommonDefines.h"
+#import "ByteRTCRtsDefines.h"
 
 /** 
  * @type keytype
@@ -34,7 +34,7 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicFilterType) {
 
 /** 
  * @type keytype
- * @brief 热榜类别。
+ * @brief 榜单类别。
  */
 typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicHotType) {
     /** 
@@ -349,7 +349,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVMusic : NSObject
  * @brief 歌曲高潮片段停止时间，单位为毫秒。
  */
 @property (nonatomic, assign) int climaxEndTime;
-
 @end
 
 /** 
@@ -358,7 +357,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVMusic : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCKTVHotMusicInfo : NSObject
 /** 
- * @brief 热榜类别，参看 ByteRTCKTVMusicHotType{@link #ByteRTCKTVMusicHotType}。多个热榜类别可以按位或组合。
+ * @brief 榜单类别，参看 ByteRTCKTVMusicHotType{@link #ByteRTCKTVMusicHotType}。
  */
 @property (nonatomic, assign) ByteRTCKTVMusicHotType hotType;
 /** 
@@ -369,7 +368,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVHotMusicInfo : NSObject
  * @brief 歌曲数据，参看 ByteRTCKTVMusic{@link #ByteRTCKTVMusic}。
  */
 @property (nonatomic, copy) NSArray<ByteRTCKTVMusic *> * _Nullable musics;
-
 @end
 
 /** 
@@ -389,7 +387,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVDownloadResult : NSObject
  * @brief 文件存放路径。
  */
 @property (nonatomic, copy) NSString * _Nullable filePath;
-
 
 @end
 

@@ -70,11 +70,9 @@
         self.localView.uid = uid;
 
         ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
-        canvas.uid = uid;
         canvas.renderMode = ByteRTCRenderModeHidden;
         canvas.view.backgroundColor = [NSColor redColor];
         canvas.view = self.localView.videoView;
-        canvas.roomId = roomId;
 
         /// 设置本地视频渲染视图
         [self.videoEngine setLocalVideoCanvas:ByteRTCStreamIndexMain withCanvas:canvas];
@@ -87,13 +85,16 @@
             renderView.uid = uid;
 
             ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
-            canvas.uid = uid;
             canvas.renderMode = ByteRTCRenderModeHidden;
-            canvas.view.backgroundColor = [NSColor redColor];
             canvas.view = renderView.videoView;
-            canvas.roomId = roomId;
+
+            ByteRTCRemoteStreamKey *streamKey = [[ByteRTCRemoteStreamKey alloc] init];
+            streamKey.roomId = roomId;
+            streamKey.userId = uid;
+            streamKey.streamIndex = ByteRTCStreamIndexMain;
+            
             /// 设置远端用户视频渲染视图
-            [self.videoEngine setRemoteVideoCanvas:uid withIndex:ByteRTCStreamIndexMain withCanvas:canvas];
+            [self.videoEngine setRemoteVideoCanvas:streamKey withCanvas:canvas];
         }
 
     }
@@ -103,13 +104,15 @@
     for (UserRenderView *renderView in self.renderViewList) {
         if ([renderView.uid isEqualToString:uid]) {
             ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
-            canvas.uid = uid;
             canvas.renderMode = ByteRTCRenderModeHidden;
-            canvas.view.backgroundColor = [NSColor redColor];
             canvas.view = nil;
-            canvas.roomId = roomId;
+            
+            ByteRTCRemoteStreamKey *streamKey = [[ByteRTCRemoteStreamKey alloc] init];
+            streamKey.roomId = roomId;
+            streamKey.userId = uid;
+            streamKey.streamIndex = ByteRTCStreamIndexMain;
 
-            [self.videoEngine setRemoteVideoCanvas:uid withIndex:ByteRTCStreamIndexMain withCanvas:canvas];
+            [self.videoEngine setRemoteVideoCanvas:streamKey withCanvas:canvas];
 
             // Update UI
             dispatch_async(dispatch_get_main_queue(), ^{

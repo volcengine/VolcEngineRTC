@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <memory>
-#include "bytertc_common_defines.h"
+#include "bytertc_media_defines.h"
 #ifdef BYTERTC_ANDROID
 #include <jni.h>
 #endif
@@ -112,26 +112,6 @@ enum VideoCodecMode {
 };
 
 /** 
- * @hidden
- * @type keytype
- * @brief 视频帧朝向
- */
-enum VideoOrientation {
-    /** 
-     * @brief （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。
-     */
-    kVideoOrientationAdaptive = 0,
-    /** 
-     * @brief 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。
-     */
-    kVideoOrientationPortrait = 1,
-    /** 
-     * @brief 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。
-     */
-    kVideoOrientationLandscape = 2
-};
-
-/** 
  * @type keytype
  * @brief 编码策略偏好。
  */
@@ -182,8 +162,6 @@ enum CameraID {
 #define SEND_KBPS_DISABLE_VIDEO_SEND 0
 
 /** 
- * @hidden
- * @deprecated since 336 along with setVideoEncoderConfig(StreamIndex index, const VideoSolution* solutions, int solution_num) = 0;
  * @type keytype
  * @brief 视频流参数
  */
@@ -204,16 +182,80 @@ struct VideoSolution {
      * @brief 最大发送编码码率（kbps），建议使用默认的自动码率。<li>-1: 自动码率</li><li>0: 不开启上限</li><li>>0: 填写预估码率<li>
      */
     int max_send_kbps = SEND_KBPS_AUTO_CALCULATE;
+    int min_send_kbps = 0;
     /** 
      * @brief 视频编码质量策略，参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
-    /** 
-     * @brief 将视频编码为横屏帧（Landscape）或者竖屏帧（Portrait）,默认与发送端横竖屏保持一致（Adaptive）
-     */
-    VideoOrientation orientation = VideoOrientation::kVideoOrientationAdaptive;
 };
-/**  
+
+/** 
+ * @hidden for internal use only on Windows and Android
+ * @type keytype
+ * @brief 视野范围（Fov）内的视频帧信息<br>
+ *        Tile 是 全景视频的基本单位。<br>
+ *        视野范围内的视频又分为高清视野和低清背景，均包含了多个 Tile。<br>
+ *        视频帧信息为发送端使用 `setVideoEncoderConfig(const VideoEncoderConfig& encoderConfig, const char* parameters)` 接口进行设置。
+ */
+struct FovVideoTileInfo {
+    /** 
+     * @brief 高清视野宽度
+     */
+    uint32_t hd_width = 0;
+    /** 
+     * @brief 高清视野高度
+     */
+    uint32_t hd_height = 0;
+    /** 
+     * @brief 低清背景宽度
+     */
+    uint32_t ld_width = 0;
+    /** 
+     * @brief 低清背景高度
+     */
+    uint32_t ld_height = 0;
+    /** 
+     * @brief Tile 宽度
+     */
+    uint32_t tile_width = 0;
+    /** 
+     * @brief Tile 高度
+     */
+    uint32_t tile_height = 0;
+    /** 
+     * @brief 高清视野中的 Tile 行数
+     */
+    uint32_t hd_row = 0;
+    /** 
+     * @brief 高清视野中的 Tile 列数
+     */
+    uint32_t hd_column = 0;
+    /** 
+     * @brief 低清背景中的 Tile 行数
+     */
+    uint32_t ld_row = 0;
+    /** 
+     * @brief 低清背景中的 Tile 列数
+     */
+    uint32_t ld_column = 0;
+    /** 
+     * @brief 视野范围中的 Tile 行数
+     */
+    uint32_t dest_row = 0;
+    /** 
+     * @brief 视野范围中的 Tile 列数
+     */
+    uint32_t dest_column = 0;
+    /** 
+     * @brief Tile 位置映射表
+     */
+    uint8_t* tile_map = nullptr;
+    /** 
+     * @brief Tile 数量
+     */
+    uint32_t tile_size = 0;
+};
+/** 
  * @type keytype
  * @brief 视频编码配置。参考 [设置视频发布参数](https://www.volcengine.com/docs/6348/70122)
  */
@@ -237,20 +279,22 @@ struct VideoEncoderConfig {
      */
     int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
     /** 
+     * @brief 视频最小编码码率, 单位 kbps。编码码率不会低于 `minBitrate`。<br>
+     *        默认值为 `0`。<br>
+     *        范围：[0, maxBitrate)，当 `maxBitrate` < `minBitrate` 时，为适配码率模式。<br>
+     *        以下情况，设置本参数无效：<br>
+     *        + 当 `maxBitrate` 为 `0` 时，不对视频流进行编码发送。<br>
+     *        + 当 `maxBitrate` < `0` 时，适配码率模式。
+     */
+     int minBitrate = 0;
+    /** 
      * @brief 编码策略偏好，默认为帧率优先。参看 VideoEncodePreference{@link #VideoEncodePreference}。
      */
     VideoEncodePreference encoderPreference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
-    /** 
-     * @hidden
-     * @brief 设置视频编码器输出的画面为横屏或竖屏显示。具体模式参看 VideoOrientation{@link #VideoOrientation}。
-     * @notes 该设置仅影响远端。若希望本地预览画面的横竖屏模式与远端保持一致，则本地需调用 setVideoCaptureConfig{@link #IRTCVideo#setVideoCaptureConfig}，将 CapturePreference 设置为 “KAutoPerformance” 用编码参数进行采集。如果你为多路流设置了不同的显示模式，则本地预览默认与大流的模式保持一致。
-     */
-    VideoOrientation orientation = VideoOrientation::kVideoOrientationAdaptive;
 };
 
 /** 
- * @hidden
- * @deprecated since 336.1, along with onUserUnPublishStream and onUserUnPublishScreen.
+ * @deprecated since 3.36 along with onUserUnPublishStream and onUserUnPublishScreen, and will be deleted in 3.51.
  * @type keytype
  * @brief 视频属性
  */
@@ -276,6 +320,7 @@ struct VideoSolutionDescription {
      *        默认为 `-1`，适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率
      */
     int max_send_kbps;
+    int min_send_kbps;
     /** 
      * @brief 缩放模式。参看 VideoStreamScaleMode{@link #VideoStreamScaleMode}
      */
@@ -292,15 +337,30 @@ struct VideoSolutionDescription {
      * @brief 视频编码质量偏好策略。参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
     VideoEncodePreference encode_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
-    /** 
-     * @brief 将视频编码为横屏帧（Landscape）或者竖屏帧（Portrait）,默认与发送端横竖屏保持一致（Adaptive）
+
+    /**
+     * @hidden constructor/destructor
      */
-    VideoOrientation orientation = VideoOrientation::kVideoOrientationAdaptive;
+    bool operator==(const VideoSolutionDescription& config) const {
+        bool result = width == config.width && height == config.height && fps == config.fps
+                             && max_send_kbps == config.max_send_kbps && min_send_kbps == config.min_send_kbps
+                             && scale_mode == config.scale_mode && codec_name == config.codec_name
+                             && codec_mode == config.codec_mode && encode_preference == config.encode_preference;
+        return result;
+    }
+
+    /**
+     * @hidden constructor/destructor
+     */
+    bool operator!=(const VideoSolutionDescription& config) const {
+        bool result = (*this == config);
+        return !result;
+    }
 };
 
 
 /** 
- * @hidden
+ * @deprecated since 3.45 and will be deleted in 3.51.
  * @type keytype
  * @region 视频管理
  */
@@ -441,9 +501,9 @@ enum VideoFrameType {
  */
 struct ManagedMemory {
     /** 
-     * @hidden
-     * @brief 内存数据数据类型，默认为 cpu 内存,详见 VideoFrameType:{@link #VideoFrameType}
-     * @notes 这个字段用不到了，后续会删除，目前只有 cpu 内存
+     * @deprecated since 3.21 and will be deleted in 3.51.
+     * @brief 内存数据数据类型，默认为 cpu 内存，详见 VideoFrameType:{@link #VideoFrameType}
+     * @notes 该字段不可用，目前只有 cpu 内存
      */
     VideoFrameType type = kVideoFrameTypeRawMemory;
     /** 
@@ -473,17 +533,14 @@ struct ManagedMemory {
 typedef struct VideoFrameBuilder {
 #define ByteRTCNumDataPointers 4
     /** 
-     * @hidden
      * @brief 内存数据数据类型，默认为 cpu 内存，详见 VideoFrameType{@link #VideoFrameType}
      */
     VideoFrameType frame_type = kVideoFrameTypeRawMemory;
     /** 
-     * @hidden
      * @brief 视频帧像素格式，详见 VideoPixelFormat{@link #VideoPixelFormat}
      */
     VideoPixelFormat pixel_fmt = kVideoPixelFormatUnknown;
     /** 
-     * @hidden
      * @brief 视频帧颜色空间，参看 ColorSpace{@link #ColorSpace}
      */
     ColorSpace color_space = kColorSpaceUnknown;
@@ -528,7 +585,7 @@ typedef struct VideoFrameBuilder {
      */
     VideoRotation rotation = kVideoRotation0;
     /** 
-     * @hidden
+     * @hidden for internal use only
      * @brief 镜像参数
      */
     bool flip = false;
@@ -605,8 +662,7 @@ public:
      */
     virtual VideoRotation rotation() const = 0;
     /** 
-     * @deprecated
-     * @hidden
+     * @hidden for internal use only
      * @brief 获取镜像信息
      * @return 是否需要镜像
      *        + True: 是  <br>
@@ -671,6 +727,7 @@ public:
     virtual IVideoFrame* shallowCopy() = 0;
     /** 
      * @brief 释放视频帧
+     * @notes 调用 pushExternalVideoFrame{@link #IRTCVideo#pushExternalVideoFrame} 推送视频帧后，你不需要再调用此方法释放资源。
      */
     virtual void release() = 0;
     /** 
@@ -681,15 +738,32 @@ public:
      * @brief 获取视频帧的摄像头信息，参看 CameraID{@link #CameraID}
      */
     virtual CameraID getCameraId() const = 0;
+    /** 
+     * @hidden for internal use only on Windows and Android
+     * @type api
+     * @brief 获取全景视频的 Tile 信息
+     * @return FoV（可视范围）随本端的头位姿实时更新获取到的视频帧，包括高清视野和低清背景。参见 FovVideoTileInfo{@link #FovVideoTileInfo}。
+     */
+    virtual FovVideoTileInfo getFovTile() = 0;
 /**
- * @hidden
+ * @hidden constructor/destructor
  */
 protected:
     /** 
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IVideoFrame() = default;
 };
+
+/** 
+ * @type api
+ * @region 视频管理
+ * @brief 创建 IVideoFrame
+ * @param [in] builder 视频帧构建实例，参看 VideoFrameBuilder{@link #VideoFrameBuilder}
+ * @return IVideoFrame{@link #IVideoFrame} 实例
+ */
+BYTERTC_API IVideoFrame* buildVideoFrame(const VideoFrameBuilder& builder);
 
 /** 
  * @type keytype
@@ -809,23 +883,100 @@ public:
      * @brief 释放视频帧
      */
     virtual void release() = 0;
-    /** 
-     * @type api
-     * @brief 根据视频帧参数创建视频帧并返回指针
-     * @param [in] builder 视频帧参数，参看 EncodedVideoFrameBuilder{@link #EncodedVideoFrameBuilder}
-     * @return IEncodedVideoFrame 创建的视频帧的指针
-     */
-    static IEncodedVideoFrame* buildEncodedVideoFrame(const EncodedVideoFrameBuilder& builder);
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
 protected:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IEncodedVideoFrame() = default;
 };
+
+/** 
+ * @type api
+ * @region 视频管理
+ * @brief 创建 IEncodedVideoFrame
+ * @param [in] builder 编码后的视频帧构建实例，参看 EncodedVideoFrameBuilder{@link #EncodedVideoFrameBuilder}
+ * @return IEncodedVideoFrame{@link #IEncodedVideoFrame} 实例
+ */
+BYTERTC_API IEncodedVideoFrame* buildEncodedVideoFrame(const EncodedVideoFrameBuilder& builder);
+
+
+/** 
+ * @hidden(Linux,Android,iOS)
+ * @type keytype
+ * @brief RTC 智能决策后得到的帧率和分辨率积（宽*高）。
+ */
+struct FrameUpdateInfo {
+    /** 
+     * @brief 分辨率积（宽*高）。
+     */
+    int pixel;
+    /** 
+     * @brief 帧率。
+     */
+    int framerate;
+};
+
+
+/** 
+ * @type keytype
+ * @brief 屏幕流编码模式。默认采用清晰模式。若在采集时设置 ScreenFilterConfig{@link #ScreenFilterConfig} 排除指定窗口，共享视频时帧率无法达到 30fps。
+ */
+enum ScreenVideoEncodePreference {
+    /** 
+     * @hidden(Linux,Android,iOS)
+     * @brief 智能模式。根据屏幕内容智能决策选择流畅模式或清晰模式。
+     */
+    kScreenVideoEncodePreferenceAuto = 0,
+    /** 
+     * @brief 流畅模式，优先保障帧率。适用于共享游戏、视频等动态画面。
+     */
+    kScreenVideoEncodePreferenceFramerate,
+    /** 
+     * @brief 清晰模式，优先保障分辨率。适用于共享PPT、文档、图片等静态画面。
+     */
+    kScreenVideoEncodePreferenceQuality,
+
+};
+
+/** 
+ * @type keytype
+ * @brief 屏幕编码配置。参考 [设置视频发布参数](https://www.volcengine.com/docs/6348/70122)。
+ */
+struct ScreenVideoEncoderConfig {
+    /** 
+     * @brief 视频宽度，单位：像素。
+     */
+    int width;
+    /** 
+     * @brief 视频高度，单位：像素。
+     */
+    int height;
+    /** 
+     * @brief 视频帧率，单位：fps。
+     */
+    int frameRate;
+    /** 
+     * @brief 最大编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
+     *        设为 -1 即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。
+     *        设为 0 则不对视频流进行编码发送。
+     *        3.44 及以上版本，内部采集时默认值为 -1，3.44 以前版本无默认值，需手动设置。
+     */
+    int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
+    /** 
+     * @brief 最小编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
+     *        最小编码码率必须小于或等于最大编码，否则不对视频流进行编码发送。
+     */
+    int minBitrate = 0;
+    /** 
+     * @brief 屏幕流编码模式。参见 ScreenVideoEncodePreference{@link #ScreenVideoEncodePreference}。
+     */
+    ScreenVideoEncodePreference encoderPreference = ScreenVideoEncodePreference::kScreenVideoEncodePreferenceQuality;
+};
+
 
 }  // namespace bytertc
 

@@ -7,6 +7,8 @@ import android.util.Log;
 import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.data.VirtualBackgroundSource;
 import com.ss.bytertc.engine.data.VirtualBackgroundSourceType;
+import com.ss.bytertc.engine.video.IVideoEffect;
+import com.ss.bytertc.engine.video.RTCVideoEffect;
 import com.ss.video.rtc.demo.advanced.effects.resource.EffectResource;
 import com.ss.video.rtc.demo.basic_module.utils.Utilities;
 
@@ -24,6 +26,8 @@ public class VolcEffectManager {
 
     private RTCVideo mRTCVideo;
 
+    private IVideoEffect mRTCVideoEffect;
+
     /**
      * 初始化美颜相关资源
      * @param rtcVideo RTCVideo 对象
@@ -34,22 +38,20 @@ public class VolcEffectManager {
             return;
         }
 
+        mRTCVideoEffect = rtcVideo.getVideoEffectInterface();
+
         String licPath = EffectResource.getLicensePath();
-        int licCheckRes = mRTCVideo.checkVideoEffectLicense(Utilities.getApplicationContext(), licPath);
-        Log.i(TAG, "checkVideoEffectLicense: " + licCheckRes);
-
         String modelPath = EffectResource.getModelPath();
-        mRTCVideo.setVideoEffectAlgoModelPath(modelPath);
 
-        String portraitPath = EffectResource.getEffectPortraitPath();
-        int vgRes = mRTCVideo.initVirtualBackground(Utilities.getApplicationContext(), licPath, portraitPath);
-        Log.i(TAG, "initVirtualBackground: " + vgRes);
+        int res =  mRTCVideoEffect.initCVResource(licPath,modelPath);
+        Log.i(TAG, "initCVResource: " + res);
 
-        int enableEffectRes = mRTCVideo.enableVideoEffect(true);
+
+        int enableEffectRes = mRTCVideoEffect.enableVideoEffect();
         Log.i(TAG, "enableVideoEffect: " + enableEffectRes);
 
         List<String> effectNodePaths = Arrays.asList(EffectResource.getBeautyPath(), EffectResource.getReshapePath());
-        int effectNodesRes = mRTCVideo.setVideoEffectNodes(effectNodePaths);
+        int effectNodesRes = mRTCVideoEffect.setEffectNodes(effectNodePaths);
         Log.i(TAG, "setVideoEffectNodes: " + effectNodesRes);
     }
 
@@ -59,10 +61,10 @@ public class VolcEffectManager {
      * @param value 具体的值，取值范围[0, 1]，值越大越明显
      */
     public void onBeautyEffectChanged(String key, float value) {
-        if (mRTCVideo == null) {
+        if (mRTCVideoEffect == null) {
             return;
         }
-        mRTCVideo.updateVideoEffectNode(EffectResource.getBeautyPath(), key, value);
+        mRTCVideoEffect.updateEffectNode(EffectResource.getBeautyPath(), key, value);
     }
 
     /**
@@ -71,10 +73,10 @@ public class VolcEffectManager {
      * @param value 具体的值，取值范围[0, 1]，值越大越明显
      */
     public void onReshapeEffectChanged(String key, float value) {
-        if (mRTCVideo == null) {
+        if (mRTCVideoEffect == null) {
             return;
         }
-        mRTCVideo.updateVideoEffectNode(EffectResource.getReshapePath(), key, value);
+        mRTCVideoEffect.updateEffectNode(EffectResource.getReshapePath(), key, value);
     }
 
     /**
@@ -83,11 +85,11 @@ public class VolcEffectManager {
      * @param value 具体的值，取值范围[0, 1]，值越大越明显
      */
     public void onFilterEffectChanged(String key, float value) {
-        if (mRTCVideo == null) {
+        if (mRTCVideoEffect == null) {
             return;
         }
-        mRTCVideo.setVideoEffectColorFilter(EffectResource.getFilterPathByName(key));
-        mRTCVideo.setVideoEffectColorFilterIntensity(value);
+        mRTCVideoEffect.setColorFilter(EffectResource.getFilterPathByName(key));
+        mRTCVideoEffect.setColorFilterIntensity(value);
     }
 
     /**
@@ -96,7 +98,7 @@ public class VolcEffectManager {
      * @param selected 是否选中
      */
     public void onStickerEffectClicked(String key, boolean selected) {
-        if (mRTCVideo == null) {
+        if (mRTCVideoEffect == null) {
             return;
         }
         ArrayList<String> pathList = new ArrayList<>();
@@ -105,7 +107,7 @@ public class VolcEffectManager {
         if (selected) {
             pathList.add(EffectResource.getStickerPathByName(key));
         }
-        mRTCVideo.setVideoEffectNodes(pathList);
+        mRTCVideoEffect.setEffectNodes(pathList);
     }
 
     /**
@@ -114,7 +116,7 @@ public class VolcEffectManager {
      * @param selected 是否选中
      */
     public void onVirtualEffectClicked(String type, boolean selected) {
-        if (mRTCVideo == null) {
+        if (mRTCVideoEffect == null) {
             return;
         }
         if (selected) {
@@ -128,9 +130,11 @@ public class VolcEffectManager {
             } else {
                 return;
             }
-            mRTCVideo.enableVirtualBackground(backgroundSource);
+
+            String portraitPath = EffectResource.getEffectPortraitPath();
+            mRTCVideoEffect.enableVirtualBackground(portraitPath,backgroundSource);
         } else {
-            mRTCVideo.disableVirtualBackground();
+            mRTCVideoEffect.disableVirtualBackground();
         }
     }
 }

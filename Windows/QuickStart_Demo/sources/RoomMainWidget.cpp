@@ -215,7 +215,7 @@ void RoomMainWidget::setRenderCanvas(bool isLocal, void *view, const std::string
         remote_stream_key.room_id = m_roomId.c_str();
         remote_stream_key.user_id = user_id.c_str();
         remote_stream_key.stream_index = bytertc::kStreamIndexMain;
-        m_rtc_video->setRemoteStreamVideoCanvas(remote_stream_key, canvas);
+        m_rtc_video->setRemoteVideoCanvas(remote_stream_key, canvas);
     }
 }
 
@@ -251,7 +251,7 @@ void RoomMainWidget::setupSignals() {
         }
     });
 
-    connect(m_operateWidget.get(), &OperateWidget::sigMuteAudio, this, [this](bool bMute) {
+    connect(m_operateWidget.data(), &OperateWidget::sigMuteAudio, this, [this](bool bMute) {
         if (m_rtc_room) {
             if (bMute) {
                 // 关闭本地音频发送
@@ -264,7 +264,7 @@ void RoomMainWidget::setupSignals() {
         }
     });
 
-    connect(m_operateWidget.get(), &OperateWidget::sigMuteVideo, this, [this](bool bMute) {
+    connect(m_operateWidget.data(), &OperateWidget::sigMuteVideo, this, [this](bool bMute) {
         if (m_rtc_video) {
             if (bMute) {
                 // 关闭视频采集

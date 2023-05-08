@@ -13,9 +13,9 @@
 NS_ASSUME_NONNULL_BEGIN
 #define BYTE_RTC_EXPORT __attribute__((visibility("default")))
 /** 
- * @type keytype
+ * @type callback
  * @brief 屏幕采集相关扩展协议，仅适用于 SDK 内部采集。  <br>
- *        用户创建 extesion 后生成的 SampleHandler 需继承此协议以实现屏幕共享相关能力。
+ *        用户创建 extension 后生成的 SampleHandler 需继承此协议以实现屏幕共享相关能力。
  */
 BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
 /** 
@@ -58,13 +58,9 @@ BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
  *        用户创建 extesion 后生成的 SampleHandler 需通过此实例实现屏幕共享相关能力。
  */
 BYTE_RTC_EXPORT @interface ByteRtcScreenCapturerExt : NSObject
-/**
- * @hidden
- */
+
 @property (readonly, class) ByteRtcScreenCapturerExt *shared; // NOLINT
-/**
- * @hidden
- */
+
 @property (nonatomic, weak, nullable) NSObject<ByteRtcScreenCapturerExtDelegate> *delegate; // NOLINT
 /** 
  * @type api

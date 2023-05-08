@@ -175,10 +175,11 @@ public:
      *            4. 下划线"_", at符"@", 减号"-"
      * @param [in] enable
      *             true 表示开启采集
-     *             false 表示关闭采集
+     *             false 表示关闭采集，默认设置
      * @return
      *        0:  表示参数检查通过，不代表打开麦克风会成功，比如房间不存在
      *        -1: 传入的room_id为空导致失败
+     * @notes 不可与 EnableAudioSend{@link #EnableAudioSend} 同时调用。
      */
     virtual int enableMicrophone(const char* room_id, bool enable) = 0;
 
@@ -195,10 +196,11 @@ public:
      *            4. 下划线"_", at符"@", 减号"-"
      * @param [in] enable
      *             true 表示启动音频数据的发送
-     *             false 表示停止音频数据的发送
+     *             false 表示停止音频数据的发送，默认设置
      * @return
      *        0:  表示参数检查通过，不代表打开麦克风会成功，比如房间不存在
      *        -1: 传入的room_id为空导致失败
+     * @notes 不可与 EnableMicrophone{@link #EnableMicrophone} 同时调用。
      */
     virtual int enableAudioSend(const char* room_id, bool enable) = 0;
 
@@ -216,7 +218,7 @@ public:
      *            4. 下划线"_", at符"@", 减号"-"
      *  @param [in] enable
      *             true 表示接收所有远端用户的音频数据
-     *             false  表示不接收所有远端用户的音频数据
+     *             false 默认设置，表示不接收所有远端用户的音频数据
      * @return
      *        0:  表示参数检查通过，不代表成功收听远端用户，比如房间不存在时仍然无法收听
      *        -1: 传入的room_id为空导致失败
@@ -241,7 +243,7 @@ public:
      *            4. 下划线"_", at符"@", 减号"-"
      * @param [in] enable
      *        true：表示收听指定用户
-     *        false：表示不收听指定用户
+     *        false：默认设置，表示不收听指定用户
      * @return
      *        0:  表示参数检查通过，不代表实际操作是否成功
      *        -1: 传入的用户名或房间号参数为空导致失败
@@ -403,7 +405,6 @@ public:
     /** 
      * @type api
      * @region 音频设备管理
-     * @author liuxiaowu
      * @brief 设置音频播放路由是否跟随系统，默认跟随系统。
      * @param followed <br>
      *        + true: 跟随。此时，调用 setAudioPlaybackDevice{@link #IAudioDeviceManager#setAudioPlaybackDevice} 会失败。
@@ -414,7 +415,6 @@ public:
     /** 
      * @type api
      * @region 音频设备管理
-     * @author liuxiaowu
      * @brief 设置音频采集路由是否跟随系统，默认跟随系统。
      * @param followed <br>
      *        + true: 跟随。此时，调用 setAudioCaptureDevice{@link #IAudioDeviceManager#setAudioCaptureDevice} 会失败。
@@ -504,7 +504,6 @@ public:
     /**
      * @type api
      * @region 美声特效管理
-     * @author luomingkang
      * @brief 设置变声特效类型。  <br>
      *        你可以根据你的需要，选择合适的变声特效。  <br>
      *        本方法只在单声道情况下生效，且与 setVoiceChangerType 接口互斥，后设置的特效会覆盖先设置的特效。  <br>
@@ -519,7 +518,6 @@ public:
     /**
      * @type api
      * @region 美声特效管理
-     * @author luomingkang
      * @brief 设置混响特效类型。  <br>
      *        你可以根据你的需要，选择合适的混响特效。  <br>
      *        本方法只在单声道情况下生效，且与 setVoiceReverbType 接口互斥，后设置的特效会覆盖先设置的特效  <br>
@@ -532,7 +530,6 @@ public:
     /**
      * @type api
      * @region 音频管理
-     * @author dixing
      * @brief 设置音质档位。你应根据业务场景需要选择适合的音质档位。  <br>
      * @param [in] audioProfile 音质档位，参看 AudioProfileType{@link #AudioProfileType}
      * @notes  <br>

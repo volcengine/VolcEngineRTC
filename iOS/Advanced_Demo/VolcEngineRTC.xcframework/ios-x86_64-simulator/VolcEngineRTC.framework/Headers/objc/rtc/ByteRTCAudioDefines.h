@@ -3,7 +3,7 @@
  * @brief Objective-C VolcEngineRTC Audio Defines
 */
 
-#import "ByteRTCCommonDefines.h"
+#import "ByteRTCMediaDefines.h"
 
 /** 
  * @type keytype
@@ -18,21 +18,23 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>设备自带麦克风和扬声器</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
      *        </table>
      */
     ByteRTCAudioScenarioMusic = 0,
     /** 
-     * @brief 高质量通话场景。
-     *        此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。
-     *        此场景下，更倾向于使用媒体音量。由此，可能引起开关麦时音量突变。如不希望有此突变，请使用 `ByteRTCAudioScenarioHighQualityChatScenario`。
-     *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验，并避免使用蓝牙耳机时音量类型切换导致的听感突变。
-     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：
+     * @brief 高质量通话场景。  <br>
+     *        此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。  <br>
+     *        此场景下，更倾向于使用媒体音量。由此，可能引起开关麦时音量突变。如不希望有此突变，请使用 `ByteRTCAudioScenarioHighqualityChat`。 <br>
+     *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验，并避免使用蓝牙耳机时音量类型切换导致的听感突变。  <br>
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>设备自带麦克风和扬声器</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
      *        </table>
@@ -56,8 +58,15 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
     ByteRTCAudioScenarioMedia = 3,
     /** 
      * @brief 游戏媒体场景。
-     *        此场景下，蓝牙耳机时使用通话音量，其它设备使用媒体音量。
      *        若外放通话且无游戏音效消除优化时音质不理想，请联系技术支持人员。
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>听筒</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *        </table>
      */
     ByteRTCAudioScenarioGameStreaming = 4,
     /** 
@@ -66,7 +75,8 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
      *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>设备自带麦克风和扬声器</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
+     *           <tr><td>听筒</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
      *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
      *        </table>
@@ -126,7 +136,7 @@ typedef NS_ENUM(NSInteger, ByteRTCVoiceReverbType) {
      * @brief 空灵
      */
     ByteRTCVoiceReverbEthereal = 3,
-    /**
+    /** 
      * @brief KTV
      */
     ByteRTCVoiceReverbKTV = 4,
@@ -134,7 +144,160 @@ typedef NS_ENUM(NSInteger, ByteRTCVoiceReverbType) {
      * @brief 录音棚
      */
     ByteRTCVoiceReverbStudio = 5,
+    /** 
+     * @brief 虚拟立体声
+     */
+    ByteRTCVoiceReverbVirtualStereo = 6,
+    /** 
+     * @brief 空旷
+     */
+    ByteRTCVoiceReverbSpacious = 7,
+    /** 
+     * @brief 3D人声
+     */
+    ByteRTCVoiceReverb3D = 8,
+    /** 
+     * @hidden internal use
+     * @brief 流行
+     */
+    ByteRTCVoiceReverbPop = 9,
+    /** 
+     * @hidden internal use
+     * @brief 蹦迪
+     */
+    ByteRTCVoiceReverbDisco = 10,
+    /** 
+     * @hidden internal use
+     * @brief 老唱片
+     */
+    ByteRTCVoiceReverbOldRecord = 11,
+    /** 
+     * @hidden internal use
+     * @brief 和声
+     */
+    ByteRTCVoiceReverbHarmony = 12,
+    /** 
+     * @hidden internal use
+     * @brief 摇滚
+     */
+    ByteRTCVoiceReverbRock = 13,
+    /** 
+     * @hidden internal use
+     * @brief 蓝调
+     */
+    ByteRTCVoiceReverbBlues = 14,
+    /** 
+     * @hidden internal use
+     * @brief 爵士
+     */
+    ByteRTCVoiceReverbJazz = 15,
+    /** 
+     * @hidden internal use
+     * @brief 电子
+     */
+    ByteRTCVoiceReverbElectronic = 16,
+    /** 
+     * @hidden internal use
+     * @brief 黑胶
+     */
+    ByteRTCVoiceReverbVinyl = 17,
+    /** 
+     * @hidden internal use
+     * @brief 密室
+     */
+    ByteRTCVoiceReverbChamber = 18,
 };
+/** 
+ * @type keytype
+ * @brief 音频均衡效果。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCBandFrequency) {
+    /** 
+     * @brief 中心频率为 31Hz 的频带。
+     */
+    ByteRTCBandFrequency31 = 0,
+    /** 
+     * @brief 中心频率为 62Hz 的频带。
+     */
+    ByteRTCBandFrequency62 = 1,
+    /** 
+     * @brief 中心频率为 125Hz 的频带。
+     */
+    ByteRTCBandFrequency125 = 2,
+    /** 
+     * @brief 中心频率为 250Hz 的频带。
+     */
+    ByteRTCBandFrequency250 = 3,
+    /** 
+     * @brief 中心频率为 500Hz 的频带。
+     */
+    ByteRTCBandFrequency500 = 4,
+    /** 
+     * @brief 中心频率为 1kHz 的频带。
+     */
+    ByteRTCBandFrequency1k = 5,
+    /** 
+     * @brief 中心频率为 2kHz 的频带。
+     */
+    ByteRTCBandFrequency2k = 6,
+    /** 
+     * @brief 中心频率为 4kHz 的频带。
+     */
+    ByteRTCBandFrequency4k = 7,
+    /** 
+     * @brief 中心频率为 8kHz 的频带。
+     */
+    ByteRTCBandFrequency8k = 8,
+    /** 
+     * @brief 中心频率为 16kHz 的频带。
+     */
+    ByteRTCBandFrequency16k = 9,
+};
+/** 
+ * @type keytype
+ * @brief 语音均衡效果。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVoiceEqualizationConfig : NSObject
+/** 
+ * @brief 频带。参看 ByteRTCBandFrequency{@link #ByteRTCBandFrequency}。
+ */
+@property(assign, nonatomic) ByteRTCBandFrequency frequency;
+/** 
+ * @brief 频带增益（dB）。取值范围是 `[-15, 15]`。
+ */
+@property(assign, nonatomic) int gain;
+@end
+
+/** 
+ * @type keytype
+ * @brief 音频混响效果。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCVoiceReverbConfig : NSObject
+/** 
+ * @brief 混响模拟的房间大小，取值范围 `[0.0, 100.0]`。默认值为 `50.0f`。房间越大，混响越强。
+ */
+@property(assign, nonatomic) float roomSize;
+/** 
+ * @brief 混响的拖尾长度，取值范围 `[0.0, 100.0]`。默认值为 `50.0f`。
+ */
+@property(assign, nonatomic) float decayTime;
+/** 
+ * @brief 混响的衰减阻尼大小，取值范围 `[0.0, 100.0]`。默认值为 `50.0f`。
+ */
+@property(assign, nonatomic) float damping;
+/** 
+ * @brief 早期反射信号强度。取值范围 `[-20.0, 10.0]`，单位为 dB。默认值为 `0.0f`。
+ */
+@property(assign, nonatomic) float wetGain;
+/** 
+ * @brief 原始信号强度。取值范围 `[-20.0, 10.0]`，单位为 dB。默认值为 `0.0f`。
+ */
+@property(assign, nonatomic) float dryGain;
+/** 
+ * @brief 早期反射信号的延迟。取值范围 `[0.0, 200.0]`，单位为 ms。默认值为 `0.0f`。
+ */
+@property(assign, nonatomic) float preDelay;
+@end
 
 /** 
  * @type keytype
@@ -176,7 +339,35 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
 };
 
 /** 
+ * @type keytype
+ * @brief 降噪模式。降噪算法受调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 时设置的房间模式影响。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAnsMode) {
+    /** 
+     * @brief 关闭所有音频降噪能力。
+     */
+    ByteRTCAnsModeDisable = 0,
+   /** 
+     * @brief 适用于微弱降噪。
+     */
+    ByteRTCAnsModeLow = 1,
+    /** 
+     * @brief 适用于抑制中度平稳噪声，如空调声和风扇声。
+     */
+    ByteRTCAnsModeMedium = 2,
+     /** 
+     * @brief 适用于抑制嘈杂非平稳噪声，如键盘声、敲击声、碰撞声、动物叫声。
+     */
+    ByteRTCAnsModeHigh = 3,
+    /** 
+     * @brief 启用音频降噪能力。具体的降噪算法由 RTC 智能决策。
+     */
+    ByteRTCAnsModeAutomatic = 4,
+};
+
+/** 
  * @hidden
+ * @deprecated since 3.45 and will be deleted in 3.51.
  * @type keytype
  * @brief 语音通话模式，在小队语音里用这个接口设置自己的发送模式
  */
@@ -217,45 +408,43 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioDeviceType) {
      */
     ByteRTCAudioDeviceTypeScreenCaptureDevice = 2
 };
-
 /** 
  * @type keytype
  * @brief 音频采样率，单位为 Hz。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioSampleRate) {
     /** 
-     * @brief 默认设置。
+     * @brief 默认设置。48000Hz。
      */
     ByteRTCAudioSampleRateAuto = -1,
     /** 
-     * @brief 8000 Hz
+     * @brief 8000Hz
      */
     ByteRTCAudioSampleRate8000 = 8000,
     /** 
-     * @brief 16000 Hz
+     * @brief 16000Hz
      */
     ByteRTCAudioSampleRate16000 = 16000,
     /** 
-     * @brief 32000 Hz
+     * @brief 32000Hz
      */
     ByteRTCAudioSampleRate32000 = 32000,
     /** 
-     * @brief 44100 Hz
+     * @brief 44100Hz
      */
     ByteRTCAudioSampleRate44100 = 44100,
     /** 
-     * @brief 48000 Hz
+     * @brief 48000Hz
      */
     ByteRTCAudioSampleRate48000 = 48000
 };
-
 /** 
  * @type keytype
  * @brief 音频声道。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioChannel) {
     /** 
-     * @brief 默认设置。
+     * @brief 默认设置。默认值为 `2`。
      */
     ByteRTCAudioChannelAuto = -1,
     /** 
@@ -270,19 +459,31 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioChannel) {
 
 /** 
  * @type keytype
- * @brief AAC 编码类型。
+ * @brief 音频编码类型。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCTranscodingAudioCodec) {
+    /** 
+     * @type keytype
+     * @brief AAC 格式。
+     */
+    ByteRTCTranscodingAudioCodecAAC = 0,
+};
+
+/** 
+ * @type keytype
+ * @brief AAC 编码规格。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAACProfile) {
     /** 
-     * @brief LC（默认）
+     * @brief AAC-LC 规格，默认值。
      */
     ByteRTCAACProfileLC   = 0,
     /** 
-     * @brief HEv1
+     * @brief HE-AAC v1 规格。
      */
     ByteRTCAACProfileHEv1 = 1,
     /** 
-     * @brief HEv2
+     * @brief HE-AAC v2 规格。
      */
     ByteRTCAACProfileHEv2 = 2,
 };
@@ -292,9 +493,9 @@ typedef NS_ENUM(NSInteger, ByteRTCAACProfile) {
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioRoute) {
     /** 
-     * @brief 未知设备
+     * @brief 默认设备。通过 `setDefaultAudioRoute:` 设置的音频路由。
      */
-    ByteRTCAudioRouteUnknown = -1,
+    ByteRTCAudioRouteDefault = -1,
     /** 
      * @brief 有线耳机
      */
@@ -567,7 +768,6 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioRenderType) {
 };
 
 /** 
- * @hidden(macOS)
  * @type keytype
  * @brief 开启/关闭耳返功能。
  */
@@ -634,18 +834,18 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioFrameMethod) {
 
 /** 
  * @type keytype
- * @brief 音量回调配置模式
+ * @brief 音量回调模式。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioReportMode) {
-    /** 
+     /** 
      * @brief 默认始终开启音量回调。
      */
     ByteRTCAudioReportModeNormal = 0,
-    /** 
+   /** 
      * @brief 可见用户进房并停止推流后，关闭音量回调。
      */
     ByteRTCAudioReportModeDisconnect = 1,
-    /** 
+     /** 
      * @brief 可见用户进房并停止推流后，开启音量回调，回调值重置为0。
      */
     ByteRTCAudioReportModeReset = 2,
@@ -663,7 +863,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioPropertiesMode) {
     /** 
      * @brief 音频信息提示中，除本地麦克风采集的音频数据和本地屏幕音频采集数据外，还包含本地混音的音频数据。
      */
-    ByteRTCAudioPropertiesModeAudioMixing = 1,
+    ByteRTCAudioPropertiesModeAudioMixing = 1
 };
 
 /** 
@@ -732,7 +932,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 /** 
  * @type callback
  * @region 音频数据回调
- * @author wangjunzheng
  * @brief 返回麦克风录制的音频数据
  * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
@@ -740,15 +939,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 /** 
  * @type callback
  * @region 音频数据回调
- * @author wangjunzheng
- * @brief 返回订阅的所有远端用户混音后的音频数据
+ * @brief 返回订阅的所有远端用户混音后的音频数据。
  * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onPlaybackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
  * @type callback
  * @region 音频数据回调
- * @author wangjunzheng
  * @brief 返回远端单个用户的音频数据
  * @param streamKey 远端流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
  * @param audioFrame 音频数据，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
@@ -759,27 +956,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 /** 
  * @type callback
  * @region 音频数据回调
- * @author wangjunzheng
  * @brief 返回本地麦克风录制和订阅的所有远端用户混音后的音频数据
  * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onMixedAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
- /** 
- * @type keytype
- * @hidden
- * @deprecated since 342, use ByteRTCAudioFrameProcessor instead.
- * @author majun.lvhiei
+
+/** 
+ * @type callback
  * @region 音频处理
  * @brief 自定义音频处理器
  */
 @protocol ByteRTCAudioProcessor <NSObject>
 /** 
  * @type callback
- * @hidden
- * @deprecated since 342, use ByteRTCAudioFrameProcessor instead.
  * @region 音频处理
- * @author majun.lvhiei
  * @brief 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
  * @param audioFrame RTC SDK 采集到的音频帧，自定义处理可直接对音频 buffer 中的数据进行修改。参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
  * @return  <br>
@@ -789,38 +980,34 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @notes 在进行音频自定义处理前，你需要调用 `registerLocalAudioProcessor` 设置音频自定义处理器。
  */
 - (int)processAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-
 @end
+
 /** 
  * @type callback
- * @author majun.lvhiei
- * @brief 自定义音频处理器。
+ * @brief 自定义音频处理器
  */
 @protocol ByteRTCAudioFrameProcessor <NSObject>
 /** 
 * @type callback
-* @author majun.lvhiei
 * @brief 回调本地采集的音频帧地址，供自定义音频处理。
 * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
 * @notes <br>
 *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。<br>
-*        + 调用 `enableAudioProcessor`，并在参数中选择本地采集的音频时，收到此回调。
+*        + 调用 enableAudioProcessor:audioFormat:{@link #ByteRTCVideo#enableAudioProcessor:audioFormat:}，并在参数中选择本地采集的音频时，收到此回调。
 */
 - (int)onProcessRecordAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
 * @type callback
-* @author majun.lvhiei
 * @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
-* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
 * @notes 调用 `enableAudioProcessor`,并在参数中选择远端音频流的的混音音频时，收到此回调。
 */
 - (int)onProcessPlayBackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
 * @type callback
-* @author majun.lvhiei
 * @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
-* @param stream_info 音频流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}。
-* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+* @param stream_info 音频流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
+* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
 * @notes 调用 `enableAudioProcessor`,并在参数中选择各个远端音频流时，收到此回调。
 */
 - (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)stream_info  audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
@@ -830,7 +1017,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @hidden(macOS)
  * @type callback
  * @region 音频处理
- * @author songxiaomeng.19
  * @brief 软件耳返音频数据的回调。你可根据此回调自定义处理音频。
  * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
  * @notes <br>
@@ -841,7 +1027,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 
 /** 
  * @type callback
- * @author zhangcaining
  * @brief 回调屏幕共享的音频帧地址，供自定义音频处理。
  * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
  * @notes 调用 `enableAudioProcessor:`，把返回给音频处理器的音频类型设置为屏幕共享音频后，你将收到此回调。
@@ -852,23 +1037,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 #pragma mark - AudioDeviceManager
 
 /** 
- * @hidden
+ * @hidden for internal use only
  * @type callback
  * @region 音频管理
- * @author dixing
  * @brief 音频设备事件回调
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCAudioDeviceEventHandler<NSObject>
 /** 
- * @hidden
  * @type callback
  * @region 音频管理
- * @author dixing
  * @brief 获得麦克风音量
  * @param volume 音量大小
  */
 - (void)onRecordingAudioVolumeIndication:(int)volume;
 @end
+
 /** 
  * @type api
  * @hidden(iOS)
@@ -878,23 +1061,18 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /**
  * @hidden
  * @type api
- * @author dixing
  */
 - (instancetype _Nonnull )initDeviceManager:(id<ByteRTCAudioDeviceEventHandler> _Nonnull)handler;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前系统内音频播放设备列表。你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
  * @return 所有音频播放设备的列表，参看 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
  */
 - (ByteRTCDeviceCollection * _Nonnull)enumerateAudioPlaybackDevices;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取音频采集设备列表。如果后续设备有变更，你需要重新调用本接口以获得新的设备列表。
  * @return 音频采集设备列表。详见 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
  */
@@ -902,28 +1080,24 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /** 
  * @type api
  * @region 音频设备管理
- * @author liuxiaowu
  * @brief 设置音频采集路由是否跟随系统。
  * @param followed <br>
- *        + true: 跟随。此时，调用 setAudioCaptureDevice:{@link #ByteRTCAudioDeviceManager#setAudioCaptureDevice:} 会失败。
+ *        + true: 跟随。此时，调用 setAudioCaptureDevice:{@link #ByteRTCAudioDeviceManager#setAudioCaptureDevice:} 会失败。默认值。
  *        + false: 不跟随系统。此时，可以调用 setAudioCaptureDevice:{@link #ByteRTCAudioDeviceManager#setAudioCaptureDevice:} 进行设置。
  */
 - (void)followSystemCaptureDevice:(BOOL)followed;
 /** 
  * @type api
  * @region 音频设备管理
- * @author liuxiaowu
  * @brief 设置音频播放路由是否跟随系统。
  * @param followed <br>
- *        + true: 跟随。此时，调用 setAudioPlaybackDevice:{@link #ByteRTCAudioDeviceManager#setAudioPlaybackDevice:} 会失败。
+ *        + true: 跟随。此时，调用 setAudioPlaybackDevice:{@link #ByteRTCAudioDeviceManager#setAudioPlaybackDevice:} 会失败。默认值。
  *        + false: 不跟随系统。此时，可以调用 setAudioPlaybackDevice:{@link #ByteRTCAudioDeviceManager#setAudioPlaybackDevice:} 进行设置。
  */
 - (void)followSystemPlaybackDevice:(BOOL)followed;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 设置音频播放设备。
  * @param deviceID 音频播放设备 ID，可通过 enumerateAudioPlaybackDevices{@link #ByteRTCAudioDeviceManager#enumerateAudioPlaybackDevices} 获取。
  * @return   <br>
@@ -934,9 +1108,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)setAudioPlaybackDevice:(NSString * _Nonnull)deviceID;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前音频播放设备。
  * @param deviceID 设备 ID
  * @return  方法调用结果  <br>
@@ -946,9 +1118,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)getAudioPlaybackDevice:(NSString * _Nonnull * _Nonnull) deviceID;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 设置音频采集设备。
  * @param deviceID 音频采集设备 ID。你可调用 enumerateAudioCaptureDevices{@link #ByteRTCAudioDeviceManager#EnumerateAudioCaptureDevices} 获取可用设备列表。
  * @return  方法调用结果  <br>
@@ -959,9 +1129,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)setAudioCaptureDevice:(NSString * _Nonnull)deviceID;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前音频采集设备。
  * @param deviceID 音频采集设备 ID。
  * @return  方法调用结果  <br>
@@ -971,9 +1139,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)getAudioCaptureDevice:(NSString *_Nonnull * _Nonnull) deviceID;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 设置当前音频采集设备静音状态，默认为非静音。
  * @param mute  <br>
  *       + true：静音  <br>
@@ -985,9 +1151,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) setAudioCaptureDeviceMute:(bool)mute;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前音频采集设备是否静音的信息。
  * @param mute  <br>
  *       + true：静音  <br>
@@ -999,9 +1163,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) getAudioCaptureDeviceMute:(bool * _Nonnull)mute;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 设置当前音频播放设备静音状态，默认为非静音。
  * @param mute  <br>
  *       + true：静音  <br>
@@ -1013,9 +1175,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) setAudioPlaybackDeviceMute:(bool)mute;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前音频播放设备是否静音的信息。
  * @param mute  <br>
  *       + true：静音  <br>
@@ -1027,9 +1187,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) getAudioPlaybackDeviceMute:(bool * _Nonnull)mute;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 设置当前音频采集设备音量
  * @param volume 音频采集设备音量，取值范围为 [0,255]。
  *       + [0,25] 接近无声；  <br>
@@ -1043,9 +1201,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) setAudioCaptureDeviceVolume:(unsigned int)volume;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前音频采集设备音量
  * @param volume 音频采集设备音量，取值范围是 [0,255]
  *       + [0,25] 接近无声；  <br>
@@ -1059,9 +1215,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) getAudioCaptureDeviceVolume:(unsigned int * _Nonnull)volume;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 设置当前音频播放设备音量
  * @param volume 音频播放设备音量，取值范围为 [0,255]
  *       + [0,25] 接近无声；  <br>
@@ -1075,9 +1229,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) setAudioPlaybackDeviceVolume:(unsigned int)volume;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 获取当前音频播放设备音量
  * @param volume 音频播放设备音量，取值范围是 [0,255] <br>
  *       + [0,25] 接近无声；  <br>
@@ -1091,9 +1243,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int) getAudioPlaybackDeviceVolume:(unsigned int * _Nonnull)volume;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 启动音频播放设备测试。  <br>
  *        该方法测试播放设备是否能正常工作。SDK 播放指定的音频文件，测试者如果能听到声音，说明播放设备能正常工作。
  * @param testAudioFilePath 音频文件的绝对路径，路径字符串使用 UTF-8 编码格式，支持以下音频格式: mp3，aac，m4a，3gp，wav。
@@ -1103,41 +1253,36 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  *        + < 0：方法调用失败  <br>
  * @notes  <br>
  *       + 该方法必须在进房前调用，且不可与其它音频设备测试功能同时应用。  <br>
- *       + 调用 stopPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#stopPlaybackDeviceTest} 停止测试。  <br>
+ *       + 调用 stopAudioPlaybackDeviceTest{@link #ByteRTCAudioDeviceManager#stopAudioPlaybackDeviceTest} 停止测试。  <br>
  */
-- (int)startPlaybackDeviceTest:(NSString *_Nonnull)testAudioFilePath interval:(int)interval;
+- (int)startAudioPlaybackDeviceTest:(NSString *_Nonnull)testAudioFilePath interval:(int)interval;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 停止音频播放设备测试。
  * @return  方法调用结果  <br>
  *        + 0：方法调用成功  <br>
  *        + < 0：方法调用失败  <br>
- * @notes  调用 startPlaybackDeviceTest:interval:{@link #ByteRTCAudioDeviceManager#startPlaybackDeviceTest:interval:} 后，需调用本方法停止测试。
+ * @notes  调用 startAudioPlaybackDeviceTest:interval:{@link #ByteRTCAudioDeviceManager#startAudioPlaybackDeviceTest:interval:} 后，需调用本方法停止测试。
  */
-- (int)stopPlaybackDeviceTest;
+- (int)stopAudioPlaybackDeviceTest;
 /** 
- * @hidden(iOS)
  * @type api
  * @region 音频设备管理
  * @brief 开始音频采集设备和音频播放设备测试。<br>
- * 建议提前调用 enableAudioPropertiesReport:{@link #ByteRTCVideo#enableAudioPropertiesReport:} 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 获取采集音量。<br>
- * @param interval 测试录音播放时触发 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 播放音量回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
+ * @param interval 测试中会收到 `rtcEngine:onLocalAudioPropertiesReport:` 回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。
  * @return  方法调用结果  <br>
  *       + 0：方法调用成功  <br>
  *       + < 0：方法调用失败  <br>
  * @notes  <br>
- *       + 该方法依赖 rtc 引擎，只有通过成员方法getAudioDeviceManager{@link #ByteRTCVideo#getAudioDeviceManager}创建的ByteRTCAudioDeviceManager，该方法才是有效的 <br>
  *       + 该方法在进房前后均可调用。且不可与其它音频设备测试功能同时应用。  <br>
  *       + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 stopAudioDeviceRecordAndPlayTest{@link #ByteRTCAudioDeviceManager#stopAudioDeviceRecordAndPlayTest}  来停止采集并开始播放此前采集到的声音。<br>
  *       + 调用 stopAudioDevicePlayTest{@link #ByteRTCAudioDeviceManager#stopAudioDevicePlayTest} 可以停止音频设备采集和播放测试。<br>
+ *       + 你不应在测试过程中，调用 `enableAudioPropertiesReport:` 注册音量提示回调。
  *       + 该方法仅在本地进行音频设备测试，不涉及网络连接。  <br>
  */
 - (int)startAudioDeviceRecordTest:(int)interval;
 /** 
- * @hidden(iOS)
  * @type api
  * @region 音频设备管理
  * @brief 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>
@@ -1151,7 +1296,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
  */
 - (int)stopAudioDeviceRecordAndPlayTest;
 /** 
- * @hidden(iOS)
  * @type api
  * @region 音频设备管理
  * @brief 停止由调用 startAudioDeviceRecordTest:{@link #ByteRTCAudioDeviceManager#startAudioDeviceRecordTest:} 开始的音频播放设备测试。<br>
@@ -1165,9 +1309,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)stopAudioDevicePlayTest;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 尝试初始化音频播放设备，以检测设备不存在、权限被拒绝/禁用等异常问题。
  * @param deviceID 设备索引号
  * @return 设备状态错误码 <br>
@@ -1184,9 +1326,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)initAudioPlaybackDeviceForTest:(NSString * _Nonnull)deviceID;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 尝试初始化音频采集设备，以检测设备不存在、权限被拒绝/禁用等异常问题。
  * @param deviceID 设备索引号
  * @return 设备状态错误码 <br>
@@ -1203,9 +1343,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)initAudioCaptureDeviceForTest:(NSString * _Nonnull)deviceID;
 /** 
  * @type api
- * @hidden(macOS)
+ * @deprecated since 3.45 and will be deleted in 3.51.
  * @region 音频设备管理
- * @author dixing
  * @brief 切换音频播放到扬声器或者听筒，默认播放设备是扬声器
  * @param enable  <br>
  *       + true：切换至扬声器  <br>
@@ -1216,9 +1355,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 启动音频采集设备测试。  <br>
  *        该方法测试音频采集设备是否能正常工作。启动测试后，会收到 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 回调上报的音量信息。
  * @param indicationInterval 获取回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。小于10 毫秒行为未定义。
@@ -1233,9 +1370,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)startAudioRecordingDeviceTest:(unsigned int)indicationInterval;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 停止音频采集设备测试。
  * @return  方法调用结果  <br>
  *        + 0：方法调用成功  <br>
@@ -1247,9 +1382,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)stopAudioRecordingDeviceTest;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 开始音频设备回路测试。  <br>
  *        该方法测试音频采集设备和音频播放设备是否能正常工作。一旦测试开始，音频采集设备会采集本地声音并通过音频播放设备播放出来，同时会收到 rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:}。
  * @param indicationInterval 收到回调的时间间隔，单位为 ms。建议设置到大于 200 ms。最小不得少于 10 ms。
@@ -1265,9 +1398,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 - (int)startAudioDeviceLoopbackTest:(unsigned int)indicationInterval;
 /** 
  * @type api
- * @hidden(iOS)
  * @region 音频设备管理
- * @author dixing
  * @brief 停止音频设备回路测试。
  * @return  方法调用结果  <br>
  *        + 0：方法调用成功  <br>
@@ -1308,13 +1439,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
  *  @brief 鉴权模式，参看 ByteRTCASRAuthorizationType{@link #ByteRTCASRAuthorizationType}
  */
 @property(assign, nonatomic) ByteRTCASRAuthorizationType authorizationType;
-
 @end
 
 #pragma mark - ByteASREventHandler
 
 /** 
- * @type keytype
+ * @hidden(macOS)
+ * @type callback
  * @brief 语音识别服务使用状态回调
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCASREngineEventHandler<NSObject>
@@ -1370,7 +1501,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
  *        + 当传入的值小于等于 0 时，不会触发进度回调。  <br>
  */
 @property(assign, nonatomic) NSInteger callbackOnProgressInterval;
-
+/** 
+ * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+ * @notes <br>
+ *        + 仅在单个音频文件混音时使用有效。<br>
+ *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
+ */
+@property(assign, nonatomic) BOOL syncProgressToRecordFrame;
 @end
 
 /** 
@@ -1398,12 +1535,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
  */
 @property(assign, nonatomic) ByteRTCAudioReportMode local_main_report_mode;
 /** 
+ * @brief 适用于音频属性信息提示的平滑系数。取值范围是 `(0.0, 1.0]`。<br>
+ *        默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。
+ */
+@property(nonatomic, assign) float smooth;
+
+/** 
  * @type keytype
- * @brief 音频信息提示中是否包含本地混音音频数据。参看 ByteRTCAudioPropertiesMode{@link #ByteRTCAudioPropertiesMode}。<br>
+ * @brief 设置 `rtcEngine:onLocalAudioPropertiesReport:` 回调中是否包含本地混音音频数据。参看 ByteRTCAudioPropertiesMode{@link #ByteRTCAudioPropertiesMode}。<br>
  *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
  */
 @property(assign, nonatomic) ByteRTCAudioPropertiesMode audio_report_mode;
 @end
+
 /** 
  * @type keytype
  * @brief 音频属性信息  <br>
@@ -1453,7 +1597,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioPropertiesInfo : NSObject
  * @brief 音频属性信息，详见 ByteRTCAudioPropertiesInfo{@link #ByteRTCAudioPropertiesInfo}
  */
 @property(strong, nonatomic) ByteRTCAudioPropertiesInfo *_Nonnull audioPropertiesInfo;
-
 @end
 
 /** 
@@ -1471,7 +1614,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioPropertiesInfo : NSObject
  * @brief 音频属性信息，详见 ByteRTCAudioPropertiesInfo{@link #ByteRTCAudioPropertiesInfo}
  */
 @property(strong, nonatomic) ByteRTCAudioPropertiesInfo *_Nonnull audioPropertiesInfo;
-
 @end
 
 /** 
@@ -1482,17 +1624,55 @@ BYTERTC_APPLE_EXPORT @interface Position : NSObject
 /** 
  * @brief x 坐标
  */
-@property(nonatomic, assign) int x;
+@property(nonatomic, assign) float x;
 /** 
  * @brief y 坐标
  */
-@property(nonatomic, assign) int y;
+@property(nonatomic, assign) float y;
 /** 
  * @brief z 坐标
  */
-@property(nonatomic, assign) int z;
-
+@property(nonatomic, assign) float z;
 @end
+
+/** 
+ * @type keytype
+ * @brief 方向朝向信息
+ */
+BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
+/** 
+ * @brief x 坐标
+ */
+@property(nonatomic, assign) float x;
+/** 
+ * @brief y 坐标
+ */
+@property(nonatomic, assign) float y;
+/** 
+ * @brief z 坐标
+ */
+@property(nonatomic, assign) float z;
+@end
+
+/** 
+ * @type keytype
+ * @brief 三维朝向信息，三个向量需要两两垂直。参看 Orientation{@link #Orientation}。
+ */
+BYTERTC_APPLE_EXPORT @interface HumanOrientation : NSObject
+/** 
+ * @brief 正前方朝向，默认值为 {1,0,0}，即正前方朝向 x 轴正方向
+ */
+@property(nonatomic, strong) Orientation* _Nonnull forward;
+/** 
+ * @brief 正右方朝向，默认值为 {0,1,0}，即右手朝向 y 轴正方向
+ */
+@property(nonatomic, strong) Orientation* _Nonnull right;
+/** 
+ * @brief 正上方朝向，默认值为 {0,0,1}，即头顶朝向 z 轴正方向
+ */
+@property(nonatomic, strong) Orientation* _Nonnull up;
+@end
+
 /** 
  * @type keytype
  * @brief K 歌打分维度。
@@ -1502,6 +1682,20 @@ typedef NS_ENUM(NSInteger, ByteRTCMulDimSingScoringMode) {
      * @brief 按照音高进行评分。
      */
     ByteRTCMulDimSingScoringModeNote = 0
+};
+/** 
+ * @type keytype
+ * @brief 远端音频流精准对齐模式
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioAlignmentMode) {
+    /** 
+     * @brief 不对齐
+     */
+    ByteRTCAudioAlignmentModeOff = 0,
+    /** 
+     * @brief 远端音频流都对齐伴奏进度同步播放
+     */
+    ByteRTCAudioAlignmentModeAudioMixing = 1,
 };
 
 /** 
@@ -1538,6 +1732,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringRealtimeInfo : NSObject
   */
  @property(nonatomic, assign) int averageScore;
 @end
+
 /** 
  * @type keytype
  * @brief 标准音高数据组。
@@ -1556,6 +1751,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCStandardPitchInfo : NSObject
   */
  @property(nonatomic, assign) int pitch;
 @end
+
 /** 
  * @type keytype
  * @brief K 歌评分配置。
@@ -1578,3 +1774,136 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringConfig : NSObject
   */
  @property(nonatomic, copy) NSString *_Nonnull midiFilepath;
 @end
+
+/** 
+ * @type keytype
+ * @brief 音频文件录制内容来源。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioFrameSource) {
+    /** 
+     * @brief 本地麦克风采集的音频数据。
+     */
+    ByteRTCAudioFrameSourceTypeMic = 0,
+    /** 
+     * @brief 远端所有用户混音后的数据
+     */
+    /**
+     * {en}
+     * @brief The audio got by mixing all remote user's audio.
+     */
+    ByteRTCAudioFrameSourceTypePlayback = 1,
+    /** 
+     * @brief 本地麦克风和所有远端用户音频流的混音后的数据
+     */
+    ByteRTCAudioFrameSourceTypeMixed = 2,
+};
+/** 
+ * @type keytype
+ * @brief 音频质量
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioQuality) {
+    /** 
+     * @brief 低音质
+     */
+    ByteRTCAudioQualityLow = 0,
+    /** 
+     * @brief 中音质
+     */
+    ByteRTCAudioQualityMedium = 1,
+    /** 
+     * @brief 高音质
+     */
+    ByteRTCAudioQualityHigh = 2,
+    /** 
+     * @brief 超高音质
+     */
+    ByteRTCAudioQualityUltraHigh = 3,
+};
+/** 
+ * @type keytype
+ * @brief 音频录制配置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
+/** 
+ * @brief 录制文件路径。一个有读写权限的绝对路径，包含文件名和文件后缀。
+ * @notes 录制文件的格式仅支持 .aac 和 .wav。
+ */
+@property(nonatomic, copy) NSString* _Nonnull absoluteFileName;
+/** 
+ * @brief 录音内容来源，参看 ByteRTCAudioFrameSource{@link #ByteRTCAudioFrameSource}。
+ */
+@property(nonatomic, assign) ByteRTCAudioFrameSource frameSource;
+/** 
+ * @brief 录音采样率。参看 ByteRTCAudioSampleRate{@link #ByteRTCAudioSampleRate}。
+ */
+@property(nonatomic, assign) ByteRTCAudioSampleRate sampleRate;
+/** 
+ * @brief 录音音频声道。参看 ByteRTCAudioChannel{@link #ByteRTCAudioChannel}。
+ * @notes 如果录制时设置的的音频声道数与采集时的音频声道数不同：<br>
+ *        + 如果采集的声道数为 1，录制的声道数为 2，那么，录制的音频为经过单声道数据拷贝后的双声道数据，而不是立体声。<br>
+ *        + 如果采集的声道数为 2，录制的声道数为 1，那么，录制的音频为经过双声道数据混合后的单声道数据。
+ */
+@property(nonatomic, assign) ByteRTCAudioChannel channel;
+/** 
+ * @brief 录音音质。仅在录制文件格式为 .aac 时可以设置。参看 ByteRTCAudioQuality{@link #ByteRTCAudioQuality}。
+ * @notes 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是： <br>
+ *        + 低音质：1.2MB；<br>
+ *        + 中音质：2MB；<br>
+ *        + 高音质：3.75MB；<br>
+ *        + 超高音质：7.5MB。
+ */
+@property(nonatomic, assign) ByteRTCAudioQuality quality;
+@end
+
+/** 
+ * @type keytype
+ * @brief 录音配置
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioRecordingState) {
+    /** 
+     * @brief 录制异常
+     */
+    ByteRTCAudioRecordingStateError = 0,
+    /** 
+     * @brief 录制进行中
+     */
+    ByteRTCAudioRecordingStateProcessing = 1,
+    /** 
+     * @brief 已结束录制，并且录制文件保存成功。
+     */
+    ByteRTCAudioRecordingStateSuccess = 2,
+};
+/** 
+ * @type errorcode
+ * @brief 音频文件录制的错误码
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAudioRecordingErrorCode) {
+    /** 
+     * @brief 录制正常
+     */
+    ByteRTCAudioRecordingErrorCodeOk = 0,
+    /** 
+     * @brief 没有文件写权限
+     */
+    ByteRTCAudioRecordingErrorCodeNoPermission = -1,
+    /** 
+     * @brief 没有进入房间
+     */
+    ByteRTCAudioRecordingErrorNotInRoom = -2,
+    /** 
+     * @brief 录制已经开始
+     */
+    ByteRTCAudioRecordingAlreadyStarted = -3,
+    /** 
+     * @brief 录制还未开始
+     */
+    ByteRTCAudioRecordingNotStarted = -4,
+        /** 
+     * @brief 录制失败。文件格式不支持。
+     */
+    ByteRTCAudioRecordingErrorCodeNotSupport = -5,
+    /** 
+     * @brief 其他异常
+     */
+    ByteRTCAudioRecordingErrorCodeOther = -6,
+};

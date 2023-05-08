@@ -18,7 +18,7 @@ namespace bytertc {
 class IVideoDeviceCollection : public IDeviceCollection {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     IVideoDeviceCollection() {};
@@ -61,7 +61,7 @@ public:
     virtual int getDevice(int index, VideoDeviceInfo* video_device_info) = 0;
 protected:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IVideoDeviceCollection() {};
@@ -75,7 +75,7 @@ protected:
 class IVideoDeviceManager {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     IVideoDeviceManager() {
@@ -109,7 +109,7 @@ public:
     virtual int getVideoCaptureDevice(char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
 
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IVideoDeviceManager() {

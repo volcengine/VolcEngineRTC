@@ -101,12 +101,12 @@
     NSString *userID = self.userIDTextField.text;
     
     if (roomID.length == 0) {
-        [self showAlertWith:@"房间号不能为空"];
+        [self showAlertWithTitle:@"房间号不能为空" message:@""];
         return;;
     }
     
     if (userID.length == 0) {
-        [self showAlertWith:@"用户名不能为空"];
+        [self showAlertWithTitle:@"用户名不能为空" message:@""];
         return;;
     }
     
@@ -115,12 +115,12 @@
     BOOL userIDValid = [self checkVaild:userID];
     
     if (!roomIDValid) {
-        [self showAlertWith:@"房间号格式错误"];
+        [self showAlertWithTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-"];
         return;;
     }
     
     if (!userIDValid) {
-        [self showAlertWith:@"用户名格式错误"];
+        [self showAlertWithTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-"];
         return;;
     }
     
@@ -139,8 +139,8 @@
     return results.count > 0;
 }
 
-- (void)showAlertWith:(NSString *)message{
-    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:message message:@"" preferredStyle:UIAlertControllerStyleAlert];
+- (void)showAlertWithTitle:(NSString *)title message:(NSString *)message {
+    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *alertAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil];
    
@@ -191,7 +191,7 @@
         _versionLabel = [[UILabel alloc] init];
         _versionLabel.textAlignment = NSTextAlignmentCenter;
         /// 获取当前SDK的版本号
-        NSString *SDKVersion = [ByteRTCVideo getSdkVersion];
+        NSString *SDKVersion = [ByteRTCVideo getSDKVersion];
         _versionLabel.text = [NSString stringWithFormat:@"VolcEngineRTC v %@",SDKVersion];
     }
     return _versionLabel;

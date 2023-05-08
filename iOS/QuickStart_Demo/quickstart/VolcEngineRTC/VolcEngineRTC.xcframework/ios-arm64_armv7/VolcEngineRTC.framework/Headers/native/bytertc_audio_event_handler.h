@@ -43,7 +43,6 @@ public:
     /** 
      * @type callback
      * @region 混音
-     * @author majun.lvhiei
      * @brief  音频混音文件播放状态改变时回调
      * @param [in] mix_id  <br>
      *        混音 ID  <br>
@@ -77,7 +76,6 @@ public:
     /** 
      * @type callback
      * @region 混音
-     * @author majun.lvhiei
      * @brief 混音音频文件播放进度回调
      * @param [in] mix_id 混音 ID  <br>
      * @param [in] progress 当前混音音频文件播放进度，单位毫秒
@@ -91,22 +89,6 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @author chenweiming.push
-     * @brief 端监控日志回调。当产生一个端监控事件时触发该回调。
-     * @param [in] log_type  <br>
-     *        事件类型。目前类型固定为 "live_webrtc_monitor_log"。
-     * @param [in] log_content  <br>
-     *        端监控日志内容。
-     */
-    virtual void onLogReport(const char* log_type, const char* log_content) {
-        (void)log_type;
-        (void)log_content;
-    }
-
-    /** 
-     * @type callback
-     * @region 引擎管理
-     * @author shenpengliang
      * @brief 创建房间失败回调。
      * @param room_id 房间 ID。
      * @param error_code 创建房间错误码，具体原因参看 ErrorCode{@link #ErrorCode}。
@@ -120,7 +102,6 @@ public:
      * @hidden(macOS,Windows)
      * @type callback
      * @region 音频事件回调
-     * @author liuxiaowu
      * @brief 音频播放设备变化时回调该事件。
      * @param [in] device 变化后的音频播放设备，参看 AudioRoute{@link #AudioRoute}。  <br>
      */
@@ -131,7 +112,6 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @author hanchenchen.c
      * @brief SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
      * @param [in] state 当前 SDK 与信令服务器的连接状态，详见 ConnectionState{@link #ConnectionState}。
      * @notes 更多信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
@@ -143,7 +123,6 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @author hanchenchen.c
      * @brief SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型发生改变时回调该事件。
      * @param [in] type  <br>
      *        SDK 当前的网络连接类型，详见：NetworkType{@link #NetworkType} 。
@@ -155,7 +134,6 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @author zhangzhenyu.samuel
      * @brief 音频设备状态回调。提示音频采集、音频播放等设备的状态。
      * @param [in] device_id 设备 ID
      * @param [in] device_type 设备类型，参看 RTCAudioDeviceType{@link #RTCAudioDeviceType}。
@@ -173,7 +151,6 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @author dixing
      * @brief 音频设备警告回调。音频设备包括音频采集设备和音频渲染设备。
      * @param [in] device_id 设备 ID
      * @param [in] device_type 参看 RTCAudioDeviceType{@link #RTCAudioDeviceType}
@@ -189,7 +166,6 @@ public:
     /** 
      * @type callback
      * @region 引擎管理
-     * @author chenweiming.push
      * @brief 周期性（2s）地发出回调，报告当前cpu与memory使用率
      * @param [in] stats 返回包含当前系统状态信息的结构体，详见 SysStats{@link #SysStats}
      */
@@ -200,7 +176,6 @@ public:
     /** 
      * @type callback
      * @region 代理回调
-     * @author qipengxiang
      * @brief HTTP 代理连接状态改变时，收到该回调。
      * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
      */
@@ -211,7 +186,6 @@ public:
     /** 
      * @type callback
      * @region 代理回调
-     * @author qipengxiang
      * @brief HTTPS 代理连接状态改变时，收到该回调。
      * @param  [out] state 当前 HTTPS 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
      */
@@ -222,7 +196,6 @@ public:
     /** 
      * @type callback
      * @region 代理回调
-     * @author qipengxiang
      * @brief Socks5 代理状态改变时，收到该回调。
      * @param [out] state SOCKS5 代理连接状态，详见 Socks5ProxyState{@link #Socks5ProxyState}
      * @param [out] cmd 代理连接的每一步操作命令
@@ -242,7 +215,6 @@ public:
     /** 
      * @type callback
      * @region 本地录制
-     * @author wunailiang
      * @brief 获取本地录制状态回调。  <br>
      *        该回调由 startFileRecording{@link #IRTCAudio#startFileRecording} 或 stopFileRecording{@link #IRTCAudio#stopFileRecording} 触发。
      * @param [out] state 录制状态，参看 RecordingState{@link #RecordingState}
@@ -258,7 +230,6 @@ public:
     /** 
      * @type callback
      * @region 本地录制
-     * @author wunailiang
      * @brief 本地录制进度回调。  <br>
      *        该回调由 startFileRecording{@link #IRTCAudio#startFileRecording} 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
      * @param [out] process 录制进度，参看 RecordingProgress{@link #RecordingProgress}
@@ -268,11 +239,20 @@ public:
         (void)process;
         (void)info;
     }
+    /** 
+     *  @type callback
+     *  @brief 调用 startAudioRecording{@link #IRTCAudio#startAudioRecording} 或 stopAudioRecording{@link #IRTCAudio#stopAudioRecording} 改变音频文件录制状态时，收到此回调。
+     *  @param [in] state 录制状态，参看 AudioRecordingState{@link #AudioRecordingState}
+     *  @param [in] error_code 录制错误码，参看 AudioRecordingErrorCode{@link #AudioRecordingErrorCode}
+     */
+    virtual void onAudioRecordingStateUpdate(AudioRecordingState state, AudioRecordingErrorCode error_code) {
+        (void)state;
+        (void)error_code;
+    }
 
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 登录结果回调
      * @param [in] uid  <br>
      *        登录用户 ID
@@ -293,7 +273,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 登出结果回调
      * @notes 调用 logout{@link #IRTCAudio#logout} 后，会收到此回调。
      */
@@ -302,7 +281,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 设置应用服务器参数的返回结果
      * @param [in] error <br>
      *        设置结果  <br>
@@ -317,7 +295,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 查询对端或本端用户登录状态的返回结果
      * @param [in] peer_user_id  <br>
      *        需要查询的用户 ID
@@ -334,7 +311,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 收到房间外用户调用 sendUserMessageOutsideRoom{@link #IRTCAudio#sendUserMessageOutsideRoom} 发来的文本消息时，会收到此回调
      * @param [in] uid  <br>
      *        消息发送者 ID
@@ -349,7 +325,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 收到房间外用户调用 sendUserBinaryMessageOutsideRoom{@link #IRTCAudio#sendUserBinaryMessageOutsideRoom} 发来的二进制消息时，会收到此回调
      * @param [in] uid  <br>
      *        消息发送者 ID
@@ -367,7 +342,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 给房间外指定的用户发送消息的回调
      * @param [in] msgid  <br>
      *        本条消息的 ID  <br>
@@ -385,7 +359,6 @@ public:
     /** 
      * @type callback
      * @region 实时消息通信
-     * @author hanchenchen.c
      * @brief 给应用服务器发送消息的回调。
      * @param [in] msgid 本条消息的 ID。
      *        所有的 P2P 和 P2Server 消息共用一个 ID 序列。
@@ -402,7 +375,6 @@ public:
      /** 
       * @type callback
       * @region 音频管理
-      * @author wangjunzheng
       * @brief 远端用户进房后，本地调用 enableAudioPropertiesReport{@link #IRTCAudio#enableAudioPropertiesReport}，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。<br>
       *        远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。
       * @param [in] audio_properties_infos 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 RemoteAudioPropertiesInfo{@link #RemoteAudioPropertiesInfo}。
@@ -423,7 +395,6 @@ public:
      /** 
       * @type callback
       * @region 音频管理
-      * @author wangjunzheng
       * @brief 调用 EnableAudioPropertiesReport{@link #IRTCAudio#enableAudioPropertiesReport} 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
       *        本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
       * @param [in] audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #LocalAudioPropertiesInfo} 。
@@ -451,7 +422,6 @@ public:
      * @hidden(Android,iOS)
      * @type callback
      * @region 设备管理
-     * @author caocun
      * @brief 音频设备音量改变回调。当通过系统设置，改变音频设备音量或静音状态时，触发本回调。本回调无需手动开启。
      * @param device_type 设备类型，包括麦克风和扬声器，参阅 ByteRTCAudioDeviceType{@link #ByteRTCAudioDeviceType}。
      * @param volume 音量值，[0, 255]。当 volume 变为 0 时，muted 会变为 True。注意：在 Windows 端，当麦克风 volume 变为 0 时，muted 值不变。
@@ -464,9 +434,8 @@ public:
     }
 
     /** 
-     * @type api
+     * @type callback
      * @region 音频管理
-     * @author wangjunzheng
      * @brief 音频流同步信息回调。可以通过此回调，在远端用户调用 sendStreamSyncInfo{@link #IRTCAudio#sendStreamSyncInfo} 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
      * @param [in] stream_key 远端流信息，详见 RemoteStreamKey{@link #RemoteStreamKey} 。
      * @param [in] stream_type 媒体流类型，详见 SyncInfoStreamType{@link #SyncInfoStreamType} 。
@@ -484,7 +453,6 @@ public:
     /** 
      * @type callback
      * @region 通话前网络探测
-     * @author hanchenchen.c
      * @brief 通话前网络探测结果。  <br>
      *        成功调用 startNetworkDetection{@link #IRTCAudio#startNetworkDetection} 接口开始探测后，会在 3s 内首次收到该回调，之后每 2s 收到一次该回调。
      * @param [in] type 探测网络类型为上行/下行  <br>
@@ -507,7 +475,6 @@ public:
     /** 
      * @type callback
      * @region 通话前网络探测
-     * @author hanchenchen.c
      * @brief 通话前网络探测结束
      *        以下情况将停止探测并收到本一次本回调：<br>
      *        1. 当调用 stopNetworkDetection{@link #IRTCAudio#stopNetworkDetection} 接口停止探测后，会收到一次该回调；
@@ -525,7 +492,6 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @author dixing
      * @brief 房间内的用户调用 startAudioCapture{@link #IRTCAudio#startAudioCapture} 开启音频采集时，房间内其他用户会收到此回调。
      * @param [in] room_id 开启音频采集的远端用户所在的房间 ID
      * @param [in] user_id 开启音频采集的远端用户 ID
@@ -538,7 +504,6 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @author dixing
      * @brief 房间内的用户调用 stopAudioCapture{@link #IRTCAudio#stopAudioCapture} 关闭音频采集时，房间内其他用户会收到此回调。
      * @param [in] room_id 关闭音频采集的远端用户所在的房间 ID
      * @param [in] user_id 关闭音频采集的远端用户 ID
@@ -551,7 +516,6 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 发布音频流时，采集到第一帧音频帧，收到该回调。
      * @notes 如果发布音频流时，未开启本地音频采集，SDK 会推送静音帧，也会收到此回调。
      */
@@ -560,7 +524,6 @@ public:
     /** 
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 接收到来自远端某音频流的第一帧时，收到该回调。
      * @param [in] key 远端音频流信息, 详见 RemoteStreamKey{@link #RemoteStreamKey}
      * @notes 用户刚收到房间内每一路音频流时，都会收到该回调。
@@ -570,9 +533,9 @@ public:
     }
 
     /** 
+     * @deprecated since 3.50. Use onAudioDeviceStateChanged{@link #IRTCAudioEventHandler#onAudioDeviceStateChanged} instead.
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 本地音频的状态发生改变时，该回调通知当前的本地音频状态。
      * @param [in] state 本地音频设备的状态，详见： LocalAudioStreamState{@link #LocalAudioStreamState}
      * @param [in] error 本地音频状态改变时的错误码，详见：LocalAudioStreamError{@link #LocalAudioStreamError}
@@ -583,9 +546,9 @@ public:
     }
 
     /** 
+     * @hidden not available
      * @type callback
      * @region 音频事件回调
-     * @author wangjunzheng
      * @brief 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。
      * @param [in] key 远端流信息, 参看 RemoteStreamKey{@link #RemoteStreamKey}
      * @param [in] state 远端音频流状态，参看 RemoteAudioState{@link #RemoteAudioState}
@@ -601,7 +564,6 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 音频首帧发送状态改变回调
      * @param [in] room_id 音频发布用户所在的房间 ID
      * @param [in] user 本地用户信息，详见 RtcUser{@link #RtcUser}
@@ -616,7 +578,6 @@ public:
     /** 
      * @type callback
      * @region 房间管理
-     * @author shenpengliang
      * @brief 音频首帧播放状态改变回调
      * @param [in] room_id 音频发布用户所在的房间 ID
      * @param [in] user 远端用户信息，详见 RtcUser{@link #RtcUser}
@@ -629,7 +590,6 @@ public:
     }
 
    /** 
-    * @author daining.nemo
     * @type callback
     * @brief 调用 startCloudProxy{@link #IRTCAudio#startCloudProxy} 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
     * @param [in] interval 从开启云代理到连接成功经过的时间，单位为 ms
@@ -638,6 +598,33 @@ public:
         (void)interval;
     }
 
+    /** 
+     * @hidden
+     * @type callback
+     * @brief 音频dump状态改变回调
+     * @param [in] status 音频dump状态，参见 AudioDumpStatus{@link #AudioDumpStatus}
+     * @notes 本回调用于内部排查音质相关异常问题，开发者无需关注。
+     */
+
+    virtual void onAudioDumpStateChanged(AudioDumpStatus status) {
+        (void)status;
+    }
+    /** 
+     * @hidden(Linux)
+     * @type callback
+     * @brief 首次调用 getNetworkTimeInfo{@link #IRTCAudio#getNetworkTimeInfo} 后，SDK 内部启动网络时间同步，同步完成时会触发此回调。
+     */
+    virtual void onNetworkTimeSynchronized() {
+    }
+    /** 
+     * @type callback
+     * @brief license过期时间提醒
+     * @param [in] days 过期时间天数
+     */
+
+    virtual void onLicenseWillExpire(int days) {
+        (void)days;
+    }
 };
 
 }  // namespace bytertc

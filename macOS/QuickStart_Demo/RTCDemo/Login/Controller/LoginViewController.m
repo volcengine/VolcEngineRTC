@@ -7,7 +7,7 @@
  * - 展示当前 SDK 使用的版本号 ByteRTCEngineKit getSdkVersion:
  *
  * 有以下常见的注意事项：
- * 1.SDK 对房间名、用户名的限制是：非空且最大长度不超过128位的数字、大小写字母、@ . _ \ -
+ * 1.SDK 对房间名、用户名的限制是：非空且最大长度不超过128位的数字、大小写字母、@ . _ -
  */
 
 #import "LoginViewController.h"
@@ -37,16 +37,30 @@
     
     __weak __typeof(self) wself = self;
     self.loginView.clickBlock = ^(NSString * _Nonnull roomID, NSString * _Nonnull userID) {
-        if ([wself isMatchRoomID:roomID] &&
-            [wself isMatchRoomID:userID]) {
-
-            if (wself.joinRoomBlock) {
-                wself.joinRoomBlock(roomID, userID);
-            }
-        } else {
-            // error alert
-            [wself showAlert];
+        if (roomID.length == 0) {
+            [wself showAlertTitle:@"房间号不能为空" message:@""];
+            return;
         }
+        
+        if (userID.length == 0) {
+            [wself showAlertTitle:@"用户名不能为空" message:@""];
+            return;
+        }
+        
+        if ([wself isMatchRoomID:roomID] == NO) {
+            [wself showAlertTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-"];
+            return;
+        }
+        
+        if ([wself isMatchRoomID:userID] == NO) {
+            [wself showAlertTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-"];
+            return;
+        }
+
+        if (wself.joinRoomBlock) {
+            wself.joinRoomBlock(roomID, userID);
+        }
+        
     };
 }
 
@@ -79,9 +93,7 @@
 }
 
 - (BOOL)isMatchRoomID:(NSString *)roomid {
-    if (roomid.length <= 0) {
-        return NO;
-    }
+
     if (roomid.length > 128) {
         return NO;
     }
@@ -89,12 +101,12 @@
     return [predicate evaluateWithObject:roomid];
 }
 
-- (void)showAlert {
+- (void)showAlertTitle:(NSString *)title message:(NSString *)msg {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.alertStyle = NSWarningAlertStyle;
     [alert addButtonWithTitle:@"确定"];
-    alert.messageText = @"输入不合法";
-    alert.informativeText = @"只支持数字、大小写字母、@._|-";
+    alert.messageText = title;
+    alert.informativeText = msg;
     [alert beginSheetModalForWindow:[NSApplication sharedApplication].keyWindow completionHandler:^(NSModalResponse returnCode) {
 
     }];
@@ -117,7 +129,7 @@
         _verLabel = [[NSLabel alloc] init];
         _verLabel.font = [NSFont systemFontOfSize:12];
         /// 获取当前SDK的版本号
-        NSString *version = [ByteRTCVideo getSdkVersion];
+        NSString *version = [ByteRTCVideo getSDKVersion];
         _verLabel.text = [@"VolcEngineRTC v" stringByAppendingString:version];
         _verLabel.textColor = [NSColor colorFromHexString:@"#FFFFFF"];
     }

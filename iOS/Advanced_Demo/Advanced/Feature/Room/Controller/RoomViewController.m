@@ -141,18 +141,19 @@
     roomConfig.isAutoPublish = true;
     roomConfig.isAutoSubscribeAudio = true;
     roomConfig.isAutoSubscribeVideo = true;
-    [self.rtcRoom joinRoomByToken:TOKEN userInfo:userInfo roomConfig:roomConfig];
+    [self.rtcRoom joinRoom:TOKEN userInfo:userInfo roomConfig:roomConfig];
     
     if (self.preJoinSetting.isScreenShare) {
         /// 设置groupID
         [self.rtcVideo setExtensionConfig:APP_GROUP];
         /// 设置屏幕共享发布参数，宽高设为00，意味着SDK不会对系统采集到的屏幕视频帧进行裁剪缩放处理
-        ByteRTCVideoEncoderConfig * config = [[ByteRTCVideoEncoderConfig alloc] init];
+        ByteRTCScreenVideoEncoderConfig * config = [[ByteRTCScreenVideoEncoderConfig alloc] init];
         config.width = self.roomSetting.resolution.width;
         config.height = self.roomSetting.resolution.height;
         config.frameRate = self.roomSetting.fps;
         config.maxBitrate = self.roomSetting.bitrate;
-        [self.rtcVideo SetScreenVideoEncoderConfig:config];
+        config.minBitrate = 0;
+        [self.rtcVideo setScreenVideoEncoderConfig:config];
         
         /// 开启本地音频采集
         [self.rtcVideo startAudioCapture];
@@ -167,7 +168,8 @@
         solution.height = self.roomSetting.resolution.height;
         solution.frameRate = self.roomSetting.fps;
         solution.maxBitrate = self.roomSetting.bitrate;
-        [self.rtcVideo SetMaxVideoEncoderConfig:solution];
+        solution.minBitrate = 0;
+        [self.rtcVideo setMaxVideoEncoderConfig:solution];
         /// 设置本地渲染
         [self setLocalRenderView];
         
@@ -274,19 +276,21 @@
         UIView *view = [[UIView alloc] init];
         ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
         canvas.view = view;
-        canvas.roomId = streamKey.roomId;
-        canvas.uid = streamKey.userId;
         canvas.renderMode = rtcRenderMode;
         userLiveView.uid = uid;
         
         [userLiveView replaceCanvasView:view];
-
-        /// 设置远端用户视频渲染视图(内部渲染)
-        [self.rtcVideo setRemoteVideoCanvas:uid withIndex:streamKey.streamIndex withCanvas:canvas];
+        
+        /// 设置远端用户视频渲染视图
+        [self.rtcVideo setRemoteVideoCanvas:streamKey withCanvas:canvas];
     }
 }
 
 #pragma mark - RTC delegate
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode {
+    [self showAlert:[NSString stringWithFormat:@"error: %ld",(long)errorCode]];
+}
+
 - (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserPublishStream:(NSString *)userId type:(ByteRTCMediaStreamType)type {
     if (type == ByteRTCMediaStreamTypeVideo || type == ByteRTCMediaStreamTypeBoth) {
         ByteRTCRemoteStreamKey *streamKey = [[ByteRTCRemoteStreamKey alloc] init];
@@ -484,12 +488,13 @@
 
 - (void)switchAudioRoute:(UIButton *)button {
     button.selected = !button.selected;
+
     if (button.selected) {
         /// 设置使用听筒播放音频数据
-        [self.rtcVideo setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceEarpiece];
+        [self.rtcVideo setDefaultAudioRoute:ByteRTCAudioRouteEarpiece];
     }else{
         /// 设置使用扬声器播放音频数据
-        [self.rtcVideo setAudioPlaybackDevice:ByteRTCAudioPlaybackDeviceSpeakerphone];
+        [self.rtcVideo setDefaultAudioRoute:ByteRTCAudioRouteSpeakerphone];
     }
 }
 
@@ -533,12 +538,12 @@
     
     if (self.preJoinSetting.isScreenShare) {
         // 修改屏幕共享参数，需要重新开启屏幕共享后生效
-        ByteRTCVideoEncoderConfig * config = [[ByteRTCVideoEncoderConfig alloc] init];
+        ByteRTCScreenVideoEncoderConfig * config = [[ByteRTCScreenVideoEncoderConfig alloc] init];
         config.width = self.roomSetting.resolution.width;
         config.height = self.roomSetting.resolution.height;
         config.frameRate = self.roomSetting.fps;
         config.maxBitrate = self.roomSetting.bitrate;
-        [self.rtcVideo SetScreenVideoEncoderConfig:config];
+        [self.rtcVideo setScreenVideoEncoderConfig:config];
     }
     else {
         ByteRTCVideoEncoderConfig *solution = [[ByteRTCVideoEncoderConfig alloc] init];
@@ -546,7 +551,7 @@
         solution.height = self.roomSetting.resolution.height;
         solution.frameRate = self.roomSetting.fps;
         solution.maxBitrate = self.roomSetting.bitrate;
-        [self.rtcVideo SetMaxVideoEncoderConfig:solution];
+        [self.rtcVideo setMaxVideoEncoderConfig:solution];
         
         if (!self.preJoinSetting.useCustomRender) {
             if (self.roomSetting.localRenderMirror == 0) {
@@ -602,8 +607,30 @@
             didOutputBuffer:(CVImageBufferRef)buffer
                        time:(CMTime)time {
     /// 自定义采集相机 使用sdk 推流
-    [self.rtcVideo pushExternalVideoFrame:buffer time:time];
+    int width   = (int)CVPixelBufferGetWidth(buffer);
+    int height  = (int)CVPixelBufferGetHeight(buffer);
+    
+    
+    ByteRTCVideoFrame *videoFrame = [[ByteRTCVideoFrame alloc] init];
+    videoFrame.format = ByteRTCVideoPixelFormatBGRA;
+    
+    
+    videoFrame.contentType = ByteRTCVideoContentTypeNormalFrame;
+    videoFrame.time = time;
+    videoFrame.width = width;
+    videoFrame.height = height;
+    videoFrame.textureBuf = buffer;
+    videoFrame.cropLeft = 0;
+    videoFrame.cropTop = 0;
+    videoFrame.cropRight = 0;
+    videoFrame.cropBottom = 0;
+    videoFrame.colorSpace = ByteRTCColorSpaceUnknown;
+    videoFrame.rotation = ByteRTCVideoRotation0;
+    videoFrame.extendedData = nil;
+    
+    [self.rtcVideo pushExternalVideoFrame:videoFrame];
 }
+
 
 #pragma mark - BeautyBarViewDelegate
 

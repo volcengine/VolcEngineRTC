@@ -5,44 +5,43 @@
 
 #pragma once
 
-#include "bytertc_common_defines.h"
+#include "bytertc_media_defines.h"
 #include <string.h>
+#include <math.h>
 // use fft size 512 to calculate spectrum, so spectrum size is 512 / 2 + 1 = 257
 #define SPECTRUM_SIZE 257
 
 namespace bytertc {
-
 /** 
  * @type keytype
  * @brief 音频采样率，单位为 Hz。
  */
 enum AudioSampleRate {
     /** 
-     * @brief 默认设置。
+     * @brief 默认设置。48000Hz。
      */
     kAudioSampleRateAuto = -1,
     /** 
-     * @brief 8000 Hz
+     * @brief 8000Hz
      */
     kAudioSampleRate8000 = 8000,
     /** 
-     * @brief 16000 Hz
+     * @brief 16000Hz
      */
     kAudioSampleRate16000 = 16000,
     /** 
-     * @brief 32000 Hz
+     * @brief 32000Hz
      */
     kAudioSampleRate32000 = 32000,
     /** 
-     * @brief 44100 Hz
+     * @brief 44100Hz
      */
     kAudioSampleRate44100 = 44100,
     /** 
-     * @brief 48000 Hz
+     * @brief 48000Hz
      */
     kAudioSampleRate48000 = 48000
 };
-
 /** 
  * @type keytype
  * @brief 音频声道。
@@ -94,8 +93,8 @@ enum AudioProcessorMethod{
      */
     kAudioFrameProcessorRemoteUser = 2,
     /** 
-     * @hidden(Windows,Linux)
-     * @brief 耳返音频。
+     * @hidden(Windows,Linux,macOS)
+     * @brief 软件耳返音频。
      */
     kAudioFrameProcessorEarMonitor = 3,
     /** 
@@ -133,9 +132,9 @@ enum RTCAudioDeviceType {
  */
 enum AudioRoute {
     /** 
-     * @brief 未知设备
+     * @brief 默认设备
      */
-    kAudioRouteUnknown = -1,
+    kAudioRouteDefault = -1,
     /** 
      * @brief 有线耳机
      */
@@ -186,7 +185,6 @@ enum AudioPlaybackDevice {
 };
 
 /** 
- * @hidden(macOS,Windows)
  * @type keytype
  * @brief 音频场景类型。<br>
  *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。<br>
@@ -221,10 +219,10 @@ enum AudioScenarioType {
     kAudioScenarioTypeHighQualityCommunication = 1,
     /** 
      * @brief 纯通话音量场景。<br>
-     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量。
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量。<br>
      *        适用于需要频繁上下麦的通话或会议场景。<br>
-     *        此场景可以保持统一的音频模式，不会有音量突变的听感；
-     *        最大程度上的消除回声，使通话清晰度达到最优；
+     *        此场景可以保持统一的音频模式，不会有音量突变的听感；<br>
+     *        最大程度上的消除回声，使通话清晰度达到最优；<br>
      *        使用蓝牙耳机时，能够使用蓝牙耳机上自带的麦克风进行音频采集。<br>
      *        但是，使用媒体音量进行播放的其他音频的音量会被压低，且音质会变差。
      */
@@ -237,8 +235,14 @@ enum AudioScenarioType {
     kAudioScenarioTypeMedia = 3,
     /** 
      * @brief 游戏媒体场景。仅适合游戏场景。
-     *        此场景下，蓝牙耳机时使用通话音量，其它设备使用媒体音量。
      *        若外放通话且无游戏音效消除优化时音质不理想，请联系技术支持人员。
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
+     *        <table>
+     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *        </table>
      */
     kAudioScenarioTypeGameStreaming = 4,
     /** 
@@ -248,7 +252,7 @@ enum AudioScenarioType {
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器/听筒</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机/USB 耳机</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
      *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
      *        </table>
      */
@@ -256,7 +260,6 @@ enum AudioScenarioType {
 };
 
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief Private method. 变声特效类型
  */
@@ -288,7 +291,6 @@ enum VoiceChangerType {
 };
 
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief Private method. 混响特效类型
  */
@@ -309,7 +311,7 @@ enum VoiceReverbType {
      * @brief 空灵
      */
     kVoiceReverbTypeEthereal = 3,
-    /**
+    /** 
      * @brief KTV
      */
     kVoiceReverbTypeKTV = 4,
@@ -317,6 +319,158 @@ enum VoiceReverbType {
      * @brief 录音棚
      */
     kVoiceReverbTypeStudio = 5,
+    /** 
+     * @brief 虚拟立体声
+     */
+    kVoiceReverbTypeVirtualStereo = 6,
+    /** 
+     * @brief 空旷
+     */
+    kVoiceReverbTypeSpacious = 7,
+    /** 
+     * @brief 3D人声
+     */
+    kVoiceReverbType3D = 8,
+    /** 
+     * @hidden for internal use only
+     * @brief 流行
+     */
+    kVoiceReverbTypePop = 9,
+    /** 
+     * @hidden for internal use only
+     * @brief 蹦迪
+     */
+    kVoiceReverbTypeDisco = 10,
+    /** 
+     * @hidden for internal use only
+     * @brief 老唱片
+     */
+    kVoiceReverbTypeOldRecord = 11,
+    /** 
+     * @hidden for internal use only
+     * @brief 和声
+     */
+    kVoiceReverbTypeHarmony = 12,
+    /** 
+     * @hidden for internal use only
+     * @brief 摇滚
+     */
+    kVoiceReverbTypeRock = 13,
+    /** 
+     * @hidden for internal use only
+     * @brief 蓝调
+     */
+    kVoiceReverbTypeBlues = 14,
+    /** 
+     * @hidden for internal use only
+     * @brief 爵士
+     */
+    kVoiceReverbTypeJazz = 15,
+    /** 
+     * @hidden for internal use only
+     * @brief 电子
+     */
+    kVoiceReverbTypeElectronic = 16,
+    /** 
+     * @hidden for internal use only
+     * @brief 黑胶
+     */
+    kVoiceReverbTypeVinyl = 17,
+    /** 
+     * @hidden for internal use only
+     * @brief 密室
+     */
+    kVoiceReverbTypeChamber = 18,
+};
+/** 
+ * @type keytype
+ * @brief 音频均衡效果。
+ */
+enum VoiceEqualizationBandFrequency {
+    /** 
+     * @brief 中心频率为 31Hz 的频带。
+     */
+    kVoiceEqualizationBandFrequency31 = 0,
+    /** 
+     * @brief 中心频率为 62Hz 的频带。
+     */
+    kVoiceEqualizationBandFrequency62 = 1,
+    /** 
+     * @brief 中心频率为 125Hz 的频带。
+     */
+    kVoiceEqualizationBandFrequency125 = 2,
+        /** 
+     * @brief 中心频率为 250Hz 的频带。
+     */
+    kVoiceEqualizationBandFrequency250 = 3,
+        /** 
+     * @brief 中心频率为 500Hz 的频带。
+     */
+    kVoiceEqualizationBandFrequency500 = 4,
+        /** 
+     * @brief 中心频率为 1kHz 的频带。
+     */
+    kVoiceEqualizationBandFrequency1k = 5,
+    /** 
+     * @brief 中心频率为 2kHz 的频带。
+     */
+    kVoiceEqualizationBandFrequency2k = 6,
+    /** 
+     * @brief 中心频率为 4kHz 的频带。
+     */
+    kVoiceEqualizationBandFrequency4k = 7,
+    /** 
+     * @brief 中心频率为 8kHz 的频带。
+     */
+    kVoiceEqualizationBandFrequency8k = 8,
+    /** 
+     * @brief 中心频率为 16kHz 的频带。
+     */
+    kVoiceEqualizationBandFrequency16k = 9,
+};
+/** 
+ * @type keytype
+ * @brief 语音均衡效果。
+ */
+struct VoiceEqualizationConfig {
+    /** 
+     * @brief 频带。参看 VoiceEqualizationBandFrequency{@link #VoiceEqualizationBandFrequency}。
+     */
+    VoiceEqualizationBandFrequency frequency;
+    /** 
+     * @brief 频带增益（dB）。取值范围是 `[-15, 15]`。
+     */
+    int gain;
+};
+/** 
+ * @type keytype
+ * @brief 音频混响效果。
+ */
+struct VoiceReverbConfig {
+    /** 
+     * @brief 混响模拟的房间大小，取值范围 `[0.0, 100.0]`。默认值为 `50.0f`。房间越大，混响越强。
+     */
+    float room_size = 50.0f;
+    /** 
+     * @brief 混响的拖尾长度，取值范围 `[0.0, 100.0]`。默认值为 `50.0f`。
+     */
+    float decay_time = 50.0f;
+    /** 
+     * @brief 混响的衰减阻尼大小，取值范围 `[0.0, 100.0]`。默认值为 `50.0f`。
+     */
+    float damping = 50.0f;
+    /** 
+     * @brief 早期反射信号强度。取值范围 `[-20.0, 10.0]`，单位为 dB。默认值为 `0.0f`。
+     */
+    float wet_gain = 0.0f;
+    /** 
+     * @brief 原始信号强度。取值范围 `[-20.0, 10.0]`，单位为 dB。默认值为 `0.0f`。
+     */
+    float dry_gain = 0.0f;
+    /** 
+     * @brief 早期反射信号的延迟。取值范围 `[0.0, 200.0]`，单位为 ms。默认值为 `0.0f`。
+     */
+    float pre_delay = 0.0f;
 };
 
 /** 
@@ -325,13 +479,13 @@ enum VoiceReverbType {
  */
 struct AudioVolumeInfo {
     /** 
-     * @brief 线性音量，取值范围是：[0,255]，与原始音量呈线性关系，数值越大，音量越大。
-     * 无声为25以下（绝对无声为0，25以下基本已经无声音了，可以视为无声），低音量为25~76，中音量为76~204，高音量为204以上
+     * @brief 线性音量，取值范围是：[0, 255]，与原始音量呈线性关系，数值越大，音量越大。
+     *        无声为 25 以下（绝对无声为 0，25 以下可视为无声），低音量为 25～76，中音量为 76～204，高音量为 204 以上。
      */
     int linear_volume;
     /** 
-     * @brief 非线性音量，取值范围是：[-127，0]，单位dB。此音量范围是将原始音量进行对数转化，在中低音量时分辨更为灵敏，适用于作为Active Speaker（房间内最活跃用户）的识别。
-     * 高音量为0~-20dB，中音量为-20~-40dB，低音量为-40~-60dB，若低于-60dB，则为无声。
+     * @brief 非线性音量，取值范围是：[–127, 0]，单位 dB。此音量范围是将原始音量进行对数转化，在中低音量时分辨更为灵敏，适用于 Active Speaker（房间内最活跃用户）的识别。
+     *        高音量为 0～–20 dB，中音量为 –20～–40dB，低音量为 –40～–60dB，若低于 –60 dB，则为无声。
      */
     int nonlinear_volume;
     /** 
@@ -432,8 +586,7 @@ enum AudioMixingError {
      */
     kAudioMixingErrorInValidPlaybackSpeed,
     /** 
-     * @hidden
-     * @deprecated since 325.1
+     * @deprecated since 3.25 and will be deleted in 3.51
      * @brief 混音错误码，失败，已废弃
      */
     kAudioMixingErrorCanNotOpen = 701,
@@ -441,7 +594,6 @@ enum AudioMixingError {
 
 /** 
  * @type keytype
- * @hidden(Windows)
  * @brief 是否开启耳返功能
  */
 enum EarMonitorMode {
@@ -453,6 +605,61 @@ enum EarMonitorMode {
      * @brief 开启
      */
     kEarMonitorModeOn = 1,
+};
+
+/** 
+ * @hidden currently not available
+ * @type keytype
+ * @region 音频管理
+ * @brief 音频编码类型
+ */
+enum AudioCodecType {
+    /** 
+     * @brief 未知编码类型
+     */
+    kAudioCodecTypeNone = 0,
+    /** 
+     * @brief Opus 编码类型
+     */
+    kAudioCodecTypeOpus,
+    /** 
+     * @brief AAC 编码类型
+     */
+    kAudioCodecTypeAac,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频输入格式
+ */
+enum class AudioFormatType {
+    /** 
+     *  PCM_S16
+     */
+    kRawPCMs16 = 0,
+    /** 
+     *  PCM_S32
+     */
+    kRawPCMs32 = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 蓝牙模式, 仅能在媒体模式下被设置
+ */
+enum BluetoothMode {
+    /** 
+     * @brief 自动选择模式
+     */
+    kBluetoothModeAuto = 0,
+    /** 
+     * @brief 使用A2DP模式
+     */
+    kBluetoothModeA2DP,
+    /** 
+     * @brief HFP 模式
+     */
+    kBluetoothModeHFP
 };
 
 /** 
@@ -532,6 +739,7 @@ struct RTCASRConfig {
 };
 
 /** 
+ * @hidden(Windows,Linux,macOS)
  * @type keytype
  * @brief 语音识别服务错误码。  <br>
  *        除网络原因导致的错误，语音识别服务内部会自行重试之外，其他错误都会停止服务，此时建议再次调用 `startASR` 重启语音识别功能。
@@ -616,6 +824,13 @@ struct AudioMixingConfig {
       *        + 当传入的值小于等于 0 时，不会触发进度回调。  <br>
       */
      int64_t callback_on_progress_interval = 0;
+    /** 
+     * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+     * @notes <br>
+     *        + 仅在单个音频文件混音时使用有效。<br>
+     *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
+     */
+    bool sync_progress_to_record_frame = false;
 };
 
 /** 
@@ -650,7 +865,7 @@ enum AudioReportMode {
      * @brief 默认始终开启音量回调。
      */
     kAudioReportModeNormal,
-    /** 
+   /** 
      * @brief 可见用户进房并停止推流后，关闭音量回调。
      */
     kAudioReportModeDisconnect,
@@ -686,7 +901,7 @@ struct AudioPropertiesConfig {
      *       + `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
      *       + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
      */
-    int interval;
+    int interval = 0;
 
     /** 
      * @brief 是否开启音频频谱检测。
@@ -701,10 +916,16 @@ struct AudioPropertiesConfig {
     /** 
      * @brief 音量回调配置模式。详见 AudioReportMode{@link #AudioReportMode}。
      */
-    AudioReportMode local_main_report_mode = kAudioReportModeNormal;    
+    AudioReportMode local_main_report_mode = kAudioReportModeNormal;
+
+    /** 
+     * @brief 适用于音频属性信息提示的平滑系数。取值范围是 `(0.0, 1.0]`。<br>
+     *        默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。
+     */
+    float smooth = 1.0f;   
         
     /** 
-     * @brief 音频信息提示中是否包含本地混音音频数据。参看 AudioPropertiesMode{@link #AudioPropertiesMode}。<br>
+     * @brief 设置 `onLocalAudioPropertiesReport` 回调中是否包含本地混音音频数据。参看 AudioPropertiesMode{@link #AudioPropertiesMode}。<br>
      *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
      */
     AudioPropertiesMode audio_report_mode = kAudioPropertiesModeMicrophone;
@@ -721,7 +942,7 @@ struct AudioPropertiesInfo {
      *        - [76, 204]: 中音量 <br>
      *        - [205, 255]: 高音量 <br>
      */
-    int linear_volume;
+    int linear_volume = 0;
     /** 
      * @brief 非线性音量。由原始音量的对数值转化而来，因此在中低音量时更灵敏，可以用作 Active Speaker（房间内最活跃用户）的识别。取值范围是：[-127，0]，单位 dB。 <br>
      *        - [-127, -60]: 无声 <br>
@@ -729,7 +950,7 @@ struct AudioPropertiesInfo {
      *        - [-39, -20]: 中音量 <br>
      *        - [-19, 0]: 高音量 <br>
      */
-    int nonlinear_volume;
+    int nonlinear_volume = 0;
     /** 
      * @brief 频谱数组。默认长度为 257。
      */
@@ -768,7 +989,7 @@ struct LocalAudioPropertiesInfo {
     /** 
      * @brief 流属性，主流或屏幕流。参看 StreamIndex{@link #StreamIndex}
      */
-    StreamIndex stream_index;
+    StreamIndex stream_index = StreamIndex::kStreamIndexMain;
     /** 
      * @type keytype
      * @brief 音频属性信息，详见 AudioPropertiesInfo{@link #AudioPropertiesInfo}
@@ -817,31 +1038,109 @@ enum AudioProfileType {
 
 /** 
  * @type keytype
+ * @brief 降噪模式。降噪算法受进房时设置的房间模式影响。
+ */
+enum AnsMode {
+   /** 
+     * @brief 禁用音频降噪。
+     */
+    kAnsModeDisable = 0,
+     /** 
+     * @brief 适用于微弱降噪。
+     */
+    kAnsModeLow = 1,
+    /** 
+     * @brief 适用于抑制中度平稳噪音，如空调声、风扇声。
+     */
+    kAnsModeMedium = 2,
+    /** 
+     * @brief 适用于抑制嘈杂非平稳噪音，如键盘声、敲击声、碰撞声、动物叫声。
+     */
+    kAnsModeHigh = 3,
+    /** 
+     * @brief 启用音频降噪能力。具体的降噪算法由 RTC 决定。
+     */
+    kAnsModeAutomatic = 4,
+};
+
+/** 
+ * @type keytype
  * @brief 本地用户在房间内的位置坐标，需自行建立空间直角坐标系
  */
 struct Position {
     /** 
      * @brief x 坐标
      */
-    int x;
+    float x;
     /** 
      * @brief y 坐标
      */
-    int y;
+    float y;
     /** 
      * @brief z 坐标
      */
-    int z;
+    float z;
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     bool isEqual(const Position& pos) const {
-        return x == pos.x && y == pos.y && z == pos.z;
+        return (fabs(x - pos.x) < 1e-2) &&
+        (fabs(y - pos.y) < 1e-2) &&
+        (fabs(z - pos.z) < 1e-2);
     }
 };
 
 /** 
- * @hidden(Linux)
+ * @type keytype
+ * @brief 方向朝向信息
+ */
+struct Orientation {
+    /** 
+     * @brief x 坐标
+     */
+    float x;
+    /** 
+     * @brief y 坐标
+     */
+    float y;
+    /** 
+     * @brief z 坐标
+     */
+    float z;
+    /**
+     * @hidden constructor/destructor
+     */
+    bool isEqual(const Orientation& orientation) const {
+        return x == orientation.x && y == orientation.y && z == orientation.z;
+    }
+};
+
+/** 
+ * @type keytype
+ * @brief 三维朝向信息，三个向量需要两两垂直。参看 Orientation{@link #Orientation}。
+ */
+struct HumanOrientation {
+    /** 
+     * @brief 正前方朝向，默认值为 {1,0,0}，即正前方朝向 x 轴正方向
+     */
+    Orientation forward =  { 1, 0, 0 };
+    /** 
+     * @brief 正右方朝向，默认值为 {0,1,0}，即右手朝向 y 轴正方向
+     */
+    Orientation right = { 0, 1, 0 };
+    /** 
+     * @brief 正上方朝向，默认值为 {0,0,1}，即头顶朝向 z 轴正方向
+     */
+    Orientation up = { 0, 0, 1 };
+    /**
+     * @hidden constructor/destructor
+     */
+    bool isEqual(const HumanOrientation& human_orientation) const {
+        return forward.isEqual(human_orientation.forward) && right.isEqual(human_orientation.right) && up.isEqual(human_orientation.up);
+    }
+};
+
+/** 
  * @type keytype
  * @brief 音频音量是否可设置
  */
@@ -859,6 +1158,20 @@ enum AudioAbilityType {
      */
     kAudioAbilityUnable = 1,
 };
+/** 
+ * @type keytype
+ * @brief 远端音频流精准对齐模式
+ */
+enum AudioAlignmentMode {
+    /** 
+     * @brief 不对齐
+     */
+    kAudioAlighmentModeOff,
+    /** 
+     * @brief 远端音频流都对齐伴奏进度同步播放
+     */
+    kAudioAlighmentModeAudioMixing,
+};
 
 /** 
  * @type keytype
@@ -870,9 +1183,13 @@ struct AudioDeviceInfo {
      */
     char device_id[MAX_DEVICE_ID_LENGTH];
     /** 
-     * @brief 设备名称
+     * @brief 设备全称，包含设备类型与设备名称。例如 "扬声器 (XYZ Audio Adapter)"
      */
     char device_name[MAX_DEVICE_ID_LENGTH];
+    /** 
+     * @brief 设备名称，不含设备类型。例如 "XYZ Audio Adapter"
+     */
+    char device_short_name[MAX_DEVICE_ID_LENGTH];
     /** 
      * @brief 设备所连接的声卡 ID，便于选择使用同一声卡的扬声器和麦克风。
      */
@@ -898,11 +1215,12 @@ struct AudioDeviceInfo {
      */
     bool is_system_default;
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     AudioDeviceInfo() {
         memset(device_id, 0, MAX_DEVICE_ID_LENGTH);
         memset(device_name, 0, MAX_DEVICE_ID_LENGTH);
+        memset(device_short_name, 0, MAX_DEVICE_ID_LENGTH);
         memset(device_container_id, 0, MAX_DEVICE_ID_LENGTH);
         this->device_vid = 0;
         this->device_pid = 0;
@@ -910,18 +1228,18 @@ struct AudioDeviceInfo {
         this->volume_settable = AudioAbilityType::kAudioAbilityTypeUnknown;
         this->is_system_default = false;
     }
-
-    /** 
-     * @hidden
-     * @brief 342需求，缺注释，需补齐
+    /**
+     * @hidden constructor/destructor
      */
     AudioDeviceInfo& operator=(const AudioDeviceInfo& src) {
         if (this != &src) {
             strncpy(device_id, src.device_id, MAX_DEVICE_ID_LENGTH - 1);
             strncpy(device_name, src.device_name, MAX_DEVICE_ID_LENGTH - 1);
+            strncpy(device_short_name, src.device_short_name, MAX_DEVICE_ID_LENGTH - 1);
             strncpy(device_container_id, src.device_container_id, MAX_DEVICE_ID_LENGTH - 1);
             device_id[MAX_DEVICE_ID_LENGTH - 1] = '\0';
             device_name[MAX_DEVICE_ID_LENGTH - 1] = '\0';
+            device_short_name[MAX_DEVICE_ID_LENGTH - 1] = '\0';
             device_container_id[MAX_DEVICE_ID_LENGTH - 1] = '\0';
             device_vid = src.device_vid;
             device_pid = src.device_pid;
@@ -934,26 +1252,24 @@ struct AudioDeviceInfo {
     }
 };
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief 标准音高数据
  */
 struct StandardPitchInfo {
-/** 
- * @brief 开始时间，单位 ms。
- */
-int start_time;
-/** 
- * @brief 持续时间，单位 ms。
- */
-int duration;
-/** 
- * @brief 音高。
- */
-int pitch;
+    /** 
+     * @brief 开始时间，单位 ms。
+     */
+    int start_time;
+    /** 
+     * @brief 持续时间，单位 ms。
+     */
+    int duration;
+    /** 
+     * @brief 音高。
+     */
+    int pitch;
 };
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief K 歌打分维度。
  */
@@ -964,63 +1280,197 @@ enum MulDimSingScoringMode {
     kMulDimSingScoringModeNote = 0
 };
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief K 歌评分配置。
  */
 struct SingScoringConfig {
-/** 
- * @brief 音频采样率。仅支持 44100 Hz、48000 Hz。
- */
-AudioSampleRate sample_rate;
-/** 
- * @brief 打分维度，详见 MulDimSingScoringMode{@link #MulDimSingScoringMode}。
- */
-MulDimSingScoringMode mode;
-/** 
- * @brief 歌词文件路径。打分功能仅支持 KRC 歌词文件。
- */
-const char* lyrics_filepath;
-/** 
- * @brief 歌曲 midi 文件路径。
- */
-const char* midi_filepath;
+    /** 
+     * @brief 音频采样率。仅支持 44100 Hz、48000 Hz。
+     */
+    AudioSampleRate sample_rate;
+    /** 
+     * @brief 打分维度，详见 MulDimSingScoringMode{@link #MulDimSingScoringMode}。
+     */
+    MulDimSingScoringMode mode;
+    /** 
+     * @brief 歌词文件路径。打分功能仅支持 KRC 歌词文件。
+     */
+    const char* lyrics_filepath;
+    /** 
+     * @brief 歌曲 midi 文件路径。
+     */
+    const char* midi_filepath;
 };
 /** 
- * @hidden(Linux)
  * @type keytype
  * @brief 实时评分信息。
  */
 struct SingScoringRealtimeInfo {
-/** 
- * @brief 当前播放进度。
- */
-int current_position;
-/** 
- * @brief 演唱者的音高。
- */
-int user_pitch;
-/** 
- * @brief 标准音高。
- */
-int standard_pitch;
-/** 
- * @brief 歌词分句索引。
- */
-int sentence_index;
-/** 
- * @brief 上一句歌词的评分。
- */
-int sentence_score;
-/** 
- * @brief 当前演唱的累计分数。
- */
-int total_score;
-/** 
- * @brief 当前演唱的平均分数。
- */
-int average_score;
+    /** 
+     * @brief 当前播放进度。
+     */
+    int current_position;
+    /** 
+     * @brief 演唱者的音高。
+     */
+    int user_pitch;
+    /** 
+     * @brief 标准音高。
+     */
+    int standard_pitch;
+    /** 
+     * @brief 歌词分句索引。
+     */
+    int sentence_index;
+    /** 
+     * @brief 上一句歌词的评分。
+     */
+    int sentence_score;
+    /** 
+     * @brief 当前演唱的累计分数。
+     */
+    int total_score;
+    /** 
+     * @brief 当前演唱的平均分数。
+     */
+    int average_score;
 };
-
+/** 
+ * @type keytype
+ * @brief 音频文件录制内容来源。
+ */
+enum AudioFrameSource {
+    /** 
+     * @brief 本地麦克风采集的音频数据。
+     */
+    kAudioFrameSourceMic = 0,
+    /** 
+     * @brief 远端所有用户混音后的数据
+     */
+    kAudioFrameSourcePlayback = 1,
+    /** 
+     * @brief 本地麦克风和所有远端用户音频流的混音后的数据
+     */
+    kAudioFrameSourceMixed = 2,
+};
+/** 
+ * @type keytype
+ * @brief 音频质量。
+ */
+enum AudioQuality {
+    /** 
+     * @brief 低音质
+     */
+    kAudioQualityLow = 0,
+    /** 
+     * @brief 中音质
+     */
+    kAudioQualityMedium = 1,
+    /** 
+     * @brief 高音质
+     */
+    kAudioQualityHigh = 2,
+    /** 
+     * @brief 超高音质
+     */
+    kAudioQualityUltraHigh = 3,
+};
+/** 
+ * @type keytype
+ * @brief 录音配置
+ */
+struct AudioRecordingConfig {
+    /**
+     * @hidden Constructor/Destructor
+     */
+    AudioRecordingConfig() {
+        absolute_file_name = nullptr;
+        frame_source = kAudioFrameSourceMixed;
+        sample_rate = kAudioSampleRateAuto;
+        channel = kAudioChannelAuto;
+        quality = kAudioQualityMedium;
+    }
+    /** 
+     * @brief 录制文件路径。一个有读写权限的绝对路径，包含文件名和文件后缀。
+     * @notes 录制文件的格式仅支持 .aac 和 .wav。
+     */
+    const char* absolute_file_name;
+    /** 
+     * @brief 录音内容来源，参看 AudioFrameSource{@link #AudioFrameSource}。
+     */
+    AudioFrameSource frame_source;
+    /** 
+     * @brief 录音采样率。参看 AudioSampleRate{@link #AudioSampleRate}。
+     */
+    AudioSampleRate sample_rate;
+    /** 
+     * @brief 录音音频声道。参看 AudioChannel{@link #AudioChannel}。
+     * @notes 如果录制时设置的的音频声道数与采集时的音频声道数不同：<br>
+     *        + 如果采集的声道数为 1，录制的声道数为 2，那么，录制的音频为经过单声道数据拷贝后的双声道数据，而不是立体声。<br>
+     *        + 如果采集的声道数为 2，录制的声道数为 1，那么，录制的音频为经过双声道数据混合后的单声道数据。
+     */
+    AudioChannel channel;
+    /** 
+     * @brief 录音音质。仅在录制文件格式为 .aac 时可以设置。参看 AudioQuality{@link #AudioQuality}。
+     * @notes 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是： <br>
+     *        + 低音质：1.2MB；<br>
+     *        + 中音质：2MB；<br>
+     *        + 高音质：3.75MB；<br>
+     *        + 超高音质：7.5MB。
+     */
+    AudioQuality quality;
+};
+/** 
+ * @type keytype
+ * @brief 录音配置
+ */
+enum AudioRecordingState {
+    /** 
+     * @brief 录制异常
+     */
+    kAudioRecordingStateError = 0,
+    /** 
+     * @brief 录制进行中
+     */
+    kAudioRecordingStateProcessing = 1,
+    /** 
+     * @brief 已结束录制，并且录制文件保存成功。
+     */
+    kAudioRecordingStateSuccess = 2,
+};
+/** 
+ * @type errorcode
+ * @brief 音频文件录制的错误码
+ */
+enum AudioRecordingErrorCode {
+    /** 
+     * @brief 录制正常
+     */
+    kAudioRecordingErrorCodeOk = 0,
+    /** 
+     * @brief 没有文件写权限
+     */
+    kAudioRecordingErrorCodeNoPermission = -1,
+    /** 
+     * @brief 没有进入房间
+     */
+    kAudioRecordingErrorNotInRoom = -2,
+    /** 
+     * @brief 录制已经开始
+     */
+    kAudioRecordingAlreadyStarted = -3,
+    /** 
+     * @brief 录制还未开始
+     */
+    kAudioRecordingNotStarted = -4,
+    /** 
+     * @brief 录制失败。文件格式不支持。
+     */
+    kAudioRecordingErrorCodeNotSupport = -5,
+    /** 
+     * @brief 其他异常
+     */
+    kAudioRecordingErrorCodeOther = -6,
+};
 
 }  // namespace bytertc

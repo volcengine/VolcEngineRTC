@@ -33,37 +33,6 @@ enum StreamLayoutMode {
 
 /** 
  * @type keytype
- * @brief 公共流错误码。
- */
-enum PublicStreamErrorCode {
-    /** 
-     * @brief 推流成功。
-     */
-    kPublicStreamOK = 200,
-    /** 
-     * @brief 推流参数错误。
-     */
-    kPushPublicStreamInvalidParam = 1191,
-    /** 
-     * @brief 推流状态异常。
-     */
-    kPushPublicStreamInvalidStatus = 1192,
-    /** 
-     * @brief 推流内部错误。
-     */
-    kPushPublicStreamInternalError = 1193,
-    /** 
-     * @brief 推流失败。
-     */
-    kPushPublicStreamPushFailed = 1195,
-    /** 
-     * @brief 推流消息发送超时。
-     */
-    kPushPublicStreamTimeout = 1196,
-};
-
-/** 
- * @type keytype
  * @brief 公共流视频裁剪配置
  */
 typedef struct SourceCrop {
@@ -99,7 +68,7 @@ typedef struct PublicStreamVideoParam {
     int32_t height;
     /** 
      * @brief 公共流视频帧率。必填<br>
-     *        范围：[1, 60] 
+     *        范围：[1, 60]
      */
     int32_t fps;
     /** 
@@ -138,13 +107,11 @@ typedef struct PublicStreamAudioParam {
  */
 typedef struct PublicStreamLayoutRegion {
     /** 
-     * @brief 目标公共流用户的 ID。必填。  <br>
-     *        服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。
+     * @brief 目标公共流用户的 ID, 不能为空
      */
     const char* user_id = "";
     /** 
-     * @brief 跨房间订阅流时，目标流所在的房间 ID。 必填。  <br>
-     *        服务端将通过用户 ID 和 房间 ID，找到需要合成到公共流中的媒体流。
+     * @brief 跨房间订阅流时，目标流所在的房间 ID, 不能为空
      */
     const char* room_id = "";
     /** 
@@ -152,7 +119,7 @@ typedef struct PublicStreamLayoutRegion {
      */
     const char* alternate_image_uri = "";
     /** 
-     * @brief 用户视频布局相对画布左侧的偏移量，取值的范围为 [0.0, 1.0)。必填。  
+     * @brief 用户视频布局相对画布左侧的偏移量，取值的范围为 [0.0, 1.0)。必填。
      */
     float x;
     /** 
@@ -242,6 +209,7 @@ struct PublicStreamConfig {
      */
     PublicStreamVideoParam video_config;
     /** 
+     * @hidden currently not available
      * @brief 公共流音频编码参数配置，必填。详见 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
     PublicStreamAudioParam audio_config;
@@ -259,9 +227,8 @@ class IPublicStreamParam : public ITranscoderParamBase {
 public:
     /** 
      * @type api
-     * @brief 获取公共流的布局模式，多路媒体流将按照指定的布局模式，合成为一路公共流。目前只支持 `kLayoutCustomerMode` 模式
+     * @brief 获取公共流的布局模式，多路媒体流将按照指定的布局模式，合成为一路公共流。
      * @return 公共流的布局模式，参看 StreamLayoutMode{@link #StreamLayoutMode}
-     *          `2`：自定义
      */
     virtual StreamLayoutMode layoutMode() = 0;
     /** 
@@ -279,6 +246,7 @@ public:
      */
     virtual const char* backgroundImageUri() = 0;
     /** 
+     * @hidden currently not available
      * @type api
      * @brief 获取公共流音频编码参数
      * @return 公共流音频编码参数内容，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
@@ -352,13 +320,12 @@ public:
      */
     virtual bool checkParameter(const char* json_str) = 0;
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     virtual ~IPublicStreamParam() = default;
 };
 
 /** 
- * @hidden
  * @type api
  * @brief 创建公共流参数实例
  */

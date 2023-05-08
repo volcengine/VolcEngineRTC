@@ -5,6 +5,7 @@
 
 #pragma once
 
-#include "bytertc_common_defines.h"
+#include "bytertc_rts_defines.h"
+#include "bytertc_media_defines.h"
 #include "bytertc_audio_defines.h"
 #include "bytertc_video_defines.h"

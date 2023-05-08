@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.join_room_btn).setOnClickListener(this);
         findViewById(R.id.setting_btn_tv).setOnClickListener(this);
         // 获取当前SDK的版本号
-        String sdkVersion = RTCVideo.getSdkVersion();
+        String sdkVersion = RTCVideo.getSDKVersion();
         TextView versionTv = findViewById(R.id.version_tv);
         versionTv.setText(String.format("VolcEngineRTC v%s", sdkVersion));
 
@@ -75,11 +75,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
         if (!Pattern.matches(Constants.INPUT_REGEX, roomId)) {
-            Toast.makeText(this, "房间号格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "输入不合法，只支持数字、大小写字母、@._-", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!Pattern.matches(Constants.INPUT_REGEX, userId)) {
-            Toast.makeText(this, "用户名格式错误", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "输入不合法，只支持数字、大小写字母、@._-", Toast.LENGTH_SHORT).show();
             return;
         }
         Intent intent = new Intent(this, RTCRoomActivity.class);

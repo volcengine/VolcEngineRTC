@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.ScreenVideoEncoderConfig;
 import com.ss.bytertc.engine.VideoEncoderConfig;
 import com.ss.bytertc.engine.data.ScreenMediaType;
 import com.ss.bytertc.engine.data.StreamIndex;
@@ -135,7 +136,7 @@ public class ShareScreenComponent implements LifecycleEventObserver {
     private void startScreenCapture(Intent data) {
         startRXScreenCaptureService(data);
         //编码参数
-        VideoEncoderConfig config = new VideoEncoderConfig();
+        ScreenVideoEncoderConfig config = new ScreenVideoEncoderConfig();
         Pair<Integer, Integer> videoSize = mVideoConfig.getResolution();
         config.width = (videoSize.first != null && videoSize.first > 0) ? videoSize.first : 720;
         config.height = (videoSize.second != null && videoSize.second > 0) ? videoSize.second : 1280;

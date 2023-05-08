@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "bytertc_common_defines.h"
+#include "bytertc_rts_defines.h"
 #include "bytertc_video_frame.h"
 
 namespace bytertc {
@@ -161,7 +161,6 @@ enum TransCodingError {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推直播包含内容。
  */
@@ -181,7 +180,6 @@ enum LiveTranscodingContentControl {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推直播视频编码器格式。
  */
@@ -197,7 +195,6 @@ enum LiveTranscodingVideoCodec {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推直播音频编码格式。
  */
@@ -209,7 +206,6 @@ enum LiveTranscodingAudioCodec {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief AAC 编码等级。
  */
@@ -233,7 +229,6 @@ enum LiveTranscodingAudioProfile {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推视频配置。
  */
@@ -271,7 +266,6 @@ struct LiveTranscodingVideoConfig {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推音频配置。
  */
@@ -299,7 +293,6 @@ struct LiveTranscodingAudioConfig {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 单个视频流在合流中的布局信息。
  */
@@ -347,7 +340,6 @@ struct LiveTranscodingRegion {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推流布局设置。
  */
@@ -371,7 +363,6 @@ struct LiveTranscodingLayout {
 };
 
 /** 
- * @hidden
  * @type keytype
  * @brief 转推直播配置信息。
  */
@@ -393,15 +384,12 @@ struct LiveTranscodingConfig {
      */
     LiveTranscodingLayout layout;
     /** 
-     * @hidden
      * @brief 设置动态扩展自定义参数。
      */
     const char* advanced_config = nullptr;
 };
 
 /** 
- * @hidden
- * @deprecated since 332.1, use VirtualBackgroundSourceType instead
  * @type keytype
  * @brief 背景模式
  */
@@ -425,8 +413,6 @@ enum BackgroundMode {
 };
 
 /** 
- * @hidden
- * @deprecated since 332.1, use enableVirtualBackground instead
  * @type keytype
  * @brief 分割模型
  */
@@ -442,8 +428,6 @@ enum DivideMode {
 };
 
 /** 
- * @hidden
- * @deprecated since 336.1 along with onStreamAdd
  * @type keytype
  * @brief 流属性。  <br>
  */
@@ -501,20 +485,20 @@ struct SubscribeVideoConfig {
      */
     int priority = 0;
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     SubscribeVideoConfig() : video_index(0), priority(0) {
     }
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     bool operator==(const SubscribeVideoConfig& config) const {
         bool result = video_index == config.video_index && priority == config.priority;
         return result;
     }
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     bool operator!=(const SubscribeVideoConfig& config) const {
         bool result = (*this == config);
@@ -569,20 +553,20 @@ struct SubscribeConfig {
      */
     int sub_height = 0;
     /**
-     * @hidden
+     * @hidden for internal use only
      */
     int sub_video_index = -1;
 
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     SubscribeConfig() : is_screen(false), sub_video(true), sub_audio(true), video_index(0), priority(0) {
     }
 
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     SubscribeConfig(bool is_screen, bool subvideo, bool subaudio, int videoindex)
@@ -590,7 +574,7 @@ public:
     }
 
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     SubscribeConfig(bool is_screen, bool subvideo, bool subaudio, int videoindex, int priority)
@@ -602,7 +586,7 @@ public:
     }
 
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     SubscribeConfig(bool is_screen, bool subvideo, bool subaudio, int videoindex,
@@ -617,7 +601,7 @@ public:
               sub_height(height) {
     }
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     bool operator==(const SubscribeConfig& config) const {
         // sub_width * sub_height valid
@@ -636,7 +620,7 @@ public:
     }
 
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     bool operator!=(const SubscribeConfig& config) const {
         bool result = (*this == config);
@@ -675,17 +659,17 @@ struct VideoCanvas {
      */
     int render_mode;
     /** 
-     * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x0000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+     * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
      */
     uint32_t background_color;
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     VideoCanvas() : view(NULL), render_mode(kRenderModeHidden), background_color(0) {
     }
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 构造函数
      */
     VideoCanvas(void* v, int m, uint32_t c) : view(v), render_mode(m), background_color(c) {
@@ -772,8 +756,6 @@ enum MouseCursorCaptureState {
 };
 
 /** 
- * @hidden
- * @deprecated
  * @type keytype
  * @brief 屏幕共享参数
  */
@@ -786,6 +768,15 @@ struct ScreenParameters {
      * @brief 屏幕采集编码码率, `-1` 为自动码率, SDK 会根据宽高信息选择合适的码率，单位 kbps
      */
     int kbitrate = -1;
+    /**  
+     * @brief 视频最小编码码率, 单位 kbps。编码码率不会低于 `min_kbitrate`。<br>
+     *        默认值为 `0`。<br>
+     *        范围：[0, kbitrate)，当 `kbitrate` < `min_kbitrate` 时，为适配码率模式。<br>
+     *        以下情况，设置本参数无效：<br>
+     *        + 当 `kbitrate` 为 `0` 时，不对视频流进行编码发送。<br>
+     *        + 当 `kbitrate` < `0` 时，适配码率模式。
+     */
+    int min_kbitrate = 0;
 };
 
 /** 
@@ -810,17 +801,13 @@ enum ContentHint {
  */
 struct ScreenCaptureParameters {
     /** 
-     * @brief 内容类型，参看 ContentHint{@link #ContentHint}。
-     */
-    ContentHint content_hint = kContentHintDetails;
-    /** 
      * @brief 采集区域，参看 Rectangle{@link #Rectangle}。
      */
     Rectangle region_rect;
     /** 
      * @brief 是否采集鼠标状态，参看 MouseCursorCaptureState{@link #MouseCursorCaptureState}。
      */
-    MouseCursorCaptureState capture_mouse_cursor;
+    MouseCursorCaptureState capture_mouse_cursor = MouseCursorCaptureState::kMouseCursorCaptureStateOn;
     /** 
      * @brief 屏幕过滤设置，填写不需要采集的窗口 ID，参看 ScreenFilterConfig{@link #ScreenFilterConfig}。
      */
@@ -853,7 +840,12 @@ struct DesktopCaptureParameters {
      */
     int bitrate = -1;
     /** 
-     * @brief 是否捕获鼠标光标
+     * @brief 最小编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
+     *        最小编码码率必须小于或等于最大编码，否则不对视频流进行编码发送。
+     */
+    int min_bitrate = 0;
+    /** 
+     * @brief 是否捕获鼠标光标。
      */
     bool capture_mouse_cursor = true;
     /** 
@@ -897,8 +889,13 @@ enum PixelFormat {
      * @return 返回值暂未使用
      */
     virtual bool onFrame(IVideoFrame* videoFrame) = 0;
+    /**
+     * @hidden for internal use only
+     * @valid since 3.50
+     */
+    virtual bool onCacheSyncedFrames(int count, const char** uidArray, IVideoFrame** videoFrameArray) = 0;
+
     /** 
-     * @hidden
      * @type callback
      * @region 房间管理
      * @brief 获取外部渲染耗时。
@@ -913,7 +910,7 @@ enum PixelFormat {
     virtual void release() {
     }
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IVideoSink() = default;
@@ -922,7 +919,7 @@ enum PixelFormat {
 /** 
  * @hidden
  * @type keytype
- * @deprecated since 329.1, use MirrorType instead
+ * @deprecated since 3.29 and will be deleted in 3.51, use MirrorType{@link #MirrorType} instead.
  * @brief 是否开启镜像模式
  */
 enum MirrorMode {
@@ -978,21 +975,21 @@ enum VideoSourceType {
     /** 
      * @brief 自定义采集视频源
      */
-    VideoSourceTypeExternal = 0,
+    kVideoSourceTypeExternal = 0,
     /** 
      * @brief 内部采集视频源
      */
-    VideoSourceTypeInternal = 1,
+    kVideoSourceTypeInternal = 1,
     /** 
      * @brief 自定义编码视频源。  <br>
      *        你仅需推送分辨率最大的一路编码后视频流，SDK 将自动转码生成多路小流
      */
-    VideoSourceTypeEncodedWithAutoSimulcast = 2,
+    kVideoSourceTypeEncodedWithAutoSimulcast = 2,
     /** 
      * @brief 自定义编码视频源。  <br>
      *        SDK 不会自动生成多路流，你需要自行生成并推送多路流
      */
-    VideoSourceTypeEncodedWithoutAutoSimulcast = 3,
+    kVideoSourceTypeEncodedWithoutAutoSimulcast = 3,
 };
 
 /** 
@@ -1033,11 +1030,20 @@ struct VideoRateInfo {
     /** 
      * @brief 帧率，单位 fps
      */
-    int fps;
+    int fps = 0;
     /** 
      * @brief 码率，单位 kbps
      */
-    int bitrate_kbps;
+    int bitrate_kbps = 0;
+    /**  
+     * @brief 视频最小编码码率, 单位 kbps。编码码率不会低于 `min_bitrate_kbps`。<br>
+     *        默认值为 `0`。<br>
+     *        范围：[0, bitrate_kbps)，当 `bitrate_kbps` < `min_bitrate_kbps` 时，为适配码率模式。<br>
+     *        以下情况，设置本参数无效：<br>
+     *        + 当 `bitrate_kbps` 为 `0` 时，不对视频流进行编码发送。<br>
+     *        + 当 `bitrate_kbps` < `0` 时，适配码率模式。
+     */
+    int min_bitrate_kbps = 0;
 };
 
 /** 
@@ -1083,10 +1089,10 @@ struct VideoCaptureConfig {
         */
        KAutoPerformance = 2,
     };
-   /** 
-    * @brief 视频采集模式，参看 CapturePreference{@link #CapturePreference}
-    */
-   CapturePreference capturePreference = CapturePreference::KAuto;
+    /** 
+     * @brief 视频采集模式，参看 [CapturePreference](#capturepreference-2)
+     */
+    CapturePreference capturePreference = CapturePreference::KAuto;
 
     /** 
      * @brief 视频采集分辨率的宽度，单位：px。
@@ -1145,7 +1151,37 @@ enum RTCVideoDeviceType {
 };
 
 /** 
- * @hidden(Windows, MacOS, Linux)
+ * @type keytype
+ * @brief 公共流状态码
+ */
+enum PublicStreamErrorCode {
+    /** 
+     * @brief 发布或订阅成功
+     */
+    kPublicStreamOK = 0,
+    /** 
+     * @brief 公共流的参数异常，请修改参数后重试
+     */
+    kPublicStreamPushInvalidParam = 1191,
+    /** 
+     * @brief 服务端状态异常，将自动重试
+     */
+    kPublicStreamPushInvalidStatus = 1192,
+    /** 
+     * @brief 内部错误，不可恢复，请重试。
+     */
+    kPublicStreamPushInternalError = 1193,
+    /** 
+     * @brief 推流失败，将自动重试，用户不需要处理
+     */
+    kPublicStreamPushFailed = 1195,
+    /** 
+     * @brief 推流失败，10s 后会重试，重试 3 次失败后自动停止。
+     */
+    kPublicStreamPushTimeout = 1196,
+};
+
+/** 
  * @type keytype
  * @brief 视频旋转模式
  */
@@ -1202,7 +1238,7 @@ enum FrameRateRatio {
  */
 struct RemoteVideoConfig {
     /** 
-     * @brief 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。  <br>
+     * @brief 期望订阅的最高帧率，单位：fps，默认值为 0 即满帧订阅，设为大于 0 的值时开始生效。  <br>
      *        当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。  <br>
      *        仅码流支持 SVC 分级编码特性时方可生效。
      */
@@ -1227,7 +1263,7 @@ struct RTCRoomConfig {
     RoomProfileType room_profile_type = kRoomProfileTypeCommunication;
     /** 
      * @brief 是否自动发布音视频流，默认为自动发布。 <br>
-     *        创建和加入多房间时，只能将其中一个房间设置为自动发布。<br>
+     *        创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>
      *        若调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
      */
    bool is_auto_publish = true;
@@ -1237,7 +1273,7 @@ struct RTCRoomConfig {
      */
     bool is_auto_subscribe_audio = true;
     /** 
-     * @brief 是否自动订阅主视频流，默认为自动订阅。<br>
+     * @brief 是否自动订阅视频流，默认为自动订阅。<br>
      *        包含主流和屏幕流。 
      */
     bool is_auto_subscribe_video = true;
@@ -1311,7 +1347,7 @@ struct VideoDeviceInfo {
      */
     DeviceTransportType transport_type;
     /**
-     * @hidden
+     * @hidden constructor/destructon
      */
     VideoDeviceInfo() {
         memset(device_id, 0, MAX_DEVICE_ID_LENGTH);
@@ -1322,7 +1358,7 @@ struct VideoDeviceInfo {
     };
 
     /**
-     * @hidden
+     * @hidden constructor/destructon
      */
     VideoDeviceInfo& operator=(const VideoDeviceInfo& src) {
         if (this != &src) {
@@ -1337,6 +1373,73 @@ struct VideoDeviceInfo {
 
         return *this;
     }
+};
+
+/** 
+ * @type keytype
+ * @brief 视频帧朝向
+ */
+enum VideoOrientation {
+    /** 
+     * @brief （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。
+     */
+    kVideoOrientationAdaptive = 0,
+    /** 
+     * @brief 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。
+     */
+    kVideoOrientationPortrait = 1,
+    /** 
+     * @brief 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。
+     */
+    kVideoOrientationLandscape = 2
+};
+
+/** 
+ * @type keytype
+ * @hidden for internal use only
+ * @brief 超分状态改变原因。
+ */
+enum VideoSuperResolutionModeChangedReason {
+    /** 
+     * @brief 调用 setRemoteVideoSuperResolution{@link #IRTCVideo#setRemoteVideoSuperResolution} 成功关闭超分。
+     */
+    kVideoSuperResolutionModeChangedReasonAPIOff = 0,
+    /** 
+     * @brief 调用 setRemoteVideoSuperResolution{@link #IRTCVideo#setRemoteVideoSuperResolution} 成功开启超分。
+     */
+    kVideoSuperResolutionModeChangedReasonAPIOn = 1,
+    /** 
+     * @brief 开启超分失败，远端视频流的原始视频分辨率超过 640 × 360 px。
+     */
+    kVideoSuperResolutionModeChangedReasonResolutionExceed = 2,
+    /** 
+     * @brief 开启超分失败，已对一路远端流开启超分。
+     */
+    kVideoSuperResolutionModeChangedReasonOverUse = 3,
+    /** 
+     * @brief 设备不支持使用超分辨率。
+     */
+    kVideoSuperResolutionModeChangedReasonDeviceNotSupport = 4,
+    /** 
+     * @brief 当前设备性能存在风险，已动态关闭超分。
+     */
+    kVideoSuperResolutionModeChangedReasonDynamicClose = 5,
+    /** 
+     * @brief 超分因其他原因关闭。
+     */
+    kVideoSuperResolutionModeChangedReasonOtherSettingDisabled = 6,
+    /** 
+     * @brief 超分因其他原因开启。
+     */
+    kVideoSuperResolutionModeChangedReasonOtherSettingEnabled = 7,
+    /** 
+     * @brief SDK 没有编译超分组件。
+     */
+    kVideoSuperResolutionModeChangedReasonNoComponent = 8,
+    /** 
+     * @brief 远端流不存在。房间 ID 或用户 ID 无效，或对方没有发布流。
+     */
+    kVideoSuperResolutionModeChangedReasonStreamNotExist = 9,
 };
 
 /** 
@@ -1389,20 +1492,26 @@ struct ScreenCaptureSourceInfo {
      * @brief 共享的应用窗体所属应用进程的 pid<br>
      *        当共享对象为应用窗体时有效 <br>
      */
-     int pid;
+     int pid = 0;
     /** 
      * @brief 共享的屏幕是否为主屏。<br>
      *        当共享对象为屏幕时有效 <br>
      */
      bool primaryMonitor = false;
     /** 
-     * @brief 屏幕共享对象的坐标。多显示器的场景下，屏幕坐标以主屏左上角为原点 (0, 0)，向右向下扩展。详见 Rectangle{@link #Rectangle}。
+     * @brief 屏幕共享对象的坐标。详见 Rectangle{@link #Rectangle}。<br>
+     *        仅在采集源为显示器屏幕时有效。<br>
+     *        + 对于多屏幕的场景，不同平台的坐标系原点不同：<br>
+     *          - 对于 Windows 平台，屏幕坐标以主屏左上角为原点 (0, 0)，向右向下扩展。<br>
+     *          — 对于 Linux 平台，屏幕坐标以 **恰好包住所有显示器的矩形区域的左上角** 为原点 (0, 0)，向右向下扩展。<br>
+     *        + 对于不同平台，窗口区域不同：<br>
+     *          - 对于 Windows 和 macOS 平台，窗口区域包含系统标题栏。<br>
+     *          - 对于 Linux 平台，窗口区域不包含系统标题栏。
      */
     Rectangle region_rect;
 };
 
 /** 
- * @hidden(Linux)
  * @type api
  * @region 屏幕共享
  * @brief 屏幕共享对象信息列表
@@ -1410,9 +1519,9 @@ struct ScreenCaptureSourceInfo {
  */
 class IScreenCaptureSourceList {
 public:
-  /**
-   * @hidden
-   */
+   /**
+    * @hidden constructor/destructor
+    */
     virtual ~IScreenCaptureSourceList() {
     }
     /** 
@@ -1447,7 +1556,7 @@ public:
 class IExternalVideoEncoderEventHandler {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IExternalVideoEncoderEventHandler(){}
@@ -1493,7 +1602,7 @@ public:
 class ILocalEncodedVideoFrameObserver {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~ILocalEncodedVideoFrameObserver() {
@@ -1516,7 +1625,7 @@ public:
 class IRemoteEncodedVideoFrameObserver {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IRemoteEncodedVideoFrameObserver() {
@@ -1551,8 +1660,7 @@ struct VideoMetadataBuffer {
 };
 
 /** 
- * @hidden
- * @deprecated since 326.1, use sendSEIMessage instead
+ * @deprecated since 3.26 and will be deleted in 3.51, use [sendSEIMessage](70098#IRTCVideo-sendseimessage-2) instead.
  * @type callback
  * @region 视频数据回调
  * @brief metadata 观察者，可以接收媒体流中的 metadata， 或者向媒体流中添加 metadata
@@ -1560,7 +1668,7 @@ struct VideoMetadataBuffer {
 class IMetadataObserver {
 public:
     /**
-     * @hidden
+     * @hidden constructor/destructor
      */
     virtual ~IMetadataObserver() {
     }
@@ -1593,6 +1701,7 @@ public:
 };
 
 /** 
+ * @deprecated since 3.50 and will be deleted in 3.55.
  * @type callback
  * @region 视频管理
  * @brief 视频数据回调观察者
@@ -1600,7 +1709,7 @@ public:
 class IVideoFrameObserver {
 public:
     /** 
-     * @hidden
+     * @hidden constructor/destructor
      * @brief 析构函数
      */
     virtual ~IVideoFrameObserver() = default;
@@ -1643,7 +1752,6 @@ public:
     virtual bool onRemoteVideoFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
 
     /** 
-     * @hidden
      * @type callback
      * @region 视频管理
      * @brief 拼接视频数据回调
@@ -1655,16 +1763,18 @@ public:
         return false;
     }
 };
-/**  
+/** 
  * @hidden(Linux)
  * @type callback
  * @brief 截图的回调。
  */
 class ISnapshotResultCallback {
 public:
+    /**
+     * @hidden constructor/destructor
+     */
     virtual ~ISnapshotResultCallback() = default;
-    /**  
-     * @hidden(Linux)
+    /** 
      * @type callback
      * @brief 调用 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 截取视频画面时，收到此回调。
      * @param [in] taskId 本地截图任务的编号。和 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 的返回值一致。
@@ -1676,8 +1786,7 @@ public:
      *        + -2: 截图错误。流无效。
      */
     virtual void onTakeLocalSnapshotResult(long taskId, StreamIndex streamIndex, IVideoFrame* image, int errorCode) = 0;
-    /**  
-     * @hidden(Linux)
+    /** 
      * @type callback
      * @brief 调用 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 截取视频画面时，收到此回调。
      * @param [in] taskId 远端截图任务的编号。和 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 的返回值一致。

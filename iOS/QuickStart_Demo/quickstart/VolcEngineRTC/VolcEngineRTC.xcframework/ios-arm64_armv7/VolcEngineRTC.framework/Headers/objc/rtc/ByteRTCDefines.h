@@ -3,6 +3,7 @@
  * @brief Objective-C VolcEngineRTC RTC Defines
 */
 
-#import "ByteRTCCommonDefines.h"
+#import "ByteRTCRtsDefines.h"
+#import "ByteRTCMediaDefines.h"
 #import "ByteRTCAudioDefines.h"
 #import "ByteRTCVideoDefines.h"
