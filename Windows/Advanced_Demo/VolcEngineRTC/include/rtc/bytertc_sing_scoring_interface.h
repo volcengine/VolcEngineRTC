@@ -17,12 +17,12 @@ namespace bytertc {
  */
 class ISingScoringEventHandler {
 public:
-/** 
- * @type callback
- * @brief 实时评分信息回调。调用 startSingScoring{@link #ISingScoringManager#startSingScoring} 后，会收到该回调。
- * @param info 实时评分信息。
- */
-virtual void onCurrentScoringInfo(
+    /** 
+     * @type callback
+     * @brief 实时评分信息回调。调用 startSingScoring{@link #ISingScoringManager#startSingScoring} 后，会收到该回调。
+     * @param info 实时评分信息。
+     */
+    virtual void onCurrentScoringInfo(
                  const SingScoringRealtimeInfo& info) = 0;
 };
 /** 
@@ -69,7 +69,7 @@ public:
      * @param sing_scoring_appkey K 歌评分密钥，用于鉴权验证 K 歌功能是否开通。
      * @param sing_scoring_token K 歌评分密钥，用于鉴权验证 K 歌功能是否开通。
      * @param handler K 歌评分事件回调类，详见 ISingScoringEventHandler{@link #ISingScoringEventHandler}。
-     * @notes 输入正确的鉴权信息才可以使用 K 歌评分相关的功能，鉴权方式为离线鉴权，根据包名（bundleID）绑定 Appkey 及 Token，K 歌评分密钥请联系技术支持同学申请。
+     * @notes 输入正确的鉴权信息才可以使用 K 歌评分相关的功能，鉴权方式为离线鉴权，根据包名（bundleID）绑定 Appkey 及 Token，K 歌评分密钥请联系技术支持人员申请。
      * @return  <br>
      *        + 0：配置成功。
      *        + -1：接口调用失败。

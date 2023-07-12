@@ -414,12 +414,12 @@ public:
 
     /** 
      * @type api
-     * @hidden(Android,iOS,Linux)
+     * @hidden currently not available
      * @region 音频设备管理
      * @brief 开启/关闭过滤无声设备功能。
      * @param [in] enable 是否开启过滤无声设备功能:
-     *        + 1: 是
-     *        + 0: 否
+     *        + 1: 是。
+     *        + 0: 否。
      * @return  + 0：方法调用成功。
      */
     virtual int enableFilterSilentDevice(bool enable) = 0;

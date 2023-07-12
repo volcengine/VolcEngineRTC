@@ -76,7 +76,9 @@ public:
      * @return  <br>
      *        + 0：成功；
      *        + !0：失败。
-     * @notes 请勿同时调用 updateToken{@link #IRTCAudioRoom#updateToken} 和 joinRoom{@link #IRTCAudioRoom#joinRoom} 方法更新 Token。若因 Token 过期或无效导致加入房间失败或已被移出房间，你应该在获取新的有效 Token 后调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 重新加入房间。
+     * @notes <br>
+     *      + 3.50（不含）以前的版本中，Token 中的发布和订阅权限为保留参数，无实际控制权限；3.50 及以后版本开放 Token 发布订阅控制权限，如需通过 Token 控制连麦权限，请联系技术支持团队开通白名单后支持。
+     *      + 请勿同时调用 updateToken{@link #IRTCAudioRoom#updateToken} 和 joinRoom{@link #IRTCAudioRoom#joinRoom} 方法更新 Token。若因 Token 过期或无效导致加入房间失败或已被移出房间，你应该在获取新的有效 Token 后调用 joinRoom{@link #IRTCAudioRoom#joinRoom} 重新加入房间。
      */
     virtual int updateToken(const char* token) = 0;
 
@@ -360,6 +362,66 @@ public:
      *        + 当该方法与 setPlaybackVolume{@link #IRTCAudio#setPlaybackVolume} 方法共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
      */
     virtual void setRemoteRoomAudioPlaybackVolume(int volume) = 0;
+
+    /** 
+     * @valid since 3.52.
+     * @type api
+     * @region 房间管理
+     * @brief 设置本端发布流在音频选路中的优先级。
+     * @param audioSelectionPriority 本端发布流在音频选路中的优先级，默认正常参与音频选路。参见 AudioSelectionPriority{@link #AudioSelectionPriority}。 
+     * @notes 
+     * 在控制台上为本 appId 开启音频选路后，调用本接口才会生效。进房前后调用均可生效。更多信息参见[音频选路](https://www.volcengine.com/docs/6348/113547)。
+     * 如果本端用户同时加入不同房间，使用本接口进行的设置相互独立。
+     * 
+     */
+    virtual int setAudioSelectionConfig(AudioSelectionPriority audio_selection_priority) = 0;
+
+    /** 
+     * @valid since 3.52.
+     * @type api
+     * @region 房间管理
+     * @brief 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。
+     * @param [in] key 房间附加信息键值，长度小于 10 字节。<br>
+     *        同一房间内最多可存在 5 个 key，超出则会从第一个 key 起进行替换。
+     * @param [in] value 房间附加信息内容，长度小于 128 字节。
+     * @return  <br>
+     *        + 0: 方法调用成功，返回本次调用的任务编号； <br>
+     *        + <0: 方法调用失败，具体原因详见 SetRoomExtraInfoResult{@link #SetRoomExtraInfoResult}。  
+     * @notes  <br>
+     *       + 在设置房间附加信息前，必须先调用 joinRoom{@link #RTCAudioRoom#joinRoom} 加入房间。  <br>
+     *       + 调用该方法后，会收到一次 onSetRoomExtraInfoResult{@link #IRTCAudioRoomEventHandler#onSetRoomExtraInfoResult} 回调，提示设置结果。  <br>
+     *       + 调用该方法成功设置附加信息后，同一房间内的其他用户会收到关于该信息的回调 onRoomExtraInfoUpdate{@link #IRTCAudioRoomEventHandler#onRoomExtraInfoUpdate}。<br>
+     *       + 新进房的用户会收到进房前房间内已有的全部附加信息通知。
+     */
+    virtual int64_t setRoomExtraInfo(const char*key,const char*value) = 0;
+    /** 
+     * @valid since 3.52.
+     * @type api
+     * @region 字幕翻译服务
+     * @brief 识别或翻译房间内所有用户的语音，形成字幕。<br>
+     *        语音识别或翻译的结果会通过 onSubtitleMessageReceived{@link #IRTCAudioRoomEventHandler#onSubtitleMessageReceived}  事件回调给你。<br> 
+     *        调用该方法后，用户会收到 onSubtitleStateChanged{@link #IRTCAudioRoomEventHandler#onSubtitleStateChanged} 回调，通知字幕是否开启。
+     * @param [in] subtitleConfig 字幕配置信息。参看 SubtitleConfig{@link #SubtitleConfig}。
+     * @return  <br>
+     *        +  0: 调用成功。  <br>
+     *        + !0: 调用失败。
+     * @notes <br>
+     *         此方法需要在进房后调用。  <br> 
+     *         如果想要指定源语言，你需要在进房前调用 `joinRoom` 接口，通过 extraInfo 参数传入 `"source_language": "zh"` JSON 字符串，设置源语言为中文；传入 `"source_language": "en"`JSON 字符串，设置源语言为英文；传入 `"source_language": "ja"` JSON 字符串，设置源语言为日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。 <br> 
+     *         调用此方法前，你还需要前往[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
+     */ 
+    virtual int startSubtitle(const SubtitleConfig& subtitle_config) = 0;
+    /** 
+     * @valid since 3.52.
+     * @type api
+     * @region 字幕翻译服务
+     * @brief 关闭字幕。 <br>
+     *        调用该方法后，用户会收到 onSubtitleStateChanged{@link #IRTCAudioRoomEventHandler#onSubtitleStateChanged} 回调，通知字幕是否关闭。
+     * @return  <br>
+     *        +  0: 调用成功。  <br>
+     *        + !0: 调用失败。 
+     */
+    virtual int stopSubtitle() = 0;
 };
 
 }  // namespace bytertc

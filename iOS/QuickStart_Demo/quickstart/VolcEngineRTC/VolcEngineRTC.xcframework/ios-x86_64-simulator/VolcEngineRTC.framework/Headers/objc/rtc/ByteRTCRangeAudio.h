@@ -58,8 +58,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @brief 开启/关闭范围语音功能。  <br>
  *        范围语音是指，在同一 RTC 房间中设定的音频接收距离范围内，本地用户收听到的远端用户音频音量会随着远端用户的靠近/远离而放大/衰减；若远端用户在房间内的位置超出设定范围，则本地用户无法接收其音频。音频接收范围设置参看 updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:}。
  * @param enable 是否开启范围语音功能：  <br>
- *        + true: 开启  <br>
- *        + false: 关闭（默认）
+ *        + YES: 开启  <br>
+ *        + NO: 关闭（默认）
  * @notes 该方法进房前后都可调用，为保证进房后范围语音效果的平滑切换，你需在该方法前先调用 updatePosition:{@link #ByteRTCRangeAudio#updatePosition:} 设置自身位置坐标，然后开启该方法收听范围语音效果。
  */
 - (void)enableRangeAudio:(BOOL)enable;

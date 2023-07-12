@@ -428,7 +428,7 @@
     [[ToastComponents shareToastComponents] showWithMessage:allStr];
 }
 
-- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserMessageSendResult:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error {
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserMessageSendResult:(NSInteger)msgid error:(ByteRTCUserMessageSendResult)error {
     NSString *message = @"";
     if (error == ByteRTCUserMessageSendResultSuccess) {
         message = @"点对点消息发送成功";
@@ -438,7 +438,7 @@
     [[ToastComponents shareToastComponents] showWithMessage:message];
 }
 
-- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onRoomMessageSendResult:(int64_t)msgid error:(ByteRTCRoomMessageSendResult)error {
+- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onRoomMessageSendResult:(NSInteger)msgid error:(ByteRTCRoomMessageSendResult)error {
     NSString *message = @"";
     if (error == ByteRTCRoomMessageSendResultSuccess) {
         message = @"广播消息发送成功";
@@ -620,10 +620,6 @@
     videoFrame.width = width;
     videoFrame.height = height;
     videoFrame.textureBuf = buffer;
-    videoFrame.cropLeft = 0;
-    videoFrame.cropTop = 0;
-    videoFrame.cropRight = 0;
-    videoFrame.cropBottom = 0;
     videoFrame.colorSpace = ByteRTCColorSpaceUnknown;
     videoFrame.rotation = ByteRTCVideoRotation0;
     videoFrame.extendedData = nil;

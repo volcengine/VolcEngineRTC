@@ -125,7 +125,7 @@ attribute_deprecated
  *        1.本函数是可选函数，默认使用正式环境；
  *        2.本函数必须在创建 RtcEngine 实例 createRtcEngine{@link #createRtcEngine} 前调用。
  */
-BYTERTC_API int setEnv(Env env);
+BYTERTC_API BYTERTC_DEPRECATED int setEnv(Env env);
 
 attribute_deprecated
 /** 
@@ -134,7 +134,7 @@ attribute_deprecated
  * @brief 设置设备ID
  * @param [in] device_id app根据当前软硬件环境生成的唯一设备id
  */
-BYTERTC_API void setDeviceId(const char* device_id);
+BYTERTC_API BYTERTC_DEPRECATED void setDeviceId(const char* device_id);
 /** 
  * @hidden for internal use only
  * @brief 设置应用的状态
@@ -208,7 +208,6 @@ BYTERTC_API void setApplicationContext(jobject j_application_context);
 #endif
 
 /** 
- * @hidden for internal use only
  * @type api
  * @region 视频管理
  * @type keytype
@@ -290,7 +289,6 @@ enum HWDeviceContextKey {
 };
 
 /** 
- * @hidden for internal use only
  * @type keytype
  * @brief 硬件加速设备 context
  */
@@ -629,6 +627,7 @@ protected:
 };
 
 /** 
+ * @deprecated since 3.51 and will be deleted in 3.53, use getAudioDeviceManager{@link #IRTCVideo#getAudioDeviceManager} instead
  * @hidden for internal use only
  * @type api
  * @brief 音频设备管理接口创建，该接口不依赖引擎，主要用于无引擎下的音频设备管理

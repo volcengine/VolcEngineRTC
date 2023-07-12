@@ -48,6 +48,21 @@
 
 /** 
  * @type callback
+ * @brief 当访问插件失败时回调。<br>
+ * @param extensionName 插件名字
+ * @param msg 失败说明
+ */
+ /**
+  * {en}
+  * @type callback
+  * @brief Failed to access extension.
+  * @param extensionName The name of extension
+  * @param msg failure description
+  */
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onExtensionAccessError:(NSString * _Nonnull)extensionName msg:(NSString * _Nonnull)msg;
+
+/** 
+ * @type callback
  * @region 多房间
  * @brief 发布端调用 setMultiDeviceAVSync:{@link #ByteRTCEngineKit#setMultiDeviceAVSync:} 后音视频同步状态发生改变时，会收到此回调。
  * @param engine ByteRTCEngineKit 实例
@@ -1310,7 +1325,7 @@ onPlayPublicStreamResult:(NSString *_Nonnull)publicStreamId
  *       SEI 不互相冲突时，将通过多次回调分别发送；<br>
  *       SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
  */
-- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onPublicStreamSEIMessageReceived:(NSString* _Nonnull)publicStreamId andMessage:(NSData* _Nonnull)message  andSourceType:(ByteRTCSEIMessageSourceType)sourceType;
+- (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onPublicStreamSEIMessageReceived:(NSString* _Nonnull)publicStreamId andMessage:(NSData* _Nonnull)message  andSourceType:(ByteRTCDataMessageSourceType)sourceType;
 
 /** 
  * @type callback
@@ -1349,6 +1364,8 @@ onPlayPublicStreamResult:(NSString *_Nonnull)publicStreamId
 - (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onEchoTestResult:(ByteRTCEchoTestResult)result;
 
 - (void)rtcEngine:(ByteRTCEngineKit * _Nonnull)engine onInvokeExperimentalAPI:(NSString * _Nonnull) param;
+
+- (void)rtcEngine:(ByteRTCEngineKit *_Nonnull)engine onHardwareEchoDetectionResult:(ByteRTCHardwareEchoDetectionResult)result;
 @end
 
 #pragma mark - ByteRTCEngineKit
@@ -3194,6 +3211,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
 #pragma mark Combined to Push
 
 /** 
+ * @deprecated since 3.52, use startPushMixedStreamToCDN instead.
  * @type api
  * @region 转推直播
  * @brief 新增转推直播任务，并设置合流的图片、视频视图布局和音频属性。  <br>
@@ -3207,9 +3225,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *       + 调用该方法后，启动结果和推流过程中的错误均会通过回调 onStreamMixingEvent:taskId:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:taskId:error:mixType:} 通知用户。
  *       + 调用 stopLiveTranscoding:{@link #ByteRTCEngineKit#stopLiveTranscoding:} 停止转推直播
  */
-- (int)startLiveTranscoding:(NSString * _Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer;
+- (int)startLiveTranscoding:(NSString * _Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer __deprecated_msg("deprecated since 352, will be deleted in 358, use startPushMixedStreamToCDN instead");
 
 /** 
+ * @deprecated since 3.52, use stopPushStreamToCDN instead.
  * @type api
  * @region 转推直播
  * @brief 停止转推直播，会收到 onStreamMixingEvent:taskId:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:taskId:error:mixType:} 回调。  <br>
@@ -3219,9 +3238,10 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *         +  0：方法调用成功  <br>
  *         + < 0：方法调用失败
  */
-- (int)stopLiveTranscoding:(NSString *_Nonnull)task_id;
+- (int)stopLiveTranscoding:(NSString *_Nonnull)task_id __deprecated_msg("deprecated since 352, will be deleted in 358, use stopPushStreamToCDN instead");
 
 /** 
+ * @deprecated since 3.52, use updatePushMixedStreamToCDN instead.
  * @type api
  * @region 多房间
  * @brief 更新转推直播参数，会收到 onStreamMixingEvent:taskId:error:mixType:{@link #LiveTranscodingDelegate#onStreamMixingEvent:taskId:error:mixType:} 回调。  <br>
@@ -3232,7 +3252,19 @@ DEPRECATED_MSG_ATTRIBUTE("Please use subscribeUserStream");
  *         +  0：方法调用成功  <br>
  *         + < 0：方法调用失败
  */
-- (int)updateLiveTranscoding:(NSString *_Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding;
+- (int)updateLiveTranscoding:(NSString *_Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding __deprecated_msg("deprecated since 352, will be deleted in 358, use updatePushMixedStreamToCDN instead");
+
+/** 
+ * @type api
+ * @region 转推直播
+ * @brief 停止转推直播，会收到 onSeamToCDNObserver#onMixingEvent:taskId:error:mixType:} 回调。  <br>
+ *        关于启动转推直播，参看 startPushMixedStreamToCDN{@link #ByteRTCEngineKit#startPushMixedStreamToCDN}。
+ * @param task_id 转推直播任务 ID。可以指定想要停止的转推直播任务。
+ * @return 方法调用结果。  <br>
+ *         +  0：方法调用成功  <br>
+ *         + < 0：方法调用失败
+ */
+- (void)stopPushStreamToCDN:(NSString *_Nonnull)task_id;
 
 /** 
  * @type api
@@ -3788,8 +3820,8 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @type api
  * @region 引擎管理
  * @brief 通话结束，将用户反馈的问题上报到 RTC <br>
- * @param types 预设问题列表，参看 ByteRTCProblemOption{@link #ByteRTCProblemOption}  <br>
- * @param desc 预设问题以外的其他问题的具体描述  <br>
+ * @param types 预设问题列表，参看 ByteRTCProblemFeedbackOption{@link #ByteRTCProblemFeedbackOption}  <br>
+ * @param info 预设问题以外的其他问题的具体描述，房间信息。参看  ByteRTCProblemFeedbackInfo{@link #ByteRTCProblemFeedbackInfo}  <br>
  * @return <br>
  *         + 0: 上报成功  <br>
  *         + -1: 上报失败，还没加入过房间 <br>
@@ -3798,7 +3830,7 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @notes 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；
  *        如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
  */
-- (int)feedback:(NSArray<ByteRTCProblemOption *> * _Nullable)types desc:(NSString* _Nullable)desc;
+- (int)feedback:(ByteRTCProblemFeedbackOption)types info:(ByteRTCProblemFeedbackInfo* _Nullable)info;
 
 #pragma mark Monitor Related
 // @name monitoring related api
@@ -5215,4 +5247,16 @@ DEPRECATED_MSG_ATTRIBUTE("Please use ByteRTCAudioMixingManager");
  * @return ret = 0 ? success : failed
  */
 - (int)invokeExperimentalAPI:(NSString * _Nonnull)param;
+
+
+/** 
+ * @type api
+ * @brief 用蜂窝网络改善通话质量。
+ * @param config 蜂窝增强的配置参数
+ * @notes <br>
+ *       + 调用此接口可设置蜂窝增强的媒体类型。
+ */
+- (void)setCellularEnhancement:(ByteRTCMediaTypeEnhancementConfig * _Nonnull)config;
+
+
 @end

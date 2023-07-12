@@ -55,12 +55,12 @@ public:
     /** 
      * @type api
      * @region 实时消息通信
-     * @brief 必须先登录，才能发送点对点消息和向应用服务器发送消息<br>
+     * @brief 登录 RTS 服务器。
+     *        必须先登录，才能发送点对点消息和向应用服务器发送消息<br>
      *        在调用本接口登录后，如果想要登出，需要调用 logout{@link #IRTS#logout}。  <br>
-     * @param [in] token  <br>
-     *        动态密钥  <br>
-     *        用户登录必须携带的 Token，用于鉴权验证。  <br>
-     *        登录 Token 与加入房间时必须携带的 Token 不同。测试时可使用控制台生成临时 Token，`roomId` 填任意值或置空，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。
+     * @param [in]token  用户登录必须携带的 Token，用于鉴权验证。
+     *               测试时可使用[控制台](https://console.volcengine.com/rtc/listRTC)生成临时 Token，`roomId` 填任意值。
+     *               正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token，`roomId` 置空，Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。
      * @param [in] uid  <br>
      *        用户 ID  <br>
      *        用户 ID 在 appid 的维度下是唯一的。
@@ -218,7 +218,23 @@ public:
      * @notes
      */
     virtual void setRuntimeParameters(const char * json_string) = 0;
+    /** 
+     * @hidden(macOS, Windows, Linux)
+     * @type api
+     * @brief 启用蜂窝网络辅助增强，改善通话质量。
+     * @param [in] enhance 是否开启。默认不开启。
+     */
+    virtual void setCellularEnhancement(bool enhance) = 0;
 
+    /** 
+     * @type api
+     * @region 代理
+     * @brief 设置本地代理
+     * @notes 要设置本地代理，调用 setLocalProxy{@link #IRTS#setLocalProxy}。
+     */
+    virtual int setLocalProxy(
+        const LocalProxyConfiguration* configurations,
+        int configuration_num) = 0;
 };
 
 /** 
@@ -239,25 +255,6 @@ public:
  */
 BYTERTC_API bytertc::IRTS* createRTS(const char* app_id,
         bytertc::IRTSEventHandler* event_handler, const char* parameters);
-
-/** 
- * @deprecated since 3.46 and will be deleted in 3.51, use createRTS{@link #IRTS#createRTS} instead.
- * @region 引擎管理
- * @brief 创建 RTCEngine 实例。
- * @param [in] app_id  <br>
- *        每个应用的唯一标识符。不同的 AppId 生成的实例进行音视频通话完全独立，无法互通。
- * @param [in] event_handler  <br>
- *        SDK 回调给应用层的 Callback 对象，详见 IRTSEventHandler{@link #IRTSEventHandler} 。
- * @param [in] parameters 保留参数
- * @return 可用的 IRTS{@link #IRTS} 实例。
- * @notes  <br>
- *        + 该方法创建并初始化 IRTS{@link #IRTS} 实例。使用 IRtcEngine，必须先调用该接口进行初始化。  <br>
- *        + IRTS{@link #IRTS} 实例通过指定的 IRTSEventHandler{@link #IRTSEventHandler}
- *          通知应用程序引擎运行时的事件。IRTSEventHandler{@link #IRTSEventHandler} 中定义的所有方法都是可选实现的。
- */
-BYTERTC_API bytertc::IRTS* createByteRTSWithPtr(
-        const char* app_id, std::unique_ptr<bytertc::IRTSEventHandler> event_handler,
-        const char* parameters);
 
 /** 
  * @type api

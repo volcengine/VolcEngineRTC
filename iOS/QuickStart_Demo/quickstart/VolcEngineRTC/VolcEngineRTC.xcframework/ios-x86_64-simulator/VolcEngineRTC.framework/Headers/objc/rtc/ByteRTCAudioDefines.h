@@ -458,6 +458,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioChannel) {
 };
 
 /** 
+ * @deprecated since 3.52, use ByteRTCMixedStreamAudioCodecType instead.
  * @type keytype
  * @brief 音频编码类型。
  */
@@ -467,6 +468,37 @@ typedef NS_ENUM(NSInteger, ByteRTCTranscodingAudioCodec) {
      * @brief AAC 格式。
      */
     ByteRTCTranscodingAudioCodecAAC = 0,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频编码类型(新)。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamAudioCodecType) {
+    /** 
+     * @type keytype
+     * @brief AAC 格式。
+     */
+    ByteRTCMixedStreamAudioCodecTypeAAC = 0,
+};
+
+/** 
+ * @type keytype
+ * @brief AAC 编码规格。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamAudioProfile) {
+    /** 
+     * @brief AAC-LC 规格，默认值。
+     */
+    ByteRTCMixedStreamAudioProfileLC   = 0,
+    /** 
+     * @brief HE-AAC v1 规格。
+     */
+    ByteRTCMixedStreamAudioProfileHEv1 = 1,
+    /** 
+     * @brief HE-AAC v2 规格。
+     */
+    ByteRTCMixedStreamAudioProfileHEv2 = 2,
 };
 
 /** 
@@ -853,15 +885,17 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioReportMode) {
 
 /** 
  * @type keytype
- * @brief 音频信息提示中是否包含本地混音音频数据。
+ * @brief rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 中包含的音频信息的范围。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioPropertiesMode) {
     /** 
-     * @brief 音频信息提示中，仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
+     * @brief 仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
      */
     ByteRTCAudioPropertiesModeMicrohone = 0,
     /** 
-     * @brief 音频信息提示中，除本地麦克风采集的音频数据和本地屏幕音频采集数据外，还包含本地混音的音频数据。
+     * @brief 包含以下信息：
+     *        + 本地麦克风采集的音频数据和本地屏幕音频采集数据；
+     *        + 本地混音的音频数据。
      */
     ByteRTCAudioPropertiesModeAudioMixing = 1
 };
@@ -987,14 +1021,17 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @brief 自定义音频处理器
  */
 @protocol ByteRTCAudioFrameProcessor <NSObject>
-/** 
-* @type callback
-* @brief 回调本地采集的音频帧地址，供自定义音频处理。
-* @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
-* @notes <br>
-*        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。<br>
-*        + 调用 enableAudioProcessor:audioFormat:{@link #ByteRTCVideo#enableAudioProcessor:audioFormat:}，并在参数中选择本地采集的音频时，收到此回调。
-*/
+/**  
+ * @type callback
+ * @brief 回调本地采集的音频帧地址，供自定义音频处理。
+ * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+ * @notes <br>
+ *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。此音频处理不会影响软件耳返音频数据。<br>
+ *        + 要启用此回调，必须调用 `enableAudioProcessor`，并在参数中选择本地采集的音频。
+ * @return  <br>
+ *        + 0： 成功。  <br>
+ *        + < 0： 失败。  <br>
+ */
 - (int)onProcessRecordAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
 * @type callback
@@ -1011,17 +1048,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 * @notes 调用 `enableAudioProcessor`,并在参数中选择各个远端音频流时，收到此回调。
 */
 - (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)stream_info  audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-
-
 /** 
+ * @valid since 3.50
  * @hidden(macOS)
  * @type callback
- * @region 音频处理
  * @brief 软件耳返音频数据的回调。你可根据此回调自定义处理音频。
- * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
- * @notes <br>
- *        + 此数据处理只影响耳返音频数据。<br>
- *        + 调用 enableAudioProcessor:audioFormat:{@link #ByteRTCVideo#enableAudioProcessor:audioFormat:} 把返回给音频处理器的音频类型设置为耳返音频后，你将收到此回调。
+ *        软件耳返音频中包含通过调用 `setVoiceReverbType:` 和 `setVoiceChangerType:` 设置的音频特效。
+ * @param audioFrame 音频帧地址。参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+ * @notes  <br>
+ *        + 此数据处理只影响软件耳返音频数据。  <br>
+ *        + 要启用此回调，必须调用 enableAudioProcessor:audioFormat:{@link #ByteRTCVideo#enableAudioProcessor:audioFormat:}，并选择耳返音频。
+ * @return  <br>
+ *        + 0： 成功。  <br>
+ *        + < 0： 失败。  <br>
  */
 - (int)onProcessEarMonitorAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 
@@ -1541,8 +1580,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 @property(nonatomic, assign) float smooth;
 
 /** 
- * @type keytype
- * @brief 设置 `rtcEngine:onLocalAudioPropertiesReport:` 回调中是否包含本地混音音频数据。参看 ByteRTCAudioPropertiesMode{@link #ByteRTCAudioPropertiesMode}。<br>
+ * @brief rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 中包含音频数据的范围。参看 ByteRTCAudioPropertiesMode{@link #ByteRTCAudioPropertiesMode}。
  *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
  */
 @property(assign, nonatomic) ByteRTCAudioPropertiesMode audio_report_mode;
@@ -1907,3 +1945,31 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioRecordingErrorCode) {
      */
     ByteRTCAudioRecordingErrorCodeOther = -6,
 };
+/** 
+ * @type keytype
+ * @brief 蜂窝网络辅助增强应用的媒体模式
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEnhancementConfig: NSObject
+/** 
+ * @brief 对信令消息，是否启用蜂窝网络辅助增强。默认不启用。
+ */
+@property (assign, nonatomic) BOOL enhanceSignaling;
+/** 
+ * @brief 对音频，是否启用蜂窝网络辅助增强。默认不启用。
+ */
+@property (assign, nonatomic) BOOL enhanceAudio;
+@end
+/** 
+ * @type keytype
+ * @brief 用户在空间音频坐标系里的位置信息。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCPositionInfo : NSObject
+/** 
+ * @brief 用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 Position{@link #Position}。
+ */
+@property(strong, nonatomic) Position *_Nonnull position;
+/** 
+ * @brief 用户在空间音频坐标系里的三维朝向信息。三个向量需要两两垂直。参看 HumanOrientation{@link #HumanOrientation}。
+ */
+@property(strong, nonatomic) HumanOrientation *_Nonnull orientation;
+@end

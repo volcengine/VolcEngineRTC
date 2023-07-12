@@ -196,6 +196,7 @@ struct PublicStreamLayout {
     int regions_num = 0;
 };
 /** 
+ * @hidden currently not available
  * @type keytype
  * @brief 公共流配置信息
  */

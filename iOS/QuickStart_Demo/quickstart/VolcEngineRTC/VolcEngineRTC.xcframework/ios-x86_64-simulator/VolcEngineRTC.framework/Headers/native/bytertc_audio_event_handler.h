@@ -41,6 +41,26 @@ public:
     }
 
     /** 
+    * @valid since 3.52
+    * @type callback
+    * @brief 当访问插件失败时，收到此回调。
+    *        RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。
+    * @param [in] extensionName 插件名字
+    * @param [in] msg 失败说明
+    */
+    /**
+    * {en}
+    * @valid since 3.52
+    * @type callback
+    * @brief Failed to access the extension.
+    *        RTC SDK provides some features with extensions. Without implementing the extension, you cannot use the corresponding feature.
+    * @param [in] extensionName The name of extension.
+    * @param [in] msg Error message.
+    */
+    virtual void onExtensionAccessError(const char* extensionName, const char* msg) {
+    }
+
+    /** 
      * @type callback
      * @region 混音
      * @brief  音频混音文件播放状态改变时回调
@@ -175,6 +195,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCAudioEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTP 代理连接状态改变时，收到该回调。
      * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -185,6 +206,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCAudioEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTPS 代理连接状态改变时，收到该回调。
      * @param  [out] state 当前 HTTPS 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -195,6 +217,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCAudioEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief Socks5 代理状态改变时，收到该回调。
      * @param [out] state SOCKS5 代理连接状态，详见 Socks5ProxyState{@link #Socks5ProxyState}
@@ -396,7 +419,7 @@ public:
       * @type callback
       * @region 音频管理
       * @brief 调用 EnableAudioPropertiesReport{@link #IRTCAudio#enableAudioPropertiesReport} 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
-      *        本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
+      *        本地音频包括使用 RTC SDK 内部机制采集的麦克风音频，屏幕音频和本地混音音频信息。
       * @param [in] audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #LocalAudioPropertiesInfo} 。
       * @param [in] audio_properties_info_number 数组长度
       */
@@ -618,12 +641,39 @@ public:
     }
     /** 
      * @type callback
-     * @brief license过期时间提醒
-     * @param [in] days 过期时间天数
+     * @brief license 过期提醒。在剩余天数低于 30 天时，收到此回调。
+     * @param [in] days license 剩余有效天数
      */
-
     virtual void onLicenseWillExpire(int days) {
         (void)days;
+    }
+
+    /** 
+     * @hidden(Linux)
+     * @type callback
+     * @region 音频管理
+     * @brief 通话前回声检测结果回调。
+     * @param [in] hardwareEchoDetectionResult 参见 HardwareEchoDetectionResult{@link #HardwareEchoDetectionResult}
+     * @notes <br>
+     *        + 通话前调用 startHardwareEchoDetection{@link #IRTCAudio#startHardwareEchoDetection} 后，将触发本回调返回检测结果。<br>
+     *        + 建议在收到检测结果后，调用 stopHardwareEchoDetection{@link #IRTCAudio#stopHardwareEchoDetection} 停止检测，释放对音频设备的占用。<br>
+     *        + 如果 SDK 在通话中检测到回声，将通过 onAudioDeviceWarning{@link #IRTCAudioEventHandler#onAudioDeviceWarning} 回调 `kMediaDeviceWarningLeakEchoDetected`。
+     */
+    virtual void onHardwareEchoDetectionResult(HardwareEchoDetectionResult hardwareEchoDetectionResult) {
+        (void)hardwareEchoDetectionResult;
+    }
+    /** 
+     * @type callback
+     * @region proxy
+     * @brief 本地代理状态发生改变回调。调用 setLocalProxy{@link #IRTCAudio#setLocalProxy} 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。  <br>
+     * @param [in] localProxyType 本地代理类型。参看 LocalProxyType{@link #LocalProxyType} 。  <br>
+     * @param [in] localProxyState 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。  <br>
+     * @param [in] localProxyError 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。
+     */
+    virtual void onLocalProxyStateChanged(LocalProxyType localProxyType, LocalProxyState localProxyState, LocalProxyError localProxyError) {
+        (void)localProxyType;
+        (void)localProxyState;
+        (void)localProxyError;
     }
 };
 

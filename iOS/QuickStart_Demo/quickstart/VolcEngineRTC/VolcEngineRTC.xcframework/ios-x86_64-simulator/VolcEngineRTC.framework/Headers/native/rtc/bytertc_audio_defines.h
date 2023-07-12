@@ -188,7 +188,7 @@ enum AudioPlaybackDevice {
  * @type keytype
  * @brief 音频场景类型。<br>
  *        选择音频场景后，RTC 会自动根据客户端音频采集播放设备和采集播放状态，适用通话音量/媒体音量。<br>
- *        如果预设的音频场景类型无法满足你的业务需要，请联系技术支持同学进行定制。
+ *        如果预设的音频场景类型无法满足你的业务需要，请联系技术支持人员进行定制。
  */
 enum AudioScenarioType {
     /** 
@@ -877,15 +877,17 @@ enum AudioReportMode {
 
 /** 
  * @type keytype
- * @brief 音频信息提示中是否包含本地混音音频数据。
+ * @brief onLocalAudioPropertiesReport{@link #IRTCVideoEventHandler#onLocalAudioPropertiesReport} 中包含的音频信息的范围。
  */
 enum AudioPropertiesMode {
     /** 
-     * @brief 音频信息提示中，仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
+     * @brief 仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
      */
     kAudioPropertiesModeMicrophone,
     /** 
-     * @brief 音频信息提示中，除本地麦克风采集的音频数据和本地屏幕音频采集数据外，还包含本地混音的音频数据。
+     * @brief 包含以下信息：
+     *        + 本地麦克风采集的音频数据和本地屏幕音频采集数据；
+     *        + 本地混音的音频数据。
      */
     kAudioPropertiesModeAudioMixing
 };
@@ -925,7 +927,7 @@ struct AudioPropertiesConfig {
     float smooth = 1.0f;   
         
     /** 
-     * @brief 设置 `onLocalAudioPropertiesReport` 回调中是否包含本地混音音频数据。参看 AudioPropertiesMode{@link #AudioPropertiesMode}。<br>
+     * @brief onLocalAudioPropertiesReport{@link #IRTCVideoEventHandler#onLocalAudioPropertiesReport} 中包含音频数据的范围。参看 AudioPropertiesMode{@link #AudioPropertiesMode}。
      *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
      */
     AudioPropertiesMode audio_report_mode = kAudioPropertiesModeMicrophone;
@@ -1038,14 +1040,14 @@ enum AudioProfileType {
 
 /** 
  * @type keytype
- * @brief 降噪模式。降噪算法受进房时设置的房间模式影响。
+ * @brief 降噪模式。降噪算法受调用 joinRoom{@link #IRTCRoom#joinRoom} 时设置的房间模式影响。
  */
 enum AnsMode {
-   /** 
+    /** 
      * @brief 禁用音频降噪。
      */
     kAnsModeDisable = 0,
-     /** 
+    /** 
      * @brief 适用于微弱降噪。
      */
     kAnsModeLow = 1,
@@ -1471,6 +1473,21 @@ enum AudioRecordingErrorCode {
      * @brief 其他异常
      */
     kAudioRecordingErrorCodeOther = -6,
+};
+/** 
+ * @hidden(macOS, Windows, Linux)
+ * @type keytype
+ * @brief 蜂窝网络辅助增强应用的媒体模式
+ */
+struct AudioEnhancementConfig {
+    /** 
+     * @brief 对信令消息，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_signaling = false;
+    /** 
+     * @brief 对音频，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_audio = false;
 };
 
 }  // namespace bytertc

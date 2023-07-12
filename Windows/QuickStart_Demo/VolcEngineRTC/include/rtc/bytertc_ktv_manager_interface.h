@@ -8,70 +8,69 @@ namespace bytertc {
  * @type callback
  * @brief KTV 事件回调接口。
  */
-class IKTVEventHandler {
+class IKTVManagerEventHandler {
 
 public:
     /**
      * @hidden Constructor/Destructor
      * @brief Destructor
      */
-    virtual ~IKTVEventHandler(){
+    virtual ~IKTVManagerEventHandler() {
     }
 
     /** 
      * @type callback
      * @brief 歌曲列表回调。
-     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
-     * @param [in] total_musics_size 数据条目总数。
      * @param [in] music_infos 歌曲数据数组，参看 MusicInfo{@link #MusicInfo}。
      * @param [in] music_count 当前查询的数据条目数。
+     * @param [in] total_musics_size 数据条目总数。
+     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
      */
-    virtual void onMusicListResult(KTVErrorCode error_code, int total_musics_size, MusicInfo *music_infos, int music_count) {
-        (void)error_code;
-        (void)total_musics_size;
+    virtual void onMusicListResult(MusicInfo* music_infos, int music_count, int total_musics_size, KTVErrorCode error_code) {
         (void)music_infos;
         (void)music_count;
+        (void)total_musics_size;
+        (void)error_code;
     }
 
     /** 
      * @type callback
      * @brief 搜索歌曲结果回调。
-     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
-     * @param [in] total_musics_size 数据条目总数。
      * @param [in] music_infos 歌曲数据数组，参看 MusicInfo{@link #MusicInfo}。
      * @param [in] music_count 当前查询的数据条目数。
+     * @param [in] total_musics_size 数据条目总数。
+     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
      */
-    virtual void onSearchMusicResult(
-            KTVErrorCode error_code, int total_musics_size, MusicInfo* music_infos, int music_count) {
-        (void)error_code;
-        (void)total_musics_size;
+    virtual void onSearchMusicResult(MusicInfo* music_infos, int music_count, int total_musics_size, KTVErrorCode error_code) {
         (void)music_infos;
         (void)music_count;
+        (void)total_musics_size;
+        (void)error_code;
     }
 
     /** 
      * @type callback
      * @brief 热榜歌曲结果回调。
-     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
      * @param [in] hot_infos 热榜歌曲数据数组，参看 HotMusicInfo{@link #HotMusicInfo}。
      * @param [in] hot_count 当前查询的热榜歌曲数据条目数。
+     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
      */
-    virtual void onHotMusicResult(KTVErrorCode error_code, HotMusicInfo* hot_infos, int hot_count) {
-        (void)error_code;
+    virtual void onHotMusicResult(HotMusicInfo* hot_infos, int hot_count, KTVErrorCode error_code) {
         (void)hot_infos;
         (void)hot_count;
-    
+        (void)error_code;
     }
 
     /** 
      * @type callback
      * @brief 歌曲详细信息回调。
-     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
      * @param [in] music_info 歌曲数据，参看 MusicInfo{@link #MusicInfo}。
+     * @param [in] error_code 错误码，成功时返回 0，其余值参看 KTVErrorCode{@link #KTVErrorCode}。
+
      */
-    virtual void onMusicDetailResult(KTVErrorCode error_code, MusicInfo* music_info) {
-        (void)error_code;
+    virtual void onMusicDetailResult(MusicInfo* music_info, KTVErrorCode error_code) {
         (void)music_info;
+        (void)error_code;        
     }
 
     /** 
@@ -82,18 +81,18 @@ public:
      */
     virtual void onDownloadSuccess(int download_id, DownloadResult* download_info) {
         (void)download_id;
-        (void)download_info;
+        (void)download_info; 
     }
 
     /** 
      * @type callback
      * @brief 下载失败回调。
-     * @param error_code 错误码，参看 KTVErrorCode{@link #KTVErrorCode}。
      * @param download_id 下载任务 ID。
+     * @param error_code 错误码，参看 KTVErrorCode{@link #KTVErrorCode}。
      */
-    virtual void onDownloadFailed(KTVErrorCode error_code, int download_id) {
-        (void)error_code;
+    virtual void onDownloadFailed(int download_id, KTVErrorCode error_code) {
         (void)download_id;
+        (void)error_code; 
     }
 
     /** 
@@ -119,7 +118,6 @@ public:
      * @brief Destructor
      */
     virtual ~IKTVPlayerEventHandler() {
-        
     }
     
     /** 
@@ -136,9 +134,9 @@ public:
     /** 
      * @type callback
      * @brief 音乐播放状态改变回调。
-     * @param [in] error_code 错误码，参看 KTVPlayerErrorCode{@link #KTVPlayerErrorCode}。
      * @param [in] music_id 音乐 ID。
      * @param [in] play_state 音乐播放状态，参看 PlayState{@link #PlayState}。
+     * @param [in] error_code 错误码，参看 KTVPlayerErrorCode{@link #KTVPlayerErrorCode}。
      * @notes <br>
      *       此回调被触发的时机汇总如下：
      *       + 调用 playMusic{@link #IKTVPlayer#playMusic} 成功后，会触发 playState 值为 PlayStatePlaying 的回调；否则会触发 playState 值为 PlayStateFailed 的回调。
@@ -148,7 +146,7 @@ public:
      *       + 调用 stopMusic{@link #IKTVPlayer#stopMusic} 方法停止播放成功后，会触发 playState 值为 PlayStateStoped 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
      *       + 音乐播放结束会触发 playState 值为 PlayStateFinished 的回调。
      */
-    virtual void onPlayStateChange(bytertc::KTVPlayerErrorCode error_code, const char* music_id, PlayState play_state) {
+    virtual void onPlayStateChanged(const char* music_id, PlayState play_state, bytertc::KTVPlayerErrorCode error_code) {
         (void)music_id;
         (void)play_state;
         (void)error_code;
@@ -165,7 +163,7 @@ public:
      * @hidden Constructor/Destructor
      * @brief Destructor
      */
-    virtual ~IKTVPlayer(){}
+    virtual ~IKTVPlayer() = default;
     
     /** 
      * @type api
@@ -182,10 +180,10 @@ public:
      * @param [in] track_type 原唱伴唱类型，参看 AudioTrackType{@link #AudioTrackType}。
      * @param [in] play_type 音乐播放类型。参看 AudioPlayType{@link #AudioPlayType}。
      * @notes  <br>
-     *        + 调用接口后，你会收到 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调歌曲播放状态。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
-     *        + 若音乐文件不存在，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3020，play_state 为 4。
+     *        + 调用接口后，你会收到 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调歌曲播放状态。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 若音乐文件不存在，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3020，play_state 为 4。
      */
     virtual void playMusic(const char* music_id, AudioTrackType track_type, AudioPlayType play_type) = 0;
 
@@ -194,9 +192,9 @@ public:
      * @brief 暂停播放歌曲。
      * @param [in] music_id 音乐 ID。
      * @notes  <br>
-     *        + 调用接口后，你会收到 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调歌曲播放状态。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 调用接口后，你会收到 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调歌曲播放状态。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
      */
     virtual void pauseMusic(const char *music_id) = 0;
 
@@ -205,9 +203,9 @@ public:
      * @brief 继续播放歌曲。
      * @param [in] music_id 音乐 ID。
      * @notes  <br>
-     *        + 调用接口后，你会收到 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调歌曲播放状态。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 调用接口后，你会收到 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调歌曲播放状态。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
      */
     virtual void resumeMusic(const char *music_id) = 0;
 
@@ -216,9 +214,9 @@ public:
      * @brief 停止播放歌曲。
      * @param [in] music_id 音乐 ID。
      * @notes  <br>
-     *        + 调用接口后，你会收到 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调歌曲播放状态。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 调用接口后，你会收到 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调歌曲播放状态。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
      */
     virtual void stopMusic(const char *music_id) = 0;
 
@@ -229,9 +227,9 @@ public:
      * @param [in] position 音乐起始位置，单位为毫秒，取值小于音乐文件总时长。
      * @notes <br>
      *        + 调用本接口时音乐必须处于播放中状态。
-     *        + 调用接口后，你会收到 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调歌曲播放状态。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 调用接口后，你会收到 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调歌曲播放状态。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
      */
     virtual void seekMusic(const char *music_id, int position) = 0;
 
@@ -246,8 +244,8 @@ public:
      * @notes <br>
      *        + 调用本接口时音乐必须处于播放中状态。
      *        + 若设置的音量大于 400，则按最大值 400 进行调整；若设置的音量小于 0，则按最小值 0 进行调整。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
      */
     virtual void setMusicVolume(const char *music_id, int volume) = 0;
 
@@ -268,8 +266,8 @@ public:
      * @notes <br>
      *        + 调用本接口时音乐必须处于播放中状态。
      *        + 若设置的 pitch 大于 12，则按最大值 12 进行调整；若设置的 pitch 小于 –12，，则按最小值 –12 进行调整。
-     *        + 若音乐 ID 错误，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3023，play_state 为 4。
-     *        + 若未进房，会触发 onPlayStateChange{@link #IKTVPlayerEventHandler#onPlayStateChange} 回调，error_code 为 –3022，play_state 为 4。
+     *        + 若音乐 ID 错误，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3023，play_state 为 4。
+     *        + 若未进房，会触发 onPlayStateChanged{@link #IKTVPlayerEventHandler#onPlayStateChanged} 回调，error_code 为 –3022，play_state 为 4。
      */
     virtual void setMusicPitch(const char* music_id, int pitch) = 0;
 
@@ -285,8 +283,7 @@ public:
      * @hidden Constructor/Destructor
      * @brief Destructor
      */
-    virtual ~IKTVManager(){
-    }
+    virtual ~IKTVManager() = default;
     
     /** 
      * @type api
@@ -299,9 +296,9 @@ public:
     /** 
      * @type api
      * @brief 设置 KTV 回调接口。
-     * @param [in] ktvEventHandler KTV 回调类，参看 IKTVEventHandler{@link #IKTVEventHandler}。
+     * @param [in] ktvManagerEventHandler KTV 回调类，参看 IKTVManagerEventHandler{@link #IKTVManagerEventHandler}。
      */
-    virtual void setKTVEventHandler(IKTVEventHandler *ktvEventHandler) = 0;
+    virtual void setKTVManagerEventHandler(IKTVManagerEventHandler *ktvManagerEventHandler) = 0;
 
     /** 
      * @type api
@@ -309,27 +306,27 @@ public:
      * @param [in] page_num 页码，默认从 1 开始。
      * @param [in] page_size 每页显示歌曲的最大数量，取值范围 [1,99]。
      * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。
-     * @notes 调用接口后，你会收到 onMusicListResult{@link #IKTVEventHandler#onMusicListResult} 回调歌曲列表。
+     * @notes 调用接口后，你会收到 onMusicListResult{@link #IKTVManagerEventHandler#onMusicListResult} 回调歌曲列表。
      */
     virtual void getMusicList(int page_num, int page_size,  int filters) = 0;
 
     /** 
      * @type api
      * @brief 根据关键词搜索歌曲。
-     * @param [in] key_world 关键词，字符串长度最大为 20 个字符。
+     * @param [in] key_word 关键词，字符串长度最大为 20 个字符。
      * @param [in] page_num 页码，默认从 1 开始。
      * @param [in] page_size 每页显示歌曲的最大数量，取值范围 [1,99]。
      * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。
-     * @notes 调用接口后，你会收到 onSearchMusicResult{@link #IKTVEventHandler#onSearchMusicResult} 回调歌曲列表。
+     * @notes 调用接口后，你会收到 onSearchMusicResult{@link #IKTVManagerEventHandler#onSearchMusicResult} 回调歌曲列表。
      */
-    virtual void searchMusic(const char* key_world, int page_num, int page_size, int filters) = 0;
+    virtual void searchMusic(const char* key_word, int page_num, int page_size, int filters) = 0;
 
     /** 
      * @type api
      * @brief 根据榜单类别获取每个榜单的歌曲列表。
      * @param [in] hot_types 榜单类别，参看 MusicHotType{@link #MusicHotType}。
      * @param [in] filters 歌曲过滤方式，参看 MusicFilterType{@link #MusicFilterType}。
-     * @notes 调用接口后，你会收到 onHotMusicResult{@link #IKTVEventHandler#onHotMusicResult} 回调歌曲列表。
+     * @notes 调用接口后，你会收到 onHotMusicResult{@link #IKTVManagerEventHandler#onHotMusicResult} 回调歌曲列表。
      */
     virtual void getHotMusic(int hot_types, int filters) = 0;
 
@@ -338,7 +335,7 @@ public:
      * @type api
      * @brief 获取音乐详细信息。
      * @param [in] music_id 音乐 ID。
-     * @notes 调用接口后，你会收到 onMusicDetailResult{@link #IKTVEventHandler#onMusicDetailResult} 回调。
+     * @notes 调用接口后，你会收到 onMusicDetailResult{@link #IKTVManagerEventHandler#onMusicDetailResult} 回调。
      */
     virtual void getMusicDetail(const char* music_id) = 0;
 
@@ -348,9 +345,9 @@ public:
      * @param [in] music_id 音乐 ID。
      * @return 下载任务 ID。
      * @notes  <br>
-     *       + 若音乐下载成功，你会收到 onDownloadSuccess{@link #IKTVEventHandler#onDownloadSuccess} 回调。
-     *       + 若音乐下载失败，你会收到 onDownloadFailed{@link #IKTVEventHandler#onDownloadFailed} 回调。
-     *       + 音乐下载进度更新时，你会收到 onDownloadMusicProgress{@link #IKTVEventHandler#onDownloadMusicProgress} 回调。
+     *       + 若音乐下载成功，你会收到 onDownloadSuccess{@link #IKTVManagerEventHandler#onDownloadSuccess} 回调。
+     *       + 若音乐下载失败，你会收到 onDownloadFailed{@link #IKTVManagerEventHandler#onDownloadFailed} 回调。
+     *       + 音乐下载进度更新时，你会收到 onDownloadMusicProgress{@link #IKTVManagerEventHandler#onDownloadMusicProgress} 回调。
      */
     virtual int downloadMusic(const char* music_id) = 0;
 
@@ -361,8 +358,8 @@ public:
      * @param [in] type 歌词文件类型，参看 DownloadLyricType{@link #DownloadLyricType}。
      * @return 下载任务 ID。
      * @notes  <br>
-     *       + 若歌词下载成功，你会收到 onDownloadSuccess{@link #IKTVEventHandler#onDownloadSuccess} 回调。
-     *       + 若歌词下载失败，你会收到 onDownloadFailed{@link #IKTVEventHandler#onDownloadFailed} 回调。
+     *       + 若歌词下载成功，你会收到 onDownloadSuccess{@link #IKTVManagerEventHandler#onDownloadSuccess} 回调。
+     *       + 若歌词下载失败，你会收到 onDownloadFailed{@link #IKTVManagerEventHandler#onDownloadFailed} 回调。
      */
     virtual int downloadLyric(const char* music_id, DownloadLyricType type) = 0;
 
@@ -372,8 +369,8 @@ public:
      * @param [in] music_id 音乐 ID。
      * @return 下载任务 ID。
      * @notes  <br>
-     *       + 若文件下载成功，你会收到 onDownloadSuccess{@link #IKTVEventHandler#onDownloadSuccess} 回调。
-     *       + 若文件下载失败，你会收到 onDownloadFailed{@link #IKTVEventHandler#onDownloadFailed} 回调。
+     *       + 若文件下载成功，你会收到 onDownloadSuccess{@link #IKTVManagerEventHandler#onDownloadSuccess} 回调。
+     *       + 若文件下载失败，你会收到 onDownloadFailed{@link #IKTVManagerEventHandler#onDownloadFailed} 回调。
      */
     virtual int downloadMidi(const char* music_id) = 0;
 
@@ -396,7 +393,7 @@ public:
      * @brief 获取 KTV 播放器。
      * @return KTV 播放器接口，参看 IKTVPlayer{@link #IKTVPlayer}。
      */
-    virtual IKTVPlayer *getPlayer() = 0;
+    virtual IKTVPlayer *getKTVPlayer() = 0;
 
 };
 

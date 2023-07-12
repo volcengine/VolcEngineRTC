@@ -17,6 +17,7 @@
 #include "bytertc_audio_event_handler.h"
 
 namespace bytertc {
+
 /** 
  * @type api
  * @brief 引擎API
@@ -53,9 +54,8 @@ public:
      * @type api
      * @region 引擎管理
      * @brief 将用户反馈的问题上报到 RTC
-     * @param [in] type 预设问题列表，参看 ProblemFeedbackOption{@link #ProblemFeedbackOption}
-     * @param [in] count `problemDesc` 的长度
-     * @param [in] problemDesc 预设问题以外的其他问题的具体描述
+     * @param [in] types 预设问题列表，参看 ProblemFeedbackOption{@link #ProblemFeedbackOption}
+     * @param [in] info 预设问题以外的其他问题的具体描述, 房间信息。 参看 ProblemFeedbackInfo{@link #ProblemFeedbackInfo}
      * @return <br>
      *         + 0: 上报成功  <br>
      *         + -1: 上报失败，还没加入过房间 <br>
@@ -64,7 +64,7 @@ public:
      * @notes 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；
      *        如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
      */
-    virtual int feedback(ProblemFeedbackOption *type, int count, const char* problem_desc) = 0;
+    virtual int feedback(uint64_t types, const ProblemFeedbackInfo* info) = 0;
     /** 
      * @type api
      * @region 引擎管理
@@ -144,6 +144,34 @@ public:
     virtual void setAudioProfile(AudioProfileType audio_profile) = 0;
 
     /** 
+     * @type api
+     * @region 音频管理
+     * @brief 支持根据业务场景，设置通话中的音频降噪模式。
+     * @param [in] ansMode 降噪模式。具体参见 AnsMode{@link #AnsMode}。
+     * @notes 该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
+     */
+    virtual void setAnsMode(AnsMode ans_mode) = 0;
+
+    /** 
+     * @type api
+     * @valid since 3.51
+     * @region 音频设备管理
+     * @brief 打开/关闭 AGC(Automatic Gain Control) 自动增益控制功能。<br>
+     *        开启该功能后，SDK 会自动调节麦克风的采集音量，确保音量稳定。
+     * @param [in] enable 是否打开 AGC 功能: <br>
+     *        + true: 打开 AGC 功能。<br>
+     *        + false: 关闭 AGC 功能。
+     * @return  <br>
+     *        +  0: 调用成功。<br>
+     *        + -1: 调用失败。
+     * @notes  <br>
+     *         该方法在进房前后均可调用。如果你需要在进房前使用 AGC 功能，请联系技术支持获得私有参数，传入对应 RoomProfileType{@link #RoomProfileType} 。 <br>
+     *         要想在进房后开启 AGC 功能，你需要把 RoomProfileType{@link #RoomProfileType} 设置为 `kRoomProfileTypeMeeting` 、`kRoomProfileTypeMeetingRoom` 或 `kRoomProfileTypeClassroom` 。 <br>
+     *         AGC 功能生效后，不建议再调用 setAudioCaptureDeviceVolume{@link #IAudioDeviceManager#setAudioCaptureDeviceVolume} 来调节设备麦克风的采集音量。
+     */
+    virtual int enableAGC(bool enable) = 0;
+
+    /** 
      * @hidden(Linux)
      * @type api
      * @region 音量管理
@@ -159,7 +187,7 @@ public:
     /** 
      * @hidden(Linux)
      * @type api
-     * @region 音频管理
+     * @region 音量管理
      * @brief 调节本地播放的所有远端用户混音后的音量。播放音频前或播放音频时，你都可以使用此接口设定播放音量。
      * @param [in] volume 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br>
      *                    只改变音频数据的音量信息，不涉及本端硬件的音量调节。<br>
@@ -174,11 +202,8 @@ public:
     /** 
       * @type api
       * @region 音频管理
-      * @brief 启用音频信息提示。  <br>
+      * @brief 启用音频信息提示。开启提示后，你可以收到 onLocalAudioPropertiesReport{@link #IRTCAudioEventHandler#onLocalAudioPropertiesReport} 和 onRemoteAudioPropertiesReport{@link #IRTCAudioEventHandler#onRemoteAudioPropertiesReport}。
       * @param config 详见 AudioPropertiesConfig{@link #AudioPropertiesConfig}
-      * @notes 开启提示后，你可以：  <br>
-      *       + 通过 onLocalAudioPropertiesReport{@link #IRTCAudioEventHandler#onLocalAudioPropertiesReport} 回调获取本地麦克风和屏幕音频流采集的音频信息；  <br>
-      *       + 通过 onRemoteAudioPropertiesReport{@link #IRTCAudioEventHandler#onRemoteAudioPropertiesReport} 回调获取订阅的远端用户的音频信息。  <br>
       */
      virtual void enableAudioPropertiesReport(const AudioPropertiesConfig& config) = 0;
 
@@ -301,7 +326,7 @@ public:
      *        + -2: 消息发送失败。传入的消息内容为空。  <br>
      *        + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  <br>
      *        + -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 ErrorCode{@link #ErrorCode}。  <br>
-     * @notes 
+     * @notes
      * + 调用本接口的频率建议不超过 50 次每秒。
      * + 在 `kRoomProfileTypeInteractivePodcast` 房间模式下，此消息一定会送达。在其他房间模式下，如果本地用户未说话，此消息不一定会送达。
      */
@@ -577,7 +602,8 @@ public:
     virtual void stopFileRecording() = 0;
     /** 
      * @type api
-     * @brief 开启录制语音通话，生成本地文件。
+     * @brief 开启录制语音通话，生成本地文件。 <br>
+     *        在进房前后开启录制，如果未打开麦克风采集，录制任务正常进行，只是不会将数据写入生成的本地文件；只有调用 startAudioCapture{@link #IRTCAudio#startAudioCapture} 接口打开麦克风采集后，才会将录制数据写入本地文件。
      * @param [in] config 参看 AudioRecordingConfig{@link #AudioRecordingConfig}
      * @return  <br>
      *        + 0: 正常 <br>
@@ -585,8 +611,7 @@ public:
      *        + -3: 当前版本 SDK 不支持该特性，请联系技术支持人员
      * @notes <br>
      *        + 录制包含各种音频效果。但不包含背景音乐。<br>
-     *        + 调用 stopAudioRecording{@link #IRTCAudio#stopAudioRecording} 关闭录制。<br>
-     *        + 加入房间后才可调用。如果加入了多个房间，录制的文件中会包含各个房间的音频。离开最后一个房间后，录制任务自动停止。 <br>
+     *        + 加入房间前后均可调用。在进房前调用该方法，退房之后，录制任务不会自动停止，需调用stopAudioRecording{@link #IRTCAudio#stopAudioRecording} 关闭录制。在进房后调用该方法，退房之后，录制任务会自动被停止。如果加入了多个房间，录制的文件中会包含各个房间的音频。<br>
      *        + 调用该方法后，你会收到 onAudioRecordingStateUpdate{@link #IRTCAudioEventHandler#onAudioRecordingStateUpdate} 回调。  <br>
      */
     virtual int startAudioRecording(AudioRecordingConfig& config) = 0;
@@ -661,10 +686,9 @@ public:
      * @region 实时消息通信
      * @brief 必须先登录，才能调用 sendUserMessageOutsideRoom{@link #IRTCAudio#sendUserMessageOutsideRoom} 和 sendServerMessage{@link #IRTCAudio#sendServerMessage} 发送房间外点对点消息和向应用服务器发送消息 <br>
      *        在调用本接口登录后，如果想要登出，需要调用 logout{@link #IRTCAudio#logout}。  <br>
-     * @param [in] token  <br>
-     *        动态密钥  <br>
-     *        用户登录必须携带的 Token，用于鉴权验证。  <br>
-     *        登录 Token 与加入房间时必须携带的 Token 不同。测试时可使用控制台生成临时 Token，`roomId` 填任意值或置空，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。
+     * @param [in]token  用户登录必须携带的 Token，用于鉴权验证。
+     *               测试时可使用[控制台](https://console.volcengine.com/rtc/listRTC)生成临时 Token，`roomId` 填任意值。
+     *               正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token，`roomId` 置空，Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。
      * @param [in] uid  <br>
      *        用户 ID  <br>
      *        用户 ID 在 appid 的维度下是唯一的。
@@ -856,7 +880,64 @@ public:
      *        + 在合唱场景下，合唱参与者应在相同的网络时间播放背景音乐。
      */
     virtual NetworkTimeInfo getNetworkTimeInfo() = 0;
+    /** 
+     * @hidden(Linux)
+     * @type api
+     * @region 音频设备
+     * @brief 开启通话前回声检测。
+     * @param [in] test_audio_file_path 用于回声检测的音频文件的绝对路径，路径字符串使用 UTF-8 编码格式，支持以下音频格式: mp3，aac，m4a，3gp，wav。<br>
+     *         音频文件不为静音文件，推荐时长为 10 ～ 20 秒。
+     * @return 方法调用结果：  <br>
+     *        + 0: 成功。<br>
+     *        + -1：失败。上一次检测未结束，请先调用 stopHardwareEchoDetection{@link #IRTCAudio#stopHardwareEchoDetection} 停止检测 后重新调用本接口。
+     *        + -2：失败。路径不合法或音频文件格式不支持。
+     * @notes <br>
+     *        + 只有当 RoomProfileType{@link #RoomProfileType} 为 `kRoomProfileTypeMeeting` 和 `kRoomProfileTypeMeetingRoom` 时支持开启本功能。<br>
+     *        + 开启检测前，你需要向用户获取音频设备的使用权限。<br>
+     *        + 开启检测前，请确保音频设备没有被静音，采集和播放音量正常。<br>
+     *        + 调用本接口后监听 onHardwareEchoDetectionResult{@link #IRTCAudioEventHandler#onHardwareEchoDetectionResult} 获取检测结果。<br>
+     *        + 检测期间，进P程将独占音频设备，无法使用其他音频设备测试接口： startEchoTest{@link #IRTCAudio#startEchoTest}、startAudioDeviceRecordTest{@link #IRTCAudio#startAudioDeviceRecordTest} 或 startAudioPlaybackDeviceTest{@link #IRTCAudio#startAudioPlaybackDeviceTest}。 <br>
+     *        + 调用 stopHardwareEchoDetection{@link #IRTCAudio#stopHardwareEchoDetection} 停止检测，释放对音频设备的占用。
+     */
+    virtual int startHardwareEchoDetection(const char* test_audio_file_path) = 0;
+    /** 
+    * @hidden(Linux)
+    * @type api
+    * @brief 停止通话前回声检测
+    * @return 方法调用结果：  <br>
+    *        + 0: 成功。<br>
+    *        + -1：失败。
+    * @notes <br>
+    *       + 关于开启通话前回声检测，参看 startHardwareEchoDetection{@link #IRTCAudio#startHardwareEchoDetection} 。<br>
+    *       + 建议在收到 onHardwareEchoDetectionResult{@link #IRTCAudioEventHandler#onHardwareEchoDetectionResult} 通知的检测结果后，调用本接口停止检测。<br>
+    *       + 在用户进入房间前结束回声检测，释放对音频设备的占用，以免影响正常通话。
+    */
+    virtual int stopHardwareEchoDetection() = 0;
 
+    /** 
+     * @hidden(macOS, Windows, Linux)
+     * @type api
+     * @brief 启用蜂窝网络辅助增强，改善通话质量。
+     * @param [in] config 参看 AudioEnhancementConfig{@link #AudioEnhancementConfig}。
+     * @notes 此功能默认不开启。
+     */
+    virtual void setCellularEnhancement(const AudioEnhancementConfig& config) = 0;
+
+    /** 
+     * @type api
+     * @region 代理
+     * @brief 设置本地代理。
+     * @param [in] configurations 本地代理配置参数。参看 LocalProxyConfiguration{@link #LocalProxyConfiguration}。 <br>
+     *        你可以根据自己的需要选择同时设置 Http 隧道 和 Socks5 两类代理，或者单独设置其中一类代理。如果你同时设置了 Http 隧道 和 Socks5 两类代理，此时，媒体和信令采用 Socks5 代理， Http 请求采用 Http 隧道代理；如果只设置 Http 隧道 或 Socks5 一类代理，媒体、信令和 Http 请求均采用已设置的代理。 <br>
+     *        调用此接口设置本地代理后，若想清空当前已有的代理设置，可再次调用此接口，选择不设置任何代理即可清空。
+     * @param [in] configuration_num 本地代理配置参数的数量。
+     * @notes <br>
+     *       + 该方法需要在进房前调用。<br>
+     *       + 调用该方法设置本地代理后，SDK 会触发 onLocalProxyStateChanged{@link #IRTCAudioEventHandler#onLocalProxyStateChanged} ，返回代理连接的状态。
+     */
+    virtual int setLocalProxy(
+        const LocalProxyConfiguration* configurations,
+        int configuration_num) = 0;
 };
 
 /** 

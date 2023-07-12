@@ -70,7 +70,9 @@ enum StreamFlag {
     kStreamFlagNormal = 1 << 0,
     kStreamFlagDocShare = 1 << 1,
     kStreamFlagMCU = 1 << 2,
-    kStreamFlagMeetTogether = 1 << 3
+    kStreamFlagMeetTogether = 1 << 3,
+    // 1 << 4 被服务端占用用作 sip 流
+    kStreamFlagMultiStream = 1 << 5
 };
 
 class IEngineInternalEventHandler {

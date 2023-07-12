@@ -36,7 +36,6 @@ namespace bytertc {
  */
 class IRtcEngine {
 public:
-
     /** 
      * @hidden
      * @brief 析构函数
@@ -165,7 +164,7 @@ public:
      *        + 耳返功能仅在使用 RTC SDK 提供的内部音频采集功能，并连接了有线耳机时有效。<br>
      */
     virtual void setEarMonitorVolume(const int volume) = 0;
-    
+
     /** 
     * @hidden(macOS,Windows,Linux,Android)
     * @type api
@@ -174,7 +173,7 @@ public:
     * @notes 仅在媒体场景下生效。
     */
    virtual void setBluetoothMode(BluetoothMode mode) = 0;
-    
+
     /** 
      * @hidden
      * @deprecated since 327.1, use setScreenAudioStreamIndex instead
@@ -908,6 +907,17 @@ public:
     * + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 Auto 模式。
     */
    virtual int setVideoCaptureConfig(const VideoCaptureConfig& videoCaptureConfig) = 0;
+
+    /** 
+     * @hidden(Android,iOS)
+     * @type api
+     * @region 视频管理
+     * @brief 调整相机朝向角度，默认0度。
+     *        只支持PC端，建议使用场景为 外接摄像头倒置或者倾斜安装时，设置相机安装朝向角度。
+     *
+     * @param rotation
+     */
+    virtual void setVideoCaptureRotation(VideoRotation rotation) = 0;
 
     /** 
      * @type api
@@ -2054,9 +2064,8 @@ public:
      * @type api
      * @region 引擎管理
      * @brief 将用户反馈的问题上报到 RTC
-     * @param [in] type 预设问题列表，参看 ProblemFeedbackOption{@link #ProblemFeedbackOption}
-     * @param [in] count `problemDesc` 的长度
-     * @param [in] problemDesc 预设问题以外的其他问题的具体描述
+     * @param [in] types 预设问题列表，参看 ProblemFeedbackOption{@link #ProblemFeedbackOption}
+     * @param [in] info 预设问题以外的其他问题的具体描述，房间信息。参看 ProblemFeedbackInfo{@link #ProblemFeedbackInfo}
      * @return <br>
      *         + 0: 上报成功  <br>
      *         + -1: 上报失败，还没加入过房间 <br>
@@ -2065,7 +2074,7 @@ public:
      * @notes 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；
      *        如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
      */
-    virtual int feedback(ProblemFeedbackOption *type, int count, const char* problem_desc) = 0;
+    virtual int feedback(uint64_t types, const ProblemFeedbackInfo* info) = 0;
 
     /** 
      * @type api
@@ -2538,7 +2547,7 @@ public:
     virtual void setLocalVoicePitch(int pitch) = 0;
 
     /** 
-     * @hidden    
+     * @hidden
      * @type api
      * @region 媒体流管理
      * @brief 控制本地音频流播放状态：播放/不播放  <br>
@@ -3087,6 +3096,7 @@ public:
 
 
     /** 
+     * @deprecated since 3.52, use startPushMixedStreamToCDN instead.
      * @type api
      * @region 多房间
      * @brief 新增转推直播任务，并设置合流的图片、视频视图布局和音频属性。  <br>
@@ -3102,6 +3112,7 @@ public:
      */
     virtual void startLiveTranscoding(const char* task_id, ITranscoderParam* param, ITranscoderObserver* observer) = 0;
     /** 
+     * @deprecated since 3.52, use stopPushStreamToCDN instead.
      * @type api
      * @region 多房间
      * @brief 停止转推直播。，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent} 回调。  <br>
@@ -3110,6 +3121,7 @@ public:
      */
     virtual void stopLiveTranscoding(const char* task_id) = 0;
     /** 
+     * @deprecated since 3.52, use updatePushMixedStreamToCDN instead.
      * @type api
      * @region 多房间
      * @brief 更新转推直播参数，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent} 回调。  <br>
@@ -3118,6 +3130,14 @@ public:
      * @param [in] param 配置参数，参看 ITranscoderParam{@link #ITranscoderParam}。
      */
     virtual void updateLiveTranscoding(const char* task_id, ITranscoderParam* param) = 0;
+    /** 
+     * @type api
+     * @region 多房间
+     * @brief 停止转推直播。，会收到 onMixingEvent{@link #IMixedStreamObserver#onMixingEvent} 回调。  <br>
+     *        关于启动转推直播，参看 startPushMixedStreamToCDN{@link #IRtcEngine#startPushMixedStreamToCDN}}。
+     * @param [in] task_id 转推直播任务 ID。可以指定想要停止的转推直播任务。
+     */
+    virtual void stopPushStreamToCDN(const char* task_id) = 0;
     /** 
      * @deprecated  since 336, use setRemoteStreamVideoCanvas instead
      * @hidden
@@ -3356,7 +3376,7 @@ public:
      * @notes 要开启云代理，调用 startCloudProxy{@link #IRtcEngine#startCloudProxy}。
      */
     virtual void stopCloudProxy() = 0;
-    
+
     /** 
      * @type api
      * @region cdn
@@ -3375,6 +3395,15 @@ public:
      */
     virtual int invokeExperimentalAPI(const char* param) = 0;
 
+
+    /** 
+     * @type api
+     * @brief 用蜂窝网络改善通话质量。
+     * @param config 蜂窝增强的配置参数
+     * @notes <br>
+     *       + 调用此接口可设置蜂窝增强的媒体类型。
+     */
+    virtual void setCellularEnhancement(const MediaTypeEnhancementConfig& config) = 0;
 };
 
 /** 

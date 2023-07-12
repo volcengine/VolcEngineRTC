@@ -50,7 +50,7 @@ public:
      * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
      *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。
      * @param [in] file_path 用于混音文件路径。
-     *        支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。
+     *        支持在线文件的 URL 和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。
      *        推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。
      *        不同平台支持的本地音频文件格式:
      *        <table>
@@ -92,11 +92,11 @@ public:
      * @type api
      * @hidden(Linux)
      * @region 混音
-     * @brief 停止播放所有音频文件。
+     * @brief 停止播放所有音频文件及混音。
      * @notes  <br>
-     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件后，可以调用本方法停止播放所有音频文件。  <br>
-     *       + 调用本方法停止播放所有音频文件后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放。  <br>
-     *       + 调用本方法停止播放所有音频文件后，该音频文件会被自动卸载。
+     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以调用本方法停止播放所有音频文件及混音。  <br>
+     *       + 调用本方法停止播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放和混音。  <br>
+     *       + 调用本方法停止播放所有音频文件及混音后，该音频文件会被自动卸载。
      */
     virtual void stopAllAudioMixing() = 0;
 
@@ -116,11 +116,11 @@ public:
      * @type api
      * @hidden(Linux)
      * @region 混音
-     * @brief 暂停播放所有音频文件。
+     * @brief 暂停播放所有音频文件及混音。
      * @notes  <br>
-     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件后，可以通过调用本方法暂停播放所有音频文件。  <br>
-     *       + 调用本方法暂停播放所有音频文件后，可调用 resumeAllAudioMixing{@link #IAudioMixingManager#resumeAllAudioMixing} 方法恢复所有播放。  <br>
-     *       + 调用本方法暂停播放所有音频文件后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放。
+     *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放所有音频文件及混音。  <br>
+     *       + 调用本方法暂停播放所有音频文件及混音后，可调用 resumeAllAudioMixing{@link #IAudioMixingManager#resumeAllAudioMixing} 方法恢复所有播放及混音。  <br>
+     *       + 调用本方法暂停播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放和混音。
      */
     virtual void pauseAllAudioMixing() = 0;
 
@@ -140,10 +140,10 @@ public:
      * @type api
      * @hidden(Linux)
      * @region 混音
-     * @brief 恢复播放所有音频文件。
+     * @brief 恢复播放所有音频文件及混音。
      * @notes  <br>
-     *       + 调用 pauseAllAudioMixing{@link #IAudioMixingManager#pauseAllAudioMixing} 方法暂停所有正在播放音频文件后，可以通过调用本方法恢复播放。  <br>
-     *       + 调用本方法恢复播放所有音频文件后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放。
+     *       + 调用 pauseAllAudioMixing{@link #IAudioMixingManager#pauseAllAudioMixing} 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  <br>
+     *       + 调用本方法恢复播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放和混音。
      */
     virtual void resumeAllAudioMixing() = 0;
 
@@ -155,9 +155,8 @@ public:
      *        如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br>
      *        如果先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing}，再使用相同的 ID 调用本方法 ，会先回调 `onAudioMixingStateChanged` 通知上一个混音停止，然后加载后一个混音。  <br>
      *        调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 播放 B.mp3，请先调用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载 A.mp3。
-     * @param [in] file_path 混音文件路径。<br>
-     *        支持在线文件的 URL，和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。预加载的文件长度不得超过 20s。<br>
-     *        不同平台支持的音频文件格式: <br>
+     * @param [in] file_path 混音文件路径。仅支持本地文件的绝对路径。预加载的文件长度不得超过 20s。
+     *        不同平台支持的音频文件格式：
      *        <table>
      *           <tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr>
      *           <tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr>

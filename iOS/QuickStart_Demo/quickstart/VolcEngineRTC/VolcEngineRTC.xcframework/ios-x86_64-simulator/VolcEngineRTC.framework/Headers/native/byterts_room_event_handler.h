@@ -20,16 +20,14 @@ public:
 
     /** 
      * @type callback
-     * @region 房间管理
+     * @region 多房间
      * @brief 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。
      * @param [in] room_id 房间 ID。
      * @param [in] uid 用户 ID。
      * @param [in] state 房间状态码。  <br>
-     *              + 0: 成功。  <br>
-     *              + !0: 失败或异常退房。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。异常退出房间，具体原因包括<br>
-     *               - -1004：相同 ID 用户在其他端进房； <br>
-     *               - -1006：用户被踢出当前房间。
-     * @param [in] extra_info 额外信息。
+     *              + 0: 加入房间成功。  <br>
+     *              + !0: 加入房间失败、异常退房、发生房间相关的警告或错误。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
+     * @param [in] extra_info 额外信息，如 `{"elapsed":1187,"join_type":0}`。
      *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
      *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTSRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
      */

@@ -29,6 +29,8 @@ protected:
 
     void mouseReleaseEvent(QMouseEvent *event) override;
 
+    void closeEvent(QCloseEvent* event) override;
+
 protected:
     void onError(int err) override;
 

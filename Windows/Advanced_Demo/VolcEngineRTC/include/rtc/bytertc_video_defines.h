@@ -15,19 +15,19 @@ namespace bytertc {
  */
 enum RenderMode {
     /** 
-     * @brief 视窗填满优先。<br>
-     *        视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>
+     * @brief 视窗填满优先，默认值。
+     *        视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。
      *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
      */
     kRenderModeHidden = 1,
     /** 
-     * @brief 视频帧内容全部显示优先。<br>
-     *        视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>
+     * @brief 视频帧内容全部显示优先。
+     *        视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。
      *        缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
      */
     kRenderModeFit = 2,
     /** 
-     *  @brief 视频帧自适应画布 <br>
+     *  @brief 视频帧自适应画布。
      *         视频帧非等比缩放，直至画布被填满。在此过程中，视频帧的长宽比例可能会发生变化。
      */
    kRenderModeFill = 3,
@@ -436,6 +436,11 @@ struct MediaStreamInfo {
      * @brief 发布此流的用户 ID 。
      */
     const char* user_id;
+    /** 
+     * @hidden for internal use only
+     * @brief 该流的标识 ID，用户内唯一。
+     */
+    const char* stream_name;
     /** 
      * @brief 此流是否为共享屏幕流。
      */
@@ -994,6 +999,56 @@ enum VideoSourceType {
 
 /** 
  * @type keytype
+ * @brief 数码变焦参数类型
+ */
+enum ZoomConfigType {
+    /** 
+     * @brief 设置缩放系数
+     */
+    kZoomFocusOffset = 0, 
+    /** 
+     * @brief 设置移动步长
+     */
+    kZoomMoveOffset,
+};
+
+/** 
+ * @type keytype
+ * @brief 数码变焦操作类型
+ */
+enum ZoomDirectionType {
+    /** 
+     * @brief 相机向左移动
+     */
+    kCameraMoveLeft = 0,
+    /** 
+     * @brief 相机向右移动
+     */
+    kCameraMoveRight,
+    /** 
+     * @brief 相机向上移动
+     */
+    kCameraMoveUp,
+    /** 
+     * @brief 相机向下移动
+     */
+    kCameraMoveDown,
+    /** 
+     * @brief 相机缩小焦距
+     */
+    kCameraZoomOut,
+    /** 
+     * @brief 相机放大焦距
+     */
+    kCameraZoomIn,
+    /** 
+     * @brief 恢复到原始画面
+     */
+    kCameraReset,
+};
+
+/** 
+ * @type keytype
  * @brief 视频帧信息
  */
 struct VideoFrameInfo {
@@ -1052,15 +1107,15 @@ struct VideoRateInfo {
  */
 enum VideoDecoderConfig {
     /** 
-     * @brief 开启 SDK 内部解码，只回调解码后的数据
+     * @brief 开启 SDK 内部解码，只回调解码后的数据。回调为onFrame{@link #IVideoSink#onFrame}。
      */
     kVideoDecoderConfigRaw,
     /** 
-     * @brief 开启自定义解码，只回调解码前数据
+     * @brief 开启自定义解码，只回调解码前数据。回调为onRemoteEncodedVideoFrame{@link #IRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame}。
      */
     kVideoDecoderConfigEncode,
     /** 
-     * @brief 开启 SDK 内部解码，同时回调解码前和解码后的数据
+     * @brief 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为onFrame{@link #IVideoSink#onFrame} 和 onRemoteEncodedVideoFrame{@link #IRemoteEncodedVideoFrameObserver#onRemoteEncodedVideoFrame}。
      */
     kVideoDecoderConfigBoth,
 };
@@ -1156,29 +1211,33 @@ enum RTCVideoDeviceType {
  */
 enum PublicStreamErrorCode {
     /** 
-     * @brief 发布或订阅成功
+     * @brief 发布或订阅成功。
      */
-    kPublicStreamOK = 0,
+    kPublicStreamErrorCodeOK = 0,
     /** 
-     * @brief 公共流的参数异常，请修改参数后重试
+     * @brief 公共流的参数异常，请修改参数后重试。
      */
-    kPublicStreamPushInvalidParam = 1191,
+    kPublicStreamErrorCodePushInvalidParam = 1191,
     /** 
-     * @brief 服务端状态异常，将自动重试
+     * @brief 服务端状态异常，将自动重试。
      */
-    kPublicStreamPushInvalidStatus = 1192,
+    kPublicStreamErrorCodePushInvalidStatus = 1192,
     /** 
      * @brief 内部错误，不可恢复，请重试。
      */
-    kPublicStreamPushInternalError = 1193,
+    kPublicStreamErrorCodePushInternalError = 1193,
     /** 
-     * @brief 推流失败，将自动重试，用户不需要处理
+     * @brief 发布失败，将自动重试，请关注重试结果。
      */
-    kPublicStreamPushFailed = 1195,
+    kPublicStreamErrorCodePushFailed = 1195,
     /** 
-     * @brief 推流失败，10s 后会重试，重试 3 次失败后自动停止。
+     * @brief 发布失败，10 s 后会重试，重试 3 次后自动停止。
      */
-    kPublicStreamPushTimeout = 1196,
+    kPublicStreamErrorCodePushTimeout = 1196,
+    /** 
+     * @brief 订阅失败，发布端未开始发布流。
+     */
+    kPublicStreamErrorCodePullNoPushStream = 1300,
 };
 
 /** 
@@ -1444,6 +1503,50 @@ enum VideoSuperResolutionModeChangedReason {
 
 /** 
  * @type keytype
+ * @brief 视频降噪模式状态改变原因。
+ */
+enum VideoDenoiseModeChangedReason {
+    /** 
+     * @brief 未知原因导致视频降噪状态改变。
+     */
+    kVideoDenoiseModeChangedReasonNull = -1,
+    /** 
+     * @brief 通过调用 setVideoDenoiser{@link #IRTCVideo#setVideoDenoiser} 成功关闭视频降噪。
+     */
+    kVideoDenoiseModeChangedReasonApiOff = 0,
+    /** 
+     * @brief 通过调用 setVideoDenoiser{@link #IRTCVideo#setVideoDenoiser} 成功开启视频降噪。
+     */
+    kVideoDenoiseModeChangedReasonApiOn = 1,
+    /** 
+     * @brief 后台未配置视频降噪，视频降噪开启失败，请联系技术人员解决。
+     */
+    kVideoDenoiseModeChangedReasonConfigDisabled = 2,
+    /** 
+     * @brief 后台配置开启了视频降噪。
+     */
+    kVideoDenoiseModeChangedReasonConfigEnabled = 3,
+    /** 
+     * @brief 由于内部发生了异常，视频降噪关闭。 
+     */
+    kVideoDenoiseModeChangedReasonInternalException = 4,
+    /** 
+     * @brief 当前设备性能过载，已动态关闭视频降噪。
+     */
+    kVideoDenoiseModeChangedReasonDynamicClose = 5,
+    /** 
+     * @brief 当前设备性能裕量充足，已动态开启视频降噪。
+     */
+    kVideoDenoiseModeChangedReasonDynamicOpen = 6,
+    /** 
+     * @brief
+     * 分辨率导致视频降噪状态发生改变。分辨率过高会导致性能消耗过大，从而导致视频降噪关闭。若希望继续使用视频降噪，可选择降低分辨率。
+     */
+    kVideoDenoiseModeChangedReasonResolution = 7,
+};
+
+/** 
+ * @type keytype
  * @brief 屏幕采集对象的类型
  */
 enum ScreenCaptureSourceType {
@@ -1701,6 +1804,7 @@ public:
 };
 
 /** 
+ * @hidden
  * @deprecated since 3.50 and will be deleted in 3.55.
  * @type callback
  * @region 视频管理
@@ -1799,5 +1903,33 @@ public:
      */
     virtual void onTakeRemoteSnapshotResult(long taskId, RemoteStreamKey streamKey, IVideoFrame* image, int errorCode) = 0;
 };
+/** 
+ * @hidden(macOS, Windows, Linux)
+ * @type keytype
+ * @brief 蜂窝网络辅助增强应用的媒体模式
+ */
+struct MediaTypeEnhancementConfig {
+    /** 
+     * @brief 对信令消息，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_signaling = false;
+    /** 
+     * @brief 对屏幕共享以外的其他音频，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_audio = false;
+    /** 
+     * @brief 对屏幕共享音频，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_screen_audio = false;
+    /** 
+     * @brief 对屏幕共享视频以外的其他视频，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_video = false;
+    /** 
+     * @brief 对屏幕共享视频，是否启用蜂窝网络辅助增强。默认不启用。
+     */
+    bool enhance_screen_video = false;
+};
+
 
 }  // namespace bytertc

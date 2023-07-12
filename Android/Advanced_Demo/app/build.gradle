@@ -18,18 +18,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        release {
-            storeFile file("bytertc.jks")
-            storePassword "bytertc"
-            keyAlias "bytertc"
-            keyPassword "bytertc"
-        }
-    }
-
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -64,5 +54,5 @@ dependencies {
 
     implementation(name: 'BasicModule', ext: 'aar')
     implementation(name: 'ByteEffect', ext: 'aar')
-    implementation 'com.volcengine:VolcEngineRTC:3.50.301'
+    implementation 'com.volcengine:VolcEngineRTC:3.52.106'
 }

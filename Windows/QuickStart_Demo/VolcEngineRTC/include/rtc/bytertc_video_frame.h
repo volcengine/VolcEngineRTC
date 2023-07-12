@@ -43,11 +43,11 @@ enum VideoPictureType {
 
 /** 
  * @type keytype
- * @brief 视频帧旋转角度
+ * @brief 视频帧旋转信息
  */
 enum VideoRotation {
     /** 
-     * @brief 顺时针旋转 0 度
+     * @brief 不旋转
     */
    kVideoRotation0 = 0,
     /** 
@@ -162,6 +162,8 @@ enum CameraID {
 #define SEND_KBPS_DISABLE_VIDEO_SEND 0
 
 /** 
+ * @hidden used in streaming only
+ * @deprecated since 3.36 along with setVideoEncoderConfig(StreamIndex index, const VideoSolution* solutions, int solution_num) = 0;
  * @type keytype
  * @brief 视频流参数
  */
@@ -581,7 +583,9 @@ typedef struct VideoFrameBuilder {
      */
     int height = 0;
     /** 
-     * @brief 视频旋转角度，参看 VideoRotation{@link #VideoRotation}
+     * @brief 视频旋转角度，参看 VideoRotation{@link #VideoRotation}。<br>
+     *        当视频接收端使用 RTC SDK 内部渲染时，引擎会根据设定的 rotation 处理旋转角度后再行渲染；<br>
+     *        当视频接收端使用自定义渲染时，此处设置的 rotation 无效，可以通过 IVideoFrame::rotation() 接口获取 rotation 信息。
      */
     VideoRotation rotation = kVideoRotation0;
     /** 

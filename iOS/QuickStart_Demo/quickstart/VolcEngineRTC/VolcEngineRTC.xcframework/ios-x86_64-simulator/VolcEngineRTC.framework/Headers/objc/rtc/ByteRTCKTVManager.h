@@ -20,36 +20,36 @@ NS_ASSUME_NONNULL_BEGIN
 /** 
  * @type callback
  * @brief 歌曲列表回调。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
- * @param totalSize 数据条目总数。
  * @param musics 歌曲数据数组，参看 ByteRTCKTVMusic{@link #ByteRTCKTVMusic}。
+ * @param totalSize 数据条目总数。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  */
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicListResult:(ByteRTCKTVError)errorCode totalSize:(int)totalSize musics:(NSArray<ByteRTCKTVMusic *> * _Nullable)musics;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicListResult:(NSArray<ByteRTCKTVMusic *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVError)errorCode;
 
 /** 
  * @type callback
  * @brief 搜索歌曲结果回调。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
- * @param totalSize 数据条目总数。
  * @param musics 歌曲数据数组，参看 ByteRTCKTVMusic{@link #ByteRTCKTVMusic}。
+ * @param totalSize 数据条目总数。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  */
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onSearchMusicResult:(ByteRTCKTVError)errorCode totalSize:(int)totalSize musics:(NSArray<ByteRTCKTVMusic *> * _Nullable)musics;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onSearchMusicResult:(NSArray<ByteRTCKTVMusic *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVError)errorCode;
 
 /** 
  * @type callback
  * @brief 热榜歌曲结果回调。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  * @param hotMusicInfos 热榜歌曲数据数组，参看 ByteRTCKTVHotMusicInfo{@link #ByteRTCKTVHotMusicInfo}。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  */
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onHotMusicResult:(ByteRTCKTVError)errorCode hotMusicInfos:(NSArray<ByteRTCKTVHotMusicInfo *> * _Nullable)hotMusicInfos;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onHotMusicResult:(NSArray<ByteRTCKTVHotMusicInfo *> * _Nullable)hotMusicInfos errorCode:(ByteRTCKTVError)errorCode;
 
 /** 
  * @type callback
  * @brief 歌曲详细信息回调。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  * @param music 歌曲数据，参看 ByteRTCKTVMusic{@link #ByteRTCKTVMusic}。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  */
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicDetailResult:(ByteRTCKTVError)errorCode music:(ByteRTCKTVMusic * _Nullable)music;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicDetailResult:(ByteRTCKTVMusic * _Nullable)music errorCode:(ByteRTCKTVError)errorCode;
 
 /** 
  * @type callback
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param downloadId 下载任务 ID。
  * @param errorCode 错误码，参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
  */
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadFail:(int)downloadId errorCode:(ByteRTCKTVError)errorCode;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadFailed:(int)downloadId errorCode:(ByteRTCKTVError)errorCode;
 
 /** 
  * @type callback
@@ -131,7 +131,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVManager : NSObject
  * @return 下载任务 ID。
  * @notes  <br>
  *       + 若音乐下载成功，你会收到 ktvManager:onDownloadSuccess:downloadResult:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadSuccess:downloadResult:} 回调。
- *       + 若音乐下载失败，你会收到 ktvManager:onDownloadFail:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadFail:errorCode:} 回调。
+ *       + 若音乐下载失败，你会收到 ktvManager:onDownloadFailed:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadFailed:errorCode:} 回调。
  *       + 音乐下载进度更新时，你会收到 ktvManager:onDownloadMusicProgress:progress:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadMusicProgress:progress:} 回调。
  */
 - (int)downloadMusic:(NSString * _Nonnull)musicId;
@@ -144,7 +144,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVManager : NSObject
  * @return 下载任务 ID。
  * @notes  <br>
  *       + 若歌词下载成功，你会收到 ktvManager:onDownloadSuccess:downloadResult:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadSuccess:downloadResult:} 回调。
- *       + 若歌词下载失败，你会收到 ktvManager:onDownloadFail:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadFail:errorCode:} 回调。
+ *       + 若歌词下载失败，你会收到 ktvManager:onDownloadFailed:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadFailed:errorCode:} 回调。
  */
 - (int)downloadLyric:(NSString * _Nonnull)musicId lyricType:(ByteRTCKTVDownloadLyricType)lyricType;
 
@@ -155,7 +155,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVManager : NSObject
  * @return 下载任务 ID。
  * @notes  <br>
  *       + 若文件下载成功，你会收到 ktvManager:onDownloadSuccess:downloadResult:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadSuccess:downloadResult:} 回调。
- *       + 若文件下载失败，你会收到 ktvManager:onDownloadFail:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadFail:errorCode:} 回调。
+ *       + 若文件下载失败，你会收到 ktvManager:onDownloadFailed:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onDownloadFailed:errorCode:} 回调。
  */
 - (int)downloadMidi:(NSString * _Nonnull)musicId;
 

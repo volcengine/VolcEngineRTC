@@ -44,7 +44,6 @@
     userIDFieldModel.alertTitle = @"Login UserID";
     userIDFieldModel.alertMessage = @"发送房间外消息前，需要 Login，\nLogin UID 可以和 joinRoom UID 不一致。";
     userIDFieldModel.placeholders = @[@"Login UserID"];
-    __weak SettingTextFieldModel *weakuserIDFieldModel = userIDFieldModel;
     userIDFieldModel.inputBlock = ^(NSInteger index, NSString * _Nonnull valueStr) {
         [wself login:@"" uid:valueStr];
     };
@@ -100,7 +99,7 @@
 
 #pragma mark - ByteRTCVideoDelegate
 
-- (void)rtcEngine:(ByteRTCVideo *)engine onUserMessageSendResultOutsideRoom:(int64_t)msgid error:(ByteRTCUserMessageSendResult)error {
+- (void)rtcEngine:(ByteRTCVideo *)engine onUserMessageSendResultOutsideRoom:(NSInteger)msgid error:(ByteRTCUserMessageSendResult)error {
     NSString *message = @"";
     if (error == ByteRTCUserMessageSendResultSuccess) {
         message = @"点对点消息发送成功";

@@ -17,10 +17,10 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.bytedance.realx.video.RXScreenCaptureService;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.ScreenVideoEncoderConfig;
-import com.ss.bytertc.engine.VideoEncoderConfig;
 import com.ss.bytertc.engine.data.ScreenMediaType;
 import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.data.VideoSourceType;
@@ -30,8 +30,6 @@ import com.ss.video.rtc.demo.advanced.ConfigManger;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
 import com.ss.video.rtc.demo.advanced.utils.CommonUtil;
 import com.ss.video.rtc.demo.basic_module.utils.Utilities;
-
-import org.webrtc.RXScreenCaptureService;
 
 public class ShareScreenComponent implements LifecycleEventObserver {
     private MediaProjectionManager mProjectionManager;

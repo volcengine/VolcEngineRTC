@@ -148,17 +148,17 @@ enum UserRoleType {
 
 /** 
  * @type keytype
- * @brief SEI 信息来源。
+ * @brief 数据消息来源
  */
-enum SEIMessageSourceType {
+enum DataMessageSourceType {
     /** 
-     * @brief （默认值）用户自定义。
+     * @brief 通过客户端或服务端的插入的自定义消息。
      */
-    kSEIMessageSourceTypeDefault = 0,
+    kDataMessageSourceTypeDefault = 0,
     /** 
-     * @brief 系统定义，包含音量指示信息。
+     * @brief 系统数据，包含音量指示信息。
      */
-    kSEIMessageSourceTypeSystem,
+    kDataMessageSourceTypeSystem,
 };
 
 /** 
@@ -177,7 +177,6 @@ enum SEICountPerFrame {
 };
 
 /** 
- * @type keytype
  * @type keytype
  * @brief 上行/下行网络质量
  */
@@ -227,7 +226,8 @@ struct NetworkQualityStats {
 enum RoomProfileType {
     /** 
      * @brief 默认场景，通用模式<br>
-     *        与 `kRoomProfileTypeMeeting = 16` 配置相同。
+     *        与 `kRoomProfileTypeMeeting = 16` 配置相同。<br>
+     *        你可以联系技术支持更换默认配置参数。
      */
     kRoomProfileTypeCommunication = 0,
     /** 
@@ -532,8 +532,8 @@ enum MediaDeviceWarning {
      */
     kMediaDeviceWarningDetectClipping = 10,
     /** 
-     * @hidden for internal use only
-     * @brief 回声泄露
+     * @brief 通话中出现回声现象。<br>
+     *        当 RoomProfileType{@link #RoomProfileType} 为 `kRoomProfileTypeMeeting` 和 `kRoomProfileTypeMeetingRoom`，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过 `onAudioDeviceWarning` 返回本枚举值。
      */
     kMediaDeviceWarningDetectLeakEcho = 11,
     /** 
@@ -599,7 +599,7 @@ enum MediaDeviceWarning {
      */
     kMediaDeviceWarningSetBluetoothModeUnsupport = 26,
     /** 
-     * @hidden(Linux)
+     * @hidden currently not available
      * @brief 使用无声的采集设备
      */
     kMediaDeviceWarningRecordingUseSilentDevice = 27,
@@ -883,6 +883,18 @@ enum ErrorCode {
      */
     kErrorCodeJoinRoomLicenseNotMatchWithCache = -1024,
     /** 
+     * @brief 房间被封禁。 <br>
+     */
+    kErrorCodeJoinRoomRoomForbidden = -1025,
+    /** 
+     * @brief 用户被封禁。 <br>
+     */
+    kErrorCodeJoinRoomUserForbidden = -1026,
+    /** 
+     * @brief license 计费方法没有加载成功。可能是因为 license 相关插件未正确集成。<br>
+     */
+    kErrorCodeJoinRoomLicenseFunctionNotFound = -1027,
+    /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
      */
@@ -898,6 +910,7 @@ enum ErrorCode {
      */
     kErrorCodeOverScreenPublishLimit = -1081,
     /** 
+     * @deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead
      * @brief 发布视频流总数超过上限。
      *        RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。
      */
@@ -913,6 +926,11 @@ enum ErrorCode {
      *        SDK与信令服务器断开，并不再自动重连，可联系技术支持。  <br>
      */
     kErrorCodeAbnormalServerStatus = -1084,
+    /** 
+     * @hidden for internal use only
+     * @brief 在一路流推多房间的场景下，在至少有两个房间在发布同一路流时，其中一个房间取消发布失败，此时需要业务方重试或者由业务方通知用户重试取消发布。 <br>
+     */
+    kErrorCodeMultiRoomUnpublishFailed = -1085,
     /**
      * @hidden for internal use only
      */
@@ -1555,6 +1573,21 @@ enum VideoSuperResolutionMode {
 
 /** 
  * @type keytype
+ * @brief 视频降噪模式。
+ */
+enum VideoDenoiseMode {
+    /** 
+     * @brief 视频降噪关闭。
+     */
+    kVideoDenoiseModeOff = 0,
+    /** 
+     * @brief 视频降噪开启，由 ByteRTC 后台配置视频降噪算法。
+     */
+    kVideoDenoiseModeAuto = 1,
+};
+
+/** 
+ * @type keytype
  * @brief 本地音频流统计信息，统计周期为 2s 。  <br>
  *        本地用户发布音频流成功后，SDK 会周期性地通过 `onLocalStreamStats`
  *        通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。  <br>
@@ -1747,6 +1780,10 @@ struct LocalVideoStats {
      * @brief 视频上行网络抖动，单位为 ms 。  <br>
      */
     int jitter;
+    /** 
+     * @brief 视频降噪模式。具体参看 VideoDenoiseMode{@link #VideoDenoiseMode} 。
+     */
+    VideoDenoiseMode video_denoise_mode;
 };
 
 /** 
@@ -1898,7 +1935,7 @@ struct RemoteStreamStats {
  * @type keytype
  * @brief 音视频质量反馈问题类型
  */
-enum ProblemFeedbackOption {
+enum ProblemFeedbackOption : uint64_t {
     /** 
      * @brief 没有问题
      */
@@ -1906,51 +1943,128 @@ enum ProblemFeedbackOption {
     /** 
      * @brief 其他问题
      */
-    kProblemFeedbackOptionOtherMessage = (1 << 0),
-    /** 
-     * @brief 声音不清晰
-     */
-    kProblemFeedbackOptionAudioNotClear = (1 << 1),
-    /** 
-     * @brief 视频不清晰
-     */
-    kProblemFeedbackOptionVideoNotClear = (1 << 2),
-    /** 
-     * @brief 音视频不同步
-     */
-    kProblemFeedbackOptionNotSync = (1 << 3),
-    /** 
-     * @brief 音频卡顿
-     */
-    kProblemFeedbackOptionAudioLagging = (1 << 4),
-    /** 
-     * @brief 视频卡顿
-     */
-    kProblemFeedbackOptionVideoLagging = (1 << 5),
+    kProblemFeedbackOptionOtherMessage = (1ULL << 0),
     /** 
      * @brief 连接失败
      */
-    kProblemFeedbackOptionDisconnected = (1 << 6),
-    /** 
-     * @brief 无声音
-     */
-    kProblemFeedbackOptionNoAudio = (1 << 7),
-    /** 
-     * @brief 无画面
-     */
-    kProblemFeedbackOptionNoVideo = (1 << 8),
-    /** 
-     * @brief 声音过小
-     */
-    kProblemFeedbackOptionAudioStrength = (1 << 9),
-    /** 
-     * @brief 回声噪音
-     */
-    kProblemFeedbackOptionEcho = (1 << 10),
+    kProblemFeedbackOptionDisconnected = (1ULL << 1),
     /** 
      * @brief 耳返延迟大
      */
-    KFeedbackOptionEarBackDelay = (1 << 11),
+    kProblemFeedbackOptionEarBackDelay = (1ULL << 2),
+
+    /** 
+     * @brief 本端有杂音
+     */
+    kProblemFeedbackOptionLocalNoise = (1ULL << 10),
+    /** 
+     * @brief 本端声音卡顿
+     */
+    kProblemFeedbackOptionLocalAudioLagging = (1ULL << 11),
+    /** 
+     * @brief 本端无声音
+     */
+    kProblemFeedbackOptionLocalNoAudio = (1ULL << 12),
+    /** 
+     * @brief 本端声音大/小
+     */
+    kProblemFeedbackOptionLocalAudioStrength = (1ULL << 13),
+    /** 
+     * @brief 本端有回声
+     */
+    kProblemFeedbackOptionLocalEcho = (1ULL << 14),
+    /** 
+     * @brief 本端视频模糊
+     */
+    kProblemFeedbackOptionLocalVideoFuzzy = (1ULL << 24),
+    /** 
+     * @brief 本端音视频不同步
+     */
+    kProblemFeedbackOptionLocalNotSync = (1ULL << 25),
+    /** 
+     * @brief 本端视频卡顿
+     */
+    kProblemFeedbackOptionLocalVideoLagging = (1ULL << 26),
+    /** 
+     * @brief 本端无画面
+     */
+    kProblemFeedbackOptionLocalNoVideo = (1ULL << 27),
+
+    /** 
+     * @brief 远端有杂音
+     */
+    kProblemFeedbackOptionRemoteNoise = (1ULL << 37),
+    /** 
+     * @brief 远端声音卡顿
+     */
+    kProblemFeedbackOptionRemoteAudioLagging = (1ULL << 38),
+    /** 
+     * @brief 远端无声音
+     */
+    kProblemFeedbackOptionRemoteNoAudio = (1ULL << 39),
+    /** 
+     * @brief 远端声音大/小
+     */
+    kProblemFeedbackOptionRemoteAudioStrength = (1ULL << 40),
+    /** 
+     * @brief 远端有回声
+     */
+    kProblemFeedbackOptionRemoteEcho = (1ULL << 41),
+
+    /** 
+     * @brief 远端视频模糊
+     */
+    kProblemFeedbackOptionRemoteVideoFuzzy = (1ULL << 51),
+    /** 
+     * @brief 远端音视频不同步
+     */
+    kProblemFeedbackOptionRemoteNotSync = (1ULL << 52),
+    /** 
+     * @brief 远端视频卡顿
+     */
+    kProblemFeedbackOptionRemoteVideoLagging = (1ULL << 53),
+    /** 
+     * @brief 远端无画面
+     */
+    kProblemFeedbackOptionRemoteNoVideo = (1ULL << 54),
+};
+
+/** 
+ * @type keytype
+ * @brief 音视频质量反馈的房间信息
+ */
+struct ProblemFeedbackRoomInfo {
+    /** 
+     * @brief 房间 ID。
+     */
+    const char* room_id = nullptr;
+
+    /** 
+     * @brief 本地用户 ID。
+     */
+    const char* user_id = nullptr;
+};
+
+/** 
+ * @type keytype
+ * @brief 音视频质量反馈的信息
+ */
+struct ProblemFeedbackInfo {
+    /** 
+     * @brief 预设问题以外的其他问题的具体描述。
+     */
+    const char* problem_desc = nullptr;
+
+    /** 
+     * @type keytype
+     * @brief 音视频质量反馈的房间信息。查看 ProblemFeedbackRoomInfo{@link #ProblemFeedbackRoomInfo}。
+     */
+    ProblemFeedbackRoomInfo* room_info = nullptr;
+    /** 
+     * @type keytype
+     * @brief `FeedbackRoomInfo` 的数组长度。
+     */
+    int room_info_count = 0;
 };
 
 /** 
@@ -2242,7 +2356,7 @@ struct RecordingInfo {
  */
 struct RecordingConfig {
     /** 
-     * @brief 录制文件保存的绝对路径。你需要指定一个有读写权限的合法路径。
+     * @brief 录制文件保存的绝对路径，需精确到文件夹，文件名由 RTC 自动生成。你需要确保对该路径具有读写权限。
      */
     const char* dir_path;
     /** 
@@ -2276,6 +2390,10 @@ enum UserWorkerType {
      * @brief 用户需要在房间进入多人模式时获取房间内所有流的相关回调  <br>
      */
     UserWorkerNeedStreamCallBack = (1 << 3),
+    /** 
+     * @brief 用户选择设置不支持音频选路功能  <br>
+     */
+    UserWorkerAudioSelectionExemption = (1 << 4),
 };
 
 /** 
@@ -2499,7 +2617,7 @@ struct ByteWatermark {
     /**
      * @hidden currently not available
      */
-    const char* url;
+    const char* url = nullptr;
     /** 
      * @brief 水印图片相对视频流左上角的横向偏移与视频流宽度的比值，取值范围为 [0,1)。
      */
@@ -2794,6 +2912,205 @@ struct NetworkTimeInfo {
      */
     explicit NetworkTimeInfo(int64_t ts): timestamp(ts) {
     }
+};
+
+/** 
+ * @type keytype
+ * @brief 通话前回声检测结果
+ */
+enum HardwareEchoDetectionResult{
+    /** 
+     * @brief 主动调用 `stopHardwareEchoDetection` 结束流程时，未有回声检测结果。
+     */
+    kHardwareEchoDetectionCanceled = 0,
+    /** 
+     * @brief 未检测出结果。建议重试，如果仍然失败请联系技术支持协助排查。
+     */
+    kHardwareEchoDetectionUnknown = 1,
+    /** 
+     * @brief 无回声
+     */
+    kHardwareEchoDetectionNormal = 2,
+    /** 
+     * @brief 有回声。可通过 UI 建议用户使用耳机设备入会。
+     */
+    kHardwareEchoDetectionPoor = 3,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频选路优先级设置
+ */
+enum AudioSelectionPriority {
+    /** 
+     * @brief 正常，参加音频选路
+     */
+    kAudioSelectionPriorityNormal = 0,
+    /** 
+     * @brief 高优先级，跳过音频选路
+     */
+    kAudioSelectionPriorityHigh = 1
+};
+
+/** 
+ * @type keytype
+ * @brief 设置房间附加消息结果。
+ */
+enum SetRoomExtraInfoResult {
+    /** 
+     * @brief 设置房间附加信息成功
+     */
+    kSetRoomExtraInfoSuccess = 0,
+    /** 
+     * @brief 设置失败，尚未加入房间
+     */
+    kSetRoomExtraInfoErrorNotJoinRoom = -1,
+    /** 
+     * @brief 设置失败，key 指针为空
+     */
+    kSetRoomExtraInfoErrorKeyIsNull = -2,
+    /** 
+     * @brief 设置失败，value 指针为空
+     */
+    kSetRoomExtraInfoErrorValueIsNull = -3,
+    /** 
+     * @brief 设置失败，未知错误
+     */
+    kSetRoomExtraInfoResultUnknow = -99,
+    /** 
+     * @brief 设置失败，key 长度为 0
+     */
+    kSetRoomExtraInfoErrorKeyIsEmpty = -400,
+    /** 
+     * @brief 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。
+     */
+    kSetRoomExtraInfoErrorTooOften = -406,
+    /** 
+     * @brief 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。
+     */
+    kSetRoomExtraInfoErrorSilentUser = -412,
+    /** 
+     * @brief 设置失败，Key 长度超过 10 字节
+     */
+    kSetRoomExtraInfoErrorKeyTooLong = -413,
+    /** 
+     * @brief 设置失败，value 长度超过 128 字节
+     */
+    kSetRoomExtraInfoErrorValueTooLong = -414,
+    /** 
+     * @brief 设置失败，服务器错误
+     */
+    kSetRoomExtraInfoErrorServer = -500
+};
+/**  
+ * @type keytype
+ * @brief 字幕任务状态。
+ */
+enum SubtitleState {
+    /** 
+     * @brief 开启字幕。
+     */
+    kSubtitleStateStarted,
+    /** 
+     * @brief 关闭字幕。
+     */
+    kSubtitleStateStoped,
+    /** 
+     * @brief 字幕任务出现错误。
+     */
+    kSubtitleStateError
+};
+/**  
+ * @type keytype
+ * @brief 字幕模式。
+ */
+enum SubtitleMode {
+    /** 
+     * @brief 识别模式。在此模式下，房间内用户语音会被转为文字。
+     */
+    kSubtitleModeRecognition = 0,
+    /** 
+     * @brief 翻译模式。在此模式下，房间内用户语音会先被转为文字，再被翻译为目标语言。
+     */
+    kSubtitleModeTranslation
+};
+/**  
+ * @type keytype
+ * @brief 字幕任务错误码。
+ */
+enum SubtitleErrorCode {
+    /** 
+     * @brief 客户端无法识别云端媒体处理发送的错误码。请联系技术支持。 
+     */
+    kSubtitleErrorCodeUnknow = -1,
+    /** 
+     * @brief 字幕已开启。
+     */
+    kSubtitleErrorCodeSuccess,
+    /** 
+     * @brief 云端媒体处理内部出现错误，请联系技术支持。
+     */
+    kSubtitleErrorCodePostProcessError,
+    /** 
+     * @brief 第三方服务连接失败，请联系技术支持。
+     */
+    kSubtitleErrorCodeASRConnectionError,
+    /** 
+     * @brief 第三方服务内部出现错误，请联系技术支持。
+     */
+    kSubtitleErrorCodeASRServiceError,
+    /** 
+     * @brief 未进房导致调用`startSubtitle`失败。请加入房间后再调用此方法。
+     */
+    kSubtitleErrorCodeBeforeJoinRoom,
+    /** 
+     * @brief 重复调用 `startSubtitle`。
+     */
+    kSubtitleErrorCodeAlreadyOn,
+    /** 
+     * @brief 用户选择的目标语言目前暂不支持。
+     */
+    kSubtitleErrorCodeUnsupportedLanguage,
+    /** 
+     * @brief 云端媒体处理超时未响应，请联系技术支持。
+     */
+    kSubtitleErrorCodePostProcessTimeout
+};
+/**  
+ * @type keytype
+ * @brief 字幕配置信息。
+ */
+struct SubtitleConfig {
+   /** 
+    * @brief 字幕模式。可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。参看 SubtitleMode{@link #SubtitleMode}。
+    */
+   SubtitleMode mode;
+   /** 
+    * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%E7%9B%AE%E6%A0%87%E8%AF%AD%E8%A8%80-2) 查看翻译服务最新支持的语种信息。
+    */
+   const char* target_language = "";
+};
+/**  
+ * @type keytype
+ * @brief 字幕具体内容。
+ */
+struct SubtitleMessage {
+    /** 
+     * @brief 说话者的用户ID。
+     */
+    const char* user_id;
+    /** 
+     * @brief 语音识别或翻译后的文本, 采用 UTF-8 编码。
+     */
+    const char* text;
+    /** 
+     * @brief 语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
+     */
+    int sequence;
+    /** 
+     * @brief 语音识别出的文本是否为一段完整的一句话。 True 代表是, False 代表不是。
+     */
+    bool definite;
 };
 
 }  // namespace bytertc

@@ -8,12 +8,11 @@ import android.os.HandlerThread;
 import android.view.TextureView;
 
 import com.bytedance.realx.base.ThreadUtils;
+import com.bytedance.realx.video.EglBase;
+import com.bytedance.realx.video.RendererCommon;
 import com.ss.bytertc.engine.ui.VideoFrameRender;
 import com.ss.bytertc.engine.video.IVideoSink;
 import com.ss.bytertc.engine.video.VideoFrame;
-
-import org.webrtc.EglBase;
-import org.webrtc.RendererCommon;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

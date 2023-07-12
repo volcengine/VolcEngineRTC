@@ -46,6 +46,28 @@ public:
     }
 
     /** 
+    * @valid since 3.52
+    * @type callback
+    * @brief 当访问插件失败时，收到此回调。
+    *        RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。
+    * @param [in] extensionName 插件名字
+    * @param [in] msg 失败说明
+    */
+    /**
+    * {en}
+    * @valid since 3.52
+    * @type callback
+    * @brief Failed to access the extension.
+    *        RTC SDK provides some features with extensions. Without implementing the extension, you cannot use the corresponding feature.
+    * @param [in] extensionName The name of extension.
+    * @param [in] msg Error message.
+    */
+     void onExtensionAccessError(const char* extensionName, const char* msg) {
+        (void)extensionName;
+        (void)msg;
+     }
+
+    /** 
      * @type callback
      * @region 引擎管理
      * @brief 端监控日志回调。当产生一个端监控事件时触发该回调。
@@ -102,6 +124,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTSEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTP 代理连接状态改变时，收到该回调。
      * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -111,6 +134,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTSEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTPS 代理连接状态改变时，收到该回调。
      * @param  [out] state 当前 HTTPS 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -120,6 +144,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTSEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief Socks5 代理状态改变时，收到该回调。
      * @param [out] state SOCKS5 代理连接状态，详见 Socks5ProxyState{@link #Socks5ProxyState}
@@ -259,6 +284,20 @@ public:
      */
     virtual void onCloudProxyConnected(int interval) {
         (void)interval;
+    }
+
+    /** 
+     * @type callback
+     * @brief 调用 setLocalProxy{@link #IRTS#setLocalProxy} 设置本地代理，SDK对代理连接的状态
+     * 回调此接口。
+     * @param [in] localProxyType 本地代理类型：sock5 或 httptunnel
+     * @param [in] localProxyState 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。  <br>
+     * @param [in] localProxyError 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。  <br>
+     */
+    virtual void onLocalProxyStateChanged(LocalProxyType localProxyType, LocalProxyState localProxyState, LocalProxyError localProxyError) {
+        (void)localProxyType;
+        (void)localProxyState;
+        (void)localProxyError;
     }
 };
 

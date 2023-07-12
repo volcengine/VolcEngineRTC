@@ -7,7 +7,7 @@
 
 #ifdef WIN32
 #define BYTERTC_API extern "C" __declspec(dllexport)
-#elif __APPLE__
+#elif defined(__APPLE__)
 #include <TargetConditionals.h>
 #if TARGET_OS_MAC && !(TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
 #define BYTERTC_API __attribute__((__visibility__("default"))) extern "C"
@@ -16,6 +16,20 @@
 #endif
 #else
 #define BYTERTC_API __attribute__((__visibility__("default")))
+#endif
+
+#ifdef __GNUC__
+#    define GCC_VERSION_AT_LEAST(x,y) (__GNUC__ > (x) || __GNUC__ == (x) && __GNUC_MINOR__ >= (y))
+#else
+#    define GCC_VERSION_AT_LEAST(x,y) 0
+#endif
+
+#if GCC_VERSION_AT_LEAST(3,1)
+#    define BYTERTC_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#    define BYTERTC_DEPRECATED __declspec(deprecated)
+#else
+#    define BYTERTC_DEPRECATED
 #endif
 
 #include <stdint.h>
@@ -353,9 +367,8 @@ enum NetworkQuality {
      */
     kNetworkQualityVbad,
     /** 
-     * @brief 12 s 内无应答，代表网络断开，将返回本枚举值。
-     * 你也可以通过 onConnectionStateChanged 监听 kConnectionStateDisconnected = 1 感知网络断开。
-     * 更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
+     * @brief 网络连接断开，无法通话。网络可能由于 12s 内无应答、开启飞行模式、拔掉网线等原因断开。
+     *        更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
      */
     kNetworkQualityDown,
 };
@@ -667,5 +680,113 @@ struct CloudProxyConfiguration {
  * @brief ID 最大长度
  */
 const unsigned int MAX_DEVICE_ID_LENGTH = 512;
+
+/** 
+ * @type keytype
+ * @brief 本地代理的类型。
+ */
+enum LocalProxyType {
+    /** 
+     * @brief Socks5 代理。选用此代理服务器，需满足 Socks5 协议标准文档的要求。
+     */
+    kLocalProxyTypeSocks5 = 1,
+    /** 
+     * @brief Http 隧道代理。
+     */
+    kLocalProxyTypeHttpTunnel = 2
+};
+
+/** 
+ * @type keytype
+ * @brief 本地代理配置详细信息。
+ */
+struct LocalProxyConfiguration {
+    /** 
+     * @brief 本地代理类型，参看 LocalProxyType{@link #LocalProxyType}。
+     */
+    LocalProxyType local_proxy_type;
+    /** 
+     * @type keytype
+     * @brief 本地代理服务器 IP。
+     */
+    const char* local_proxy_ip;
+    /** 
+     * @type keytype
+     * @brief 本地代理服务器端口。
+     */
+    int local_proxy_port;
+    /** 
+     * @type keytype
+     * @brief 本地代理用户名。
+     */
+    const char* local_proxy_username;
+    /** 
+     * @type keytype
+     * @brief 本地代理密码。
+     */
+    const char* local_proxy_password;
+};
+
+/** 
+ * @type keytype
+ * @brief 本地代理连接状态。
+ */
+enum LocalProxyState {
+    /** 
+     * @brief TCP 代理服务器连接成功。
+     */
+    kLocalProxyStateInited = 0,
+
+    /** 
+     * @brief 本地代理连接成功。
+     */
+    kLocalProxyStateConnected = 1,
+
+    /** 
+     * @brief 本地代理连接出现错误。
+     */
+    kLocalProxyStateError = 2,
+};
+
+/** 
+ * @type keytype
+ * @brief 本地代理错误。
+ */
+enum LocalProxyError {
+    /** 
+     * @brief 本地代理服务器无错误。
+     */
+    kLocalProxyErrorOK = 0,
+
+    /** 
+     * @brief 代理服务器回复的版本号不符合 Socks5 协议标准文档的规定，导致 Socks5 代理连接失败。请检查代理服务器是否存在异常。
+     */
+    kLocalProxyErrorSocks5VersionError = 1,
+
+    /** 
+     * @brief 代理服务器回复的格式错误不符合 Socks5 协议标准文档的规定，导致 Socks5 代理连接失败。请检查代理服务器是否存在异常。
+     */
+    kLocalProxyErrorSocks5FormatError = 2,
+
+    /** 
+     * @brief 代理服务器回复的字段值不符合 Socks5 协议标准文档的规定，导致 Socks5 代理连接失败。请检查代理服务器是否存在异常。
+     */
+    kLocalProxyErrorSocks5InvalidValue = 3,
+
+    /** 
+     * @brief 未提供代理服务器的用户名及密码，导致 Socks5 代理连接失败。请重新调用 `setLocalProxy`，在设置本地代理时填入用户名和密码。
+     */
+    kLocalProxyErrorSocks5UserPassNotGiven = 4,
+
+    /** 
+     * @brief TCP 关闭，导致 Socks5 代理连接失败。请检查网络或者代理服务器是否存在异常。
+     */
+    kLocalProxyErrorSocks5TcpClosed = 5,
+
+    /** 
+     * @brief Http 隧道代理错误。请检查 Http 隧道代理服务器或者网络是否存在异常。
+     */
+    kLocalProxyErrorHttpTunnelFailed = 6,
+};
 
 }  // namespace bytertc

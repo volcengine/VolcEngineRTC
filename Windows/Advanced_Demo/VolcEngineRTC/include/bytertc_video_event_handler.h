@@ -46,6 +46,27 @@ public:
     virtual void onError(int err) {
         (void)err;
     }
+    /** 
+    * @valid since 3.52
+    * @type callback
+    * @brief 当访问插件失败时，收到此回调。
+    *        RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。
+    * @param [in] extensionName 插件名字
+    * @param [in] msg 失败说明
+    */
+    /**
+    * {en}
+    * @valid since 3.52
+    * @type callback
+    * @brief Failed to access the extension.
+    *        RTC SDK provides some features with extensions. Without implementing the extension, you cannot use the corresponding feature.
+    * @param [in] extensionName The name of extension.
+    * @param [in] msg Error message.
+    */
+    virtual void onExtensionAccessError(const char* extensionName, const char* msg) {
+
+    }
+
 
     /** 
      * @type callback
@@ -84,7 +105,7 @@ public:
      * @param [in] progress 当前混音音频文件播放进度，单位毫秒
      * @notes 调用 setAudioMixingProgressInterval{@link #IAudioMixingManager#setAudioMixingProgressInterval} 将时间间隔设为大于 0 的值后，或调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 将 AudioMixingConfig{@link #AudioMixingConfig} 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 <br>
      */
-    virtual void onAudioMixingPlayingProgress(int mix_id, int64_t progress){
+    virtual void onAudioMixingPlayingProgress(int mix_id, int64_t progress) {
     }
 
     /** 
@@ -109,7 +130,7 @@ public:
      * @brief 移动端音频播放设备变化时回调该事件。
      * @param [in] device 变化后的音频播放设备，参看 AudioPlaybackDevice{@link #AudioPlaybackDevice}。  <br>
      */
-    virtual void onAudioPlaybackDeviceChanged(AudioPlaybackDevice device) {
+    BYTERTC_DEPRECATED virtual void onAudioPlaybackDeviceChanged(AudioPlaybackDevice device) {
         (void)device;
     };
 
@@ -185,7 +206,7 @@ public:
      * @param [in] device_state 设备状态，详见 MediaDeviceState{@link #MediaDeviceState}
      * @param [in] device_error 设备错误类型，详见 MediaDeviceError{@link #MediaDeviceError}
      */
-    virtual void onMediaDeviceStateChanged(const char* device_id,
+    BYTERTC_DEPRECATED virtual void onMediaDeviceStateChanged(const char* device_id,
                                            bytertc::MediaDeviceType device_type,
                                            bytertc::MediaDeviceState device_state,
                                            bytertc::MediaDeviceError device_error) {
@@ -236,8 +257,8 @@ public:
      * @param [in] device_type 详见 MediaDeviceType{@link #MediaDeviceType}
      * @param [in] device_warning 详见 MediaDeviceWarning{@link #MediaDeviceWarning}
      */
-     virtual void onMediaDeviceWarning(const char* device_id, bytertc::MediaDeviceType device_type,
-            bytertc::MediaDeviceWarning device_warning){
+     BYTERTC_DEPRECATED virtual void onMediaDeviceWarning(const char* device_id, bytertc::MediaDeviceType device_type,
+            bytertc::MediaDeviceWarning device_warning) {
         (void)device_id;
         (void)device_type;
         (void)device_warning;
@@ -294,6 +315,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTP 代理连接状态改变时，收到该回调。
      * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -303,6 +325,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTPS 代理连接状态改变时，收到该回调。
      * @param  [out] state 当前 HTTPS 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -312,6 +335,7 @@ public:
 
     /** 
      * @type callback
+     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief SOCKS5 代理状态改变时，收到该回调。
      * @param [out] state SOCKS5 代理连接状态
@@ -528,7 +552,7 @@ public:
       * @type callback
       * @region 音频管理
       * @brief 调用 enableAudioPropertiesReport{@link #IRTCVideo#enableAudioPropertiesReport} 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
-      *        本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
+      *        本地音频包括使用 RTC SDK 内部机制采集的麦克风音频，屏幕音频和本地混音音频信息。
       * @param [in] audio_properties_infos 本地音频信息，详见 LocalAudioPropertiesInfo{@link #LocalAudioPropertiesInfo} 。
       * @param [in] audio_properties_info_number 数组长度
       */
@@ -681,14 +705,38 @@ public:
      *        调用 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。
      * @param [in] public_stream_id 公共流 ID。
      * @param [in] message 收到的 SEI 消息内容。
+     * 本回调可以获取通过调用客户端 sendSEIMessage{@link #RTCVideo#sendSEIMessage} 插入的 SEI 信息。
+     * 当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
      * @param [in] message_length SEI 信息的长度。
-     * @param [in] source_type SEI 消息类型，参看 SEIMessageSourceType{@link #SEIMessageSourceType}。
-     * @notes 当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
+     * @param [in] source_type SEI 消息类型，自 3.52.1 版本后固定为 `0`，自定义消息。参看 DataMessageSourceType{@link #DataMessageSourceType}。
+     * @notes 通过 Open API 插入的 SEI 信息，应通过回调 onPublicStreamDataMessageReceived{@Link #IRTCVideoEventHandler#onPublicStreamDataMessageReceived} 获取。
      */
     virtual void onPublicStreamSEIMessageReceived(const char* public_stream_id,
         const uint8_t* message,
         int message_length,
-        SEIMessageSourceType source_type) {
+        DataMessageSourceType source_type) {
+        (void)public_stream_id;
+        (void)message;
+        (void)message_length;
+        (void)source_type;
+    }
+    /** 
+     * @type callback
+     * @valid since 3.52
+     * @brief 回调公共流中包含的数据信息。
+     *        通过 startPlayPublicStream{@link #IRtcEngine#startPlayPublicStream} 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
+     * @param [in] public_stream_id 公共流 ID
+     * @param [in] message 收到的数据消息内容，如下：
+     * + 调用公共流 OpenAPI 发送的 SEI 消息。当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
+     * + 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。
+     * @param [in] message_length 消息的长度
+     * @param [in] source_type 数据消息来源，参看 DataMessageSourceType{@link #DataMessageSourceType}。
+     * @notes 通过调用客户端 API 插入的 SEI 信息，应通过回调 onPublicStreamSEIMessageReceived{@Link #IRTCVideoEventHandler#onPublicStreamSEIMessageReceived} 获取。
+     */
+    virtual void onPublicStreamDataMessageReceived(const char* public_stream_id,
+        const uint8_t* message,
+        int message_length,
+        DataMessageSourceType source_type) {
         (void)public_stream_id;
         (void)message;
         (void)message_length;
@@ -766,7 +814,7 @@ public:
      * @param [in] user_id 改变本地音频发送状态的用户 ID
      * @param [in] mute_state 发送状态，参看 MuteState{@link #MuteState}
      */
-    virtual void onUserMuteAudio(const char* room_id, const char* user_id, MuteState mute_state) {
+    BYTERTC_DEPRECATED virtual void onUserMuteAudio(const char* room_id, const char* user_id, MuteState mute_state) {
         (void)user_id;
         (void)mute_state;
     }
@@ -788,7 +836,7 @@ public:
      * @param [in] uid 暂停/恢复发送视频流的用户 ID。
      * @param [in] mute 视频流的发送状态。参看 MuteState{@link #MuteState}。
      */
-    virtual void onUserMuteVideo(const char* room_id, const char* uid, MuteState mute) {
+    BYTERTC_DEPRECATED virtual void onUserMuteVideo(const char* room_id, const char* uid, MuteState mute) {
         (void)uid;
         (void)mute;
     }
@@ -853,6 +901,19 @@ public:
         (void)reason;
     }
 
+    /** 
+     * @type callback
+     * @hidden for internal use only
+     * @region 音视频处理
+     * @brief 降噪模式状态变更回调。当降噪模式的运行状态发生改变，SDK 会触发该回调，提示用户降噪模式改变后的运行状态及状态发生改变的原因。          
+     * @param [in] mode 视频降噪模式，参看 VideoDenoiseMode{@link #VideoDenoiseMode}。
+     * @param [in] reason 视频降噪模式改变的原因，参看 VideoDenoiseModeChangedReason{@link #VideoDenoiseModeChangedReason}。
+     */
+    virtual void onVideoDenoiseModeChanged(VideoDenoiseMode mode, VideoDenoiseModeChangedReason reason) {
+       (void)mode;
+       (void)reason;
+    }
+    
     /** 
      * @type callback
      * @region 房间管理
@@ -1050,10 +1111,9 @@ public:
     }
     /** 
      * @type callback
-     * @brief license过期时间提醒
-     * @param [in] days 过期时间天数
+     * @brief license 过期提醒。在剩余天数低于 30 天时，收到此回调。
+     * @param [in] days license 剩余有效天数
      */
-
     virtual void onLicenseWillExpire(int days) {
         (void)days;
     }
@@ -1068,6 +1128,8 @@ public:
         (void)frameUpdateInfo;
     }
     /** 
+     * @hidden internal use
+     * @valid since 3.52
      * @type callback
      * @brief 试验性接口回调
      * @param param 回调内容(JSON string)
@@ -1075,6 +1137,35 @@ public:
     virtual void onInvokeExperimentalAPI(const char* param) {
         (void)param;
     }
+    /** 
+     * @hidden(Linux)
+     * @type callback
+     * @region 音频管理
+     * @brief 通话前回声检测结果回调。
+     * @param [in] hardwareEchoDetectionResult 参见 HardwareEchoDetectionResult{@link #HardwareEchoDetectionResult}
+     * @notes <br>
+     *        + 通话前调用 startHardwareEchoDetection{@link #IRTCVideo#startHardwareEchoDetection} 后，将触发本回调返回检测结果。<br>
+     *        + 建议在收到检测结果后，调用 stopHardwareEchoDetection{@link #IRTCVideo#stopHardwareEchoDetection} 停止检测，释放对音频设备的占用。<br>
+     *        + 如果 SDK 在通话中检测到回声，将通过 onAudioDeviceWarning{@link #IRTCVideoEventHandler#onAudioDeviceWarning} 回调 `kMediaDeviceWarningLeakEchoDetected`。
+     */
+    virtual void onHardwareEchoDetectionResult(HardwareEchoDetectionResult hardwareEchoDetectionResult) {
+        (void)hardwareEchoDetectionResult;
+    }
+
+    /** 
+     * @type callback
+     * @region proxy
+     * @brief 本地代理状态发生改变回调。调用 setLocalProxy{@link #IRTCVideo#setLocalProxy} 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。  <br>
+     * @param [in] localProxyType 本地代理类型。参看 LocalProxyType{@link #LocalProxyType} 。  <br>
+     * @param [in] localProxyState 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。  <br>
+     * @param [in] localProxyError 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。
+     */
+    virtual void onLocalProxyStateChanged(LocalProxyType local_proxy_type, LocalProxyState local_proxy_state, LocalProxyError local_proxy_error) {
+        (void)local_proxy_type;
+        (void)local_proxy_state;
+        (void)local_proxy_error;
+    }
+
 };
 
 } // namespace bytertc

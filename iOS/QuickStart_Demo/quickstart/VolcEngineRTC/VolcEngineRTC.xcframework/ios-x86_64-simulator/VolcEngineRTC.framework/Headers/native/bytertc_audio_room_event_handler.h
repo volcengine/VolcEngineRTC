@@ -29,7 +29,7 @@ public:
      * @param [in] state 房间状态码。  <br>
      *              + 0: 加入房间成功。  <br>
      *              + !0: 加入房间失败、异常退房、发生房间相关的警告或错误。具体原因参看 ErrorCode{@link #ErrorCode} 及 WarningCode{@link #WarningCode}。
-     * @param [in] extra_info 额外信息。
+     * @param [in] extra_info 额外信息，如 `{"elapsed":1187,"join_type":0}`。
      *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
      *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #IRTCRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
      */
@@ -337,6 +337,59 @@ public:
         (void)localQuality;
         (void)remoteQualities;
         (void)remoteQualityNum;
+    }
+
+    /** 
+     * @valid since 3.52.
+     * @type callback
+     * @region 房间管理
+     * @brief 调用 setRoomExtraInfo{@link #IRTCAudioRoom#setRoomExtraInfo} 设置房间附加信息结果的回调。
+     * @param [in] taskId 调用 setRoomExtraInfo 的任务编号。
+     * @param [in] errCode 设置房间附加信息的结果，详见 SetRoomExtraInfoResult{@link #SetRoomExtraInfoResult}
+     */
+    virtual void onSetRoomExtraInfoResult(int64_t taskId, SetRoomExtraInfoResult errCode) {
+        (void)taskId;
+        (void)errCode;
+    }
+
+    /** 
+     * @valid since 3.52.
+     * @type callback
+     * @region 房间管理
+     * @brief 接收同一房间内，其他用户调用 setRoomExtraInfo{@link #IRTCAudioRoom#setRoomExtraInfo} 设置的房间附加信息的回调。
+     * @param [in] key 房间附加信息的键值
+     * @param [in] value 房间附加信息的内容
+     * @param [in] lastUpdateUserId 最后更新本条信息的用户 ID。
+     * @param [in] lastUpdateTimeMs 最后更新本条信息的 Unix 时间，单位：毫秒。
+     * @notes 新进房的用户会收到进房前房间内已有的全部附加信息通知。
+     */
+    virtual void onRoomExtraInfoUpdate(const char*key,const char* value,const char* lastUpdateUserId,int64_t lastUpdateTimeMs) {
+        (void)key;
+        (void)value;
+        (void)lastUpdateUserId;
+        (void)lastUpdateTimeMs;
+    }
+    /**  
+     * @type callback
+     * @region 字幕翻译服务
+     * @brief  字幕状态发生改变回调。 <br>
+     *         当用户调用 startSubtitle{@link #IRTCAudioRoom#startSubtitle} 和 stopSubtitle{@link #IRTCAudioRoom#stopSubtitle} 使字幕状态发生改变或出现错误时，触发该回调。  
+     * @param [in] state 字幕状态。参看 SubtitleState{@link #SubtitleState}。
+     * @param [in] errorCode  字幕任务错误码。参看 SubtitleErrorCode{@link #SubtitleErrorCode}。
+     * @param [in] errorMessage  与第三方服务有关的错误信息。
+     */
+    virtual void onSubtitleStateChanged(SubtitleState state, SubtitleErrorCode error_code, const char* error_message) {
+    }
+
+    /**  
+     * @type callback
+     * @region 字幕翻译服务
+     * @brief  字幕相关内容回调。 <br>
+     *         当用户调用 startSubtitle{@link #IRTCAudioRoom#startSubtitle} 后会收到此回调，通知字幕的相关信息。
+     * @param [in] subtitles  字幕消息内容。参看 SubtitleMessage{@link #SubtitleMessage}。
+     * @param [in] cnt  字幕消息个数。
+     */
+    virtual void onSubtitleMessageReceived(const SubtitleMessage* subtitles, int cnt) {
     }
 };
 

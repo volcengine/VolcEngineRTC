@@ -46,6 +46,23 @@ public:
     virtual void onError(int err) {
         (void)err;
     }
+    
+    /** 
+    * @type callback
+    * @brief 当访问插件失败时回调。<br>
+    * @param [in] extensionName 插件名字
+    * @param [in] msg 失败说明
+    */
+    /**
+    * {en}
+    * @type callback
+    * @brief Failed to access extension.
+    * @param [in] extensionName The name of extension
+    * @param [in] msg failure description
+    */
+    virtual void onExtensionAccessError(const char* extensionName, const char* msg) {
+
+    }
 
     /** 
      * @hidden
@@ -661,12 +678,13 @@ public:
     virtual void onPublicStreamSEIMessageReceived(const char* public_stream_id,
         const uint8_t* message,
         int message_length,
-        SEIMessageSourceType source_type) {
+        DataMessageSourceType source_type) {
         (void)public_stream_id;
         (void)message;
         (void)message_length;
         (void)source_type;
     }
+
     /** 
      * @type callback
      * @brief 公共流的首帧视频解码成功<br>
@@ -1598,22 +1616,18 @@ public:
         (void)interval;
     }
 
-    /*
-     *入参 param 格式如下：
-     * {
-     * "callback_name": "onInfo",
-     *   "params": {
-     *       "stream_id": "123456",
-     *       "uri": "rtmp://xxxx/stream_id/path?xxx",
-     *       "option": "xxxx"
-     *       ……
-     *   },
-     *  }
+    /** 
+     * @type callback
+     * @brief 试验性接口回调
+     * @param param 回调内容(JSON string)
      */
     virtual void onInvokeExperimentalAPI( const char* param ) {
-        //TODO tiannianyi
         (void)param;
     }
+    
+    virtual void onHardwareEchoDetectionResult(HardwareEchoDetectionResult result) {
+        (void)result;
+    };
 
 };
 

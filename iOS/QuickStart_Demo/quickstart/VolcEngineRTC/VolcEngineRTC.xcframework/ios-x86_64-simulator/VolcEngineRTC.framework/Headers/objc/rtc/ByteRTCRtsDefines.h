@@ -190,9 +190,8 @@ typedef NS_ENUM(NSUInteger, ByteRTCNetworkQuality) {
      */
     ByteRTCNetworkQualityVeryBad = 5,
     /** 
-     * @brief 12 s 内无应答，代表网络断开，将返回本枚举值。
-     * 你也可以通过 rtcEngine:onConnectionStateChanged: 监听 ByteRTCConnectionStateDisconnected = 1 感知网络断开。
-     * 更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
+     * @brief 网络连接断开，无法通话。网络可能由于 12s 内无应答、开启飞行模式、拔掉网线等原因断开。
+     *        更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。
      */
     ByteRTCNetworkQualityDown = 6,
 };
@@ -635,3 +634,111 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCCloudProxyInfo: NSObject
  */
 @property(assign, nonatomic) int cloudProxyPort;
 @end
+
+/** 
+ * @type keytype
+ * @brief 本地代理的类型。
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCLocalProxyType) {
+    /** 
+     * @brief Socks5 代理。选用此代理服务器，需满足 Socks5 协议标准文档的要求。
+     */
+    ByteRTCLocalProxyTypeSocks5 = 1,
+    /** 
+     * @brief Http 隧道代理。
+     */
+    ByteRTCLocalProxyTypeHttpTunnel = 2,
+};
+
+/** 
+ * @type keytype
+ * @brief 本地代理配置详细信息。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCLocalProxyInfo : NSObject
+/** 
+ * @brief 本地代理的类型，参看 ByteRTCLocalProxyType{@link #ByteRTCLocalProxyType}。
+ */
+@property(assign, nonatomic) ByteRTCLocalProxyType localProxyType;
+/** 
+ * @type keytype
+ * @brief 本地代理服务器 IP。
+ */
+@property(copy, nonatomic) NSString * _Nullable localProxyIp;
+/** 
+ * @type keytype
+ * @brief 本地代理服务器端口。
+ */
+@property(assign, nonatomic) int localProxyPort;
+ /** 
+  * @type keytype
+  * @brief 本地代理用户名。
+  */
+ @property(copy, nonatomic) NSString * _Nullable localProxyUsername;
+ /** 
+  * @brief 本地代理密码。
+  */
+ @property(copy, nonatomic) NSString * _Nullable localProxyPassword;
+@end
+
+/** 
+ * @type keytype
+ * @brief 本地代理连接状态。
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCLocalProxyState) {
+    /** 
+     * @brief TCP 代理服务器连接成功。
+     */
+    ByteRTCLocalProxyStateInited = 0,
+
+    /** 
+     * @brief 本地代理连接成功。
+     */
+    ByteRTCLocalProxyStateConnected = 1,
+
+    /** 
+     * @brief 本地代理连接出现错误。
+     */
+    ByteRTCLocalProxyStateError = 2,
+};
+
+/** 
+ * @type keytype
+ * @brief 本地代理错误。
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCLocalProxyError) {
+    /** 
+     * @brief 本地代理服务器无错误。
+     */
+    ByteRTCLocalProxyErrorOK = 0,
+
+    /** 
+     * @brief 代理服务器回复的版本号不符合 Socks5 协议标准文档的规定，导致 Socks5 代理连接失败。请检查代理服务器是否存在异常。
+     */
+    ByteRTCLocalProxyErrorSocks5VersionError = 1,
+
+    /** 
+     * @brief 代理服务器回复的格式错误不符合 Socks5 协议标准文档的规定，导致 Socks5 代理连接失败。请检查代理服务器是否存在异常。
+     */
+    ByteRTCLocalProxyErrorSocks5FormatError = 2,
+
+    /** 
+     * @brief 代理服务器回复的字段值不符合 Socks5 协议标准文档的规定，导致 Socks5 代理连接失败。请检查代理服务器是否存在异常。
+     */
+    ByteRTCLocalProxyErrorSocks5InvalidValue = 3,
+
+    /** 
+     * @brief 未提供代理服务器的用户名及密码，导致 Socks5 代理连接失败。请重新调用 `setLocalProxy`，在设置本地代理时填入用户名和密码。
+     */
+    ByteRTCLocalProxyErrorSocks5UserPassNotGiven = 4,
+
+    /** 
+     * @brief TCP 关闭，导致 Socks5 代理连接失败。请检查网络或者代理服务器是否存在异常。
+     */
+    ByteRTCLocalProxyErrorSocks5TcpClosed = 5,
+
+    /** 
+     * @brief Http 隧道代理错误。请检查 Http 隧道代理服务器或者网络是否存在异常。
+     */
+    ByteRTCLocalProxyErrorHttpTunnelFailed = 6,
+};
+

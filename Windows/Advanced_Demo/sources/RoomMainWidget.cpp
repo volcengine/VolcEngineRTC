@@ -112,6 +112,12 @@ void RoomMainWidget::mouseReleaseEvent(QMouseEvent *event) {
     m_bLeftBtnPressed = false;
 }
 
+void RoomMainWidget::closeEvent(QCloseEvent* event)
+{
+    qDebug() << Q_FUNC_INFO << "will close";
+    on_closeBtn_clicked();
+}
+
 void RoomMainWidget::slotOnEnterRoom(const QString &roomID, const QString &userID) {
     m_uid = userID.toStdString();
     m_roomId = roomID.toStdString();

@@ -135,7 +135,8 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamRemoveReason) {
 typedef NS_ENUM(NSInteger, ByteRTCRoomProfile) {
     /** 
      * @brief 默认场景，通用模式<br>
-     *        与 `ByteRTCRoomProfileMeeting = 16` 配置相同。
+     *        与 `ByteRTCRoomProfileMeeting = 16` 配置相同。<br>
+     *        你可以联系技术支持更换默认配置参数。
      */
     ByteRTCRoomProfileCommunication = 0,
     /** 
@@ -248,17 +249,17 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
 
 /** 
  * @type keytype
- * @brief SEI 信息来源。
+ * @brief 数据消息来源
  */
-typedef NS_ENUM(NSInteger, ByteRTCSEIMessageSourceType) {
+typedef NS_ENUM(NSInteger, ByteRTCDataMessageSourceType) {
     /** 
-     * @brief （默认值）用户自定义。
+     * @brief 通过客户端或服务端的插入的自定义消息。
      */
-    ByteRTCSEIMessageSourceTypeDefault = 0,
+    ByteRTCDataMessageSourceTypeDefault = 0,
     /** 
-     * @brief 系统定义，包含音量指示信息。
+     * @brief 系统数据，包含音量指示信息。
      */
-    ByteRTCSEIMessageSourceTypeSystem = 1,
+    ByteRTCDataMessageSourceTypeSystem = 1,
 };
 
 /** 
@@ -382,6 +383,14 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      */
     ByteRTCErrorCodeJoinRoomLicenseNotMatchWithCache = -1024,
     /** 
+     * @brief 房间被封禁。 <br>
+     */
+    ByteRTCErrorCodeJoinRoomRoomForbidden = -1025,
+    /** 
+     * @brief 用户被封禁。 <br>
+     */
+    ByteRTCErrorCodeJoinRoomUserForbidden = -1026,
+    /** 
      * @brief 订阅音视频流失败，订阅音视频流总数超过上限。
      *        游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
      */
@@ -397,6 +406,7 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      */
     ByteRTCErrorCodeOverScreenPublishLimit = -1081,
     /** 
+     * @deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead
      * @brief 发布视频流总数超过上限。
      *        RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。
      */
@@ -412,6 +422,11 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      *        SDK与信令服务器断开，并不再自动重连，可联系技术支持。  <br>
      */
     ByteRTCErrorCodeAbnormalServerStatus = -1084,
+    /** 
+     * @hidden for internal use only
+     * @brief 在一路流推多房间的场景下，在至少有两个房间在发布同一路流时，其中一个房间取消发布失败，此时需要业务方重试或者由业务方通知用户重试取消发布。 <br>
+     */
+    ByteRTCErrorCodeMultiRoomUnpublishFailed = -1085,
 };
 
 /** 
@@ -1218,8 +1233,8 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
      */
     ByteRTCMediaDeviceWarningDetectClipping = 10,
     /** 
-     * @hidden for internal use only
-     * @brief 回声泄露
+     * @brief 通话中出现回声现象。<br>
+     *        当 ByteRTCRoomProfile{@link #ByteRTCRoomProfile} 为 `ByteRTCRoomProfileMeeting` 和 `ByteRTCRoomProfileMeetingRoom` ，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过 `rtcEngine:onAudioDeviceWarning:deviceType:deviceWarning:` 返回本枚举值。
      */
     ByteRTCMediaDeviceWarningDetectLeakEcho = 11,
     /** 
@@ -1289,7 +1304,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning) {
  *  @type keytype
  *  @brief 音视频质量反馈问题类型
  */
-typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
+typedef NS_OPTIONS(uint64_t, ByteRTCProblemFeedbackOption) {
     /** 
      * @brief 没有问题
      */
@@ -1297,72 +1312,121 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCProblemFeedbackOption){
     /** 
      * @brief 其他问题
      */
-    ByteRTCProblemFeedbackOptionOtherMessage = (1 << 0),
+    ByteRTCProblemFeedbackOptionOtherMessage = (1ULL << 0),
     /** 
-     * @brief 声音不清晰
+     * @brief 连接失败
      */
-    ByteRTCProblemFeedbackOptionAudioNotClear = (1 << 1),
-    /** 
-     * @brief 视频不清晰
-     */
-    ByteRTCProblemFeedbackOptionVideoNotClear = (1 << 2),
-    /** 
-     * @brief 音视频不同步
-     */
-    ByteRTCProblemFeedbackOptionNotSync = (1 << 3),
-    /** 
-     * @brief 音频卡顿
-     */
-    ByteRTCProblemFeedbackOptionAudioLagging = (1 << 4),
-    /** 
-     * @brief 视频卡顿
-     */
-    ByteRTCProblemFeedbackOptionVideoLagging = (1 << 5),
-    /** 
-     * @brief 连接断开
-     */
-    ByteRTCProblemFeedbackOptionDisconnected = (1 << 6),
-    /** 
-     * @brief 无声音
-     */
-    ByteRTCProblemFeedbackOptionNoAudio = (1 << 7),
-    /** 
-     * @brief 无画面
-     */
-    ByteRTCProblemFeedbackOptionNoVideo = (1 << 8),
-    /** 
-     * @brief 声音过小
-     */
-    ByteRTCProblemFeedbackOptionAudioStrength = (1 << 9),
-    /** 
-     * @brief 回声噪音
-     */
-    ByteRTCProblemFeedbackOptionEcho = (1 << 10),
+    ByteRTCProblemFeedbackOptionDisconnected = (1ULL << 1),
     /** 
      * @brief 耳返延迟大
      */
-    ByteRTCFeedBackProblemTypeEarBackDelay = (1 << 11),
+    ByteRTCProblemFeedbackOptionEarBackDelay = (1ULL << 2),
+    /** 
+     * @brief 本端有杂音
+     */
+    ByteRTCProblemFeedbackOptionLocalNoise = (1ULL << 10),
+    /** 
+     * @brief 本端声音卡顿
+     */
+    ByteRTCProblemFeedbackOptionLocalAudioLagging = (1ULL << 11),
+    /** 
+     * @brief 本端无声音
+     */
+    ByteRTCProblemFeedbackOptionLocalNoAudio = (1ULL << 12),
+    /** 
+     * @brief 本端声音大/小
+     */
+    ByteRTCProblemFeedbackOptionLocalAudioStrength = (1ULL << 13),
+    /** 
+     * @brief 本端有回声
+     */
+    ByteRTCProblemFeedbackOptionLocalEcho = (1ULL << 14),
+    /** 
+     * @brief 本端视频模糊
+     */
+    ByteRTCProblemFeedbackOptionLocalVideoFuzzy = (1ULL << 24),
+    /** 
+     * @brief 本端音视频不同步
+     */
+    ByteRTCProblemFeedbackOptionLocalNotSync = (1ULL << 25),
+    /** 
+     * @brief 本端视频卡顿
+     */
+    ByteRTCProblemFeedbackOptionLocalVideoLagging = (1ULL << 26),
+    /** 
+     * @brief 本端无画面
+     */
+    ByteRTCProblemFeedbackOptionLocalNoVideo = (1ULL << 27),
+    /** 
+     * @brief 远端有杂音
+     */
+    ByteRTCProblemFeedbackOptionRemoteNoise = (1ULL << 37),
+    /** 
+     * @brief 远端声音卡顿
+     */
+    ByteRTCProblemFeedbackOptionRemoteAudioLagging = (1ULL << 38),
+    /** 
+     * @brief 远端无声音
+     */
+    ByteRTCProblemFeedbackOptionRemoteNoAudio = (1ULL << 39),
+    /** 
+     * @brief 远端声音大/小
+     */
+    ByteRTCProblemFeedbackOptionRemoteAudioStrength = (1ULL << 40),
+    /** 
+     * @brief 远端有回声
+     */
+    ByteRTCProblemFeedbackOptionRemoteEcho = (1ULL << 41),
+    /** 
+     * @brief 远端视频模糊
+     */
+    ByteRTCProblemFeedbackOptionRemoteVideoFuzzy = (1ULL << 51),
+    /** 
+     * @brief 远端音视频不同步
+     */
+    ByteRTCProblemFeedbackOptionRemoteNotSync = (1ULL << 52),
+    /** 
+     * @brief 远端视频卡顿
+     */
+    ByteRTCProblemFeedbackOptionRemoteVideoLagging = (1ULL << 53),
+    /** 
+     * @brief 远端无画面
+     */
+    ByteRTCProblemFeedbackOptionRemoteNoVideo = (1ULL << 54)
 };
 
 /** 
  * @type keytype
- * @brief 通话质量反馈预设问题列表
+ * @brief 通话质量反馈房间信息
  */
-BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemOption: NSObject
-/** 
- * @brief 初始化 ByteRTCProblemOption
- */
-- (instancetype _Nonnull)initWithOption:(ByteRTCProblemFeedbackOption)option;
-/** 
- * @brief 读取音视频质量反馈问题类型，参看 ByteRTCProblemFeedbackOption{@link #ByteRTCProblemFeedbackOption}。
- */
-@property(nonatomic, assign, readonly) ByteRTCProblemFeedbackOption option;
-/** 
- * @brief 读取 ByteRTCProblemOption 类对应的文字描述
- */
-@property(nonatomic, copy, readonly) NSString * _Nonnull desc;
+BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemFeedbackRoomInfo: NSObject
+    /** 
+     * @brief 通话质量反馈的房间ID
+     */
+    @property(nonatomic, copy) NSString * _Nonnull roomId;
+
+    /** 
+     * @brief 通话质量反馈的用户ID
+     */
+    @property(nonatomic, copy) NSString * _Nonnull userId;
 @end
 
+/** 
+ * @type keytype
+ * @brief 通话质量反馈信息
+ */
+BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemFeedbackInfo: NSObject
+    /** 
+     * @brief 通话质量反馈的文字描述
+     */
+    @property(nonatomic, copy) NSString * _Nonnull problemDesc;
+
+    /** 
+     * @brief 通话质量反馈的房间信息。参看 ByteRTCProblemFeedbackRoomInfo{@link #ByteRTCProblemFeedbackRoomInfo}。
+     */
+    @property(nonatomic, strong) NSArray<ByteRTCProblemFeedbackRoomInfo *> * _Nullable roomInfo;
+
+@end
 
 /** 
  * @type keytype
@@ -1462,6 +1526,21 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSuperResolutionMode) {
      * @brief 开启超分。
      */
     ByteRTCVideoSuperResolutionModeOn = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 视频降噪模式。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVideoDenoiseMode) {
+    /** 
+     * @brief 视频降噪关闭。
+     */
+    ByteRTCVideoDenoiseModeOff = 0,
+    /** 
+     * @brief 视频降噪开启，由 ByteRTC 后台配置视频降噪算法。
+     */
+    ByteRTCVideoDenoiseModeAuto = 1,
 };
 
 /** 
@@ -1760,29 +1839,33 @@ typedef NS_ENUM(NSInteger, ByteRTCEchoTestResult) {
  */
 typedef NS_ENUM(NSInteger, ByteRTCPublicStreamErrorCode) {
     /** 
-     * @brief 发布或订阅成功
+     * @brief 发布或订阅成功。
      */
     ByteRTCPublicStreamErrorCodeSuccess = 0,
     /** 
-     * @brief 公共流的参数异常，请修改参数后重试
+     * @brief 公共流的参数异常，请修改参数后重试。
      */
-    ByteRTCPublicStreamErrorCodeParamError = 1191,
+    ByteRTCPublicStreamErrorCodePushParamError = 1191,
     /** 
-     * @brief 服务端状态异常，将自动重试
+     * @brief 服务端状态异常，将自动重试。
      */
-    ByteRTCPublicStreamErrorCodeStatusError = 1192,
+    ByteRTCPublicStreamErrorCodePushStatusError = 1192,
     /** 
      * @brief 内部错误，不可恢复，请重试。
      */
-    ByteRTCPublicStreamErrorCodeInternalError = 1193,
+    ByteRTCPublicStreamErrorCodePushInternalError = 1193,
     /** 
-     * @brief 推流失败，将自动重试，用户不需要处理
+     * @brief 发布失败，将自动重试，请关注重试结果。
      */
     ByteRTCPublicStreamErrorCodePushError = 1195,
     /** 
-     * @brief 推流失败，10 s 后会重试，重试 3 次后停止重试
+     * @brief 发布失败，10 s 后会重试，重试 3 次后自动停止。
      */
-    ByteRTCPublicStreamErrorCodeTimeOut = 1196
+    ByteRTCPublicStreamErrorCodePushTimeOut = 1196,
+    /** 
+     * @brief 订阅失败，发布端未开始发布流。
+     */
+    ByteRTCPublicStreamErrorCodePullNoPushStream = 1300,
 };
 /** 
  * @type keytype
@@ -2045,6 +2128,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
  * @brief 视频上行网络抖动，单位为 ms。  <br>
  */
 @property(assign, nonatomic) NSInteger jitter;
+
+/** 
+ * @brief 视频降噪模式。具体参看 ByteRTCVideoDenoiseMode{@link #ByteRTCVideoDenoiseMode} 。
+ */
+@property(assign, nonatomic) ByteRTCVideoDenoiseMode videoDenoiseMode;
 @end
 
 /** 
@@ -2408,7 +2496,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamKey : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingConfig : NSObject
 /** 
- * @brief 录制文件保存的绝对路径。你需要指定一个有读写权限的合法路径。
+ * @brief 录制文件保存的绝对路径，需精确到文件夹，文件名由 RTC 自动生成。你需要确保对该路径具有读写权限。
  */
 @property(strong, nonatomic) NSString* _Nullable dirPath;
 /** 
@@ -2706,3 +2794,204 @@ typedef NS_ENUM(NSUInteger, ByteRTCNetworkDetectionLinkType) {
      */
     ByteRTCNetworkDetectionLinkTypeDown = 1,
 };
+
+/** 
+ * @type keytype
+ * @brief 通话前回声检测结果
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCHardwareEchoDetectionResult) {
+    /** 
+     * @brief 主动调用 `stopHardwareEchoDetection` 结束流程时，未有回声检测结果。
+     */
+    ByteRTCHardwareEchoDetectionCanceled = 0,
+    /** 
+     * @brief 未检测出结果。建议重试，如果仍然失败请联系技术支持协助排查。
+     */
+    ByteRTCHardwareEchoDetectionUnknown = 1,
+    /** 
+     * @brief 无回声
+     */
+    ByteRTCHardwareEchoDetectionNormal = 2,
+    /** 
+     * @brief 有回声。可通过 UI 建议用户使用耳机设备入会。
+     */
+    ByteRTCHardwareEchoDetectionPoor = 3,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频选路优先级设置
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCAudioSelectionPriority) {
+    /** 
+     * @brief 正常，参加音频选路
+     */
+    ByteRTCAudioSelectionPriorityNormal = 0,
+    /** 
+     * @brief 高优先级，跳过音频选路
+     */
+    ByteRTCAudioSelectionPriorityHigh = 1
+};
+
+/** 
+ * @type keytype
+ * @brief 设置房间附加消息结果。
+ */
+typedef NS_ENUM(NSInteger,ByteRTCSetRoomExtraInfoResult) {
+    /** 
+     * @brief 设置房间附加信息成功
+     */
+    ByteRTCSetRoomExtraInfoResultSuccess = 0,
+    /** 
+     * @brief 设置失败，尚未加入房间
+     */
+    ByteRTCSetRoomExtraInfoResultNotJoinRoom = -1,
+    /** 
+     * @brief 设置失败，key 指针为空
+     */
+    ByteRTCSetRoomExtraInfoResultKeyIsNull = -2,
+    /** 
+     * @brief 设置失败，value 指针为空
+     */
+    ByteRTCSetRoomExtraInfoResultValueIsNull = -3,
+    /** 
+     * @brief 设置失败，未知错误
+     */
+    ByteRTCSetRoomExtraInfoResultUnknow = -99,
+    /** 
+     * @brief 设置失败，key 长度为 0
+     */
+    ByteRTCSetRoomExtraInfoResultKeyIsEmpty = -400,
+    /** 
+     * @brief 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。
+     */
+    ByteRTCSetRoomExtraInfoResultTooOften = -406,
+    /** 
+     * @brief 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。
+     */
+    ByteRTCSetRoomExtraInfoResultSilentUser = -412,
+    /** 
+     * @brief 设置失败，Key 长度超过 10 字节
+     */
+    ByteRTCSetRoomExtraInfoResultKeyTooLong = -413,
+    /** 
+     * @brief 设置失败，value 长度超过 128 字节
+     */
+    ByteRTCSetRoomExtraInfoResultValueTooLong = -414,
+    /** 
+     * @brief 设置失败，服务器错误
+     */
+    ByteRTCSetRoomExtraInfoResultServerError = -500
+};
+
+#pragma mark - ByteRTCSubtitle
+/**  
+ * @type keytype
+ * @brief 字幕任务状态。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCSubtitleState) {
+    /** 
+     * @brief 开启字幕。
+     */
+    ByteRTCSubtitleStateStarted = 0,
+    /** 
+     * @brief 关闭字幕。
+     */
+    ByteRTCSubtitleStateStoped = 1,
+    /** 
+     * @brief 字幕任务出现错误。
+     */
+    ByteRTCSubtitleStateError = 2
+};
+/**  
+ * @type keytype
+ * @brief 字幕模式。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCSubtitleMode) {
+    /** 
+     * @brief 识别模式。在此模式下，房间内用户语音会被转为文字。
+     */
+    ByteRTCSubtitleModeRecognition = 0,
+    /** 
+     * @brief 翻译模式。在此模式下，房间内用户语音会先被转为文字，再被翻译为目标语言。
+     */
+    ByteRTCSubtitleModeTranslation = 1
+};
+/**  
+ * @type keytype
+ * @brief 字幕任务错误码。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCSubtitleErrorCode) {
+    /** 
+     * @brief 客户端无法识别云端媒体处理发送的错误码。 
+     */
+    ByteRTCSubtitleErrorCodeUnknow = -1,
+    /** 
+     * @brief 字幕已开启。
+     */
+    ByteRTCSubtitleErrorCodeSuccess = 0,
+    /** 
+     * @brief 云端媒体处理内部出现错误，请联系技术支持。
+     */
+    ByteRTCSubtitleErrorCodePostProcessError = 1,
+    /** 
+     * @brief 第三方服务连接失败，请联系技术支持。
+     */
+    ByteRTCSubtitleErrorCodeASRConnectionError = 2,
+    /** 
+     * @brief 第三方服务内部出现错误，请联系技术支持。
+     */
+    ByteRTCSubtitleErrorCodeASRServiceError = 3,
+    /** 
+     * @brief 未进房导致调用`startSubtitle`失败。请加入房间后再调用此方法。
+     */
+    ByteRTCSubtitleErrorCodeBeforeJoinRoom = 4,
+    /** 
+     * @brief 字幕已开启，无需重复调用 `startSubtitle`。
+     */
+    ByteRTCSubtitleErrorCodeAlreadyOn = 5,
+    /** 
+     * @brief 用户选择的目标语言目前暂不支持。
+     */
+    ByteRTCSubtitleErrorCodeUnsupportedLanguage = 6,
+    /** 
+     * @brief 云端媒体处理超时未响应，请联系技术支持。
+     */
+    ByteRTCSubtitleErrorCodePostProcessTimeout = 7
+};
+/**  
+ * @type keytype
+ * @brief 字幕配置信息。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleConfig : NSObject
+/** 
+ * @brief 字幕模式。可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。参看 ByteRTCSubtitleMode{@link #ByteRTCSubtitleMode}。
+ */
+@property(assign, nonatomic) ByteRTCSubtitleMode mode;
+/** 
+ * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%E7%9B%AE%E6%A0%87%E8%AF%AD%E8%A8%80-2) 查看翻译服务最新支持的语种信息。
+ */
+@property(copy, nonatomic) NSString *_Nonnull targetLanguage;
+@end
+/**  
+ * @type keytype
+ * @brief 字幕具体内容。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleMessage : NSObject
+/** 
+ * @brief 说话者的用户ID。
+ */
+@property(copy, nonatomic) NSString *_Nonnull userId;
+/** 
+ * @brief 语音识别或翻译后的文本, 采用 UTF-8 编码。
+ */
+@property(copy, nonatomic) NSString *_Nonnull text;
+/** 
+ * @brief 语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
+ */
+@property(assign, nonatomic) NSInteger sequence;
+/** 
+ * @brief 语音识别出的文本是否为一段完整的一句话。 True 代表是, False 代表不是。
+ */
+@property(assign, nonatomic) BOOL definite;
+@end

@@ -343,7 +343,7 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes  <br>
      *      + 调用本方法前，必须先调用 initCVResource{@link #IVideoEffect#initCVResource} 进行初始化。
-     *      + 调用该方法后，特效不直接生效，你还需调用 setEffectNodes{@link #IVideoEffect#setEffectNodes} 设置视频特效素材包或调用调用 setColorFilter{@link #IVideoEffect#setColorFilter} 设置滤镜。
+     *      + 调用该方法后，特效不直接生效，你还需调用 setEffectNodes{@link #IVideoEffect#setEffectNodes} 设置视频特效素材包或调用 setColorFilter{@link #IVideoEffect#setColorFilter} 设置滤镜。
      *      + 调用 disableVideoEffect{@link #IVideoEffect#disableVideoEffect} 关闭视频特效。
      */
     virtual int enableVideoEffect() = 0;
@@ -474,8 +474,7 @@ public:
     /** 
      * @hidden for internal use only
      * @type api
-     * @brief 私有接口
-     * 设置视频特效素材包。
+     * @brief 私有接口，设置视频特效素材包。
      * @param [in] stickerPath 特效素材包绝对路径。
      *        要取消当前视频特效，将此参数设置为 null。
      * @return  <br>

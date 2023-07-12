@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  *       + 调用 stopMusic:{@link #ByteRTCKTVPlayer#stopMusic:} 方法停止播放成功后，会触发 playState 值为 ByteRTCKTVPlayStateStoped 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
  *       + 音乐播放结束会触发 playState 值为 ByteRTCKTVPlayStateFinished 的回调。
  */
-- (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChange:(NSString *)musicId state:(ByteRTCKTVPlayState)state error:(ByteRTCKTVPlayerError)error;
+- (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChanged:(NSString *)musicId state:(ByteRTCKTVPlayState)state error:(ByteRTCKTVPlayerError)error;
 @end
 
 /** 
@@ -59,10 +59,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @param trackType 原唱伴唱类型，参看 ByteRTCKTVAudioTrackType{@link #ByteRTCKTVAudioTrackType}。
  * @param playType 音乐播放类型。参看 ByteRTCKTVAudioPlayType{@link #ByteRTCKTVAudioPlayType}。
  * @notes  <br>
- *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调歌曲播放状态。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
- *        + 若音乐文件不存在，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3020，playState 为 4。
+ *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调歌曲播放状态。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 若音乐文件不存在，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3020，playState 为 4。
  */
 - (void)playMusic:(NSString * _Nonnull)musicId audioTrackType:(ByteRTCKTVAudioTrackType)trackType audioPlayType:(ByteRTCKTVAudioPlayType)playType;
 
@@ -71,9 +71,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @brief 暂停播放歌曲。
  * @param musicId 音乐 ID。
  * @notes  <br>
- *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调歌曲播放状态。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调歌曲播放状态。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  */
 - (void)pauseMusic:(NSString * _Nonnull)musicId;
 
@@ -82,9 +82,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @brief 继续播放歌曲。
  * @param musicId 音乐 ID。
  * @notes  <br>
- *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调歌曲播放状态。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调歌曲播放状态。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  */
 - (void)resumeMusic:(NSString * _Nonnull)musicId;
 
@@ -93,9 +93,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @brief 停止播放歌曲。
  * @param musicId 音乐 ID。
  * @notes  <br>
- *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调歌曲播放状态。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调歌曲播放状态。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  */
 - (void)stopMusic:(NSString * _Nonnull)musicId;
 
@@ -106,9 +106,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @param position 音乐起始位置，单位为毫秒，取值小于音乐文件总时长。
  * @notes <br>
  *        + 调用本接口时音乐必须处于播放中状态。
- *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调歌曲播放状态。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调歌曲播放状态。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  */
 - (void)seekMusic:(NSString * _Nonnull)musicId position:(int)position;
 
@@ -123,8 +123,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @notes <br>
  *        + 调用本接口时音乐必须处于播放中状态。
  *        + 若设置的音量大于 400，则按最大值 400 进行调整；若设置的音量小于 0，则按最小值 0 进行调整。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  */
 - (void)setMusicVolume:(NSString * _Nonnull)musicId volume:(int)volume;
 
@@ -145,8 +145,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @notes <br>
  *        + 调用本接口时音乐必须处于播放中状态。
  *        + 若设置的 pitch 大于 12，则按最大值 12 进行调整；若设置的 pitch 小于 –12，，则按最小值 –12 进行调整。
- *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3023，playState 为 4。
- *        + 若未进房，会触发 ktvPlayer:onPlayStateChange:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChange:state:error:} 回调，errorCode 为 –3022，playState 为 4。
+ *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
+ *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  */
 - (void)setMusicPitch:(NSString * _Nonnull)musicId pitch:(int)pitch;
 

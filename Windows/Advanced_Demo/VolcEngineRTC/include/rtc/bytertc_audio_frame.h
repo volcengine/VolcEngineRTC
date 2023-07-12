@@ -285,13 +285,18 @@ public:
      */
     virtual int onProcessRemoteUserAudioFrame(const RemoteStreamKey& stream_info, IAudioFrame& audioFrame) = 0;
     /** 
-     * @hidden(Windows,Linux)
+     * @hidden(macOS, Windows, Linux)
+     * @valid since 3.50
      * @type callback
      * @brief 软件耳返音频数据的回调。你可根据此回调自定义处理音频。
-     * @param [in] audioFrame 耳返音频数据。参看 IAudioFrame{@link #IAudioFrame}。
+     *        耳返音频中包含通过调用 `setVoiceReverbType` 和 `setVoiceChangerType` 设置的音频特效。
+     * @param audioFrame 音频帧地址。参看 IAudioFrame{@link #IAudioFrame}。
      * @notes  <br>
-     *        + 此数据处理只影响耳返音频数据。  <br>
-     *        + 调用 enableAudioProcessor{@link #RTCVideo#enableAudioProcessor}，将返回给音频处理器的音频类型设置为耳返音频后，你将收到此回调。
+     *        + 此数据处理只影响软件耳返音频数据。  <br>
+     *        + 要启用此回调，必须调用 `enableAudioProcessor`，并选择耳返音频。
+     * @return  <br>
+     *        + 0： 成功。  <br>
+     *        + < 0： 失败。  <br>
      */
     virtual int onProcessEarMonitorAudioFrame(IAudioFrame& audioFrame) = 0;
     /** 
@@ -321,7 +326,7 @@ public:
     /** 
      * @type callback
      * @region 音频数据回调
-     * @brief 获得单个流的音频数据，此回调通过调用 registerRemoteAudioFrameObserver{@link #IRTCVideo#registerRemoteAudioFrameObserver} 触发。
+     * @brief 获得单个流的音频数据，此回调通过调用 registerAudioFrameObserver{@link #IRTCVideo#registerAudioFrameObserver} 触发。
      * @param [in] audio_frame 音频数据, 详见： IAudioFrame{@link #IAudioFrame}
      * @param [in] stream_info 该音频流的业务信息, 详见： RemoteStreamKey{@link #RemoteStreamKey}
      */

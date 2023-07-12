@@ -101,7 +101,7 @@ public:
      * @type api
      * @region 视频设备管理
      * @brief 获取当前 SDK 正在使用的视频采集设备信息
-     * @param [out] device_id 视频设备 ID
+     * @param [out] device_id 视频设备 ID。此参数同时是入参和出参。
      * @return  <br>
      *        + 0：方法调用成功  <br>
      *        + !0：方法调用失败  <br>
