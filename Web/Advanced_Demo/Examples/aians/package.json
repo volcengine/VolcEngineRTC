@@ -1,0 +1,14 @@
+{
+  "name": "aians",
+  "version": "0.0.0",
+  "description": "AI 降噪",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^4.4.4",
+    "@volcengine/rtc": "^4.54.0"
+  }
+}

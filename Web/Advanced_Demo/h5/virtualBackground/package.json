@@ -1,0 +1,14 @@
+{
+  "name": "virtualbackground",
+  "version": "0.0.0",
+  "description": "virtualBackground",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^4.4.4",
+    "@volcengine/rtc": "^4.54.0"
+  }
+}
