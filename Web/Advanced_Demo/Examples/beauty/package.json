@@ -1,0 +1,14 @@
+{
+  "name": "beauty",
+  "version": "0.0.0",
+  "description": "基础美颜",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^4.4.4",
+    "@volcengine/rtc": "^4.54.0"
+  }
+}
