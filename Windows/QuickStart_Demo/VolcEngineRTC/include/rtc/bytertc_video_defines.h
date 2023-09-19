@@ -135,33 +135,6 @@ struct RemoteStreamSwitch {
 
 /** 
  * @type keytype
- * @brief 直播推流转码功能错误码。
- */
-enum TransCodingError {
-    /** 
-     * @brief 推流成功。
-     */
-    kTransCodingErrorOK = 0,
-    /** 
-     * @brief 推流参数错误。
-     */
-    kTransCodingErrorInvalidArgument = 1,
-    /** 
-     * @brief 和 RTC 服务端建立连接失败。会自动重连
-     */
-    kTransCodingErrorSubscribe = 2,
-    /** 
-     * @brief 合流服务中间过程存在错误，建议重试。
-     */
-    kTransCodingErrorProcessing = 3,
-    /** 
-     * @brief 推流失败，可以等待服务端重新推流。
-     */
-    kTransCodingErrorPublish = 4,
-};
-
-/** 
- * @type keytype
  * @brief 转推直播包含内容。
  */
 enum LiveTranscodingContentControl {
@@ -873,32 +846,31 @@ struct DesktopCaptureParameters {
  */
 class IVideoSink {
 public:
-/** 
- * @type keytype
- * @brief 视频帧编码格式
- */
-enum PixelFormat {
     /** 
-     * @brief YUV I420 格式
+     * @type keytype
+     * @brief 视频帧编码格式
      */
-    kI420 = VideoPixelFormat::kVideoPixelFormatI420,
-    /** 
-     * @brief 原始视频帧格式
-     */
-    kOriginal = VideoPixelFormat::kVideoPixelFormatUnknown,
-};
+    enum PixelFormat {
+        /** 
+         * @brief YUV I420 格式
+         */
+        kI420 = VideoPixelFormat::kVideoPixelFormatI420,
+        /** 
+         * @brief RGBA 格式, 字节序为 R8 G8 B8 A8
+         */
+        kRGBA = VideoPixelFormat::kVideoPixelFormatRGBA,
+        /** 
+         * @brief 原始视频帧格式
+         */
+        kOriginal = VideoPixelFormat::kVideoPixelFormatUnknown,
+    };
     /** 
      * @type callback
      * @brief 视频帧回调
-     * @param [out] videoFrame 视频帧结构类，参看 IVideoFrame{@link #IVideoFrame}
+     * @param [out] video_frame 视频帧结构类，参看 IVideoFrame{@link #IVideoFrame}
      * @return 返回值暂未使用
      */
-    virtual bool onFrame(IVideoFrame* videoFrame) = 0;
-    /**
-     * @hidden for internal use only
-     * @valid since 3.50
-     */
-    virtual bool onCacheSyncedFrames(int count, const char** uidArray, IVideoFrame** videoFrameArray) = 0;
+    virtual bool onFrame(IVideoFrame* video_frame) = 0;
 
     /** 
      * @type callback
@@ -1073,6 +1045,7 @@ struct VideoFrameInfo {
 struct VideoPreprocessorConfig {
     /** 
      * @brief 视频帧像素格式，参看 VideoPixelFormat{@link #VideoPixelFormat}
+     *        当前仅支持 `kVideoPixelFormatI420` 和 `kVideoPixelFormatUnknown` 格式。
      */
     VideoPixelFormat required_pixel_format = kVideoPixelFormatUnknown;
 };
@@ -1206,7 +1179,7 @@ enum RTCVideoDeviceType {
 };
 
 /** 
- * @type keytype
+ * @type errorcode
  * @brief 公共流状态码
  */
 enum PublicStreamErrorCode {
@@ -1502,6 +1475,7 @@ enum VideoSuperResolutionModeChangedReason {
 };
 
 /** 
+ * @hidden for internal use only
  * @type keytype
  * @brief 视频降噪模式状态改变原因。
  */
@@ -1655,6 +1629,7 @@ public:
 /** 
  * @type callback
  * @brief 自定义编码帧回调类
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IExternalVideoEncoderEventHandler {
 public:
@@ -1701,6 +1676,7 @@ public:
  * @type callback
  * @region 视频数据回调
  * @brief 本地视频帧监测器
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class ILocalEncodedVideoFrameObserver {
 public:
@@ -1724,6 +1700,7 @@ public:
  * @type callback
  * @region 视频管理
  * @brief 远端编码后视频数据监测器
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IRemoteEncodedVideoFrameObserver {
 public:
@@ -1767,6 +1744,7 @@ struct VideoMetadataBuffer {
  * @type callback
  * @region 视频数据回调
  * @brief metadata 观察者，可以接收媒体流中的 metadata， 或者向媒体流中添加 metadata
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IMetadataObserver {
 public:
@@ -1871,6 +1849,7 @@ public:
  * @hidden(Linux)
  * @type callback
  * @brief 截图的回调。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class ISnapshotResultCallback {
 public:
@@ -1930,6 +1909,5 @@ struct MediaTypeEnhancementConfig {
      */
     bool enhance_screen_video = false;
 };
-
 
 }  // namespace bytertc

@@ -1,0 +1,220 @@
+%YAML 1.1
+--- !Prefab &1
+name: ""
+guid: {a: 10974919665342929405, b: 7524677798450677672}
+entities:
+  - __class: Entity
+    name: Slider
+    guid: {a: 1318084798639157075, b: 606922534992238781}
+    selfvisible: true
+    components:
+      - {localId: 15, path: main.scene}
+      - __class: IFSprite2d
+        name: ""
+        guid: {a: 7224412471939755745, b: 11279912861989046406}
+        enabled: true
+        alpha: 1
+        cascadeAlphaEnabled: true
+        type:
+          __class: IFSprite2dType
+          value: Normal
+        sizeMode:
+          __class: IFSprite2dSizeMode
+          value: Custom
+        colorTint: {r: 1, g: 1, b: 1, a: 1}
+        texture: {localId: 1, path: image/back1.png}
+        atlasIndex: 0
+        filledType:
+          __class: IFFilledType
+          value: Horizontal
+        filledStartPos: 0
+        filledRange: 1
+        ellipseX: 200
+        ellipseY: 200
+        topLeftPoint: {x: 0, y: 0}
+        topRightPoint: {x: 0, y: 0}
+        bottomLeftPoint: {x: 0, y: 0}
+        bottomRightPoint: {x: 0, y: 0}
+        slicedLeft: 0.1000000014901161
+        slicedRight: 0.8999999761581421
+        slicedBottom: 0.1000000014901161
+        slicedTop: 0.8999999761581421
+        fillCenter: true
+        topLeft: 0.5
+        topRight: 0.5
+        bottomLeft: 0.5
+        bottomRight: 0.5
+        lineWidth: 1
+        lineColor: {r: 1, g: 1, b: 1, a: 1}
+        outer: false
+        sizeInited: true
+        freeInited: false
+      - __class: IFUISlider
+        name: ""
+        guid: {a: 10973871560119013206, b: 11765056506212973460}
+        enabled: true
+        swallowTouch: true
+        touchEnabled: true
+        hitOnTouchMoved: true
+        normalSprite: 0
+        pressedSprite: 0
+        disabledSprite: 0
+        normalColor: {r: 1, g: 1, b: 1, a: 1}
+        pressedColor: {r: 0.6862745, g: 0.6862745, b: 0.6862745, a: 1}
+        disabledColor: {r: 1, g: 0.9294118, b: 0.1843137, a: 1}
+        touchMoveRespond: true
+        direction:
+          __class: IFUIMoveDirection
+          value: LEFT_TO_RIGHT
+        mode:
+          __class: IFUISliderMode
+          value: DRAG_THUMB
+        minValue: 0
+        maxValue: 1
+        steps: 0
+        fillTrans: {localId: 14, path: main.scene}
+        thumbTrans: {localId: 16, path: main.scene}
+        value: 0.5668922066688538
+      - __class: IFBoxCollider
+        name: ""
+        guid: {a: 6649774450424011988, b: 10972493028285115539}
+        enabled: true
+        autoAdjustCollider: true
+        center: {x: 0, y: 0, z: 0}
+        size: {x: 0.78125, y: 0.078125, z: 0.1}
+      - __class: IFScriptComponent
+        name: ""
+        guid: {a: 3838092421542869325, b: 15720656516102988989}
+        enabled: true
+        path: ""
+        properties:
+          __class: Map
+        className: ""
+        LuaObjRef: -1
+    layer: 0
+  - __class: Entity
+    name: Fill
+    guid: {a: 5424720749723977484, b: 405781553911618438}
+    selfvisible: true
+    components:
+      - {localId: 14, path: main.scene}
+      - __class: IFSprite2d
+        name: ""
+        guid: {a: 17962936519226413470, b: 12011572157120988594}
+        enabled: true
+        alpha: 1
+        cascadeAlphaEnabled: true
+        type:
+          __class: IFSprite2dType
+          value: Sliced
+        sizeMode:
+          __class: IFSprite2dSizeMode
+          value: Custom
+        colorTint: {r: 1, g: 1, b: 1, a: 1}
+        texture: {localId: 1, path: image/fill1.png}
+        atlasIndex: 0
+        filledType:
+          __class: IFFilledType
+          value: Horizontal
+        filledStartPos: 0
+        filledRange: 1
+        ellipseX: 200
+        ellipseY: 200
+        topLeftPoint: {x: 0, y: 0}
+        topRightPoint: {x: 0, y: 0}
+        bottomLeftPoint: {x: 0, y: 0}
+        bottomRightPoint: {x: 0, y: 0}
+        slicedLeft: 0.1000000014901161
+        slicedRight: 0.8999999761581421
+        slicedBottom: 0.1000000014901161
+        slicedTop: 0.8999999761581421
+        fillCenter: true
+        topLeft: 0.5
+        topRight: 0.5
+        bottomLeft: 0.5
+        bottomRight: 0.5
+        lineWidth: 1
+        lineColor: {r: 1, g: 1, b: 1, a: 1}
+        outer: false
+        sizeInited: true
+        freeInited: false
+    layer: 0
+  - __class: Entity
+    name: Thumb
+    guid: {a: 14289682576103594825, b: 1207820952906302598}
+    selfvisible: true
+    components:
+      - {localId: 16, path: main.scene}
+      - __class: IFSprite2d
+        name: ""
+        guid: {a: 11403395192505616658, b: 2503122522066202036}
+        enabled: true
+        alpha: 1
+        cascadeAlphaEnabled: true
+        type:
+          __class: IFSprite2dType
+          value: Normal
+        sizeMode:
+          __class: IFSprite2dSizeMode
+          value: Custom
+        colorTint: {r: 0.04175245, g: 0.6249782, b: 0.2639335, a: 1}
+        texture: {localId: 1, path: image/whiteThumb.png}
+        atlasIndex: 0
+        filledType:
+          __class: IFFilledType
+          value: Horizontal
+        filledStartPos: 0
+        filledRange: 1
+        ellipseX: 200
+        ellipseY: 200
+        topLeftPoint: {x: 0, y: 0}
+        topRightPoint: {x: 0, y: 0}
+        bottomLeftPoint: {x: 0, y: 0}
+        bottomRightPoint: {x: 0, y: 0}
+        slicedLeft: 0.1000000014901161
+        slicedRight: 0.8999999761581421
+        slicedBottom: 0.1000000014901161
+        slicedTop: 0.8999999761581421
+        fillCenter: true
+        topLeft: 0.5
+        topRight: 0.5
+        bottomLeft: 0.5
+        bottomRight: 0.5
+        lineWidth: 1
+        lineColor: {r: 1, g: 1, b: 1, a: 1}
+        outer: false
+        sizeInited: true
+        freeInited: false
+      - __class: IFUISliderThumb
+        name: ""
+        guid: {a: 9965174690437987143, b: 11370949116929731713}
+        enabled: true
+        swallowTouch: true
+        touchEnabled: true
+        hitOnTouchMoved: true
+        normalSprite: 0
+        pressedSprite: 0
+        disabledSprite: 0
+        normalColor: {r: 0.04175245, g: 0.6249782, b: 0.2639335, a: 1}
+        pressedColor: {r: 0.6862745, g: 0.6862745, b: 0.6862745, a: 1}
+        disabledColor: {r: 1, g: 0.9294118, b: 0.1843137, a: 1}
+        touchMoveRespond: true
+      - __class: IFBoxCollider
+        name: ""
+        guid: {a: 13279363368620868563, b: 8308678589923516855}
+        enabled: true
+        autoAdjustCollider: true
+        center: {x: 0, y: 0, z: 0}
+        size: {x: 0.125, y: 0.1234375, z: 0.1}
+      - __class: IFScriptComponent
+        name: ""
+        guid: {a: 2614049276841007261, b: 17922029607893819029}
+        enabled: true
+        path: ""
+        properties:
+          __class: Map
+        className: ""
+        LuaObjRef: -1
+    layer: 0
+standaloneResources:
+  __class: Map

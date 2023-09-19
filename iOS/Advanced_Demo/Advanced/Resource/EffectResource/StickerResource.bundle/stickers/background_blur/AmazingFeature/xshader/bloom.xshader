@@ -1,0 +1,287 @@
+%YAML 1.1
+--- !XShader &1
+name: bloom
+guid: {a: 4053612589361769360, b: 175977186300360328}
+properties:
+  __class: PropertySheet
+  name: ""
+  guid: {a: 18180934764219675821, b: 191029828517050003}
+  floatmap:
+    __class: Map
+  vec4map:
+    __class: Map
+  vec3map:
+    __class: Map
+  vec2map:
+    __class: Map
+  mat4map:
+    __class: Map
+  texmap:
+    __class: Map
+  intmap:
+    __class: Map
+renderQueue: 2000
+passes:
+  - __class: Pass
+    name: ""
+    guid: {a: 13349595479755358301, b: 17802107701026876842}
+    shaders:
+      __class: Map
+      gles2:
+        - {localId: 2}
+        - {localId: 3}
+    semantics:
+      __class: Map
+      attPosition:
+        __class: VertexAttribType
+        value: POSITION
+      attUV:
+        __class: VertexAttribType
+        value: TEXCOORD0
+    renderTexture: {localId: 1, path: rt/preFilter.rt}
+    clearColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    clearDepth: 1
+    clearType:
+      __class: CameraClearType
+      value: DONT
+    renderState:
+      __class: RenderState
+      name: ""
+      guid: {a: 14650184791410034702, b: 4377611375224700313}
+      depthstencil:
+        __class: DepthStencilState
+        name: ""
+        guid: {a: 91805679247822516, b: 12677137357777760937}
+        depthTestEnable: false
+        depthTestEnableName: ""
+        depthCompareOp:
+          __class: CompareOp
+          value: LESS
+        depthCompareOpName: ""
+        depthWriteEnable: true
+        stencilTestEnable: false
+        stencilTestEnableName: ""
+    useFBOTexture: false
+    useCameraRT: false
+    useFBOFetch: false
+    isFullScreenShading: false
+    macrosMap:
+      __class: Map
+    preprocess: false
+    passType:
+      __class: PassType
+      value: NORMAL
+    lightMode:
+      __class: LightMode
+      value: NONE
+  - __class: Pass
+    name: ""
+    guid: {a: 18177732298394296203, b: 12629874845841615036}
+    shaders:
+      __class: Map
+      gles2:
+        - {localId: 4}
+        - {localId: 5}
+    semantics:
+      __class: Map
+      attPosition:
+        __class: VertexAttribType
+        value: POSITION
+      attUV:
+        __class: VertexAttribType
+        value: TEXCOORD0
+    renderTexture: {localId: 1, path: rt/bokeh.rt}
+    clearColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    clearDepth: 1
+    clearType:
+      __class: CameraClearType
+      value: DONT
+    renderState:
+      __class: RenderState
+      name: ""
+      guid: {a: 12629711741262451538, b: 18433856560022636688}
+      depthstencil:
+        __class: DepthStencilState
+        name: ""
+        guid: {a: 13208105651310284684, b: 541437443700579971}
+        depthTestEnable: false
+        depthTestEnableName: ""
+        depthCompareOp:
+          __class: CompareOp
+          value: LESS
+        depthCompareOpName: ""
+        depthWriteEnable: true
+        stencilTestEnable: false
+        stencilTestEnableName: ""
+    useFBOTexture: false
+    useCameraRT: false
+    useFBOFetch: false
+    isFullScreenShading: false
+    macrosMap:
+      __class: Map
+    preprocess: false
+    passType:
+      __class: PassType
+      value: NORMAL
+    lightMode:
+      __class: LightMode
+      value: NONE
+  - __class: Pass
+    name: ""
+    guid: {a: 17745640600395860450, b: 5247619513071945609}
+    shaders:
+      __class: Map
+      gles2:
+        - {localId: 6}
+        - {localId: 7}
+    semantics:
+      __class: Map
+      attPosition:
+        __class: VertexAttribType
+        value: POSITION
+      attUV:
+        __class: VertexAttribType
+        value: TEXCOORD0
+    renderTexture: {localId: 1, path: rt/postFilter.rt}
+    clearColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    clearDepth: 1
+    clearType:
+      __class: CameraClearType
+      value: DONT
+    renderState:
+      __class: RenderState
+      name: ""
+      guid: {a: 3838085496907048183, b: 2545640728859782323}
+      depthstencil:
+        __class: DepthStencilState
+        name: ""
+        guid: {a: 8018067758139715717, b: 4591817823377614509}
+        depthTestEnable: false
+        depthTestEnableName: ""
+        depthCompareOp:
+          __class: CompareOp
+          value: LESS
+        depthCompareOpName: ""
+        depthWriteEnable: true
+        stencilTestEnable: false
+        stencilTestEnableName: ""
+    useFBOTexture: false
+    useCameraRT: false
+    useFBOFetch: false
+    isFullScreenShading: false
+    macrosMap:
+      __class: Map
+    preprocess: false
+    passType:
+      __class: PassType
+      value: NORMAL
+    lightMode:
+      __class: LightMode
+      value: NONE
+  - __class: Pass
+    name: ""
+    guid: {a: 886084087205573365, b: 10540684944545072546}
+    shaders:
+      __class: Map
+      gles2:
+        - {localId: 8}
+        - {localId: 9}
+    semantics:
+      __class: Map
+      attPosition:
+        __class: VertexAttribType
+        value: POSITION
+      attUV:
+        __class: VertexAttribType
+        value: TEXCOORD0
+    clearColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    clearDepth: 1
+    clearType:
+      __class: CameraClearType
+      value: DONT
+    renderState:
+      __class: RenderState
+      name: ""
+      guid: {a: 12054664858226094187, b: 16373741737178146217}
+      depthstencil:
+        __class: DepthStencilState
+        name: ""
+        guid: {a: 7299508748311437461, b: 14677796556865123518}
+        depthTestEnable: false
+        depthTestEnableName: ""
+        depthCompareOp:
+          __class: CompareOp
+          value: LESS
+        depthCompareOpName: ""
+        depthWriteEnable: true
+        stencilTestEnable: false
+        stencilTestEnableName: ""
+    useFBOTexture: false
+    useCameraRT: false
+    useFBOFetch: false
+    isFullScreenShading: false
+    macrosMap:
+      __class: Map
+    preprocess: false
+    passType:
+      __class: PassType
+      value: NORMAL
+    lightMode:
+      __class: LightMode
+      value: NONE
+--- !Shader &2
+name: ""
+guid: {a: 7948405909118946109, b: 1719778417573094019}
+type:
+  __class: ShaderType
+  value: VERTEX
+sourcePath: xshader/preFilter.vert
+--- !Shader &3
+name: ""
+guid: {a: 6721284275530932665, b: 3827333854652340378}
+type:
+  __class: ShaderType
+  value: FRAGMENT
+sourcePath: xshader/preFilter.frag
+--- !Shader &4
+name: ""
+guid: {a: 17385896080524283772, b: 5598876249908180132}
+type:
+  __class: ShaderType
+  value: VERTEX
+sourcePath: xshader/bokeh.vert
+--- !Shader &5
+name: ""
+guid: {a: 3697276062557219513, b: 1181931188386092461}
+type:
+  __class: ShaderType
+  value: FRAGMENT
+sourcePath: xshader/bokeh.frag
+--- !Shader &6
+name: ""
+guid: {a: 6144416568365533656, b: 6927518828726297235}
+type:
+  __class: ShaderType
+  value: VERTEX
+sourcePath: xshader/postFilter.vert
+--- !Shader &7
+name: ""
+guid: {a: 12556062271205306414, b: 12144720161778629775}
+type:
+  __class: ShaderType
+  value: FRAGMENT
+sourcePath: xshader/postFilter.frag
+--- !Shader &8
+name: ""
+guid: {a: 4633970724417819477, b: 3531776505660950423}
+type:
+  __class: ShaderType
+  value: VERTEX
+sourcePath: xshader/combine.vert
+--- !Shader &9
+name: ""
+guid: {a: 2902709592859180611, b: 12148584235620020376}
+type:
+  __class: ShaderType
+  value: FRAGMENT
+sourcePath: xshader/combine.frag

@@ -69,11 +69,17 @@ struct AudioFormat {
     /** 
      * @brief 音频采样率，详见 AudioSampleRate{@link #AudioSampleRate}
      */
-    AudioSampleRate sample_rate;
+    AudioSampleRate sample_rate = kAudioSampleRateAuto;
     /** 
      * @brief 音频声道，详见 AudioChannel{@link #AudioChannel}
      */
-    AudioChannel channel;
+    AudioChannel channel = kAudioChannelAuto;
+    /** 
+     * @brief 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
+     *        最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
+     *        最大值是 `2048`。超出取值范围时，采样点数取默认值。
+     */
+    int samples_per_call = 0;
 };
 /** 
  * @type keytype
@@ -261,7 +267,7 @@ enum AudioScenarioType {
 
 /** 
  * @type keytype
- * @brief Private method. 变声特效类型
+ * @brief 变声特效类型。如需更多类型，联系技术支持。
  */
 enum VoiceChangerType {
     /** 
@@ -591,6 +597,86 @@ enum AudioMixingError {
      */
     kAudioMixingErrorCanNotOpen = 701,
 };
+/**  
+ * @type keytype
+ * @brief 播放状态。
+ */
+enum PlayerState {
+    /**  
+     * @brief 播放未启动
+     */
+    kPlayerStateIdle = 0,
+    /**  
+     * @brief 已加载
+     */
+    kPlayerStatePreloaded,
+    /**  
+     * @brief 已打开
+     */
+    kPlayerStateOpened,
+    /**  
+     * @brief 正在播放
+     */
+    kPlayerStatePlaying,
+    /**  
+     * @brief 播放已暂停
+     */
+    kPlayerStatePaused,
+    /**  
+     * @brief 播放已停止/或结束
+     */
+    kPlayerStateStopped,
+    /**  
+     * @brief 播放失败
+     */
+    kPlayerStateFailed,
+};
+/**  
+ * @type keytype
+ * @brief 播放错误码。
+ */
+enum PlayerError {
+    /**  
+     * @brief 正常
+     */
+    kPlayerErrorOK = 0,
+    /**  
+     * @brief 不支持此类型
+     */
+    kPlayerErrorFormatNotSupport,
+    /**  
+     * @brief 无效的播放路径
+     */
+    kPlayerErrorInvalidPath,
+    /**  
+     * @brief 未满足前序接口调用的要求。请查看具体接口文档。
+     */
+    kPlayerErrorInvalidState,
+    /**  
+     * @brief 设置播放位置出错。
+     */
+    kPlayerErrorInvalidPosition,
+    /**  
+     * @brief 音量参数不合法。
+     */
+    kPlayerErrorInvalidVolume,
+    /**  
+     * @brief 音调参数设置不合法。
+     */
+    kPlayerErrorInvalidPitch,
+    /**  
+     * @brief 音轨参数设置不合法。
+     */
+    kPlayerErrorInvalidAudioTrackIndex,
+    /** 
+     * @brief 播放速度参数设置不合法
+     */
+    kPlayerErrorInvalidPlaybackSpeed,
+    /**  
+     * @brief 音效 ID 异常。还未加载或播放文件，就调用其他 API。
+     */
+    kPlayerErrorInvalidEffectId,
+};
 
 /** 
  * @type keytype
@@ -715,27 +801,27 @@ struct RTCASRConfig {
     /** 
      * @brief 应用 ID
      */
-    const char* app_id;
+    const char* app_id = 0;
     /** 
      * @brief 用户 ID
      */
-    const char* user_id;
+    const char* user_id = 0;
     /** 
      * @brief 鉴权方式，参看 ASRAuthorizationType{@link #ASRAuthorizationType}
      */
-    ASRAuthorizationType authorization_type;
+    ASRAuthorizationType authorization_type = kASRAuthorizationTypeToken;
     /** 
      * @brief 访问令牌
      */
-    const char* access_token;
+    const char* access_token = 0;
     /** 
      * @brief 私钥。Signature 鉴权模式下不能为空，token 鉴权模式下为空。参看[关于鉴权](https://www.volcengine.com/docs/6561/107789)
      */
-    const char* secret_key;
+    const char* secret_key = 0;
     /** 
      * @brief 场景信息，参看[业务集群](https://www.volcengine.com/docs/6561/80818#_3-2-2-%E5%8F%91%E9%80%81-full-client-request)
      */
-    const char* cluster;
+    const char* cluster = 0;
 };
 
 /** 
@@ -854,6 +940,69 @@ enum AudioMixingDualMonoMode{
      * @brief 能同时听到音频文件中左右声道的音频
      */
     kAudioMixingDualMonoModeMix
+};
+/** 
+ * @type keytype
+ * @brief 混音配置
+ */
+struct AudioEffectPlayerConfig {
+    /** 
+     * @brief 混音播放类型，详见 AudioMixingType{@link #AudioMixingType} 
+     */ 
+    AudioMixingType type = kAudioMixingTypePlayoutAndPublish;
+    /** 
+     * @brief 混音播放次数
+     *       + play_count <= 0: 无限循环  <br>
+     *       + play_count == 1: 播放一次（默认）  <br>
+     *       + play_count > 1: 播放 play_count 次
+     */
+    int play_count = 1;
+    /** 
+     * @brief 混音起始位置。默认值为 0，单位为毫秒。
+     */
+    int pitch = 0;
+    /** 
+     * @brief 混音起始位置。默认值为 0，单位为毫秒。
+     */
+    int start_pos = 0;
+};
+/** 
+ * @type keytype
+ * @brief 混音配置
+ */
+struct MediaPlayerConfig {
+    /** 
+     * @brief 混音播放次数
+     *       + play_count <= 0: 无限循环  <br>
+     *       + play_count == 1: 播放一次（默认）  <br>
+     *       + play_count > 1: 播放 play_count 次
+     */
+    int play_count = 1;
+    /** 
+     * @brief 混音起始位置。默认值为 0，单位为毫秒。
+     */
+    int start_pos = 0;
+    /** 
+     * @brief 设置音频文件混音时，收到 onMediaPlayerPlayingProgress{@link #IMediaPlayerEventHandler#onMediaPlayerPlayingProgress} 的间隔。单位毫秒。
+     *       + interval > 0 时，触发回调。实际间隔是 `10*(mod(10)+1)`。
+     *       + interval <= 0 时，不会触发回调。
+     */
+     int64_t callback_on_progress_interval = 0;
+    /** 
+     * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+     * @notes <br>
+     *        + 仅在单个音频文件混音时使用有效。<br>
+     *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
+     */
+    bool sync_progress_to_record_frame = false;
+    /** 
+    * @brief 是否自动播放。如果不自动播放，调用 start{@link #IMediaPlayer#start} 播放音乐文件。
+    */
+    bool auto_play = true;
+    /** 
+     * @brief 混音播放类型，详见 AudioMixingType{@link #AudioMixingType}
+     */
+    AudioMixingType type = kAudioMixingTypePlayoutAndPublish;
 };
 
 /** 
@@ -1394,11 +1543,12 @@ struct AudioRecordingConfig {
     }
     /** 
      * @brief 录制文件路径。一个有读写权限的绝对路径，包含文件名和文件后缀。
-     * @notes 录制文件的格式仅支持 .aac 和 .wav。
+     * 录制文件的格式仅支持 .aac 和 .wav。
      */
     const char* absolute_file_name;
     /** 
      * @brief 录音内容来源，参看 AudioFrameSource{@link #AudioFrameSource}。
+     * 默认为 kAudioFrameSourceMixed = 2。
      */
     AudioFrameSource frame_source;
     /** 
@@ -1407,16 +1557,16 @@ struct AudioRecordingConfig {
     AudioSampleRate sample_rate;
     /** 
      * @brief 录音音频声道。参看 AudioChannel{@link #AudioChannel}。
-     * @notes 如果录制时设置的的音频声道数与采集时的音频声道数不同：<br>
+     *        如果录制时设置的的音频声道数与采集时的音频声道数不同：<br>
      *        + 如果采集的声道数为 1，录制的声道数为 2，那么，录制的音频为经过单声道数据拷贝后的双声道数据，而不是立体声。<br>
      *        + 如果采集的声道数为 2，录制的声道数为 1，那么，录制的音频为经过双声道数据混合后的单声道数据。
      */
     AudioChannel channel;
     /** 
      * @brief 录音音质。仅在录制文件格式为 .aac 时可以设置。参看 AudioQuality{@link #AudioQuality}。
-     * @notes 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是： <br>
+     * 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是： <br>
      *        + 低音质：1.2MB；<br>
-     *        + 中音质：2MB；<br>
+     *        + 【默认】中音质：2MB；<br>
      *        + 高音质：3.75MB；<br>
      *        + 超高音质：7.5MB。
      */

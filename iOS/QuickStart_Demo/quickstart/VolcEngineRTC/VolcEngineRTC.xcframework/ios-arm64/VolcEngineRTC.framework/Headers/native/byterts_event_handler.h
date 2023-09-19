@@ -8,7 +8,7 @@
 #ifndef BYTE_RTS_EVENT_HANDLER_H__
 #define BYTE_RTS_EVENT_HANDLER_H__
 
-#include "bytertc_rts_defines.h"
+#include "rtc/bytertc_rts_defines.h"
 
 namespace bytertc {
 /** 

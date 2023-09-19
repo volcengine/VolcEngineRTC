@@ -1,0 +1,72 @@
+{
+    "name": "",
+    "materials": [
+        {
+            "name": "",
+            "techniques": [
+                {
+                    "name": "",
+                    "passes": [
+                        {
+                            "name": "",
+                            "renderType": "Opaque",
+                            "depthTest": true,
+                            "depthWrite": true,
+                            "depthFunc": "DF_LEQUAL",
+                            "renderFaceMode": "RFM_FRONT_AND_BACK",
+                            "blend": false,
+                            "blend_src_factor": "BF_ONE",
+                            "blend_dst_factor": "BF_ZERO",
+                            "uniforms": {
+                                "g_unif_CameraWorldPos": "BT_CAMERA_WORLD_POS",
+                                "g_unif_ModelMat": "BT_MODEL_MATRIX",
+                                "g_unif_ModelViewProjMat": "BT_MODEL_VIEW_PROJECTION_MATRIX",
+                                "g_unif_NormalWorldMat": "BT_NORMAL_WORLD_MATRIX",
+                                "u_AOIntensiy": 1.0,
+                                "u_HairColorTint": [
+                                    6.311830669670365e-14,
+                                    6.311808985626916e-14,
+                                    6.311691756267016e-14
+                                ],
+                                "u_Shift": 0.0,
+                                "u_ShiftTiling": 1.0,
+                                "u_Shiftness": 0.2750000059604645,
+                                "u_Shininess1": 128.0,
+                                "u_Shininess2": 129.0,
+                                "u_SpecularIntensity": 0.699999988079071,
+                                "u_HairTex": {
+                                    "type": "2d_texture",
+                                    "source": [
+                                        "../Textures/Girl_Hair_d.png"
+                                    ],
+                                    "wrap": "WM_REPEAT",
+                                    "filter": "FM_LINEAR_MIPMAP_LINEAR",
+                                    "premult": false
+                                },
+                                "u_ShiftTex": {
+                                    "type": "2d_texture",
+                                    "source": [
+                                        "../Textures/ShiftTex.png"
+                                    ],
+                                    "wrap": "WM_REPEAT",
+                                    "filter": "FM_LINEAR_MIPMAP_LINEAR",
+                                    "premult": false
+                                }
+                            },
+                            "shaders": [
+                                {
+                                    "type": "VERTEX_SHADER",
+                                    "source": "Girl_Hair.glsl.vs"
+                                },
+                                {
+                                    "type": "FRAGMENT_SHADER",
+                                    "source": "Girl_Hair.glsl.fs"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

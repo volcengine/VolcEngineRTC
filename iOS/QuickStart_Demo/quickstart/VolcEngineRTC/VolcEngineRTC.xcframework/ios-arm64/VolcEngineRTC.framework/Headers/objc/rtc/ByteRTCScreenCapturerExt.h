@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @type callback
  * @brief 屏幕采集相关扩展协议，仅适用于 SDK 内部采集。  <br>
  *        用户创建 extension 后生成的 SampleHandler 需继承此协议以实现屏幕共享相关能力。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
 /** 

@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 
  * @type callback
  * @brief KTV 播放器回调接口。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 @protocol ByteRTCKTVPlayerDelegate <NSObject>
 
@@ -28,18 +29,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @brief 音乐播放状态改变回调。
  * @param ktvPlayer 当前 ktvPlayer 对象，参看 ByteRTCKTVPlayer{@link #ByteRTCKTVPlayer}。
  * @param musicId 音乐 ID。
- * @param state 音乐播放状态，参看 ByteRTCKTVPlayState{@link #ByteRTCKTVPlayState}。
- * @param error 错误码，参看 ByteRTCKTVPlayerError{@link #ByteRTCKTVPlayerError}。
+ * @param state 音乐播放状态，参看 ByteRTCPlayState{@link #ByteRTCPlayState}。
+ * @param error 错误码，参看 ByteRTCKTVPlayerErrorCode{@link #ByteRTCKTVPlayerErrorCode}。
  * @notes <br>
  *       此回调被触发的时机汇总如下：
- *       + 调用 playMusic:audioTrackType:audioPlayType:{@link #ByteRTCKTVPlayer#playMusic:audioTrackType:audioPlayType:} 成功后，会触发 playState 值为 ByteRTCKTVPlayStatePlaying 的回调；否则会触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
- *       + 使用相同的音乐 ID 重复调用 playMusic:audioTrackType:audioPlayType:{@link #ByteRTCKTVPlayer#playMusic:audioTrackType:audioPlayType:} 后，后一次播放会覆盖前一次，且会触发 playState 值为 ByteRTCKTVPlayStatePlaying 的回调，表示后一次音乐播放已开始。
- *       + 调用 pauseMusic:{@link #ByteRTCKTVPlayer#pauseMusic:} 方法暂停播放成功后，会触发 playState 值为 ByteRTCKTVPlayStatePaused 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
- *       + 调用 resumeMusic:{@link #ByteRTCKTVPlayer#resumeMusic:} 方法恢复播放成功后，会触发 playState 值为 ByteRTCKTVPlayStatePlaying 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
- *       + 调用 stopMusic:{@link #ByteRTCKTVPlayer#stopMusic:} 方法停止播放成功后，会触发 playState 值为 ByteRTCKTVPlayStateStoped 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
- *       + 音乐播放结束会触发 playState 值为 ByteRTCKTVPlayStateFinished 的回调。
+ *       + 调用 playMusic:audioTrackType:audioPlayType:{@link #ByteRTCKTVPlayer#playMusic:audioTrackType:audioPlayType:} 成功后，会触发 playState 值为 ByteRTCPlayStatePlaying 的回调；否则会触发 playState 值为 ByteRTCPlayStateFailed 的回调。
+ *       + 使用相同的音乐 ID 重复调用 playMusic:audioTrackType:audioPlayType:{@link #ByteRTCKTVPlayer#playMusic:audioTrackType:audioPlayType:} 后，后一次播放会覆盖前一次，且会触发 playState 值为 ByteRTCPlayStatePlaying 的回调，表示后一次音乐播放已开始。
+ *       + 调用 pauseMusic:{@link #ByteRTCKTVPlayer#pauseMusic:} 方法暂停播放成功后，会触发 playState 值为 ByteRTCPlayStatePaused 的回调；否则触发 playState 值为 ByteRTCPlayStateFailed 的回调。
+ *       + 调用 resumeMusic:{@link #ByteRTCKTVPlayer#resumeMusic:} 方法恢复播放成功后，会触发 playState 值为 ByteRTCPlayStatePlaying 的回调；否则触发 playState 值为 ByteRTCPlayStateFailed 的回调。
+ *       + 调用 stopMusic:{@link #ByteRTCKTVPlayer#stopMusic:} 方法停止播放成功后，会触发 playState 值为 ByteRTCPlayStateStoped 的回调；否则触发 playState 值为 ByteRTCPlayStateFailed 的回调。
+ *       + 音乐播放结束会触发 playState 值为 ByteRTCPlayStateFinished 的回调。
  */
-- (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChanged:(NSString *)musicId state:(ByteRTCKTVPlayState)state error:(ByteRTCKTVPlayerError)error;
+- (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChanged:(NSString *)musicId state:(ByteRTCPlayState)state error:(ByteRTCKTVPlayerErrorCode)error;
 @end
 
 /** 
@@ -56,15 +57,15 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVPlayer : NSObject
  * @brief 播放歌曲。
  * @param musicId 音乐 ID。
  *        若同一 musicId 的歌曲正在播放，再次调用接口会从开始位置重新播放。若 musicId 对应的音频文件不存在会触发报错。
- * @param trackType 原唱伴唱类型，参看 ByteRTCKTVAudioTrackType{@link #ByteRTCKTVAudioTrackType}。
- * @param playType 音乐播放类型。参看 ByteRTCKTVAudioPlayType{@link #ByteRTCKTVAudioPlayType}。
+ * @param trackType 原唱伴唱类型，参看 ByteRTCAudioTrackType{@link #ByteRTCAudioTrackType}。
+ * @param playType 音乐播放类型。参看 ByteRTCAudioPlayType{@link #ByteRTCAudioPlayType}。
  * @notes  <br>
  *        + 调用接口后，你会收到 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调歌曲播放状态。
  *        + 若音乐 ID 错误，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3023，playState 为 4。
  *        + 若未进房，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3022，playState 为 4。
  *        + 若音乐文件不存在，会触发 ktvPlayer:onPlayStateChanged:state:error:{@link #ByteRTCKTVPlayerDelegate#ktvPlayer:onPlayStateChanged:state:error:} 回调，errorCode 为 –3020，playState 为 4。
  */
-- (void)playMusic:(NSString * _Nonnull)musicId audioTrackType:(ByteRTCKTVAudioTrackType)trackType audioPlayType:(ByteRTCKTVAudioPlayType)playType;
+- (void)playMusic:(NSString * _Nonnull)musicId audioTrackType:(ByteRTCAudioTrackType)trackType audioPlayType:(ByteRTCAudioPlayType)playType;
 
 /** 
  * @type api

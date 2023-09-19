@@ -14,6 +14,7 @@ namespace bytertc {
 /** 
  * @type callback
  * @brief K 歌评分事件回调类。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class ISingScoringEventHandler {
 public:

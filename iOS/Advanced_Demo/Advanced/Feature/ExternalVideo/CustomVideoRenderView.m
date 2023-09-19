@@ -33,6 +33,9 @@
                  rotation:(ByteRTCVideoRotation)rotation
               contentType:(ByteRTCVideoContentType)contentType
              extendedData:(NSData * _Nullable)extendedData {
+    
+    NSLog(@"rotation = %ld",(long)rotation);
+    
     [CustomFrameRender renderImageBuffer:pixelBuffer
                                  forView:self.renderImageView
                                 rotation:[self deviceOrientationRotation:rotation]];

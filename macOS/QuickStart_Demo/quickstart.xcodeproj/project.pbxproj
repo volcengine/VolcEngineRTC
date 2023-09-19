@@ -29,18 +29,20 @@
 		2BAF494726CD01820020C84C /* BottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF494626CD01820020C84C /* BottomView.m */; };
 		2BAF494E26CD018D0020C84C /* RenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF494D26CD018D0020C84C /* RenderView.m */; };
 		2BECB70226CD0E7900A1600D /* UserRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BECB70126CD0E7900A1600D /* UserRenderView.m */; };
-		9EE5CBD52A4BE6A0007E1428 /* ByteRTCNICOExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE5CBCF2A4BE65A007E1428 /* ByteRTCNICOExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9EE5CBD62A4BE6A0007E1428 /* libbytenn.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE5CBD22A4BE65C007E1428 /* libbytenn.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		9EE5CBD72A4BE6A0007E1428 /* libbytevc0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE5CBD42A4BE65C007E1428 /* libbytevc0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		9EE5CBD82A4BE6A0007E1428 /* libeffect.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE5CBD02A4BE65B007E1428 /* libeffect.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		9EE5CBD92A4BE6A0007E1428 /* RTCFFmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE5CBD32A4BE65C007E1428 /* RTCFFmpeg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9EE5CBDA2A4BE6A0007E1428 /* VolcEngineRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE5CBD12A4BE65C007E1428 /* VolcEngineRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F193DB42497A477003202CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193DB32497A477003202CC /* AppDelegate.m */; };
 		9F193DB92497A47A003202CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F193DB82497A47A003202CC /* Assets.xcassets */; };
 		9F193DBC2497A47A003202CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F193DBA2497A47A003202CC /* Main.storyboard */; };
 		9F193DBF2497A47A003202CC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193DBE2497A47A003202CC /* main.m */; };
 		9F193EB22497B8B0003202CC /* LoginView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F193E892497B8AF003202CC /* LoginView.m */; };
 		9F4EC6CC24B70F8E00988C24 /* WindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4EC6CB24B70F8E00988C24 /* WindowController.m */; };
+		CC51ECFC2A433608004F8987 /* libbytenn.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF72A4335F2004F8987 /* libbytenn.dylib */; };
+		CC51ECFE2A433608004F8987 /* libbytevc0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF92A4335FF004F8987 /* libbytevc0.dylib */; };
+		CC51ED002A43360B004F8987 /* libbytenn.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF72A4335F2004F8987 /* libbytenn.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CC51ED012A43360D004F8987 /* libbytevc0.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF92A4335FF004F8987 /* libbytevc0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CC51ED032A433610004F8987 /* RTCFFmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF62A4335EB004F8987 /* RTCFFmpeg.framework */; };
+		CC51ED042A433610004F8987 /* RTCFFmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF62A4335EB004F8987 /* RTCFFmpeg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC51ED052A433611004F8987 /* VolcEngineRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF82A4335FB004F8987 /* VolcEngineRTC.framework */; };
+		CC51ED062A433612004F8987 /* VolcEngineRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECF82A4335FB004F8987 /* VolcEngineRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,12 +69,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9EE5CBD52A4BE6A0007E1428 /* ByteRTCNICOExtension.framework in Embed Frameworks */,
-				9EE5CBD62A4BE6A0007E1428 /* libbytenn.dylib in Embed Frameworks */,
-				9EE5CBD72A4BE6A0007E1428 /* libbytevc0.dylib in Embed Frameworks */,
-				9EE5CBD82A4BE6A0007E1428 /* libeffect.dylib in Embed Frameworks */,
-				9EE5CBD92A4BE6A0007E1428 /* RTCFFmpeg.framework in Embed Frameworks */,
-				9EE5CBDA2A4BE6A0007E1428 /* VolcEngineRTC.framework in Embed Frameworks */,
+				CC51ED012A43360D004F8987 /* libbytevc0.dylib in Embed Frameworks */,
+				CC51ED042A433610004F8987 /* RTCFFmpeg.framework in Embed Frameworks */,
+				CC51ED002A43360B004F8987 /* libbytenn.dylib in Embed Frameworks */,
+				CC51ED062A433612004F8987 /* VolcEngineRTC.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,12 +129,6 @@
 		2BAF494D26CD018D0020C84C /* RenderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RenderView.m; sourceTree = "<group>"; };
 		2BECB70026CD0E7900A1600D /* UserRenderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserRenderView.h; sourceTree = "<group>"; };
 		2BECB70126CD0E7900A1600D /* UserRenderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserRenderView.m; sourceTree = "<group>"; };
-		9EE5CBCF2A4BE65A007E1428 /* ByteRTCNICOExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ByteRTCNICOExtension.framework; sourceTree = "<group>"; };
-		9EE5CBD02A4BE65B007E1428 /* libeffect.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libeffect.dylib; sourceTree = "<group>"; };
-		9EE5CBD12A4BE65C007E1428 /* VolcEngineRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VolcEngineRTC.framework; sourceTree = "<group>"; };
-		9EE5CBD22A4BE65C007E1428 /* libbytenn.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libbytenn.dylib; sourceTree = "<group>"; };
-		9EE5CBD32A4BE65C007E1428 /* RTCFFmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RTCFFmpeg.framework; sourceTree = "<group>"; };
-		9EE5CBD42A4BE65C007E1428 /* libbytevc0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libbytevc0.dylib; sourceTree = "<group>"; };
 		9F193DAF2497A477003202CC /* QuickStart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickStart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F193DB22497A477003202CC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9F193DB32497A477003202CC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -148,6 +142,10 @@
 		9F193E8A2497B8AF003202CC /* LoginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginView.h; sourceTree = "<group>"; };
 		9F4EC6CA24B70F8E00988C24 /* WindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowController.h; sourceTree = "<group>"; };
 		9F4EC6CB24B70F8E00988C24 /* WindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowController.m; sourceTree = "<group>"; };
+		CC51ECF62A4335EB004F8987 /* RTCFFmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RTCFFmpeg.framework; sourceTree = "<group>"; };
+		CC51ECF72A4335F2004F8987 /* libbytenn.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libbytenn.dylib; sourceTree = "<group>"; };
+		CC51ECF82A4335FB004F8987 /* VolcEngineRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = VolcEngineRTC.framework; sourceTree = "<group>"; };
+		CC51ECF92A4335FF004F8987 /* libbytevc0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libbytevc0.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +153,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC51ECFC2A433608004F8987 /* libbytenn.dylib in Frameworks */,
+				CC51ECFE2A433608004F8987 /* libbytevc0.dylib in Frameworks */,
+				CC51ED032A433610004F8987 /* RTCFFmpeg.framework in Frameworks */,
+				CC51ED052A433611004F8987 /* VolcEngineRTC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,13 +408,11 @@
 		BA54B357C0037EA9DD7FAAF6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CC51ECF72A4335F2004F8987 /* libbytenn.dylib */,
+				CC51ECF92A4335FF004F8987 /* libbytevc0.dylib */,
+				CC51ECF62A4335EB004F8987 /* RTCFFmpeg.framework */,
+				CC51ECF82A4335FB004F8987 /* VolcEngineRTC.framework */,
 				2B1856CF25C2FC5E00B2DD6C /* CoreFoundation.framework */,
-				9EE5CBCF2A4BE65A007E1428 /* ByteRTCNICOExtension.framework */,
-				9EE5CBD22A4BE65C007E1428 /* libbytenn.dylib */,
-				9EE5CBD42A4BE65C007E1428 /* libbytevc0.dylib */,
-				9EE5CBD02A4BE65B007E1428 /* libeffect.dylib */,
-				9EE5CBD32A4BE65C007E1428 /* RTCFFmpeg.framework */,
-				9EE5CBD12A4BE65C007E1428 /* VolcEngineRTC.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -50,6 +50,14 @@ typedef NS_ENUM(NSInteger, ByteRTCReturnStatus) {
      */
     ByteRTCReturnStatusScreenNotSupport = -9,
     /** 
+     * @brief 失败，不支持该操作。
+     */
+    ByteRTCReturnStatusNotSupport = -10,
+    /** 
+     * @brief 失败，资源已占用。
+     */
+    ByteRTCReturnStatusResourceOverflow = -11,
+    /** 
      * @brief 失败，没有音频帧。
      */
     ByteRTCReturnStatusAudioNoFrame = -101,
@@ -249,6 +257,25 @@ typedef NS_ENUM(NSInteger, ByteRTCUserRoleType) {
 
 /** 
  * @type keytype
+ * @brief 用户可见性状态改变错误码。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCUserVisibilityChangeError) {
+    /** 
+     * @brief 成功。
+     */
+    ByteRTCUserVisibilityChangeErrorOk = 0,
+    /** 
+     * @brief 未知错误。
+     */
+    ByteRTCUserVisibilityChangeErrorUnknown = 1,
+    /** 
+     * @brief 房间内可见用户达到上限。
+     */
+    ByteRTCUserVisibilityChangeErrorTooManyVisibleUser = 2,
+};
+
+/** 
+ * @type keytype
  * @brief 数据消息来源
  */
 typedef NS_ENUM(NSInteger, ByteRTCDataMessageSourceType) {
@@ -285,8 +312,7 @@ typedef NS_ENUM(NSInteger,  ByteRTCSEICountPerFrame) {
 typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
     /** 
      * @brief Token 无效。
-     *        进房时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用
-     *        `updateToken:` 方法更新 Token。
+     *        调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 进房时使用的 Token 参数有误或过期失效。需要重新获取 Token，并调用 updateToken:{@link #ByteRTCRoom#updateToken:} 方法更新 Token。
      */
     ByteRTCErrorCodeInvalidToken               = -1000,
     /** 
@@ -318,10 +344,8 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      * @brief 当调用 `createRtcRoom:` ，如果 roomId 非法，会返回 null，并抛出该错误
      */
     ByteRTCErrorCodeRoomIdIllegal = -1007,
-
-
     /** 
-     * @brief Token 过期。调用 `joinRoomByKey:roomId:userInfo:rtcRoomConfig:` 使用新的 Token 重新加入房间。
+     * @brief Token 过期。加入房间后 Token 过期时，返回此错误码。需使用新的 Token 重新加入房间。
      */
     ByteRTCErrorCodeTokenExpired            = -1009,
         /** 
@@ -596,23 +620,23 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeInvalidCanvasHandle = -6001,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) SDK 鉴权失效。联系技术支持人员。
      */
     ByteRTCWarningCodeInvaildSamiAppkeyORToken = -7002,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) 资源加载失败。传入正确的 DAT 路径，或联系技术支持人员。
      */
     ByteRTCWarningCodeInvaildSamiResourcePath = -7003,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) 库加载失败。使用正确的库，或联系技术支持人员。
      */
     ByteRTCWarningCodeLoadSamiLibraryFailed = -7004,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) 不支持此音效。联系技术支持人员。
      */
     ByteRTCWarningCodeInvaildSamiEffectType = -7005
 };
@@ -1142,7 +1166,13 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceState) {
     /** 
      * @brief 音视频通话已从系统电话或第三方应用打断中恢复
      */
-    ByteRTCMediaDeviceStateInterruptionEnded = 13
+    ByteRTCMediaDeviceStateInterruptionEnded = 13,
+    /** 
+     * @hidden(iOS)
+     * @brief 设备列表更新通知。请调用 enumerateVideoCaptureDevices{@link #IVideoDeviceManager#enumerateVideoCaptureDevices} 更新设备列表。
+     */
+    ByteRTCMediaDeviceListUpdated = 16,
+
 };
 
 /** 
@@ -2053,11 +2083,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
 /** 
  * @brief 蜂窝路径发送的码率 (kbps)，为获取该数据时的瞬时值
  */
-@property(assign, nonatomic) NSInteger tx_cellular_kbitrate;
+@property(assign, nonatomic) NSInteger txCellularKBitrate;
 /** 
  * @brief 蜂窝路径接收码率 (kbps)，为获取该数据时的瞬时值
  */
-@property(assign, nonatomic) NSInteger rx_cellular_kbitrate;
+@property(assign, nonatomic) NSInteger rxCellularKBitrate;
 @end
 
 /** 
@@ -2450,6 +2480,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamKey : NSObject
  * @type callback
  * @region 加密
  * @brief 自定义加密接口
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 @protocol ByteRTCEncryptHandler <NSObject>
 
@@ -2965,7 +2996,7 @@ typedef NS_ENUM(NSInteger, ByteRTCSubtitleErrorCode) {
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleConfig : NSObject
 /** 
- * @brief 字幕模式。可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。参看 ByteRTCSubtitleMode{@link #ByteRTCSubtitleMode}。
+ * @brief 字幕模式。
  */
 @property(assign, nonatomic) ByteRTCSubtitleMode mode;
 /** 

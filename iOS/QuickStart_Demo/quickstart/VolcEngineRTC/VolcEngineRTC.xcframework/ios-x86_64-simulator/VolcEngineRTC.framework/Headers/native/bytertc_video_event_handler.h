@@ -14,6 +14,7 @@ namespace bytertc {
 /** 
  * @type callback
  * @brief 音视频引擎事件回调接口
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IRTCVideoEventHandler {
 public:
@@ -51,7 +52,7 @@ public:
     * @type callback
     * @brief 当访问插件失败时，收到此回调。
     *        RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。
-    * @param [in] extensionName 插件名字
+    * @param [in] extension_name 插件名字
     * @param [in] msg 失败说明
     */
     /**
@@ -60,10 +61,10 @@ public:
     * @type callback
     * @brief Failed to access the extension.
     *        RTC SDK provides some features with extensions. Without implementing the extension, you cannot use the corresponding feature.
-    * @param [in] extensionName The name of extension.
+    * @param [in] extension_name The name of extension.
     * @param [in] msg Error message.
     */
-    virtual void onExtensionAccessError(const char* extensionName, const char* msg) {
+    virtual void onExtensionAccessError(const char* extension_name, const char* msg) {
 
     }
 
@@ -693,11 +694,11 @@ public:
      * @brief 订阅公共流的结果回调<br>
      *        通过 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 订阅公共流后，可以通过本回调获取订阅结果。
      * @param [in] public_stream_id 公共流的 ID
-     * @param [in] errorCode 公共流订阅结果状态码。详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}。
+     * @param [in] error_code 公共流订阅结果状态码。详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}。
      */
-    virtual void onPlayPublicStreamResult(const char* public_stream_id, PublicStreamErrorCode errorCode) {
+    virtual void onPlayPublicStreamResult(const char* public_stream_id, PublicStreamErrorCode error_code) {
         (void)public_stream_id;
-        (void)errorCode;
+        (void)error_code;
     }
     /** 
      * @type callback
@@ -705,11 +706,11 @@ public:
      *        调用 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。
      * @param [in] public_stream_id 公共流 ID。
      * @param [in] message 收到的 SEI 消息内容。
-     * 本回调可以获取通过调用客户端 sendSEIMessage{@link #RTCVideo#sendSEIMessage} 插入的 SEI 信息。
+     * 本回调可以获取通过调用客户端 [sendSEIMessage](70095#sendseimessage-2) 插入的 SEI 信息。
      * 当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
      * @param [in] message_length SEI 信息的长度。
      * @param [in] source_type SEI 消息类型，自 3.52.1 版本后固定为 `0`，自定义消息。参看 DataMessageSourceType{@link #DataMessageSourceType}。
-     * @notes 通过 Open API 插入的 SEI 信息，应通过回调 onPublicStreamDataMessageReceived{@Link #IRTCVideoEventHandler#onPublicStreamDataMessageReceived} 获取。
+     * @notes 通过 Open API 插入的 SEI 信息，应通过回调 onPublicStreamDataMessageReceived{@link #IRTCVideoEventHandler#onPublicStreamDataMessageReceived} 获取。
      */
     virtual void onPublicStreamSEIMessageReceived(const char* public_stream_id,
         const uint8_t* message,
@@ -724,14 +725,14 @@ public:
      * @type callback
      * @valid since 3.52
      * @brief 回调公共流中包含的数据信息。
-     *        通过 startPlayPublicStream{@link #IRtcEngine#startPlayPublicStream} 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
+     *        通过 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
      * @param [in] public_stream_id 公共流 ID
      * @param [in] message 收到的数据消息内容，如下：
      * + 调用公共流 OpenAPI 发送的 SEI 消息。当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
      * + 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。
      * @param [in] message_length 消息的长度
      * @param [in] source_type 数据消息来源，参看 DataMessageSourceType{@link #DataMessageSourceType}。
-     * @notes 通过调用客户端 API 插入的 SEI 信息，应通过回调 onPublicStreamSEIMessageReceived{@Link #IRTCVideoEventHandler#onPublicStreamSEIMessageReceived} 获取。
+     * @notes 通过调用客户端 API 插入的 SEI 信息，应通过回调 onPublicStreamSEIMessageReceived{@link #IRTCVideoEventHandler#onPublicStreamSEIMessageReceived} 获取。
      */
     virtual void onPublicStreamDataMessageReceived(const char* public_stream_id,
         const uint8_t* message,
@@ -841,7 +842,6 @@ public:
         (void)mute;
     }
     /** 
-     * @hidden not available
      * @type callback
      * @region 音频事件回调
      * @brief 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。
@@ -870,7 +870,6 @@ public:
         (void)error;
     }
     /** 
-     * @hidden not available
      * @type callback
      * @region 视频管理
      * @brief 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
@@ -969,6 +968,9 @@ public:
      * @brief SDK 接收并解码远端视频流首帧后，收到此回调。
      * @param [in] key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
+     * @notes <br>
+     *       + 对于主流，进入房间后，仅在发布端第一次发布的时候，订阅端会收到该回调，此后不受重新发布的影响，只要不重新加入房间，就不会再收到该回调。
+     *       + 对于屏幕流，用户每次重新发布屏幕视频流在订阅端都会重新触发一次该回调。
      */
     virtual void onFirstRemoteVideoFrameDecoded(const RemoteStreamKey key, const VideoFrameInfo& info) {
         (void)key;
@@ -1051,12 +1053,12 @@ public:
      *        调用 startPushPublicStream{@link #IRTCVideo#startPushPublicStream} 接口发布公共流后，启动结果通过此回调方法通知用户。
      * @param [in] room_id 公共流的发布房间的 ID
      * @param [in] public_streamid 公共流 ID
-     * @param [in] errorCode 公共流发布结果状态码。详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}
+     * @param [in] error_code 公共流发布结果状态码。详见 PublicStreamErrorCode{@link #PublicStreamErrorCode}
      */
-    virtual void onPushPublicStreamResult(const char* room_id, const char* public_streamid, PublicStreamErrorCode errorCode) {
+    virtual void onPushPublicStreamResult(const char* room_id, const char* public_streamid, PublicStreamErrorCode error_code) {
         (void)room_id;
         (void)public_streamid;
-        (void)errorCode;
+        (void)error_code;
     }
 
     /** 
@@ -1122,10 +1124,10 @@ public:
      * @hidden(Linux,Android,iOS)
      * @type callback
      * @brief 外部采集时，调用 setOriginalScreenVideoInfo{@link #IRTCVideo#setOriginalScreenVideoInfo}设置屏幕或窗口大小改变前的分辨率后，若屏幕采集模式为智能模式，你将收到此回调，根据 RTC 智能决策合适的帧率和分辨率积（宽*高）重新采集。
-     * @param [in] frameUpdateInfo RTC 智能决策后合适的帧率和分辨率积（宽*高）。参看 FrameUpdateInfo{@link #FrameUpdateInfo}。
+     * @param [in] frame_update_info RTC 智能决策后合适的帧率和分辨率积（宽*高）。参看 FrameUpdateInfo{@link #FrameUpdateInfo}。
      */
-    virtual void onExternalScreenFrameUpdate(FrameUpdateInfo frameUpdateInfo) {
-        (void)frameUpdateInfo;
+    virtual void onExternalScreenFrameUpdate(FrameUpdateInfo frame_update_info) {
+        (void)frame_update_info;
     }
     /** 
      * @hidden internal use
@@ -1142,23 +1144,23 @@ public:
      * @type callback
      * @region 音频管理
      * @brief 通话前回声检测结果回调。
-     * @param [in] hardwareEchoDetectionResult 参见 HardwareEchoDetectionResult{@link #HardwareEchoDetectionResult}
+     * @param [in] hardware_echo_detection_result 参见 HardwareEchoDetectionResult{@link #HardwareEchoDetectionResult}
      * @notes <br>
      *        + 通话前调用 startHardwareEchoDetection{@link #IRTCVideo#startHardwareEchoDetection} 后，将触发本回调返回检测结果。<br>
      *        + 建议在收到检测结果后，调用 stopHardwareEchoDetection{@link #IRTCVideo#stopHardwareEchoDetection} 停止检测，释放对音频设备的占用。<br>
      *        + 如果 SDK 在通话中检测到回声，将通过 onAudioDeviceWarning{@link #IRTCVideoEventHandler#onAudioDeviceWarning} 回调 `kMediaDeviceWarningLeakEchoDetected`。
      */
-    virtual void onHardwareEchoDetectionResult(HardwareEchoDetectionResult hardwareEchoDetectionResult) {
-        (void)hardwareEchoDetectionResult;
+    virtual void onHardwareEchoDetectionResult(HardwareEchoDetectionResult hardware_echo_detection_result) {
+        (void)hardware_echo_detection_result;
     }
 
     /** 
      * @type callback
      * @region proxy
-     * @brief 本地代理状态发生改变回调。调用 setLocalProxy{@link #IRTCVideo#setLocalProxy} 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。  <br>
-     * @param [in] localProxyType 本地代理类型。参看 LocalProxyType{@link #LocalProxyType} 。  <br>
-     * @param [in] localProxyState 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。  <br>
-     * @param [in] localProxyError 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。
+     * @brief 本地代理状态发生改变回调。调用 setLocalProxy{@link #IRTCVideo#setLocalProxy} 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。
+     * @param [in] local_proxy_type 本地代理类型。参看 LocalProxyType{@link #LocalProxyType}。
+     * @param [in] local_proxy_state 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。
+     * @param [in] local_proxy_error 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。
      */
     virtual void onLocalProxyStateChanged(LocalProxyType local_proxy_type, LocalProxyState local_proxy_state, LocalProxyError local_proxy_error) {
         (void)local_proxy_type;

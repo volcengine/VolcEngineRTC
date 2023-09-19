@@ -41,28 +41,37 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 <br>
+     * @brief 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
      * @param [in] enable 设置用户是否对房间内其他用户可见：  <br>
-     *        + true: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br>
-     *        + false: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+     *        + true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
+     *        + false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0: 调用失败。参看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明。
      * @notes  <br>
-     *       + 该方法在加入房间前后均可调用。 <br>
-     *       + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
-     *            - 从 false 切换至 true 时，房间内其他用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined} 回调通知；  <br>
-     *            - 从 true 切换至 false 时，房间内其他用户会收到 onUserLeave{@link #IRTCRoomEventHandler#onUserLeave} 回调通知。  <br>
-     *       + 若调用该方法将可见性设为 false，此时尝试发布流会收到 `kWarningCodePublishStreamForbiden` 警告。
+     *       + 在加入房间前后，用户均可调用此方法设置用户可见性。
+     *       + 设置用户可见性，会收到设置成功/失败回调 onUserVisibilityChanged{@link #IRTCRoomEventHandler#onUserVisibilityChanged}。（v3.54 新增）
+     *   &#x0020;  • 在加入房间前设置用户可见性，若设置的可见性与默认值不同，将在加入房间时触发本回调。
+     *   &#x0020;  • 在加入房间后设置用户可见性，若可见性前后不同，会触发本回调。
+     *   &#x0020;  • 在断网重连后，若可见性发生改变，会触发本回调。
+     *       + 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调。
+     *   &#x0020;  • 从可见换至不可见时，房间内其他用户会收到 onUserLeave{@link #IRTCRoomEventHandler#onUserLeave}。
+     *   &#x0020;  • 从不可见切换至可见时，房间内其他用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined}。
+     *   &#x0020;  • 若调用该方法将可见性设为 `false`，此时尝试发布流会收到 `kWarningCodePublishStreamForbiden` 警告。
      */
-    virtual void setUserVisibility(bool enable) = 0;
-
-
+    virtual int setUserVisibility(bool enable) = 0;
 
     /** 
      * @type api
      * @region 多房间
      * @brief 通过设置 IRTCRoom{@link #IRTCRoom} 对象的事件句柄，监听此对象对应的回调事件。
      * @param [in] room_event_handler 参见 IRTCRoomEventHandler{@link #IRTCRoomEventHandler}
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      */
-    virtual void setRTCRoomEventHandler(IRTCRoomEventHandler* room_event_handler) = 0;
+    virtual int setRTCRoomEventHandler(IRTCRoomEventHandler* room_event_handler) = 0;
+
     /** 
      * @type api
      * @region 多房间
@@ -92,11 +101,14 @@ public:
      *        用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
      *        加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
      *        此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 onLeaveRoom{@link #IRTCRoomEventHandler#onLeaveRoom} 回调通知。  <br>
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *       + 可见的用户离开房间后，房间内其他用户会收到 onUserLeave{@link #IRTCRoomEventHandler#onUserLeave} 回调通知。  <br>
      *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 onLeaveRoom{@link #IRTCRoomEventHandler#onLeaveRoom} 回调。  <br>
      */
-     virtual void leaveRoom() = 0;
+    virtual int leaveRoom() = 0;
 
     /** 
      * @type api
@@ -180,11 +192,15 @@ public:
      *       + 同一房间内的其他用户会收到 onRoomBinaryMessageReceived{@link #IRTCRoomEventHandler#onRoomBinaryMessageReceived} 回调。
      */
     virtual int64_t sendRoomBinaryMessage(int size, const uint8_t* message) = 0;
+
     /** 
      * @type api
      * @region 房间管理
      * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
      * @param [in] type 媒体流类型，用于指定发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        + 如果你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，则无需再调用本接口。<br>
      *        + 调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
@@ -193,24 +209,31 @@ public:
      *        + 调用此方法后，房间中的所有远端用户会收到 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 onFirstRemoteAudioFrame{@link #IRTCVideoEventHandler#onFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 onFirstRemoteVideoFrameDecoded{@link #IRTCVideoEventHandler#onFirstRemoteVideoFrameDecoded} 回调。<br>
      *        + 调用 unpublishStream{@link #IRTCRoom#unpublishStream} 取消发布。
      */
-    virtual void publishStream(MediaStreamType type) = 0;
+    virtual int publishStream(MediaStreamType type) = 0;
 
     /** 
      * @type api
      * @region 房间管理
      * @brief 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
      * @param [in] type 媒体流类型，用于指定停止发布音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *        + 调用 publishStream{@link #IRTCRoom#publishStream} 手动发布摄像头音视频流后，你需调用此接口停止发布。<br>
      *        + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 onUserUnpublishStream{@link #IRTCRoomEventHandler#onUserUnpublishStream} 回调通知。
      */
-    virtual void unpublishStream(MediaStreamType type) = 0;
+    virtual int unpublishStream(MediaStreamType type) = 0;
+
     /** 
      * @type api
      * @region 屏幕共享
      * @brief 在当前所在房间内手动发布本地屏幕共享音视频流。<br>
      *        如果你需要手动向多个房间发布屏幕共享流，可以使用同样的 uid 加入多个房间，并在每个房间调用该方法。同时，你可以在不同的房间发布不同的屏幕共享流类型。
      * @param [in] type 媒体流类型，用于指定发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        + 即使你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，也需要调用本接口。<br>
      *        + 调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
@@ -220,17 +243,21 @@ public:
      *        + 对 Linux，仅支持发布视频流。<br>
      *        + 查看 [PC 端屏幕共享](https://www.volcengine.com/docs/6348/70144)，获取更多信息。
      */
-    virtual void publishScreen(MediaStreamType type) = 0;
+    virtual int publishScreen(MediaStreamType type) = 0;
+
     /** 
      * @type api
      * @region 屏幕共享
      * @brief 停止将本地屏幕共享音视频流发布到当前所在房间中
      * @param [in] type 媒体流类型，用于指定停止发布屏幕音频/视频，参看 MediaStreamType{@link #MediaStreamType}
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        + 调用 publishScreen{@link #IRTCRoom#publishScreen} 发布屏幕流后，你需调用此接口停止发布。 <br>
      *        + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 onUserUnpublishScreen{@link #IRTCRoomEventHandler#onUserUnpublishScreen} 回调。
      */
-    virtual void unpublishScreen(MediaStreamType type) = 0;
+    virtual int unpublishScreen(MediaStreamType type) = 0;
 
     /** 
      * @deprecated since 3.36 and will be deleted in 3.51, use subscribeStream{@link #IRTCRoom#subscribeStream}, unsubscribeStream{@link #IRTCRoom#unsubscribeStream}, subscribeScreen{@link #IRTCRoom#subscribeScreen} and unsubscribeScreen{@link #IRTCRoom#unsubscribeScreen} instead.
@@ -293,7 +320,7 @@ public:
      *        !0: 方法调用失败  <br>
      * @notes  <br>
      *        + 多次调用订阅接口时，将根据末次调用接口和传入的参数，更新订阅配置。<br>
-     *        + 大会模式下，如果房间内的媒体流超过上限，建议通过调用 subscribeStream{@link #IRTCRoom#subscribeStream} 逐一指定需要订阅的媒体流。<br>
+     *        + 开启音频选路后，如果房间内的媒体流超过上限，建议通过调用 subscribeStream{@link #IRTCRoom#subscribeStream} 逐一指定需要订阅的媒体流。<br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
      *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #IRTCRoom#unsubscribeStream} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
@@ -366,34 +393,38 @@ public:
     /**
      * @hidden for internal use only.
      */
-    virtual void enableSubscribeLocalStream(bool enable) = 0;
+    virtual int enableSubscribeLocalStream(bool enable) = 0;
 
     /** 
      * @type api
      * @region 多房间
      * @brief 暂停接收来自远端的媒体流。
      * @param [in] media_type 媒体流类型，指定需要暂停接收音频还是视频流，参看 PauseResumeControlMediaType{@link #PauseResumeControlMediaType}。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *        + 该方法仅暂停远端流的接收，并不影响远端流的采集和发送；  <br>
      *        + 该方法不改变用户的订阅状态以及订阅流的属性。  <br>
      *        + 若想恢复接收远端流，需调用 resumeAllSubscribedStream{@link #IRTCRoom#resumeAllSubscribedStream}。 <br>
      *        + 多房间场景下，仅暂停接收发布在当前所在房间的流。
      */
-    virtual void pauseAllSubscribedStream(PauseResumeControlMediaType media_type) = 0;
+    virtual int pauseAllSubscribedStream(PauseResumeControlMediaType media_type) = 0;
 
     /** 
      * @type api
      * @region 多房间
      * @brief 恢复接收来自远端的媒体流
      * @param [in] media_type 媒体流类型，指定需要暂停接收音频还是视频流，参看 PauseResumeControlMediaType{@link #PauseResumeControlMediaType}
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        + 该方法仅恢复远端流的接收，并不影响远端流的采集和发送；  <br>
      *        + 该方法不改变用户的订阅状态以及订阅流的属性。
      */
-    virtual void resumeAllSubscribedStream(PauseResumeControlMediaType media_type) = 0;
+    virtual int resumeAllSubscribedStream(PauseResumeControlMediaType media_type) = 0;
 
-
-#ifndef ByteRTC_AUDIO_ONLY
 
     /** 
      * @type api
@@ -401,6 +432,9 @@ public:
      * @brief 设置发流端音画同步。  <br>
      *        当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
      * @param [in] audio_user_id 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        + 该方法在进房前后均可调用。  <br>
      *        + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  <br>
@@ -408,19 +442,18 @@ public:
      *        + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  <br>
      *        + 如需更换同步音频源，再次调用该接口传入新的 `audio_user_id` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
      */
-    virtual void setMultiDeviceAVSync(const char* audio_user_id) = 0;
+    virtual int setMultiDeviceAVSync(const char* audio_user_id) = 0;
 
     /**
      * @hidden for internal use only.
      */
-    virtual void updateCloudRendering(const char* cloudrenderJsonString) = 0;
+    virtual int updateCloudRendering(const char* cloudrenderJsonString) = 0;
 
-#endif
 
     /**
      * @hidden for internal use only.
      */
-    virtual void setCustomUserRole(const char* role) = 0;
+    virtual int setCustomUserRole(const char* role) = 0;
 
     /** 
      * @type api
@@ -462,13 +495,16 @@ public:
      * @region 多房间
      * @brief 停止跨房间媒体流转发。
      *        通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms} 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        + 调用本方法后，将在本端触发 onForwardStreamStateChanged{@link #IRTCRoomEventHandler#onForwardStreamStateChanged} 回调。
      *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 onUserUnpublishStream{@link #IRTCRoomEventHandler#onUserUnpublishStream}/onUserUnpublishScreen{@link #IRTCRoomEventHandler#onUserUnpublishScreen} 和退房 onUserLeave{@link #IRTCRoomEventHandler#onUserLeave} 的回调。
      *        + 如果需要停止向指定的房间转发媒体流，请调用 updateForwardStreamToRooms{@link #IRTCRoom#updateForwardStreamToRooms} 更新房间信息。
      *        + 如果需要暂停转发，请调用 pauseForwardStreamToAllRooms{@link #IRTCRoom#pauseForwardStreamToAllRooms}，并在之后随时调用 resumeForwardStreamToAllRooms{@link #IRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
      */
-    virtual void stopForwardStreamToRooms() = 0;
+    virtual int stopForwardStreamToRooms() = 0;
 
     /** 
      * @type api
@@ -476,19 +512,25 @@ public:
      * @brief 暂停跨房间媒体流转发。
      *        通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms} 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
      *        调用本方法暂停向所有目标房间转发后，你可以随时调用 resumeForwardStreamToAllRooms{@link #IRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes 调用本方法后，目标房间中的用户将接收到本地用户停止发布 onUserUnpublishStream{@link #IRTCRoomEventHandler#onUserUnpublishStream}/onUserUnpublishScreen{@link #IRTCRoomEventHandler#onUserUnpublishScreen} 和退房 onUserLeave{@link #IRTCRoomEventHandler#onUserLeave} 的回调。
      */
-     virtual void pauseForwardStreamToAllRooms() = 0;
+     virtual int pauseForwardStreamToAllRooms() = 0;
 
     /** 
      * @type api
      * @region 多房间
      * @brief 恢复跨房间媒体流转发。
      *        调用 pauseForwardStreamToAllRooms{@link #IRTCRoom#pauseForwardStreamToAllRooms} 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes <br>
      *        目标房间中的用户将接收到本地用户进房 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined} 和发布 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream}/onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen} 的回调。
      */
-    virtual void resumeForwardStreamToAllRooms() = 0;
+    virtual int resumeForwardStreamToAllRooms() = 0;
 
     /** 
      * @hidden(Linux)
@@ -525,11 +567,14 @@ public:
      *              + 0: 静音  <br>
      *              + 100: 原始音量，默认值  <br>
      *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes 假设某远端用户 A 始终在被调节的目标用户范围内，<br>
      *        + 当该方法与 setRemoteAudioPlaybackVolume{@link #IRTCVideo#setRemoteAudioPlaybackVolume} 共同使用时，本地收听用户 A 的音量为后调用的方法设置的音量；<br>
      *        + 当该方法与 setPlaybackVolume{@link #IRTCVideo#setPlaybackVolume} 方法共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
      */
-    virtual void setRemoteRoomAudioPlaybackVolume(int volume) = 0;
+    virtual int setRemoteRoomAudioPlaybackVolume(int volume) = 0;
     /** 
      * @hidden for internal use only on Windows and Android
      * @type api
@@ -550,10 +595,10 @@ public:
      * @type api
      * @region 房间管理
      * @brief 设置本端发布流在音频选路中的优先级。
-     * @param audioSelectionPriority 本端发布流在音频选路中的优先级，默认正常参与音频选路。参见 AudioSelectionPriority{@link #AudioSelectionPriority}。 
-     * @notes 
-     * 在控制台上为本 appId 开启音频选路后，调用本接口才会生效。进房前后调用均可生效。更多信息参见[音频选路](https://www.volcengine.com/docs/6348/113547)。
-     * 如果本端用户同时加入不同房间，使用本接口进行的设置相互独立。
+     * @param [in] audio_selection_priority 本端发布流在音频选路中的优先级，默认正常参与音频选路。参见 AudioSelectionPriority{@link #AudioSelectionPriority}。 
+     * @notes <br>
+     *       + 在控制台上为本 appId 开启音频选路后，调用本接口才会生效。进房前后调用均可生效。更多信息参见[音频选路](https://www.volcengine.com/docs/6348/113547)。
+     *       + 如果本端用户同时加入不同房间，使用本接口进行的设置相互独立。
      * 
      */
     virtual int setAudioSelectionConfig(AudioSelectionPriority audio_selection_priority) = 0;
@@ -578,24 +623,21 @@ public:
     virtual int64_t setRoomExtraInfo(const char*key,const char*value) = 0;
 
     /** 
-     * @valid since 3.52.
      * @type api
      * @region 字幕翻译服务
      * @brief 识别或翻译房间内所有用户的语音，形成字幕。<br>
-     *        语音识别或翻译的结果会通过 onSubtitleMessageReceived{@link #IRTCAudioRoomEventHandler#onSubtitleMessageReceived}  事件回调给你。<br> 
+     *        语音识别或翻译的结果会通过 onSubtitleMessageReceived{@link #IRTCRoomEventHandler#onSubtitleMessageReceived} 事件回调给你。<br> 
      *        调用该方法后，用户会收到 onSubtitleStateChanged{@link #IRTCRoomEventHandler#onSubtitleStateChanged} 回调，通知字幕是否开启。
-     * @param [in] subtitleConfig 字幕配置信息。参看 SubtitleConfig{@link #SubtitleConfig}。
+     * @param [in] subtitle_config 字幕配置信息。参看 SubtitleConfig{@link #SubtitleConfig}。
      * @return  <br>
      *        +  0: 调用成功。  <br>
      *        + !0: 调用失败。
      * @notes <br>
      *         此方法需要在进房后调用。  <br> 
-     *         如果想要指定源语言，你需要在进房前调用 `joinRoom` 接口，通过 extraInfo 参数传入 `"source_language": "zh"` JSON 字符串，设置源语言为中文；传入 `"source_language": "en"`JSON 字符串，设置源语言为英文；传入 `"source_language": "ja"` JSON 字符串，设置源语言为日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。  <br> 
-     *         调用此方法前，你还需要前往[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
+     *         如果想要指定源语言，你需要在进房前调用 `joinRoom` 接口，通过 extraInfo 参数传入 `"SourceLanguage": "zh"` 字符串来指定自己的源语言，目前仅支持指定中文、英文和日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。 
      */ 
     virtual int startSubtitle(const SubtitleConfig& subtitle_config) = 0;
     /** 
-     * @valid since 3.52.
      * @type api
      * @region 字幕翻译服务
      * @brief 关闭字幕。 <br>
@@ -605,6 +647,13 @@ public:
      *        + !0: 调用失败。 
      */
     virtual int stopSubtitle() = 0;
+    /** 
+     * @type api
+     * @valid since 3.53
+     * @brief 获取房间 ID。
+     * @return 房间 ID。
+     */
+    virtual const char* getRoomId() = 0;
 };
 
 } // namespace bytertc

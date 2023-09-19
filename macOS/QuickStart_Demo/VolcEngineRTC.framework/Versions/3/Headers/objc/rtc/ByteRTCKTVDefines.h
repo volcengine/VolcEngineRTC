@@ -9,42 +9,42 @@
  * @type keytype
  * @brief 歌曲过滤方式。
  */
-typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicFilterType) {
+typedef NS_OPTIONS(NSUInteger, ByteRTCMusicFilterType) {
     /** 
      * @brief 不过滤。
      */
-    ByteRTCKTVMusicFilterTypeNone                 = 0,
+    ByteRTCMusicFilterTypeNone                 = 0,
     /** 
      * @brief 过滤没有歌词的歌曲。
      */
-    ByteRTCKTVMusicFilterTypeWithoutLyric         = 1 << 0,
+    ByteRTCMusicFilterTypeWithoutLyric         = 1 << 0,
     /** 
      * @brief 过滤不支持打分的歌曲。
      */
-    ByteRTCKTVMusicFilterTypeUnsupportedScore     = 1 << 1,
+    ByteRTCMusicFilterTypeUnsupportedScore     = 1 << 1,
     /** 
      * @brief 过滤不支持伴唱切换的歌曲。
      */
-    ByteRTCKTVMusicFilterTypeUnsupportedAccopmay  = 1 << 2,
+    ByteRTCMusicFilterTypeUnsupportedAccopmay  = 1 << 2,
     /** 
      * @brief 过滤没有高潮片段的歌曲。
      */
-    ByteRTCKTVMusicFilterTypeUnsupportedClimx     = 1 << 3,
+    ByteRTCMusicFilterTypeUnsupportedClimx     = 1 << 3,
 };
 
 /** 
  * @type keytype
  * @brief 榜单类别。
  */
-typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicHotType) {
+typedef NS_OPTIONS(NSUInteger, ByteRTCMusicHotType) {
     /** 
      * @brief 火山内容中心热歌榜。
      */
-    ByteRTCKTVMusicHotTypeContentCenter   = 1 << 0,
+    ByteRTCMusicHotTypeContentCenter   = 1 << 0,
     /** 
      * @brief 项目热歌榜。
      */
-    ByteRTCKTVMusicHotTypeProject         = 1 << 1,
+    ByteRTCMusicHotTypeProject         = 1 << 1,
     
 };
 
@@ -52,255 +52,281 @@ typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicHotType) {
  * @type keytype
  * @brief 音乐播放状态。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVPlayState) {
+typedef NS_ENUM(NSInteger, ByteRTCPlayState) {
     /** 
      * @brief 播放中。
      */
-    ByteRTCKTVPlayStatePlaying    = 1,
+    ByteRTCPlayStatePlaying    = 1,
     /** 
      * @brief 暂停中。
      */
-    ByteRTCKTVPlayStatePaused     = 2,
+    ByteRTCPlayStatePaused     = 2,
     /** 
      * @brief 已停止。
      */
-    ByteRTCKTVPlayStateStoped     = 3,
+    ByteRTCPlayStateStoped     = 3,
     /** 
      * @brief 播放失败。
      */
-    ByteRTCKTVPlayStateFailed     = 4,
+    ByteRTCPlayStateFailed     = 4,
     /** 
      * @brief 播放结束。
      */
-    ByteRTCKTVPlayStateFinished   = 5,
+    ByteRTCPlayStateFinished   = 5,
 };
 
 /** 
  * @type keytype
  * @brief 原唱伴唱类型。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVAudioTrackType) {
+typedef NS_ENUM(NSInteger, ByteRTCAudioTrackType) {
     /** 
      * @brief 播放原唱。
      */
-    ByteRTCKTVAudioTrackTypeOriginal    = 1,
+    ByteRTCAudioTrackTypeOriginal    = 1,
     /** 
      * @brief 播放伴唱。
      */
-    ByteRTCKTVAudioTrackTypeAccompy     = 2,
+    ByteRTCAudioTrackTypeAccompy     = 2,
 };
 
 /** 
  * @type keytype
  * @brief 音乐播放类型。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVAudioPlayType) {
+typedef NS_ENUM(NSInteger, ByteRTCAudioPlayType) {
     /** 
      * @brief 仅本地播放。
      */
-    ByteRTCKTVAudioPlayTypeLocal            = 0,
+    ByteRTCAudioPlayTypeLocal            = 0,
     /** 
      * @brief 仅远端播放。
      */
-    ByteRTCKTVAudioPlayTypeRemote           = 1,
+    ByteRTCAudioPlayTypeRemote           = 1,
     /** 
      * @brief 本地、远端同时播放。
      */
-    ByteRTCKTVAudioPlayTypeLocalAndRemote   = 2,
+    ByteRTCAudioPlayTypeLocalAndRemote   = 2,
 };
 
 /** 
  * @type keytype
  * @brief 歌词格式类型。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVLyricStatus) {
+typedef NS_ENUM(NSInteger, ByteRTCLyricStatus) {
     /** 
      * @brief 无歌词。
      */
-    ByteRTCKTVLyricStatusNone         = 0,
+    ByteRTCLyricStatusNone         = 0,
     /** 
      * @brief KRC 歌词。
      */
-    ByteRTCKTVLyricStatusKRC          = 1,
+    ByteRTCLyricStatusKRC          = 1,
     /** 
      * @brief LRC 歌词。
      */
-    ByteRTCKTVLyricStatusLRC          = 2,
+    ByteRTCLyricStatusLRC          = 2,
     /** 
      * @brief KRC 歌词和 LRC 歌词均有。
      */
-    ByteRTCKTVLyricStatusKRCAndLRC    = 3,
+    ByteRTCLyricStatusKRCAndLRC    = 3,
 };
 
 /** 
  * @type keytype
  * @brief 下载文件类型。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVDownloadFileType) {
+typedef NS_ENUM(NSInteger, ByteRTCDownloadFileType) {
     /** 
      * @brief 音频文件。
      */
-    ByteRTCKTVDownloadFileTypeMusic     = 1,
+    ByteRTCDownloadFileTypeMusic     = 1,
     /** 
      * @brief KRC 歌词文件。
      */
-    ByteRTCKTVDownloadFileTypeKRC       = 2,
+    ByteRTCDownloadFileTypeKRC       = 2,
     /** 
      * @brief LRC 歌词文件。
      */
-    ByteRTCKTVDownloadFileTypeLRC       = 3,
+    ByteRTCDownloadFileTypeLRC       = 3,
     /** 
      * @brief MIDI 文件。
      */
-    ByteRTCKTVDownloadFileTypeMIDI      = 4,
+    ByteRTCDownloadFileTypeMIDI      = 4,
 };
 
 /** 
  * @type keytype
  * @brief 歌词文件类型。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVDownloadLyricType) {
+typedef NS_ENUM(NSInteger, ByteRTCDownloadLyricType) {
     /** 
      * @brief KRC 歌词文件。
      */
-    ByteRTCKTVDownloadLyricTypeKRC = 0,
+    ByteRTCDownloadLyricTypeKRC = 0,
     /** 
      * @brief LRC 歌词文件。
      */
-    ByteRTCKTVDownloadLyricTypeLRC = 1,
+    ByteRTCDownloadLyricTypeLRC = 1,
 };
 
 /** 
  * @type keytype
  * @brief KTV 错误码。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVError) {
+typedef NS_ENUM(NSInteger, ByteRTCKTVErrorCode) {
     /** 
      * @brief 成功。
      */
-    ByteRTCKTVErrorOK = 0,
+    ByteRTCKTVErrorCodeOK = 0,
     /** 
      * @brief AppID 异常。
      */
-    ByteRTCKTVErrorAppidInValid = -3000,
+    ByteRTCKTVErrorCodeAppidInValid = -3000,
     /** 
      * @brief 非法参数，传入的参数不正确。
      */
-    ByteRTCKTVErrorParasInValid = -3001,
+    ByteRTCKTVErrorCodeParasInValid = -3001,
     /** 
      * @brief 获取歌曲资源失败。
      */
-    ByteRTCKTVErrorGetMusicFailed = -3002,
+    ByteRTCKTVErrorCodeGetMusicFailed = -3002,
     /** 
      * @brief 获取歌词失败。
      */
-    ByteRTCKTVErrorGetLyricFailed = -3003,
+    ByteRTCKTVErrorCodeGetLyricFailed = -3003,
     /** 
      * @brief 歌曲下架。
      */
-    ByteRTCKTVErrorMusicTakedown = -3004,
+    ByteRTCKTVErrorCodeMusicTakedown = -3004,
     /** 
      * @brief 歌曲文件下载失败。
      */
-    ByteRTCKTVErrorMusicDownload = -3005,
+    ByteRTCKTVErrorCodeMusicDownload = -3005,
     /** 
      * @brief MIDI 文件下载失败。
      */
-    ByteRTCKTVErrorMidiDownloadFailed = -3006,
+    ByteRTCKTVErrorCodeMidiDownloadFailed = -3006,
     /** 
      * @brief 系统繁忙。
      */
-    ByteRTCKTVErrorSystemBusy = -3007,
+    ByteRTCKTVErrorCodeSystemBusy = -3007,
     /** 
      * @brief 网络异常。
      */
-    ByteRTCKTVErrorNetwork = -3008,
+    ByteRTCKTVErrorCodeNetwork = -3008,
     /** 
      * @brief KTV 功能未加入房间。
      */
-    ByteRTCKTVErrorNotJoinRoom = -3009,
+    ByteRTCKTVErrorCodeNotJoinRoom = -3009,
     /** 
      * @brief 解析数据失败。
      */
-    ByteRTCKTVErrorParseData = -3010,
+    ByteRTCKTVErrorCodeParseData = -3010,
     /** 
+     * @hidden
+     * @deprecated 从353开始
      * @brief 下载失败。
      */
-    ByteRTCKTVErrorDownload = -3011,
+    ByteRTCKTVErrorCodeDownload = -3011,
     /** 
      * @brief 已在下载中。
      */
-    ByteRTCKTVErrorDownloading = -3012,
+    ByteRTCKTVErrorCodeDownloading = -3012,
     /** 
      * @brief 内部错误，联系技术支持人员。
      */
-    ByteRTCKTVErrorInternal = -3013
+    ByteRTCKTVErrorCodeInternal = -3013,
+    /** 
+     * @brief 下载失败，磁盘空间不足。清除缓存后重试。
+     */
+    ByteRTCKTVErrorCodeInsufficientDiskSpace = -3014,
+    /** 
+     * @brief 下载失败，音乐文件解密失败，联系技术支持人员。
+     */
+    ByteRTCKTVErrorCodeMusicDecryptionFailed = -3015,
+    /** 
+     * @brief 下载失败，音乐文件重命名失败，请重试。
+     */
+    ByteRTCKTVErrorCodeFileRenameFailed = -3016,
+    /** 
+     * @brief 下载失败，下载超时，请重试。
+     */
+    ByteRTCKTVErrorCodeDownloadTimeOut = -3017,
+    /** 
+     * @brief 清除缓存失败，可能原因是文件被占用或者系统异常，请重试。
+     */
+    ByteRTCKTVErrorCodeClearCacheFailed = -3018,
+    /** 
+     * @brief 取消下载。
+     */
+    ByteRTCKTVErrorCodeDownloadCanceled = -3019
 };
 
 /** 
  * @type keytype
  * @brief KTV 播放器错误码。
  */
-typedef NS_ENUM(NSInteger, ByteRTCKTVPlayerError) {
+typedef NS_ENUM(NSInteger, ByteRTCKTVPlayerErrorCode) {
     /** 
      * @brief 成功。
      */
-    ByteRTCKTVPlayerErrorOK = 0,
+    ByteRTCKTVPlayerErrorCodeOK = 0,
     /** 
      * @brief 播放错误，请下载后播放。
      */
-    ByteRTCKTVPlayerErrorFileNotExist = -3020,
+    ByteRTCKTVPlayerErrorCodeFileNotExist = -3020,
     /** 
      * @brief 播放错误，请确认文件播放格式。
      */
-    ByteRTCKTVPlayerErrorFileError = -3021,
+    ByteRTCKTVPlayerErrorCodeFileError = -3021,
     /** 
      * @brief 播放错误，未进入房间。
      */
-    ByteRTCKTVPlayerErrorNotJoinRoom = -3022,
+    ByteRTCKTVPlayerErrorCodeNotJoinRoom = -3022,
     /** 
      * @brief 参数错误。
      */
-    ByteRTCKTVPlayerErrorParam = -3023,
+    ByteRTCKTVPlayerErrorCodeParam = -3023,
     /** 
      * @brief 播放失败，找不到文件或文件打开失败。
      */
-    ByteRTCKTVPlayerErrorStartError = -3024,
+    ByteRTCKTVPlayerErrorCodeStartError = -3024,
     /** 
      * @brief 混音 ID 异常。
      */
-    ByteRTCKTVPlayerErrorMixIdError = -3025,
+    ByteRTCKTVPlayerErrorCodeMixIdError = -3025,
     /** 
      * @brief 设置播放位置出错。
      */
-    ByteRTCKTVPlayerErrorPositionError = -3026,
+    ByteRTCKTVPlayerErrorCodePositionError = -3026,
     /** 
      * @brief 音量参数不合法，可设置的取值范围为 [0,400]。
      */
-    ByteRTCKTVPlayerErrorAudioVolumeError = -3027,
+    ByteRTCKTVPlayerErrorCodeAudioVolumeError = -3027,
     /** 
      * @brief 不支持此混音类型。
      */
-    ByteRTCKTVPlayerErrorTypeError = -3028,
+    ByteRTCKTVPlayerErrorCodeTypeError = -3028,
     /** 
      * @brief 音调文件不合法。
      */
-    ByteRTCKTVPlayerErrorPitchError = -3029,
+    ByteRTCKTVPlayerErrorCodePitchError = -3029,
     /** 
      * @brief 音轨不合法。
      */
-    ByteRTCKTVPlayerErrorAudioTrackError = -3030,
+    ByteRTCKTVPlayerErrorCodeAudioTrackError = -3030,
     /** 
      * @brief 混音启动中。
      */
-    ByteRTCKTVPlayerErrorStartingError = -3031,
+    ByteRTCKTVPlayerErrorCodeStartingError = -3031,
 };
 
 /** 
  * @type keytype
  * @brief 歌曲数据。
  */
-BYTERTC_APPLE_EXPORT @interface ByteRTCKTVMusic : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCMusicInfo : NSObject
 /** 
  * @brief 音乐 ID。
  */
@@ -330,9 +356,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVMusic : NSObject
  */
 @property (nonatomic, copy) NSString * _Nonnull posterUrl;
 /** 
- * @brief 歌词格式类型，参看 ByteRTCKTVLyricStatus{@link #ByteRTCKTVLyricStatus}。
+ * @brief 歌词格式类型，参看 ByteRTCLyricStatus{@link #ByteRTCLyricStatus}。
  */
-@property (nonatomic, assign) ByteRTCKTVLyricStatus lyricStatus;
+@property (nonatomic, assign) ByteRTCLyricStatus lyricStatus;
 /** 
  * @brief 歌曲长度，单位为毫秒。
  */
@@ -355,34 +381,34 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVMusic : NSObject
  * @type keytype
  * @brief 热榜歌曲数据。
  */
-BYTERTC_APPLE_EXPORT @interface ByteRTCKTVHotMusicInfo : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCHotMusicInfo : NSObject
 /** 
- * @brief 榜单类别，参看 ByteRTCKTVMusicHotType{@link #ByteRTCKTVMusicHotType}。
+ * @brief 榜单类别，参看 ByteRTCMusicHotType{@link #ByteRTCMusicHotType}。
  */
-@property (nonatomic, assign) ByteRTCKTVMusicHotType hotType;
+@property (nonatomic, assign) ByteRTCMusicHotType hotType;
 /** 
  * @brief 热榜名称。
  */
 @property (nonatomic, copy) NSString * _Nullable hotName;
 /** 
- * @brief 歌曲数据，参看 ByteRTCKTVMusic{@link #ByteRTCKTVMusic}。
+ * @brief 歌曲数据，参看 ByteRTCMusicInfo{@link #ByteRTCMusicInfo}。
  */
-@property (nonatomic, copy) NSArray<ByteRTCKTVMusic *> * _Nullable musics;
+@property (nonatomic, copy) NSArray<ByteRTCMusicInfo *> * _Nullable musics;
 @end
 
 /** 
  * @type keytype
  * @brief 歌曲下载信息。
  */
-BYTERTC_APPLE_EXPORT @interface ByteRTCKTVDownloadResult : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCDownloadResult : NSObject
 /** 
  * @brief 音乐 ID。
  */
 @property (nonatomic, copy) NSString * _Nonnull musicId;
 /** 
- * @brief 下载文件类型，参看 ByteRTCKTVDownloadFileType{@link #ByteRTCKTVDownloadFileType}。
+ * @brief 下载文件类型，参看 ByteRTCDownloadFileType{@link #ByteRTCDownloadFileType}。
  */
-@property (nonatomic, assign) ByteRTCKTVDownloadFileType fileType;
+@property (nonatomic, assign) ByteRTCDownloadFileType fileType;
 /** 
  * @brief 文件存放路径。
  */

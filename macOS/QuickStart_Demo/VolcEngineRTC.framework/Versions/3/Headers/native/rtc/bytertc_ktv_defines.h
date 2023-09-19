@@ -1,5 +1,5 @@
-﻿#ifndef BYTERTC_KTV_DEFINES_H
-#define BYTERTC_KTV_DEFINES_H
+#pragma once
+
 #include <string>
 
 namespace bytertc {
@@ -12,23 +12,23 @@ enum MusicFilterType {
     /** 
      * @brief 不过滤。
      */
-    kFilterNone = 0,
+    kMusicFilterTypeNone = 0,
     /** 
      * @brief 过滤没有歌词的歌曲。
      */
-    kFilterWithoutLyric     = 1 << 0,
+    kMusicFilterTypeWithoutLyric     = 1 << 0,
     /** 
      * @brief 过滤不支持打分的歌曲。
      */
-    kFilterUnsupportedScore     = 1 << 1,
+    kMusicFilterTypeUnsupportedScore     = 1 << 1,
     /** 
      * @brief 过滤不支持伴唱切换的歌曲。
      */
-    kFilterUnsupportedAccopmay  = 1 << 2,
+    kMusicFilterTypeUnsupportedAccopmay  = 1 << 2,
     /** 
      * @brief 过滤没有高潮片段的歌曲。
      */
-    kFilterUnsupportedClimx     = 1 << 3,
+    kMusicFilterTypeUnsupportedClimx     = 1 << 3,
 };
 
 /** 
@@ -39,11 +39,11 @@ enum MusicHotType {
     /** 
      * @brief 火山内容中心热歌榜。
      */
-    kHotContentCenter       = 1 << 0,
+    kMusicHotTypeContentCenter       = 1 << 0,
     /** 
      * @brief 项目热歌榜。
      */
-    kHotProject          = 1 << 1,
+    kMusicHotTypeProject          = 1 << 1,
 };
 
 /** 
@@ -54,11 +54,11 @@ enum class AudioTrackType {
     /** 
      * @brief 播放原唱。
      */
-    kAudioTrackTypeOriginal = 1,
+    kOriginal = 1,
     /** 
      * @brief 播放伴唱。
      */
-    kAudioTrackTypeAccompy = 2
+    kAccompy = 2
 };
 
 /** 
@@ -69,15 +69,15 @@ enum class AudioPlayType {
     /** 
      * @brief 仅本地播放。
      */
-    kAudioPlayTypeLocal,
+    kLocal,
     /** 
      * @brief 仅远端播放。
      */
-    kAudioPlayTypeRemote,
+    kRemote,
     /** 
      * @brief 本地、远端同时播放。
      */
-    kAudioPlayTypeLocalAndRemote
+    kLocalAndRemote
 };
 
 /** 
@@ -88,23 +88,23 @@ enum class PlayState {
     /** 
      * @brief 播放中。
      */
-    kPlayStatePlaying = 1,
+    kPlaying = 1,
     /** 
      * @brief 暂停中。
      */
-    kPlayStatePaused = 2,
+    kPaused = 2,
     /** 
      * @brief 已停止。
      */
-    kPlayStateStoped = 3,
+    kStoped = 3,
     /** 
      * @brief 播放失败。
      */
-    kPlayStateFailed = 4,
+    kFailed = 4,
     /** 
      * @brief 播放结束。
      */
-    kPlayStateFinished = 5,
+    kFinished = 5,
 };
 
 /** 
@@ -115,19 +115,19 @@ enum class LyricStatus {
     /** 
      * @brief 无歌词。
      */
-    kLyricStatusNone = 0,
+    kNone = 0,
     /** 
      * @brief KRC 歌词。
      */
-    kLyricStatusKRC = 1,
+    kKRC = 1,
     /** 
      * @brief LRC 歌词。
      */
-    kLyricStatusLRC = 2,
+    kLRC = 2,
     /** 
      * @brief KRC 歌词和 LRC 歌词均有。
      */
-    kLyricStatusKRCAndLRC = 3
+    kKRCAndLRC = 3
 };
 
 /** 
@@ -138,11 +138,11 @@ enum class DownloadLyricType {
     /** 
      * @brief KRC 歌词文件。
      */
-    kDownKrc,
+    kKRC,
     /** 
      * @brief LRC 歌词文件。
      */
-    kDownLrc
+    kLRC
 };
 
 
@@ -235,19 +235,19 @@ enum DownloadFileType {
     /** 
      * @brief 音频文件。
      */
-    kDownloadMusic = 1,
+    kDownloadFileTypeMusic = 1,
     /** 
      * @brief KRC 歌词文件。
      */
-    kDownloadKRC = 2,
+    kDownloadFileTypeKRC = 2,
     /** 
      * @brief LRC 歌词文件。
      */
-    kDownloadLRC = 3,
+    kDownloadFileTypeLRC = 3,
     /** 
      * @brief MIDI 文件。
      */
-    kDownloadMIDI = 4
+    kDownloadFileTypeMIDI = 4
 
 } ;
 
@@ -279,63 +279,89 @@ enum KTVErrorCode {
     /** 
      * @brief 成功。
      */
-    kErrorCodeKTVOK = 0,
+    kKTVErrorCodeOK = 0,
     /** 
      * @brief AppID 异常。
      */
-    kErrorCodeKTVAppidInValid = -3000,
+    kKTVErrorCodeAppidInValid = -3000,
     /** 
      * @brief 非法参数，传入的参数不正确。
      */
-    kErrorCodeKTVParasInValid = -3001,
+    kKTVErrorCodeParasInValid = -3001,
     /** 
      * @brief 获取歌曲资源失败。
      */
-    kErrorCodeKTVGetMusicFailed = -3002,
+    kKTVErrorCodeGetMusicFailed = -3002,
     /** 
      * @brief 获取歌词失败。
      */
-    kErrorCodeKTVGetLyricFailed = -3003,
+    kKTVErrorCodeGetLyricFailed = -3003,
     /** 
      * @brief 歌曲下架。
      */
-    kErrorCodeKTVMusicTakedown = -3004,
+    kKTVErrorCodeMusicTakedown = -3004,
     /** 
      * @brief 歌曲文件下载失败。
      */
-    kErrorCodeKTVMusicDownload = -3005,
+    kKTVErrorCodeMusicDownload = -3005,
     /** 
      * @brief MIDI 文件下载失败。
      */
-    kErrorCodeKTVMidiDownloadFailed = -3006,
+    kKTVErrorCodeMidiDownloadFailed = -3006,
     /** 
      * @brief 系统繁忙。
      */
-    kErrorCodeKTVSystemBusy = -3007,
+    kKTVErrorCodeSystemBusy = -3007,
     /** 
      * @brief 网络异常。
      */
-    kErrorCodeKTVNetwork = -3008,
+    kKTVErrorCodeNetwork = -3008,
     /** 
      * @brief KTV 功能未加入房间。
      */
-    kErrorCodeKTVNotJoinRoom = -3009,
+    kKTVErrorCodeNotJoinRoom = -3009,
     /** 
      * @brief 解析数据失败。
      */
-    kErrorCodeKTVParseData = -3010,
+    kKTVErrorCodeParseData = -3010,
     /** 
+     * @hidden
+     * @deprecated 从353开始。
      * @brief 下载失败。
      */
-    kErrorCodeKTVDownload = -3011,
+    kKTVErrorCodeDownload = -3011,
     /** 
      * @brief 已在下载中。
      */
-    kErrorCodeKTVDownloading = -3012,
+    kKTVErrorCodeDownloading = -3012,
     /** 
      * @brief 内部错误，联系技术支持人员。
      */
-    kErrorCodeKTVInternalDomain = -3013
+    kKTVErrorCodeInternalDomain = -3013,
+    /** 
+     * @brief 下载失败，磁盘空间不足。清除缓存后重试。
+     */
+    kKTVErrorCodeInsufficientDiskSpace = -3014,
+    /** 
+     * @brief 下载失败，音乐文件解密失败，联系技术支持人员。
+     */
+    kKTVErrorCodeMusicDecryptionFailed = -3015,
+    /** 
+     * @brief 下载失败，音乐文件重命名失败，请重试。
+     */
+    kKTVErrorCodeFileRenameFailed = -3016,
+    /** 
+     * @brief 下载失败，下载超时，请重试。
+     */
+    kKTVErrorCodeDownloadTimeOut = -3017,
+    /** 
+     * @brief 清除缓存失败，可能原因是文件被占用或者系统异常，请重试。
+     */
+    kKTVErrorCodeClearCacheFailed = -3018,
+    /** 
+     * @brief 取消下载。
+     */
+    kKTVErrorCodeDownloadCanceled = -3019
 };
 
 /** 
@@ -346,57 +372,56 @@ enum KTVPlayerErrorCode {
     /** 
      * @brief 成功。
      */
-    kErrorCodeKTVPlayOK = 0,
+    kKTVPlayerErrorCodeOK = 0,
     /** 
      * @brief 播放错误，请下载后播放。
      */
-    kErrorCodeKTVPlayFileNotExist = -3020,
+    kKTVPlayerErrorCodeFileNotExist = -3020,
     /** 
      * @brief 播放错误，请确认文件播放格式。
      */
-    kErrorCodeKTVPlayFileError = -3021,
+    kKTVPlayerErrorCodeFileError = -3021,
     /** 
      * @brief 播放错误，未进入房间。
      */
-    kErrorCodeKTVPlayNotJoinRoom = -3022,
+    kKTVPlayerErrorCodeNotJoinRoom = -3022,
     /** 
      * @brief 参数错误。
      */
-    kErrorCodeKTVPlayParam = -3023,
+    kKTVPlayerErrorCodeParam = -3023,
     /** 
      * @brief 播放失败，找不到文件或文件打开失败。
      */
-    kErrorCodeKTVPlayStartError = -3024,
+    kKTVPlayerErrorCodeStartError = -3024,
     /** 
      * @brief 混音 ID 异常。
      */
-    kErrorCodeKTVPlayMixIdError = -3025,
+    kKTVPlayerErrorCodeMixIdError = -3025,
     /** 
      * @brief 设置播放位置出错。
      */
-    kErrorCodeKTVPlayPositionError = -3026,
+    kKTVPlayerErrorCodePositionError = -3026,
     /** 
      * @brief 音量参数不合法，可设置的取值范围为 [0,400]。
      */
-    kErrorCodeKTVPlayAudioVolumeError = -3027,
+    kKTVPlayerErrorCodeAudioVolumeError = -3027,
     /** 
      * @brief 不支持此混音类型。
      */
-    kErrorCodeKTVPlayTypeError = -3028,
+    kKTVPlayerErrorCodeTypeError = -3028,
     /** 
      * @brief 音调文件不合法。
      */
-    kErrorCodeKTVPlayPitchError = -3029,
+    kKTVPlayerErrorCodePitchError = -3029,
     /** 
      * @brief 音轨不合法。
      */
-    kErrorCodeKTVPlayAudioTrackError = -3030,
+    kKTVPlayerErrorCodeAudioTrackError = -3030,
     /** 
      * @brief 混音启动中。
      */
-    kErrorCodeKTVPlayStartingError = -3031
+    kKTVPlayerErrorCodeStartingError = -3031
 };
 
 
 } // namespace bytertc
-#endif // BYTERTC_KTV_DEFINES_H

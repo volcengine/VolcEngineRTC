@@ -19,29 +19,44 @@
 
 + (void)renderImageBuffer:(CVImageBufferRef)imageBufer forView:(UIImageView *)imageView rotation:(VideoRotation)rotation {
     CFRetain(imageBufer);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        imageView.image = [UIImage imageWithCIImage:[CIImage imageWithCVImageBuffer:imageBufer]];
-        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        
+        
+        CIImage *ciImage = [CIImage imageWithCVImageBuffer:imageBufer];
+        
+        CIContext *context = [CIContext contextWithOptions:nil];
+        CGImageRef cgImage = [context
+                                 createCGImage:ciImage
+                                 fromRect:CGRectMake(0, 0,
+                                                     CVPixelBufferGetWidth(imageBufer),
+                                                     CVPixelBufferGetHeight(imageBufer))];
+        
+        UIImageOrientation imageOrientation;
         switch (rotation) {
             case VideoRotation_0:
-                imageView.transform = CGAffineTransformMakeRotation(0);
+                imageOrientation = UIImageOrientationUp;
                 break;
             case VideoRotation_90:
-                imageView.transform = CGAffineTransformMakeRotation(M_PI_2);
+                imageOrientation = UIImageOrientationRight;
                 break;
             case VideoRotation_180:
-                imageView.transform = CGAffineTransformMakeRotation(M_PI);
+                imageOrientation = UIImageOrientationDown;
                 break;
             case VideoRotation_270:
-                imageView.transform = CGAffineTransformMakeRotation(M_PI_2 + M_PI);
+                imageOrientation = UIImageOrientationLeft;
                 break;
-                
+
             default:
                 break;
         }
-        imageView.transform = CGAffineTransformScale(imageView.transform, 1.2, 1.2);
-        CFRelease(imageBufer);
+        
+    UIImage *image = [[UIImage alloc] initWithCGImage:cgImage scale:1.0 orientation:imageOrientation];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        imageView.contentMode = UIViewContentModeScaleAspectFill;
+        imageView.image = image;
     });
+    
+    CGImageRelease(cgImage);
+    CFRelease(imageBufer);
 }
 
 @end

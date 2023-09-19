@@ -140,8 +140,11 @@ BYTERTC_APPLE_EXPORT @interface RTSRoom : NSObject
  * @region 多房间
  * @brief 通过设置 RTSRoomDelegate{@link #RTSRoomDelegate} 代理，可以监听此 `RTSRoom` 对象对应的回调事件。
  * @param roomDelegate 参见 RTSRoomDelegate{@link #RTSRoomDelegate}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
  */
-- (void)setRTSRoomDelegate:(id<RTSRoomDelegate> _Nullable)roomDelegate;
+- (int)setRTSRoomDelegate:(id<RTSRoomDelegate> _Nullable)roomDelegate;
 
 /** 
  * @type api

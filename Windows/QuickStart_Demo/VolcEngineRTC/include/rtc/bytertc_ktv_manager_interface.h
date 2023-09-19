@@ -1,5 +1,4 @@
-﻿#ifndef BYTERTC_KTV_MANAGER_INTERFACE_H
-#define BYTERTC_KTV_MANAGER_INTERFACE_H
+#pragma once
 
 #include "bytertc_ktv_defines.h"
 namespace bytertc {
@@ -7,6 +6,7 @@ namespace bytertc {
 /** 
  * @type callback
  * @brief KTV 事件回调接口。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IKTVManagerEventHandler {
 
@@ -105,11 +105,20 @@ public:
         (void)download_id;
         (void)download_percentage;
     }
+    /** 
+     * @type callback
+     * @brief 清理文件缓存结果回调。
+     * @param error_code 错误码，非0为失败，参看 KTVErrorCode{@link #KTVErrorCode}。
+     */
+    virtual void onClearCacheResult(KTVErrorCode error_code) {
+        (void)error_code;
+    }
 };
 
 /** 
  * @type callback
  * @brief KTV 播放器回调接口。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IKTVPlayerEventHandler {
 public:
@@ -398,4 +407,3 @@ public:
 };
 
 } // namespace bytertc
-#endif // BYTERTC_KTV_MANAGER_INTERFACE_H

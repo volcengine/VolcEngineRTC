@@ -26,6 +26,11 @@
 
 @implementation CustomCameraCapture
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self stopCamera];
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -352,11 +357,6 @@
         default:
         return AVCaptureVideoOrientationPortrait;
     }
-}
-
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

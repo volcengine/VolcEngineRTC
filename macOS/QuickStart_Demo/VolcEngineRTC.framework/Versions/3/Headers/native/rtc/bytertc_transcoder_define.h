@@ -202,7 +202,7 @@ enum StreamMixingErrorCode {
 
 /** 
  * @type keytype
- * @brief 合流类型(新)
+ * @brief 合流类型。(新)
  */
 enum MixedStreamType {
     /** 
@@ -218,7 +218,7 @@ enum MixedStreamType {
 
 /** 
  * @type keytype
- * @brief AAC 编码规格(新)。
+ * @brief AAC 编码规格。(新)
  */
 enum MixedStreamAudioProfile {
     /** 
@@ -237,7 +237,7 @@ enum MixedStreamAudioProfile {
 
 /** 
  * @type keytype
- * @brief 音频编码格式(新)。
+ * @brief 音频编码格式。(新)
  */
 enum MixedStreamAudioCodecType {
     /** 
@@ -248,7 +248,7 @@ enum MixedStreamAudioCodecType {
 
 /** 
  * @type keytype
- * @brief 视频编码格式(新)。
+ * @brief 视频编码格式。(新)
  */
 enum MixedStreamVideoCodecType {
     /** 
@@ -263,7 +263,7 @@ enum MixedStreamVideoCodecType {
 
 /** 
  * @type keytype
- * @brief 图片或视频流的缩放模式(新)。
+ * @brief 图片或视频流的缩放模式。(新)
  */
 enum MixedStreamRenderMode {
     /** 
@@ -285,7 +285,7 @@ enum MixedStreamRenderMode {
 
 /** 
  * @type keytype
- * @brief 合流输出内容类型(新)。
+ * @brief 合流输出内容类型。(新)
  */
 enum MixedStreamMediaType {
     /** 
@@ -304,7 +304,7 @@ enum MixedStreamMediaType {
 
 /** 
  * @type keytype
- * @brief 合流布局区域类型(新)。
+ * @brief 合流布局区域类型。(新)
  */
 enum MixedStreamLayoutRegionType {
     /** 
@@ -319,7 +319,8 @@ enum MixedStreamLayoutRegionType {
 
 /** 
  * @type keytype
- * @brief 客户端合流回调视频格式(新)。设置为系统不支持的格式时，自动回调系统默认格式。
+ * @brief 客户端合流回调视频格式。(新)<br>
+ *        设置为系统不支持的格式时，自动回调系统默认格式。
  */
 enum MixedStreamClientMixVideoFormat {
     /** 
@@ -345,7 +346,7 @@ enum MixedStreamClientMixVideoFormat {
 };
 /** 
  * @type keytype
- * @brief region 中流的类型属性
+ * @brief region中流的类型属性
  */
 enum MixedStreamVideoType {
     /** 
@@ -363,7 +364,8 @@ enum MixedStreamVideoType {
 
 /** 
  *  @type keytype
- *  @brief 音频合流配置参数(新)。值不合法或未设置时，自动使用默认值。
+ *  @brief 音频合流配置参数。(新)<br>
+ *         值不合法或未设置时，自动使用默认值。
  */
 typedef struct MixedStreamAudioConfig {
     /** 
@@ -379,7 +381,7 @@ typedef struct MixedStreamAudioConfig {
      */
     int32_t bitrate = 64;
     /** 
-     * @brief AAC 编码规格，参看 MixedStreamAudioCodecProfile{@link #MixedStreamAudioCodecProfile}。默认值为 `0`。
+     * @brief AAC 编码规格，参看 MixedStreamAudioProfile{@link #MixedStreamAudioProfile}。默认值为 `0`。
      */
     MixedStreamAudioProfile audio_profile = MixedStreamAudioProfile::kMixedStreamAudioProfileLC;
     /** 
@@ -390,7 +392,8 @@ typedef struct MixedStreamAudioConfig {
 
 /** 
  * @type keytype
- * @brief 视频合流配置参数(新)。值不合法或未设置时，自动使用默认值。
+ * @brief 视频合流配置参数。(新)<br>
+ *        值不合法或未设置时，自动使用默认值。
  */
 typedef struct MixedStreamVideoConfig {
     /** 
@@ -431,7 +434,7 @@ typedef struct MixedStreamVideoConfig {
 
 /** 
  * @type keytype
- * @brief 客户端合流参数(新)。
+ * @brief 客户端合流参数。(新)
  */
 typedef struct MixedStreamClientMixConfig {
     /** 
@@ -445,35 +448,36 @@ typedef struct MixedStreamClientMixConfig {
 } MixedStreamClientMixConfig;
 
 /** 
+ * @hidden for internal use only
  * @type keytype
- * @brief 合流转推直播同步参数(新)。
+ * @brief 转推直播单通同步参数。(新)
  */
 typedef struct MixedStreamSyncControlConfig {
     /** 
-     * @brief 是否转推同步，默认为 false。
+     * @brief 是否在转推直播时，启用单通模式。默认为 false，不启用。
+     *        启用单通模式时，RTC SDK 会对指定的多个用户的媒体流进行同步处理，再合流后推送到 CDN，但基准流所属用户不会播放来自其他用户的媒体流。你需要设定以下参数。
+     *        非单通模式时，RTC SDK 不会对媒体流进行同步处理，只是简单合流后推送到 CDN。以下参数设定无效。
      */
     bool enable_sync = false;
     /** 
-     * @brief 转推同步基准用户 ID，即以该用户的流同步时间戳为准。默认为空。
+     * @brief 在进行同步处理时，基准流所属用户的 ID。默认为空。
      */
     const char* base_user_id = nullptr;
     /** 
-     * @brief 缓存队列的长度，单位为毫秒。默认值为 0。
+     * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 0。
+     * @notes 参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
      */
     int32_t max_cache_time_ms = 0;
     /** 
-     * @brief 视频是否需要在 RTC 进行合流。
+     * @brief 是否通过 RTC SDK 进行转推直播。默认为 True。
+     *        如果选择 `False`，你会通过 onCacheSyncVideoFrames{@link #ITranscoderObserver#onCacheSyncVideoFrames} 收到同步的帧，你可以使用此视频帧，自行实现合流转推。
      */
     bool video_need_sdk_mix = true;
-    /** 
-     * @brief 是否只开启时间戳发送而不做对齐和数据回调。
-     */
-    bool is_only_send_pts = false;
 } MixedStreamSyncControlConfig;
 
 /** 
  * @type keytype
- * @brief 图片合流相关参数(新)。
+ * @brief 图片合流相关参数。(新)
  */
 typedef struct MixedStreamLayoutRegionImageWaterMarkConfig {
     /** 
@@ -488,7 +492,7 @@ typedef struct MixedStreamLayoutRegionImageWaterMarkConfig {
 
 /** 
  * @type keytype
- * @brief 推流 CDN 的空间音频参数(新)。
+ * @brief 推流 CDN 的空间音频参数。(新)
  */
 typedef struct MixedStreamSpatialAudioConfig {
     /** 
@@ -510,7 +514,7 @@ typedef struct MixedStreamSpatialAudioConfig {
 
 /** 
  * @type keytype
- * @brief 单个图片或视频流在合流中的布局信息(新)。
+ * @brief 单个图片或视频流在合流中的布局信息。(新)
  *        开启合流功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
  */
 typedef struct MixedStreamLayoutRegionConfig {
@@ -597,7 +601,7 @@ typedef struct MixedStreamLayoutRegionConfig {
 } MixedStreamLayoutRegionConfig;
 
 /** 
- * @deprecated since 3.52, use MixedStreamType instead.
+ * @deprecated since 3.52, use MixedStreamType{@link #MixedStreamType} instead.
  * @type keytype
  * @brief 合流类型
  */
@@ -614,7 +618,7 @@ enum StreamMixingType {
 
 
 /** 
- * @deprecated since 3.52, use MixedStreamAudioProfile instead.
+ * @deprecated since 3.52, use MixedStreamAudioProfile{@link #MixedStreamAudioProfile} instead.
  * @type keytype
  * @brief AAC 编码规格。
  */
@@ -634,7 +638,7 @@ enum TranscoderAudioCodecProfile {
 };
 
 /** 
- * @deprecated since 3.52, use MixedStreamAudioCodecType instead.
+ * @deprecated since 3.52, use MixedStreamAudioCodecType{@link #MixedStreamAudioCodecType} instead.
  * @type keytype
  * @brief 音频编码格式。
  */
@@ -646,7 +650,7 @@ enum TranscoderAudioCodecType {
 };
 
 /** 
- * @deprecated since 3.52, use MixedStreamVideoCodecType instead.
+ * @deprecated since 3.52, use MixedStreamVideoCodecType{@link #MixedStreamVideoCodecType} instead.
  * @type keytype
  * @brief 视频编码格式。
  */
@@ -662,7 +666,7 @@ enum TranscoderVideoCodecType {
 };
 
 /** 
- * @deprecated since 3.52, use MixedStreamRenderMode instead.
+ * @deprecated since 3.52, use MixedStreamRenderMode{@link #MixedStreamRenderMode} instead.
  * @type keytype
  * @brief 图片或视频流的缩放模式。
  */
@@ -689,7 +693,7 @@ enum TranscoderRenderMode {
 };
 
 /** 
- * @deprecated since 3.52, use MixedStreamLayoutRegionType instead.
+ * @deprecated since 3.52, use MixedStreamLayoutRegionType{@link #MixedStreamLayoutRegionType} instead.
  * @type keytype
  * @brief 合流布局区域类型
  */
@@ -705,7 +709,7 @@ enum TranscoderLayoutRegionType {
 };
 
 /** 
- * @deprecated since 3.52, use MixedStreamLayoutRegionImageWaterMarkConfig instead.
+ * @deprecated since 3.52, use MixedStreamLayoutRegionImageWaterMarkConfig{@link #MixedStreamLayoutRegionImageWaterMarkConfig} instead.
  * @type keytype
  * @brief 图片合流相关参数
  */
@@ -721,7 +725,7 @@ typedef struct TranscoderLayoutRegionDataParam {
 }TranscoderLayoutRegionDataParam;
 
 /** 
- * @deprecated since 3.52, use MixedStreamClientMixVideoFormat instead.
+ * @deprecated since 3.52, use MixedStreamClientMixVideoFormat{@link #MixedStreamClientMixVideoFormat} instead.
  * @type keytype
  * @brief 客户端合流回调视频格式。设置为系统不支持的格式时，自动回调系统默认格式。
  */
@@ -791,7 +795,7 @@ typedef struct IDataFrame {
 } IDataFrame;
 
 /** 
- * @deprecated since 3.52, use MixedStreamLayoutRegionConfig instead.
+ * @deprecated since 3.52, use MixedStreamLayoutRegionConfig{@link #MixedStreamLayoutRegionConfig} instead.
  * @type keytype
  * @brief 单个图片或视频流在合流中的布局信息。
  *        开启转推直播功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
@@ -882,7 +886,7 @@ typedef struct TranscoderLayoutRegion {
 } TranscoderLayoutRegion;
 
 /** 
- * @deprecated since 3.52, use MixedStreamAudioConfig instead.
+ * @deprecated since 3.52, use MixedStreamAudioConfig{@link #MixedStreamAudioConfig} instead.
  *  @type keytype
  *  @brief 音频转码配置参数。值不合法或未设置时，自动使用默认值。
  */
@@ -910,7 +914,7 @@ typedef struct TranscoderAudioParam {
 } TranscoderAudioParam;
 
 /** 
- * @deprecated since 3.52, use MixedStreamVideoConfig instead.
+ * @deprecated since 3.52, use MixedStreamVideoConfig{@link #MixedStreamVideoConfig} instead.
  * @type keytype
  * @brief 视频转码配置参数。值不合法或未设置时，自动使用默认值。
  */
@@ -950,6 +954,7 @@ typedef struct TranscoderVideoParam {
       */
      bool bFrame = false;
 } TranscoderVideoParam;
+
 /** 
  * @deprecated since 3.52, use MixedStreamSyncControlConfig instead.
  * @hidden internal use only
@@ -985,8 +990,9 @@ typedef struct TranscoderSyncControlParam {
      */
     bool sync_only_send_pts = false;
 } TranscoderSyncControlParam;
+
 /** 
- * @deprecated since 3.52, use MixedStreamClientMixConfig instead.
+ * @deprecated since 3.52, use MixedStreamClientMixConfig{@link #MixedStreamClientMixConfig} instead.
  * @type keytype
  * @brief 客户端合流参数。
  */
@@ -1006,7 +1012,7 @@ typedef struct TranscoderClientMixParam {
 } TranscoderClientMixParam;
 
 /** 
- * @deprecated since 3.52, use MixedStreamSpatialAudioConfig instead.
+ * @deprecated since 3.52, use MixedStreamSpatialAudioConfig{@link #MixedStreamSpatialAudioConfig} instead.
  * @type keytype
  * @brief 推流 CDN 的空间音频参数。
  */
@@ -1029,7 +1035,7 @@ typedef struct TranscoderSpatialConfig {
 } TranscoderSpatialConfig;
 
 /** 
- * @deprecated since 3.52, use IMixedStreamParam instead.
+ * @deprecated since 3.52, use IMixedStreamConfig{@link #IMixedStreamConfig} instead.
  * @type keytype
  * @brief 转推直播配置参数。
  */
@@ -1109,7 +1115,6 @@ public:
      */
     virtual const char* authInfo() = 0;
     /** 
-     * @hidden internal use only
      * @valid since 3.50
      * @type api
      * @brief 获取客户端合流信息。
@@ -1148,23 +1153,20 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置音频参数。
+     * @brief 设置音频参数。参看 TranscoderAudioParam{@link #TranscoderAudioParam}。<br>
      *        本参数不支持过程中更新。
-     * @param [in] TranscoderAudioParam 音频参数，参看 TranscoderAudioParam{@link #TranscoderAudioParam}。
      */
     virtual void setAudioParam(const TranscoderAudioParam&) = 0;
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置视频参数。
-     * @param [in] TranscoderVideoParam 视频参数，参看 TranscoderVideoParam{@link #TranscoderVideoParam}
+     * @brief 设置视频参数。参看 TranscoderVideoParam{@link #TranscoderVideoParam}。
      */
     virtual void setVideoParam(const TranscoderVideoParam&) = 0;
     /** 
      * @hidden(Windows,macOS,Linux)
      * @type api
-     * @brief 设定转推 CDN 时的空间音频效果。
-     * @param [in] TranscoderSpatialConfig 参看 TranscoderSpatialConfig{@link #TranscoderSpatialConfig}。
+     * @brief 设定转推 CDN 时的空间音频效果。参看 TranscoderSpatialConfig{@link #TranscoderSpatialConfig}。
      */
     virtual void setSpatialConfig(const TranscoderSpatialConfig&) = 0;
     /** 
@@ -1239,7 +1241,7 @@ public:
 
 /** 
  * @type keytype
- * @brief 转推直播配置参数(新)。
+ * @brief 转推直播配置参数。(新)
  */
 class IMixedStreamConfig : public ITranscoderParamBase {
 public:
@@ -1352,23 +1354,20 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置音频参数。
+     * @brief 设置音频参数。参看 MixedStreamAudioConfig{@link #MixedStreamAudioConfig}。
      *        本参数不支持过程中更新。
-     * @param [in] MixedStreamAudioConfig 音频参数，参看 MixedStreamAudioConfig{@link #MixedStreamAudioConfig}。
      */
     virtual void setAudioConfig(const MixedStreamAudioConfig&) = 0;
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置视频参数。
-     * @param [in] MixedStreamVideoConfig 视频参数，参看 MixedStreamVideoConfig{@link #MixedStreamVideoConfig}
+     * @brief 设置视频参数。参看 MixedStreamVideoConfig{@link #MixedStreamVideoConfig}。
      */
     virtual void setVideoConfig(const MixedStreamVideoConfig&) = 0;
     /** 
      * @hidden(Windows,macOS,Linux)
      * @type api
-     * @brief 设定转推 CDN 时的空间音频效果。
-     * @param [in] TranscoderSpatialConfig 参看 MixedStreamSpatialAudioConfig{@link #MixedStreamSpatialAudioConfig}。
+     * @brief 设定转推 CDN 时的空间音频效果。参看 MixedStreamSpatialAudioConfig{@link #MixedStreamSpatialAudioConfig}。
      */
     virtual void setSpatialAudioConfig(const MixedStreamSpatialAudioConfig&) = 0;
     /** 
@@ -1404,15 +1403,13 @@ public:
     virtual void setAuthInfo(const char* authInfo) = 0;
     /** 
      * @type api
-     * @brief 设置客户端合流信息
-     * @param [in] param 客户端合流信息，参看 MixedStreamClientMixConfig{@link #MixedStreamClientMixConfig}。
+     * @brief 设置客户端合流信息，参看 MixedStreamClientMixConfig{@link #MixedStreamClientMixConfig}。
      */
     virtual void setClientMixConfig(MixedStreamClientMixConfig&) = 0;
     /** 
      * @hidden for internal use only
      * @type api
-     * @brief 设置转推直播同步参数。
-     * @param [in] param 转推直播同步参数，参看 MixedStreamSyncControlConfig{@link #MixedStreamSyncControlConfig}。
+     * @brief 设置转推直播同步参数。参看 MixedStreamSyncControlConfig{@link #MixedStreamSyncControlConfig}。
      */
     virtual void setSyncControlConfig(MixedStreamSyncControlConfig&) = 0;
 
@@ -1447,7 +1444,8 @@ typedef struct PushSingleStreamParam {
      */
     const char* user_id;
     /** 
-     * @brief 推流地址
+     * @brief 推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。
+     *        本参数不支持过程中更新。
      */
     const char* uri;
     /** 
@@ -1455,4 +1453,84 @@ typedef struct PushSingleStreamParam {
      */
     const bool is_screen_stream;
 }PushSingleStreamParam;
+
+/** 
+* @hidden internal use only
+* @type keytype
+* @brief 缓存同步模式。
+*/
+enum ChorusCacheSyncMode {
+    /** 
+     * @brief 合唱场景下，主唱应采用此模式，以发送带时间戳信息的媒体数据。
+     */
+    kChorusCacheSyncModeProducer= 0,
+    /** 
+     * @brief 合唱场景下，副唱应采用此模式。
+     *        此模式下，副唱收到来自主唱的带时间戳的媒体数据。副唱发送的媒体数据中带有来自主唱的时间戳。
+     */
+    kChorusCacheSyncModeRetransmitter= 1,
+    /** 
+     * @brief 合唱场景下，听众应采用此模式。
+     *        此模式下，听众收到来自主唱的时间戳，并据此对齐来自主唱和副唱的媒体数据，以获得良好的合唱播放效果。
+     */
+    kChorusCacheSyncModeConsumer = 2
+};
+/** 
+* @hidden internal use only
+* @type keytype
+* @brief 缓存同步事件。
+*/
+enum ChorusCacheSyncEvent {
+     /** 
+     * @brief 成功
+     */
+    kChorusCacheSyncEventStartSuccess = 0,
+     /** 
+     * @brief 失败。
+     */
+    kChorusCacheSyncEventStartFailed = 1,
+};
+/** 
+* @hidden internal use only
+* @type errorcode
+* @brief 缓存同步错误码。
+*/
+enum ChorusCacheSyncError {
+    /** 
+     * @brief 成功。
+     */
+    kChorusCacheSyncErrorOK = 0,
+   /** 
+    * @brief 失败。推送至 CDN 时，应进行以下设置：
+    *        + `IMixedStreamConfig.MixedStreamSyncControlConfig.enable_sync = true`；
+    *        + `IMixedStreamConfig.MixedStreamSyncControlConfig.base_user_id = {uid of producer}`。
+    */
+    kChorusCacheSyncErrorWrongState = 1,
+    /** 
+    * @brief 缓存同步功能已启动，不需要重复开启。
+    */
+    kChorusCacheSyncErrorAlreadyRunning = 2
+};
+/** 
+* @hidden internal use only
+* @type keytype
+* @brief 缓存同步配置。
+*/
+struct ChorusCacheSyncConfig {
+     /** 
+      * @brief 最大媒体缓存时长（ms）。
+      *        取值范围是 `[500, 2500]`，默认值是 `2000`。
+      *        值越大，同步效果越好，但会造成占用内存较大。如果参与缓存同步的各路媒体流之间的时间差超过此值，会造成丢帧。
+      */
+     int32_t max_cache_time_ms = 2000;
+    /** 
+      * @brief 收到 onSyncedVideoFrames{@link #IChorusCacheSyncObserver#onSyncedVideoFrames} 的频率。
+      *        默认值是 `15`。此值通常应小于等于原始视频帧率；如果大于原始视频帧率，可能会收到重复帧。
+      */
+     int32_t video_fps = 15;
+    /** 
+      * @brief 模式。参看 ChorusCacheSyncMode{@link #ChorusCacheSyncMode}. 默认值是 `retransmitter`。  
+      */
+     ChorusCacheSyncMode mode = kChorusCacheSyncModeRetransmitter;
+};
 }  // namespace bytertc

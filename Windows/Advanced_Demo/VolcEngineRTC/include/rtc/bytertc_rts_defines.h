@@ -789,4 +789,47 @@ enum LocalProxyError {
     kLocalProxyErrorHttpTunnelFailed = 6,
 };
 
+/** 
+ * @type keytype
+ * @brief 本地日志输出等级。
+ */
+enum class LocalLogLevel {
+    /** 
+     * @brief 信息级别。
+     */
+    kInfo     = 0,
+    /** 
+     * @brief （默认值）警告级别。
+     */
+    kWarning  = 1,
+    /** 
+     * @brief 错误级别。
+     */
+    kError    = 2,
+    /** 
+     * @brief 关闭日志。
+     */
+    kNone     = 3
+};
+ 
+/** 
+ * @type keytype
+ * @brief 本地日志参数。
+ */
+struct LogConfig {
+    /** 
+     * @brief 日志存储路径。
+     */ 
+    const char* log_path = nullptr;
+    /** 
+     * @brief 日志等级，参看 LocalLogLevel{@link #LocalLogLevel}，默认为警告级别。
+     */ 
+    LocalLogLevel log_level = LocalLogLevel::kWarning;
+
+    /** 
+     * @brief 日志可使用的最大缓存空间，单位为 MB。取值范围为 1～100 MB，默认值为 10 MB。
+     */ 
+    uint32_t log_file_size = 10;
+};
+
 }  // namespace bytertc

@@ -22,6 +22,8 @@
 #include "bytertc_audio_frame.h"
 #include "byte_rtc_asr_engine_event_handler.h"
 #include "bytertc_audio_mixing_manager.h"
+#include "bytertc_audio_effect_player.h"
+#include "bytertc_media_player.h"
 #include "bytertc_video_processor_interface.h"
 #include "bytertc_transcoder_interface.h"
 #include "bytertc_publicstream_interface.h"
@@ -145,7 +147,7 @@ public:
 
 
     /** 
-     * @hidden(Windows)
+     * @hidden(Linux)
      * @type api
      * @region 音频管理
      * @brief 开启/关闭耳返功能
@@ -154,7 +156,7 @@ public:
     virtual void setEarMonitorMode(EarMonitorMode mode) = 0;
 
     /** 
-     * @hidden(Windows)
+     * @hidden(Linux)
      * @type api
      * @region 音频管理
      * @brief 设置耳返的音量
@@ -860,7 +862,6 @@ public:
      */
     virtual bool pushAudioMixingStreamData(int8_t* audio_frame, int frame_num) = 0;
 
-#ifndef ByteRTC_AUDIO_ONLY
 
     /** 
      * @hidden(Linux)
@@ -1493,7 +1494,6 @@ public:
      * @hidden
      */
     virtual void setupDynamicLayoutRender(IVideoSink* render) = 0;
-#endif
 
     /** 
      * @hidden(macOS,Windows,Linux)
@@ -2244,7 +2244,7 @@ public:
      *       + 成功调用本接口后，会在 3s 内收到一次 onNetworkDetectionResult{@link #IRtcEngineEventHandler#onNetworkDetectionResult} 回调，此后每 2s 会收到一次该回调，通知探测结果；  <br>
      *       + 若探测停止，则会收到一次 onNetworkDetectionStopped{@link #IRtcEngineEventHandler#onNetworkDetectionStopped} 通知探测停止。
      */
-    virtual NetworkDetectionStartReturn startNetworkDetection(bool is_test_uplink, int expected_uplink_bitrate,
+    virtual int startNetworkDetection(bool is_test_uplink, int expected_uplink_bitrate,
                                    bool is_test_downlink, int expected_downlink_biterate) = 0;
 
     /** 
@@ -3072,7 +3072,6 @@ public:
      * @notes 本方法只影响本地是否接收远端音频流，并不影响远端音频设备的采集发送功能。
      */
     virtual void muteRemoteAudio(const char* uid, MuteState mute_state) = 0;
-#ifndef ByteRTC_AUDIO_ONLY
     /**
      * @hidden
     */
@@ -3107,6 +3106,7 @@ public:
      * @param [in] observer 端云一体转推直播观察者。参看 ITranscoderObserver{@link #ITranscoderObserver}。  <br>
      *        通过注册 observer 接收转推直播相关的回调。
      * @notes  <br>
+     *       + 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。        
      *       + 调用该方法后，关于启动结果和推流过程中的错误，会收到 onStreamMixingEvent{@link #ITranscoderObserver#onStreamMixingEvent} 回调。
      *       + 调用 stopLiveTranscoding{@link #IRtcEngine#stopLiveTranscoding} 停止转推直播。
      */
@@ -3198,7 +3198,6 @@ public:
      * @notes 本方法不影响远端视频采集和发送状态
      */
     virtual void muteRemoteVideo(const char* userid, MuteState muteState) = 0;
-#endif
     /**
      * @hidden
      */
@@ -3400,10 +3399,14 @@ public:
      * @type api
      * @brief 用蜂窝网络改善通话质量。
      * @param config 蜂窝增强的配置参数
+     * @return 方法调用结果：  <br>
+     *        + 0: 成功。<br>
+     *        + -1：失败，内部错误。 <br>
+     *        + -2: 失败，输入参数错误。 <br>
      * @notes <br>
      *       + 调用此接口可设置蜂窝增强的媒体类型。
      */
-    virtual void setCellularEnhancement(const MediaTypeEnhancementConfig& config) = 0;
+    virtual int setCellularEnhancement(const MediaTypeEnhancementConfig& config) = 0;
 };
 
 /** 

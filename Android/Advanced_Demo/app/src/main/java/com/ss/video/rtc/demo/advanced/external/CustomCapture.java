@@ -69,6 +69,7 @@ public class CustomCapture {
         mCameraHandler = new Handler(mCameraThread.getLooper());
         mCameraHandler.post(() -> {
             mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            mCameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
             CustomCapture.this.previewCallback = previewCallback;
             initCamera(surfaceTexture, previewCallback);
         });

@@ -8,13 +8,14 @@
 /** 
  * @type callback
  * @brief K 歌评分事件回调类。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCSingScoringDelegate<NSObject>
 @required
 /** 
  * @type callback
  * @brief 实时评分信息回调。调用 startSingScoring:scoringInfoInterval:{@link #ByteRTCSingScoringManager#startSingScoring:scoringInfoInterval:} 后，会收到该回调。
- * @param Info 实时评分信息。详见 ByteRTCSingScoringRealtimeInfo{@link #ByteRTCSingScoringRealtimeInfo}。
+ * @param info 实时评分信息。详见 ByteRTCSingScoringRealtimeInfo{@link #ByteRTCSingScoringRealtimeInfo}。
  */
 - (void)onCurrentScoringInfo:(ByteRTCSingScoringRealtimeInfo * _Nullable)info;
 @end

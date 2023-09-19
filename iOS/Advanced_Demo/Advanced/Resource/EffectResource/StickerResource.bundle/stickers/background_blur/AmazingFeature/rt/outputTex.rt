@@ -1,0 +1,47 @@
+%YAML 1.1
+--- !SceneOutputRT &1
+name: ""
+guid: {a: 7515297882067904160, b: 6847905396919676033}
+width: 720
+height: 1280
+depth: 1
+internalFormat:
+  __class: InternalFormat
+  value: RGBA8
+dataType:
+  __class: DataType
+  value: U8norm
+builtinType:
+  __class: BuiltInTextureType
+  value: OUTPUT
+enableMipmap: false
+filterMin:
+  __class: FilterMode
+  value: LINEAR
+filterMag:
+  __class: FilterMode
+  value: LINEAR
+filterMipmap:
+  __class: FilterMipmapMode
+  value: NONE
+wrapModeS:
+  __class: WrapMode
+  value: CLAMP
+wrapModeT:
+  __class: WrapMode
+  value: CLAMP
+wrapModeR:
+  __class: WrapMode
+  value: CLAMP
+maxAnisotropy: 1
+attachment:
+  __class: RenderTextureAttachment
+  value: DEPTH24
+inputTexture: {localId: 1, path: share://input.texture}
+massMode:
+  __class: MSAAMode
+  value: NONE
+shared: false
+colorFormat:
+  __class: PixelFormat
+  value: RGBA8Unorm

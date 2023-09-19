@@ -1172,7 +1172,6 @@ public:
         (void)mode;
     }
 
-#ifndef ByteRTC_AUDIO_ONLY
     /** 
      * @type callback
      * @region 视频管理
@@ -1520,7 +1519,6 @@ public:
         (void)banned;
     }
 
-#endif  // ByteRTC_AUDIO_ONLY
     /** 
      * @type callback
      * @region 音频事件回调

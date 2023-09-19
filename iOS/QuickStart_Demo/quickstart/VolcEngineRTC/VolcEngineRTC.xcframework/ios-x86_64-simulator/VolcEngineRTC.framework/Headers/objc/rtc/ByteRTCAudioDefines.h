@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
 
 /** 
  * @type keytype
- * @brief 变声特效类型
+ * @brief 变声特效类型。如需更多类型，联系技术支持。
  */
 typedef NS_ENUM(NSInteger, ByteRTCVoiceChangerType) {
     /** 
@@ -340,7 +340,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioProfileType) {
 
 /** 
  * @type keytype
- * @brief 降噪模式。降噪算法受调用 joinRoomByToken:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 时设置的房间模式影响。
+ * @brief 降噪模式。降噪算法受调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 时设置的房间模式影响。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAnsMode) {
     /** 
@@ -458,7 +458,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioChannel) {
 };
 
 /** 
- * @deprecated since 3.52, use ByteRTCMixedStreamAudioCodecType instead.
+ * @deprecated since 3.52, use ByteRTCMixedStreamAudioCodecType{@link #ByteRTCMixedStreamAudioCodecType} instead.
  * @type keytype
  * @brief 音频编码类型。
  */
@@ -472,7 +472,7 @@ typedef NS_ENUM(NSInteger, ByteRTCTranscodingAudioCodec) {
 
 /** 
  * @type keytype
- * @brief 音频编码类型(新)。
+ * @brief 音频编码类型。(新)
  */
 typedef NS_ENUM(NSInteger, ByteRTCMixedStreamAudioCodecType) {
     /** 
@@ -502,6 +502,7 @@ typedef NS_ENUM(NSInteger, ByteRTCMixedStreamAudioProfile) {
 };
 
 /** 
+ * @deprecated since 3.52, use ByteRTCMixedStreamAudioProfile{@link #ByteRTCMixedStreamAudioProfile} instead.
  * @type keytype
  * @brief AAC 编码规格。
  */
@@ -769,6 +770,141 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError) {
     ByteRTCAudioMixingErrorInValidPlaybackSpeed,
 };
 
+/**  
+ * @type keytype
+ * @brief 数据源模式
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMediaPlayerCustomSourceMode) {
+    /**  
+     * @brief 外部数据源 push 模式
+     */
+    ByteRTCMediaPlayerCustomSourceModePush = 0,
+    /**  
+     * @brief 外部数据源 Pull 模式
+     */
+    ByteRTCMediaPlayerCustomSourceModePull,
+};
+
+/**  
+ * @type keytype
+ * @brief 数据源类型
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMediaPlayerCustomSourceStreamType) {
+    /**  
+     * @brief 外部裸数据
+     */
+    ByteRTCMediaPlayerCustomSourceStreamTypeRaw = 0,
+    /**  
+     * @brief 编码后的数据
+     */
+    ByteRTCMediaPlayerCustomSourceStreamTypeEncoded,
+};
+
+/** 
+ * @type keytype
+ * @brief 音频数据的起始读取位置。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMediaPlayerCustomSourceSeekWhence) {
+    /** 
+     * @brief 从音频数据的头开始读取，读取后的位置为参数 offset 的值。
+     */
+    ByteRTCMediaPlayerCustomSourceSeekWhenceSet = 0,
+    /** 
+     * @brief 从音频数据的某一位置开始读取，读取后的位置为音频数据当前的读取位置加上参数 offset 的值。 
+     */
+    ByteRTCMediaPlayerCustomSourceSeekWhenceCur = 1,
+    /** 
+     * @brief 从音频数据的尾开始读取，读取后的位置为用户传入的音频数据大小加上参数 offset 的值。 
+     */
+    ByteRTCMediaPlayerCustomSourceSeekWhenceEnd = 2,
+    /** 
+     * @brief 返回音频数据的大小。
+     */
+    ByteRTCMediaPlayerCustomSourceSeekWhenceSize = 3,
+};
+
+/**  
+ * @type keytype
+ * @brief 播放状态。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCPlayerState) {
+    /**  
+     * @brief 播放未启动
+     */
+    ByteRTCPlayerStateIdle = 0,
+    /**  
+     * @brief 已加载
+     */
+    ByteRTCPlayerStatePreloaded,
+    /**  
+     * @brief 播放文件已打开
+     */
+    ByteRTCPlayerStateOpened,
+    /**  
+     * @brief 正在播放
+     */
+    ByteRTCPlayerStatePlaying,
+    /**  
+     * @brief 播放已暂停
+     */
+    ByteRTCPlayerStatePaused,
+    /**  
+     * @brief 播放已停止
+     */
+    ByteRTCPlayerStateStopped,
+    /**  
+     * @brief 播放失败
+     */
+    ByteRTCPlayerStateFailed,
+};
+
+/**  
+ * @type keytype
+ * @brief 播放错误码。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCPlayerError) {
+    /**  
+     * @brief 正常
+     */
+    ByteRTCPlayerErrorOK = 0,
+    /**  
+     * @brief 不支持此类型
+     */
+    ByteRTCPlayerErrorFormatNotSupport,
+    /**  
+     * @brief 无效的播放路径
+     */
+    ByteRTCPlayerErrorInvalidPath,
+    /**  
+     * @brief 无效的状态
+     */
+    ByteRTCPlayerErrorInvalidState,
+    /**  
+     * @brief 设置播放位置出错
+     */
+    ByteRTCPlayerErrorInvalidPosition,
+    /**  
+     * @brief 音量参数不合法，仅支持设置的音量值为[0, 400]
+     */
+    ByteRTCPlayerErrorInvalidVolume,
+    /**  
+     * @brief 音调参数设置不合法
+     */
+    ByteRTCPlayerErrorInvalidPitch,
+    /**  
+     * @brief 音轨参数设置不合法
+     */
+    ByteRTCPlayerErrorInvalidAudioTrackIndex,
+    /** 
+     * @brief 播放速度参数设置不合法
+     */
+    ByteRTCPlayerErrorInvalidPlaybackSpeed,
+    /**  
+     * @brief 音效 ID 异常
+     */
+    ByteRTCPlayerErrorInvalidEffectId,
+};
+
 /** 
  * @type keytype
  * @brief 音频输入源类型
@@ -932,6 +1068,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFormat : NSObject
  * @brief 音频声道，详见 ByteRTCAudioChannel{@link #ByteRTCAudioChannel}
  */
 @property(nonatomic, assign) ByteRTCAudioChannel channel;
+/** 
+ * @brief 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
+ *        最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
+ *        最大值是 `2048`。超出取值范围时，采样点数取默认值。
+ */
+@property(nonatomic, assign) int samplesPerCall;
 @end
 
 /** 
@@ -961,6 +1103,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 /** 
  *  @type callback
  *  @brief 音频数据回调观察者
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
+ * 本接口类中的回调周期均为 20 ms。
  */
 @protocol ByteRTCAudioFrameObserver <NSObject>
 /** 
@@ -1000,6 +1144,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @type callback
  * @region 音频处理
  * @brief 自定义音频处理器
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 @protocol ByteRTCAudioProcessor <NSObject>
 /** 
@@ -1019,6 +1164,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 /** 
  * @type callback
  * @brief 自定义音频处理器
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 @protocol ByteRTCAudioFrameProcessor <NSObject>
 /**  
@@ -1027,7 +1173,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
  * @notes <br>
  *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。此音频处理不会影响软件耳返音频数据。<br>
- *        + 要启用此回调，必须调用 `enableAudioProcessor`，并在参数中选择本地采集的音频。
+ *        + 要启用此回调，必须调用 `enableAudioProcessor`，并在参数中选择本地采集的音频，每 10 ms 收到此回调。
  * @return  <br>
  *        + 0： 成功。  <br>
  *        + < 0： 失败。  <br>
@@ -1037,17 +1183,17 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
 * @type callback
 * @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
 * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
-* @notes 调用 `enableAudioProcessor`,并在参数中选择远端音频流的的混音音频时，收到此回调。
+* @notes 调用 `enableAudioProcessor`,并在参数中选择远端音频流的的混音音频时，每 10 ms 收到此回调。
 */
 - (int)onProcessPlayBackAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
 * @type callback
 * @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
-* @param stream_info 音频流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
+* @param streamKey 音频流信息，参看 ByteRTCRemoteStreamKey{@link #ByteRTCRemoteStreamKey}
 * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
-* @notes 调用 `enableAudioProcessor`,并在参数中选择各个远端音频流时，收到此回调。
+* @notes 调用 `enableAudioProcessor`,并在参数中选择各个远端音频流时，每 10 ms 收到此回调。
 */
-- (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)stream_info  audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
+- (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)streamKey  audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 /** 
  * @valid since 3.50
  * @hidden(macOS)
@@ -1057,7 +1203,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @param audioFrame 音频帧地址。参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
  * @notes  <br>
  *        + 此数据处理只影响软件耳返音频数据。  <br>
- *        + 要启用此回调，必须调用 enableAudioProcessor:audioFormat:{@link #ByteRTCVideo#enableAudioProcessor:audioFormat:}，并选择耳返音频。
+ *        + 要启用此回调，必须调用 enableAudioProcessor:audioFormat:{@link #ByteRTCVideo#enableAudioProcessor:audioFormat:}，并选择耳返音频。每 10 ms 收到此回调。
  * @return  <br>
  *        + 0： 成功。  <br>
  *        + < 0： 失败。  <br>
@@ -1068,7 +1214,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @type callback
  * @brief 回调屏幕共享的音频帧地址，供自定义音频处理。
  * @param audioFrame 音频帧地址，参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
- * @notes 调用 `enableAudioProcessor:`，把返回给音频处理器的音频类型设置为屏幕共享音频后，你将收到此回调。
+ * @notes 调用 `enableAudioProcessor:`，把返回给音频处理器的音频类型设置为屏幕共享音频后，每 10 ms 收到此回调。
  */
 - (int)onProcessScreenAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
@@ -1486,6 +1632,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
  * @hidden(macOS)
  * @type callback
  * @brief 语音识别服务使用状态回调
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCASREngineEventHandler<NSObject>
 @required
@@ -1549,6 +1696,119 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 @property(assign, nonatomic) BOOL syncProgressToRecordFrame;
 @end
 
+/** 
+ * @type keytype
+ * @brief 音效混音参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayerConfig : NSObject
+/** 
+ * @brief 混音播放类型，详见 ByteRTCAudioMixingType{@link #ByteRTCAudioMixingType}
+ */
+@property(assign, nonatomic) ByteRTCAudioMixingType type;
+/** 
+ * @brief 音调参数,默认为0，取值范围为[-12,12]
+ */
+@property(assign, nonatomic) NSInteger pitch;
+/** 
+ * @brief 混音播放次数
+ *       + play_count <= 0: 无限循环  <br>
+ *       + play_count == 1: 播放一次（默认）  <br>
+ *       + play_count > 1: 播放 play_count 次
+ */
+@property(assign, nonatomic) NSInteger playCount;
+/** 
+ * @brief 混音时音频文件播放进度条位置，参数为整数，单位为毫秒
+ */
+@property(assign, nonatomic) NSInteger startPos;
+@end
+
+/** 
+ * @type keytype
+ * @brief 音乐混音参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
+/** 
+ * @brief 混音播放类型，详见 ByteRTCAudioMixingType{@link #ByteRTCAudioMixingType}
+ */
+@property(assign, nonatomic) ByteRTCAudioMixingType type;
+/** 
+ * @brief 混音播放次数
+ *       + play_count <= 0: 无限循环  <br>
+ *       + play_count == 1: 播放一次（默认）  <br>
+ *       + play_count > 1: 播放 play_count 次
+ */
+@property(assign, nonatomic) NSInteger playCount;
+/** 
+ * @brief 混音时音频文件播放进度条位置，参数为整数，单位为毫秒
+ */
+@property(assign, nonatomic) NSInteger startPos;
+/** 
+ * @brief 设置音频文件播放进度回调的时间间隔，参数为为大于 0 的 10 的倍数，单位为毫秒，设置后 SDK 将按照设置的值触发 `rtcEngine:onAudioMixingPlayingProgress:progress:` 回调，默认不回调。  <br>
+ *        + 当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。  <br>
+ *        + 当传入的值小于等于 0 时，不会触发进度回调。  <br>
+ */
+@property(assign, nonatomic) NSInteger callbackOnProgressInterval;
+/** 
+ * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+ * @notes <br>
+ *        + 仅在单个音频文件混音时使用有效。<br>
+ *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
+ */
+@property(assign, nonatomic) BOOL syncProgressToRecordFrame;
+/** 
+ * @brief 是否自动播放，默认为True。
+ */
+@property(assign, nonatomic) BOOL autoPlay;
+@end
+
+/** 
+ * @type callback
+ * @brief 内存播放数据源回调
+ */
+BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaPlayerCustomSourceProvider <NSObject>
+/** 
+ * @valid since 3.53
+ * @type callback
+ * @region 音乐播放器
+ * @brief 调用 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 接口播放用户传入的内存音频数据时，会触发此回调，用户需要写入音频数据。
+ * @param buffer 内存地址。在该地址中写入音频数据，写入音频数据的大小不超过 bufferSize 中填入的数值。支持的音频数据格式有: mp3，aac，m4a，3gp，wav。 <br>
+ * @param bufferSize 音频数据大小，单位为字节。如果你想停止播放内存音频数据，可在 bufferSize 中填入小于或等于 0 的数，此时 SDK 会停止调用此接口。 
+ * @return 返回实际读取的音频数据大小。
+ * @notes 若 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 接口调用失败，请在 buffer 和 bufferSize 两个参数中填入 0。 此时 SDK 会停止调用此接口。
+ */
+-(int)onReadData:(uint8_t*_Nonnull) buffer bufferSize:(int)bufferSize;
+/** 
+ * @valid since 3.53
+ * @type callback
+ * @region 音乐播放器
+ * @brief 根据设置好的内存音频数据的读取位置和读取偏移量对音频数据进行偏移，以便 SDK 读取和分析音频数据。 <br>
+ *        在调用 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 接口传入内存音频数据，或者调用 setPosition:position:{@link #ByteRTCAudioEffectPlayer#setPosition:position:} 设置了音频数据的起始播放位置后，SDK 会对音频数据进行读取和分析，此时会触发该回调，你需要根据参数中设置的起始读取位置和偏移量进行操作。
+ * @param offset 音频数据读取偏移量，单位为字节，取值可正可负。  <br>
+ * @param whence 音频数据的起始读取位置。参看 ByteRTCMediaPlayerCustomSourceSeekWhence{@link #ByteRTCMediaPlayerCustomSourceSeekWhence}
+ * @return <br>
+ *         定位成功，返回偏移后的位置信息，或返回音频数据的大小。<br>
+ *         定位失败，返回 -1。         
+ */
+-(int64_t)onSeek:(int64_t)offset whence:(ByteRTCMediaPlayerCustomSourceSeekWhence)whence;
+@end
+
+/**
+ * @hidden notes missing
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerCustomSource : NSObject
+@property(weak, nonatomic) id<ByteRTCMediaPlayerCustomSourceProvider> _Nullable provider;
+/**  
+ * @type keytype
+ * @brief 数据源模式，详见ByteRTCMediaPlayerCustomSourceMode
+ */
+@property(assign, nonatomic) ByteRTCMediaPlayerCustomSourceMode mode;
+/**  
+ * @type keytype
+ * @brief 数据源类型，详见ByteRTCMediaPlayerCustomSourceStreamType
+ */
+@property(assign, nonatomic) ByteRTCMediaPlayerCustomSourceStreamType type;
+
+@end
 /** 
  * @type keytype
  * @brief 音频属性信息提示的相关配置。
@@ -1869,6 +2129,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
 @property(nonatomic, copy) NSString* _Nonnull absoluteFileName;
 /** 
  * @brief 录音内容来源，参看 ByteRTCAudioFrameSource{@link #ByteRTCAudioFrameSource}。
+ * 默认为 ByteRTCAudioFrameSourceTypeMixed = 2。
  */
 @property(nonatomic, assign) ByteRTCAudioFrameSource frameSource;
 /** 
@@ -1877,16 +2138,16 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
 @property(nonatomic, assign) ByteRTCAudioSampleRate sampleRate;
 /** 
  * @brief 录音音频声道。参看 ByteRTCAudioChannel{@link #ByteRTCAudioChannel}。
- * @notes 如果录制时设置的的音频声道数与采集时的音频声道数不同：<br>
+ *       如果录制时设置的的音频声道数与采集时的音频声道数不同：<br>
  *        + 如果采集的声道数为 1，录制的声道数为 2，那么，录制的音频为经过单声道数据拷贝后的双声道数据，而不是立体声。<br>
  *        + 如果采集的声道数为 2，录制的声道数为 1，那么，录制的音频为经过双声道数据混合后的单声道数据。
  */
 @property(nonatomic, assign) ByteRTCAudioChannel channel;
 /** 
  * @brief 录音音质。仅在录制文件格式为 .aac 时可以设置。参看 ByteRTCAudioQuality{@link #ByteRTCAudioQuality}。
- * @notes 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是： <br>
+ * 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是： <br>
  *        + 低音质：1.2MB；<br>
- *        + 中音质：2MB；<br>
+ *        + 【默认】中音质：2MB；<br>
  *        + 高音质：3.75MB；<br>
  *        + 超高音质：7.5MB。
  */

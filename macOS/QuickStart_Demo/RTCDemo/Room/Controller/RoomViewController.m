@@ -170,7 +170,7 @@
     [self.renderView removeUser:uid roomid:self.currentRoomID];
 }
 
-- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode {
+- (void)rtcEngine:(ByteRTCVideo *)engine onError:(ByteRTCErrorCode)errorCode {
     NSLog(@"onError uid:%ld", (long)errorCode);
     [self showAlert:[NSString stringWithFormat:@"error:%ld", (long)errorCode]];
 }

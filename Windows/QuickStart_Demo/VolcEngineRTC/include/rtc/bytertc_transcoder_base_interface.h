@@ -30,6 +30,7 @@ enum TranscoderRoomStatus {
 };
 
 /** 
+ * @deprecated since 3.52, use MixedStreamMediaType{@link #MixedStreamMediaType} instead.
  * @type keytype
  * @brief 合流输出内容类型
  */

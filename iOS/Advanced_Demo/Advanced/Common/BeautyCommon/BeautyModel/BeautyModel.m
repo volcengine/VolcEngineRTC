@@ -70,7 +70,7 @@
                            @"name"  : @"漫画脸",
     };
     NSDictionary *dic8 = @{@"index" : @(7),
-                           @"key"   : @"zhukeai",
+                           @"key"   : @"stickers_zhutouzhuer",
                            @"name"  : @"猪可爱",
     };
     return @[ dic1, dic2, dic3, dic4, dic5, dic6, dic7, dic8 ];

@@ -43,7 +43,7 @@ public:
     virtual void enableSpatialAudio(bool enable) = 0;
 
     /** 
-     * @deprecated since 352.1, will be deleted in 357，use updateSelfPosition instead
+     * @deprecated since 3.52, will be deleted in 3.58，use updateSelfPosition{@link #ISpatialAudio#updateSelfPosition} instead
      * @type api
      * @region 空间音频
      * @brief 更新本地用户发声时，在房间内空间直角坐标系中的位置坐标。  <br>
@@ -57,7 +57,7 @@ public:
     BYTERTC_DEPRECATED virtual int updatePosition(const Position& pos) = 0;
 
     /** 
-     * @deprecated since 352.1, will be deleted in 357，use updateSelfPosition instead
+     * @deprecated since 3.52, will be deleted in 3.58，use updateSelfPosition{@link #ISpatialAudio#updateSelfPosition} instead
      * @type api
      * @region 空间音频
      * @brief 更新本地用户发声时，在空间音频坐标系下的朝向。  <br>
@@ -84,7 +84,7 @@ public:
     virtual void disableRemoteOrientation() = 0;
     
     /** 
-     * @deprecated since 352.1, will be deleted in 357，use updateRemotePosition instead
+     * @deprecated since 3.52, will be deleted in 3.58, use updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} instead
      * @type api
      * @region 空间音频
      * @brief 更新在房间内收听音频时的位置。<br>
@@ -101,7 +101,7 @@ public:
     BYTERTC_DEPRECATED virtual int updateListenerPosition(const Position &pos) = 0;
     
     /** 
-     * @deprecated since 352.1, will be deleted in 357，use updateRemotePosition instead
+     * @deprecated since 3.52, will be deleted in 3.58，use updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} instead
      * @type api
      * @region 空间音频
      * @brief 更新在房间内收听音频时的朝向。<br>
@@ -115,12 +115,12 @@ public:
      */
     BYTERTC_DEPRECATED virtual int updateListenerOrientation(const HumanOrientation& orientation) = 0;
     /** 
-     * @valid since 3.52.
+     * @valid since 3.52
      * @type api
      * @hidden(Linux)
      * @region 音频管理
      * @brief 设置本地用户在自建空间直角坐标系中的收听坐标和收听朝向，以实现本地用户预期的空间音频收听效果。 
-     * @param positionInfo 空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
+     * @param [in] position_info 空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
      * @return  <br>
      *        + 0：成功。  <br>
      *        + <0：失败。 <br>
@@ -131,13 +131,13 @@ public:
      */
     virtual int updateSelfPosition(const PositionInfo& position_info) = 0;
     /** 
-     * @valid since 3.52.
+     * @valid since 3.52
      * @type api
      * @hidden(Linux)
      * @region 音频管理
      * @brief 设置房间内某一远端用户在本地用户自建的空间音频坐标系中的发声位置和发声朝向，以实现本地用户预期的空间音频收听效果。
-     * @param uid 用户 ID
-     * @param positionInfo 远端用户的空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
+     * @param [in] uid 用户 ID
+     * @param [in] position_info 远端用户的空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
      * @return  <br>
      *        + 0：成功。  <br>
      *        + <0：失败。 <br>
@@ -148,21 +148,20 @@ public:
      */
     virtual int updateRemotePosition(const char* uid, const PositionInfo& position_info) = 0;
     /** 
-     * @valid since 3.52.
+     * @valid since 3.52
      * @type api
      * @hidden(Linux)
      * @region 音频管理
      * @brief 移除调用 updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} 为某一远端用户设置的空间音频效果。
-     * @param uid 远端用户 ID。
+     * @param [in] uid 远端用户 ID。
      * @return  <br>
      *        + 0：成功。  <br>
      *        + <0：失败。 
      */
     virtual int removeRemotePosition(const char* uid) = 0;
     /** 
-     * @valid since 3.52.
+     * @valid since 3.52
      * @type api
-     * @hidden(Linux)
      * @region 音频管理
      * @brief 移除调用 updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} 为所有远端用户设置的空间音频效果。
      * @return  <br>

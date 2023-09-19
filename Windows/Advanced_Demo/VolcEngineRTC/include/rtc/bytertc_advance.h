@@ -323,7 +323,7 @@ public:
     virtual bool ownContext() const = 0;
     /** 
      * @brief 设置 context 是否被实例对象拥有
-     * @param  [in] ownContext  <br>
+     * @param  [in] own_context  <br>
      *       + true: context 被实例对象拥有  <br>
      *       + false: context 不被实例对象拥有  <br>
      */

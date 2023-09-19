@@ -1,0 +1,46 @@
+%YAML 1.1
+--- !RenderTexture &1
+name: bokeh
+guid: {a: 3119169155315472604, b: 2370198818853904306}
+width: 720
+height: 1280
+depth: 1
+internalFormat:
+  __class: InternalFormat
+  value: RGBA8
+dataType:
+  __class: DataType
+  value: U8norm
+builtinType:
+  __class: BuiltInTextureType
+  value: NORAML
+enableMipmap: false
+filterMin:
+  __class: FilterMode
+  value: LINEAR
+filterMag:
+  __class: FilterMode
+  value: LINEAR
+filterMipmap:
+  __class: FilterMipmapMode
+  value: NONE
+wrapModeS:
+  __class: WrapMode
+  value: CLAMP
+wrapModeT:
+  __class: WrapMode
+  value: CLAMP
+wrapModeR:
+  __class: WrapMode
+  value: CLAMP
+maxAnisotropy: 1
+attachment:
+  __class: RenderTextureAttachment
+  value: DEPTH24
+massMode:
+  __class: MSAAMode
+  value: NONE
+shared: false
+colorFormat:
+  __class: PixelFormat
+  value: RGBA8Unorm

@@ -8,11 +8,13 @@
 
 #ifdef DEBUG
 
-#define CVLicenseName @"rtc_test_20230309_20230630_com.ss.rtc.demo.advanced.ios.debug_4.4.3_140.licbag"
+
+
+#define CVLicenseName @"rtc_test_20230524_20230831_vertc.veRTCDemo.ios_4.4.2_347.licbag"
 
 #else
 
-#define CVLicenseName @"rtc_test_20230309_20230630_com.ss.rtc.demo.advanced.ios_4.4.3_140.licbag"
+#define CVLicenseName @"rtc_test_20230524_20230831_com.ss.rtc.demo.advanced.ios_4.4.2_347.licbag"
 
 #endif
 

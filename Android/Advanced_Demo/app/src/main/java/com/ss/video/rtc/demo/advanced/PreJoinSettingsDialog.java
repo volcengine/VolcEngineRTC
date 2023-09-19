@@ -419,10 +419,10 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
             startDetectionBtn.setOnClickListener(v -> {
                 switchStatus(true);
                 showOrHideStats();
-                NetworkDetectionStartReturn startReturn
+                int startReturn
                         = mRTCVideo.startNetworkDetection(mEnableUplinkDetection, mUplinkDetectionTarget,
                         mEnableDownlinkDetection, mDownlinkDetectionTarget);
-                Toast.makeText(getContext(), "网络监测开启结果: " + startReturn.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "网络监测开启结果: " + startReturn, Toast.LENGTH_SHORT).show();
             });
 
             mUplinkStatLayout = mStopLayout.findViewById(R.id.uplink_stat_layout);

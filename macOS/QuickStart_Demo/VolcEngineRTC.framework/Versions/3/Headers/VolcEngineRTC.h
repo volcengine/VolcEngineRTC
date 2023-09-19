@@ -6,6 +6,7 @@
 #import <VolcEngineRTC/objc/game/GameRTCEngineKit.h>
 #import <VolcEngineRTC/objc/game/GameRTCEngineKitDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCAudioDefines.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCAudioEffectPlayer.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCAudioMixingManager.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCEngineKit.h>
@@ -14,6 +15,7 @@
 #import <VolcEngineRTC/objc/rtc/ByteRTCKTVManager.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCKTVPlayer.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCMediaDefines.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCMediaPlayer.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRangeAudio.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRtsDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCScreenCapturerExt.h>

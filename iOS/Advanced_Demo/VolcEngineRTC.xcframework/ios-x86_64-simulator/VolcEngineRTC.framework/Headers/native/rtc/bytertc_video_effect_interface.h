@@ -190,6 +190,7 @@ struct ExpressionDetectResult {
  * @type callback
  * @region 视频特效
  * @brief 人脸检测结果回调观察者
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IFaceDetectionObserver {
 public:
@@ -253,20 +254,20 @@ public:
      * @type api
      * @region 视频特效
      * @brief 设置视频特效算法模型路径
-     * @param [in] modelPath 模型路径
+     * @param [in] model_path 模型路径
      */
-    virtual void setAlgoModelPath(const char* modelPath) = 0;
+    virtual void setAlgoModelPath(const char* model_path) = 0;
 
     /** 
      * @deprecated since 3.50 and will be deleted in 3.55, use initCVResource{@link #IVideoEffect#initCVResource} instead.
      * @type api
      * @region 视频特效
      * @brief 视频特效许可证检查
-     * @param androidContext  <br>
+     * @param android_context  <br>
      *        Android Context 对象指针(jobject 类型)。Android 以外平台传入 nullptr
      * @param jnienv Android  <br>
      *        JNIEnv 指针。Android 以外平台传入 nullptr
-     * @param licensePath 许可证文件绝对路径
+     * @param license_path 许可证文件绝对路径
      * @return  <br>
      *      + 0: 调用成功。  <br>
      *      + 1000: 未集成特效 SDK。  <br>
@@ -274,7 +275,7 @@ public:
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      * @notes 开始使用视频特效前，你必须先调用这个方法进行许可证验证
      */
-    virtual int checkLicense(void* androidContext, void* jnienv, const char* licensePath) = 0;
+    virtual int checkLicense(void* android_context, void* jnienv, const char* license_path) = 0;
 
     /** 
      * @type api
@@ -364,9 +365,9 @@ public:
     /** 
      * @type api
      * @brief 设置视频特效素材包。
-     * @param [in] effectNodePaths 特效素材包绝对路径数组。
+     * @param [in] effect_node_paths 特效素材包绝对路径数组。
      *        要取消当前视频特效，将此参数设置为 null。
-     * @param [in] nodeNum 特效素材包个数。
+     * @param [in] node_num 特效素材包个数。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -375,14 +376,14 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes 调用本方法前，必须先调用 enableVideoEffect{@link #IVideoEffect#enableVideoEffect}。
      */
-    virtual int setEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
+    virtual int setEffectNodes(const char** effect_node_paths, int node_num) = 0;
 
     /** 
      * @hidden for internal use only
      * @type api
      * @brief  叠加视频特效素材包。
-     * @param [in] effectNodePaths 特效素材包绝对路径数组。
-     * @param [in] nodeNum 特效素材包个数。
+     * @param [in] effect_node_paths 特效素材包绝对路径数组。
+     * @param [in] node_num 特效素材包个数。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -391,14 +392,14 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes 该接口会在 setEffectNodes{@link #IVideoEffect#setEffectNodes} 设置的特效基础上叠加特效。
      */
-    virtual int appendEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
+    virtual int appendEffectNodes(const char** effect_node_paths, int node_num) = 0;
 
     /** 
      * @hidden for internal use only
      * @type api
      * @brief  移除指定的视频特效资源。
-     * @param [in] effectNodePaths 特效素材包绝对路径数组。
-     * @param [in] nodeNum 特效素材包个数。
+     * @param [in] effect_node_paths 特效素材包绝对路径数组。
+     * @param [in] node_num 特效素材包个数。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -407,18 +408,18 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes 移除 setEffectNodes{@link #IVideoEffect#SetEffectNodes} 或 appendEffectNodes{@link #IVideoEffect#appendEffectNodes} 设置的视频特效资源。
      */
-    virtual int removeEffectNodes(const char** effectNodePaths, int nodeNum) = 0;
+    virtual int removeEffectNodes(const char** effect_node_paths, int node_num) = 0;
 
     /** 
      * @deprecated since 3.50 and will be deleted in 3.55, use updateEffectNode{@link #IVideoEffect#updateEffectNode} instead.
      * @type api
      * @region 视频特效
      * @brief 设置特效强度
-     * @param [in] nodePath  <br>
+     * @param [in] node_path  <br>
      *        特效素材包路径
-     * @param [in] nodeKey  <br>
+     * @param [in] node_key  <br>
      *        需要设置的素材 key 名称，取值请参考 [素材 key 对应说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99769/)。
-     * @param [in] nodeValue  <br>
+     * @param [in] node_value  <br>
      *        需要设置的强度值 取值范围 [0,1]，超出范围时设置无效。
      * @return  <br>
      *      + 0: 调用成功。  <br>
@@ -426,14 +427,14 @@ public:
      *      + 1001: 特效 SDK 不支持该功能。  <br>
      *      + < 0: 调用失败。具体错误码，参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。  <br>
      */
-    virtual int updateNode(const char* nodePath, const char* nodeKey, float nodeValue) = 0;
+    virtual int updateNode(const char* node_path, const char* node_key, float node_value) = 0;
 
     /** 
      * @type api
      * @brief 设置特效强度。
-     * @param [in] effectNodePath 特效素材包绝对路径，参考[素材包结构说明](https://www.volcengine.com/docs/6705/102039)。
-     * @param [in] nodeKey 需要设置的素材 key 名称，参考[素材 key 对应说明](https://www.volcengine.com/docs/6705/102041)。
-     * @param [in] nodeValue 特效强度值，取值范围 [0,1]，超出范围时设置无效。
+     * @param [in] effect_node_path 特效素材包绝对路径，参考[素材包结构说明](https://www.volcengine.com/docs/6705/102039)。
+     * @param [in] node_key 需要设置的素材 key 名称，参考[素材 key 对应说明](https://www.volcengine.com/docs/6705/102041)。
+     * @param [in] node_value 特效强度值，取值范围 [0,1]，超出范围时设置无效。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -441,12 +442,12 @@ public:
      *      + –1002: 特效 SDK 版本不兼容。
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      */
-    virtual int updateEffectNode(const char* effectNodePath, const char* nodeKey, float nodeValue) = 0;
+    virtual int updateEffectNode(const char* effect_node_path, const char* node_key, float node_value) = 0;
 
     /** 
      * @type api
      * @brief 设置颜色滤镜。
-     * @param [in] resPath 滤镜资源包绝对路径。
+     * @param [in] res_path 滤镜资源包绝对路径。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -455,7 +456,7 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes 调用 setColorFilterIntensity{@link #IVideoEffect#setColorFilterIntensity} 设置已启用颜色滤镜的强度。设置强度为 0 时即关闭颜色滤镜。
      */
-    virtual int setColorFilter(const char* resPath) = 0;
+    virtual int setColorFilter(const char* res_path) = 0;
 
     /** 
      * @type api
@@ -475,7 +476,7 @@ public:
      * @hidden for internal use only
      * @type api
      * @brief 私有接口，设置视频特效素材包。
-     * @param [in] stickerPath 特效素材包绝对路径。
+     * @param [in] sticker_path 特效素材包绝对路径。
      *        要取消当前视频特效，将此参数设置为 null。
      * @return  <br>
      *      + 0: 调用成功。
@@ -485,13 +486,13 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes 调用本方法前，必须先调用 enableVideoEffect{@link #IVideoEffect#enableVideoEffect}。
      */
-    virtual int ApplyStickerEffect(const char* stickerPath) = 0;
+    virtual int ApplyStickerEffect(const char* sticker_path) = 0;
 
     /** 
      * @hidden(Linux)
      * @type api
      * @brief 将摄像头采集画面中的人像背景替换为指定图片或纯色背景。
-     * @param [in] bg_sticker_path 背景贴纸特效素材绝对路径。
+     * @param [in] background_sticker_path 背景贴纸特效素材绝对路径。
      * @param [in] source 背景贴纸对象，参看 VirtualBackgroundSource{@link #VirtualBackgroundSource}。
      * @return  <br>
      *      + 0: 调用成功。
@@ -503,7 +504,7 @@ public:
      *      + 调用本方法前，必须先调用 initCVResource{@link #IVideoEffect#initCVResource} 进行初始化。
      *      + 调用 disableVirtualBackground{@link #IVideoEffect#disableVirtualBackground} 关闭虚拟背景。
      */
-    virtual int enableVirtualBackground(const char* bg_sticker_path, const VirtualBackgroundSource& source) = 0;
+    virtual int enableVirtualBackground(const char* background_sticker_path, const VirtualBackgroundSource& source) = 0;
 
     /** 
      * @hidden(Linux)
@@ -523,7 +524,7 @@ public:
      * @hidden for internal use only
      * @type api
      * @brief 开启人像属性检测。
-     * @param [in] expressionDetectConfig 人像属性检测参数，参看 VideoEffectExpressionConfig{@link #VideoEffectExpressionConfig}。
+     * @param [in] expression_detection_config 人像属性检测参数，参看 VideoEffectExpressionConfig{@link #VideoEffectExpressionConfig}。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -531,7 +532,7 @@ public:
      *      + –1002: 特效 SDK 版本不兼容。
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      */
-    virtual int setVideoEffectExpressionDetect(const VideoEffectExpressionDetectConfig& expressionDetectConfig) = 0;
+    virtual int setVideoEffectExpressionDetect(const VideoEffectExpressionDetectConfig& expression_detection_config) = 0;
 
     /** 
      * @deprecated since 3.50 and will be deleted in 3.55, use enableFaceDetection{@link #IVideoEffect#enableFaceDetection} and disableFaceDetection{@link #IVideoEffect#disableFaceDetection} instead.
@@ -555,7 +556,7 @@ public:
      *        此观察者后，你会周期性收到 onFaceDetectResult{@link #IFaceDetectionObserver#onFaceDetectResult} 回调。
      * @param [in] observer 人脸检测结果回调观察者，参看 IFaceDetectionObserver{@link #IFaceDetectionObserver}。
      * @param [in] interval_ms 两次回调之间的最小时间间隔，必须大于 0，单位为毫秒。实际收到回调的时间间隔大于 interval_ms，小于 interval_ms+视频采集帧间隔。
-     * @param [in] faceModelPath 人脸检测算法模型文件路径，一般为 ttfacemodel 文件夹中 tt_face_vXXX.model 文件的绝对路径。
+     * @param [in] face_model_path 人脸检测算法模型文件路径，一般为 ttfacemodel 文件夹中 tt_face_vXXX.model 文件的绝对路径。
      * @return  <br>
      *      + 0: 调用成功。
      *      + –1000: 未集成特效 SDK。
@@ -564,7 +565,7 @@ public:
      *      + -1004: 初始化中，初始化完成后启动此功能。
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      */
-    virtual int enableFaceDetection(IFaceDetectionObserver* observer, unsigned int interval_ms, const char* faceModelPath) = 0;
+    virtual int enableFaceDetection(IFaceDetectionObserver* observer, unsigned int interval_ms, const char* face_model_path) = 0;
 
     /** 
      * @type api
@@ -579,12 +580,13 @@ public:
     virtual int disableFaceDetection() = 0;
 
     /** 
+     * @hidden(Linux)
      * @deprecated since 3.50 and will be deleted in 3.55, use enableVirtualBackground{@link #IVideoEffect#enableVirtualBackground} instead.
      * @type api
      * @region 视频特效
      * @brief 将摄像头采集画面中的人像背景替换为指定图片或纯色背景。
      *        若要取消背景特效，将背景贴纸特效素材路径设置为null。
-     * @param [in] modelPath 传入背景贴纸特效素材路径。  <br>
+     * @param [in] model_path 传入背景贴纸特效素材路径。  <br>
      * @param [in] source 设置背景特效图片的本地路径。参看 VirtualBackgroundSource{@link #VirtualBackgroundSource}。  <br>
      * @return  <br>
      *        + 0：调用成功。  <br>
@@ -597,7 +599,7 @@ public:
      * 2、设置视频特效算法模型路径 setAlgoModelPath{@link #IVideoEffect#setAlgoModelPath}；<br>
      * 3、开启视频特效 enableEffect{@link #IVideoEffect#enableEffect}。
      */
-    virtual int setBackgroundSticker(const char* modelPath, const VirtualBackgroundSource& source) = 0;
+    virtual int setBackgroundSticker(const char* model_path, const VirtualBackgroundSource& source) = 0;
 
 };
 

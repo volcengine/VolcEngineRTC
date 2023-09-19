@@ -14,6 +14,7 @@ namespace bytertc {
 /** 
  * @type callback
  * @brief 音视频房间事件回调接口
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IRTCRoomEventHandler {
 public:
@@ -401,7 +402,6 @@ public:
         (void)mode;
     }
 
-#ifndef ByteRTC_AUDIO_ONLY
     /**
      * @hidden for internal use only
      * @brief callback when the maximum screen share fps is changed
@@ -414,10 +414,10 @@ public:
     /** 
      * @hidden for internal use only
      * @brief 最大屏幕共享帧率改变时的回调
-     * @param [in] screenPixels 为了保持帧率而推荐的最大视频宽度×高度的值。
+     * @param [in] screen_pixels 为了保持帧率而推荐的最大视频宽度×高度的值。
      */
-    virtual void onMaximumScreenSharePixelsUpdated(int screenPixels) {
-        (void)screenPixels;
+    virtual void onMaximumScreenSharePixelsUpdated(int screen_pixels) {
+        (void)screen_pixels;
     }
 
     /** 
@@ -449,7 +449,6 @@ public:
         (void)state;
     }
 
-#endif  // ByteRTC_AUDIO_ONLY
     /** 
      * @type callback
      * @region 音频事件回调
@@ -462,7 +461,7 @@ public:
      *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
      *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
      *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
-     *        + 在控制台开启大会模式后，只有被封禁/解禁用户会收到该回调。   <br>
+     *        + 在控制台开启音频选路后，只有被封禁/解禁用户会收到该回调。   <br>
      *        + 同一房间解散后再次创建，房间内状态清空。
      */
     virtual void onAudioStreamBanned(const char* uid, bool banned) {
@@ -493,12 +492,12 @@ public:
     /** 
      * @type callback
      * @brief 加入房间并发布或订阅流后， 以每 2 秒一次的频率，报告本地用户和已订阅的远端用户的上下行网络质量信息。
-     * @param [in] localQuality 本端网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
-     * @param [in] remoteQualities 已订阅用户的网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
-     * @param [in] remoteQualityNum `remoteQualities` 数组长度
+     * @param [in] local_quality 本端网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
+     * @param [in] remote_qualities 已订阅用户的网络质量，详见 NetworkQualityStats{@link #NetworkQualityStats}。
+     * @param [in] remote_quality_num `remoteQualities` 数组长度
      * @notes 更多通话中的监测接口，详见[通话中质量监测](https://www.volcengine.com/docs/6348/106866)。
      */
-    virtual void onNetworkQuality(const NetworkQualityStats& localQuality, const NetworkQualityStats* remoteQualities, int remoteQualityNum) {
+    virtual void onNetworkQuality(const NetworkQualityStats& local_quality, const NetworkQualityStats* remote_qualities, int remote_quality_num) {
     }
 
     /** 
@@ -506,12 +505,12 @@ public:
      * @type callback
      * @region 房间管理
      * @brief 调用 setRoomExtraInfo{@link #IRTCRoom#setRoomExtraInfo} 设置房间附加信息结果的回调。
-     * @param [in] taskId 调用 setRoomExtraInfo 的任务编号。
-     * @param [in] errCode 设置房间附加信息的结果，详见 SetRoomExtraInfoResult{@link #SetRoomExtraInfoResult}
+     * @param [in] task_id 调用 setRoomExtraInfo 的任务编号。
+     * @param [in] error_code 设置房间附加信息的结果，详见 SetRoomExtraInfoResult{@link #SetRoomExtraInfoResult}
      */
-    virtual void onSetRoomExtraInfoResult(int64_t taskId, SetRoomExtraInfoResult errCode) {
-        (void)taskId;
-        (void)errCode;
+    virtual void onSetRoomExtraInfoResult(int64_t task_id, SetRoomExtraInfoResult error_code) {
+        (void)task_id;
+        (void)error_code;
     }
 
     /** 
@@ -521,15 +520,30 @@ public:
      * @brief 接收同一房间内，其他用户调用 setRoomExtraInfo{@link #IRTCRoom#setRoomExtraInfo} 设置的房间附加信息的回调。
      * @param [in] key 房间附加信息的键值
      * @param [in] value 房间附加信息的内容
-     * @param [in] lastUpdateUserId 最后更新本条信息的用户 ID。
-     * @param [in] lastUpdateTimeMs 最后更新本条信息的 Unix 时间，单位：毫秒。
+     * @param [in] last_update_user_id 最后更新本条信息的用户 ID。
+     * @param [in] last_update_time_ms 最后更新本条信息的 Unix 时间，单位：毫秒。
      * @notes 新进房的用户会收到进房前房间内已有的全部附加信息通知。
      */
-    virtual void onRoomExtraInfoUpdate(const char*key,const char* value,const char* lastUpdateUserId,int64_t lastUpdateTimeMs) {
+    virtual void onRoomExtraInfoUpdate(const char*key, const char* value, const char* last_update_user_id, int64_t last_update_time_ms) {
         (void)key;
         (void)value;
-        (void)lastUpdateUserId;
-        (void)lastUpdateTimeMs;
+        (void)last_update_user_id;
+        (void)last_update_time_ms;
+    }
+
+    /** 
+     * @valid since 3.54
+     * @type callback
+     * @region 房间管理
+     * @brief 用户调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 设置用户可见性的回调。
+     * @param [in] current_user_visibility 当前用户的可见性。  <br>
+     *        + true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
+     *        + false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+     * @param [in] error_code 设置用户可见性错误码，参看 UserVisibilityChangeError{@link #UserVisibilityChangeError}。
+     */
+    virtual void onUserVisibilityChanged(bool current_user_visibility, UserVisibilityChangeError error_code) {
+        (void)current_user_visibility;
+        (void)error_code;
     }
 
     /**  
@@ -538,8 +552,8 @@ public:
      * @brief  字幕状态发生改变回调。 <br>
      *         当用户调用 startSubtitle{@link #IRTCRoom#startSubtitle} 和 stopSubtitle{@link #IRTCRoom#stopSubtitle} 使字幕状态发生改变或出现错误时，触发该回调。  
      * @param [in] state 字幕状态。参看 SubtitleState{@link #SubtitleState}。
-     * @param [in] errorCode  字幕任务错误码。参看 SubtitleErrorCode{@link #SubtitleErrorCode}。
-     * @param [in] errorMessage  与第三方服务有关的错误信息。
+     * @param [in] error_code 字幕任务错误码。参看 SubtitleErrorCode{@link #SubtitleErrorCode}。
+     * @param [in] error_message 与第三方服务有关的错误信息。
      */
     virtual void onSubtitleStateChanged(SubtitleState state, SubtitleErrorCode error_code, const char* error_message) {
     }
@@ -549,8 +563,8 @@ public:
      * @region 字幕翻译服务
      * @brief  字幕相关内容回调。 <br>
      *         当用户调用 startSubtitle{@link #IRTCRoom#startSubtitle} 后会收到此回调，通知字幕的相关信息。
-     * @param [in] subtitles  字幕消息内容。参看 SubtitleMessage{@link #SubtitleMessage}。
-     * @param [in] cnt  字幕消息个数。
+     * @param [in] subtitles 字幕消息内容。参看 SubtitleMessage{@link #SubtitleMessage}。
+     * @param [in] cnt 字幕消息个数。
      */
     virtual void onSubtitleMessageReceived(const SubtitleMessage* subtitles, int cnt) {
     }

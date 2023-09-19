@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <memory>
-#include "bytertc_rts_defines.h"
+#include "rtc/bytertc_rts_defines.h"
 #include "byterts_event_handler.h"
 #include "byterts_room.h"
 
@@ -70,16 +70,21 @@ public:
      *        + `-2`：无效调用。用户已经登录。成功登录后再次调用本接口将收到此返回值 <br>
      * @notes 本地用户调用此方法登录后，会收到 onLoginResult{@link #IRTSEventHandler#onLoginResult} 回调通知登录结果，远端用户不会收到通知。
      */
-    virtual int64_t login(const char* token, const char* uid) = 0;
+    virtual int login(const char* token, const char* uid) = 0;
+
     /** 
      * @type api
      * @region 实时消息通信
      * @brief 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *       + 调用本接口登出前，必须先调用 login{@link #IRTS#login} 登录。  <br>
      *       + 本地用户调用此方法登出后，会收到 onLogout{@link #IRTSEventHandler#onLogout} 回调通知结果，远端用户不会收到通知。
      */
-    virtual void logout() = 0;
+    virtual int logout() = 0;
+
     /** 
      * @type api
      * @region 实时消息通信
@@ -88,11 +93,15 @@ public:
      *        调用 login{@link #IRTS#login} 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 onLoginResult{@link #IRTSEventHandler#onLoginResult} 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。
      * @param [in] token  <br>
      *        更新的动态密钥
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *       + 如果 Token 无效导致登录失败，则调用此方法更新 Token 后，SDK 会自动重新登录，而用户不需要自己调用 login{@link #IRTS#login} 方法。  <br>
      *       + Token 过期时，如果已经成功登录，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 登录时，或因本地网络状况不佳导致断网重新登录时通知给用户。
      */
-    virtual void updateLoginToken(const char* token) = 0;
+    virtual int updateLoginToken(const char* token) = 0;
+
     /** 
      * @type api
      * @region 实时消息通信
@@ -103,23 +112,31 @@ public:
      *        应用服务器会使用该签名对请求进行鉴权验证。
      * @param [in] url  <br>
      *        应用服务器的地址
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *       + 用户必须调用 login{@link #IRTS#login} 登录后，才能调用本接口。  <br>
      *       + 调用本接口后，SDK 会使用 onServerParamsSetResult{@link #IRTSEventHandler#onServerParamsSetResult} 返回相应结果。
      */
-    virtual void setServerParams(const char* signature, const char* url) = 0;
+    virtual int setServerParams(const char* signature, const char* url) = 0;
+
     /** 
      * @type api
      * @region 实时消息通信
      * @brief 查询对端用户或本端用户的登录状态
      * @param [in] peer_user_id  <br>
      *        需要查询的用户 ID
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *       + 必须调用 login{@link #IRTS#login} 登录后，才能调用本接口。  <br>
      *       + 调用本接口后，SDK 会使用 onGetPeerOnlineStatus{@link #IRTSEventHandler#onGetPeerOnlineStatus} 回调通知查询结果。  <br>
      *       + 在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。
      */
-    virtual void getPeerOnlineStatus(const char* peer_user_id) = 0;
+    virtual int getPeerOnlineStatus(const char* peer_user_id) = 0;
+
     /** 
      * @type api
      * @region 实时消息通信
@@ -215,16 +232,23 @@ public:
      * @region 引擎管理
      * @brief 设置运行时的参数
      * @param [in] json_string  json 序列化之后的字符串
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes
      */
-    virtual void setRuntimeParameters(const char * json_string) = 0;
+    virtual int setRuntimeParameters(const char * json_string) = 0;
+
     /** 
      * @hidden(macOS, Windows, Linux)
      * @type api
      * @brief 启用蜂窝网络辅助增强，改善通话质量。
      * @param [in] enhance 是否开启。默认不开启。
+     * @return 方法调用结果：  <br>
+     *        + 0: 成功。<br>
+     *        + -1：失败，内部错误。 <br>
      */
-    virtual void setCellularEnhancement(bool enhance) = 0;
+    virtual int setCellularEnhancement(bool enhance) = 0;
 
     /** 
      * @type api
@@ -285,6 +309,19 @@ BYTERTC_API const char* getErrorDescription(int code);
  * @return 当前 SDK 版本信息。
  */
 BYTERTC_API const char* getSDKVersion();
+
+/** 
+ * @type api
+ * @region 引擎管理
+ * @brief 配置 SDK 本地日志参数，包括日志级别、存储路径、可使用的最大缓存空间。
+ * @param [in] log_config 本地日志参数，参看 LogConfig{@link #LogConfig}。
+ * @return <br>
+ *        + 0：成功。
+ *        + –1：失败，本方法必须在创建引擎前调用。
+ *        + –2：失败，参数填写错误。
+ * @notes 本方法必须在调用 createRTS{@link #createRTS} 之前调用。
+ */
+BYTERTC_API int setLogConfig(const LogConfig& log_config);
 
 }    // namespace bytertc
 

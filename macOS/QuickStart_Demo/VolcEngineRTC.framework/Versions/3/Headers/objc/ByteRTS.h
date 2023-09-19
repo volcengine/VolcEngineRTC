@@ -202,6 +202,20 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @return SDK 当前的版本号。
  */
 + (NSString * _Nonnull)getSdkVersion;
+
+/** 
+ * @type api
+ * @region 引擎管理
+ * @brief 配置 SDK 本地日志参数，包括日志级别、存储路径、可使用的最大缓存空间。
+ * @param logConfig 本地日志参数，参看 ByteRTCLogConfig{@link #ByteRTCLogConfig}。
+ * @return <br>
+ *        + 0：成功。
+ *        + –1：失败，本方法必须在创建引擎前调用。
+ *        + –2：失败，参数填写错误。
+ * @notes 本方法必须在调用 createRTS:delegate:parameters:{@link #RTS#createRTS:delegate:parameters:} 之前调用。
+ */
++ (int) setLogConfig:(ByteRTCLogConfig *_Nonnull) logConfig;
+
 /** 
  * @type api
  * @region 引擎管理
@@ -220,8 +234,11 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @type api
  * @brief 设置运行时的参数
  * @param parameters 保留参数
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
  */
-- (void)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
+- (int)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
 
 #pragma mark - Multi-room Methods
 /** 
@@ -257,15 +274,18 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  *        + `-3`：失败。Engine 为空。
  * @notes  本地用户调用此方法登录后，会收到 rtsEngine:onLoginResult:errorCode:elapsed:{@link #RTSDelegate#rtsEngine:onLoginResult:errorCode:elapsed:} 回调通知登录结果。
  */
-- (int64_t)login:(NSString * _Nonnull)token uid:(NSString * _Nonnull)uid;
+- (int)login:(NSString * _Nonnull)token uid:(NSString * _Nonnull)uid;
 /** 
  * @type api
  * @region 实时消息通信
  * @brief 登出 RTS 服务器。 <br>
  *        调用本接口登出后，无法再调用消息相关的方法或收到相关回调。
- * @notes 本地用户调用此方法登出后，会收到 rtsEngineOnLogout:{@link #RTSDelegate#rtsEngineOnLogout:}  回调通知结果，远端用户不会收到通知。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
+ * @notes 本地用户调用此方法登出后，会收到 rtcEngineOnLogout:{@link #RTSDelegate#rtsEngineOnLogout:}  回调通知结果，远端用户不会收到通知。
  */
-- (void)logout;
+- (int)logout;
 /** 
  * @type api
  * @region 实时消息通信
@@ -274,11 +294,14 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  *        调用 login:uid:{@link #RTS#login:uid:} 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 rtsEngine:onLoginResult:errorCode:elapsed:{@link #RTSDelegate#rtsEngine:onLoginResult:errorCode:elapsed:} 回调通知，错误码为 ByteRTCLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。
  * @param token  <br>
  *        更新的动态密钥  <br>
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
  * @notes  <br>
  *       + 如果 Token 无效导致登录失败，则调用此方法更新 Token 后，SDK 会自动重新登录，而用户不需要自己调用 login:uid:{@link #RTS#login:uid:} 方法。  <br>
  *       + Token 过期时，如果已经成功登录，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 登录时，或因本地网络状况不佳导致断网重新登录时通知给用户。
  */
-- (void)updateLoginToken:(NSString * _Nonnull)token;
+- (int)updateLoginToken:(NSString * _Nonnull)token;
 /** 
  * @type api
  * @region 实时消息通信
@@ -287,22 +310,28 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @param signature 动态签名  <br>
  *        应用服务器会使用该签名对请求进行鉴权验证。  <br>
  * @param url 应用服务器的地址
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
  * @notes  <br>
  *       + 用户必须调用 login:uid:{@link #RTS#login:uid:} 登录后，才能调用本接口。  <br>
  *       + 调用本接口后，SDK 会使用 rtsEngine:onServerParamsSetResult:{@link #RTSDelegate#rtsEngine:onServerParamsSetResult:} 返回相应结果。
  */
-- (void)setServerParams:(NSString * _Nonnull)signature url:(NSString * _Nonnull)url;
+- (int)setServerParams:(NSString * _Nonnull)signature url:(NSString * _Nonnull)url;
 /** 
  * @type api
  * @region 实时消息通信
  * @brief 查询本地/远端用户的登录状态。<br>
  *        在发送消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。
  * @param peerUserId  需要查询的用户 ID
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
  * @notes  <br>
  *       + 必须调用 login:uid:{@link #RTS#login:uid:} 登录后，才能调用本接口。  <br>
  *       + 调用本接口后，SDK 会使用 rtsEngine:onGetPeerOnlineStatus:status:{@link #RTSDelegate#rtsEngine:onGetPeerOnlineStatus:status:} 回调通知查询结果。  <br>
  */
-- (void)getPeerOnlineStatus:(NSString * _Nonnull)peerUserId;
+- (int)getPeerOnlineStatus:(NSString * _Nonnull)peerUserId;
 /** 
  * @type api
  * @region 实时消息通信
@@ -367,8 +396,12 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @type api
  * @brief 启用蜂窝网络辅助增强，改善通话质量。
  * @param enhance 是否开启。默认不开启。
+ * @return 方法调用结果：  <br>
+ *        + 0: 成功。<br>
+ *        + -1：失败，内部错误。 <br>
  */
-- (void)setCellularEnhancement:(BOOL)enhance;
+- (int)setCellularEnhancement:(BOOL)enhance;
+
 /** 
  * @type api
  * @region 代理

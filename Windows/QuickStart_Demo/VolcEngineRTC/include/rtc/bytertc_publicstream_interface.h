@@ -284,15 +284,15 @@ public:
      * @hidden currently not available
      * @type api
      * @brief 设置音频编码参数
-     * @param [in] PublicStreamAudioParam 音频参数，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
+     * @param [in] audio_param 音频参数，参看 PublicStreamAudioParam{@link #PublicStreamAudioParam}
      */
-    virtual void setAudioParam(const PublicStreamAudioParam&) = 0;
+    virtual void setAudioParam(const PublicStreamAudioParam& audio_param) = 0;
     /** 
      * @type api
      * @brief 设置视频编码参数
-     * @param [in] PublicStreamVideoParam 视频编码参数，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
+     * @param [in] video_param 视频编码参数，参看 PublicStreamVideoParam{@link #PublicStreamVideoParam}
      */
-    virtual void setVideoParam(const PublicStreamVideoParam&) = 0;
+    virtual void setVideoParam(const PublicStreamVideoParam& video_param) = 0;
     /** 
      * @type api
      * @brief 设置公共流布局参数

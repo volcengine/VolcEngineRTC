@@ -8,16 +8,17 @@
 /** 
  * @type callback
  * @brief 本地音频文件混音的音频帧观察者。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 @protocol ByteRTCAudioFileFrameObserver <NSObject>
 /** 
  * @type callback
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @brief 当本地音频文件混音时，回调播放的音频帧。
- * @param mix_id 混音 ID。
- * @param audio_frame 参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+ * @param mixID 混音 ID。
+ * @param audioFrame 参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
  */
-- (void)onAudioFileFrame:(int)mix_id
-                    audioFrame:(ByteRTCAudioFrame * _Nonnull)audio_frame;
+- (void)onAudioFileFrame:(int)mixID audioFrame:(ByteRTCAudioFrame *_Nonnull)audioFrame __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 @end
 
@@ -29,6 +30,7 @@
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 开始播放音频文件。
  *        可以通过传入不同的 mixId 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
@@ -60,10 +62,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 开始播放音频文件后，可以调用 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 方法停止播放音频文件。  <br>
  *       + 本方法的混音数据来源于外部文件，而 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
  */
--(void)startAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath config:(ByteRTCAudioMixingConfig * _Nullable)config;
+-(void)startAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath config:(ByteRTCAudioMixingConfig * _Nullable)config
+    __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 停止播放音频文件及混音。
  * @param mixId  <br>
@@ -73,9 +77,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 `onAudioMixingStateChanged`。  <br>
  *       + 调用本方法停止播放音频文件后，该音频文件会被自动卸载。
  */
--(void)stopAudioMixing:(int)mixId;
+- (void)stopAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 停止播放所有音频文件及混音。
  * @notes  <br>
@@ -83,10 +88,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法停止播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放和混音。  <br>
  *       + 调用本方法停止播放所有音频文件及混音后，该音频文件会被自动卸载。
  */
--(void)stopAllAudioMixing;
+-(void)stopAllAudioMixing __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");;
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 暂停播放音频文件及混音。
  * @param mixId  <br>
@@ -96,9 +102,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法暂停播放音频文件后，可调用 resumeAudioMixing:{@link #ByteRTCAudioMixingManager#resumeAudioMixing:} 方法恢复播放及混音。  <br>
  *       + 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 `onAudioMixingStateChanged`。
  */
--(void)pauseAudioMixing:(int)mixId;
+-(void)pauseAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 暂停播放所有音频文件及混音。
  * @notes  <br>
@@ -106,10 +113,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法暂停播放所有音频文件及混音后，可调用 resumeAllAudioMixing{@link #ByteRTCAudioMixingManager#resumeAllAudioMixing} 方法恢复所有播放及混音。  <br>
  *       + 调用本方法暂停播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放和混音。
  */
--(void)pauseAllAudioMixing;
+-(void)pauseAllAudioMixing __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 恢复播放音频文件及混音。
  * @param mixId  <br>
@@ -118,19 +126,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用 pauseAudioMixing:{@link #ByteRTCAudioMixingManager#pauseAudioMixing:} 方法暂停播放音频文件后，可以通过调用本方法恢复播放及混音。  <br>
  *       + 调用本方法恢复播放音频文件后，SDK 会向本地回调通知音频文件正在播放中，见 `onAudioMixingStateChanged`。
  */
--(void)resumeAudioMixing:(int)mixId;
+-(void)resumeAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 恢复播放所有音频文件及混音。
  * @notes  <br>
  *       + 调用 pauseAllAudioMixing{@link #ByteRTCAudioMixingManager#pauseAllAudioMixing} 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  <br>
  *       + 调用本方法恢复播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放和混音。
  */
--(void)resumeAllAudioMixing;
+-(void)resumeAllAudioMixing __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
  * @param mixId 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
@@ -150,21 +160,24 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  <br>
  *       + 调用本方法预加载的指定音频文件可以通过 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载。
  */
--(void)preloadAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath;
+- (void)preloadAudioMixing:(int)mixId filePath:(NSString *_Nullable)filePath __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
+
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 卸载指定音乐文件。
  * @param mixId  <br>
  *        混音 ID
  * @notes 不论音频文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 `onAudioMixingStateChanged`。
  */
--(void)unloadAudioMixing:(int)mixId;
+-(void)unloadAudioMixing:(int)mixId  __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @hidden(macOS)
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
  * @param volume 混音音量相对原音量的比值。范围为 `[0, 400]`，建议范围是 `[0, 100]`。  <br>
@@ -174,10 +187,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  * @param type 混音类型。是否本地播放、以及是否发送到远端，详见 ByteRTCAudioMixingType{@link #ByteRTCAudioMixingType}。
  * @notes 该接口的优先级低于 setAudioMixingVolume:volume:type:{@link #ByteRTCAudioMixingManager#setAudioMixingVolume:volume:type:}，即通过 setAudioMixingVolume:volume:type:{@link #ByteRTCAudioMixingManager#setAudioMixingVolume:volume:type:} 单独设置了音量的混音 ID，不受该接口设置的影响。
  */
--(void)setAllAudioMixingVolume:(int)volume type:(ByteRTCAudioMixingType)type;
+- (void)setAllAudioMixingVolume:(int)volume type:(ByteRTCAudioMixingType)type __deprecated_msg("deprecated since 353.1, will be deleted in 359, use  ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
  * @param mixId 需调节音量的混音 ID
@@ -188,10 +202,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  * @param type 混音类型。是否本地播放、以及是否发送到远端，详见 ByteRTCAudioMixingType{@link #ByteRTCAudioMixingType}。
  * @notes 该方法仅对指定混音 ID 生效。iOS 端提供 setAllAudioMixingVolume:type:{@link #ByteRTCAudioMixingManager#setAllAudioMixingVolume:type:} 接口调节全部混音文件播放音量。
  */
--(void)setAudioMixingVolume:(int)mixId volume:(int)volume type:(ByteRTCAudioMixingType)type;
+- (void)setAudioMixingVolume:(int)mixId
+                      volume:(int)volume
+                        type:(ByteRTCAudioMixingType)type
+    __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 获取音频文件时长。
  * @param mixId  <br>
@@ -201,10 +219,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + < 0: 失败
  * @notes 调用本方法获取音频文件时长前，需要先调用 preloadAudioMixing:filePath:{@link #ByteRTCAudioMixingManager#preloadAudioMixing:filePath:} 或 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:}。
  */
--(int)getAudioMixingDuration:(int)mixId;
+-(int)getAudioMixingDuration:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
+
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 获取音频文件播放进度。
  * @param mixId  <br>
@@ -214,9 +234,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *        + < 0: 失败
  * @notes 调用本方法获取音频文件播放进度前，需要先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件。
  */
--(int)getAudioMixingCurrentPosition:(int)mixId;
+-(int)getAudioMixingCurrentPosition:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
+
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 设置音频文件的起始播放位置
  * @param mixId 混音 ID
@@ -224,10 +246,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *        你可以通过 getAudioMixingDuration:{@link #ByteRTCAudioMixingManager#getAudioMixingDuration:} 获取音频文件总时长，position 的值不得大于音频文件总时长。
  * @notes 在播放在线文件时，调用此接口可能造成播放延迟的现象。
  */
--(void)setAudioMixingPosition:(int)mixId position:(int)position;
+- (void)setAudioMixingPosition:(int)mixId
+                      position:(int)position __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
+
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 设置当前音频文件的声道模式
  * @param mixId 混音 ID
@@ -236,10 +261,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *        + 调用本方法设置音频文件的声道模式前，需要先调用 startAudioMixing:filePath:config:{@link #startAudioMixing:filePath:config:} 开始播放音频文件。<br>
  *        + 此方法对 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 播放的音乐无效。
  */
--(void) setAudioMixingDualMonoMode:(int)mixId mode:(ByteRTCAudioMixingDualMonoMode)mode;
+- (void)setAudioMixingDualMonoMode:(int)mixId
+                              mode:(ByteRTCAudioMixingDualMonoMode)mode
+        __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
  * @region 混音
  * @brief 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
  *        使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
@@ -249,10 +277,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *        超出取值范围则设置失败，并且会触发 `onAudioMixingStateChanged` 回调，提示 ByteRTCAudioMixingState{@link #ByteRTCAudioMixingState} 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，ByteRTCAudioMixingError{@link #ByteRTCAudioMixingError} 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。
  * @notes 本方法需要在调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件后、调用 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错
  */
--(void)setAudioMixingPitch:(int)mixId pitch:(int)pitch;
+-(void)setAudioMixingPitch:(int)mixId pitch:(int)pitch __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 设置混音时音频文件的播放速度
  * @param mixId 混音 ID
@@ -263,10 +292,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *        + 你需要在调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 ByteRTCAudioMixingState{@link #ByteRTCAudioMixingState} 状态为 `ByteRTCAudioMixingStatePlaying`，ByteRTCAudioMixingError{@link #ByteRTCAudioMixingError} 错误码为 `AUDIO_MIXING_ERROR_OK` 之后调用该方法。  <br>
  *        + 在 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 停止混音或 unloadAudioMixing:{@link #ByteRTCAudioMixingManager#unloadAudioMixing:} 卸载音频文件后调用该 API，会收到状态为 `ByteRTCAudioMixingStateFailed` 错误码为 `ByteRTCAudioMixingErrorIdNotFound` 的 `onAudioMixingStateChanged` 回调。
  */
-- (int)setAudioMixingPlaybackSpeed:(int)mixId speed:(int)speed;
+- (int)setAudioMixingPlaybackSpeed:(int)mixId speed:(int)speed __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 如果你需要使用 `enableVocalInstrumentBalance:` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
  * @param mixId 混音 ID
@@ -274,10 +304,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *        当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音均衡处理。默认值为 1.0lufs，即不做处理。
  * @notes 建议在 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件之前调用该接口，以免播放过程中的音量突变导致听感体验下降。
  */
--(void)setAudioMixingLoudness:(int)mixId loudness:(float)loudness;
+-(void)setAudioMixingLoudness:(int)mixId loudness:(float)loudness __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 设置混音时音频文件播放进度回调的间隔
  * @param mixId 混音 ID  <br>
@@ -288,10 +319,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  * @notes 本方法需要在调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件后、调用 stopAudioMixing:{@link #ByteRTCAudioMixingManager#stopAudioMixing:} 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错。  <br>
  *        若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 在 ByteRTCAudioMixingConfig{@link #ByteRTCAudioMixingConfig} 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
  */
--(void) setAudioMixingProgressInterval:(int)mixId interval:(int64_t) interval;
+-(void) setAudioMixingProgressInterval:(int)mixId interval:(int64_t) interval __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
  /** 
   * @type api
+  * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
   * @region 混音
   * @brief 启动 PCM 音频数据混音。<br>
   *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
@@ -302,18 +334,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
   *       + 必须先调用本方法启动 PCM 音频数据混音，随后调用 pushAudioMixingFrame:audioFrame:{@link #pushAudioMixingFrame:audioFrame:} 方法，才会开始混音。 <br>
   *       + 如要结束 PCM 音频数据混音，使用 disableAudioMixingFrame:{@link #disableAudioMixingFrame:}。
   */
- -(void)enableAudioMixingFrame:(int)mixId type:(ByteRTCAudioMixingType)type;
+ -(void)enableAudioMixingFrame:(int)mixId type:(ByteRTCAudioMixingType)type __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 关闭 PCM 混音
  * @param mixId 混音 ID。
  */
--(void)disableAudioMixingFrame:(int)mixId;
+-(void)disableAudioMixingFrame:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 推送 PCM 音频帧数据用于混音
  * @param mixId 混音 ID。
@@ -325,9 +359,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *      + 调用该方法前，须通过 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 启动外部音频流混音。  <br>
  *      + 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 200 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。要暂停播放，暂停推送即可。
  */
-- (int)pushAudioMixingFrame:(int)mixId audioFrame:(ByteRTCAudioFrame* _Nullable)audioFrame;
+- (int)pushAudioMixingFrame:(int)mixId
+                 audioFrame:(ByteRTCAudioFrame *_Nullable)audioFrame __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 获取当前音频文件的音轨索引。
  * @param mixId 混音 ID
@@ -338,9 +374,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法获取音频文件的音轨前，需要先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件。<br>
  *       + 此方法对 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 播放的音频无效。
  */
--(int)getAudioTrackCount:(int)mixId;
+-(int)getAudioTrackCount:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @region 混音
  * @brief 指定当前音频文件的播放音轨。
  * @param mixId 混音 ID
@@ -350,18 +387,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
  *       + 调用本方法设置音频文件的音轨前，需要先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放音频文件。<br>
  *       + 此方法对 enableAudioMixingFrame:type:{@link #ByteRTCAudioMixingManager#enableAudioMixingFrame:type:} 播放的音乐无效。
  */
--(void)selectAudioTrack:(int)mixId audioTrackIndex:(int)audioTrackIndex;
+-(void)selectAudioTrack:(int)mixId audioTrackIndex:(int)audioTrackIndex __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 /** 
  * @type api
+ * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
  * @brief 注册本地音频文件混音的音频帧观察者。
  *        当本地音频文件混音时，会收到相关回调。
  * @param observer 参看 ByteRTCAudioFileFrameObserver{@link #ByteRTCAudioFileFrameObserver}。
  */
-- (void)registerAudioFileFrameObserver:(_Nullable id<ByteRTCAudioFileFrameObserver>) observer;
+- (void)registerAudioFileFrameObserver:(_Nullable id<ByteRTCAudioFileFrameObserver>) observer __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 
 /** 
   * @hidden(macOS)
   * @type api
+  * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
   * @region 混音
   * @brief 获取混音音频文件的实际播放时长（单位：毫秒）。
   * @param mixId 混音ID。
@@ -372,5 +411,5 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingManager :NSObject
   *        + 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。  <br>
   *        + 调用本接口前，需要先调用 startAudioMixing:filePath:config:{@link #ByteRTCAudioMixingManager#startAudioMixing:filePath:config:} 开始播放指定音频文件。
   */
- -(int)getAudioMixingPlaybackDuration:(int)mixId;
+ -(int)getAudioMixingPlaybackDuration:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 @end

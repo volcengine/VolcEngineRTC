@@ -54,5 +54,5 @@ dependencies {
 
     implementation(name: 'BasicModule', ext: 'aar')
     implementation(name: 'ByteEffect', ext: 'aar')
-    implementation 'com.volcengine:VolcEngineRTC:3.52.106'
+    implementation 'com.volcengine:VolcEngineRTC:3.54.0.542800'
 }

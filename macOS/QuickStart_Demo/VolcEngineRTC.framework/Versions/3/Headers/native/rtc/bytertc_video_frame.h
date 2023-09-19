@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <memory>
+#include <cstring>
 #include "bytertc_media_defines.h"
 #ifdef BYTERTC_ANDROID
 #include <jni.h>
@@ -121,7 +122,7 @@ enum VideoEncodePreference {
      */
     kVideoEncodePreferenceDisabled = 0,
     /** 
-     * @brief （默认值）帧率优先。
+     * @brief （默认值）帧率优先。分辨率不变。
      */
     kVideoEncodePreferenceFramerate,
     /** 
@@ -148,7 +149,8 @@ enum CameraID {
      */
     kCameraIDBack = 1,
     /** 
-     *@brief 外接摄像头
+     * @hidden currently not available
+     * @brief 外接摄像头
      */
     kCameraIDExternal = 2,
     /** 
@@ -162,7 +164,6 @@ enum CameraID {
 #define SEND_KBPS_DISABLE_VIDEO_SEND 0
 
 /** 
- * @hidden used in streaming only
  * @deprecated since 3.36 along with setVideoEncoderConfig(StreamIndex index, const VideoSolution* solutions, int solution_num) = 0;
  * @type keytype
  * @brief 视频流参数
@@ -495,6 +496,11 @@ enum VideoFrameType {
      * @brief vaapi 数据格式
      */
     kVideoFrameTypeVAAPI,
+	/** 
+     * @hidden(Windows)
+     * @brief nvidia jetson dma 数据格式
+     */
+    kVideoFrameTypeNvidiaJetsonDma,
 };
 
 /** 
@@ -623,7 +629,6 @@ typedef struct VideoFrameBuilder {
      * @brief 纹理ID(仅针对纹理类型的frame生效)
      */
     uint32_t texture_id = 0;
-
     /** 
      * @brief 用户定义的视频帧释放回调函数指针，如果指针不为空，方法会被调用用来释放内存空间
      */

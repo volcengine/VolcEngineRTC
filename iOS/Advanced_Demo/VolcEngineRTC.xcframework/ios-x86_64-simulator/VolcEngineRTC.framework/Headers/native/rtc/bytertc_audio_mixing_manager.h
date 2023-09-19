@@ -14,6 +14,7 @@ namespace bytertc {
  * @hidden(Linux)
  * @type callback
  * @brief 本地音频文件混音的音频帧观察者。
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IAudioFileFrameObserver {
 public:
@@ -31,6 +32,7 @@ public:
 };
 
 /** 
+ * @deprecated since 353. Use IAudioEffectPlayer and IMediaPlayer instead.
  * @type api
  * @brief 混音管理类
  */
@@ -44,6 +46,7 @@ public:
     }
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 开始播放音频文件。
      *        可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
@@ -78,6 +81,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 停止播放音频文件及混音。
      * @param [in] mix_id  <br>
@@ -102,6 +106,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 暂停播放音频文件及混音。
      * @param [in] mix_id  <br>
@@ -114,6 +119,7 @@ public:
     virtual void pauseAudioMixing(int mix_id) = 0;
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
      * @hidden(Linux)
      * @region 混音
      * @brief 暂停播放所有音频文件及混音。
@@ -126,6 +132,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 恢复播放音频文件及混音。
      * @param [in] mix_id  <br>
@@ -138,6 +145,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
      * @hidden(Linux)
      * @region 混音
      * @brief 恢复播放所有音频文件及混音。
@@ -149,6 +157,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
      * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
@@ -172,6 +181,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 卸载指定音乐文件。
      * @param [in] mix_id  <br>
@@ -183,6 +193,7 @@ public:
     /** 
      * @hidden(Windows,Linux,macOS)
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
      * @param volume 混音音量相对原音量的比值。范围为 `[0, 400]`，建议范围是 `[0, 100]`。  <br>
@@ -199,6 +210,7 @@ public:
     /** 
      * @hidden(Linux)
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
      * @param mix_id 需调节音量的混音 ID
@@ -213,6 +225,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 获取音频文件时长。
      * @param [in] mix_id  <br>
@@ -226,6 +239,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 获取音频文件播放进度。
      * @param [in] mix_id  <br>
@@ -240,6 +254,7 @@ public:
     /** 
      * @hidden(Linux,macOS)
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 获取混音音频文件的实际播放时长（单位：毫秒）。
      * @param [in] mix_id 混音 ID。
@@ -254,6 +269,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 设置音频文件的起始播放位置
      * @param [in] mix_id 混音 ID
@@ -265,6 +281,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 设置当前音频文件的声道模式
      * @param [in] mix_id 混音 ID
@@ -277,6 +294,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
      *        使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
@@ -290,6 +308,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 设置混音时音频文件的播放速度
      * @param [in] mix_id 混音 ID
@@ -304,6 +323,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer  instead
      * @region 混音
      * @brief 设置混音时音频文件播放进度回调的间隔
      * @param [in] mix_id 混音 ID  <br>
@@ -318,6 +338,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
      * @param [in] mix_id 混音 ID
@@ -329,6 +350,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 启动 PCM 音频数据混音。<br>
      *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
@@ -346,6 +368,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 关闭 PCM 混音
      * @param mix_id 混音 ID。
@@ -354,6 +377,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 推送 PCM 音频帧数据用于混音
      * @param mix_id 混音 ID。
@@ -369,6 +393,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 获取当前音频文件的音轨索引
      * @param [in] mix_id 混音 ID
@@ -383,6 +408,7 @@ public:
 
     /** 
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @region 混音
      * @brief 指定当前音频文件的播放音轨
      * @param [in] mix_id 混音 ID
@@ -396,6 +422,7 @@ public:
     /** 
      * @hidden(Linux)
      * @type api
+     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @brief 注册本地音频文件混音的音频帧观察者。
      *        当本地音频文件混音时，会收到相关回调。
      * @param observer 参看 IAudioFileFrameObserver{@link #IAudioFileFrameObserver}。

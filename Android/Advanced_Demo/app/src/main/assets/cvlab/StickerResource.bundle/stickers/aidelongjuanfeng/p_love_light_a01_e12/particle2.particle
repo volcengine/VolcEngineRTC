@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "name": "jet3.veparticle",
+  "quota": 5,
+  "emitters": [
+    {
+      "type": "BOX",
+      "name": "boxEmitter0",
+      "keepLocal": false,
+      "isEnabled": true,
+      "color": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "angle": {
+        "type": "FIXED",
+        "value": 0.2
+      },
+      "velocity": {
+        "type": "RANDOM",
+        "max": 0.001,
+        "min": 0.0001
+      },
+      "emissionRate": {
+        "type": "FIXED",
+        "value": 10000
+      },
+      "totalTimeToLive": {
+        "type": "RANDOM",
+        "max": 300,
+        "min": 300
+      },
+     "width": {
+        "type": "RANDOM",
+        "max": 80,
+        "min": 80
+      },
+      "height": {
+        "type": "RANDOM",
+        "max": 80,
+        "min": 80
+      },
+      "boxWidth": 600,
+      "boxHeight": 600,
+      "boxDepth": 800
+    }
+  ],
+  "affectors": [
+  ]
+}

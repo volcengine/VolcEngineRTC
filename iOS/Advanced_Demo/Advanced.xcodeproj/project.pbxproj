@@ -73,18 +73,6 @@
 		2BE077E027E0810700166688 /* SettingButtonModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE077DF27E0810700166688 /* SettingButtonModel.m */; };
 		2BE077E327E0866800166688 /* PreJoinNetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE077E227E0866800166688 /* PreJoinNetViewController.m */; };
 		2BE077E627E0893A00166688 /* SettingTextFieldModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE077E527E0893A00166688 /* SettingTextFieldModel.m */; };
-		9E2E82EB2A4C1EB3000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E42A4C1E89000B3184 /* VolcEngineRTCScreenCapturer.xcframework */; };
-		9E2E82EC2A4C1EB3000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E42A4C1E89000B3184 /* VolcEngineRTCScreenCapturer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9E2E82ED2A4C1EBF000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E42A4C1E89000B3184 /* VolcEngineRTCScreenCapturer.xcframework */; };
-		9E2E82EE2A4C1EBF000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E42A4C1E89000B3184 /* VolcEngineRTCScreenCapturer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9E2E82EF2A4C1EC5000B3184 /* VolcEngineRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E32A4C1E89000B3184 /* VolcEngineRTC.xcframework */; };
-		9E2E82F02A4C1EC5000B3184 /* VolcEngineRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E32A4C1E89000B3184 /* VolcEngineRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9E2E82F12A4C1EC9000B3184 /* bytenn.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E52A4C1E89000B3184 /* bytenn.xcframework */; };
-		9E2E82F22A4C1EC9000B3184 /* bytenn.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E52A4C1E89000B3184 /* bytenn.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9E2E82F32A4C1ECC000B3184 /* ByteRTCNICOExtension.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E22A4C1E88000B3184 /* ByteRTCNICOExtension.xcframework */; };
-		9E2E82F42A4C1ECD000B3184 /* ByteRTCNICOExtension.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E22A4C1E88000B3184 /* ByteRTCNICOExtension.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9E2E82F52A4C1ED0000B3184 /* bytevc1enc.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E12A4C1E88000B3184 /* bytevc1enc.xcframework */; };
-		9E2E82F62A4C1ED1000B3184 /* bytevc1enc.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E2E82E12A4C1E88000B3184 /* bytevc1enc.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9E5DCF8A2A1B14DB0050ECD8 /* effect-sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */; };
 		9E5DCF912A1B14F00050ECD8 /* effect-sdk.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9EEB53142A405F56007C603E /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */; };
@@ -92,6 +80,14 @@
 		CC2AE8C726CB6A24009D594D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC2AE8C626CB6A24009D594D /* Assets.xcassets */; };
 		CC2AE8CA26CB6A24009D594D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC2AE8C826CB6A24009D594D /* LaunchScreen.storyboard */; };
 		CC2AE8CD26CB6A24009D594D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CC2AE8CC26CB6A24009D594D /* main.m */; };
+		CC51ECE22A4333B5004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */; };
+		CC51ECE32A4333B5004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC51ECE42A4333B7004F8987 /* VolcEngineRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECDC2A4333AB004F8987 /* VolcEngineRTC.xcframework */; };
+		CC51ECE52A4333B7004F8987 /* VolcEngineRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECDC2A4333AB004F8987 /* VolcEngineRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC51ECE62A4333BB004F8987 /* bytenn.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */; };
+		CC51ECE72A4333BB004F8987 /* bytenn.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CC51ECEC2A4333CF004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */; };
+		CC51ECED2A4333CF004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,7 +118,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9E2E82EC2A4C1EB3000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
+				CC51ECED2A4333CF004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,12 +129,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9E2E82F42A4C1ECD000B3184 /* ByteRTCNICOExtension.xcframework in Embed Frameworks */,
 				9E5DCF912A1B14F00050ECD8 /* effect-sdk.framework in Embed Frameworks */,
-				9E2E82F22A4C1EC9000B3184 /* bytenn.xcframework in Embed Frameworks */,
-				9E2E82F62A4C1ED1000B3184 /* bytevc1enc.xcframework in Embed Frameworks */,
-				9E2E82EE2A4C1EBF000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
-				9E2E82F02A4C1EC5000B3184 /* VolcEngineRTC.xcframework in Embed Frameworks */,
+				CC51ECE72A4333BB004F8987 /* bytenn.xcframework in Embed Frameworks */,
+				CC51ECE32A4333B5004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
+				CC51ECE52A4333B7004F8987 /* VolcEngineRTC.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,11 +264,6 @@
 		2BE077E527E0893A00166688 /* SettingTextFieldModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingTextFieldModel.m; sourceTree = "<group>"; };
 		3BE1A58E03A709961486F17D /* Pods-Advanced.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Advanced.debug.xcconfig"; path = "Target Support Files/Pods-Advanced/Pods-Advanced.debug.xcconfig"; sourceTree = "<group>"; };
 		9BB33BD86BD9FAC6A68B4200 /* Pods-Advanced.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Advanced.release.xcconfig"; path = "Target Support Files/Pods-Advanced/Pods-Advanced.release.xcconfig"; sourceTree = "<group>"; };
-		9E2E82E12A4C1E88000B3184 /* bytevc1enc.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = bytevc1enc.xcframework; path = ../../../../../../Downloads/VolcEngineRTC/bytevc1enc.xcframework; sourceTree = "<group>"; };
-		9E2E82E22A4C1E88000B3184 /* ByteRTCNICOExtension.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ByteRTCNICOExtension.xcframework; sourceTree = "<group>"; };
-		9E2E82E32A4C1E89000B3184 /* VolcEngineRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTC.xcframework; sourceTree = "<group>"; };
-		9E2E82E42A4C1E89000B3184 /* VolcEngineRTCScreenCapturer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTCScreenCapturer.xcframework; sourceTree = "<group>"; };
-		9E2E82E52A4C1E89000B3184 /* bytenn.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = bytenn.xcframework; sourceTree = "<group>"; };
 		9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "effect-sdk.framework"; sourceTree = "<group>"; };
 		CC2AE8B726CB6A21009D594D /* Advanced.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Advanced.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC2AE8BA26CB6A21009D594D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -284,6 +273,9 @@
 		CC2AE8CB26CB6A24009D594D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC2AE8CC26CB6A24009D594D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CC2AE8D826CB6C9A009D594D /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTCScreenCapturer.xcframework; sourceTree = "<group>"; };
+		CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = bytenn.xcframework; sourceTree = "<group>"; };
+		CC51ECDC2A4333AB004F8987 /* VolcEngineRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTC.xcframework; sourceTree = "<group>"; };
 		CF204D15E7C0CD41573D450F /* Pods_Advanced.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Advanced.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -293,7 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EEB53142A405F56007C603E /* ReplayKit.framework in Frameworks */,
-				9E2E82EB2A4C1EB3000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
+				CC51ECEC2A4333CF004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,22 +294,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				2BC1A9D827B66BC200DD0557 /* ReplayKit.framework in Frameworks */,
-				9E2E82ED2A4C1EBF000B3184 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
+				CC51ECE22A4333B5004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */,
 				2BC1A9D627B66BBD00DD0557 /* SystemConfiguration.framework in Frameworks */,
-				9E2E82F52A4C1ED0000B3184 /* bytevc1enc.xcframework in Frameworks */,
 				2BC1A9D427B66BB800DD0557 /* CoreTelephony.framework in Frameworks */,
 				2BC1A9D227B66BAC00DD0557 /* VideoToolbox.framework in Frameworks */,
 				2BC1A9D027B66BA200DD0557 /* AVFoundation.framework in Frameworks */,
-				9E2E82EF2A4C1EC5000B3184 /* VolcEngineRTC.xcframework in Frameworks */,
 				2BC1A9CE27B66B9800DD0557 /* AudioToolbox.framework in Frameworks */,
+				CC51ECE42A4333B7004F8987 /* VolcEngineRTC.xcframework in Frameworks */,
 				2BC1A9CC27B66B8E00DD0557 /* Accelerate.framework in Frameworks */,
 				2BC1A9CA27B66B8300DD0557 /* GLKit.framework in Frameworks */,
-				9E2E82F12A4C1EC9000B3184 /* bytenn.xcframework in Frameworks */,
 				2BC1A9C827B66B7700DD0557 /* MetalPerformanceShaders.framework in Frameworks */,
+				CC51ECE62A4333BB004F8987 /* bytenn.xcframework in Frameworks */,
 				2BC1A9C627B66B6A00DD0557 /* CoreMotion.framework in Frameworks */,
 				2BC1A9C427B66B6200DD0557 /* libz.tbd in Frameworks */,
 				9E5DCF8A2A1B14DB0050ECD8 /* effect-sdk.framework in Frameworks */,
-				9E2E82F32A4C1ECC000B3184 /* ByteRTCNICOExtension.xcframework in Frameworks */,
 				2BC1A9C227B66B4200DD0557 /* CoreML.framework in Frameworks */,
 				29B566F369D3E77B976F57FD /* Pods_Advanced.framework in Frameworks */,
 			);
@@ -698,11 +688,9 @@
 		CC2AE90826CCF39A009D594D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9E2E82E52A4C1E89000B3184 /* bytenn.xcframework */,
-				9E2E82E22A4C1E88000B3184 /* ByteRTCNICOExtension.xcframework */,
-				9E2E82E12A4C1E88000B3184 /* bytevc1enc.xcframework */,
-				9E2E82E32A4C1E89000B3184 /* VolcEngineRTC.xcframework */,
-				9E2E82E42A4C1E89000B3184 /* VolcEngineRTCScreenCapturer.xcframework */,
+				CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */,
+				CC51ECDC2A4333AB004F8987 /* VolcEngineRTC.xcframework */,
+				CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */,
 				9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */,
 				2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */,
 				2BC1A9D527B66BBD00DD0557 /* SystemConfiguration.framework */,
@@ -947,9 +935,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_ENTITLEMENTS = AdvanceScreenShare/Advanced.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3XMD9D6A65;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -966,6 +956,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.debug.screenShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = veRTC_Development_Extension_20211117;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1125,8 +1116,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3XMD9D6A65;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)",
@@ -1145,37 +1138,11 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 4.0.0;
-				OTHER_LDFLAGS = (
-	                    "-Wl,-u,_bef_effect_ai_check_license",
-	                    "-Wl,-u,_bef_effect_ai_create",
-	                    "-Wl,-u,_bef_effect_ai_destroy",
-	                    "-Wl,-u,_bef_effect_ai_init",
-	                    "-Wl,-u,_bef_effect_ai_use_pipeline_processor",
-	                    "-Wl,-u,_bef_effect_ai_set_intensity",
-	                    "-Wl,-u,_bef_effect_ai_set_color_filter_v2",
-	                    "-Wl,-u,_bef_effect_ai_set_camera_device_position",
-	                    "-Wl,-u,_bef_effect_ai_composer_set_nodes",
-	                    "-Wl,-u,_bef_effect_ai_composer_update_node",
-	                    "-Wl,-u,_bef_effect_ai_algorithm_texture",
-	                    "-Wl,-u,_bef_effect_ai_process_texture",
-	                    "-Wl,-u,_bef_effect_ai_composer_set_mode",
-	                    "-Wl,-u,_bef_effect_ai_set_width_height",
-	                    "-Wl,-u,_bef_effect_ai_matting_check_license",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_init_model",
-	                    "-Wl,-u,_bef_effect_ai_matting_check_license",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_destroy",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_set_param",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_do_detect",
-	                    "-Wl,-u,_bef_effect_ai_portrait_get_output_shape",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_create",
-	                    "-Wl,-u,_bef_effect_ai_matting_check_license",
-	                    "-Wl,-u,_bef_effect_ai_set_orientation",
-	            );
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = veRTC_Development_20211117;
 				STRIP_INSTALLED_PRODUCT = NO;
-				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1210,37 +1177,10 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 4.0.0;
-				OTHER_LDFLAGS = (
-	                    "-Wl,-u,_bef_effect_ai_check_license",
-	                    "-Wl,-u,_bef_effect_ai_create",
-	                    "-Wl,-u,_bef_effect_ai_destroy",
-	                    "-Wl,-u,_bef_effect_ai_init",
-	                    "-Wl,-u,_bef_effect_ai_use_pipeline_processor",
-	                    "-Wl,-u,_bef_effect_ai_set_intensity",
-	                    "-Wl,-u,_bef_effect_ai_set_color_filter_v2",
-	                    "-Wl,-u,_bef_effect_ai_set_camera_device_position",
-	                    "-Wl,-u,_bef_effect_ai_composer_set_nodes",
-	                    "-Wl,-u,_bef_effect_ai_composer_update_node",
-	                    "-Wl,-u,_bef_effect_ai_algorithm_texture",
-	                    "-Wl,-u,_bef_effect_ai_process_texture",
-	                    "-Wl,-u,_bef_effect_ai_composer_set_mode",
-	                    "-Wl,-u,_bef_effect_ai_set_width_height",
-	                    "-Wl,-u,_bef_effect_ai_matting_check_license",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_init_model",
-	                    "-Wl,-u,_bef_effect_ai_matting_check_license",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_destroy",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_set_param",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_do_detect",
-	                    "-Wl,-u,_bef_effect_ai_portrait_get_output_shape",
-	                    "-Wl,-u,_bef_effect_ai_portrait_matting_create",
-	                    "-Wl,-u,_bef_effect_ai_matting_check_license",
-	                    "-Wl,-u,_bef_effect_ai_set_orientation",
-	            );
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCAdvancedDis;
-				STRIP_STYLE = "non-global";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

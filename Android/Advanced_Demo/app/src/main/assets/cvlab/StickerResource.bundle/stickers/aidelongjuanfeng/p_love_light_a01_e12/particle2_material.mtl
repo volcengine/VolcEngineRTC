@@ -1,0 +1,48 @@
+{
+  "version": "1.2",
+  "materials": [
+    {
+      "name": "mat-0",
+      "techniques": [
+        {
+          "name": "microfacet",
+          "passes": [
+            {
+              "name": "microfacet",
+              "depthTest": true,
+              "blend": true,
+              "depthWrite": true,
+              "cullFace": false,
+              "depthFunc": "DF_LEQUAL",
+              "blend_src_factor": "BF_ONE",
+              "blend_dst_factor": "BF_ONE_MINUS_SRC_ALPHA",
+              "uniforms": {
+                "mvpMat": "BT_MODEL_VIEW_PROJECTION_MATRIX",
+                "diffuseMap": {
+                  "type": "2d_texture",
+                  "source": [
+                    "love_02.png"
+                  ],
+                  "wrap": "WM_CLAMP",
+                  "filter": "FM_LINEAR"
+                }
+              },
+              "shaders": [
+                {
+                  "type": "VERTEX_SHADER",
+                  "defination": [],
+                  "source": "particle3.vs"
+                },
+                {
+                  "type": "FRAGMENT_SHADER",
+                  "defination": [],
+                  "source": "particle3.fs"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

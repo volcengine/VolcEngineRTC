@@ -9,7 +9,6 @@
 
 namespace bytertc {
 
-#ifndef ByteRTC_AUDIO_ONLY
 /** 
  * @type api
  * @region 引擎管理
@@ -116,6 +115,5 @@ public:
     }
 };
 
-#endif  // ByteRTC_AUDIO_ONLY
 
 }  // namespace bytertc

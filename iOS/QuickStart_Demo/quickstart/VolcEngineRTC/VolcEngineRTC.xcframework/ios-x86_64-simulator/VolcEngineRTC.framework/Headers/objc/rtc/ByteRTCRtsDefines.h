@@ -532,6 +532,29 @@ typedef NS_ENUM(NSInteger, ByteRTCEnv) {
 
 /** 
  * @type keytype
+ * @brief 本地日志输出等级。
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCLocalLogLevel) {
+    /** 
+     * @brief 信息级别。
+     */
+    ByteRTCLocalLogLevelInfo = 0,
+    /** 
+     * @brief （默认值）警告级别。
+     */
+    ByteRTCLocalLogLevelWarning = 1,
+    /** 
+     * @brief 错误级别。
+     */
+    ByteRTCLocalLogLevelError = 2,
+    /** 
+     * @brief 关闭日志。
+     */
+    ByteRTCLocalLogLevelNone = 3
+};
+
+/** 
+ * @type keytype
  * @brief App 使用的 cpu 和 memory 信息  <br>
  *        信息由 SDK 周期性（2s）地通过 `reportSysStats` 回调事件通知给用户。
  */
@@ -573,6 +596,27 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSysStats : NSObject
  * @brief 系统内存使用率（单位 %）
  */
 @property(assign, nonatomic) double total_memory_ratio;
+@end
+
+/** 
+ * @type keytype
+ * @brief 本地日志参数。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCLogConfig : NSObject
+/** 
+ * @brief 日志存储路径。
+ */ 
+@property(copy, nonatomic) NSString *_Nonnull logPath;
+
+/** 
+ * @brief 日志等级，参看 ByteRTCLocalLogLevel{@link #ByteRTCLocalLogLevel}，默认为警告级别。
+ */ 
+@property(assign, nonatomic) ByteRTCLocalLogLevel logLevel;
+
+/** 
+ * @brief 日志可使用的最大缓存空间，单位为 MB。取值范围为 1～100 MB，默认值为 10 MB。
+ */ 
+@property(assign, nonatomic) int logFileSize;
 @end
 
 /** 

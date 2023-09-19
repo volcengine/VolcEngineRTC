@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "bytertc_rts_defines.h"
+#include "rtc/bytertc_rts_defines.h"
 #include "byterts_room_event_handler.h"
 
 namespace bytertc {
@@ -52,13 +52,16 @@ public:
      * @region 多房间
      * @brief 离开房间。  <br>
      *        用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      * @notes  <br>
      *       + 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 onLeaveRoom{@link #IRTSRoomEventHandler#onLeaveRoom} 回调通知。  <br>
      *       + 可见的用户离开房间后，房间内其他用户会收到 onUserLeave{@link #IRTSRoomEventHandler#onUserLeave} 回调通知。  <br>
      *       + 如果调用此方法后立即销毁引擎，SDK 将无法触发 onLeaveRoom{@link #IRTSRoomEventHandler#onLeaveRoom} 回调。  <br>
      *       + 调用 joinRoom{@link #IRTSRoom#joinRoom} 方法加入房间后，必须调用此方法离开房间，否则无法进入下一个房间。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
      */
-    virtual void leaveRoom() = 0;
+    virtual int leaveRoom() = 0;
 
     /** 
      * @type api
@@ -66,8 +69,11 @@ public:
      * @brief 设置 IRTSRoom{@link #IRTSRoom} 对象的事件句柄。
      *        通过设置事件句柄可以监听此 IRTSRoom{@link #IRTSRoom} 对象对应的房间的回调事件。
      * @param [in] room_event_handler 回调处理器，详见 IRTSRoomEventHandler{@link #IRTSRoomEventHandler}
+     * @return  <br>
+     *        + 0: 调用成功。
+     *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      */
-    virtual void setRTSRoomEventHandler(IRTSRoomEventHandler* room_event_handler) = 0;
+    virtual int setRTSRoomEventHandler(IRTSRoomEventHandler* room_event_handler) = 0;
 
     /** 
      * @type api

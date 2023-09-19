@@ -14,6 +14,7 @@ namespace bytertc {
  * @type callback
  * @region 转推直播
  * @brief 合流推流 Observer
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IMixedStreamObserver {
 public:
@@ -92,10 +93,11 @@ public:
 };
 
 /** 
- * @deprecated since 3.52, use IMixedStreamObserver instead.
+ * @deprecated since 3.52, use IMixedStreamObserver{@link #IMixedStreamObserver} instead.
  * @type callback
  * @region 转推直播
  * @brief 推流 Observer
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class ITranscoderObserver {
 public:
@@ -174,6 +176,7 @@ public:
  * @type callback
  * @region 转推直播
  * @brief 单流转推直播观察者。  <br>
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IPushSingleStreamToCDNObserver {
 public:
@@ -191,6 +194,45 @@ public:
      */
     virtual ~IPushSingleStreamToCDNObserver() = default;
 };
+
+/** 
+ * @type callback
+ * @brief 缓存同步 Observer
+ */
+class IChorusCacheSyncObserver {
+public:
+    /**
+     * @hidden constructor/destructor
+    */
+    virtual ~IChorusCacheSyncObserver() {
+    }
+    /** 
+     * @type callback
+     * @brief 调用 startChorusCacheSync{@link #IRTCVideo#startChorusCacheSync}，并设置为 `consumer` 的用户会通过此回调获取经缓存同步后的视频帧。获取频率通过启动同步时的 `fps` 进行设置。
+     * @param count `uids` 和 `videoFrames` 的数组长度
+     * @param uids 参与合唱缓存同步的 `producer` 和 `retransmitter` 的列表，不包括参与但未发送媒体数据的用户。
+     * @param videoFrames 对应 `uids` 的视频帧。参看 IVideoFrame{@link #IVideoFrame}。
+     */
+    virtual void onSyncedVideoFrames(int count, const char* uids[], bytertc::IVideoFrame* video_frames[]) = 0;
+    /** 
+     * @type callback
+     * @brief 参与合唱缓存同步的 `producer` 和 `retransmitter` 发生变化时，收到此回调。
+     * @param count 当前的 `uids` 的长度
+     * @param uids  当前的参与者列表
+     * @notes 有以下情况可能造成参与者发生变化：
+     *        + 用户主动调用 startChorusCacheSync{@link #IRTCVideo#startChorusCacheSync} 或 stopChorusCacheSync{@link #IRTCVideo#stopChorusCacheSync};
+     *        + 原本参与缓存同步的用户发生异常退出。
+     */
+    virtual void onSyncedUsersChanged(int count, const char* uids[]) = 0;
+    /** 
+     * @type callback
+     * @brief 缓存同步事件回调
+     * @param event 事件，参看 ChorusCacheSyncEvent{@link #ChorusCacheSyncEvent}。
+     * @param error 错误码，参看 ChorusCacheSyncError{@link #ChorusCacheSyncError}。
+     */
+    virtual void onSyncEvent(ChorusCacheSyncEvent event, ChorusCacheSyncError error) = 0;
+};
+
 /** 
  * @type api
  * @brief 创建合流参数实例

@@ -14,7 +14,7 @@ import java.io.File;
  */
 public class EffectResource {
 
-    private static final String LICENSE_NAME = "";
+    private static final String LICENSE_NAME = "/rtc_test_20230309_20230630_com.ss.rtc.demo.advanced_4.4.3_140.licbag";
 
     /**
      * 获取证书文件路径

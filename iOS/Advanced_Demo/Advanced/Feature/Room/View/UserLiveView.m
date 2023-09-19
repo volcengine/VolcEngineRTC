@@ -50,23 +50,13 @@
     }
 }
 
-- (void)replaceCanvasView:(UIView *)view {
-    [self.liveView removeFromSuperview];
-    self.liveView = view;
-    [self addSubview:view];
-    [view mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.top.right.equalTo(self);
-        make.height.equalTo(self).offset(-30);
-    }];
-}
-
 - (void)setUid:(NSString *)uid {
     _uid = uid;
     if (uid.length > 0) {
         self.label.text = [@"UserID：" stringByAppendingString:uid];
     } else {
         self.label.text = @"";
-        [[self.liveView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [self.liveView removeFromSuperview];
         [self.customRenderView removeFromSuperview];
     }
 }

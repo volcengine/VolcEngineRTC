@@ -264,6 +264,8 @@
 
 - (void)setupRemoteView:(UserLiveView *)userLiveView streamKey:(ByteRTCRemoteStreamKey *)streamKey {
     
+    userLiveView.useCustomRender = self.preJoinSetting.useCustomRender;
+    
     if (self.preJoinSetting.useCustomRender) {
         /// 设置远端用户视频渲染视图(外部渲染)
         [self.rtcVideo setRemoteVideoSink:streamKey withSink:userLiveView.customRenderView withPixelFormat:ByteRTCVideoSinkPixelFormatNV12];
@@ -273,23 +275,17 @@
         NSString *uid = streamKey.userId;
         ByteRTCRenderMode rtcRenderMode =  [self RTCRenderModeFromRenderMode:self.preJoinSetting.remoteRenderMode];
 
-        UIView *view = [[UIView alloc] init];
         ByteRTCVideoCanvas *canvas = [[ByteRTCVideoCanvas alloc] init];
-        canvas.view = view;
+        canvas.view = userLiveView.liveView;
         canvas.renderMode = rtcRenderMode;
         userLiveView.uid = uid;
-        
-        [userLiveView replaceCanvasView:view];
-        
+                
         /// 设置远端用户视频渲染视图
         [self.rtcVideo setRemoteVideoCanvas:streamKey withCanvas:canvas];
     }
 }
 
 #pragma mark - RTC delegate
-- (void)rtcRoom:(ByteRTCRoom *)rtcRoom onRoomError:(ByteRTCErrorCode)errorCode {
-    [self showAlert:[NSString stringWithFormat:@"error: %ld",(long)errorCode]];
-}
 
 - (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserPublishStream:(NSString *)userId type:(ByteRTCMediaStreamType)type {
     if (type == ByteRTCMediaStreamTypeVideo || type == ByteRTCMediaStreamTypeBoth) {

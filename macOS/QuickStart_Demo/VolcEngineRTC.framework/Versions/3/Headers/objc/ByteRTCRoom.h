@@ -13,6 +13,7 @@
 /** 
  * @type callback
  * @brief 房间事件回调接口
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 @protocol ByteRTCRoomDelegate <NSObject>
 @optional
@@ -346,10 +347,10 @@
  * @valid since 3.52.
  * @type callback
  * @region 多房间
- * @brief 调用 setRoomExtraInfo{@link #ByteRTCRoom#setRoomExtraInfo} 结果回调。
+ * @brief 调用 setRoomExtraInfo:value:{@link #ByteRTCRoom#setRoomExtraInfo:value:} 结果回调。
  * @param rtcRoom ByteRTCRoom 对象。
  * @param taskId 本次调用的任务编号。
- * @param error 设置房间附加信息结果，详见 SetRoomExtraInfoResult{@link #ByteRTCSetRoomExtraInfoResult}
+ * @param error 设置房间附加信息结果，详见 ByteRTCSetRoomExtraInfoResult{@link #ByteRTCSetRoomExtraInfoResult}
  */
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onSetRoomExtraInfoResult:(NSInteger)taskId error:(ByteRTCSetRoomExtraInfoResult)error;
 
@@ -358,7 +359,7 @@
  * @type callback
  * @region 多房间
  * @brief 接收到房间附加信息的回调。<br>
- *        房间内其他用户调用 setRoomExtraInfo{@link #ByteRTCRoom#setRoomExtraInfo} 设置房间附加信息，收到此回调。<br>
+ *        房间内其他用户调用 setRoomExtraInfo:value:{@link #ByteRTCRoom#setRoomExtraInfo:value:} 设置房间附加信息，收到此回调。<br>
  *        另外用户加入房间成功后会收到这个房间全量附加信息
  * @param rtcRoom ByteRTCRoom 对象。
  * @param key 附加信息的键值
@@ -369,6 +370,17 @@
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onRoomExtraInfoUpdate:(NSString *_Nonnull)key value:(NSString *_Nonnull)value lastUpdateUserId:(NSString *_Nonnull)lastUpdateUserId 
                  lastUpdateTimeMs:(NSInteger)lastUpdateTimeMs;
 
+/** 
+ * @valid since 3.54
+ * @type callback
+ * @region 房间管理
+ * @brief 用户调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 设置用户可见性的回调。
+ * @param currentUserVisibility 当前用户的可见性。  <br>
+ *        + YES: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
+ *        + NO: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+ * @param errorCode 设置用户可见性错误码，参看 ByteRTCUserVisibilityChangeError{@link #ByteRTCUserVisibilityChangeError}。
+ */
+- (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onUserVisibilityChanged:(BOOL)currentUserVisibility errorCode:(ByteRTCUserVisibilityChangeError)errorCode;
 
 /** 
  * @type callback
@@ -398,7 +410,7 @@
  *        + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。  <br>
  *        + 若被封禁用户断网或退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。  <br>
  *        + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。  <br>
- *        + 在控制台开启大会模式后，只有被封禁/解禁用户会收到该回调。<br>
+ *        + 在控制台开启音频选路后，只有被封禁/解禁用户会收到该回调。<br>
  *        + 同一房间解散后再次创建，房间内状态清空。
  */
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onAudioStreamBanned:(NSString *_Nonnull)uid isBanned:(BOOL)banned;
@@ -476,18 +488,22 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 
 /** 
  * @type api
- * @region 多房间
- * @brief 获取房间 ID
+ * @valid since 3.53
+ * @brief 获取房间 ID。
+ * @return 房间 ID。
  */
-- (NSString *_Nullable)getRoomId;
+- (NSString *_Nonnull)getRoomId;
 
 /** 
  * @type api
  * @region 多房间
  * @brief 通过设置 ByteRTCRoom{@link #ByteRTCRoom} 对象的事件句柄，监听此对象对应的回调事件。
  * @param roomDelegate 参见 ByteRTCRoomDelegate{@link #ByteRTCRoomDelegate}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
-- (void)setRTCRoomDelegate:(id<ByteRTCRoomDelegate> _Nullable)roomDelegate;
+- (int)setRTCRoomDelegate:(id<ByteRTCRoomDelegate> _Nullable)roomDelegate;
 
 /** 
  * @type api
@@ -517,16 +533,23 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @region 多房间
  * @brief 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
  * @param enable 设置用户是否对房间内其他用户可见：  <br>
- *        + YES: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br>
- *        + NO: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+ *        + YES: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
+ *        + NO: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0: 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明。
  * @notes  <br>
- *       + 该方法在加入房间前后均可调用。 <br>
- *       + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：<br>
- *            - 从 NO 切换至 YES 时，房间内其他用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知；  <br>
- *            - 从 YES 切换至 NO 时，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
- *       + 若调用该方法将可见性设为 NO，此时尝试发布流会收到 `ByteRTCWarningCodeSubscribeStreamForbiden` 警告。
+ *       + 在加入房间前后，用户均可调用此方法设置用户可见性。
+ *       + 设置用户可见性，会收到设置成功/失败回调 rtcRoom:onUserVisibilityChanged:errorCode:{@link #ByteRTCRoomDelegate#rtcRoom:onUserVisibilityChanged:errorCode:}。（v3.54 新增）
+ *   &#x0020;  • 在加入房间前设置用户可见性，若设置的可见性与默认值不同，将在加入房间时触发本回调。
+ *   &#x0020;  • 在加入房间后设置用户可见性，若可见性前后不同，会触发本回调。
+ *   &#x0020;  • 在断网重连后，若可见性发生改变，会触发本回调。
+ *       + 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调。
+ *   &#x0020;  • 从可见换至不可见时，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:}。
+ *   &#x0020;  • 从不可见切换至可见时，房间内其他用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:}。
+ *   &#x0020;  • 若调用该方法将可见性设为 `false`，此时尝试发布流会收到 `ByteRTCWarningCodeSubscribeStreamForbiden` 警告。
  */
-- (void)setUserVisibility:(BOOL)enable;
+- (int)setUserVisibility:(BOOL)enable;
 
 /** 
  * @type api
@@ -534,6 +557,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @brief 设置发流端音画同步。  <br>
  *        当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
  * @param audioUserId 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes <br>
  *        + 该方法在进房前后均可调用。  <br>
  *        + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  <br>
@@ -541,18 +567,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  <br>
  *        + 如需更换同步音频源，再次调用该接口传入新的 `audioUserId` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
  */
-- (void)setMultiDeviceAVSync:(NSString* _Nullable) audioUserId;
+- (int)setMultiDeviceAVSync:(NSString* _Nullable) audioUserId;
 
 /** 
  *  @type api
  *  @region 房间管理
  *  @brief 离开房间。  <br>
  *         用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  *  @notes  <br>
  *        + 用户离开房间后，本地会收到 rtcRoom:onLeaveRoom:{@link #ByteRTCRoomDelegate#rtcRoom:onLeaveRoom:} 的回调；  <br>
  *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设为可见的用户离开房间后，房间内其他用户会收到 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 回调通知。  <br>
  */
-- (void)leaveRoom NS_SWIFT_NAME(leaveRoom());
+- (int)leaveRoom NS_SWIFT_NAME(leaveRoom());
 
 
 /** 
@@ -589,6 +618,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @region 房间管理
  * @brief 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
  * @param type 媒体流类型，用于指定发布音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes <br>
  *        + 如果你已经在用户进房时通过调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 成功选择了自动发布，则无需再调用本接口。<br>
  *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
@@ -597,22 +629,28 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        + 调用此方法后，房间中的所有远端用户会收到 rtcRoom:onUserPublishStream:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishStream:type:} 回调通知，其中成功收到了音频流的远端用户会收到 rtcEngine:onFirstRemoteAudioFrame:{@link #ByteRTCVideoDelegate#rtcEngine:onFirstRemoteAudioFrame:} 回调，订阅了视频流的远端用户会收到 rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:{@link #ByteRTCVideoDelegate#rtcEngine:onFirstRemoteVideoFrameDecoded:withFrameInfo:} 回调。<br>
  *        + 调用 unpublishStream:{@link #ByteRTCRoom#unpublishStream:} 取消发布。
  */
-- (void)publishStream:(ByteRTCMediaStreamType)type;
+- (int)publishStream:(ByteRTCMediaStreamType)type;
 /** 
  * @type api
  * @region 房间管理
  * @brief 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
  * @param type 媒体流类型，用于指定停止发布音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *        + 调用 publishStream:{@link #ByteRTCRoom#publishStream:} 手动发布摄像头音视频流后，你需调用此接口停止发布。<br>
  *        + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 回调通知。
  */
-- (void)unpublishStream:(ByteRTCMediaStreamType)type;
+- (int)unpublishStream:(ByteRTCMediaStreamType)type;
 /** 
  * @type api
  * @region 屏幕共享
  * @brief 在当前所在房间内发布本地屏幕共享音视频流
  * @param type 媒体流类型，用于指定发布屏幕音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes <br>
  *        + 如果你已经在用户进房时通过调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 成功选择了自动发布，则无需再调用本接口。<br>
  *        + 调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。 <br>
@@ -622,17 +660,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        + 调用 unpublishScreen:{@link #ByteRTCRoom#unpublishScreen:} 取消发布。<br>
  *        + 查看 [屏幕共享](https://www.volcengine.com/docs/6348/80225)，获取更多信息。
  */
-- (void)publishScreen:(ByteRTCMediaStreamType)type;
+- (int)publishScreen:(ByteRTCMediaStreamType)type;
 /** 
  * @type api
  * @region 屏幕共享
  * @brief 停止将本地屏幕共享音视频流发布到当前所在房间中
  * @param type 媒体流类型，用于指定停止发布屏幕音频/视频，参看 ByteRTCMediaStreamType{@link #ByteRTCMediaStreamType}
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes <br>
  *        + 调用 publishScreen:{@link #ByteRTCRoom#publishScreen:} 发布屏幕流后，你需调用此接口停止发布。 <br>
  *        + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 rtcRoom:onUserUnpublishScreen:type:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishScreen:type:reason:} 回调。
  */
-- (void)unpublishScreen:(ByteRTCMediaStreamType)type;
+- (int)unpublishScreen:(ByteRTCMediaStreamType)type;
 
 /** 
  * @deprecated since 3.36 and will be deleted in 3.51, use subscribeStream:mediaStreamType:{@link #ByteRTCRoom#subscribeStream:mediaStreamType:}, unsubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unsubscribeStream:mediaStreamType:}, subscribeScreen:mediaStreamType:{@link #ByteRTCRoom#subscribeScreen:mediaStreamType:} and unsubscribeScreen:mediaStreamType:{@link #ByteRTCRoom#unsubscribeScreen:mediaStreamType:} instead.
@@ -678,7 +719,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        !0: 方法调用失败  <br>
  * @notes  <br>
  *        + 多次调用订阅接口时，将根据末次调用接口和传入的参数，更新订阅配置。<br>
- *        + 大会模式下，如果房间内的媒体流超过上限，建议通过调用 subscribeStream:mediaStreamType:{@link #ByteRTCRoom#subscribeStream:mediaStreamType:} 逐一指定需要订阅的媒体流。<br>
+ *        + 开启音频选路后，如果房间内的媒体流超过上限，建议通过调用 subscribeStream:mediaStreamType:{@link #ByteRTCRoom#subscribeStream:mediaStreamType:} 逐一指定需要订阅的媒体流。<br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
  *        + 成功调用本接口后，订阅关系将持续到调用 unsubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unsubscribeStream:mediaStreamType:} 或 unsubscribeAllStreamsWithMediaStreamType:{@link #ByteRTCRoom#unsubscribeAllStreamsWithMediaStreamType:} 取消订阅或本端用户退房。 <br>
  *        + 关于其他调用异常，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知，具体异常原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode}。
@@ -752,24 +793,30 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @region 多房间
  * @brief 暂停接收来自远端的媒体流
  * @param mediaType 媒体流类型，指定需要暂停接收音频还是视频流，参看 ByteRTCPauseResumControlMediaType{@link #ByteRTCPauseResumControlMediaType}
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes <br>
  *        + 该方法仅暂停远端流的接收，并不影响远端流的采集和发送；  <br>
  *        + 该方法不改变用户的订阅状态以及订阅流的属性。  <br>
  *        + 若想恢复接收远端流，需调用 resumeAllSubscribedStream:{@link #ByteRTCRoom#resumeAllSubscribedStream:}。 <br>
  *        + 多房间场景下，仅暂停接收发布在当前所在房间的流。
  */
-- (void)pauseAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
+- (int)pauseAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 
 /** 
  * @type api
  * @region 多房间
  * @brief 恢复接收来自远端的媒体流
  * @param mediaType 媒体流类型，指定需要暂停接收音频还是视频流，参看 ByteRTCPauseResumControlMediaType{@link #ByteRTCPauseResumControlMediaType}
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes <br>
  *        + 该方法仅恢复远端流的接收，并不影响远端流的采集和发送；  <br>
  *        + 该方法不改变用户的订阅状态以及订阅流的属性。
  */
-- (void)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
+- (int)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
  /** 
   * @type api
   * @region 多房间
@@ -871,36 +918,45 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
      *        + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
      */
     - (int)updateForwardStreamToRooms:(NSArray <ForwardStreamConfiguration *> * _Nullable)configurations NS_SWIFT_NAME(updateForwardStreamToRooms(_:));
-    /** 
-     * @type api
-     * @region 多房间
-     * @brief 停止跨房间媒体流转发。
-     *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
-     * @notes <br>
-     *        + 调用本方法后，将在本端触发 rtcRoom:onForwardStreamStateChanged:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamStateChanged:} 回调。
-     *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
-     *        + 如果需要更改目标房间，请调用 updateForwardStreamToRooms:{@link #ByteRTCRoom#updateForwardStreamToRooms:} 更新房间信息。
-     *        + 如果需要暂停转发，请调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms}，并在之后随时调用 resumeForwardStreamToAllRooms{@link #ByteRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
-     */
-    - (void)stopForwardStreamToRooms;
-    /** 
-     * @type api
-     * @region 多房间
-     * @brief 暂停跨房间媒体流转发。
-     *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
-     *        调用本方法暂停向所有目标房间转发后，你可以随时调用 resumeForwardStreamToAllRooms{@link #ByteRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
-     * @notes 调用本方法后，目标房间中的用户将接收到本地用户停止发布 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
-     */
-     - (void)pauseForwardStreamToAllRooms;
-    /** 
-     * @type api
-     * @region 多房间
-     * @brief 恢复跨房间媒体流转发。
-     *        调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms} 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
-     * @notes <br>
-     *        目标房间中的用户将接收到本地用户进房 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 和发布 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 的回调。
-     */
-    - (void)resumeForwardStreamToAllRooms;
+/** 
+ * @type api
+ * @region 多房间
+ * @brief 停止跨房间媒体流转发。
+ *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 调用本方法后，将在本端触发 rtcRoom:onForwardStreamStateChanged:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamStateChanged:} 回调。
+ *        + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
+ *        + 如果需要更改目标房间，请调用 updateForwardStreamToRooms:{@link #ByteRTCRoom#updateForwardStreamToRooms:} 更新房间信息。
+ *        + 如果需要暂停转发，请调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms}，并在之后随时调用 resumeForwardStreamToAllRooms{@link #ByteRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
+ */
+- (int)stopForwardStreamToRooms;
+/** 
+ * @type api
+ * @region 多房间
+ * @brief 暂停跨房间媒体流转发。
+ *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
+ *        调用本方法暂停向所有目标房间转发后，你可以随时调用 resumeForwardStreamToAllRooms{@link #ByteRTCRoom#resumeForwardStreamToAllRooms} 快速恢复转发。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes 调用本方法后，目标房间中的用户将接收到本地用户停止发布 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
+ */
+  - (int)pauseForwardStreamToAllRooms;
+/** 
+ * @type api
+ * @region 多房间
+ * @brief 恢复跨房间媒体流转发。
+ *        调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms} 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        目标房间中的用户将接收到本地用户进房 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 和发布 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 的回调。
+ */
+- (int)resumeForwardStreamToAllRooms;
 
 
 /** 
@@ -936,11 +992,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *              + 0: 静音  <br>
  *              + 100: 原始音量，默认值  <br>
  *              + 400: 最大可为原始音量的 4 倍(自带溢出保护)  <br>
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 假设某远端用户 A 始终在被调节的目标用户范围内，<br>
  *        + 当该方法与 setRemoteAudioPlaybackVolume:remoteUid:playVolume:{@link #ByteRTCVideo#setRemoteAudioPlaybackVolume:remoteUid:playVolume:} 共同使用时，本地收听用户 A 的音量为后调用的方法设置的音量；<br>
  *        + 当该方法与 setPlaybackVolume:{@link #ByteRTCVideo#setPlaybackVolume:} 方法共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
  */
-- (void)setRemoteRoomAudioPlaybackVolume:(NSInteger)volume;
+- (int)setRemoteRoomAudioPlaybackVolume:(NSInteger)volume;
 
 /** 
  * @hidden for internal use only.
@@ -948,8 +1007,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @region 云端渲染
  * @brief 按照传入的布局信息开启云端渲染。
  * @param rendingInfo 渲染功能相关参数。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
-- (void)startCloudRendering:(NSString *_Nonnull)rendingInfo;
+- (int)startCloudRendering:(NSString *_Nonnull)rendingInfo;
 
 /** 
  * @hidden for internal use only.
@@ -957,16 +1019,22 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @region 云端渲染
  * @brief 按照传入的布局信息更新云端渲染。
  * @param rendingInfo 渲染功能相关参数。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
-- (void)updateCloudRendering:(NSString *_Nonnull)rendingInfo;
+- (int)updateCloudRendering:(NSString *_Nonnull)rendingInfo;
 
 /** 
  * @hidden for internal use only.
  * @type api
  * @region 云端渲染
  * @brief 停止云端渲染。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
-- (void)stopCloudRendering;
+- (int)stopCloudRendering;
 
 /** 
  * @valid since 3.52.
@@ -1002,13 +1070,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 
 
 /** 
- * @valid since 3.52.
  * @type api
  * @region 字幕翻译服务
  * @brief 识别或翻译房间内所有用户的语音，形成字幕。<br>
- *        语音识别或翻译的结果会通过 rtcRoom:onSubtitleMessageReceived:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onSubtitleMessageReceived:} 事件回调给你。<br>
- *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link #ByteRTCAudioRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:} 回调，通知字幕是否开启。
- * @param subtitleConfig 字幕配置信息。参看 SubtitleConfig{@link #SubtitleConfig}。
+ *        语音识别或翻译的结果会通过 rtcRoom:onSubtitleMessageReceived:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleMessageReceived:} 事件回调给你。<br>
+ *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:} 回调，通知字幕是否开启。
+ * @param subtitleConfig 字幕配置信息。参看 ByteRTCSubtitleConfig{@link #ByteRTCSubtitleConfig}。
  * @return  <br>
  *        +  0: 调用成功。  <br>
  *        + !0: 调用失败。 
@@ -1020,11 +1087,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 - (int)startSubtitle:(ByteRTCSubtitleConfig *_Nonnull)subtitleConfig;
 
 /** 
- * @valid since 3.52.
  * @type api
  * @region 字幕翻译服务
  * @brief 关闭字幕。 <br>
- *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link  #ByteRTCAudioRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:}  回调，通知字幕是否关闭。
+ *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link  #ByteRTCRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:}  回调，通知字幕是否关闭。
  * @return  <br>
  *        +  0: 调用成功。  <br>
  *        + !0: 调用失败。 

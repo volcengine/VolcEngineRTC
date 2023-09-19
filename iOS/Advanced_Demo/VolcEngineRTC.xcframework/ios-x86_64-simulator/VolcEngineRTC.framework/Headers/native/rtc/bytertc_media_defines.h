@@ -57,6 +57,18 @@ enum ReturnStatus {
      */
     kReturnStatusScreenNotSupport = -9,
     /** 
+     * @brief 失败，不支持该操作。
+     */
+    kReturnStatusNotSupport = -10,
+    /** 
+     * @brief 失败，资源已占用。
+     */
+    kReturnStatusResourceOverflow = -11,
+    /** 
+     * @brief 失败，不支持视频接口调用。
+     */
+    kReturnStatusVideoNotSupport = -12,
+    /**  
      * @brief 失败，没有音频帧。
      */
     kReturnStatusAudioNoFrame = -101,
@@ -92,6 +104,10 @@ enum ReturnStatus {
      * @brief 系统错误，设备开启失败。
      */
     kReturnStatusAudioDeviceStartFailed = -109,
+    /** 
+     * @brief 失败，无效对象。
+     */
+    kReturnStatusNativeInvalid = -201,
 };
 
 /** 
@@ -144,6 +160,25 @@ enum UserRoleType {
      * @brief 隐身用户角色。此角色用户只可在房间内订阅音视频流，房间中的其他用户无法感知到该用户的存在。  <br>
      */
     kUserRoleTypeSilentAudience = 2,
+};
+
+/** 
+ * @type keytype
+ * @brief 用户可见性状态改变错误码。
+ */
+enum UserVisibilityChangeError {
+    /** 
+     * @brief 成功。
+     */
+    kUserVisibilityChangeErrorOk = 0,
+    /** 
+     * @brief 未知错误。
+     */
+    kUserVisibilityChangeErrorUnknown = 1,
+    /** 
+     * @brief 房间内可见用户达到上限。
+     */
+    kUserVisibilityChangeErrorTooManyVisibleUser = 2,
 };
 
 /** 
@@ -430,7 +465,13 @@ enum MediaDeviceState {
     /** 
      * @brief 设备不再是系统默认
      */
-    kMediaDeviceResignSystemDefault = 15
+    kMediaDeviceResignSystemDefault = 15,
+
+    /** 
+     * @brief 设备列表更新通知。请调用 enumerateVideoCaptureDevices{@link
+     * #IVideoDeviceManager#enumerateVideoCaptureDevices} 更新设备列表。
+     */
+    kMediaDeviceListUpdated = 16,
 };
 
 /** 
@@ -533,7 +574,9 @@ enum MediaDeviceWarning {
     kMediaDeviceWarningDetectClipping = 10,
     /** 
      * @brief 通话中出现回声现象。<br>
-     *        当 RoomProfileType{@link #RoomProfileType} 为 `kRoomProfileTypeMeeting` 和 `kRoomProfileTypeMeetingRoom`，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过 `onAudioDeviceWarning` 返回本枚举值。
+     *        当 RoomProfileType{@link #RoomProfileType} 为 `kRoomProfileTypeMeeting` 和
+     * `kRoomProfileTypeMeetingRoom`，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过
+     * `onAudioDeviceWarning` 返回本枚举值。
      */
     kMediaDeviceWarningDetectLeakEcho = 11,
     /** 
@@ -558,11 +601,25 @@ enum MediaDeviceWarning {
     kMediaDeviceWarningCaptureDetectSilenceDisappear = 15,
     /** 
      * @hidden(Linux)
-      * @brief 啸叫。触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。
-     *        仅 kRoomProfileTypeCommunication、kRoomProfileTypeMeeting、kRoomProfileTypeMeetingRoom 三种房间模式支持啸叫抑制。
-     *        建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。
+     * @brief
+     * 啸叫。触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。
+     *        仅 kRoomProfileTypeCommunication、kRoomProfileTypeMeeting、kRoomProfileTypeMeetingRoom
+     * 三种房间模式支持啸叫抑制。 建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。
      */
     kMediaDeviceWarningCaptureDetectHowling = 16,
+
+    /**
+     * @hidden for internal use only
+     * @brief sudden impluse noise detected
+     */
+    kMediaDeviceWarningSuddenImpluseDetected = 17,
+
+    /**
+     * @hidden for internal use only
+     * @brief sudden impluse noise detected
+     */
+    kMediaDeviceWarningSquareWavSoundDetected = 18,
+
     /** 
      * @hidden(Windows,macOS,Linux)
      * @brief setAudioRoute结果回调, 该scenario下不支持设置
@@ -794,7 +851,7 @@ enum PerformanceAlarmMode {
 enum ErrorCode {
     /** 
      * @brief Token 无效。
-     *        进房时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 `updateToken` 方法更新 Token。
+     *        调用 joinRoom{@link #IRTCRoom#joinRoom} 进房时使用的 Token 参数有误或过期失效。需要重新获取 Token，并调用 updateToken{@link #IRTCRoom#updateToken} 方法更新 Token。
      */
     kErrorCodeInvalidToken = -1000,
     /** 
@@ -825,7 +882,7 @@ enum ErrorCode {
      */
     kRoomErrorCodeRoomIdIllegal = -1007,
     /** 
-     * @brief Token 过期。调用 `joinRoom` 使用新的 Token 重新加入房间。
+     * @brief Token 过期。加入房间后 Token 过期时，返回此错误码。需使用新的 Token 重新加入房间。
      */
     kRoomErrorTokenExpired = -1009,
     /** 
@@ -1088,23 +1145,23 @@ enum WarningCode {
      */
     kWarningLicenseFileExpired = -7001,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) SDK 鉴权失效。联系技术支持人员。
      */
     kWarningInvaildSamiAppkeyORToken = -7002,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) 资源加载失败。传入正确的 DAT 路径，或联系技术支持人员。
      */
     kWarningInvaildSamiResourcePath = -7003,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) 库加载失败。使用正确的库，或联系技术支持人员。
      */
     kWarningLoadSamiLibraryFailed = -7004,
 
-    /**
-     * @hidden for internal use only
+    /** 
+     * @brief [音频技术](https://www.volcengine.com/docs/6489/71986) 不支持此音效。联系技术支持人员。
      */
     kWarningInvaildSamiEffectType = -7005,
 };
@@ -1784,6 +1841,11 @@ struct LocalVideoStats {
      * @brief 视频降噪模式。具体参看 VideoDenoiseMode{@link #VideoDenoiseMode} 。
      */
     VideoDenoiseMode video_denoise_mode;
+    /** 
+     * @brief 视频编码平均耗时，单位ms。
+     */
+    int codec_elapse_per_frame;
+
 };
 
 /** 
@@ -1863,6 +1925,10 @@ struct RemoteVideoStats {
      * @brief 远端视频超分模式，参看 VideoSuperResolutionMode{@link #VideoSuperResolutionMode}。
      */
     VideoSuperResolutionMode super_resolution_mode;
+    /** 
+     * @brief 视频解码平均耗时，单位ms。
+     */
+    int codec_elapse_per_frame;
 };
 
 /** 
@@ -2097,6 +2163,7 @@ enum EncryptType {
 /** 
  * @type callback
  * @brief 加密/解密处理函数
+ * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
  */
 class IEncryptHandler {
 public:
@@ -3020,7 +3087,7 @@ enum SubtitleState {
      */
     kSubtitleStateError
 };
-/**  
+/** 
  * @type keytype
  * @brief 字幕模式。
  */
@@ -3035,7 +3102,7 @@ enum SubtitleMode {
     kSubtitleModeTranslation
 };
 /**  
- * @type keytype
+ * @type errorcode
  * @brief 字幕任务错误码。
  */
 enum SubtitleErrorCode {
@@ -3082,9 +3149,9 @@ enum SubtitleErrorCode {
  */
 struct SubtitleConfig {
    /** 
-    * @brief 字幕模式。可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。参看 SubtitleMode{@link #SubtitleMode}。
+    * @brief 字幕模式。
     */
-   SubtitleMode mode;
+   SubtitleMode mode = kSubtitleModeRecognition;
    /** 
     * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%E7%9B%AE%E6%A0%87%E8%AF%AD%E8%A8%80-2) 查看翻译服务最新支持的语种信息。
     */
