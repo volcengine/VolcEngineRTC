@@ -28,6 +28,7 @@ if (!hasLogin) {
   $('#room-id').val(roomId);
   $('#pannel').show();
 
+  fillRoomId();
   checkRoomIdAndUserId('room-id');
   checkRoomIdAndUserId('user-id');
 } else {
@@ -59,26 +60,44 @@ const changeMicOrVideoIconUrl = (type, statusTag, offIconUrl, onIconUrl) => {
  */
 
 async function switchToMeeting(config) {
-  $('#control').show();
-  $('.player').show();
-  $('#pannel').hide();
-  $('.control-wrapper').show();
-
   try {
     rtc.bindEngineEvents();
     /*
      * before join a room, you should create a room,then you can join it with `engine.join(token,roomId,uid, onSuccessFunc, onFailFunc)`
      */
-    await rtc.join((config.token || {})[config.uid], config.roomId, config.uid);
+    let token = null;
+    config.tokens.forEach((item) => {
+      if (item.userId === config.uid) {
+        token = item.token;
+      }
+    });
+
+    await rtc.join(token, config.roomId, config.uid);
     console.log('join room ');
+    try {
+      rtc.createLocalStream();
+    } catch(e) {
+      console.log('createLocalStream Error', e);
+    }
+
+    // only set session info when login success
+    setSessionInfo({ roomId: config.roomId, uid: config.uid });
+
     $('#header-version').text(`${config.roomId}`);
     $('#local-player').show();
     $('#local-player-name').text(`${config.uid}`);
-    rtc.createLocalStream();
+    $('#control').show();
+    $('.player').show();
+    $('#pannel').hide();
+    $('.control-wrapper').show();
+    $('#join-res').hide();
+    $('#join-res').text('');
   } catch (err) {
     $('#control').hide();
     $('#pannel').show();
     $('.player').hide();
+    $('#join-res').show();
+    $('#join-res').text(JSON.stringify(err));
     console.log(err);
   }
 }
@@ -89,7 +108,6 @@ $('#submit').on('click', async () => {
   }
   config.roomId = $('#room-id').val();
   config.uid = $('#user-id').val();
-  setSessionInfo({ roomId: config.roomId, uid: config.uid });
   changeUrl(config.roomId);
 
   switchToMeeting(config);
@@ -270,4 +288,8 @@ function handleUserStopVideoCapture(event) {
   const { userId } = event;
 
   rtc.setRemoteVideoPlayer(userId, undefined);
+}
+
+if (location.host.includes('boe')) {
+  new VConsole();
 }
