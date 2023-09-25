@@ -10,12 +10,18 @@
 
 ```
 const config = {
-  appId: 'YourAppId',
-  roomId: 'YourRoomId',
-  token: {
-    YourUserId: 'YourToken', // "test_user1": "test_tokenxxxxxxxxx"
-  },
-
+  appId: 'yourAppId',
+  roomId: 'yourRoomId',
+  tokens: [
+    {
+      userId: 'yourUserId1',
+      token: 'yourToken1',
+    },
+    {
+      userId: 'yourUserId2',
+      token: 'yourToken2',
+    }
+  ],
 };
 ```
 

@@ -7,6 +7,7 @@ import LogoHeaderImg from 'src/assets/images/header_logo.png';
 import JoinRoom from './pages/JoinRoom';
 import Meeting from './pages/Meeting';
 import { Context } from './context';
+import config from './config';
 import { getQueryString, checkLoginInfo } from './utils';
 
 const head = '64px';
@@ -67,11 +68,12 @@ const App: React.FC<Record<string, unknown>> = () => {
   }, []);
 
   const [hasJoin, setJoin] = useState(hasLogin);
+  const [joinFailReason, setJoinFailReason] = useState<string>('');
   const [userId, setUserId] = useState<string>(getQueryString('userId') || '');
-  const [roomId, setRoomId] = useState<string>(getQueryString('roomId') || '');
+  const [roomId, setRoomId] = useState<string>(getQueryString('roomId') || config.roomId || '');
 
   return (
-    <Context.Provider value={{ hasJoin, userId, roomId, setUserId, setRoomId, setJoin }}>
+    <Context.Provider value={{ hasJoin, userId, roomId, joinFailReason, setUserId, setRoomId, setJoin, setJoinFailReason }}>
       <HeaderWrapper>
         <Logo>
           <img src={LogoHeaderImg} style={{ height: '100%' }} />

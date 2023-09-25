@@ -10,7 +10,6 @@ import {
 } from '@volcengine/rtc';
 import { ControlBar, AutoPlayModal } from '../../modules';
 import { Context } from '../../context';
-import VConsole from 'vconsole';
 
 import RTCComponent from '../../sdk/rtc-component';
 import { RTCClient } from '../../app-interfaces';
@@ -37,10 +36,8 @@ const Item = styled.div`
   position: relative;
 `;
 
-const vConsole = new VConsole();
-
 const Meeting: React.FC<Record<string, unknown>> = () => {
-  const { roomId, userId, setJoin } = useContext(Context);
+  const { roomId, userId, setJoin, setJoinFailReason } = useContext(Context);
   const [isMicOn, setMicOn] = useState<boolean>(true);
   const [isVideoOn, setVideoOn] = useState<boolean>(true);
   const rtc = useRef<RTCClient>();
@@ -68,6 +65,7 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
       }
 
       setAutoPlayFailUser([]);
+      setJoinFailReason('');
     },
     [rtc, setJoin]
   );
@@ -177,8 +175,16 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     (async () => {
       if (!roomId || !userId || !rtc.current) return;
       // rtc.current.bindEngineEvents();
+
+      let token = null;
+      config.tokens.forEach((item) => {
+        if (item.userId === userId) {
+          token = item.token;
+        }
+      });
+
       rtc.current
-        .join((config.token as any)?.[userId] || null, roomId, userId)
+        .join((token as any) || null, roomId, userId)
         .then(() =>
           rtc?.current?.createLocalStream(userId, (res: any) => {
             const { code, msg, devicesStatus } = res;
@@ -189,7 +195,11 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
             }
           })
         )
-        .catch((err: any) => console.log('err', err));
+        .catch((err: any) => {
+          console.log('err', err);
+          leaveRoom(false);
+          setJoinFailReason(JSON.stringify(err));
+        });
     })();
   }, [roomId, userId, rtc]);
 

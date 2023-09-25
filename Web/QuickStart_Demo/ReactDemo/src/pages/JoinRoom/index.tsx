@@ -73,7 +73,7 @@ const getLoginFieldRules = (
 const JoinRoom: FC<{ joinRoom: () => void }> = ({ joinRoom }) => {
   const [form] = Form.useForm<IForm>();
 
-  const { setRoomId, setUserId, userId, roomId } = useContext(Context);
+    const { setRoomId, setUserId, userId, roomId, joinFailReason} = useContext(Context);
 
   const onFinish = (value: IForm) => {
     const { roomId, userId } = value;
@@ -116,6 +116,9 @@ const JoinRoom: FC<{ joinRoom: () => void }> = ({ joinRoom }) => {
           >
             <Input placeholder="用户ID" size="large" />
           </Form.Item>
+          <div style={{ color: 'red'}}>
+            {joinFailReason}
+          </div>
           <Form.Item>
             <Button
               type="primary"

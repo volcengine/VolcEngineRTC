@@ -15,11 +15,18 @@ let isVideoOn = true; // control the video
  * On initiation. `engine` is not attached to any project or room for any specific user.
  */
 const config = {
-  appId: 'YourAppId',
-  roomId: 'YourRoomId',
-  token: {
-    YourUserId: 'YourToken',
-  },
+  appId: 'yourAppId',
+  roomId: 'yourRoomId',
+  tokens: [
+    {
+      userId: 'yourUserId1',
+      token: 'yourToken1',
+    },
+    {
+      userId: 'yourUserId2',
+      token: 'yourToken2',
+    }
+  ],
 };
 
 /**
@@ -130,4 +137,8 @@ function checkLoginInfo() {
     hasLogin = false;
   }
   return hasLogin;
+}
+
+function fillRoomId() {
+  $('#room-id').val(config.roomId);
 }
