@@ -79,7 +79,7 @@
   | USER_MESSAGE_UNKNOWN | `'USER_MESSAGE_UNKNOWN'` | 即时未知消息错误 |
   | START_PUBLIC_STREAM_BEFORE_JOIN | `'START_PUBLIC_STREAM_BEFORE_JOIN'` | 推流用户没有进入房间。 |
   | RECONNECT_FAILED | `'RECONNECT_FAILED'` | SDK 与服务端重连失败，并不再自动重试，你需退房后重新进房，或联系技术支持。 |
-  | SUBTITLE_ALREADY_ON | `'SUBTITLE_ALREADY_ON'` | 字幕已开启，无需重复调用 [startSubtitle](104478.md#startsubtitle)。 |
+  | SUBTITLE_ALREADY_ON | `'SUBTITLE_ALREADY_ON'` | 字幕已开启，无需重复调用 [startSubtitle](Web-api.md#startsubtitle)。 |
   | SUBTITLE_ERR_POSTPROCESS | `'SUBTITLE_ERR_POSTPROCESS'` | 云端媒体处理内部出现错误，请联系技术支持。 |
   | SUBTITLE_ERR_CONNECTION_ERROR | `'SUBTITLE_ERR_CONNECTION_ERROR'` | 第三方服务连接失败，请联系技术支持。 |
   | SUBTITLE_ERR_PROCESS_ERROR | `'SUBTITLE_ERR_PROCESS_ERROR'` | 云端媒体处理超时未响应，请联系技术支持。 |

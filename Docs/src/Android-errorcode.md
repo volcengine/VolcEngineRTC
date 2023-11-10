@@ -132,7 +132,7 @@ public class com.ss.bytertc.engine.type.ErrorCode
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_INVALID_TOKEN = -1000;
 ```
-Token 无效。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+Token 无效。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 进房时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 `updateToken` 方法更新 Token。
 
 
@@ -141,7 +141,7 @@ Token 无效。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onrooms
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM = -1001;
 ```
-加入房间错误。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+加入房间错误。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 进房时发生未知错误导致加入房间失败。需要用户重新加入房间。
 
 
@@ -150,7 +150,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROO
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_NO_PUBLISH_PERMISSION = -1002;
 ```
-没有发布音视频流权限。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+没有发布音视频流权限。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 用户在所在房间中发布音视频流失败，失败原因为用户没有发布流的权限。
 
 
@@ -159,7 +159,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_NO_PUBLI
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_NO_SUBSCRIBE_PERMISSION = -1003;
 ```
-没有订阅音视频流权限。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+没有订阅音视频流权限。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 用户订阅所在房间中的音视频流失败，失败原因为用户没有订阅流的权限。
 
 
@@ -168,7 +168,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_NO_SUBSC
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_DUPLICATE_LOGIN = -1004;
 ```
-相同用户 ID 的用户加入本房间，当前用户被踢出房间。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+相同用户 ID 的用户加入本房间，当前用户被踢出房间。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_app_id_null"></span>
@@ -185,7 +185,7 @@ App ID 参数异常。
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_KICKED_OUT = -1006;
 ```
-服务端调用 OpenAPI 将当前用户踢出房间。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+服务端调用 OpenAPI 将当前用户踢出房间。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_room_id_illegal"></span>
@@ -193,7 +193,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_KICKED_O
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_ID_ILLEGAL = -1007;
 ```
-当调用 `createRoom` ，如果 roomId 非法，会返回 null，并抛出该错误。通过 [onCreateRoomStateChanged](70081.md#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。
+当调用 `createRoom` ，如果 roomId 非法，会返回 null，并抛出该错误。通过 [onCreateRoomStateChanged](Android-callback.md#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_token_expired"></span>
@@ -201,7 +201,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_ID_
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_TOKEN_EXPIRED = -1009;
 ```
-Token 过期。调用 `joinRoom` 使用新的 Token 重新加入房间。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+Token 过期。调用 `joinRoom` 使用新的 Token 重新加入房间。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_update_token_with_invalid_token"></span>
@@ -209,7 +209,7 @@ Token 过期。调用 `joinRoom` 使用新的 Token 重新加入房间。通过 
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN = -1010;
 ```
-调用 `updateToken` 传入的 Token 无效。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+调用 `updateToken` 传入的 Token 无效。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_room_dismiss"></span>
@@ -217,7 +217,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_UPDATE_T
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_DISMISS = -1011;
 ```
-服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_join_room_without_license_authenticate_sdk"></span>
@@ -226,7 +226,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_DIS
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_WITHOUT_LICENSE_AUTHENTICATE_SDK = -1012;
 ```
 加入房间错误。  <br>
-调用 `joinRoom` 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+调用 `joinRoom` 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_room_already_exist"></span>
@@ -234,7 +234,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROO
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_ALREADY_EXIST = -1013;
 ```
-通话回路检测已经存在同样 roomId 的房间了。通过 [onCreateRoomStateChanged](70081.md#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。
+通话回路检测已经存在同样 roomId 的房间了。通过 [onCreateRoomStateChanged](Android-callback.md#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_user_id_different"></span>
@@ -242,7 +242,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_ALR
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_USER_ID_DIFFERENT = -1014;
 ```
-加入多个房间时使用了不同的 uid。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+加入多个房间时使用了不同的 uid。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。
 
 
@@ -251,7 +251,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_USER_ID_
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_SERVER_LICENSE_EXPIRE = -1017;
 ```
-服务端license过期，拒绝进房。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+服务端license过期，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_exceeds_the_upper_limit"></span>
@@ -259,7 +259,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_SERVER_L
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_EXCEEDS_THE_UPPER_LIMIT = -1018;
 ```
-超过服务端license许可的并发量上限，拒绝进房。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+超过服务端license许可的并发量上限，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_license_parameter_error"></span>
@@ -267,7 +267,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_EXCEEDS_
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_PARAMETER_ERROR = -1019;
 ```
-license参数错误，拒绝进房。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license参数错误，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_license_file_path_error"></span>
@@ -275,7 +275,7 @@ license参数错误，拒绝进房。通过 [onRoomStateChanged](70081.md#IRTCRo
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_FILE_PATH_ERROR = -1020;
 ```
-license证书路径错误。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license证书路径错误。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_license_illegal"></span>
@@ -283,7 +283,7 @@ license证书路径错误。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHa
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_ILLEGAL = -1021;
 ```
-license证书不合法。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license证书不合法。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_license_expired"></span>
@@ -291,7 +291,7 @@ license证书不合法。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandl
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_EXPIRED = -1022;
 ```
-license证书已经过期，拒绝进房。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license证书已经过期，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_license_information_not_match"></span>
@@ -299,7 +299,7 @@ license证书已经过期，拒绝进房。通过 [onRoomStateChanged](70081.md#
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_INFORMATION_NOT_MATCH = -1023;
 ```
-license证书内容不匹配。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license证书内容不匹配。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_license_not_match_with_cache"></span>
@@ -307,7 +307,7 @@ license证书内容不匹配。通过 [onRoomStateChanged](70081.md#IRTCRoomEven
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_NOT_MATCH_WITH_CACHE=-1024;
 ```
-license当前证书与缓存证书不匹配。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license当前证书与缓存证书不匹配。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_join_room_room_forbidden"></span>
@@ -315,7 +315,7 @@ license当前证书与缓存证书不匹配。通过 [onRoomStateChanged](70081.
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_ROOM_FORBIDDEN = -1025;
 ```
-房间被封禁。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+房间被封禁。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_join_room_user_forbidden"></span>
@@ -323,7 +323,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROO
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_USER_FORBIDDEN = -1026;
 ```
-用户被封禁。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+用户被封禁。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_join_room_license_function_not_found"></span>
@@ -331,7 +331,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROO
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_LICENSE_FUNCTION_NOT_FOUND = -1027;
 ```
-license 计费方法没有加载成功。可能是因为 license 相关插件未正确集成。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+license 计费方法没有加载成功。可能是因为 license 相关插件未正确集成。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_over_subscribe_limit"></span>
@@ -339,7 +339,7 @@ license 计费方法没有加载成功。可能是因为 license 相关插件未
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_OVER_SUBSCRIBE_LIMIT = -1070;
 ```
-订阅音视频流失败，订阅音视频流总数超过上限。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+订阅音视频流失败，订阅音视频流总数超过上限。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 游戏场景下为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流的总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。
 
 
@@ -348,7 +348,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_OVER_SUB
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_OVER_STREAM_PUBLISH_LIMIT = -1080;
 ```
-发布流失败，发布流总数超过上限。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+发布流失败，发布流总数超过上限。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。
 
 
@@ -375,7 +375,7 @@ RTC 系统会限制单个房间内发布的视频流数。如果房间内发布�
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_INVALID_AUDIO_SYNC_USERID_REPEATED = -1083;
 ```
-音视频同步失败。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+音视频同步失败。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 当前音频源已与其他视频源关联同步关系。  <br>
 单个音频源不支持与多个视频源同时同步。
 
@@ -385,7 +385,7 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_INVALID_
 ```java
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ABNORMAL_SERVER_STATUS = -1084;
 ```
-服务端异常状态导致退出房间。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+服务端异常状态导致退出房间。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 SDK与信令服务器断开，并不再自动重连，可联系技术支持。
 
 
@@ -841,7 +841,7 @@ SDK 获取房间信息失败（包含超时，返回非 200 的错误码），�
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_JOIN_ROOM_FAILED = -2001;
 ```
-进房失败。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+进房失败。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 初次进房或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。
 
 
@@ -850,7 +850,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_JOIN
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PUBLISH_STREAM_FAILED = -2002;
 ```
-发布音视频流失败。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+发布音视频流失败。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。
 
 
@@ -859,7 +859,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PUBL
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SUBSCRIBE_STREAM_FAILED404 = -2003;
 ```
-订阅音视频流失败。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+订阅音视频流失败。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。
 
 
@@ -868,7 +868,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SUBS
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SUBSCRIBE_STREAM_FAILED5XX = -2004;
 ```
-订阅音视频流失败。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+订阅音视频流失败。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 当你订阅所在房间中的音视频流时，由于服务器错误导致订阅失败。SDK 会自动重试订阅。
 
 
@@ -877,7 +877,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SUBS
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PUBLISH_STREAM_FORBIDEN = -2009;
 ```
-当调用 `setUserVisibility` 将自身可见性设置为 false 后，再尝试发布流会触发此警告。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+当调用 `setUserVisibility` 将自身可见性设置为 false 后，再尝试发布流会触发此警告。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 
 
 <span id="WarningCode-warning_code_subscribe_stream_forbiden"></span>
@@ -886,7 +886,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PUBL
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SUBSCRIBE_STREAM_FORBIDEN = -2010;
 ```
 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br>
-你需在进房前关闭自动订阅模式，再调用 [subscribeUserStream](70080.md#RTCRoom-subscribeuserstream) 方法手动订阅音视频流。
+你需在进房前关闭自动订阅模式，再调用 [subscribeUserStream](Android-api.md#RTCRoom-subscribeuserstream) 方法手动订阅音视频流。
 
 > Deprecated since 3.45 and will be deleted in 3.51.
 <span id="WarningCode-warning_code_send_custom_message"></span>
@@ -902,7 +902,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SEND
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECEIVE_USER_NOTIFY_STOP = -2013;
 ```
-当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="WarningCode-warning_code_user_in_publish"></span>
@@ -910,7 +910,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECE
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_USER_IN_PUBLISH = -2014;
 ```
-用户已经在其他房间发布过流，或者用户正在发布公共流。通过 [onStreamStateChanged](70081.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
+用户已经在其他房间发布过流，或者用户正在发布公共流。通过 [onStreamStateChanged](Android-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。
 
 
 <span id="WarningCode-warning_code_room_id_already_exist"></span>
@@ -926,7 +926,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_ROOM
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_OLD_ROOM_BEEN_REPLACED = -2016;
 ```
-已存在相同 roomId 的房间，新创建的房间实例已替换旧房间实例。通过 [onRoomStateChanged](70081.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
+已存在相同 roomId 的房间，新创建的房间实例已替换旧房间实例。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="WarningCode-warning_code_in_echo_test_mode"></span>
@@ -952,7 +952,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_M
 ```
 麦克风权限异常，当前应用没有获取麦克风权限。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_NOPERMISSION](70083.md#MediaDeviceError-media_device_error_nopermission) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_NOPERMISSION](Android-keytype.md#MediaDeviceError-media_device_error_nopermission) instead.
 <span id="WarningCode-warning_code_recoding_device_start_failed"></span>
 ### WARNING_CODE_RECODING_DEVICE_START_FAILED
 ```java
@@ -961,7 +961,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECO
 音频采集设备启动失败。  <br>
 启动音频采集设备失败，当前设备可能被其他应用占用。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICEFAILURE](70083.md#MediaDeviceError-media_device_error_devicefailure) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICEFAILURE](Android-keytype.md#MediaDeviceError-media_device_error_devicefailure) instead.
 <span id="WarningCode-warning_code_playout_device_start_failed"></span>
 ### WARNING_CODE_PLAYOUT_DEVICE_START_FAILED
 ```java
@@ -970,7 +970,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PLAY
 音频播放设备启动失败警告。   <br>
 可能由于系统资源不足，或参数错误。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICEFAILURE](70083.md#MediaDeviceError-media_device_error_devicefailure) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICEFAILURE](Android-keytype.md#MediaDeviceError-media_device_error_devicefailure) instead.
 <span id="WarningCode-warning_code_no_recording_device"></span>
 ### WARNING_CODE_NO_RECORDING_DEVICE
 ```java
@@ -979,7 +979,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_R
 无可用音频采集设备。  <br>
 启动音频采集设备失败，请插入可用的音频采集设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICENOTFOUND](70083.md#MediaDeviceError-media_device_error_devicenotfound) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICENOTFOUND](Android-keytype.md#MediaDeviceError-media_device_error_devicenotfound) instead.
 <span id="WarningCode-warning_code_no_playout_device"></span>
 ### WARNING_CODE_NO_PLAYOUT_DEVICE
 ```java
@@ -988,7 +988,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_P
 无可用音频播放设备。  <br>
 启动音频播放设备失败，请插入可用的音频播放设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICENOTFOUND](70083.md#MediaDeviceError-media_device_error_devicenotfound) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICENOTFOUND](Android-keytype.md#MediaDeviceError-media_device_error_devicenotfound) instead.
 <span id="WarningCode-warning_code_recording_silence"></span>
 ### WARNING_CODE_RECORDING_SILENCE
 ```java
@@ -996,7 +996,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECO
 ```
 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning.MEDIA_DEVICE_WARNING_CAPTURE_SILENCE](70083.md#MediaDeviceWarning-media_device_warning_capture_silence) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning.MEDIA_DEVICE_WARNING_CAPTURE_SILENCE](Android-keytype.md#MediaDeviceWarning-media_device_warning_capture_silence) instead.
 <span id="WarningCode-warning_code_media_device_operation_denied"></span>
 ### WARNING_CODE_MEDIA_DEVICE_OPERATION_DENIED
 ```java
@@ -1005,13 +1005,13 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_MEDI
 媒体设备误操作警告。  <br>
 使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning.MEDIA_DEVICE_WARNING_OPERATION_DENIED](70083.md#MediaDeviceWarning-media_device_warning_operation_denied) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning.MEDIA_DEVICE_WARNING_OPERATION_DENIED](Android-keytype.md#MediaDeviceWarning-media_device_warning_operation_denied) instead.
 <span id="WarningCode-warning_code_set_screen_audio_source_type_failed"></span>
 ### WARNING_CODE_SET_SCREEN_AUDIO_SOURCE_TYPE_FAILED
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_SCREEN_AUDIO_SOURCE_TYPE_FAILED = -5009;
 ```
-不支持在 [publishScreen](70080.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioSourceType](70080.md#RTCVideo-setscreenaudiosourcetype) 设置屏幕音频采集类型
+不支持在 [publishScreen](Android-api.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioSourceType](Android-api.md#RTCVideo-setscreenaudiosourcetype) 设置屏幕音频采集类型
 
 
 <span id="WarningCode-warning_code_set_screen_stream_index_failed"></span>
@@ -1019,7 +1019,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_SCREEN_STREAM_INDEX_FAILED = -5010;
 ```
-不支持在 [publishScreen](70080.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioStreamIndex](70080.md#RTCVideo-setscreenaudiostreamindex) 设置屏幕音频共享发布类型
+不支持在 [publishScreen](Android-api.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioStreamIndex](Android-api.md#RTCVideo-setscreenaudiostreamindex) 设置屏幕音频共享发布类型
 
 
 <span id="WarningCode-warning_code_set_screen_stream_invalid_voice_pitch"></span>

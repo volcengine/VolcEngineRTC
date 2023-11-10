@@ -596,7 +596,7 @@ enum bytertc::AudioMixingError
 | kAudioMixingErrorIdNotFound | 3 | 混音 ID 异常 |
 | kAudioMixingErrorSetPositionFailed | 4 | 设置混音文件的播放位置出错 |
 | kAudioMixingErrorInValidVolume | 5 | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-| kAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing](70095.md#IAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
+| kAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing](Windows-api.md#IAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
 | kAudioMixingErrorIdTypeNotMatch | 7 | 不支持此混音类型。 |
 | kAudioMixingErrorInValidPitch | 8 | 设置混音文件的音调不合法 |
 | kAudioMixingErrorInValidAudioTrack | 9 | 设置混音文件的音轨不合法 |
@@ -924,7 +924,7 @@ enum bytertc::AudioReportMode
 enum bytertc::AudioPropertiesMode
 ```
 
-[onLocalAudioPropertiesReport](70096.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 中包含的音频信息的范围。
+[onLocalAudioPropertiesReport](Windows-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 中包含的音频信息的范围。
 
 
 `Defined in : bytertc_audio_defines.h`
@@ -1010,7 +1010,7 @@ float bytertc::AudioPropertiesConfig::smooth = 1.0f;
 ```cpp
 AudioPropertiesMode bytertc::AudioPropertiesConfig::audio_report_mode = kAudioPropertiesModeMicrophone;
 ```
-[onLocalAudioPropertiesReport](70096.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [AudioPropertiesMode](#audiopropertiesmode)。
+[onLocalAudioPropertiesReport](Windows-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [AudioPropertiesMode](#audiopropertiesmode)。
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
 
 
@@ -1182,7 +1182,7 @@ enum bytertc::AudioProfileType
 enum bytertc::AnsMode
 ```
 
-降噪模式。降噪算法受调用 [joinRoom](70095.md#IRTCRoom-joinroom) 时设置的房间模式影响。
+降噪模式。降噪算法受调用 [joinRoom](Windows-api.md#IRTCRoom-joinroom) 时设置的房间模式影响。
 
 
 `Defined in : bytertc_audio_defines.h`
@@ -2453,8 +2453,8 @@ enum bytertc::SubscribeFallbackOption
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kSubscribeFallbackOptionDisable | 0 | 下行网络不佳或设备性能不足时，不对音视频流作回退处理。默认设置。 |
-| kSubscribeFallbackOptionVideoStreamLow | 1 | 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看[音视频流回退](70137)。 <br><br/>该设置仅对发布端调用 [enableSimulcastMode](70095.md#IRTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
-| kSubscribeFallbackOptionAudioOnly | 2 | 下行网络不佳或设备性能不足时，先对视频流做回退处理。当网络状况不满足接收弱流时，则自动取消接收视频，仅接收音频。<br><br/>该设置仅对发布端调用 [enableSimulcastMode](70095.md#IRTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+| kSubscribeFallbackOptionVideoStreamLow | 1 | 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看[音视频流回退](70137)。 <br><br/>该设置仅对发布端调用 [enableSimulcastMode](Windows-api.md#IRTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+| kSubscribeFallbackOptionAudioOnly | 2 | 下行网络不佳或设备性能不足时，先对视频流做回退处理。当网络状况不满足接收弱流时，则自动取消接收视频，仅接收音频。<br><br/>该设置仅对发布端调用 [enableSimulcastMode](Windows-api.md#IRTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
 
 
 # FallbackOrRecoverReason
@@ -2538,8 +2538,8 @@ enum bytertc::LocalAudioStreamState
 | kLocalAudioStreamStateRecording | 1 | 本地音频录制设备启动成功。<br/>采集到音频首帧时回调该状态，对应错误码 kLocalAudioStreamErrorOk |
 | kLocalAudioStreamStateEncoding | 2 | 本地音频首帧编码成功。<br/>音频首帧编码成功时回调该状态，对应错误码 kLocalAudioStreamErrorOk |
 | kLocalAudioStreamStateFailed | 3 | 本地音频启动失败，在以下时机回调该状态：  <br><br/>+ 本地录音设备启动失败，对应错误码 kLocalAudioStreamErrorRecordFailure <br><br/>+ 检测到没有录音设备权限，对应错误码 kLocalAudioStreamErrorDeviceNoPermission <br><br/>+ 音频编码失败，对应错误码 kLocalAudioStreamErrorEncodeFailure |
-| kLocalAudioStreamMute | 4 | 本地音频静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](70095.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
-| kLocalAudioStreamUnmute | 5 | 本地音频解除静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](70095.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
+| kLocalAudioStreamMute | 4 | 本地音频静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](Windows-api.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
+| kLocalAudioStreamUnmute | 5 | 本地音频解除静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](Windows-api.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
 
 
 # LocalAudioStreamError
@@ -2687,8 +2687,8 @@ enum bytertc::SEIStreamEventType
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| kSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage](70095.md#IRTCVideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| kSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage](70095.md#IRTCVideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType](70095.md#IRTCVideo-setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布。 |
+| kSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage](Windows-api.md#IRTCVideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| kSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage](Windows-api.md#IRTCVideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType](Windows-api.md#IRTCVideo-setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 # SourceWantedData
@@ -3672,7 +3672,7 @@ NetworkQuality bytertc::LocalStreamStats::local_tx_quality;
 ```
 所属用户的媒体流上行网络质量，详见 [NetworkQuality](#networkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](70096.md#IRTCRoomEventHandler-onnetworkquality) instead.
+> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](Windows-callback.md#IRTCRoomEventHandler-onnetworkquality) instead.
 <span id="LocalStreamStats-local_rx_quality"></span>
 ### local_rx_quality
 ```cpp
@@ -3680,7 +3680,7 @@ NetworkQuality bytertc::LocalStreamStats::local_rx_quality;
 ```
 所属用户的媒体流下行网络质量，详见 [NetworkQuality](#networkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](70096.md#IRTCRoomEventHandler-onnetworkquality) instead.
+> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](Windows-callback.md#IRTCRoomEventHandler-onnetworkquality) instead.
 <span id="LocalStreamStats-is_screen"></span>
 ### is_screen
 ```cpp
@@ -3746,7 +3746,7 @@ NetworkQuality bytertc::RemoteStreamStats::remote_tx_quality;
 ```
 所属用户的媒体流上行网络质量，详见 [NetworkQuality](#networkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](70096.md#IRTCRoomEventHandler-onnetworkquality) instead.
+> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](Windows-callback.md#IRTCRoomEventHandler-onnetworkquality) instead.
 <span id="RemoteStreamStats-remote_rx_quality"></span>
 ### remote_rx_quality
 ```cpp
@@ -3754,7 +3754,7 @@ NetworkQuality bytertc::RemoteStreamStats::remote_rx_quality;
 ```
 所属用户的媒体流下行网络质量，详见 [NetworkQuality](#networkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](70096.md#IRTCRoomEventHandler-onnetworkquality) instead.
+> Deprecated since 3.36 and will be deleted in 3.51, use [onNetworkQuality](Windows-callback.md#IRTCRoomEventHandler-onnetworkquality) instead.
 <span id="RemoteStreamStats-is_screen"></span>
 ### is_screen
 ```cpp
@@ -4751,7 +4751,7 @@ bool bytertc::EchoTestConfig::enableAudio;
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioPropertiesReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame](70095.md#IRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame](Windows-api.md#IRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
 + flase：否  <br>
 
 
@@ -4764,7 +4764,7 @@ bool bytertc::EchoTestConfig::enableVideo;
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalVideoFrame](70095.md#IRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalVideoFrame](Windows-api.md#IRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
 + flase：否  <br>
 
 **注意:**
@@ -7486,7 +7486,7 @@ const char* bytertc::MixedStreamLayoutRegionConfig::region_id = nullptr;
 const char* bytertc::MixedStreamLayoutRegionConfig::room_id = nullptr;
 ```
 图片或视频流所在房间的房间 ID。必填。<br>
-如果此图片或视频流是通过 [startForwardStreamToRooms](70095.md#IRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms](Windows-api.md#IRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 
 <span id="MixedStreamLayoutRegionConfig-location_x"></span>
@@ -7908,7 +7908,7 @@ const char* bytertc::TranscoderLayoutRegion::region_id = nullptr;
 const char* bytertc::TranscoderLayoutRegion::room_id = nullptr;
 ```
 图片或视频流所在房间的房间 ID。必填。<br>
-如果此图片或视频流是通过 [startForwardStreamToRooms](70095.md#IRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms](Windows-api.md#IRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 
 <span id="TranscoderLayoutRegion-x"></span>
@@ -9557,7 +9557,7 @@ bool bytertc::MediaStreamInfo::has_audio;
 VideoSolutionDescription* bytertc::MediaStreamInfo::profiles;
 ```
 视频流的属性。  <br>
-当远端用户调用 [setVideoEncoderConfig](70095.md#IRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
+当远端用户调用 [setVideoEncoderConfig](Windows-api.md#IRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
 参看 [VideoSolutionDescription](#videosolutiondescription)。
 
 
@@ -9567,7 +9567,7 @@ VideoSolutionDescription* bytertc::MediaStreamInfo::profiles;
 int bytertc::MediaStreamInfo::profile_count;
 ```
 不同配置流的个数。  <br>
-当远端用户调用 [setVideoEncoderConfig](70095.md#IRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
+当远端用户调用 [setVideoEncoderConfig](Windows-api.md#IRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的视频流的数目。
 
 
 <span id="MediaStreamInfo-max_profile"></span>
@@ -9606,7 +9606,7 @@ struct bytertc::SubscribeVideoConfig
 int bytertc::SubscribeVideoConfig::video_index = 0;
 ```
 订阅的视频流分辨率下标。  <br>
-当远端用户通过调用 [setVideoEncoderConfig](70095.md#IRTCVideo-setvideoencoderconfig) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+当远端用户通过调用 [setVideoEncoderConfig](Windows-api.md#IRTCVideo-setvideoencoderconfig) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
 默认值为 0，即订阅第一路流。  <br>
 如果不想更改之前的设置，可以输入 -1。  <br>
 
@@ -9676,7 +9676,7 @@ bool bytertc::SubscribeConfig::sub_audio;
 int bytertc::SubscribeConfig::video_index;
 ```
 订阅的视频流分辨率下标。  <br>
-用户可以通过调用 [setVideoEncoderConfig](70095.md#IRTCVideo-setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+用户可以通过调用 [setVideoEncoderConfig](Windows-api.md#IRTCVideo-setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
 
 
 <span id="SubscribeConfig-priority"></span>
@@ -9685,7 +9685,7 @@ int bytertc::SubscribeConfig::video_index;
 int bytertc::SubscribeConfig::priority = 0;
 ```
 远端用户的需求优先级，参看 [RemoteUserPriority](#remoteuserpriority)，默认值为 0 。  <br>
-当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](70095.md#IRTCVideo-setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
+当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](Windows-api.md#IRTCVideo-setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。  <br>
 
 
 <span id="SubscribeConfig-svc_layer"></span>
@@ -9749,7 +9749,7 @@ struct bytertc::VideoCanvas
 ```
 
 视频帧渲染设置。<br>
-调用 [setLocalVideoCanvas](70095.md#IRTCVideo-setlocalvideocanvas) 将视频流绑定到本地视图。
+调用 [setLocalVideoCanvas](Windows-api.md#IRTCVideo-setlocalvideocanvas) 将视频流绑定到本地视图。
 
 
 `Defined in : bytertc_video_defines.h`
@@ -10489,8 +10489,8 @@ enum bytertc::VideoDecoderConfig
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kVideoDecoderConfigRaw | 0 | 开启 SDK 内部解码，只回调解码后的数据。回调为[onFrame](#IVideoSink-onframe)。 |
-| kVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为[onRemoteEncodedVideoFrame](70096.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe)。 |
-| kVideoDecoderConfigBoth | 2 | 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为[onFrame](#IVideoSink-onframe) 和 [onRemoteEncodedVideoFrame](70096.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe)。 |
+| kVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为[onRemoteEncodedVideoFrame](Windows-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe)。 |
+| kVideoDecoderConfigBoth | 2 | 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为[onFrame](#IVideoSink-onframe) 和 [onRemoteEncodedVideoFrame](Windows-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe)。 |
 
 
 # VideoCaptureConfig
@@ -10563,7 +10563,7 @@ enum bytertc::VideoCaptureConfig::CapturePreference
 | --- | --- | --- |
 | KAuto | 0 | （默认）自动设置采集参数。<br/>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
 | KManual | 1 | 手动设置采集参数，包括采集分辨率、帧率。 |
-| KAutoPerformance | 2 | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](70095.md#IRTCVideo-setvideoencoderconfig) 中设置的参数。 |
+| KAutoPerformance | 2 | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](Windows-api.md#IRTCVideo-setvideoencoderconfig) 中设置的参数。 |
 
 
 # RecordingType
@@ -10768,7 +10768,7 @@ bool bytertc::RTCRoomConfig::is_auto_publish = true;
 ```
 是否自动发布音视频流，默认为自动发布。 <br>
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>
-若调用 [setUserVisibility](70095.md#IRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility](Windows-api.md#IRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 
 <span id="RTCRoomConfig-is_auto_subscribe_audio"></span>
@@ -10983,7 +10983,7 @@ view_t bytertc::ScreenCaptureSourceInfo::source_id = nullptr;
 const char* bytertc::ScreenCaptureSourceInfo::source_name = nullptr;
 ```
 屏幕共享对象的名称<br>
-调用 [release](70095.md#IScreenCaptureSourceList-release) 时将被释放，请及时转为 string 对象保存
+调用 [release](Windows-api.md#IScreenCaptureSourceList-release) 时将被释放，请及时转为 string 对象保存
 
 
 <span id="ScreenCaptureSourceInfo-application"></span>
@@ -10993,7 +10993,7 @@ const char* bytertc::ScreenCaptureSourceInfo::application = nullptr;
 ```
 共享的应用窗体所属应用的名称<br>
 当共享对象为应用窗体时有效 <br>
-调用 [release](70095.md#IScreenCaptureSourceList-release) 时将被释放，请及时转为 string 对象保存<br>
+调用 [release](Windows-api.md#IScreenCaptureSourceList-release) 时将被释放，请及时转为 string 对象保存<br>
 
 
 <span id="ScreenCaptureSourceInfo-pid"></span>
@@ -12210,7 +12210,7 @@ virtual void bytertc::IVideoFrame::release()
 
 
 **注意**
-调用 [pushExternalVideoFrame](70095.md#IRTCVideo-pushexternalvideoframe) 推送视频帧后，你不需要再调用此方法释放资源。
+调用 [pushExternalVideoFrame](Windows-api.md#IRTCVideo-pushexternalvideoframe) 推送视频帧后，你不需要再调用此方法释放资源。
 
 <span id="IVideoFrame-toi420"></span>
 ### toI420
