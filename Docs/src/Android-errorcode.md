@@ -852,7 +852,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PUBL
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SUBSCRIBE_STREAM_FORBIDEN = -2010;
 ```
 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br>
-你需在进房前关闭自动订阅模式，再调用 [subscribeUserStream](70080.md#RTCRoom-subscribeuserstream) 方法手动订阅音视频流。
+你需在进房前关闭自动订阅模式，再调用 [subscribeUserStream](Android-api.md#RTCRoom-subscribeuserstream) 方法手动订阅音视频流。
 
 > Deprecated since 3.45 and will be deleted in 3.51.
 <span id="WarningCode-warning_code_send_custom_message"></span>
@@ -918,7 +918,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_M
 ```
 麦克风权限异常，当前应用没有获取麦克风权限。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_recoding_device_start_failed"></span>
 ### WARNING_CODE_RECODING_DEVICE_START_FAILED
 ```java
@@ -927,7 +927,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECO
 音频采集设备启动失败。  <br>
 启动音频采集设备失败，当前设备可能被其他应用占用。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_playout_device_start_failed"></span>
 ### WARNING_CODE_PLAYOUT_DEVICE_START_FAILED
 ```java
@@ -936,7 +936,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PLAY
 音频播放设备启动失败警告。   <br>
 可能由于系统资源不足，或参数错误。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_no_recording_device"></span>
 ### WARNING_CODE_NO_RECORDING_DEVICE
 ```java
@@ -945,7 +945,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_R
 无可用音频采集设备。  <br>
 启动音频采集设备失败，请插入可用的音频采集设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_no_playout_device"></span>
 ### WARNING_CODE_NO_PLAYOUT_DEVICE
 ```java
@@ -954,7 +954,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_P
 无可用音频播放设备。  <br>
 启动音频播放设备失败，请插入可用的音频播放设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_recording_silence"></span>
 ### WARNING_CODE_RECORDING_SILENCE
 ```java
@@ -962,7 +962,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECO
 ```
 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_media_device_operation_denied"></span>
 ### WARNING_CODE_MEDIA_DEVICE_OPERATION_DENIED
 ```java
@@ -971,13 +971,13 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_MEDI
 媒体设备误操作警告。  <br>
 使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](70083.md#mediadevicewarning) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) instead.
 <span id="WarningCode-warning_code_set_screen_audio_source_type_failed"></span>
 ### WARNING_CODE_SET_SCREEN_AUDIO_SOURCE_TYPE_FAILED
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_SCREEN_AUDIO_SOURCE_TYPE_FAILED = -5009;
 ```
-不支持在 [publishScreen](70080.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioSourceType](70080.md#RTCVideo-setscreenaudiosourcetype) 设置屏幕音频采集类型
+不支持在 [publishScreen](Android-api.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioSourceType](Android-api.md#RTCVideo-setscreenaudiosourcetype) 设置屏幕音频采集类型
 
 
 <span id="WarningCode-warning_code_set_screen_stream_index_failed"></span>
@@ -985,7 +985,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_SCREEN_STREAM_INDEX_FAILED = -5010;
 ```
-不支持在 [publishScreen](70080.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioStreamIndex](70080.md#RTCVideo-setscreenaudiostreamindex) 设置屏幕音频共享发布类型
+不支持在 [publishScreen](Android-api.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioStreamIndex](Android-api.md#RTCVideo-setscreenaudiostreamindex) 设置屏幕音频共享发布类型
 
 
 <span id="WarningCode-warning_code_set_screen_stream_invalid_voice_pitch"></span>

@@ -472,7 +472,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError)
 | ByteRTCAudioMixingErrorIdNotFound | 3 | 混音 ID 异常 |
 | ByteRTCAudioMixingErrorSetPositionFailed | 4 | 设置混音文件的播放位置出错 |
 | ByteRTCAudioMixingErrorInValidVolume | 5 | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-| ByteRTCAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing:](70086.md#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
+| ByteRTCAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing:](iOS-api.md#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
 | ByteRTCAudioMixingErrorIdTypeNotMatch | 7 | 不支持此混音类型。 |
 | ByteRTCAudioMixingErrorInValidPitch | 8 | 设置混音文件的音调不合法 |
 | ByteRTCAudioMixingErrorInValidAudioTrack | 9 | 设置混音文件的音轨不合法 |
@@ -587,7 +587,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioReportMode)
 typedef NS_ENUM(NSInteger, ByteRTCAudioPropertiesMode)
 ```
 
-[rtcEngine:onLocalAudioPropertiesReport:](70087.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含的音频信息的范围。
+[rtcEngine:onLocalAudioPropertiesReport:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含的音频信息的范围。
 
 
 ### 枚举值
@@ -945,7 +945,7 @@ PCM 数据
 ```objectivec
 @property(assign, nonatomic) ByteRTCAudioPropertiesMode audio_report_mode;
 ```
-[rtcEngine:onLocalAudioPropertiesReport:](70087.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [ByteRTCAudioPropertiesMode](#bytertcaudiopropertiesmode)。
+[rtcEngine:onLocalAudioPropertiesReport:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [ByteRTCAudioPropertiesMode](#bytertcaudiopropertiesmode)。
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
 
 
@@ -2232,8 +2232,8 @@ typedef NS_ENUM(NSInteger, ByteSEIStreamEventType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](70086.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| ByteSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](70086.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType:WithStreamIndex:](70086.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。 |
+| ByteSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](iOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| ByteSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](iOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType:WithStreamIndex:](iOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 # ByteRTCStreamIndex
@@ -2512,7 +2512,7 @@ typedef NS_ENUM(NSInteger, ByteRTCBluetoothMode)
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame:](70086.md#ByteRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame:](iOS-api.md#ByteRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
 + flase：否  <br>
 
 
@@ -2525,7 +2525,7 @@ typedef NS_ENUM(NSInteger, ByteRTCBluetoothMode)
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalVideoFrame:](70086.md#ByteRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalVideoFrame:](iOS-api.md#ByteRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
 + flase：否  <br>
 
 **注意:**
@@ -3418,7 +3418,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 ```
 所属用户的媒体流上行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](70087.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 <span id="ByteRTCLocalStreamStats-rx_quality"></span>
 ### rx_quality
 ```objectivec
@@ -3426,7 +3426,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 ```
 所属用户的媒体流下行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](70087.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 <span id="ByteRTCLocalStreamStats-is_screen"></span>
 ### is_screen
 ```objectivec
@@ -3490,7 +3490,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 ```
 所属用户的媒体流上行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](70087.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 <span id="ByteRTCRemoteStreamStats-rx_quality"></span>
 ### rx_quality
 ```objectivec
@@ -3498,7 +3498,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 ```
 所属用户的媒体流下行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](70087.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 <span id="ByteRTCRemoteStreamStats-is_screen"></span>
 ### is_screen
 ```objectivec
@@ -4790,7 +4790,7 @@ Extension 启动后，系统将自动调用该方法开启屏幕采集。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| delegate | **NSObject<ByteRtcScreenCapturerExtDelegate>*** | 回调代理，参看 [ByteRtcScreenCapturerExtDelegate](70087.md#bytertcscreencapturerextdelegate) |
+| delegate | **NSObject<ByteRtcScreenCapturerExtDelegate>*** | 回调代理，参看 [ByteRtcScreenCapturerExtDelegate](iOS-callback.md#bytertcscreencapturerextdelegate) |
 | groupId | **NSString*** | App groups 中配置的 group ID |
 
 
@@ -5314,7 +5314,7 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoDecoderConfig)
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoDecoderConfigRaw | 0 | 开启 SDK 内部解码，只回调解码后的数据。回调为[renderPixelBuffer:rotation:contentType:extendedData:](#ByteRTCVideoSinkDelegate-renderpixelbuffer-rotation-contenttype-extendeddata) |
-| ByteRTCVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为[onRemoteEncodedVideoFrame:withEncodedVideoFrame:](70087.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe)。 |
+| ByteRTCVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为[onRemoteEncodedVideoFrame:withEncodedVideoFrame:](iOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe)。 |
 | ByteRTCVideoDecoderConfigBoth | 2 | 开启 SDK 内部解码，同时回调解码前和解码后的数据 |
 
 
@@ -6114,7 +6114,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 @property(nonatomic, copy, readonly) NSArray<ByteRTCVideoSolution *> * videoStreamDescriptions;
 ```
 视频流的分辨率信息。  <br>
-当远端用户调用 [setVideoEncoderConfig:](70086.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
+当远端用户调用 [setVideoEncoderConfig:](iOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。  <br>
 参看 [ByteRTCVideoSolution](#bytertcvideosolution)。  <br>
 
 
@@ -6186,7 +6186,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 @property(nonatomic, copy, nullable) NSArray<ByteRTCVideoSolution *> *videoStreamDescriptions;
 ```
 视频流的分辨率信息，详见 [ByteRTCVideoSolution](#bytertcvideosolution) 类。
-用户可以通过调用 [setVideoEncoderConfig:](70086.md#ByteRTCVideo-setvideoencoderconfig) 方法在一路流中发布多个不同的视频分辨率。此参数即为流中所有分辨率的相关信息。
+用户可以通过调用 [setVideoEncoderConfig:](iOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法在一路流中发布多个不同的视频分辨率。此参数即为流中所有分辨率的相关信息。
 
 
 <span id="ByteRTCStreamEx-maxvideostreamdescription"></span>
@@ -6255,7 +6255,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 @property(nonatomic, assign) NSInteger videoIndex;
 ```
 订阅的视频流分辨率下标。  <br>
-用户可以通过调用 [setVideoEncoderConfig:](70086.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+用户可以通过调用 [setVideoEncoderConfig:](iOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
 
 
 <span id="ByteRTCSubscribeConfig-svclayer"></span>
@@ -6638,7 +6638,7 @@ CVPixelBufferRef 类型的数据，当 format 为 kPixelFormatCVPixelBuffer 时�
 @property(copy, nonatomic) NSString * _Nonnull roomId;
 ```
 图片或视频流所在房间的房间 ID。必填。
-如果此图片或视频流是通过 [startForwardStreamToRooms:](70086.md#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms:](iOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 
 <span id="ByteRTCVideoCompositingRegion-x"></span>
@@ -7269,7 +7269,7 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 @property(assign, nonatomic) NSInteger videoIndex;
 ```
 订阅的视频流分辨率下标。  <br>
-当远端用户通过调用 [enableSimulcastMode:](70086.md#ByteRTCVideo-enablesimulcastmode) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+当远端用户通过调用 [enableSimulcastMode:](iOS-api.md#ByteRTCVideo-enablesimulcastmode) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
 默认值为 0，即订阅第一路流。  <br>
 如果不想更改之前的设置，可以输入 -1。  <br>
 
@@ -8009,7 +8009,7 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 ```
 是否自动发布音视频流，默认为自动发布。 <br>
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>
-若调用 [setUserVisibility:](70086.md#ByteRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility:](iOS-api.md#ByteRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 
 <span id="ByteRTCRoomConfig-isautosubscribeaudio"></span>

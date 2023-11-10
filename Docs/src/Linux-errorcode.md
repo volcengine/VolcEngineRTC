@@ -91,10 +91,10 @@ enum bytertc::WarningCode
 | **kWarningCodeInvalidAudioFormat** | 设置音频格式不合法 |
 | **kWarningCodeInvalidCallForExtAudio** | 外部音频源新旧接口混用 |
 | **kWarningCodeInvalidRemoteStreamKey** | 非法的远端流索引 |
-| **kWarningCodeInvalidCanvasHandle** | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](85516.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
+| **kWarningCodeInvalidCanvasHandle** | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](Linux-api.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
 | **kWarningLicenseFileExpired** | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。  <br> |
 | **[deprecated] kWarningCodeGetRoomFailed** |  |
-| **[deprecated] kWarningCodeSubscribeStreamForbiden** | 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br><br/>你需在进房前关闭自动订阅模式，再调用 [subscribeStream](85516.md#IRTCRoom-subscribestream) 方法手动订阅音视频流。 |
+| **[deprecated] kWarningCodeSubscribeStreamForbiden** | 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br><br/>你需在进房前关闭自动订阅模式，再调用 [subscribeStream](Linux-api.md#IRTCRoom-subscribestream) 方法手动订阅音视频流。 |
 | **[deprecated] kWarningCodeNoMicrophonePermission** | 麦克风权限异常，当前应用没有获取麦克风权限。 |
 | **[deprecated] kWarningCodeRecodingDeviceStartFailed** | 音频采集设备启动失败，当前设备可能被其他应用占用。 |
 | **[deprecated] kWarningCodePlayoutDeviceStartFailed** | 音频播放设备启动失败警告，可能由于系统资源不足，或参数错误。 |

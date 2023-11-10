@@ -97,7 +97,7 @@ enum bytertc::WarningCode
 | kWarningCodeInvalidAudioFormat | -5012 | 设置音频格式不合法 |
 | kWarningCodeInvalidCallForExtAudio | -5013 | 外部音频源新旧接口混用 |
 | kWarningCodeInvalidRemoteStreamKey | -5014 | 非法的远端流索引 |
-| kWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](70095.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
+| kWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](Windows-api.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
 | kWarningLicenseFileExpired | -7001 | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。  <br> |
 
 

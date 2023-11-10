@@ -89,9 +89,9 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode)
 | ByteRTCWarningSetScreenAudioStreamIndexFailed | -5010 | 不支持在 `publishScreen` 之后，通过 `setScreenAudioStreamIndex` 设置屏幕音频混流类型 |
 | ByteRTCWarningInvalidVoicePitch | -5011 | 设置语音音高不合法 |
 | ByteRTCWarningInvalidCallForExtAudio | -5013 | 外部音频源新旧接口混用 |
-| ByteRTCWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas:withCanvas:](70092.md#ByteRTCVideo-setlocalvideocanvas-withcanvas) 或 [setRemoteVideoCanvas:withCanvas:](70092.md#ByteRTCVideo-setremotevideocanvas-withcanvas) 时指定了无效的画布句柄，触发此回调。 |
+| ByteRTCWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas:withCanvas:](macOS-api.md#ByteRTCVideo-setlocalvideocanvas-withcanvas) 或 [setRemoteVideoCanvas:withCanvas:](macOS-api.md#ByteRTCVideo-setremotevideocanvas-withcanvas) 时指定了无效的画布句柄，触发此回调。 |
 | [deprecated] ByteRTCWarningCodeGetRoomFailed | -2000 |  |
-| [deprecated] ByteRTCWarningCodeSubscribeStreamForbiden | -2010 | 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br><br/>你需在进房前关闭自动订阅模式，再调用 [subscribeStream:mediaStreamType:](70092.md#ByteRTCRoom-subscribestream-mediastreamtype) 方法手动订阅音视频流。 |
+| [deprecated] ByteRTCWarningCodeSubscribeStreamForbiden | -2010 | 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br><br/>你需在进房前关闭自动订阅模式，再调用 [subscribeStream:mediaStreamType:](macOS-api.md#ByteRTCRoom-subscribestream-mediastreamtype) 方法手动订阅音视频流。 |
 | [deprecated] ByteRTCWarningCodeRoomAlreadyExist | -2015 | 同样roomid的房间已经存在了 |
 | [deprecated] ByteRTCWarningCodeNoMicrophonePermission | -5002 | 麦克风权限异常，当前应用没有获取麦克风权限 |
 | [deprecated] ByteRTCWarningCodeAudioDeviceManagerRecordingStartFail | -5003 | 音频采集设备启动失败。  <br><br/>启动音频采集设备失败，当前设备可能被其他应用占用。 |

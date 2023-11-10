@@ -22,19 +22,19 @@
 | [onTrackEnded](#engineevents-ontrackended) | 断流事件 |
 | [onRoomMessageReceived](#engineevents-onroommessagereceived) | 接收到房间内广播消息的事件。 |
 | [onRoomBinaryMessageReceived](#engineevents-onroombinarymessagereceived) | 接收到房间内二进制广播消息的事件。 |
-| [onUserMessageReceived](#engineevents-onusermessagereceived) | 收到来自房间中其他用户通过 [sendUserMessage](104478.md#sendusermessage) 发来的点对点文本消息时，会收到此事件 |
+| [onUserMessageReceived](#engineevents-onusermessagereceived) | 收到来自房间中其他用户通过 [sendUserMessage](Web-api.md#sendusermessage) 发来的点对点文本消息时，会收到此事件 |
 | [onUserBinaryMessageReceived](#engineevents-onuserbinarymessagereceived) | 收到来自房间中其他用户通过 sendUserBinaryMessage 发来的点对点二进制消息时，会收到此事件 |
 | [onRemoteStreamStats](#engineevents-onremotestreamstats) | 用户订阅的远端音/视频流统计信息以及网络状况，统计周期为 2s |
 | [onLocalStreamStats](#engineevents-onlocalstreamstats) | 本地音/视频流统计信息以及网络状况，统计周期为 2s |
-| [onPublicStreamStats](#engineevents-onpublicstreamstats) | 调用 [startPlayPublicStream](104478.md#startplaypublicstream) 订阅公共流，后将触发此回调，周期为 2s，包含各项统计信息。 |
-| [onLocalAudioPropertiesReport](#engineevents-onlocalaudiopropertiesreport) | 调用 [enableAudioPropertiesReport](104478.md#enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。<br>本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。 |
-| [onRemoteAudioPropertiesReport](#engineevents-onremoteaudiopropertiesreport) | 远端用户进房后，本地调用 [enableAudioPropertiesReport](104478.md#enableaudiopropertiesreport)，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。<br>远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。 |
-| [onActiveSpeaker](#engineevents-onactivespeaker) | 成功调用 [enableAudioPropertiesReport](104478.md#enableaudiopropertiesreport) 后，当房间内用户数量大于或等于 2 且有活跃用户时，你会周期性收到此回调，获取房间内音量最大用户的信息。 |
-| [onAudioPlaybackDeviceChanged](#engineevents-onaudioplaybackdevicechanged) | 当调用 [setAudioPlaybackDevice](104478.md#setaudioplaybackdevice) 设置音频播放设备时，会收到此事件。 |
-| [onUserStartAudioCapture](#engineevents-onuserstartaudiocapture) | 房间内的可见用户调用 [startAudioCapture](104478.md#startaudiocapture) 开启音频采集时，房间内其他用户会收到此事件。 |
-| [onUserStopAudioCapture](#engineevents-onuserstopaudiocapture) | 房间内的可见用户调用 [stopAudioCapture](104478.md#stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此事件。 |
-| [onUserStartVideoCapture](#engineevents-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](104478.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。 |
-| [onUserStopVideoCapture](#engineevents-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](104478.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。 |
+| [onPublicStreamStats](#engineevents-onpublicstreamstats) | 调用 [startPlayPublicStream](Web-api.md#startplaypublicstream) 订阅公共流，后将触发此回调，周期为 2s，包含各项统计信息。 |
+| [onLocalAudioPropertiesReport](#engineevents-onlocalaudiopropertiesreport) | 调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。<br>本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。 |
+| [onRemoteAudioPropertiesReport](#engineevents-onremoteaudiopropertiesreport) | 远端用户进房后，本地调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport)，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。<br>远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。 |
+| [onActiveSpeaker](#engineevents-onactivespeaker) | 成功调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，当房间内用户数量大于或等于 2 且有活跃用户时，你会周期性收到此回调，获取房间内音量最大用户的信息。 |
+| [onAudioPlaybackDeviceChanged](#engineevents-onaudioplaybackdevicechanged) | 当调用 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice) 设置音频播放设备时，会收到此事件。 |
+| [onUserStartAudioCapture](#engineevents-onuserstartaudiocapture) | 房间内的可见用户调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启音频采集时，房间内其他用户会收到此事件。 |
+| [onUserStopAudioCapture](#engineevents-onuserstopaudiocapture) | 房间内的可见用户调用 [stopAudioCapture](Web-api.md#stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此事件。 |
+| [onUserStartVideoCapture](#engineevents-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。 |
+| [onUserStopVideoCapture](#engineevents-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Web-api.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。 |
 | [onSEIMessageReceived](#engineevents-onseimessagereceived) | 接收到包含 SEI 数据的视频帧事件 |
 | [onAutoSubscribeResult](#engineevents-onautosubscriberesult) | 如果开启了自动订阅，订阅成功或者失败后可以收到此事件 |
 | [onAutoPublishResult](#engineevents-onautopublishresult) | 如果开启了自动发布，发布成功或者失败后可以收到此事件 |
@@ -43,13 +43,13 @@
 | [onAudioMixingStateChanged](#engineevents-onaudiomixingstatechanged) | 音频混音文件播放状态改变事件 |
 | [onUserMessageReceivedOutsideRoom](#engineevents-onusermessagereceivedoutsideroom) | 接收到房间外消息的事件。 |
 | [onUserBinaryMessageReceivedOutsideRoom](#engineevents-onuserbinarymessagereceivedoutsideroom) | 接收到房间外二进制消息的事件。 |
-| [onTokenWillExpire](#engineevents-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。<br>调用 [updateToken](104478.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。 |
-| [onCloudProxyConnected](#engineevents-oncloudproxyconnected) | 调用 [startCloudProxy](104478.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。 |
-| [onPushPublicStreamResult](#engineevents-onpushpublicstreamresult) | 公共流发布结果回调。<br>调用 [startPushPublicStream](104478.md#startpushpublicstream) 发布公共流后，结果通过此回调通知用户。 |
-| [onPublicStreamSEIMessageReceived](#engineevents-onpublicstreamseimessagereceived) | 回调公共流中包含的 SEI 信息。<br>调用 [startPlayPublicStream](104478.md#startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。 |
-| [onFirstPublicStreamVideoFrameDecoded](#engineevents-onfirstpublicstreamvideoframedecoded) | 公共流的视频首帧解码成功。<br>关于订阅公共流，参看 [startPlayPublicStream](104478.md#startplaypublicstream)。 |
-| [onFirstPublicStreamAudioFrameDecoded](#engineevents-onfirstpublicstreamaudioframedecoded) | 公共流的音频首帧解码成功。<br>关于订阅公共流，参看 [startPlayPublicStream](104478.md#startplaypublicstream)。 |
-| [onFirstPublicStreamVideoFrameRendered](#engineevents-onfirstpublicstreamvideoframerendered) | 公共流的首帧视频渲染成功。<br>关于订阅公共流，参看 [startPlayPublicStream](104478.md#startplaypublicstream)。 |
+| [onTokenWillExpire](#engineevents-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。<br>调用 [updateToken](Web-api.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。 |
+| [onCloudProxyConnected](#engineevents-oncloudproxyconnected) | 调用 [startCloudProxy](Web-api.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。 |
+| [onPushPublicStreamResult](#engineevents-onpushpublicstreamresult) | 公共流发布结果回调。<br>调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布公共流后，结果通过此回调通知用户。 |
+| [onPublicStreamSEIMessageReceived](#engineevents-onpublicstreamseimessagereceived) | 回调公共流中包含的 SEI 信息。<br>调用 [startPlayPublicStream](Web-api.md#startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。 |
+| [onFirstPublicStreamVideoFrameDecoded](#engineevents-onfirstpublicstreamvideoframedecoded) | 公共流的视频首帧解码成功。<br>关于订阅公共流，参看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。 |
+| [onFirstPublicStreamAudioFrameDecoded](#engineevents-onfirstpublicstreamaudioframedecoded) | 公共流的音频首帧解码成功。<br>关于订阅公共流，参看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。 |
+| [onFirstPublicStreamVideoFrameRendered](#engineevents-onfirstpublicstreamvideoframerendered) | 公共流的首帧视频渲染成功。<br>关于订阅公共流，参看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。 |
 | [onAudioPlaybackDeviceTestVolume](#engineevents-onaudioplaybackdevicetestvolume) | 回调音频设备测试时的播放音量 |
 | [onNetworkQuality](#engineevents-onnetworkquality) | 加入房间后，会以每2秒一次的频率，收到本端上行及下行的网络质量信息。 |
 | [onSimulcastSubscribeFallback](#engineevents-onsimulcastsubscribefallback) | 订阅的视频流发生回退，或从回退中恢复时，收到此回调。 |
@@ -58,8 +58,8 @@
 | [onVideoStreamBanned](#engineevents-onvideostreambanned) | 调用服务端接口 BanUserStream/UnbanUserStream 封禁/解禁指定用户的视频流发布时，触发该回调。 |
 | [onAudioStreamBanned](#engineevents-onaudiostreambanned) | 调用服务端接口 BanUserStream/UnbanUserStream 封禁/解禁指定用户的音频流发布时，触发该回调。 |
 | [onLocalVideoSizeChanged](#engineevents-onlocalvideosizechanged) | 当实际采集的参数与设置的编码参数不一致时，SDK 会触发该回调返回实际采集视频的参数。 |
-| [onSubtitleStateChanged](#engineevents-onsubtitlestatechanged) | 字幕状态发生改变回调。<br>当你调用 [startSubtitle](104478.md#startsubtitle) 和 [stopSubtitle](104478.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。 |
-| [onSubtitleMessageReceived](#engineevents-onsubtitlemessagereceived) | 字幕相关信息回调。<br>当你成功调用 [startSubtitle](104478.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
+| [onSubtitleStateChanged](#engineevents-onsubtitlestatechanged) | 字幕状态发生改变回调。<br>当你调用 [startSubtitle](Web-api.md#startsubtitle) 和 [stopSubtitle](Web-api.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。 |
+| [onSubtitleMessageReceived](#engineevents-onsubtitlemessagereceived) | 字幕相关信息回调。<br>当你成功调用 [startSubtitle](Web-api.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
 | [onServerParamsSetResult](#engineevents-onserverparamssetresult) | 设置接收客户端即时消息的服务器成功或失败时收到本事件。 |
 
 
@@ -77,7 +77,7 @@
 
   - **event**
 
-    类型: <code>[PlayerEvent](104481.md#playerevent)</code>
+    类型: <code>[PlayerEvent](Web-keytype.md#playerevent)</code>
 
 ### onUserJoined <span id="engineevents-onuserjoined"></span> 
 
@@ -93,7 +93,7 @@
 
   - **event**
 
-    类型: <code>[onUserJoinedEvent](104481.md#onuserjoinedevent)</code>
+    类型: <code>[onUserJoinedEvent](Web-keytype.md#onuserjoinedevent)</code>
 
 ### onUserLeave <span id="engineevents-onuserleave"></span> 
 
@@ -109,7 +109,7 @@
 
   - **event**
 
-    类型: <code>[onUserLeaveEvent](104481.md#onuserleaveevent)</code>
+    类型: <code>[onUserLeaveEvent](Web-keytype.md#onuserleaveevent)</code>
 
 ### onConnectionStateChanged <span id="engineevents-onconnectionstatechanged"></span> 
 
@@ -125,7 +125,7 @@
 
   - **event**
 
-    类型: <code>[ConnectionStateChangeEvent](104481.md#connectionstatechangeevent)</code>
+    类型: <code>[ConnectionStateChangeEvent](Web-keytype.md#connectionstatechangeevent)</code>
 
 ### onUserPublishStream <span id="engineevents-onuserpublishstream"></span> 
 
@@ -139,13 +139,13 @@
 
 - **注意**
 
-  当房间内的远端用户调用 [publishStream](104478.md#publishstream) 成功发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeStream](104478.md#subscribestream) 订阅此流。
+  当房间内的远端用户调用 [publishStream](Web-api.md#publishstream) 成功发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeStream](Web-api.md#subscribestream) 订阅此流。
 
 - **参数**
 
   - **event**
 
-    类型: <code>{ userId: string; mediaType: [MediaType](104481.md#mediatype); }</code>
+    类型: <code>{ userId: string; mediaType: [MediaType](Web-keytype.md#mediatype); }</code>
 
     - **成员**
 
@@ -167,13 +167,13 @@
 
 - **注意**
 
-  当房间内的远端用户调用 [unpublishStream](104478.md#unpublishstream) 成功取消发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [unsubscribeStream](104478.md#unsubscribestream) 取消订阅此流。
+  当房间内的远端用户调用 [unpublishStream](Web-api.md#unpublishstream) 成功取消发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [unsubscribeStream](Web-api.md#unsubscribestream) 取消订阅此流。
 
 - **参数**
 
   - **event**
 
-    类型: <code>{ userId: string; mediaType: [MediaType](104481.md#mediatype); reason: [StreamRemoveReason](104481.md#streamremovereason); }</code>
+    类型: <code>{ userId: string; mediaType: [MediaType](Web-keytype.md#mediatype); reason: [StreamRemoveReason](Web-keytype.md#streamremovereason); }</code>
 
     - **成员**
 
@@ -196,13 +196,13 @@
 
 - **注意**
 
-  当房间内的远端用户调用 [publishScreen](104478.md#publishscreen) 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeScreen](104478.md#subscribescreen) 订阅此流。
+  当房间内的远端用户调用 [publishScreen](Web-api.md#publishscreen) 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeScreen](Web-api.md#subscribescreen) 订阅此流。
 
 - **参数**
 
   - **event**
 
-    类型: <code>{ userId: string; mediaType: [MediaType](104481.md#mediatype); }</code>
+    类型: <code>{ userId: string; mediaType: [MediaType](Web-keytype.md#mediatype); }</code>
 
     - **成员**
 
@@ -224,13 +224,13 @@
 
 - **注意**
 
-  当房间内的远端用户调用 [unpublishScreen](104478.md#unpublishscreen) 成功取消发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [unsubscribeScreen](104478.md#unsubscribescreen) 取消订阅此流。
+  当房间内的远端用户调用 [unpublishScreen](Web-api.md#unpublishscreen) 成功取消发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [unsubscribeScreen](Web-api.md#unsubscribescreen) 取消订阅此流。
 
 - **参数**
 
   - **event**
 
-    类型: <code>{ userId: string; mediaType: [MediaType](104481.md#mediatype); reason: [StreamRemoveReason](104481.md#streamremovereason); }</code>
+    类型: <code>{ userId: string; mediaType: [MediaType](Web-keytype.md#mediatype); reason: [StreamRemoveReason](Web-keytype.md#streamremovereason); }</code>
 
     - **成员**
 
@@ -255,7 +255,7 @@
 
   - **event**
 
-    类型: <code>[onVideoFirstFrameRenderedEvent](104481.md#onvideofirstframerenderedevent)</code>
+    类型: <code>[onVideoFirstFrameRenderedEvent](Web-keytype.md#onvideofirstframerenderedevent)</code>
 
 ### onRemoteAudioFirstFrame <span id="engineevents-onremoteaudiofirstframe"></span> 
 
@@ -271,7 +271,7 @@
 
   - **event**
 
-    类型: <code>[onAudioFirstFrameDecodedEvent](104481.md#onaudiofirstframedecodedevent)</code>
+    类型: <code>[onAudioFirstFrameDecodedEvent](Web-keytype.md#onaudiofirstframedecodedevent)</code>
 
 ### onVideoDeviceStateChanged <span id="engineevents-onvideodevicestatechanged"></span> 
 
@@ -287,7 +287,7 @@
 
   - **event**
 
-    类型: <code>[DeviceInfo](104481.md#deviceinfo)</code>
+    类型: <code>[DeviceInfo](Web-keytype.md#deviceinfo)</code>
 
     媒体设备信息及状态。
 
@@ -305,7 +305,7 @@
 
   - **event**
 
-    类型: <code>[DeviceInfo](104481.md#deviceinfo)</code>
+    类型: <code>[DeviceInfo](Web-keytype.md#deviceinfo)</code>
 
     媒体设备信息及状态。
 
@@ -323,7 +323,7 @@
 
   - **event**
 
-    类型: <code>[AutoPlayFailedEvent](104481.md#autoplayfailedevent)</code>
+    类型: <code>[AutoPlayFailedEvent](Web-keytype.md#autoplayfailedevent)</code>
 
 ### onTrackEnded <span id="engineevents-ontrackended"></span> 
 
@@ -399,7 +399,7 @@
 
 ### onUserMessageReceived <span id="engineevents-onusermessagereceived"></span> 
 
-收到来自房间中其他用户通过 [sendUserMessage](104478.md#sendusermessage) 发来的点对点文本消息时，会收到此事件
+收到来自房间中其他用户通过 [sendUserMessage](Web-api.md#sendusermessage) 发来的点对点文本消息时，会收到此事件
 
 - **类型**
 
@@ -411,7 +411,7 @@
 
   - **event**
 
-    类型: <code>[UserMessageEvent](104481.md#usermessageevent)</code>
+    类型: <code>[UserMessageEvent](Web-keytype.md#usermessageevent)</code>
 
 ### onUserBinaryMessageReceived <span id="engineevents-onuserbinarymessagereceived"></span> 
 
@@ -427,7 +427,7 @@
 
   - **event**
 
-    类型: <code>[UserBinaryMessageEvent](104481.md#userbinarymessageevent)</code>
+    类型: <code>[UserBinaryMessageEvent](Web-keytype.md#userbinarymessageevent)</code>
 
 ### onRemoteStreamStats <span id="engineevents-onremotestreamstats"></span> 
 
@@ -443,7 +443,7 @@
 
   - **stats**
 
-    类型: <code>[RemoteStreamStats](104481.md#remotestreamstats)</code>
+    类型: <code>[RemoteStreamStats](Web-keytype.md#remotestreamstats)</code>
 
 ### onLocalStreamStats <span id="engineevents-onlocalstreamstats"></span> 
 
@@ -459,11 +459,11 @@
 
   - **stats**
 
-    类型: <code>[LocalStreamStats](104481.md#localstreamstats)</code>
+    类型: <code>[LocalStreamStats](Web-keytype.md#localstreamstats)</code>
 
 ### onPublicStreamStats <span id="engineevents-onpublicstreamstats"></span> 
 
-调用 [startPlayPublicStream](104478.md#startplaypublicstream) 订阅公共流，后将触发此回调，周期为 2s，包含各项统计信息。
+调用 [startPlayPublicStream](Web-api.md#startplaypublicstream) 订阅公共流，后将触发此回调，周期为 2s，包含各项统计信息。
 
 - **类型**
 
@@ -475,11 +475,11 @@
 
   - **stats**
 
-    类型: <code>[PublicStreamStats](104481.md#publicstreamstats)</code>
+    类型: <code>[PublicStreamStats](Web-keytype.md#publicstreamstats)</code>
 
 ### onLocalAudioPropertiesReport <span id="engineevents-onlocalaudiopropertiesreport"></span> 
 
-调用 [enableAudioPropertiesReport](104478.md#enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。
+调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。
 本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
 
 - **类型**
@@ -492,13 +492,13 @@
 
   - **event**
 
-    类型: <code>[LocalAudioPropertiesInfo](104481.md#localaudiopropertiesinfo)[]</code>
+    类型: <code>[LocalAudioPropertiesInfo](Web-keytype.md#localaudiopropertiesinfo)[]</code>
 
     本地音频信息。
 
 ### onRemoteAudioPropertiesReport <span id="engineevents-onremoteaudiopropertiesreport"></span> 
 
-远端用户进房后，本地调用 [enableAudioPropertiesReport](104478.md#enableaudiopropertiesreport)，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。
+远端用户进房后，本地调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport)，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。
 远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。
 
 - **类型**
@@ -511,13 +511,13 @@
 
   - **event**
 
-    类型: <code>[RemoteAudioPropertiesInfo](104481.md#remoteaudiopropertiesinfo)[]</code>
+    类型: <code>[RemoteAudioPropertiesInfo](Web-keytype.md#remoteaudiopropertiesinfo)[]</code>
 
     远端音频信息，其中包含音频流属性、房间 ID、用户 ID。
 
 ### onActiveSpeaker <span id="engineevents-onactivespeaker"></span> 
 
-成功调用 [enableAudioPropertiesReport](104478.md#enableaudiopropertiesreport) 后，当房间内用户数量大于或等于 2 且有活跃用户时，你会周期性收到此回调，获取房间内音量最大用户的信息。
+成功调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，当房间内用户数量大于或等于 2 且有活跃用户时，你会周期性收到此回调，获取房间内音量最大用户的信息。
 
 - **类型**
 
@@ -529,13 +529,13 @@
 
   - **event**
 
-    类型: <code>[UserInfo](104481.md#userinfo)</code>
+    类型: <code>[UserInfo](Web-keytype.md#userinfo)</code>
 
     音量最大用户的信息。
 
 ### onAudioPlaybackDeviceChanged <span id="engineevents-onaudioplaybackdevicechanged"></span> 
 
-当调用 [setAudioPlaybackDevice](104478.md#setaudioplaybackdevice) 设置音频播放设备时，会收到此事件。
+当调用 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice) 设置音频播放设备时，会收到此事件。
 
 - **类型**
 
@@ -553,7 +553,7 @@
 
 ### onUserStartAudioCapture <span id="engineevents-onuserstartaudiocapture"></span> 
 
-房间内的可见用户调用 [startAudioCapture](104478.md#startaudiocapture) 开启音频采集时，房间内其他用户会收到此事件。
+房间内的可见用户调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启音频采集时，房间内其他用户会收到此事件。
 
 - **类型**
 
@@ -576,7 +576,7 @@
 
 ### onUserStopAudioCapture <span id="engineevents-onuserstopaudiocapture"></span> 
 
-房间内的可见用户调用 [stopAudioCapture](104478.md#stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此事件。
+房间内的可见用户调用 [stopAudioCapture](Web-api.md#stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此事件。
 
 - **类型**
 
@@ -599,7 +599,7 @@
 
 ### onUserStartVideoCapture <span id="engineevents-onuserstartvideocapture"></span> 
 
-房间内的可见用户调用 [startVideoCapture](104478.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。
+房间内的可见用户调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。
 
 - **类型**
 
@@ -622,7 +622,7 @@
 
 ### onUserStopVideoCapture <span id="engineevents-onuserstopvideocapture"></span> 
 
-房间内的可见用户调用 [stopVideoCapture](104478.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。
+房间内的可见用户调用 [stopVideoCapture](Web-api.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。
 
 - **类型**
 
@@ -657,7 +657,7 @@
 
   - **event**
 
-    类型: <code>[onSEIMessageEvent](104481.md#onseimessageevent)</code>
+    类型: <code>[onSEIMessageEvent](Web-keytype.md#onseimessageevent)</code>
 
     SEI 数据事件
 
@@ -675,7 +675,7 @@
 
   - **event**
 
-    类型: <code>{ userId: string; isScreen: boolean; state: [SubscribeState](104481.md#subscribestate); }</code>
+    类型: <code>{ userId: string; isScreen: boolean; state: [SubscribeState](Web-keytype.md#subscribestate); }</code>
 
     - **成员**
 
@@ -700,7 +700,7 @@
 
   - **event**
 
-    类型: <code>{ isScreen: boolean; state: [PublishState](104481.md#publishstate); }</code>
+    类型: <code>{ isScreen: boolean; state: [PublishState](Web-keytype.md#publishstate); }</code>
 
     - **成员**
 
@@ -724,7 +724,7 @@
 
   - **event**
 
-    类型: <code>[AutoPlayFailedEvent](104481.md#autoplayfailedevent)</code>
+    类型: <code>[AutoPlayFailedEvent](Web-keytype.md#autoplayfailedevent)</code>
 
     播放器事件
 
@@ -765,7 +765,7 @@
 
   - **event**
 
-    类型: <code>[AudioMixingStateChangedEvent](104481.md#audiomixingstatechangedevent)</code>
+    类型: <code>[AudioMixingStateChangedEvent](Web-keytype.md#audiomixingstatechangedevent)</code>
 
 ### onUserMessageReceivedOutsideRoom <span id="engineevents-onusermessagereceivedoutsideroom"></span> 
 
@@ -781,7 +781,7 @@
 
   - **event**
 
-    类型: <code>[UserMessageEvent](104481.md#usermessageevent)</code>
+    类型: <code>[UserMessageEvent](Web-keytype.md#usermessageevent)</code>
 
 ### onUserBinaryMessageReceivedOutsideRoom <span id="engineevents-onuserbinarymessagereceivedoutsideroom"></span> 
 
@@ -797,12 +797,12 @@
 
   - **event**
 
-    类型: <code>[UserBinaryMessageEvent](104481.md#userbinarymessageevent)</code>
+    类型: <code>[UserBinaryMessageEvent](Web-keytype.md#userbinarymessageevent)</code>
 
 ### onTokenWillExpire <span id="engineevents-ontokenwillexpire"></span> 
 
 Token 过期前 30 秒将触发该回调。
-调用 [updateToken](104478.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+调用 [updateToken](Web-api.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
 
 - **类型**
 
@@ -812,7 +812,7 @@ Token 过期前 30 秒将触发该回调。
 
 ### onCloudProxyConnected <span id="engineevents-oncloudproxyconnected"></span> 
 
-调用 [startCloudProxy](104478.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
+调用 [startCloudProxy](Web-api.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
 
 - **类型**
 
@@ -824,12 +824,12 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[CloudProxyConnectedEvent](104481.md#cloudproxyconnectedevent)</code>
+    类型: <code>[CloudProxyConnectedEvent](Web-keytype.md#cloudproxyconnectedevent)</code>
 
 ### onPushPublicStreamResult <span id="engineevents-onpushpublicstreamresult"></span> 
 
 公共流发布结果回调。
-调用 [startPushPublicStream](104478.md#startpushpublicstream) 发布公共流后，结果通过此回调通知用户。
+调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布公共流后，结果通过此回调通知用户。
 
 - **类型**
 
@@ -841,12 +841,12 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[PublicStreamResultEvent](104481.md#publicstreamresultevent)</code>
+    类型: <code>[PublicStreamResultEvent](Web-keytype.md#publicstreamresultevent)</code>
 
 ### onPublicStreamSEIMessageReceived <span id="engineevents-onpublicstreamseimessagereceived"></span> 
 
 回调公共流中包含的 SEI 信息。
-调用 [startPlayPublicStream](104478.md#startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。
+调用 [startPlayPublicStream](Web-api.md#startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。
 
 - **类型**
 
@@ -865,12 +865,12 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[PublicStreamSEIMessageEvent](104481.md#publicstreamseimessageevent)</code>
+    类型: <code>[PublicStreamSEIMessageEvent](Web-keytype.md#publicstreamseimessageevent)</code>
 
 ### onFirstPublicStreamVideoFrameDecoded <span id="engineevents-onfirstpublicstreamvideoframedecoded"></span> 
 
 公共流的视频首帧解码成功。
-关于订阅公共流，参看 [startPlayPublicStream](104478.md#startplaypublicstream)。
+关于订阅公共流，参看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。
 
 - **类型**
 
@@ -882,12 +882,12 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[PublicStreamVideoFirstFrameDecodedEvent](104481.md#publicstreamvideofirstframedecodedevent)</code>
+    类型: <code>[PublicStreamVideoFirstFrameDecodedEvent](Web-keytype.md#publicstreamvideofirstframedecodedevent)</code>
 
 ### onFirstPublicStreamAudioFrameDecoded <span id="engineevents-onfirstpublicstreamaudioframedecoded"></span> 
 
 公共流的音频首帧解码成功。
-关于订阅公共流，参看 [startPlayPublicStream](104478.md#startplaypublicstream)。
+关于订阅公共流，参看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。
 
 - **类型**
 
@@ -899,12 +899,12 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[PublicStreamAudioFirstFrameDecodedEvent](104481.md#publicstreamaudiofirstframedecodedevent)</code>
+    类型: <code>[PublicStreamAudioFirstFrameDecodedEvent](Web-keytype.md#publicstreamaudiofirstframedecodedevent)</code>
 
 ### onFirstPublicStreamVideoFrameRendered <span id="engineevents-onfirstpublicstreamvideoframerendered"></span> 
 
 公共流的首帧视频渲染成功。
-关于订阅公共流，参看 [startPlayPublicStream](104478.md#startplaypublicstream)。
+关于订阅公共流，参看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。
 
 - **类型**
 
@@ -916,7 +916,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[PublicStreamAudioFirstFrameDecodedEvent](104481.md#publicstreamaudiofirstframedecodedevent)</code>
+    类型: <code>[PublicStreamAudioFirstFrameDecodedEvent](Web-keytype.md#publicstreamaudiofirstframedecodedevent)</code>
 
 ### onAudioPlaybackDeviceTestVolume <span id="engineevents-onaudioplaybackdevicetestvolume"></span> 
 
@@ -930,7 +930,7 @@ Token 过期前 30 秒将触发该回调。
 
 - **注意**
 
-  调用 [startAudioPlaybackDeviceTest](104478.md#startaudioplaybackdevicetest) 或 [startAudioDeviceRecordTest](104478.md#startaudiodevicerecordtest)，开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
+  调用 [startAudioPlaybackDeviceTest](Web-api.md#startaudioplaybackdevicetest) 或 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest)，开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
 
 - **参数**
 
@@ -954,13 +954,13 @@ Token 过期前 30 秒将触发该回调。
 
   - **uplinkNetworkQuality**
 
-    类型: <code>[NetworkQuality](104481.md#networkquality)</code>
+    类型: <code>[NetworkQuality](Web-keytype.md#networkquality)</code>
 
     上行网络质量。
 
   - **downlinkNetworkQuality**
 
-    类型: <code>[NetworkQuality](104481.md#networkquality)</code>
+    类型: <code>[NetworkQuality](Web-keytype.md#networkquality)</code>
 
     下行网络质量。
 
@@ -978,7 +978,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[RemoteStreamSwitch](104481.md#remotestreamswitch)</code>
+    类型: <code>[RemoteStreamSwitch](Web-keytype.md#remotestreamswitch)</code>
 
     流切换信息
 
@@ -996,7 +996,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **key**
 
-    类型: <code>[RemoteStreamKey](104481.md#remotestreamkey)</code>
+    类型: <code>[RemoteStreamKey](Web-keytype.md#remotestreamkey)</code>
 
   - **info**
 
@@ -1024,7 +1024,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[StreamMixingEvent](104481.md#streammixingevent)</code>
+    类型: <code>[StreamMixingEvent](Web-keytype.md#streammixingevent)</code>
 
 ### onVideoStreamBanned <span id="engineevents-onvideostreambanned"></span> 
 
@@ -1048,7 +1048,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[VideoStreamBannedEvent](104481.md#videostreambannedevent)</code>
+    类型: <code>[VideoStreamBannedEvent](Web-keytype.md#videostreambannedevent)</code>
 
 ### onAudioStreamBanned <span id="engineevents-onaudiostreambanned"></span> 
 
@@ -1072,7 +1072,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[AudioStreamBannedEvent](104481.md#audiostreambannedevent)</code>
+    类型: <code>[AudioStreamBannedEvent](Web-keytype.md#audiostreambannedevent)</code>
 
 ### onLocalVideoSizeChanged <span id="engineevents-onlocalvideosizechanged"></span> 
 
@@ -1088,7 +1088,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **e**
 
-    类型: <code>{ streamIndex: [StreamIndex](104481.md#streamindex); info: { width: number; height: number;}; }</code>
+    类型: <code>{ streamIndex: [StreamIndex](Web-keytype.md#streamindex); info: { width: number; height: number;}; }</code>
 
     - **成员**
 
@@ -1103,7 +1103,7 @@ Token 过期前 30 秒将触发该回调。
 ### onSubtitleStateChanged <span id="engineevents-onsubtitlestatechanged"></span> 
 
 字幕状态发生改变回调。
-当你调用 [startSubtitle](104478.md#startsubtitle) 和 [stopSubtitle](104478.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。
+当你调用 [startSubtitle](Web-api.md#startsubtitle) 和 [stopSubtitle](Web-api.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。
 
 - **类型**
 
@@ -1115,12 +1115,12 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[SubtitleEvent](104481.md#subtitleevent)</code>
+    类型: <code>[SubtitleEvent](Web-keytype.md#subtitleevent)</code>
 
 ### onSubtitleMessageReceived <span id="engineevents-onsubtitlemessagereceived"></span> 
 
 字幕相关信息回调。
-当你成功调用 [startSubtitle](104478.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。
+当你成功调用 [startSubtitle](Web-api.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。
 
 - **类型**
 
@@ -1132,7 +1132,7 @@ Token 过期前 30 秒将触发该回调。
 
   - **event**
 
-    类型: <code>[SubtitleMessage](104481.md#subtitlemessage)[]</code>
+    类型: <code>[SubtitleMessage](Web-keytype.md#subtitlemessage)[]</code>
 
 ### onServerParamsSetResult <span id="engineevents-onserverparamssetresult"></span> 
 
@@ -1146,13 +1146,13 @@ Token 过期前 30 秒将触发该回调。
 
 - **注意**
 
-  + 调用 [setServerParams](104478.md#setserverparams) 时触发。
-  + 当调用 [setServerParams](104478.md#setserverparams) 设置服务器参数后断网，会在重连成功后收到本事件。
+  + 调用 [setServerParams](Web-api.md#setserverparams) 时触发。
+  + 当调用 [setServerParams](Web-api.md#setserverparams) 设置服务器参数后断网，会在重连成功后收到本事件。
 
 - **参数**
 
   - **error**
 
-    类型: <code>[ErrorCode](104480.md#errorcode) | undefined</code>
+    类型: <code>[ErrorCode](Web-errorcode.md#errorcode) | undefined</code>
 
     错误码
