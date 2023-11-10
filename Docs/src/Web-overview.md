@@ -39,10 +39,10 @@
 | [leaveRoom](Web-api.md#rtcengine-leaveroom) | 离开房间。<br>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。 |
 | [updateToken](Web-api#rtcengine-updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
 | [setUserVisibility](Web-api.md#rtcengine-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
-| [onUserJoined](Web-event.md#engineevents-onuserjoined) | 远端可见用户加入房间，或房内不可见用户切换为可见的回调 |
+| [onUserJoined](Web-event.md#engineevents-onuserjoined) | 远端可见用户加入房间，或房内隐身用户切换为可见的回调 |
 | [onUserLeave](Web-event.md#engineevents-onuserleave) | 远端可见用户离开房间，或房内可见用户切换为隐身的回调 |
 | [onConnectionStateChanged](Web-event.md#engineevents-onconnectionstatechanged) | 连接状态发生变化 |
-| [onError](Web-event.md#engineevents-onerror) | 当 SDK 内部发生不可逆转错误时触发该回调。 |
+| [onError](Web-event.md#engineevents-onerror) | 当 SDK 内部发生不可逆转错误时触发该回调 |
 | [onTokenWillExpire](Web-event#engineevents-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。<br>调用 [updateToken](Web-api.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。 |
 
 
@@ -53,9 +53,8 @@
 | :-- | :-- |
 | [setAudioCaptureDevice](Web-api.md#rtcengine-setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
 | [setAudioPlaybackDevice](Web-api.md#rtcengine-setaudioplaybackdevice) | 设置音频播放设备，例如扬声器或者耳机，默认使用扬声器。 |
-| [startAudioCapture](Web-api#rtcengine-startaudiocapture) | 开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
-| [startAudioAndVideoCapture](Web-api#rtcengine-startaudioandvideocapture) | 使用内部采集模块同时开启音视频采集。调用该方法，浏览器会同时请求麦克风和摄像头授权，用户只需授权一次。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 和 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
-| [stopAudioCapture](Web-api#rtcengine-stopaudiocapture) | 立即关闭内部音频采集。<br>发布流后调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
+| [startAudioCapture](Web-api#rtcengine-startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
+| [stopAudioCapture](Web-api#rtcengine-stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
 | [setAudioSourceType](Web-api.md#rtcengine-setaudiosourcetype) | 设置向 SDK 输入的音频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](Web-api.md#startaudiocapture) 手动开启内部采集。 |
 | [setExternalAudioTrack](Web-api.md#rtcengine-setexternalaudiotrack) | 使用用户自定义的 audioTrack。<br>调用本方法前必须先调用 [setAudioSourceType](Web-api.md#setaudiosourcetype) 设置为自定义音频采集。 |
 | [setAudioProfile](Web-api.md#rtcengine-setaudioprofile) | 设置音质档位 |
@@ -78,8 +77,8 @@
 | 方法 | 描述 |
 | :-- | :-- |
 | [setVideoCaptureDevice](Web-api.md#rtcengine-setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
-| [startVideoCapture](Web-api#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
-| [stopVideoCapture](Web-api#rtcengine-stopvideocapture) | 关闭内部视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
+| [startVideoCapture](Web-api#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
+| [stopVideoCapture](Web-api#rtcengine-stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
 | [setVideoSourceType](Web-api.md#rtcengine-setvideosourcetype) | 设置向 SDK 输入的视频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startVideoCapture](Web-api.md#startvideocapture) 手动开启内部采集。 |
 | [setExternalVideoTrack](Web-api.md#rtcengine-setexternalvideotrack) | 使用用户自定义的 videoTrack。<br>调用本方法前必须先调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 设置为自定义视频采集。 |
 | [setLocalVideoPlayer](Web-api.md#rtcengine-setlocalvideoplayer) | 设置本地视频渲染时，使用的视图，并设置渲染模式。<br>调用本方法绑定视图以后，你可以通过 `onPlayerEvent` 来监听播放状态。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
@@ -94,7 +93,7 @@
 | [onLocalVideoSizeChanged](Web-event.md#engineevents-onlocalvideosizechanged) | 当实际采集的参数与设置的编码参数不一致时，SDK 会触发该回调返回实际采集视频的参数。 |
 | [onPlayerEvent](Web-event.md#engineevents-onplayerevent) | 播放器事件 |
 | [onAutoplayFailed](Web-event.md#engineevents-onautoplayfailed) | 自动播放失败 |
-| [onTrackEnded](Web-event.md#engineevents-ontrackended) | 断流事件，建议在回调里重新采集。 |
+| [onTrackEnded](Web-event.md#engineevents-ontrackended) | 断流事件 |
 
 
 
@@ -225,7 +224,7 @@
 | [sendRoomMessage](Web-api#rtcengine-sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。 |
 | [sendRoomBinaryMessage](Web-api#rtcengine-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息 |
 | [sendSEIMessage](Web-api.md#rtcengine-sendseimessage) | 在视频通信时，通过视频帧发送 SEI 数据。 |
-| [login](Web-api.md#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登录用户发送文本或二进制消息。 |
+| [login](Web-api.md#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登陆用户发送文本或二进制消息。 |
 | [logout](Web-api.md#rtcengine-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](Web-api.md#rtcengine-updatelogintoken) | 更新用户用于登录的 Token。Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。 |
 | [getPeerOnlineStatus](Web-api.md#rtcengine-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态。在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。 |

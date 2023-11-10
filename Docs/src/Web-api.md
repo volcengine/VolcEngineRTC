@@ -19,11 +19,10 @@
 | [updateToken](#rtcengine-updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
 | [setAudioCaptureDevice](#rtcengine-setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
 | [setVideoCaptureDevice](#rtcengine-setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
-| [startVideoCapture](#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
-| [stopVideoCapture](#rtcengine-stopvideocapture) | 关闭内部视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
-| [startAudioCapture](#rtcengine-startaudiocapture) | 开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
-| [stopAudioCapture](#rtcengine-stopaudiocapture) | 立即关闭内部音频采集。<br>发布流后调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
-| [startAudioAndVideoCapture](#rtcengine-startaudioandvideocapture) | 使用内部采集模块同时开启音视频采集。调用该方法，浏览器会同时请求麦克风和摄像头授权，用户只需授权一次。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 和 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
+| [startVideoCapture](#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
+| [stopVideoCapture](#rtcengine-stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
+| [startAudioCapture](#rtcengine-startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
+| [stopAudioCapture](#rtcengine-stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
 | [startScreenCapture](#rtcengine-startscreencapture) | 使用内部采集模块，采集当前屏幕视频流，用于共享。 |
 | [stopScreenCapture](#rtcengine-stopscreencapture) | 停止屏幕共享流内部采集。 |
 | [setLocalVideoPlayer](#rtcengine-setlocalvideoplayer) | 设置本地视频渲染时，使用的视图，并设置渲染模式。<br>调用本方法绑定视图以后，你可以通过 `onPlayerEvent` 来监听播放状态。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
@@ -54,7 +53,7 @@
 | [setAudioSourceType](#rtcengine-setaudiosourcetype) | 设置向 SDK 输入的音频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](Web-api.md#startaudiocapture) 手动开启内部采集。 |
 | [getAudioMixingManager](#rtcengine-getaudiomixingmanager) | 混音管理接口创建 |
 | [setAudioCaptureConfig](#rtcengine-setaudiocaptureconfig) | 设置 RTC SDK 内部采集时的音频采集参数。默认参数由浏览器决定。 |
-| [login](#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登录用户发送文本或二进制消息。 |
+| [login](#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登陆用户发送文本或二进制消息。 |
 | [logout](#rtcengine-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](#rtcengine-updatelogintoken) | 更新用户用于登录的 Token。Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。 |
 | [getPeerOnlineStatus](#rtcengine-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态。在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。 |
@@ -115,7 +114,6 @@
 
   + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则先进房的用户将自动退房并收到 `DUPLICATE_LOGIN` 错误。
   + 本地用户调用 [setUserVisibility](#setuservisibility) 将自身设为可见后加入房间，远端用户会收到 [onUserJoined](Web-event.md#onuserjoined) 回调通知。
-  + 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用 [setUserVisibility](#setuservisibility)。更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
   + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Web-event.md#onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，如果加入房间的为可见用户，远端用户会收到 [onUserJoined](Web-event.md#onuserjoined)  回调通知。
 
 - **参数**
@@ -150,8 +148,6 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
-
-  房间被封禁导致的进房失败会返回错误码 `ErrorCode.ROOM_FORBIDDEN`，用户被封禁导致的进房失败会返回错误码 `ErrorCode.USER_FORBIDDEN`。
 
 ### leaveRoom <span id="rtcengine-leaveroom"></span> 
 
@@ -497,7 +493,7 @@
 
 开启内部视频采集。默认为关闭状态。
 内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
-可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。
+发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。
 
 - **类型**
 
@@ -527,7 +523,8 @@
 
 ### stopVideoCapture <span id="rtcengine-stopvideocapture"></span> 
 
-关闭内部视频采集。
+关闭内部视频采集。默认为关闭状态。
+内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。
 发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。
 
 - **类型**
@@ -547,9 +544,9 @@
 
 ### startAudioCapture <span id="rtcengine-startaudiocapture"></span> 
 
-开启内部音频采集。默认为关闭状态。
+立即开启内部音频采集。默认为关闭状态。
 内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。
-可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
+发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
 
 - **类型**
 
@@ -578,8 +575,9 @@
 
 ### stopAudioCapture <span id="rtcengine-stopaudiocapture"></span> 
 
-立即关闭内部音频采集。
-发布流后调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。
+立即关闭内部音频采集。默认为关闭状态。
+内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。
+调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。
 
 - **类型**
 
@@ -595,52 +593,6 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
-
-### startAudioAndVideoCapture <span id="rtcengine-startaudioandvideocapture"></span> 
-
-使用内部采集模块同时开启音视频采集。调用该方法，浏览器会同时请求麦克风和摄像头授权，用户只需授权一次。
-可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 和 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
-
-- **类型**
-
-  ```ts
-  (optionsOrAudioDeviceId?: { audioDeviceId?: string; videoDeviceId?: string;} | string, videoDeviceId?: string) => Promise<{ audioTrackSettings: MediaTrackSettings; videoTrackSettings: MediaTrackSettings;}>
-  ```
-
-- **注意**
-
-  + 采集的音视频可以通过 [publishStream](#publishstream) 发布/ [unPublishStream](#unpublishstream) 取消发布。
-  + 该方法和 [startVideoCapture](#startvideocapture) / [startAudioCapture](#startaudiocapture) 无法同时调用。
-  + 调用该方法时，摄像头和麦克风其中之一无法完成采集，则音视频采集失败。
-  + 若需停止音视频采集，调用 [stopVideoCapture](#stopvideocapture) / [stopAudioCapture](#stopaudiocapture)。
-
-- **参数**
-
-  - **optionsOrAudioDeviceId**
-
-    类型: <code>string | { audioDeviceId?: string | undefined; videoDeviceId?: string | undefined; } | undefined</code>
-
-    单参数使用时可以同时设置音视频设备 ID；双参数使用时为音频设备 ID。
-
-    - **成员**
-
-      | 名称 | 类型 | 描述 |
-      | :-- | :-- | :-- |
-      | audioDeviceId | `string | undefined` | 音频设备 ID。 |
-      | videoDeviceId | `string | undefined` | 视频设备 ID。 |
-
-
-  - **videoDeviceId**
-
-    类型: <code>string | undefined</code>
-
-    视频设备 ID。
-
-- **返回值**
-
-  类型: <code>Promise<{ audioTrackSettings: MediaTrackSettings; videoTrackSettings: MediaTrackSettings }\></code>
-
-  实际生效的音视频采集参数。参看 [MediaTrackSettings](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings)。请关注其中的 `deviceId`, `channelCount`, `sampleRate`, `frameRate`, `height`, `width` 等值。
 
 ### startScreenCapture <span id="rtcengine-startscreencapture"></span> 
 
@@ -693,7 +645,7 @@
 - **类型**
 
   ```ts
-  (streamIndex: StreamIndex, videoPlayerOption?: Partial<Omit<VideoPlayerOption, 'rotation'>>) => HTMLVideoElement | undefined
+  (streamIndex: StreamIndex, videoPlayerOption?: Partial<VideoPlayerOption>) => HTMLVideoElement | undefined
   ```
 
 - **注意**
@@ -710,7 +662,7 @@
 
   - **videoPlayerOption**
 
-    类型: <code>Partial<Omit<[VideoPlayerOption](Web-keytype.md#videoplayeroption), "rotation"\>\> | undefined</code>
+    类型: <code>Partial<[VideoPlayerOption](Web-keytype.md#videoplayeroption)\> | undefined</code>
 
     视图信息和渲染模式
 
@@ -740,13 +692,13 @@
 
     类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
-    视频流属性。
+    视频流属性
 
-  - **videoPlayerOption**
+  - **videoPlayer**
 
     类型: <code>[VideoPlayerOption](Web-keytype.md#videoplayeroption)</code>
 
-    视图信息和渲染模式。4.56 版本起支持通过 `rotation` 参数设置远端视频渲染的旋转角度。
+    视图信息和渲染模式
 
 - **返回值**
 
@@ -790,7 +742,7 @@
 
     类型: <code>string</code>
 
-    音频播放设备（扬声器或者耳机），你可以通过调用 [enumerateDevices](#enumeratedevices) 获取当前可用的播放设备。
+    音频播放设备（扬声器或者耳机），你可以通过调用 [enumerateDevices](#enumeratedevices)
 
 - **返回值**
 
@@ -1022,7 +974,7 @@
 
     类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
-    指定携带 SEI 信息的媒体流类型。此处仅支持视频流，不支持纯音频流。
+    指定携带 SEI 信息的媒体流类型
 
   - **message**
 
@@ -1280,7 +1232,6 @@
 ### setUserVisibility <span id="rtcengine-setuservisibility"></span> 
 
 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
-默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 
 - **类型**
 
@@ -1477,7 +1428,7 @@
 ### login <span id="rtcengine-login"></span> 
 
 登录即时消息服务器。
-调用此方法登录后，可以向同 `appID` 下其他已登录用户发送文本或二进制消息。
+调用此方法登录后，可以向同 `appID` 下其他已登陆用户发送文本或二进制消息。
 
 - **类型**
 
@@ -2407,9 +2358,7 @@
 
 - **注意**
 
-  + 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。
-  + 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
-  + 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
+  + 使用字幕功能前，你需要[开通机器翻译服务](https://www.volcengine.com/docs/4640/130262)，并前往 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
   + 此方法需要在进房后调用。
   + 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 `extraInfo` 参数传入 JSON 字符串，将源语言设置为中文、英文、日文，对应的字符串分别为 `"source_language": "zh"`, `"source_language": "en"`, `"source_language": "ja"`。
   + 如未指定源语言，SDK 会将浏览器的语种设定为源语言。如浏览器语种不是中文、英文、日文，此时 SDK 会自动将中文设为源语言。

@@ -1543,13 +1543,6 @@ DOM
 + 10 个数字 0 ~ 9
 + 下划线 "_"，at 符 "@"，减 号 "-"
 
-<p style="font-size: 16px;font-weight: bolder;"> rotation <span id="videoplayeroption-rotation"></span></p> 
-
-类型: <code>number | undefined</code>
-
-视频帧顺时针的旋转角度。可选值为 0，90，180，270。默认值是 0，即不做旋转处理。<br>
-该设置仅对远端视频有效，调用 [setLocalVideoPlayer](Web-api.md#setlocalvideoplayer) 设置本参数不生效。
-
 
 ## VideoRenderMode <span id="videorendermode"></span>
 
@@ -1615,19 +1608,6 @@ DOM
 
 最大编码码率，RTC SDK 内部采集和自定义采集均需设定 > 0 的数值，单位为 Kbps。默认值为 600 Kbps。
 
-<p style="font-size: 16px;font-weight: bolder;"> contentHint <span id="videoencoderconfig-contenthint"></span></p> 
-
-类型: <code>"text" | "motion" | "detail" | undefined</code>
-
-视频内容类型。
-`'text'`：清晰度优先，适用于视频内容只包含大量文本的情况。
-`'motion'`：流畅度优先，适用于视频内容为摄像头采集、电影、视频、游戏的情况。
-`'detail'`：清晰度优先，适用于视频内容包含图片、文本混排的情况。
-
-- **注意**
-
-  Firefox 浏览器不支持设置此参数，参看 [contentHint 浏览器兼容信息](https://caniuse.com/?search=contentHint)。
-
 
 ## ScreenEncoderConfig <span id="screenencoderconfig"></span>
 
@@ -1666,14 +1646,15 @@ DOM
 
 类型: <code>"text" | "motion" | "detail" | undefined</code>
 
-视频内容类型。
-`'text'`：清晰度优先，适用于视频内容只包含大量文本的情况。
-`'motion'`：流畅度优先，适用于视频内容为摄像头采集、电影、视频、游戏的情况。
-`'detail'`：清晰度优先，适用于视频内容包含图片、文本混排的情况。
+屏幕共享的视频内容类型。
+
+- 'detail'【默认值】：清晰度优先，适用于视频内容包含图片、文本混排的情况。
+- 'text'：清晰度优先，适用于视频内容只包含大量文本的情况。
+- 'motion'：流畅度优先，适用于视频内容为摄像头采集、电影、视频、游戏的情况。
 
 - **注意**
 
-  Firefox 浏览器不支持设置此参数，参看 [contentHint 浏览器兼容信息](https://caniuse.com/?search=contentHint)。
+  仅支持Chrome浏览器设置此参数。
 
 
 ## AudioPropertiesConfig <span id="audiopropertiesconfig"></span>
@@ -1701,51 +1682,6 @@ DOM
 + true: 保持开启
 + false：关闭
 
-<p style="font-size: 16px;font-weight: bolder;"> localMainReportMode <span id="audiopropertiesconfig-localmainreportmode"></span></p> 
-
-类型: <code>[LocalMainReportMode](#localmainreportmode) | undefined</code>
-
-本地主流音量回调模式。
-
-<p style="font-size: 16px;font-weight: bolder;"> audioReportMode <span id="audiopropertiesconfig-audioreportmode"></span></p> 
-
-类型: <code>[AudioReportMode](#audioreportmode) | undefined</code>
-
-本地主流音量回调的数据范围，控制回调中是否包含混音。
-
-
-## LocalMainReportMode <span id="localmainreportmode"></span>
-
-类型: `enum`
-
-本地主流音量回调模式。
-该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，进入房间但未发布主流音频，[LocalMainReportMode](#localmainreportmode) 为 `RESET`，则该回调永远不会包含本端用户主流音频。
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | NORMAL | `0` | （默认值）本地主流存在时，始终开启音量回调。 |
-  | DISCONNECT | `1` | 未发布时，不回调对应音量。发布时回调真实音量。 |
-  | RESET | `2` | 未发布时，始终回调 0。发布时正常回调真实音量。 |
-
-
-
-## AudioReportMode <span id="audioreportmode"></span>
-
-类型: `enum`
-
-本地主流音量回调的数据范围，控制回调中是否包含混音。
-该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，[AudioReportMode](#audioreportmode) 为 `AUDIOMIXING`，即使麦克风音量为 0，该回调中也可能回调本端用户主流音频。
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | MICROPHONE | `0` | （默认值）麦克风音量，即混音前的音量。 |
-  | AUDIOMIXING | `1` | 混音后的音量。 |
-
-
 
 ## LiveTranscodeConfig <span id="livetranscodeconfig"></span>
 
@@ -1757,27 +1693,27 @@ DOM
 
 类型: <code>string</code>
 
-推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。建议设置。
+推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。
 本参数不支持过程中更新。
 
 <p style="font-size: 16px;font-weight: bolder;"> audio <span id="livetranscodeconfig-audio"></span></p> 
 
 类型: <code>Partial<[LiveTranscodeAudioConfig](#livetranscodeaudioconfig)\> | undefined</code>
 
-音频转码配置参数。建议设置。
+音频转码配置参数。
 本参数不支持过程中更新。
 
 <p style="font-size: 16px;font-weight: bolder;"> video <span id="livetranscodeconfig-video"></span></p> 
 
 类型: <code>Partial<[LiveTranscodeVideoConfig](#livetranscodevideoconfig)\> | undefined</code>
 
-视频转码配置参数。建议设置。
+视频转码配置参数。
 
 <p style="font-size: 16px;font-weight: bolder;"> layout <span id="livetranscodeconfig-layout"></span></p> 
 
 类型: <code>Partial<[LiveTranscodeLayoutConfig](#livetranscodelayoutconfig)\> | undefined</code>
 
-用户布局信息。建议设置。
+用户布局信息。
 
 
 ## LiveTranscodeAudioConfig <span id="livetranscodeaudioconfig"></span>
@@ -1790,32 +1726,32 @@ DOM
 
 类型: <code>"AAC" | undefined</code>
 
-音频编码格式，选填，默认为 `AAC`。建议设置。
+音频编码格式，选填，默认为 `AAC`。
 
 <p style="font-size: 16px;font-weight: bolder;"> kBitRate <span id="livetranscodeaudioconfig-kbitrate"></span></p> 
 
 类型: <code>number</code>
 
-音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。建议设置。
+音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。
 
 <p style="font-size: 16px;font-weight: bolder;"> sampleRate <span id="livetranscodeaudioconfig-samplerate"></span></p> 
 
 类型: <code>number</code>
 
-音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。建议设置。
+音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。
 
 <p style="font-size: 16px;font-weight: bolder;"> channels <span id="livetranscodeaudioconfig-channels"></span></p> 
 
 类型: <code>number</code>
 
-音频声道数。可取 1（单声道）、2（双声道），默认值为 2。建议设置。
+音频声道数。可取 1（单声道）、2（双声道），默认值为 2。
 
 <p style="font-size: 16px;font-weight: bolder;"> AACProfile <span id="livetranscodeaudioconfig-aacprofile"></span></p> 
 
 类型: <code>[AAC_PROFILE](#aac_profile)</code>
 
 <span id="aac_profile"></span>
-AAC 编码规格。默认值为 `LC`。建议设置。
+AAC 编码规格。默认值为 `LC`。
 
 
 ## AAC_PROFILE <span id="aac_profile"></span>
@@ -1845,33 +1781,33 @@ AAC 编码规格。
 类型: <code>number</code>
 
 合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。
-设置值为非偶数时，自动向上取偶数。建议设置。
+设置值为非偶数时，自动向上取偶数。
 
 <p style="font-size: 16px;font-weight: bolder;"> height <span id="livetranscodevideoconfig-height"></span></p> 
 
 类型: <code>number</code>
 
 合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。
-设置值为非偶数时，自动向上取偶数。建议设置。
+设置值为非偶数时，自动向上取偶数。
 
 <p style="font-size: 16px;font-weight: bolder;"> codec <span id="livetranscodevideoconfig-codec"></span></p> 
 
 类型: <code>[TRANSCODING_VIDEO_CODEC](#transcoding_video_codec)</code>
 
-视频编码格式。默认值为 `H264`。建议设置。
+视频编码格式。默认值为 `H264`。
 本参数不支持过程中更新。
 
 <p style="font-size: 16px;font-weight: bolder;"> fps <span id="livetranscodevideoconfig-fps"></span></p> 
 
 类型: <code>number</code>
 
-合流视频帧率。单位为 FPS，取值范围为 [1,60]，默认值为 15 FPS。建议设置。
+合流视频帧率。单位为 FPS，取值范围为 [1,60]，默认值为 15 FPS。
 
 <p style="font-size: 16px;font-weight: bolder;"> gop <span id="livetranscodevideoconfig-gop"></span></p> 
 
 类型: <code>number</code>
 
-视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。建议设置。
+视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。
 本参数不支持过程中更新。
 
 
@@ -1902,7 +1838,7 @@ AAC 编码规格。
 
 类型: <code>[LiveTranscodeLayoutRegion](#livetranscodelayoutregion)[]</code>
 
-用户布局信息列表。值不合法或未设置时，自动使用默认值。建议设置。
+用户布局信息列表。值不合法或未设置时，自动使用默认值。
 
 <p style="font-size: 16px;font-weight: bolder;"> appData <span id="livetranscodelayoutconfig-appdata"></span></p> 
 
@@ -1914,7 +1850,7 @@ AAC 编码规格。
 
 类型: <code>string</code>
 
-合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。建议设置。
+合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。
 值不合法或未设置时，自动使用默认值。
 
 
@@ -1934,19 +1870,19 @@ AAC 编码规格。
 
 类型: <code>string</code>
 
-视频流发布用户的用户 ID。建议设置。
+视频流发布用户的用户 ID
 
 <p style="font-size: 16px;font-weight: bolder;"> x <span id="livetranscodelayoutregion-x"></span></p> 
 
 类型: <code>number | undefined</code>
 
-视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
+视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
 
 <p style="font-size: 16px;font-weight: bolder;"> y <span id="livetranscodelayoutregion-y"></span></p> 
 
 类型: <code>number | undefined</code>
 
-视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
+视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
 
 <p style="font-size: 16px;font-weight: bolder;"> zorder <span id="livetranscodelayoutregion-zorder"></span></p> 
 
@@ -1958,19 +1894,19 @@ AAC 编码规格。
 
 类型: <code>number | undefined</code>
 
-视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 (0.0, 1.0]。默认值为 1.0。建议设置。
+视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 (0.0, 1.0]。默认值为 1.0。
 
 <p style="font-size: 16px;font-weight: bolder;"> h <span id="livetranscodelayoutregion-h"></span></p> 
 
 类型: <code>number | undefined</code>
 
-视频流对应区域高度相对整体画面的归一化比例，取值的范围为 (0.0, 1.0]。默认值为 1.0。建议设置。
+视频流对应区域高度相对整体画面的归一化比例，取值的范围为 (0.0, 1.0]。默认值为 1.0。
 
 <p style="font-size: 16px;font-weight: bolder;"> renderMode <span id="livetranscodelayoutregion-rendermode"></span></p> 
 
 类型: <code>number | undefined</code>
 
-图片或视频流的缩放模式，默认值为 1。建议设置。可选取值如下：
+图片或视频流的缩放模式，默认值为 1。可选取值如下：
 • 1: 视频尺寸等比缩放，优先保证窗口被填满。当视频尺寸与显示窗口尺寸不一致时，多出的视频将被截掉。
 • 2: 视频尺寸等比缩放，优先保证视频内容全部显示。当视频尺寸与显示窗口尺寸不一致时，会把窗口未被填满的区域填充成黑色。
 • 3: 视频尺寸非等比例缩放，把窗口充满。当视频尺寸与显示窗口尺寸不一致时，视频高或宽方向会被拉伸。
@@ -1979,7 +1915,7 @@ AAC 编码规格。
 
 类型: <code>number | undefined</code>
 
-合流内容控制。默认值为 0，可选取值如下：
+合流内容控制。默认值为0，可选取值如下：
 • 0: 输出的混流包含音视频。
 • 1: 只包含音频。
 • 2: 只包含视频。

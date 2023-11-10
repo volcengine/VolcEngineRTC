@@ -7,7 +7,7 @@
 | 方法 | 描述 |
 | :-- | :-- |
 | [onPlayerEvent](#engineevents-onplayerevent) | 播放器事件 |
-| [onUserJoined](#engineevents-onuserjoined) | 远端可见用户加入房间，或房内不可见用户切换为可见的回调 |
+| [onUserJoined](#engineevents-onuserjoined) | 远端可见用户加入房间，或房内隐身用户切换为可见的回调 |
 | [onUserLeave](#engineevents-onuserleave) | 远端可见用户离开房间，或房内可见用户切换为隐身的回调 |
 | [onConnectionStateChanged](#engineevents-onconnectionstatechanged) | 连接状态发生变化 |
 | [onUserPublishStream](#engineevents-onuserpublishstream) | 房间内新增远端摄像头/麦克风采集音视频流的回调。 |
@@ -18,7 +18,7 @@
 | [onRemoteAudioFirstFrame](#engineevents-onremoteaudiofirstframe) | 远端音频首帧播放事件 |
 | [onVideoDeviceStateChanged](#engineevents-onvideodevicestatechanged) | 视频媒体设备状态改变。 |
 | [onAudioDeviceStateChanged](#engineevents-onaudiodevicestatechanged) | 音频媒体设备状态改变。 |
-| [onTrackEnded](#engineevents-ontrackended) | 断流事件，建议在回调里重新采集。 |
+| [onTrackEnded](#engineevents-ontrackended) | 断流事件 |
 | [onRoomMessageReceived](#engineevents-onroommessagereceived) | 接收到房间内广播消息的事件。 |
 | [onRoomBinaryMessageReceived](#engineevents-onroombinarymessagereceived) | 接收到房间内二进制广播消息的事件。 |
 | [onUserMessageReceived](#engineevents-onusermessagereceived) | 收到来自房间中其他用户通过 [sendUserMessage](Web-api.md#sendusermessage) 发来的点对点文本消息时，会收到此事件 |
@@ -38,7 +38,7 @@
 | [onAutoSubscribeResult](#engineevents-onautosubscriberesult) | 如果开启了自动订阅，订阅成功或者失败后可以收到此事件 |
 | [onAutoPublishResult](#engineevents-onautopublishresult) | 如果开启了自动发布，发布成功或者失败后可以收到此事件 |
 | [onAutoplayFailed](#engineevents-onautoplayfailed) | 自动播放失败 |
-| [onError](#engineevents-onerror) | 当 SDK 内部发生不可逆转错误时触发该回调。 |
+| [onError](#engineevents-onerror) | 当 SDK 内部发生不可逆转错误时触发该回调 |
 | [onAudioMixingStateChanged](#engineevents-onaudiomixingstatechanged) | 音频混音文件播放状态改变事件 |
 | [onUserMessageReceivedOutsideRoom](#engineevents-onusermessagereceivedoutsideroom) | 接收到房间外消息的事件。 |
 | [onUserBinaryMessageReceivedOutsideRoom](#engineevents-onuserbinarymessagereceivedoutsideroom) | 接收到房间外二进制消息的事件。 |
@@ -81,7 +81,7 @@
 
 ### onUserJoined <span id="engineevents-onuserjoined"></span> 
 
-远端可见用户加入房间，或房内不可见用户切换为可见的回调
+远端可见用户加入房间，或房内隐身用户切换为可见的回调
 
 - **类型**
 
@@ -243,7 +243,7 @@
 
 ### onRemoteVideoFirstFrame <span id="engineevents-onremotevideofirstframe"></span> 
 
-视频首帧渲染
+视频首帧解码
 
 - **类型**
 
@@ -311,7 +311,7 @@
 
 ### onTrackEnded <span id="engineevents-ontrackended"></span> 
 
-断流事件，建议在回调里重新采集。
+断流事件
 
 - **类型**
 
@@ -714,26 +714,25 @@
 
 ### onError <span id="engineevents-onerror"></span> 
 
-当 SDK 内部发生不可逆转错误时触发该回调。
+当 SDK 内部发生不可逆转错误时触发该回调
 
 - **类型**
 
   ```ts
-  (event: { errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.TOKEN_EXPIRED | ErrorCode.RECONNECT_FAILED | ErrorCode.KICKED_OUT | ErrorCode.ROOM_DISMISS; forbiddenTime?: number;}) => void
+  (event: { errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.EXPIRED_TOKEN | ErrorCode.RECONNECT_FAILED;}) => void
   ```
 
 - **参数**
 
   - **event**
 
-    类型: <code>{ errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.TOKEN_EXPIRED | ErrorCode.RECONNECT_FAILED | ErrorCode.KICKED_OUT | ErrorCode.ROOM_DISMISS; forbiddenTime?: number | undefined; }</code>
+    类型: <code>{ errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.EXPIRED_TOKEN | ErrorCode.RECONNECT_FAILED; }</code>
 
     - **成员**
 
       | 名称 | 类型 | 描述 |
       | :-- | :-- | :-- |
-      | errorCode | `ErrorCode.KICKED_OUT | ErrorCode.ROOM_DISMISS | ErrorCode.TOKEN_EXPIRED | ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.RECONNECT_FAILED` | 错误码，参看 [ErrorCode](Web-errorcode.md#errorcode)。 |
-      | forbiddenTime | `number | undefined` | （可选参数）房间解封时间，unix 时间戳，单位毫秒。<br> 当 `forbiddenTime` 为 0 时，代表允许用户重新进房。 |
+      | errorCode | `ErrorCode.EXPIRED_TOKEN | ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.RECONNECT_FAILED` | 查看错误码和发生错误的原因 |
 
 
 ### onAudioMixingStateChanged <span id="engineevents-onaudiomixingstatechanged"></span> 
