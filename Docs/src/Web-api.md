@@ -17,41 +17,41 @@
   | [unsubscribeStream()](#unsubscribestream) | 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。<br>该方法对自动订阅和手动订阅模式均适用。 |
   | [subscribeScreen()](#subscribescreen) | 订阅房间内指定的远端屏幕共享音视频流。<br>该方法对自动订阅和手动订阅模式均适用。 |
   | [unsubscribeScreen()](#unsubscribescreen) | 取消订阅房间内指定的远端屏幕共享音视频流。<br>该方法对自动订阅和手动订阅模式均适用。 |
-  | [updateToken()](#updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](104479.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
+  | [updateToken()](#updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
   | [setAudioCaptureDevice()](#setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
   | [setVideoCaptureDevice()](#setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
-  | [startVideoCapture()](#startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](104479.md#onuserstartvideocapture) 的回调。 |
-  | [stopVideoCapture()](#stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](104479.md#onuserstopvideocapture) 的回调。 |
-  | [startAudioCapture()](#startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](104479.md#onuserstartaudiocapture) 的回调。 |
-  | [stopAudioCapture()](#stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](104479.md#onuserstopaudiocapture) 的回调。 |
+  | [startVideoCapture()](#startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
+  | [stopVideoCapture()](#stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
+  | [startAudioCapture()](#startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
+  | [stopAudioCapture()](#stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
   | [startScreenCapture()](#startscreencapture) | 使用内部采集模块，采集当前屏幕视频流，用于共享。 |
   | [stopScreenCapture()](#stopscreencapture) | 停止屏幕共享流内部采集。 |
   | [setLocalVideoPlayer()](#setlocalvideoplayer) | 设置本地视频渲染时，使用的视图，并设置渲染模式。<br>调用本方法绑定视图以后，你可以通过 `onPlayerEvent` 来监听播放状态。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
-  | [setRemoteVideoPlayer()](#setremotevideoplayer) | 设置远端视频渲染时使用的视图，并设置渲染模式。<br>建议在收到 [onUserPublishStream](104479.md#onuserpublishstream)/[onUserPublishScreen](104479.md#onuserpublishscreen) 事件后，调用本方法对远端视频视图进行设置。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
+  | [setRemoteVideoPlayer()](#setremotevideoplayer) | 设置远端视频渲染时使用的视图，并设置渲染模式。<br>建议在收到 [onUserPublishStream](Web-event.md#onuserpublishstream)/[onUserPublishScreen](Web-event.md#onuserpublishscreen) 事件后，调用本方法对远端视频视图进行设置。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
   | [setLocalVideoMirrorType()](#setlocalvideomirrortype) | 是否开启本地视频流镜像模式。 |
   | [setAudioPlaybackDevice()](#setaudioplaybackdevice) | 设置音频播放设备，例如扬声器或者耳机，默认使用扬声器。 |
   | [play()](#play) | 手动开启音视频流播放 |
   | [pauseAllSubscribedStream()](#pauseallsubscribedstream) | 暂停接收来自远端的媒体流。 |
   | [resumeAllSubscribedStream()](#resumeallsubscribedstream) | 恢复接收来自远端的媒体流 |
-  | [sendUserMessage()](#sendusermessage) | 给房间内指定的用户发送点对点文本消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](104479.md#onusermessagereceived) 回调。 |
-  | [sendUserBinaryMessage()](#senduserbinarymessage) | 给房间内指定的用户发送点对点二进制消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](104479.md#onuserbinarymessagereceived) 回调。 |
-  | [sendRoomMessage()](#sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](104479.md#onroommessagereceived) 回调。 |
-  | [sendRoomBinaryMessage()](#sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](104479.md#onroombinarymessagereceived) 回调发送的消息 |
+  | [sendUserMessage()](#sendusermessage) | 给房间内指定的用户发送点对点文本消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](Web-event.md#onusermessagereceived) 回调。 |
+  | [sendUserBinaryMessage()](#senduserbinarymessage) | 给房间内指定的用户发送点对点二进制消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](Web-event.md#onuserbinarymessagereceived) 回调。 |
+  | [sendRoomMessage()](#sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。 |
+  | [sendRoomBinaryMessage()](#sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息 |
   | [sendSEIMessage()](#sendseimessage) | 在视频通信时，通过视频帧发送 SEI 数据。 |
   | [setVideoEncoderConfig()](#setvideoencoderconfig) | 在视频发布端设置发布的视频流参数。 |
-  | [setScreenEncoderConfig()](#setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](104479.md#onlocalvideosizechanged) 通知采集的实际参数。 |
+  | [setScreenEncoderConfig()](#setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
   | [setRemoteVideoConfig()](#setremotevideoconfig) | 设置期望订阅的远端视频流的参数。 |
   | [enableSimulcastMode()](#enablesimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式 |
   | [enableAudioPropertiesReport()](#enableaudiopropertiesreport) | 启用音频信息提示。 |
   | [startLiveTranscoding()](#startlivetranscoding) | 开启转推直播，并设置合流的视频视图布局和音频属性。 |
-  | [updateLiveTranscoding()](#updatelivetranscoding) | 更新转推直播参数。<br>使用 [startLiveTranscoding](104478.md#startlivetranscoding) 启用转推直播功能后，使用此方法更新功能配置参数。 |
-  | [stopLiveTranscoding()](#stoplivetranscoding) | 停止转推直播。<br>关于启动转推直播，参看 [startLiveTranscoding](104478.md#startlivetranscoding)。 |
+  | [updateLiveTranscoding()](#updatelivetranscoding) | 更新转推直播参数。<br>使用 [startLiveTranscoding](Web-api.md#startlivetranscoding) 启用转推直播功能后，使用此方法更新功能配置参数。 |
+  | [stopLiveTranscoding()](#stoplivetranscoding) | 停止转推直播。<br>关于启动转推直播，参看 [startLiveTranscoding](Web-api.md#startlivetranscoding)。 |
   | [setBusinessId()](#setbusinessid) | 设置业务标识参数<br>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
   | [setUserVisibility()](#setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
-  | [setExternalVideoTrack()](#setexternalvideotrack) | 使用用户自定义的 videoTrack。<br>调用本方法前必须先调用 [setVideoSourceType](104478.md#setvideosourcetype) 设置为自定义视频采集。 |
-  | [setExternalAudioTrack()](#setexternalaudiotrack) | 使用用户自定义的 audioTrack。<br>调用本方法前必须先调用 [setAudioSourceType](104478.md#setaudiosourcetype) 设置为自定义音频采集。 |
-  | [setVideoSourceType()](#setvideosourcetype) | 设置向 SDK 输入的视频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startVideoCapture](104478.md#startvideocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startVideoCapture](104478.md#startvideocapture) 手动开启内部采集。 |
-  | [setAudioSourceType()](#setaudiosourcetype) | 设置向 SDK 输入的音频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startAudioCapture](104478.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](104478.md#startaudiocapture) 手动开启内部采集。 |
+  | [setExternalVideoTrack()](#setexternalvideotrack) | 使用用户自定义的 videoTrack。<br>调用本方法前必须先调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 设置为自定义视频采集。 |
+  | [setExternalAudioTrack()](#setexternalaudiotrack) | 使用用户自定义的 audioTrack。<br>调用本方法前必须先调用 [setAudioSourceType](Web-api.md#setaudiosourcetype) 设置为自定义音频采集。 |
+  | [setVideoSourceType()](#setvideosourcetype) | 设置向 SDK 输入的视频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startVideoCapture](Web-api.md#startvideocapture) 手动开启内部采集。 |
+  | [setAudioSourceType()](#setaudiosourcetype) | 设置向 SDK 输入的音频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](Web-api.md#startaudiocapture) 手动开启内部采集。 |
   | [getAudioMixingManager()](#getaudiomixingmanager) | 混音管理接口创建 |
   | [setAudioCaptureConfig()](#setaudiocaptureconfig) | 设置 RTC SDK 内部采集时的音频采集参数。默认参数由浏览器决定。 |
   | [login()](#login) | 登录即时消息服务器<br>调用此方法登录后，可以向同 `appID` 下其他已登陆用户发送文本或二进制消息。 |
@@ -60,26 +60,26 @@
   | [getPeerOnlineStatus()](#getpeeronlinestatus) | 查询对端用户或本端用户的登录状态。在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。 |
   | [sendUserMessageOutsideRoom()](#sendusermessageoutsideroom) | 给房间外指定的用户发送文本消息（P2P） |
   | [sendUserBinaryMessageOutsideRoom()](#senduserbinarymessageoutsideroom) | 给房间外指定的用户发送二进制消息（P2P） |
-  | [setServerParams()](#setserverparams) | 设置业务服务器参数。调用 [sendServerMessage](104478.md#sendservermessage) 或 [sendServerBinaryMessage](104478.md#sendserverbinarymessage) 发送消息给业务服务器之前，必须需要设置有效签名和业务服务器地址。 |
+  | [setServerParams()](#setserverparams) | 设置业务服务器参数。调用 [sendServerMessage](Web-api.md#sendservermessage) 或 [sendServerBinaryMessage](Web-api.md#sendserverbinarymessage) 发送消息给业务服务器之前，必须需要设置有效签名和业务服务器地址。 |
   | [sendServerMessage()](#sendservermessage) | 客户端给业务服务器发送文本消息（P2Server） |
   | [sendServerBinaryMessage()](#sendserverbinarymessage) | 客户端给业务服务器发送二进制消息（P2Server） |
   | [startCloudProxy()](#startcloudproxy) | 开启云代理 |
   | [stopCloudProxy()](#stopcloudproxy) | 关闭云代理 |
   | [startPushPublicStream()](#startpushpublicstream) | 发布一路公共流。 |
-  | [updatePublicStreamParam()](#updatepublicstreamparam) | 更新公共流参数。<br>调用 [startPushPublicStream](104478.md#startpushpublicstream) 发布一路公共流。 |
-  | [stopPushPublicStream()](#stoppushpublicstream) | 停止发布公共流。<br>调用 [startPushPublicStream](104478.md#startpushpublicstream) 发布一路公共流。 |
+  | [updatePublicStreamParam()](#updatepublicstreamparam) | 更新公共流参数。<br>调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布一路公共流。 |
+  | [stopPushPublicStream()](#stoppushpublicstream) | 停止发布公共流。<br>调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布一路公共流。 |
   | [startPlayPublicStream()](#startplaypublicstream) | 订阅指定公共流。<br>无论用户是否在房间内，都可以调用本接口获取和播放指定的公共流。 |
-  | [stopPlayPublicStream()](#stopplaypublicstream) | 取消订阅指定公共流。<br>关于订阅公共流，查看 [startPlayPublicStream](104478.md#startplaypublicstream)。 |
+  | [stopPlayPublicStream()](#stopplaypublicstream) | 取消订阅指定公共流。<br>关于订阅公共流，查看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。 |
   | [setPublicStreamVideoPlayer()](#setpublicstreamvideoplayer) | 为指定公共流设置使用的视图和渲染模式。 |
   | [setDummyCaptureImagePath()](#setdummycaptureimagepath) | 停止内部摄像头采集时，使用静态图片填充本地推送的视频流。 |
   | [defaultTranscoding()](#defaulttranscoding) | 获取合流转推默认参数。 |
   | [setSubscribeFallbackOption()](#setsubscribefallbackoption) | 设置订阅的音视频流的回退选项。<br>回退指：设置网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。 |
-  | [setRemoteUserPriority()](#setremoteuserpriority) | 设置用户优先级。<br>该方法与 [setSubscribeFallbackOption](104478.md#setsubscribefallbackoption) 搭配使用。<br>开启回退后，会优先保证收到的高优先级用户的流的质量。 |
-  | [startAudioPlaybackDeviceTest()](#startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](104479.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。 |
+  | [setRemoteUserPriority()](#setremoteuserpriority) | 设置用户优先级。<br>该方法与 [setSubscribeFallbackOption](Web-api.md#setsubscribefallbackoption) 搭配使用。<br>开启回退后，会优先保证收到的高优先级用户的流的质量。 |
+  | [startAudioPlaybackDeviceTest()](#startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。 |
   | [stopAudioPlaybackDeviceTest()](#stopaudioplaybackdevicetest) | 停止音频播放设备测试。 |
-  | [startAudioDeviceRecordTest()](#startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br>建议提前调用 [enableAudioPropertiesReport](104478#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](104479.md#onlocalaudiopropertiesreport) 获取采集音量。 |
-  | [stopAudioDeviceRecordAndPlayTest()](#stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>调用 [startAudioDeviceRecordTest](104478.md#startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
-  | [stopAudioDevicePlayTest()](#stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](104478.md#startaudiodevicerecordtest) 开始的音频播放设备测试。<br>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
+  | [startAudioDeviceRecordTest()](#startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br>建议提前调用 [enableAudioPropertiesReport](Web-api#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。 |
+  | [stopAudioDeviceRecordAndPlayTest()](#stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
+  | [stopAudioDevicePlayTest()](#stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 开始的音频播放设备测试。<br>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
   | [setAudioProfile()](#setaudioprofile) | 设置音质档位 |
   | [getLocalStreamTrack()](#getlocalstreamtrack) | 获取本地用户的音频或者视频的 [MediaStreamTrack](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack)。 |
   | [getRemoteStreamTrack()](#getremotestreamtrack) | 获取已订阅的远端用户的音频或者视频的 [MediaStreamTrack](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack)。 |
@@ -87,8 +87,8 @@
   | [takeLocalSnapshot()](#takelocalsnapshot) | 截取本地视频画面 |
   | [takeRemoteSnapshot()](#takeremotesnapshot) | 截取远端视频画面 |
   | [registerExtension()](#registerextension) | 注册插件。 |
-  | [startSubtitle()](#startsubtitle) | 开启字幕。<br>调用该方法后，你可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。语音识别或翻译的结果会通过 [onSubtitleMessageReceived](104479.md#onsubtitlemessagereceived) 事件回调给你。<br>调用该方法后，你会收到 [onSubtitleStateChanged](104479.md#onsubtitlestatechanged) 回调，通知字幕是否开启。 |
-  | [stopSubtitle()](#stopsubtitle) | 关闭字幕。<br>调用该方法后，你会收到 [onSubtitleStateChanged](104479.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
+  | [startSubtitle()](#startsubtitle) | 开启字幕。<br>调用该方法后，你可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Web-event.md#onsubtitlemessagereceived) 事件回调给你。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否开启。 |
+  | [stopSubtitle()](#stopsubtitle) | 关闭字幕。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
   | [setRemoteStreamRenderSync()](#setremotestreamrendersync) | 设置远端音视频流是否同步渲染。<br>你可以通过关闭音视频同步，达到超低端到端延时的效果。 |
 
 
@@ -106,8 +106,8 @@
 - **注意**
 
   + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则先进房的用户将自动退房并收到 `DUPLICATE_LOGIN` 错误。
-  + 本地用户调用 [setUserVisibility](#setuservisibility) 将自身设为可见后加入房间，远端用户会收到 [onUserJoined](104479.md#onuserjoined) 回调通知。
-  + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](104479.md#onConnectionStateChanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，如果加入房间的为可见用户，远端用户会收到 [onUserJoined](104479.md#onuserjoined)  回调通知。
+  + 本地用户调用 [setUserVisibility](#setuservisibility) 将自身设为可见后加入房间，远端用户会收到 [onUserJoined](Web-event.md#onuserjoined) 回调通知。
+  + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Web-event.md#onConnectionStateChanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，如果加入房间的为可见用户，远端用户会收到 [onUserJoined](Web-event.md#onuserjoined)  回调通知。
 
 - **参数**
 
@@ -133,13 +133,13 @@
 
   - **userInfo**
 
-    类型: <code>[UserInfo](104481.md#userinfo)</code>
+    类型: <code>[UserInfo](Web-keytype.md#userinfo)</code>
 
     用户信息。
 
   - **roomConfig**
 
-    类型: <code>[RoomConfig](104481.md#roomconfig) | undefined</code>
+    类型: <code>[RoomConfig](Web-keytype.md#roomconfig) | undefined</code>
 
     房间参数配置，设置房间模式以及是否自动发布或订阅流。
 
@@ -160,7 +160,7 @@
 
 - **注意**
 
-  + 可见的用户离开房间后，房间内其他用户会收到 [onUserLeave](104479.md#onuserleave) 回调通知。
+  + 可见的用户离开房间后，房间内其他用户会收到 [onUserLeave](Web-event.md#onuserleave) 回调通知。
   + 调用 [joinRoom](#joinroom) 方法加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。重复调用此方法没有负面影响。
 
 - **参数**
@@ -187,14 +187,14 @@
 
   + 调用 [setUserVisibility](#setuservisibility) 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。
   + 如果你需要发布屏幕共享流，调用 [publishScreen](#publishscreen)。
-  + 调用此方法后，房间中的所有远端用户会收到 [onUserPublishStream](104479.md#onuserpublishstream) 回调通知。
+  + 调用此方法后，房间中的所有远端用户会收到 [onUserPublishStream](Web-event.md#onuserpublishstream) 回调通知。
   + 调用 [unpublishStream](#unpublishstream) 取消发布。
 
 - **参数**
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定发布音频/视频。
 
@@ -215,13 +215,13 @@
 - **注意**
 
   + 调用 [publishStream](#publishstream) 手动发布摄像头/麦克风采集的音视频流后，你需调用此接口停止发布。
-  + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 [onUserUnpublishStream](104479.md#onuserunpublishstream) 回调通知。
+  + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 [onUserUnpublishStream](Web-event.md#onuserunpublishstream) 回调通知。
 
 - **参数**
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定停止发布音频/视频。
 
@@ -242,14 +242,14 @@
 - **注意**
 
   + 调用 [setUserVisibility](#setuservisibility) 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。
-  + 调用该方法后，房间中的所有远端用户会收到 [onUserPublishScreen](104479.md#onuserpublishscreen) 回调。
+  + 调用该方法后，房间中的所有远端用户会收到 [onUserPublishScreen](Web-event.md#onuserpublishscreen) 回调。
   + 调用 [unpublishScreen](#unpublishscreen) 取消发布。
 
 - **参数**
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定发布屏幕音频/视频。
 
@@ -270,13 +270,13 @@
 - **注意**
 
   + 调用 [publishScreen](#publishscreen) 发布屏幕流后，你需调用此接口停止发布。
-  + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 [onUserUnpublishScreen](104479.md#onuserunpublishscreen) 回调。
+  + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 [onUserUnpublishScreen](Web-event.md#onuserunpublishscreen) 回调。
 
 - **参数**
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定停止发布屏幕音频/视频
 
@@ -297,7 +297,7 @@
 
 - **注意**
 
-  你必须先通过 [onUserPublishStream](104479.md#onuserpublishstream) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。
+  你必须先通过 [onUserPublishStream](Web-event.md#onuserpublishstream) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。
 
 - **参数**
 
@@ -309,7 +309,7 @@
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定订阅音频/视频。
 
@@ -338,7 +338,7 @@
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定取消订阅音频/视频。
 
@@ -359,7 +359,7 @@
 
 - **注意**
 
-  你必须先通过 [onUserPublishScreen](104479.md#onuserpublishscreen) 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。
+  你必须先通过 [onUserPublishScreen](Web-event.md#onuserpublishscreen) 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。
 
 - **参数**
 
@@ -371,7 +371,7 @@
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定订阅音频/视频。
 
@@ -400,7 +400,7 @@
 
   - **type**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，用于指定取消订阅音频/视频。
 
@@ -411,7 +411,7 @@
 ### updateToken()
 
 更新 Token。
-用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](104479.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。
+用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。
 
 - **类型**
 
@@ -491,7 +491,7 @@
 
 开启内部视频采集。默认为关闭状态。
 内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
-发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](104479.md#onuserstartvideocapture) 的回调。
+发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。
 
 - **类型**
 
@@ -523,7 +523,7 @@
 
 关闭内部视频采集。默认为关闭状态。
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。
-发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](104479.md#onuserstopvideocapture) 的回调。
+发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。
 
 - **类型**
 
@@ -544,7 +544,7 @@
 
 立即开启内部音频采集。默认为关闭状态。
 内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。
-发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](104479.md#onuserstartaudiocapture) 的回调。
+发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
 
 - **类型**
 
@@ -573,7 +573,7 @@
 
 立即关闭内部音频采集。默认为关闭状态。
 内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。
-调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](104479.md#onuserstopaudiocapture) 的回调。
+调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。
 
 - **类型**
 
@@ -610,7 +610,7 @@
 
   - **screenConfig**
 
-    类型: <code>[ScreenConfig](104481.md#screenconfig) | undefined</code>
+    类型: <code>[ScreenConfig](Web-keytype.md#screenconfig) | undefined</code>
 
     共享屏幕属性
 
@@ -652,13 +652,13 @@
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     视频流属性
 
   - **videoPlayerOption**
 
-    类型: <code>Partial<[VideoPlayerOption](104481.md#videoplayeroption)\> | undefined</code>
+    类型: <code>Partial<[VideoPlayerOption](Web-keytype.md#videoplayeroption)\> | undefined</code>
 
     视图信息和渲染模式
 
@@ -669,7 +669,7 @@
 ### setRemoteVideoPlayer()
 
 设置远端视频渲染时使用的视图，并设置渲染模式。
-建议在收到 [onUserPublishStream](104479.md#onuserpublishstream)/[onUserPublishScreen](104479.md#onuserpublishscreen) 事件后，调用本方法对远端视频视图进行设置。
+建议在收到 [onUserPublishStream](Web-event.md#onuserpublishstream)/[onUserPublishScreen](Web-event.md#onuserpublishscreen) 事件后，调用本方法对远端视频视图进行设置。
 你可以通过再次调用本方法，并绑定空视图来解除绑定。
 
 - **类型**
@@ -686,13 +686,13 @@
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     视频流属性
 
   - **videoPlayer**
 
-    类型: <code>[VideoPlayerOption](104481.md#videoplayeroption)</code>
+    类型: <code>[VideoPlayerOption](Web-keytype.md#videoplayeroption)</code>
 
     视图信息和渲染模式
 
@@ -714,7 +714,7 @@
 
   - **mirrorType**
 
-    类型: <code>[MirrorType](104481.md#mirrortype)</code>
+    类型: <code>[MirrorType](Web-keytype.md#mirrortype)</code>
 
     是否开启镜像模式
 
@@ -765,13 +765,13 @@
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype) | undefined</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype) | undefined</code>
 
     媒体流类型，用于指定发布音频/视频。
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex) | undefined</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex) | undefined</code>
 
     视频流属性
 
@@ -801,7 +801,7 @@
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，指定需要暂停接收音频还是视频流
 
@@ -828,7 +828,7 @@
 
   - **mediaType**
 
-    类型: <code>[MediaType](104481.md#mediatype)</code>
+    类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
     媒体流类型，指定需要暂停接收音频还是视频流
 
@@ -839,7 +839,7 @@
 ### sendUserMessage()
 
 给房间内指定的用户发送点对点文本消息。
-若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](104479.md#onusermessagereceived) 回调。
+若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](Web-event.md#onusermessagereceived) 回调。
 
 - **类型**
 
@@ -873,7 +873,7 @@
 ### sendUserBinaryMessage()
 
 给房间内指定的用户发送点对点二进制消息。
-若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](104479.md#onuserbinarymessagereceived) 回调。
+若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](Web-event.md#onuserbinarymessagereceived) 回调。
 
 - **类型**
 
@@ -907,7 +907,7 @@
 ### sendRoomMessage()
 
 给房间内的所有其他用户群发文本消息。
-若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](104479.md#onroommessagereceived) 回调。
+若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。
 
 - **类型**
 
@@ -931,7 +931,7 @@
 ### sendRoomBinaryMessage()
 
 给房间内的所有其他用户群发二进制消息。
-若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](104479.md#onroombinarymessagereceived) 回调发送的消息
+若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息
 
 - **类型**
 
@@ -965,13 +965,13 @@
 
   + 你可以通过此接口对 RTC SDK 内部采集的视频帧添加 SEI。
   + 如果调用此接口之后的 2s 内，没有可带 SEI 的视频帧（比如没有开启视频采集和传输），那么，SEI 数据不会被加进视频帧中。
-  + 消息发送成功后，远端会收到 [onSEIMessageReceived](104479.md#onseimessagereceived) 事件。
+  + 消息发送成功后，远端会收到 [onSEIMessageReceived](Web-event.md#onseimessagereceived) 事件。
 
 - **参数**
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     指定携带 SEI 信息的媒体流类型
 
@@ -1003,7 +1003,7 @@
   + 视频流发布前后均可调用本方法。视频流发布后，不支持从单流切换到多路流，不支持修改发布的多路流层数。
   + 当使用移动端在竖持状态下发布视频流时，设置的分辨率宽高与实际发流参数相反。例如，当设置发送分辨率为 640 × 480 px 时，实际发流参数为 480 × 640 px。
   + 发布多路流时，建议取消自动发布，通过调用 [publishStream](#publishstream) 手动发布音视频流，否则多路流不生效。
-  + 若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](104479.md#onlocalvideosizechanged) 通知采集的实际参数。
+  + 若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。
   + 是否发布多路流取决于是否同时调用了 [enableSimulcastMode](#enablesimulcastmode) 开启发布多路流。若未开启发布多路流，但调用本方法设置了多个分辨率，SDK 默认发布分辨率最大的一条流，多个分辨率的设置会在开启发布多路流之后生效。若开启了发布多路流，但仅调用本方法设置了一路流的参数，SDK 会自动填充 1～2 组小流参数。
   + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 [setScreenEncoderConfig](#setscreenencoderconfig)。
 
@@ -1011,7 +1011,7 @@
 
   - **descriptions**
 
-    类型: <code>[VideoEncoderConfig](104481.md#videoencoderconfig) | [VideoEncoderConfig](104481.md#videoencoderconfig)[]</code>
+    类型: <code>[VideoEncoderConfig](Web-keytype.md#videoencoderconfig) | [VideoEncoderConfig](Web-keytype.md#videoencoderconfig)[]</code>
 
     要推送的多路视频流的参数，所设置的分辨率是各路流的最大分辨率。
 最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。
@@ -1025,7 +1025,7 @@
 ### setScreenEncoderConfig()
 
 设置共享屏幕的视频编码参数，同时对视频采集生效。
-若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](104479.md#onlocalvideosizechanged) 通知采集的实际参数。
+若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。
 
 - **类型**
 
@@ -1042,7 +1042,7 @@
 
   - **description**
 
-    类型: <code>[ScreenEncoderConfig](104481.md#screenencoderconfig)</code>
+    类型: <code>[ScreenEncoderConfig](Web-keytype.md#screenencoderconfig)</code>
 
     共享屏幕的视频编码参数。
 
@@ -1076,7 +1076,7 @@
 
   - **remoteVideoConfig**
 
-    类型: <code>[RemoteVideoConfig](104481.md#remotevideoconfig)</code>
+    类型: <code>[RemoteVideoConfig](Web-keytype.md#remotevideoconfig)</code>
 
     期望配置的远端视频流参数。
 
@@ -1123,14 +1123,14 @@
 
   开启提示后，你可以：
 
-  + 通过 [onLocalAudioPropertiesReport](104479.md#onlocalaudiopropertiesreport) 回调获取本地麦克风和屏幕音频流采集的音频信息；
-  + 通过 [onRemoteAudioPropertiesReport](104479.md#onremoteaudiopropertiesreport) 回调获取订阅的远端用户的音频信息。
+  + 通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 回调获取本地麦克风和屏幕音频流采集的音频信息；
+  + 通过 [onRemoteAudioPropertiesReport](Web-event.md#onremoteaudiopropertiesreport) 回调获取订阅的远端用户的音频信息。
 
 - **参数**
 
   - **config**
 
-    类型: <code>[AudioPropertiesConfig](104481.md#audiopropertiesconfig) | undefined</code>
+    类型: <code>[AudioPropertiesConfig](Web-keytype.md#audiopropertiesconfig) | undefined</code>
 
     音频信息提示相关设置
 
@@ -1146,14 +1146,14 @@
 
 - **注意**
 
-  + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamMixingEvent](104479.md#onstreammixingevent) 回调。
+  + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamMixingEvent](Web-event.md#onstreammixingevent) 回调。
   + 调用 [stopLiveTranscoding](#stoplivetranscoding) 停止转推直播。
 
 - **参数**
 
   - **transcode**
 
-    类型: <code>[LiveTranscodeConfig](104481.md#livetranscodeconfig)</code>
+    类型: <code>[LiveTranscodeConfig](Web-keytype.md#livetranscodeconfig)</code>
 
     转推直播配置参数。
 
@@ -1164,7 +1164,7 @@
 ### updateLiveTranscoding()
 
 更新转推直播参数。
-使用 [startLiveTranscoding](104478.md#startlivetranscoding) 启用转推直播功能后，使用此方法更新功能配置参数。
+使用 [startLiveTranscoding](Web-api.md#startlivetranscoding) 启用转推直播功能后，使用此方法更新功能配置参数。
 
 - **类型**
 
@@ -1176,7 +1176,7 @@
 
   - **transcode**
 
-    类型: <code>Partial<[LiveTranscodeConfig](104481.md#livetranscodeconfig)\></code>
+    类型: <code>Partial<[LiveTranscodeConfig](Web-keytype.md#livetranscodeconfig)\></code>
 
     转推直播配置参数。除特殊说明外，均支持过程中更新。
 
@@ -1187,7 +1187,7 @@
 ### stopLiveTranscoding()
 
 停止转推直播。
-关于启动转推直播，参看 [startLiveTranscoding](104478.md#startlivetranscoding)。
+关于启动转推直播，参看 [startLiveTranscoding](Web-api.md#startlivetranscoding)。
 
 - **类型**
 
@@ -1240,8 +1240,8 @@
 
   + 该方法在加入房间前后均可调用。
   + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：
-      - 从 `false` 切换至 `true` 时，房间内其他用户会收到 [onUserJoined](104479.md#onuserjoined) 回调通知；
-      - 从 `true` 切换至 `false` 时，房间内其他用户会收到 [onUserLeave](104479.md#onuserleave) 回调通知。
+      - 从 `false` 切换至 `true` 时，房间内其他用户会收到 [onUserJoined](Web-event.md#onuserjoined) 回调通知；
+      - 从 `true` 切换至 `false` 时，房间内其他用户会收到 [onUserLeave](Web-event.md#onuserleave) 回调通知。
 
 - **参数**
 
@@ -1261,7 +1261,7 @@
 ### setExternalVideoTrack()
 
 使用用户自定义的 videoTrack。
-调用本方法前必须先调用 [setVideoSourceType](104478.md#setvideosourcetype) 设置为自定义视频采集。
+调用本方法前必须先调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 设置为自定义视频采集。
 
 - **类型**
 
@@ -1273,7 +1273,7 @@
 
   - **index**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     视频指针。
 
@@ -1290,7 +1290,7 @@
 ### setExternalAudioTrack()
 
 使用用户自定义的 audioTrack。
-调用本方法前必须先调用 [setAudioSourceType](104478.md#setaudiosourcetype) 设置为自定义音频采集。
+调用本方法前必须先调用 [setAudioSourceType](Web-api.md#setaudiosourcetype) 设置为自定义音频采集。
 
 - **类型**
 
@@ -1302,7 +1302,7 @@
 
   - **index**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     音频流指针
 
@@ -1321,8 +1321,8 @@
 设置向 SDK 输入的视频源
 默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。
 该方法进房前后均可调用。
-当你已调用 [startVideoCapture](104478.md#startvideocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。
-当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startVideoCapture](104478.md#startvideocapture) 手动开启内部采集。
+当你已调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。
+当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startVideoCapture](Web-api.md#startvideocapture) 手动开启内部采集。
 
 - **类型**
 
@@ -1334,13 +1334,13 @@
 
   - **index**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     视频流指针
 
   - **videoSourceType**
 
-    类型: <code>[VideoSourceType](104481.md#videosourcetype)</code>
+    类型: <code>[VideoSourceType](Web-keytype.md#videosourcetype)</code>
 
     视频采集模块
 
@@ -1353,8 +1353,8 @@
 设置向 SDK 输入的音频源
 默认使用内部采集。内部采集指：使用 RTC SDK 内置的音频采集机制进行音频采集。
 该方法进房前后均可调用。
-当你已调用 [startAudioCapture](104478.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。
-当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](104478.md#startaudiocapture) 手动开启内部采集。
+当你已调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。
+当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](Web-api.md#startaudiocapture) 手动开启内部采集。
 
 - **类型**
 
@@ -1366,13 +1366,13 @@
 
   - **index**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     音频流指针
 
   - **audioSourceType**
 
-    类型: <code>[AudioSourceType](104481.md#audiosourcetype)</code>
+    类型: <code>[AudioSourceType](Web-keytype.md#audiosourcetype)</code>
 
     音频采集模块
 
@@ -1521,7 +1521,7 @@
 
 - **返回值**
 
-  类型: <code>Promise<[USER_ONLINE_STATUS](104481.md#user_online_status)\></code>
+  类型: <code>Promise<[USER_ONLINE_STATUS](Web-keytype.md#user_online_status)\></code>
 
 ### sendUserMessageOutsideRoom()
 
@@ -1536,7 +1536,7 @@
 - **注意**
 
   + 必须调用 [login](#login) 登录后，才能调用本接口。
-  + 若文本消息发送成功，指定的用户会通过 [onUserMessageReceivedOutsideRoom](104479.md#onusermessagereceivedoutsideroom) 回调收到该消息。
+  + 若文本消息发送成功，指定的用户会通过 [onUserMessageReceivedOutsideRoom](Web-event.md#onusermessagereceivedoutsideroom) 回调收到该消息。
 
 - **参数**
 
@@ -1569,7 +1569,7 @@
 - **注意**
 
   + 必须调用 [login](#login) 登录后，才能调用本接口。
-  + 若文本消息发送成功，则 uid 所指定的用户会通过 [EngineEventsTypes.onUserBinaryMessageReceivedOutsideRoom](104479.md#onuserbinarymessagereceivedoutsideroom) 回调收到该消息。
+  + 若文本消息发送成功，则 uid 所指定的用户会通过 [EngineEventsTypes.onUserBinaryMessageReceivedOutsideRoom](Web-event.md#onuserbinarymessagereceivedoutsideroom) 回调收到该消息。
 
 - **参数**
 
@@ -1591,7 +1591,7 @@
 
 ### setServerParams()
 
-设置业务服务器参数。调用 [sendServerMessage](104478.md#sendservermessage) 或 [sendServerBinaryMessage](104478.md#sendserverbinarymessage) 发送消息给业务服务器之前，必须需要设置有效签名和业务服务器地址。
+设置业务服务器参数。调用 [sendServerMessage](Web-api.md#sendservermessage) 或 [sendServerBinaryMessage](Web-api.md#sendserverbinarymessage) 发送消息给业务服务器之前，必须需要设置有效签名和业务服务器地址。
 
 - **类型**
 
@@ -1602,7 +1602,7 @@
 - **注意**
 
   + 用户必须调用 [login](#login) 登录后，才能调用本接口。
-  + 调用本接口后将触发 [onServerParamsSetResult](104479.md#onserverparamssetresult) 回调。
+  + 调用本接口后将触发 [onServerParamsSetResult](Web-event.md#onserverparamssetresult) 回调。
 
 - **参数**
 
@@ -1688,14 +1688,14 @@
 
   + 在加入房间前调用此接口
   + 在开启云代理后，进行通话前网络探测
-  + 开启云代理后，并成功链接云代理服务器后，会收到 [onCloudProxyConnected](104479.md#oncloudproxyconnected)。
+  + 开启云代理后，并成功链接云代理服务器后，会收到 [onCloudProxyConnected](Web-event.md#oncloudproxyconnected)。
   + 要关闭云代理，调用 [stopCloudProxy](#stopcloudproxy)。
 
 - **参数**
 
   - **cloudProxyInfo**
 
-    类型: <code>[CloudProxyInfo](104481.md#cloudproxyinfo)</code>
+    类型: <code>[CloudProxyInfo](Web-keytype.md#cloudproxyinfo)</code>
 
     云代理服务器信息列表。
 
@@ -1741,7 +1741,7 @@
 
   - **publicStreamParam**
 
-    类型: <code>[PublicStreamConfig](104481.md#publicstreamconfig)</code>
+    类型: <code>[PublicStreamConfig](Web-keytype.md#publicstreamconfig)</code>
 
     公共流参数。
 一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。
@@ -1754,7 +1754,7 @@
 ### updatePublicStreamParam()
 
 更新公共流参数。
-调用 [startPushPublicStream](104478.md#startpushpublicstream) 发布一路公共流。
+调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布一路公共流。
 
 - **类型**
 
@@ -1773,7 +1773,7 @@
 
   - **publicStreamParam**
 
-    类型: <code>Partial<[PublicStreamConfig](104481.md#publicstreamconfig)\></code>
+    类型: <code>Partial<[PublicStreamConfig](Web-keytype.md#publicstreamconfig)\></code>
 
     公共流参数。
 
@@ -1784,7 +1784,7 @@
 ### stopPushPublicStream()
 
 停止发布公共流。
-调用 [startPushPublicStream](104478.md#startpushpublicstream) 发布一路公共流。
+调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布一路公共流。
 
 - **类型**
 
@@ -1819,8 +1819,8 @@
 - **注意**
 
   + 建议在调用本接口前，先调用 [setPublicStreamVideoPlayer](#setpublicstreamvideoplayer) 设置使用的视图和渲染模式。
-  + 调用本接口后，可以通过 [onFirstPublicStreamVideoFrameDecoded](104479.md#onfirstpublicstreamvideoframedecoded) 和 [onFirstPublicStreamAudioFrameDecoded](104479.md#onfirstpublicstreamaudioframedecoded) 回调公共流的视频和音频首帧解码情况。
-  + 调用本接口后，可以通过 [onPublicStreamSEIMessageReceived](104479.md#onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
+  + 调用本接口后，可以通过 [onFirstPublicStreamVideoFrameDecoded](Web-event.md#onfirstpublicstreamvideoframedecoded) 和 [onFirstPublicStreamAudioFrameDecoded](Web-event.md#onfirstpublicstreamaudioframedecoded) 回调公共流的视频和音频首帧解码情况。
+  + 调用本接口后，可以通过 [onPublicStreamSEIMessageReceived](Web-event.md#onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
   + 调用 [stopPlayPublicStream](#stopplaypublicstream) 取消订阅公共流。
 
 - **参数**
@@ -1839,7 +1839,7 @@
 ### stopPlayPublicStream()
 
 取消订阅指定公共流。
-关于订阅公共流，查看 [startPlayPublicStream](104478.md#startplaypublicstream)。
+关于订阅公共流，查看 [startPlayPublicStream](Web-api.md#startplaypublicstream)。
 
 - **类型**
 
@@ -1879,7 +1879,7 @@
 
   - **videoPlayerOption**
 
-    类型: <code>Omit<[VideoPlayerOption](104481.md#videoplayeroption), "userId"\></code>
+    类型: <code>Omit<[VideoPlayerOption](Web-keytype.md#videoplayeroption), "userId"\></code>
 
     视图信息和渲染模式。
 
@@ -1903,7 +1903,7 @@
 
   - **index**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
   - **filePath**
 
@@ -1929,7 +1929,7 @@
 
 - **返回值**
 
-  类型: <code>Required<[LiveTranscodeConfig](104481.md#livetranscodeconfig)\></code>
+  类型: <code>Required<[LiveTranscodeConfig](Web-keytype.md#livetranscodeconfig)\></code>
 
   转推直播默认音视频参数
 
@@ -1947,14 +1947,14 @@
 - **注意**
 
   + 必须在进房前设置，进房后设置或更改设置无效。
-  + 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onRemoteVideoSizeChanged](104479.md#onremotevideosizechanged) 回调通知。
+  + 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onRemoteVideoSizeChanged](Web-event.md#onremotevideosizechanged) 回调通知。
   + 可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 - **参数**
 
   - **option**
 
-    类型: <code>[SubscribeFallbackOption](104481.md#subscribefallbackoption)</code>
+    类型: <code>[SubscribeFallbackOption](Web-keytype.md#subscribefallbackoption)</code>
 
     订阅的音视频流回退选项
 
@@ -1968,7 +1968,7 @@
 ### setRemoteUserPriority()
 
 设置用户优先级。
-该方法与 [setSubscribeFallbackOption](104478.md#setsubscribefallbackoption) 搭配使用。
+该方法与 [setSubscribeFallbackOption](Web-api.md#setsubscribefallbackoption) 搭配使用。
 开启回退后，会优先保证收到的高优先级用户的流的质量。
 
 - **类型**
@@ -1987,7 +1987,7 @@
 
   - **priority**
 
-    类型: <code>[RemoteUserPriority](104481.md#remoteuserpriority)</code>
+    类型: <code>[RemoteUserPriority](Web-keytype.md#remoteuserpriority)</code>
 
     远端用户优先级
 
@@ -2000,7 +2000,7 @@
 
 ### startAudioPlaybackDeviceTest()
 
-启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](104479.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。
+启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。
 
 - **类型**
 
@@ -2025,7 +2025,7 @@
 
     类型: <code>number</code>
 
-    [onAudioPlaybackDeviceTestVolume](104479.md#onaudioplaybackdevicetestvolume) 音量回调的时间间隔，推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 100 毫秒。
+    [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 音量回调的时间间隔，推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 100 毫秒。
 
 - **返回值**
 
@@ -2050,7 +2050,7 @@
 ### startAudioDeviceRecordTest()
 
 开始音频采集设备和音频播放设备测试。
-建议提前调用 [enableAudioPropertiesReport](104478#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](104479.md#onlocalaudiopropertiesreport) 获取采集音量。
+建议提前调用 [enableAudioPropertiesReport](Web-api#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。
 
 - **类型**
 
@@ -2071,7 +2071,7 @@
 
     类型: <code>number</code>
 
-    测试录音播放时触发 [onAudioPlaybackDeviceTestVolume](104479.md#onaudioplaybackdevicetestvolume) 播放音量回调，本参数指定了该周期回调的时间间隔。推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 100 毫秒。
+    测试录音播放时触发 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 播放音量回调，本参数指定了该周期回调的时间间隔。推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 100 毫秒。
 
   - **onAutoplayFailed**
 
@@ -2088,7 +2088,7 @@
 ### stopAudioDeviceRecordAndPlayTest()
 
 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。
-调用 [startAudioDeviceRecordTest](104478.md#startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
+调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
 
 - **类型**
 
@@ -2102,7 +2102,7 @@
 
 ### stopAudioDevicePlayTest()
 
-停止由调用 [startAudioDeviceRecordTest](104478.md#startaudiodevicerecordtest) 开始的音频播放设备测试。
+停止由调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 开始的音频播放设备测试。
 在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。
 
 - **类型**
@@ -2129,7 +2129,7 @@
 
   - **profile**
 
-    类型: <code>[AudioProfileType](104481.md#audioprofiletype)</code>
+    类型: <code>[AudioProfileType](Web-keytype.md#audioprofiletype)</code>
 
     音质档位。不同的音质档位有着不同的音频参数，带来不同的听觉体验，你应根据业务场景选择适合的音质档位。
 
@@ -2153,7 +2153,7 @@
   + 当调用接口或拔出设备关闭本地采集时，将触发该 MediaStreamTrack 回调的 `ended` 事件，MediaStreamTrack 随即被关闭。
   + 通过 MediaStreamTrack 可以获取实际分辨率、设备 ID 参数、实时音量信息，对轨道进行 muted 和 stop 操作，调整音量等。
   + 我们推荐使用 RTC 提供的对外接口实现以下功能：
-  1. 获取本地流分辨率和音量：[onLocalStreamStats](104479.md#onlocalstreamstats)
+  1. 获取本地流分辨率和音量：[onLocalStreamStats](Web-event.md#onlocalstreamstats)
   2. 获取设备 ID： [enumerateDevices](#enumeratedevices)
   3. stop：[stopAudioCapture](#stopaudiocapture)，[stopVideoCapture](#stopvideocapture)
 
@@ -2161,7 +2161,7 @@
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     流属性，包括主流、屏幕流。
 
@@ -2195,7 +2195,7 @@
   + 本地用户取消订阅该流时，将触发该 MediaStreamTrack 回调的 `ended` 事件， MediaStreamTrack 随即被关闭。
   + 通过 MediaStreamTrack 可以获取实际分辨率、实时音量信息，对轨道进行 muted 和 stop 操作，调整音量等。
   + 我们推荐使用 RTC 提供的对外接口实现以下功能。
-  1. 获取远端流分辨率和音量：[onRemoteStreamStats](70081.md#onremotestreamstats)
+  1. 获取远端流分辨率和音量：[onRemoteStreamStats](Android-callback.md#onremotestreamstats)
   2. stop：[unsubscribeStream](#unsubscribestream)，[unsubscribeScreen](#unsubscribescreen)
 
 - **参数**
@@ -2208,7 +2208,7 @@
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     流属性，包括主流、屏幕流。
 
@@ -2280,7 +2280,7 @@
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     截图的视频流。
 
@@ -2308,7 +2308,7 @@
 
   - **streamIndex**
 
-    类型: <code>[StreamIndex](104481.md#streamindex)</code>
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
     截图的视频流。
 
@@ -2347,8 +2347,8 @@
 ### startSubtitle()
 
 开启字幕。
-调用该方法后，你可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。语音识别或翻译的结果会通过 [onSubtitleMessageReceived](104479.md#onsubtitlemessagereceived) 事件回调给你。
-调用该方法后，你会收到 [onSubtitleStateChanged](104479.md#onsubtitlestatechanged) 回调，通知字幕是否开启。
+调用该方法后，你可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Web-event.md#onsubtitlemessagereceived) 事件回调给你。
+调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否开启。
 
 - **类型**
 
@@ -2366,7 +2366,7 @@
 
   - **config**
 
-    类型: <code>[RTCSubtitleConfig](104481.md#rtcsubtitleconfig)</code>
+    类型: <code>[RTCSubtitleConfig](Web-keytype.md#rtcsubtitleconfig)</code>
 
     字幕配置信息。
 
@@ -2377,7 +2377,7 @@
 ### stopSubtitle()
 
 关闭字幕。
-调用该方法后，你会收到 [onSubtitleStateChanged](104479.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。
+调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。
 
 - **类型**
 
@@ -2426,13 +2426,13 @@
   | 名称 | 描述 |
   | -- | -- |
   | [createEngine()](#createengine) | 创建引擎对象。<br>你必须先使用此方法，以使用 RTC 提供的各种音视频能力。<br>再次调用此方法时，会创建另一个独立的引擎实例。 |
-  | [destroyEngine()](#destroyengine) | 手动销毁通过 [createEngine](104478.md#createengine) 所创建的引擎对象。 |
+  | [destroyEngine()](#destroyengine) | 手动销毁通过 [createEngine](Web-api.md#createengine) 所创建的引擎对象。 |
   | [getSdkVersion()](#getsdkversion) | 获取 SDK 当前的版本号。 |
-  | [enumerateDevices()](#enumeratedevices) | 枚举可用的媒体输入和输出设备，比如麦克风、摄像头、耳机等。<br>可以通过该方法获取设备的 deviceId, 用于在 [setAudioPlaybackDevice](104478.md#setaudioplaybackdevice)、[startVideoCapture](104478.md#startvideocapture)、[startAudioCapture](104478.md#startaudiocapture) 方法中指定采集/播放设备。 |
+  | [enumerateDevices()](#enumeratedevices) | 枚举可用的媒体输入和输出设备，比如麦克风、摄像头、耳机等。<br>可以通过该方法获取设备的 deviceId, 用于在 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice)、[startVideoCapture](Web-api.md#startvideocapture)、[startAudioCapture](Web-api.md#startaudiocapture) 方法中指定采集/播放设备。 |
   | [enableDevices()](#enabledevices) | 向用户获取设备权限 |
-  | [enumerateAudioCaptureDevices()](#enumerateaudiocapturedevices) | 该方法枚举可用的麦克风。<br>可以通过该方法获取设备的 `deviceId`, 用于在 [startAudioCapture](104478.md#startaudiocapture)、[setAudioCaptureDevice](104478.md#setaudiocapturedevice) 方法中指定使用的麦克风设备。 |
-  | [enumerateVideoCaptureDevices()](#enumeratevideocapturedevices) | 该方法枚举可用的摄像头等。<br>可以通过该方法获取设备的 deviceId, 用于在 [startVideoCapture](104478.md#startvideocapture)、[setVideoCaptureDevice](104478.md#setvideocapturedevice) 方法中指定使用的摄像头设备。 |
-  | [enumerateAudioPlaybackDevices()](#enumerateaudioplaybackdevices) | 该方法枚举可用的音频播放设备，例如耳机、音箱等。<br>可以通过该方法获取设备的 deviceId, 可用于 [setAudioPlaybackDevice](104478.md#setaudioplaybackdevice) 方法中指定音频播放设备。 |
+  | [enumerateAudioCaptureDevices()](#enumerateaudiocapturedevices) | 该方法枚举可用的麦克风。<br>可以通过该方法获取设备的 `deviceId`, 用于在 [startAudioCapture](Web-api.md#startaudiocapture)、[setAudioCaptureDevice](Web-api.md#setaudiocapturedevice) 方法中指定使用的麦克风设备。 |
+  | [enumerateVideoCaptureDevices()](#enumeratevideocapturedevices) | 该方法枚举可用的摄像头等。<br>可以通过该方法获取设备的 deviceId, 用于在 [startVideoCapture](Web-api.md#startvideocapture)、[setVideoCaptureDevice](Web-api.md#setvideocapturedevice) 方法中指定使用的摄像头设备。 |
+  | [enumerateAudioPlaybackDevices()](#enumerateaudioplaybackdevices) | 该方法枚举可用的音频播放设备，例如耳机、音箱等。<br>可以通过该方法获取设备的 deviceId, 可用于 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice) 方法中指定音频播放设备。 |
   | [isSupported()](#issupported) | 浏览器是否支持 |
   | [getSupportedCodecs()](#getsupportedcodecs) | 获取当前浏览器支持的编解码类型。<br>若你已开通 vp8 业务，可以在进房前调用该接口查看当前浏览器是否支持 vp8 编码类型 |
   | [setLogConfig()](#setlogconfig) | 配置本地缓存的日志级别, 以及可使用的最大缓存空间。 |
@@ -2466,7 +2466,7 @@
 
   - **config**
 
-    类型: <code>[EngineConfig](104481.md#engineconfig) | undefined</code>
+    类型: <code>[EngineConfig](Web-keytype.md#engineconfig) | undefined</code>
 
     引擎级的设置项。例如，是否开启自动播放。
 
@@ -2478,7 +2478,7 @@
 
 ### destroyEngine()
 
-手动销毁通过 [createEngine](104478.md#createengine) 所创建的引擎对象。
+手动销毁通过 [createEngine](Web-api.md#createengine) 所创建的引擎对象。
 
 - **类型**
 
@@ -2518,7 +2518,7 @@
 ### enumerateDevices()
 
 枚举可用的媒体输入和输出设备，比如麦克风、摄像头、耳机等。
-可以通过该方法获取设备的 deviceId, 用于在 [setAudioPlaybackDevice](104478.md#setaudioplaybackdevice)、[startVideoCapture](104478.md#startvideocapture)、[startAudioCapture](104478.md#startaudiocapture) 方法中指定采集/播放设备。
+可以通过该方法获取设备的 deviceId, 用于在 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice)、[startVideoCapture](Web-api.md#startvideocapture)、[startAudioCapture](Web-api.md#startaudiocapture) 方法中指定采集/播放设备。
 
 - **类型**
 
@@ -2572,7 +2572,7 @@
 ### enumerateAudioCaptureDevices()
 
 该方法枚举可用的麦克风。
-可以通过该方法获取设备的 `deviceId`, 用于在 [startAudioCapture](104478.md#startaudiocapture)、[setAudioCaptureDevice](104478.md#setaudiocapturedevice) 方法中指定使用的麦克风设备。
+可以通过该方法获取设备的 `deviceId`, 用于在 [startAudioCapture](Web-api.md#startaudiocapture)、[setAudioCaptureDevice](Web-api.md#setaudiocapturedevice) 方法中指定使用的麦克风设备。
 
 - **类型**
 
@@ -2593,7 +2593,7 @@
 ### enumerateVideoCaptureDevices()
 
 该方法枚举可用的摄像头等。
-可以通过该方法获取设备的 deviceId, 用于在 [startVideoCapture](104478.md#startvideocapture)、[setVideoCaptureDevice](104478.md#setvideocapturedevice) 方法中指定使用的摄像头设备。
+可以通过该方法获取设备的 deviceId, 用于在 [startVideoCapture](Web-api.md#startvideocapture)、[setVideoCaptureDevice](Web-api.md#setvideocapturedevice) 方法中指定使用的摄像头设备。
 
 - **类型**
 
@@ -2614,7 +2614,7 @@
 ### enumerateAudioPlaybackDevices()
 
 该方法枚举可用的音频播放设备，例如耳机、音箱等。
-可以通过该方法获取设备的 deviceId, 可用于 [setAudioPlaybackDevice](104478.md#setaudioplaybackdevice) 方法中指定音频播放设备。
+可以通过该方法获取设备的 deviceId, 可用于 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice) 方法中指定音频播放设备。
 
 - **类型**
 
@@ -2771,7 +2771,7 @@
 
   - **options**
 
-    类型: <code>[MixOption](104481.md#mixoption)</code>
+    类型: <code>[MixOption](Web-keytype.md#mixoption)</code>
 
     混音配置
 可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端
@@ -3063,7 +3063,7 @@
 
   - **type**
 
-    类型: <code>[AudioMixingType](104481.md#audiomixingtype)</code>
+    类型: <code>[AudioMixingType](Web-keytype.md#audiomixingtype)</code>
 
     混音类型。是否本地播放、以及是否发送到远端
 

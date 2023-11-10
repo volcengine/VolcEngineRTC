@@ -306,7 +306,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioMixingError)
 | ByteRTCAudioMixingErrorIdNotFound | 3 | 混音 ID 异常 |
 | ByteRTCAudioMixingErrorSetPositionFailed | 4 | 设置混音文件的播放位置出错 |
 | ByteRTCAudioMixingErrorInValidVolume | 5 | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-| ByteRTCAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing:](70086.md#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
+| ByteRTCAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing:](macOS-api.md#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
 | ByteRTCAudioMixingErrorIdTypeNotMatch | 7 | 不支持此混音类型。 |
 | ByteRTCAudioMixingErrorInValidPitch | 8 | 设置混音文件的音调不合法 |
 | ByteRTCAudioMixingErrorInValidAudioTrack | 9 | 设置混音文件的音轨不合法 |
@@ -346,22 +346,6 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioRenderType)
 | ByteRTCAudioRenderTypeInternal | 1 | RTC SDK 内部渲染音频 |
 
 
-# ByteRTCEarMonitorMode
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCEarMonitorMode)
-```
-
-开启/关闭耳返功能。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCEarMonitorModeOff | 0 | 关闭耳返功能。 |
-| ByteRTCEarMonitorModeOn | 1 | 开启耳返功能。 |
-
-
 # ByteRTCAudioFrameCallbackMethod
 ```objectivec
 typedef NS_ENUM(NSInteger, ByteRTCAudioFrameCallbackMethod)
@@ -395,7 +379,6 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioFrameMethod)
 | ByteRTCAudioFrameProcessorRecord | 0 | 本地采集的音频。 |
 | ByteRTCAudioFrameProcessorPlayback | 1 | 远端音频流的混音音频。 |
 | ByteRTCAudioFrameProcessorRemoteUser | 2 | 各个远端音频流。 |
-| ByteRTCAudioFrameProcessorEarMonitor | 3 | 软件耳返音频。 |
 | ByteRTCAudioFrameProcessorScreen | 4 | 屏幕共享音频。 |
 
 
@@ -1784,9 +1767,8 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceWarning)
 | ByteRTCMediaDeviceWarningOK | 0 | 无警告 |
 | ByteRTCMediaDeviceWarningOperationDenied | 1 | 非法设备操作。在使用外部设备时，调用了 SDK 内部设备 API。 |
 | ByteRTCMediaDeviceWarningCaptureSilence | 2 | 采集到的数据为静音帧。 |
-| ByteRTCMediaDeviceWarningSetAudioRouteInvalidScenario | 20 | 当前 AudioScenario 不支持更改音频路由，设置音频路由失败 |
-| ByteRTCMediaDeviceWarningSetAudioRouteFailedByPriority | 22 | 音频路由被系统或其他应用占用，设置音频路由失败 |
-| ByteRTCMediaDeviceWarningSetAudioRouteDeviceNotStart | 24 | 音频设备未启动，设置音频路由失败 |
+| ByteRTCMediaDeviceWarningSetAudioRouteNotExists | 21 | 音频设备不存在，设置音频路由失败 |
+| ByteRTCMediaDeviceWarningSetAudioRouteNotVoipMode | 23 | 当前非通话模式，不支持设置音频路由 |
 
 
 # ByteRTCProblemFeedbackOption
@@ -1965,8 +1947,8 @@ typedef NS_ENUM(NSInteger, ByteSEIStreamEventType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:](70086.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| ByteSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:](70086.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType:WithStreamIndex:](70086.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。 |
+| ByteSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| ByteSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType:WithStreamIndex:](macOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 # ByteRTCStreamIndex
@@ -2209,7 +2191,7 @@ typedef NS_ENUM(NSInteger, ByteRTCEchoTestResult)
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame:](70086.md#ByteRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame:](macOS-api.md#ByteRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
 + flase：否  <br>
 
 
@@ -2222,7 +2204,7 @@ typedef NS_ENUM(NSInteger, ByteRTCEchoTestResult)
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
-- If you choose custom capture, you also need to call [pushExternalVideoFrame:time:](70086.md#ByteRTCVideo-pushexternalvideoframe-time) to push the captured video to the SDK.  <br>
+- If you choose custom capture, you also need to call [pushExternalVideoFrame:time:](macOS-api.md#ByteRTCVideo-pushexternalvideoframe-time) to push the captured video to the SDK.  <br>
 + false: No  <br>
 
 **注意:**
@@ -3730,411 +3712,6 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 
 
-# ByteRTCKTVMusicFilterType
-```objectivec
-typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicFilterType)
-```
-
-歌曲过滤方式。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVMusicFilterTypeNone | 0 | 不过滤。 |
-| ByteRTCKTVMusicFilterTypeWithoutLyric | 1 << 0 | 过滤没有歌词的歌曲。 |
-| ByteRTCKTVMusicFilterTypeUnsupportedScore | 1 << 1 | 过滤不支持打分的歌曲。 |
-| ByteRTCKTVMusicFilterTypeUnsupportedAccopmay | 1 << 2 | 过滤不支持伴唱切换的歌曲。 |
-| ByteRTCKTVMusicFilterTypeUnsupportedClimx | 1 << 3 | 过滤没有高潮片段的歌曲。 |
-
-
-# ByteRTCKTVMusicHotType
-```objectivec
-typedef NS_OPTIONS(NSUInteger, ByteRTCKTVMusicHotType)
-```
-
-热榜类别。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVMusicHotTypeContentCenter | 1 << 0 | 火山内容中心热歌榜。 |
-| ByteRTCKTVMusicHotTypeProject | 1 << 1 | 项目热歌榜。 |
-
-
-# ByteRTCKTVPlayState
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVPlayState)
-```
-
-音乐播放状态。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVPlayStatePlaying | 1 | 播放中。 |
-| ByteRTCKTVPlayStatePaused | 2 | 暂停中。 |
-| ByteRTCKTVPlayStateStoped | 3 | 已停止。 |
-| ByteRTCKTVPlayStateFailed | 4 | 播放失败。 |
-| ByteRTCKTVPlayStateFinished | 5 | 播放结束。 |
-
-
-# ByteRTCKTVAudioTrackType
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVAudioTrackType)
-```
-
-原唱伴唱类型。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVAudioTrackTypeOriginal | 1 | 播放原唱。 |
-| ByteRTCKTVAudioTrackTypeAccompy | 2 | 播放伴唱。 |
-
-
-# ByteRTCKTVAudioPlayType
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVAudioPlayType)
-```
-
-音乐播放类型。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVAudioPlayTypeLocal | 0 | 仅本地播放。 |
-| ByteRTCKTVAudioPlayTypeRemote | 1 | 仅远端播放。 |
-| ByteRTCKTVAudioPlayTypeLocalAndRemote | 2 | 本地、远端同时播放。 |
-
-
-# ByteRTCKTVLyricStatus
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVLyricStatus)
-```
-
-歌词格式类型。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVLyricStatusNone | 0 | 无歌词。 |
-| ByteRTCKTVLyricStatusKRC | 1 | KRC 歌词。 |
-| ByteRTCKTVLyricStatusLRC | 2 | LRC 歌词。 |
-| ByteRTCKTVLyricStatusKRCAndLRC | 3 | KRC 歌词和 LRC 歌词均有。 |
-
-
-# ByteRTCKTVDownloadFileType
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVDownloadFileType)
-```
-
-下载文件类型。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVDownloadFileTypeMusic | 1 | 音频文件。 |
-| ByteRTCKTVDownloadFileTypeKRC | 2 | KRC 歌词文件。 |
-| ByteRTCKTVDownloadFileTypeLRC | 3 | LRC 歌词文件。 |
-| ByteRTCKTVDownloadFileTypeMIDI | 4 | MIDI 文件。 |
-
-
-# ByteRTCKTVDownloadLyricType
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVDownloadLyricType)
-```
-
-歌词文件类型。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVDownloadLyricTypeKRC | 0 | KRC 歌词文件。 |
-| ByteRTCKTVDownloadLyricTypeLRC | 1 | LRC 歌词文件。 |
-
-
-# ByteRTCKTVError
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVError)
-```
-
-KTV 错误码。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVErrorOK | 0 | 成功。 |
-| ByteRTCKTVErrorAppidInValid | -3000 | AppID 异常。 |
-| ByteRTCKTVErrorParasInValid | -3001 | 非法参数，传入的参数不正确。 |
-| ByteRTCKTVErrorGetMusicFailed | -3002 | 获取歌曲资源失败。 |
-| ByteRTCKTVErrorGetLyricFailed | -3003 | 获取歌词失败。 |
-| ByteRTCKTVErrorMusicTakedown | -3004 | 歌曲下架。 |
-| ByteRTCKTVErrorMusicDownload | -3005 | 歌曲文件下载失败。 |
-| ByteRTCKTVErrorMidiDownloadFailed | -3006 | MIDI 文件下载失败。 |
-| ByteRTCKTVErrorSystemBusy | -3007 | 系统繁忙。 |
-| ByteRTCKTVErrorNetwork | -3008 | 网络异常。 |
-| ByteRTCKTVErrorNotJoinRoom | -3009 | KTV 功能未加入房间。 |
-| ByteRTCKTVErrorParseData | -3010 | 解析数据失败。 |
-| ByteRTCKTVErrorDownload | -3011 | 下载失败。 |
-| ByteRTCKTVErrorDownloading | -3012 | 已在下载中。 |
-| ByteRTCKTVErrorInternal | -3013 | 内部错误，联系技术支持人员。 |
-
-
-# ByteRTCKTVPlayerError
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCKTVPlayerError)
-```
-
-KTV 播放器错误码。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCKTVPlayerErrorOK | 0 | 成功。 |
-| ByteRTCKTVPlayerErrorFileNotExist | -3020 | 播放错误，请下载后播放。 |
-| ByteRTCKTVPlayerErrorFileError | -3021 | 播放错误，请确认文件播放格式。 |
-| ByteRTCKTVPlayerErrorNotJoinRoom | -3022 | 播放错误，未进入房间。 |
-| ByteRTCKTVPlayerErrorParam | -3023 | 参数错误。 |
-| ByteRTCKTVPlayerErrorStartError | -3024 | 播放失败，找不到文件或文件打开失败。 |
-| ByteRTCKTVPlayerErrorMixIdError | -3025 | 混音 ID 异常。 |
-| ByteRTCKTVPlayerErrorPositionError | -3026 | 设置播放位置出错。 |
-| ByteRTCKTVPlayerErrorAudioVolumeError | -3027 | 音量参数不合法，可设置的取值范围为 [0,400]。 |
-| ByteRTCKTVPlayerErrorTypeError | -3028 | 不支持此混音类型。 |
-| ByteRTCKTVPlayerErrorPitchError | -3029 | 音调文件不合法。 |
-| ByteRTCKTVPlayerErrorAudioTrackError | -3030 | 音轨不合法。 |
-| ByteRTCKTVPlayerErrorStartingError | -3031 | 混音启动中。 |
-
-
-# ByteRTCKTVMusic
-```objectivec
-@interface ByteRTCKTVMusic : NSObject
-```
-
-歌曲数据。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **NSString*** | [musicId](#ByteRTCKTVMusic-musicid) |
-| **NSString*** | [musicName](#ByteRTCKTVMusic-musicname) |
-| **NSString*** | [singer](#ByteRTCKTVMusic-singer) |
-| **NSString*** | [vendorId](#ByteRTCKTVMusic-vendorid) |
-| **NSString*** | [vendorName](#ByteRTCKTVMusic-vendorname) |
-| **int64_t** | [updateTimestamp](#ByteRTCKTVMusic-updatetimestamp) |
-| **NSString*** | [posterUrl](#ByteRTCKTVMusic-posterurl) |
-| **ByteRTCKTVLyricStatus** | [lyricStatus](#ByteRTCKTVMusic-lyricstatus) |
-| **int** | [duration](#ByteRTCKTVMusic-duration) |
-| **BOOL** | [enableScore](#ByteRTCKTVMusic-enablescore) |
-| **int** | [climaxStartTime](#ByteRTCKTVMusic-climaxstarttime) |
-| **int** | [climaxEndTime](#ByteRTCKTVMusic-climaxendtime) |
-
-
-## 变量说明
-<span id="ByteRTCKTVMusic-musicid"></span>
-### musicId
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull musicId;
-```
-音乐 ID。
-
-
-<span id="ByteRTCKTVMusic-musicname"></span>
-### musicName
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull musicName;
-```
-音乐名称。
-
-
-<span id="ByteRTCKTVMusic-singer"></span>
-### singer
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull singer;
-```
-歌手。
-
-
-<span id="ByteRTCKTVMusic-vendorid"></span>
-### vendorId
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull vendorId;
-```
-版权商 ID。
-
-
-<span id="ByteRTCKTVMusic-vendorname"></span>
-### vendorName
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull vendorName;
-```
-版权商名称。
-
-
-<span id="ByteRTCKTVMusic-updatetimestamp"></span>
-### updateTimestamp
-```objectivec
-@property (nonatomic, assign) int64_t updateTimestamp;
-```
-最新更新时间戳，单位为毫秒。
-
-
-<span id="ByteRTCKTVMusic-posterurl"></span>
-### posterUrl
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull posterUrl;
-```
-封面地址。
-
-
-<span id="ByteRTCKTVMusic-lyricstatus"></span>
-### lyricStatus
-```objectivec
-@property (nonatomic, assign) ByteRTCKTVLyricStatus lyricStatus;
-```
-歌词格式类型，参看 [ByteRTCKTVLyricStatus](#bytertcktvlyricstatus)。
-
-
-<span id="ByteRTCKTVMusic-duration"></span>
-### duration
-```objectivec
-@property (nonatomic, assign) int duration;
-```
-歌曲长度，单位为毫秒。
-
-
-<span id="ByteRTCKTVMusic-enablescore"></span>
-### enableScore
-```objectivec
-@property (nonatomic, assign) BOOL enableScore;
-```
-歌曲是否支持打分。
-
-
-<span id="ByteRTCKTVMusic-climaxstarttime"></span>
-### climaxStartTime
-```objectivec
-@property (nonatomic, assign) int climaxStartTime;
-```
-歌曲高潮片段开始时间，单位为毫秒。
-
-
-<span id="ByteRTCKTVMusic-climaxendtime"></span>
-### climaxEndTime
-```objectivec
-@property (nonatomic, assign) int climaxEndTime;
-```
-歌曲高潮片段停止时间，单位为毫秒。
-
-
-
-# ByteRTCKTVHotMusicInfo
-```objectivec
-@interface ByteRTCKTVHotMusicInfo : NSObject
-```
-
-热榜歌曲数据。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **ByteRTCKTVMusicHotType** | [hotType](#ByteRTCKTVHotMusicInfo-hottype) |
-| **NSString*** | [hotName](#ByteRTCKTVHotMusicInfo-hotname) |
-| **NSArray<ByteRTCKTVMusic*>*** | [musics](#ByteRTCKTVHotMusicInfo-musics) |
-
-
-## 变量说明
-<span id="ByteRTCKTVHotMusicInfo-hottype"></span>
-### hotType
-```objectivec
-@property (nonatomic, assign) ByteRTCKTVMusicHotType hotType;
-```
-热榜类别，参看 [ByteRTCKTVMusicHotType](#bytertcktvmusichottype)。多个热榜类别可以按位或组合。
-
-
-<span id="ByteRTCKTVHotMusicInfo-hotname"></span>
-### hotName
-```objectivec
-@property (nonatomic, copy) NSString * _Nullable hotName;
-```
-热榜名称。
-
-
-<span id="ByteRTCKTVHotMusicInfo-musics"></span>
-### musics
-```objectivec
-@property (nonatomic, copy) NSArray<ByteRTCKTVMusic *> * _Nullable musics;
-```
-歌曲数据，参看 [ByteRTCKTVMusic](#bytertcktvmusic)。
-
-
-
-# ByteRTCKTVDownloadResult
-```objectivec
-@interface ByteRTCKTVDownloadResult : NSObject
-```
-
-歌曲下载信息。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **NSString*** | [musicId](#ByteRTCKTVDownloadResult-musicid) |
-| **ByteRTCKTVDownloadFileType** | [fileType](#ByteRTCKTVDownloadResult-filetype) |
-| **NSString*** | [filePath](#ByteRTCKTVDownloadResult-filepath) |
-
-
-## 变量说明
-<span id="ByteRTCKTVDownloadResult-musicid"></span>
-### musicId
-```objectivec
-@property (nonatomic, copy) NSString * _Nonnull musicId;
-```
-音乐 ID。
-
-
-<span id="ByteRTCKTVDownloadResult-filetype"></span>
-### fileType
-```objectivec
-@property (nonatomic, assign) ByteRTCKTVDownloadFileType fileType;
-```
-下载文件类型，参看 [ByteRTCKTVDownloadFileType](#bytertcktvdownloadfiletype)。
-
-
-<span id="ByteRTCKTVDownloadResult-filepath"></span>
-### filePath
-```objectivec
-@property (nonatomic, copy) NSString * _Nullable filePath;
-```
-文件存放路径。
-
-
-
 # AttenuationType
 ```objectivec
 typedef NS_ENUM(NSInteger, AttenuationType)
@@ -4254,7 +3831,7 @@ typedef NS_ENUM(NSInteger, AttenuationType)
 
 
 **注意**
-用户调用 [stopScreenCapture](70086.md#ByteRTCVideo-stopscreencapture) 后，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
+用户调用 [stopScreenCapture](macOS-api.md#ByteRTCVideo-stopscreencapture) 后，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
 
 <span id="ByteRtcScreenCapturerExtDelegate-onreceivemessagefromapp"></span>
 ### onReceiveMessageFromApp:
@@ -4544,23 +4121,6 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoOutputOrientationMode)
 | ByteRTCVideoOutputOrientationModeAdaptative | 0 | 自适应布局 |
 | ByteRTCVideoOutputOrientationModeFixedLandscape | 1 | 横屏布局 |
 | ByteRTCVideoOutputOrientationModeFixedPortrait | 2 | 竖屏布局 |
-
-
-# ByteRTCVideoOrientation
-```objectivec
-typedef NS_ENUM(NSUInteger, ByteRTCVideoOrientation)
-```
-
-视频帧朝向
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCVideoOrientationAdaptive | 0 | （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。 |
-| ByteRTCVideoOrientationPortrait | 1 | 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。 |
-| ByteRTCVideoOrientationLandscape | 2 | 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。 |
 
 
 # ByteRTCMirrorType
@@ -4889,9 +4449,9 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoDecoderConfig)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteRTCVideoDecoderConfigRaw | 0 | 开启 SDK 内部解码，只回调解码后的数据。回调为[onRemoteVideoFrame:user:room: ](70087.md#onremotevideoframe-user-room)。 |
-| ByteRTCVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为[onRemoteEncodedVideoFrame:withEncodedVideoFrame:](70087.md#onremoteencodedvideoframe-withencodedvideoframe)。|
-| ByteRTCVideoDecoderConfigBoth | 2 | 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为回调为[onRemoteVideoFrame:user:room: ](70087.md#onremotevideoframe-user-room)和[onRemoteEncodedVideoFrame:withEncodedVideoFrame:](70087.md#onremoteencodedvideoframe-withencodedvideoframe)。 |
+| ByteRTCVideoDecoderConfigRaw | 0 | 开启 SDK 内部解码，只回调解码后的数据。回调为[onRemoteVideoFrame:user:room: ](macOS-callback.md#onremotevideoframe-user-room)。 |
+| ByteRTCVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为[onRemoteEncodedVideoFrame:withEncodedVideoFrame:](macOS-callback.md#onremoteencodedvideoframe-withencodedvideoframe)。 |
+| ByteRTCVideoDecoderConfigBoth | 2 | 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为[onRemoteVideoFrame:user:room: ](macOS-callback.md#onremotevideoframe-user-room)和[onRemoteEncodedVideoFrame:withEncodedVideoFrame:](macOS-callback.md#onremoteencodedvideoframe-withencodedvideoframe)。|
 
 
 # ByteRTCVirtualBackgroundSourceType
@@ -5433,7 +4993,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 @property(nonatomic, assign) NSInteger videoIndex;
 ```
 订阅的视频流分辨率下标。  <br>
-用户可以通过调用 [SetVideoEncoderConfig:](70086.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
+用户可以通过调用 [SetVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
 
 
 <span id="ByteRTCSubscribeConfig-svclayer"></span>
@@ -5789,7 +5349,7 @@ CVPixelBufferRef 类型的数据，当 format 为 kPixelFormatCVPixelBuffer 时�
 @property(copy, nonatomic) NSString * _Nonnull roomId;
 ```
 图片或视频流所在房间的房间 ID。必填。<br>
-如果此图片或视频流是通过 [startForwardStreamToRooms:](70086.md#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 
 <span id="ByteRTCVideoCompositingRegion-x"></span>
@@ -6193,58 +5753,6 @@ AAC 等级，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为 `0`�
 转推直播配置参数，参看 [ByteRTCLiveTranscoding](#bytertclivetranscoding)。
 
 
-# ByteRTCPushSingleStreamParam
-```objectivec
-@interface ByteRTCPushSingleStreamParam : NSObject
-```
-
-单流转推直播配置参数。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **NSString*** | [url](#ByteRTCPushSingleStreamParam-url) |
-| **NSString*** | [roomId](#ByteRTCPushSingleStreamParam-roomid) |
-| **NSString*** | [userId](#ByteRTCPushSingleStreamParam-userid) |
-| **BOOL** | [isScreen](#ByteRTCPushSingleStreamParam-isscreen) |
-
-
-## 变量说明
-<span id="ByteRTCPushSingleStreamParam-url"></span>
-### url
-```objectivec
-@property(copy, nonatomic) NSString * _Nullable url;
-```
-推流地址
-
-
-<span id="ByteRTCPushSingleStreamParam-roomid"></span>
-### roomId
-```objectivec
-@property(copy, nonatomic) NSString * _Nonnull roomId;
-```
-媒体流所在的房间 ID
-
-
-<span id="ByteRTCPushSingleStreamParam-userid"></span>
-### userId
-```objectivec
-@property(copy, nonatomic) NSString * _Nullable userId;
-```
-媒体流所属的用户 ID
-
-
-<span id="ByteRTCPushSingleStreamParam-isscreen"></span>
-### isScreen
-```objectivec
-@property(nonatomic, assign) BOOL isScreen;
-```
-媒体流是否为屏幕流。
-
-
-
 # ByteRTCSubscribeVideoConfig
 ```objectivec
 @interface ByteRTCSubscribeVideoConfig : NSObject
@@ -6268,7 +5776,7 @@ AAC 等级，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为 `0`�
 @property(assign, nonatomic) NSInteger videoIndex;
 ```
 订阅的视频流分辨率下标。  <br>
-当远端用户通过调用 [enableSimulcastMode:](70086.md#ByteRTCVideo-enablesimulcastmode) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
+当远端用户通过调用 [enableSimulcastMode:](macOS-api.md#ByteRTCVideo-enablesimulcastmode) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。  <br>
 默认值为 0，即订阅第一路流。  <br>
 如果不想更改之前的设置，可以输入 -1。  <br>
 
@@ -6865,7 +6373,7 @@ AAC 等级，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为 `0`�
 ```
 是否自动发布音视频流，默认为自动发布。 <br>
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>
-若调用 [setUserVisibility:](70086.md#ByteRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility:](macOS-api.md#ByteRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 
 <span id="ByteRTCRoomConfig-isautosubscribeaudio"></span>

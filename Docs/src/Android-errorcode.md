@@ -756,7 +756,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_C
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_SCREEN_AUDIO_SOURCE_TYPE_FAILED = -5009;
 ```
-不支持在 [publishScreen](70080.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioSourceType](70080.md#RTCVideo-setscreenaudiosourcetype) 设置屏幕音频采集类型
+不支持在 [publishScreen](Android-api.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioSourceType](Android-api.md#RTCVideo-setscreenaudiosourcetype) 设置屏幕音频采集类型
 
 
 <span id="WarningCode-warning_code_set_screen_stream_index_failed"></span>
@@ -764,7 +764,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_
 ```java
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_SET_SCREEN_STREAM_INDEX_FAILED = -5010;
 ```
-不支持在 [publishScreen](70080.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioStreamIndex](70080.md#RTCVideo-setscreenaudiostreamindex) 设置屏幕音频共享发布类型
+不支持在 [publishScreen](Android-api.md#RTCRoom-publishscreen) 之后，调用 [setScreenAudioStreamIndex](Android-api.md#RTCVideo-setscreenaudiostreamindex) 设置屏幕音频共享发布类型
 
 
 <span id="WarningCode-warning_code_set_screen_stream_invalid_voice_pitch"></span>

@@ -102,7 +102,7 @@ enum bytertc::WarningCode
 | **kWarningCodeInvalidVoicePitch** | 设置语音音高不合法 |
 | **kWarningCodeInvalidAudioFormat** | 设置音频格式不合法 |
 | **kWarningCodeInvalidCallForExtAudio** | 外部音频源新旧接口混用 |
-| **kWarningCodeInvalidCanvasHandle** | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](85516.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
+| **kWarningCodeInvalidCanvasHandle** | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](Linux-api.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
 | **kWarningLicenseFileExpired** | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。  <br> |
 
 

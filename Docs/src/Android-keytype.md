@@ -127,7 +127,7 @@ public enum com.ss.bytertc.engine.data.AudioMixingError
 | **AUDIO_MIXING_ERROR_ID_NOT_FOUND(3)** | 混音 ID 异常 |
 | **AUDIO_MIXING_ERROR_SET_POSITION_FAILED(4)** | 设置混音文件的播放位置出错 |
 | **AUDIO_MIXING_ERROR_INVALID_VOLUME(5)** | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-| **AUDIO_MIXING_ERROR_LOAD_CONFLICT(6)** | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing](70080.md#IAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
+| **AUDIO_MIXING_ERROR_LOAD_CONFLICT(6)** | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing](Android-api.md#IAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
 | **AUDIO_MIXING_ERROR_ID_TYPE_NOT_MATCH(7)** | 不支持此混音类型。 |
 | **AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH(8)** | 设置混音文件的音调不合法 |
 | **AUDIO_MIXING_ERROR_INVALID_AUDIO_TRACK(9)** | 设置混音文件的音轨不合法 |
@@ -639,8 +639,8 @@ public enum com.ss.bytertc.engine.data.ForwardStreamEventInfo.ForwardStreamEvent
 | **FORWARD_STREAM_EVENT_DISCONNECTED(0)** | 本端与服务器网络连接断开，暂停转发。 |
 | **FORWARD_STREAM_EVENT_CONNECTED(1)** | 本端与服务器网络连接恢复，转发服务连接成功。 |
 | **FORWARD_STREAM_EVENT_INTERRUPT(2)** | 转发中断。转发过程中，如果相同 user_id 的用户进入目标房间，转发中断。 |
-| **FORWARD_STREAM_EVENT_DST_ROOM_UPDATED(3)** | 目标房间已更新，由 [updateForwardStreamToRooms](70080.md#RTCRoom-updateforwardstreamtorooms) 触发。 |
-| **FORWARD_STREAM_EVENT_UN_EXPECT_API_CALL(4)** | API 调用时序错误。例如，在调用 [startForwardStreamToRooms](70080.md#RTCRoom-startforwardstreamtorooms) 之前调用 [updateForwardStreamToRooms](70080.md#RTCRoom-updateforwardstreamtorooms) 。 |
+| **FORWARD_STREAM_EVENT_DST_ROOM_UPDATED(3)** | 目标房间已更新，由 [updateForwardStreamToRooms](Android-api.md#RTCRoom-updateforwardstreamtorooms) 触发。 |
+| **FORWARD_STREAM_EVENT_UN_EXPECT_API_CALL(4)** | API 调用时序错误。例如，在调用 [startForwardStreamToRooms](Android-api.md#RTCRoom-startforwardstreamtorooms) 之前调用 [updateForwardStreamToRooms](Android-api.md#RTCRoom-updateforwardstreamtorooms) 。 |
 
 
 # ForwardStreamInfo
@@ -735,9 +735,9 @@ public enum com.ss.bytertc.engine.data.ForwardStreamStateInfo.ForwardStreamState
 
 | 类型 | 说明 |
 | --- | --- |
-| **FORWARD_STREAM_STATE_IDLE(0)** | 空闲状态<br/>+ 成功调用 [stopForwardStreamToRooms](70080.md#RTCRoom-stopforwardstreamtorooms) 后，所有目标房间为空闲状态。<br/>+ 成功调用 [updateForwardStreamToRooms](70080.md#RTCRoom-updateforwardstreamtorooms) 减少目标房间后，本次减少的目标房间为空闲状态。 |
-| **FORWARD_STREAM_STATE_SUCCESS(1)** | 开始转发<br/>+ 调用 [startForwardStreamToRooms](70080.md#RTCRoom-startforwardstreamtorooms) 成功向所有房间开始转发媒体流后，返回此状态。<br/>+ 调用 [updateForwardStreamToRooms](70080.md#RTCRoom-updateforwardstreamtorooms) 后，成功向新增目标房间开始转发媒体流后，返回此状态。 |
-| **FORWARD_STREAM_STATE_FAILURE(2)** | 转发失败，失败详情参考 ForwardStreamError[forwardStreamError](#forwardstreamerror)<br/>调用 [startForwardStreamToRooms](70080.md#RTCRoom-startforwardstreamtorooms) 或 [updateForwardStreamToRooms](70080.md#RTCRoom-updateforwardstreamtorooms) 后，如遇转发失败，返回此状态。 |
+| **FORWARD_STREAM_STATE_IDLE(0)** | 空闲状态<br/>+ 成功调用 [stopForwardStreamToRooms](Android-api.md#RTCRoom-stopforwardstreamtorooms) 后，所有目标房间为空闲状态。<br/>+ 成功调用 [updateForwardStreamToRooms](Android-api.md#RTCRoom-updateforwardstreamtorooms) 减少目标房间后，本次减少的目标房间为空闲状态。 |
+| **FORWARD_STREAM_STATE_SUCCESS(1)** | 开始转发<br/>+ 调用 [startForwardStreamToRooms](Android-api.md#RTCRoom-startforwardstreamtorooms) 成功向所有房间开始转发媒体流后，返回此状态。<br/>+ 调用 [updateForwardStreamToRooms](Android-api.md#RTCRoom-updateforwardstreamtorooms) 后，成功向新增目标房间开始转发媒体流后，返回此状态。 |
+| **FORWARD_STREAM_STATE_FAILURE(2)** | 转发失败，失败详情参考 ForwardStreamError[forwardStreamError](#forwardstreamerror)<br/>调用 [startForwardStreamToRooms](Android-api.md#RTCRoom-startforwardstreamtorooms) 或 [updateForwardStreamToRooms](Android-api.md#RTCRoom-updateforwardstreamtorooms) 后，如遇转发失败，返回此状态。 |
 
 
 ## 成员函数
@@ -866,7 +866,7 @@ public enum com.ss.bytertc.engine.data.MediaInputType
 | 类型 | 说明 |
 | --- | --- |
 | **MEDIA_INPUT_TYPE_EXTERNAL(0)** | 自定义采集。  <br><br/>设置完成后方可直接向 SDK 推送视频帧。 |
-| **MEDIA_INPUT_TYPE_INTERNAL(1)** | 内部 SDK 采集。  <br><br/>此设置仅切换至内部采集，你需继续调用 [startVideoCapture](70080.md#RTCVideo-startvideocapture) 开启内部采集。 |
+| **MEDIA_INPUT_TYPE_INTERNAL(1)** | 内部 SDK 采集。  <br><br/>此设置仅切换至内部采集，你需继续调用 [startVideoCapture](Android-api.md#RTCVideo-startvideocapture) 开启内部采集。 |
 
 
 # MirrorType
@@ -3359,7 +3359,7 @@ public Region com.ss.bytertc.engine.publicstream.PublicStreaming.Layout.Region.r
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| roomId | **String** | 必填。如果此媒体流是通过 [startForwardStreamToRooms](70080.md#RTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。 |
+| roomId | **String** | 必填。如果此媒体流是通过 [startForwardStreamToRooms](Android-api.md#RTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。 |
 
 **返回值**
 当前流在公共流中的布局信息。详见 [Region](#region-2)。
@@ -5251,7 +5251,7 @@ public enum com.ss.bytertc.engine.type.RemoteUserPriority
 public enum com.ss.bytertc.engine.type.RemoteVideoState
 ```
 
-远端视频流状态。状态改变时，会收到回调：[onRemoteVideoStateChanged](70081.md#IRTCVideoEventHandler-onremotevideostatechanged)
+远端视频流状态。状态改变时，会收到回调：[onRemoteVideoStateChanged](Android-callback.md#IRTCVideoEventHandler-onremotevideostatechanged)
 
 
 ## 枚举值
@@ -5284,7 +5284,7 @@ public enum com.ss.bytertc.engine.type.RemoteVideoStateChangeReason
 | **REMOTE_VIDEO_STATE_CHANGE_REASON_LOCAL_UNMUTED(4)** | 本地用户恢复接收远端视频流或本地用户启用视频模块 |
 | **REMOTE_VIDEO_STATE_CHANGE_REASON_REMOTE_MUTED(5)** | 远端用户停止发送视频流或远端用户禁用视频模块 |
 | **REMOTE_VIDEO_STATE_CHANGE_REASON_REMOTE_UNMUTED(6)** | 远端用户恢复发送视频流或远端用户启用视频模块 |
-| **REMOTE_VIDEO_STATE_CHANGE_REASON_REMOTE_OFFLINE(7)** | 远端用户离开房间<br/>状态转换参看 [onUserUnpublishStream](70081.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](70081.md#IRTCRoomEventHandler-onuserunpublishscreen)。 |
+| **REMOTE_VIDEO_STATE_CHANGE_REASON_REMOTE_OFFLINE(7)** | 远端用户离开房间<br/>状态转换参看 [onUserUnpublishStream](Android-callback.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](Android-callback.md#IRTCRoomEventHandler-onuserunpublishscreen)。 |
 
 
 # RemoteVideoStats
@@ -5708,8 +5708,8 @@ public enum com.ss.bytertc.engine.type.SEIStreamUpdateEvent
 
 | 类型 | 说明 |
 | --- | --- |
-| **SEIStreamUpdateEventStreamAdd (0)** | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage](70080.md#RTCVideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| **SEIStreamUpdateEventStreamRemove (1)** | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage](70080.md#RTCVideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType](70080.md#RTCVideo-setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布。 |
+| **SEIStreamUpdateEventStreamAdd (0)** | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| **SEIStreamUpdateEventStreamRemove (1)** | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType](Android-api.md#RTCVideo-setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 # SourceWantedData
@@ -5792,8 +5792,8 @@ public enum com.ss.bytertc.engine.type.SubscribeFallbackOptions
 | 类型 | 说明 |
 | --- | --- |
 | **SUBSCRIBE_FALLBACK_OPTIONS_DISABLED(0)** | 下行网络不佳或设备性能不足时，不对音视频流作回退处理。默认设置。 |
-| **SUBSCRIBE_FALLBACK_OPTIONS_STREAM_LOW(1)** | 下行网络不佳或设备性能不足时，对视频流做回退处理，具体降级规则参看[音视频流回退](70137)。 <br>该设置仅对发布端调用 [enableSimulcastMode](70080.md#RTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
-| **SUBSCRIBE_FALLBACK_OPTIONS_AUDIO_ONLY(2)** | 下行网络不佳或设备性能不足时，先对视频流做回退处理。当网络状况不满足接收弱流时，则自动取消接收视频，仅接收音频。<br>该设置仅对发布端调用 [enableSimulcastMode](70080.md#RTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+| **SUBSCRIBE_FALLBACK_OPTIONS_STREAM_LOW(1)** | 下行网络不佳或设备性能不足时，对视频流做回退处理，具体降级规则参看[音视频流回退](70137)。 <br>该设置仅对发布端调用 [enableSimulcastMode](Android-api.md#RTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+| **SUBSCRIBE_FALLBACK_OPTIONS_AUDIO_ONLY(2)** | 下行网络不佳或设备性能不足时，先对视频流做回退处理。当网络状况不满足接收弱流时，则自动取消接收视频，仅接收音频。<br>该设置仅对发布端调用 [enableSimulcastMode](Android-api.md#RTCVideo-enablesimulcastmode) 开启发送多路流功能的情况生效。 |
 
 
 # SubscribeMediaType
@@ -6358,7 +6358,7 @@ public enum com.ss.bytertc.engine.video.VideoCaptureConfig.CapturePreference
 | --- | --- |
 | **AUTO(0)** | （默认）自动设置采集参数。<br/>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
 | **MANUAL(1)** | 手动设置采集参数，包括采集分辨率、帧率。 |
-| **AUTO_PERFORMANCE(2)** | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](70080.md#RTCVideo-setvideoencoderconfig) 中设置的参数。 |
+| **AUTO_PERFORMANCE(2)** | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](Android-api.md#RTCVideo-setvideoencoderconfig) 中设置的参数。 |
 
 
 # VideoEncoderConfiguration
@@ -6678,9 +6678,9 @@ public enum com.ss.bytertc.engine.video.VideoDecoderConfig
 
 | 类型 | 说明 |
 | --- | --- |
-| **VIDEO_DECODER_CONFIG_RAW(0)** | 开启 SDK 内部解码，只回调解码后的数据。回调为[onFrame](70083.md#onframe)。 |
-| **VIDEO_DECODER_CONFIG_ENCODE(1)** | 开启自定义解码，只回调解码前数据。回调为[OnRemoteEncodedVideoFrame](70081.md#onremoteencodedvideoframe)。 |
-| **VIDEO_DECODER_CONFIG_BOTH(2)** | 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为[onFrame](70083#onframe)和[OnRemoteEncodedVideoFrame](70081.md#onremoteencodedvideoframe)。|
+| **VIDEO_DECODER_CONFIG_RAW(0)** | 开启 SDK 内部解码，只回调解码后的数据。回调为[onFrame](Android-keytype.md#onframe)。 |
+| **VIDEO_DECODER_CONFIG_ENCODE(1)** | 开启自定义解码，只回调解码前数据。回调为[OnRemoteEncodedVideoFrame](Android-callback.md#onremoteencodedvideoframe)。 |
+| **VIDEO_DECODER_CONFIG_BOTH(2)** | 开启 SDK 内部解码，同时回调解码前和解码后的数据。回调为[onFrame](Android-keytype#onframe)和[OnRemoteEncodedVideoFrame](Android-callback.md#onremoteencodedvideoframe)。|
 
 
 # VideoPreprocessorConfig
@@ -6989,7 +6989,7 @@ public boolean com.ss.bytertc.engine.data.EchoTestConfig.enableAudio;
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame](70080.md#RTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame](Android-api.md#RTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
 + flase：否  <br>
 
 
@@ -7002,7 +7002,7 @@ public boolean com.ss.bytertc.engine.data.EchoTestConfig.enableVideo;
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalVideoFrame](70080.md#RTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalVideoFrame](Android-api.md#RTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
 + flase：否  <br>
 
 **注意:**
@@ -8161,7 +8161,7 @@ public boolean com.ss.bytertc.engine.RTCRoomConfig.isAutoPublish;
 ```
 是否自动发布音视频流，默认为自动发布。 <br>
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>
-若调用 [setUserVisibility](70080.md#RTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 
 <span id="RTCRoomConfig-isautosubscribeaudio"></span>
@@ -8350,7 +8350,7 @@ public com.ss.bytertc.engine.SubscribeVideoConfig.SubscribeVideoConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| videoIndex | **int** | 订阅的视频流分辨率下标。  <br/>通过此参数指定希望订阅的流。在此之前，远端用户已经通过调用 [setVideoEncoderConfig](70080.md#RTCVideo-setvideoencoderconfig) 方法，启动发布多路不同分辨率的视频流。编号 `0` 至 `3`代表流质量从高至低。<br/>默认值为 0，即订阅第一路流。  <br/>如果不想更改之前的设置，可以输入 -1。 |
+| videoIndex | **int** | 订阅的视频流分辨率下标。  <br/>通过此参数指定希望订阅的流。在此之前，远端用户已经通过调用 [setVideoEncoderConfig](Android-api.md#RTCVideo-setvideoencoderconfig) 方法，启动发布多路不同分辨率的视频流。编号 `0` 至 `3`代表流质量从高至低。<br/>默认值为 0，即订阅第一路流。  <br/>如果不想更改之前的设置，可以输入 -1。 |
 | priority | **int** | 远端用户优先级，参看 [RemoteUserPriority](#remoteuserpriority)，默认值为 0。 |
 
 

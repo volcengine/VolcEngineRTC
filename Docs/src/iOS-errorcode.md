@@ -79,7 +79,7 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode)
 | ByteRTCWarningSetScreenAudioStreamIndexFailed | -5010 | 不支持在 `publishScreen` 之后，通过 `setScreenAudioStreamIndex` 设置屏幕音频混流类型 |
 | ByteRTCWarningInvalidVoicePitch | -5011 | 设置语音音高不合法 |
 | ByteRTCWarningInvalidCallForExtAudio | -5013 | 外部音频源新旧接口混用 |
-| ByteRTCWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas:withCanvas:](70092.md#ByteRTCVideo-setlocalvideocanvas-withcanvas) 或 [setRemoteVideoCanvas:withIndex:withCanvas:](70092.md#ByteRTCVideo-setremotevideocanvas-withindex-withcanvas) 时指定了无效的画布句柄，触发此回调。 |
+| ByteRTCWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas:withCanvas:](iOS-api.md#ByteRTCVideo-setlocalvideocanvas-withcanvas) 或 [setRemoteVideoCanvas:withIndex:withCanvas:](iOS-api.md#ByteRTCVideo-setremotevideocanvas-withindex-withcanvas) 时指定了无效的画布句柄，触发此回调。 |
 
 
 # ByteRTCLoginErrorCode

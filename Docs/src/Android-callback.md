@@ -24,13 +24,13 @@ public abstract void com.ss.bytertc.engine.handler.IExternalVideoEncoderEventHan
     StreamIndex index)
 ```
 提示自定义编码帧可以开始推送的回调。  <br>
-收到该回调后，你即可调用 [pushExternalEncodedVideoFrame](70080.md#RTCVideo-pushexternalencodedvideoframe) 向 SDK 推送自定义编码视频帧
+收到该回调后，你即可调用 [pushExternalEncodedVideoFrame](Android-api.md#RTCVideo-pushexternalencodedvideoframe) 向 SDK 推送自定义编码视频帧
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 可以推送的编码流的属性，参看 [StreamIndex](70083.md#streamindex-2) |
+| index | **StreamIndex** | 可以推送的编码流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 
 
 <span id="IExternalVideoEncoderEventHandler-onstop"></span>
@@ -45,7 +45,7 @@ public abstract void com.ss.bytertc.engine.handler.IExternalVideoEncoderEventHan
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 需停止推送的编码流的属性，参看 [StreamIndex](70083.md#streamindex-2) |
+| index | **StreamIndex** | 需停止推送的编码流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 
 
 <span id="IExternalVideoEncoderEventHandler-onrateupdate"></span>
@@ -63,7 +63,7 @@ public abstract void com.ss.bytertc.engine.handler.IExternalVideoEncoderEventHan
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_index | **StreamIndex** | 发生变化的编码流的属性，参看 [StreamIndex](70083.md#streamindex-2) |
+| stream_index | **StreamIndex** | 发生变化的编码流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 | video_index | **int** | 对应编码流的下标 |
 | fps | **int** | 变化后的帧率，单位：fps |
 | bitrateKbps | **int** | 变化后的码率，单位：kbps |
@@ -82,7 +82,7 @@ public abstract void com.ss.bytertc.engine.handler.IExternalVideoEncoderEventHan
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_index | **StreamIndex** | 远端编码流的属性，参看 [StreamIndex](70083.md#streamindex-2) |
+| stream_index | **StreamIndex** | 远端编码流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 | video_index | **int** | 对应编码流的下标 |
 
 
@@ -187,7 +187,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onLeaveR
     RTCRoomStats stats)
 ```
 离开房间成功回调。  <br>
-用户调用 [leaveRoom](70080.md#RTCRoom-leaveroom) 方法后，SDK 会停止所有的发布订阅流，并在释放所有通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
+用户调用 [leaveRoom](Android-api.md#RTCRoom-leaveroom) 方法后，SDK 会停止所有的发布订阅流，并在释放所有通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
 
 **传入参数**
 
@@ -198,7 +198,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onLeaveR
 
 **注意**
 
-+ 用户调用 [leaveRoom](70080.md#RTCRoom-leaveroom) 方法离开房间后，如果立即调用 [destroyRTCVideo](70080.md#RTCVideo-destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。  
++ 用户调用 [leaveRoom](Android-api.md#RTCRoom-leaveroom) 方法离开房间后，如果立即调用 [destroyRTCVideo](Android-api.md#RTCVideo-destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。  
 + 离开房间后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备导致初始化失败。  
 
 
@@ -219,8 +219,8 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onRoomSt
 | --- | --- | --- |
 | roomId | **String** | 房间 ID。 |
 | uid | **String** | 用户 ID。 |
-| state | **int** | 房间状态码。  <br/>• 0: 成功。  <br/>• !0: 失败或异常退房。具体原因参看 [ErrorCode](70082.md#errorcode) 及 [WarningCode](70082.md#warningcode)。异常退出房间，具体原因包括<br/>- -1004：相同 ID 用户在其他端进房； <br/>- -1006：用户被踢出当前房间。 |
-| extraInfo | **String** | 额外信息，如 `{"elapsed":1187,"join_type":0}`。<br/>`join_type` 表示加入房间的类型，`0`为首次进房，`1`为重连进房。<br/>`elapsed`表示加入房间耗时，即本地用户从调用 [joinRoom](70080.md#RTCRoom-joinroom) 到加入房间成功所经历的时间间隔，单位为 ms。 |
+| state | **int** | 房间状态码。  <br/>• 0: 成功。  <br/>• !0: 失败或异常退房。具体原因参看 [ErrorCode](Android-errorcode.md#errorcode) 及 [WarningCode](Android-errorcode.md#warningcode)。异常退出房间，具体原因包括<br/>- -1004：相同 ID 用户在其他端进房； <br/>- -1006：用户被踢出当前房间。 |
+| extraInfo | **String** | 额外信息，如 `{"elapsed":1187,"join_type":0}`。<br/>`join_type` 表示加入房间的类型，`0`为首次进房，`1`为重连进房。<br/>`elapsed`表示加入房间耗时，即本地用户从调用 [joinRoom](Android-api.md#RTCRoom-joinroom) 到加入房间成功所经历的时间间隔，单位为 ms。 |
 
 
 <span id="IRTCRoomEventHandler-onstreamstatechanged"></span>
@@ -240,7 +240,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onStream
 | --- | --- | --- |
 | roomId | **String** | 房间 ID。 |
 | uid | **String** | 用户 ID。 |
-| state | **int** | 流状态码，参看 [ErrorCode](70082.md#errorcode) 及 [WarningCode](70082.md#warningcode)。 |
+| state | **int** | 流状态码，参看 [ErrorCode](Android-errorcode.md#errorcode) 及 [WarningCode](Android-errorcode.md#warningcode)。 |
 | extraInfo | **String** | 附加信息，目前为空。 |
 
 
@@ -250,13 +250,13 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onStream
 public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onAVSyncStateChange(
     AVSyncState state)
 ```
-发布端调用 [setMultiDeviceAVSync](70080.md#RTCRoom-setmultideviceavsync) 后音视频同步状态发生改变时，会收到此回调。
+发布端调用 [setMultiDeviceAVSync](Android-api.md#RTCRoom-setmultideviceavsync) 后音视频同步状态发生改变时，会收到此回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| state | **AVSyncState** | 音视频同步状态，参看 [AVSyncState](70083.md#avsyncstate)。 |
+| state | **AVSyncState** | 音视频同步状态，参看 [AVSyncState](Android-keytype.md#avsyncstate)。 |
 
 
 <span id="IRTCRoomEventHandler-onroomstats"></span>
@@ -272,7 +272,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onRoomSt
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stats | **RTCRoomStats** | 房间内的汇总统计数据。详见 [RTCRoomStats](70083.md#rtcroomstats)。 |
+| stats | **RTCRoomStats** | 房间内的汇总统计数据。详见 [RTCRoomStats](Android-keytype.md#rtcroomstats)。 |
 
 
 <span id="IRTCRoomEventHandler-onuserjoined"></span>
@@ -283,16 +283,16 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserJo
     int elapsed)
 ```
 可见用户加入房间，或房内隐身用户切换为可见的回调。  <br>
-1.远端用户调用 [setUserVisibility](70080.md#RTCRoom-setuservisibility) 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br>
+1.远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br>
 2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br>
-3.房间内隐身远端用户调用 [setUserVisibility](70080.md#RTCRoom-setuservisibility) 方法切换至可见时，房间内其他用户将收到该事件。  <br>
+3.房间内隐身远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 方法切换至可见时，房间内其他用户将收到该事件。  <br>
 4.新进房用户也会收到进房前已在房内的主播角色用户的进房回调通知。  <br>
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| userInfo | **UserInfo** | 用户信息。参看 [UserInfo](70083.md#userinfo)。 |
+| userInfo | **UserInfo** | 用户信息。参看 [UserInfo](Android-keytype.md#userinfo)。 |
 | elapsed | **int** | 保留字段，无意义。 |
 
 
@@ -310,7 +310,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserLe
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | uid | **String** | 离开房间，或切至不可见的的远端用户 ID。 |
-| reason | **int** | 用户离开房间的原因：  <br/>• 0: 远端用户调用 [leaveRoom](70080.md#RTCRoom-leaveroom) 主动退出房间。 <br/>• 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](https://www.volcengine.com/docs/6348/95376) <br/>• 2: 远端用户调用 [setUserVisibility](70080.md#RTCRoom-setuservisibility) 切换至不可见状态。 <br/>• 3: 服务端调用 OpenAPI 将该远端用户踢出房间。 |
+| reason | **int** | 用户离开房间的原因：  <br/>• 0: 远端用户调用 [leaveRoom](Android-api.md#RTCRoom-leaveroom) 主动退出房间。 <br/>• 1: 远端用户因 Token 过期或网络原因等掉线。详细信息请参看[连接状态提示](https://www.volcengine.com/docs/6348/95376) <br/>• 2: 远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 切换至不可见状态。 <br/>• 3: 服务端调用 OpenAPI 将该远端用户踢出房间。 |
 
 
 <span id="IRTCRoomEventHandler-ontokenwillexpire"></span>
@@ -319,7 +319,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserLe
 public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onTokenWillExpire()
 ```
 Token 过期前 30 秒将触发该回调。<br>
-调用 [updateToken](70080.md#RTCRoom-updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+调用 [updateToken](Android-api.md#RTCRoom-updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
 
 
 <span id="IRTCRoomEventHandler-onuserpublishstream"></span>
@@ -336,11 +336,11 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserPu
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | uid | **String** | 远端流发布用户的用户 ID。 |
-| type | **MediaStreamType** | 远端媒体流的类型，参看 [MediaStreamType](70083.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 远端媒体流的类型，参看 [MediaStreamType](Android-keytype.md#mediastreamtype)。 |
 
 
 **注意**
-当房间内的远端用户调用 [publishStream](70080.md#RTCRoom-publishstream) 成功发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeStream](70080.md#RTCRoom-subscribestream) 订阅此流。
+当房间内的远端用户调用 [publishStream](Android-api.md#RTCRoom-publishstream) 成功发布由摄像头/麦克风采集的媒体流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeStream](Android-api.md#RTCRoom-subscribestream) 订阅此流。
 
 <span id="IRTCRoomEventHandler-onuserunpublishstream"></span>
 ### onUserUnpublishStream
@@ -357,12 +357,12 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserUn
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | uid | **String** | 移除的远端流发布用户的用户 ID。 |
-| type | **MediaStreamType** | 移除的远端流类型，参看 [MediaStreamType](70083.md#mediastreamtype)。 |
-| reason | **StreamRemoveReason** | 远端流移除的原因，参看 [StreamRemoveReason](70083.md#streamremovereason)。 |
+| type | **MediaStreamType** | 移除的远端流类型，参看 [MediaStreamType](Android-keytype.md#mediastreamtype)。 |
+| reason | **StreamRemoveReason** | 远端流移除的原因，参看 [StreamRemoveReason](Android-keytype.md#streamremovereason)。 |
 
 
 **注意**
-收到该回调通知后，你可以自行选择是否调用 [unsubscribeStream](70080.md#RTCRoom-unsubscribestream) 取消订阅此流。
+收到该回调通知后，你可以自行选择是否调用 [unsubscribeStream](Android-api.md#RTCRoom-unsubscribestream) 取消订阅此流。
 
 <span id="IRTCRoomEventHandler-onuserpublishscreen"></span>
 ### onUserPublishScreen
@@ -378,11 +378,11 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserPu
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | uid | **String** | 远端流发布用户的用户 ID。 |
-| type | **MediaStreamType** | 远端媒体流的类型，参看 [MediaStreamType](70083.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 远端媒体流的类型，参看 [MediaStreamType](Android-keytype.md#mediastreamtype)。 |
 
 
 **注意**
-当房间内的远端用户调用 [publishScreen](70080.md#RTCRoom-publishscreen) 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeScreen](70080.md#RTCRoom-subscribescreen) 订阅此流。
+当房间内的远端用户调用 [publishScreen](Android-api.md#RTCRoom-publishscreen) 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeScreen](Android-api.md#RTCRoom-subscribescreen) 订阅此流。
 
 <span id="IRTCRoomEventHandler-onuserunpublishscreen"></span>
 ### onUserUnpublishScreen
@@ -399,12 +399,12 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserUn
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | uid | **String** | 移除的远端流发布用户的用户 ID。 |
-| type | **MediaStreamType** | 移除的远端流类型，参看 [MediaStreamType](70083.md#mediastreamtype)。 |
-| reason | **StreamRemoveReason** | 远端流移除的原因，参看 [StreamRemoveReason](70083.md#streamremovereason)。 |
+| type | **MediaStreamType** | 移除的远端流类型，参看 [MediaStreamType](Android-keytype.md#mediastreamtype)。 |
+| reason | **StreamRemoveReason** | 远端流移除的原因，参看 [StreamRemoveReason](Android-keytype.md#streamremovereason)。 |
 
 
 **注意**
-收到该回调通知后，你可以自行选择是否调用 [unsubscribeScreen](70080.md#RTCRoom-unsubscribescreen) 取消订阅此流。
+收到该回调通知后，你可以自行选择是否调用 [unsubscribeScreen](Android-api.md#RTCRoom-unsubscribescreen) 取消订阅此流。
 
 <span id="IRTCRoomEventHandler-onlocalstreamstats"></span>
 ### onLocalStreamStats
@@ -419,7 +419,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onLocalS
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stats | **LocalStreamStats** | 音视频流以及网络状况统计信息。参见 [LocalStreamStats](70083.md#localstreamstats)。 |
+| stats | **LocalStreamStats** | 音视频流以及网络状况统计信息。参见 [LocalStreamStats](Android-keytype.md#localstreamstats)。 |
 
 
 <span id="IRTCRoomEventHandler-onremotestreamstats"></span>
@@ -434,7 +434,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onRemote
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stats | **RemoteStreamStats** | 音视频流以及网络状况统计信息。参见 [RemoteStreamStats](70083.md#remotestreamstats)。 |
+| stats | **RemoteStreamStats** | 音视频流以及网络状况统计信息。参见 [RemoteStreamStats](Android-keytype.md#remotestreamstats)。 |
 
 
 <span id="IRTCRoomEventHandler-onstreamsubscribed"></span>
@@ -451,16 +451,16 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onStream
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stateCode | **int** | 订阅媒体流状态，参看 [SubscribeState](70083.md#subscribestate) |
+| stateCode | **int** | 订阅媒体流状态，参看 [SubscribeState](Android-keytype.md#subscribestate) |
 | userId | **String** | 流发布用户的用户 ID |
-| info | **SubscribeConfig** | 流的属性，参看 [SubscribeConfig](70083.md#subscribeconfig) |
+| info | **SubscribeConfig** | 流的属性，参看 [SubscribeConfig](Android-keytype.md#subscribeconfig) |
 
 
 **注意**
 本地用户收到该回调的时机包括：  
 
-+ 调用 [subscribeStream](70080.md#RTCRoom-subscribestream) 或 [unsubscribeStream](70080.md#RTCRoom-unsubscribestream) 订阅/取消订阅指定远端摄像头音视频流后；  
-+ 调用 [subscribeScreen](70080.md#RTCRoom-subscribescreen) 或 [unsubscribeScreen](70080.md#RTCRoom-unsubscribescreen) 订阅/取消订阅指定远端屏幕共享流后。
++ 调用 [subscribeStream](Android-api.md#RTCRoom-subscribestream) 或 [unsubscribeStream](Android-api.md#RTCRoom-unsubscribestream) 订阅/取消订阅指定远端摄像头音视频流后；  
++ 调用 [subscribeScreen](Android-api.md#RTCRoom-subscribescreen) 或 [unsubscribeScreen](Android-api.md#RTCRoom-unsubscribescreen) 订阅/取消订阅指定远端屏幕共享流后。
 
 
 <span id="IRTCRoomEventHandler-onroommessagereceived"></span>
@@ -471,7 +471,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onRoomMe
     String message)
 ```
 接收到房间内广播消息的回调。<br>
-房间内其他用户调用 [sendRoomMessage](70080.md#RTCRoom-sendroommessage) 发送广播消息时，收到此回调。
+房间内其他用户调用 [sendRoomMessage](Android-api.md#RTCRoom-sendroommessage) 发送广播消息时，收到此回调。
 
 **传入参数**
 
@@ -489,7 +489,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onRoomBi
     ByteBuffer message)
 ```
 接收到房间内广播二进制消息的回调。<br>
-房间内其他用户调用 [sendRoomBinaryMessage](70080.md#RTCRoom-sendroombinarymessage) 发送广播二进制消息时，收到此回调。
+房间内其他用户调用 [sendRoomBinaryMessage](Android-api.md#RTCRoom-sendroombinarymessage) 发送广播二进制消息时，收到此回调。
 
 **传入参数**
 
@@ -506,7 +506,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserMe
     String uid,
     String message)
 ```
-收到来自房间中其他用户通过 [sendUserMessage](70080.md#RTCRoom-sendusermessage) 发来的点对点文本消息时，会收到此回调。
+收到来自房间中其他用户通过 [sendUserMessage](Android-api.md#RTCRoom-sendusermessage) 发来的点对点文本消息时，会收到此回调。
 
 **传入参数**
 
@@ -523,7 +523,7 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserBi
     String uid,
     ByteBuffer message)
 ```
-收到来自房间中其他用户通过 [sendUserBinaryMessage](70080.md#RTCRoom-senduserbinarymessage) 发来的点对点二进制消息时，会收到此回调。
+收到来自房间中其他用户通过 [sendUserBinaryMessage](Android-api.md#RTCRoom-senduserbinarymessage) 发来的点对点二进制消息时，会收到此回调。
 
 **传入参数**
 
@@ -547,11 +547,11 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onUserMe
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | msgid | **long** | 本条消息的 ID。 |
-| error | **int** | 文本或二进制消息发送结果，详见 [UserMessageSendResult](70082.md#usermessagesendresult) |
+| error | **int** | 文本或二进制消息发送结果，详见 [UserMessageSendResult](Android-errorcode.md#usermessagesendresult) |
 
 
 **注意**
-调用 [sendUserMessage](70080.md#RTCRoom-sendusermessage) 或 [sendUserBinaryMessage](70080.md#RTCRoom-senduserbinarymessage) 接口，才能收到此回调。
+调用 [sendUserMessage](Android-api.md#RTCRoom-sendusermessage) 或 [sendUserBinaryMessage](Android-api.md#RTCRoom-senduserbinarymessage) 接口，才能收到此回调。
 
 <span id="IRTCRoomEventHandler-onroommessagesendresult"></span>
 ### onRoomMessageSendResult
@@ -560,14 +560,14 @@ public abstract void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onRoomMe
     long msgid,
     int error)
 ```
-调用 [sendRoomMessage](70080.md#RTCRoom-sendroommessage) 或 [sendRoomBinaryMessage](70080.md#RTCRoom-sendroombinarymessage) 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。
+调用 [sendRoomMessage](Android-api.md#RTCRoom-sendroommessage) 或 [sendRoomBinaryMessage](Android-api.md#RTCRoom-sendroombinarymessage) 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | msgid | **long** | 本条消息的 ID。 |
-| error | **int** | 消息发送结果，详见 [RoomMessageSendResult](70082.md#roommessagesendresult) |
+| error | **int** | 消息发送结果，详见 [RoomMessageSendResult](Android-errorcode.md#roommessagesendresult) |
 
 
 <span id="IRTCRoomEventHandler-onvideostreambanned"></span>
@@ -634,7 +634,7 @@ public void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onForwardStreamSt
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stateInfos | **ForwardStreamStateInfo[]** | 跨房间媒体流转发目标房间信息数组，详见 [ForwardStreamStateInfo](70083.md#forwardstreamstateinfo) |
+| stateInfos | **ForwardStreamStateInfo[]** | 跨房间媒体流转发目标房间信息数组，详见 [ForwardStreamStateInfo](Android-keytype.md#forwardstreamstateinfo) |
 
 
 <span id="IRTCRoomEventHandler-onforwardstreamevent"></span>
@@ -649,7 +649,7 @@ public void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onForwardStreamEv
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| eventInfos | **ForwardStreamEventInfo[]** | 跨房间媒体流转发目标房间事件数组，详见 [ForwardStreamEventInfo](70083.md#forwardstreameventinfo) |
+| eventInfos | **ForwardStreamEventInfo[]** | 跨房间媒体流转发目标房间事件数组，详见 [ForwardStreamEventInfo](Android-keytype.md#forwardstreameventinfo) |
 
 
 <span id="IRTCRoomEventHandler-onnetworkquality"></span>
@@ -665,8 +665,8 @@ public void com.ss.bytertc.engine.handler.IRTCRoomEventHandler.onNetworkQuality(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| localQuality | **NetworkQualityStats** | 本地网络质量，详见 [NetworkQualityStats](70083.md#networkqualitystats)。 |
-| remoteQualities | **NetworkQualityStats[]** | 已订阅用户的网络质量，详见 [NetworkQualityStats](70083.md#networkqualitystats)。 |
+| localQuality | **NetworkQualityStats** | 本地网络质量，详见 [NetworkQualityStats](Android-keytype.md#networkqualitystats)。 |
+| remoteQualities | **NetworkQualityStats[]** | 已订阅用户的网络质量，详见 [NetworkQualityStats](Android-keytype.md#networkqualitystats)。 |
 
 
 **注意**
@@ -764,7 +764,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onWarning(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| warn | **int** | 警告代码，参见 [WarningCode](70082.md#warningcode) |
+| warn | **int** | 警告代码，参见 [WarningCode](Android-errorcode.md#warningcode) |
 
 
 **注意**
@@ -782,7 +782,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onError(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| err | **int** | 错误代码，详情定义见: [ErrorCode](70082.md#errorcode) |
+| err | **int** | 错误代码，详情定义见: [ErrorCode](Android-errorcode.md#errorcode) |
 
 
 **注意**
@@ -800,7 +800,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onSysStats(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stats | **SysStats** | cpu，内存信息。详见 [SysStats](70083.md#sysstats) 数据类型。 |
+| stats | **SysStats** | cpu，内存信息。详见 [SysStats](Android-keytype.md#sysstats) 数据类型。 |
 
 
 <span id="IRTCVideoEventHandler-onnetworktypechanged"></span>
@@ -825,7 +825,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserStartVideo
     String roomId,
     String uid)
 ```
-房间内的可见用户调用 [startVideoCapture](70080.md#RTCVideo-startvideocapture) 开启内部视频采集时，房间内其他用户会收到此回调。
+房间内的可见用户调用 [startVideoCapture](Android-api.md#RTCVideo-startvideocapture) 开启内部视频采集时，房间内其他用户会收到此回调。
 
 **传入参数**
 
@@ -842,7 +842,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserStopVideoC
     String roomId,
     String uid)
 ```
-房间内的可见用户调用 [stopVideoCapture](70080.md#RTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
+房间内的可见用户调用 [stopVideoCapture](Android-api.md#RTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
 
 **传入参数**
 
@@ -866,7 +866,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onCreateRoomStat
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 房间 ID。 |
-| errorCode | **int** | 创建房间错误码，具体原因参看 [ErrorCode](70082.md#errorcode)。 |
+| errorCode | **int** | 创建房间错误码，具体原因参看 [ErrorCode](Android-errorcode.md#errorcode)。 |
 
 
 <span id="IRTCVideoEventHandler-onuserstartaudiocapture"></span>
@@ -876,7 +876,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserStartAudio
     String roomId,
     String uid)
 ```
-房间内的用户调用 [startAudioCapture](70080.md#RTCVideo-startaudiocapture) 开启音频采集时，房间内其他用户会收到此回调。
+房间内的用户调用 [startAudioCapture](Android-api.md#RTCVideo-startaudiocapture) 开启音频采集时，房间内其他用户会收到此回调。
 
 **传入参数**
 
@@ -893,7 +893,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserStopAudioC
     String roomId,
     String uid)
 ```
-房间内的用户调用 [stopAudioCapture](70080.md#RTCVideo-stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此回调。
+房间内的用户调用 [stopAudioCapture](Android-api.md#RTCVideo-stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此回调。
 
 **传入参数**
 
@@ -916,8 +916,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onLocalAudioStat
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| state | **LocalAudioStreamState** | 本地音频设备的状态，详见 [LocalAudioStreamState](70083.md#localaudiostreamstate) |
-| error | **LocalAudioStreamError** | 本地音频流状态改变时的错误码，详见 [LocalAudioStreamError](70083.md#localaudiostreamerror) |
+| state | **LocalAudioStreamState** | 本地音频设备的状态，详见 [LocalAudioStreamState](Android-keytype.md#localaudiostreamstate) |
+| error | **LocalAudioStreamError** | 本地音频流状态改变时的错误码，详见 [LocalAudioStreamError](Android-keytype.md#localaudiostreamerror) |
 
 
 <span id="IRTCVideoEventHandler-onremoteaudiostatechanged"></span>
@@ -934,9 +934,9 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onRemoteAudioSta
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| key | **RemoteStreamKey** | 远端流信息, 详见 [RemoteStreamKey](70083.md#remotestreamkey) |
-| state | **RemoteAudioState** | 远端音频流状态，详见 [RemoteAudioState](70083.md#remoteaudiostate) |
-| reason | **RemoteAudioStateChangeReason** | 远端音频流状态改变的原因，详见 [RemoteAudioStateChangeReason](70083.md#remoteaudiostatechangereason) |
+| key | **RemoteStreamKey** | 远端流信息, 详见 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| state | **RemoteAudioState** | 远端音频流状态，详见 [RemoteAudioState](Android-keytype.md#remoteaudiostate) |
+| reason | **RemoteAudioStateChangeReason** | 远端音频流状态改变的原因，详见 [RemoteAudioStateChangeReason](Android-keytype.md#remoteaudiostatechangereason) |
 
 
 <span id="IRTCVideoEventHandler-onlocalvideostatechanged"></span>
@@ -953,9 +953,9 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onLocalVideoStat
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 流属性，参看 [StreamIndex](70083.md#streamindex-2) |
-| state | **LocalVideoStreamState** | 本地视频流状态，参看 [LocalVideoStreamState](70083.md#localvideostreamstate) |
-| error | **LocalVideoStreamError** | 本地视频状态改变时的错误码，参看 [LocalVideoStreamError](70083.md#localvideostreamerror) |
+| streamIndex | **StreamIndex** | 流属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| state | **LocalVideoStreamState** | 本地视频流状态，参看 [LocalVideoStreamState](Android-keytype.md#localvideostreamstate) |
+| error | **LocalVideoStreamError** | 本地视频状态改变时的错误码，参看 [LocalVideoStreamError](Android-keytype.md#localvideostreamerror) |
 
 
 <span id="IRTCVideoEventHandler-onremotevideostatechanged"></span>
@@ -972,9 +972,9 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onRemoteVideoSta
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamKey | **RemoteStreamKey** | 远端视频流信息，房间、用户 ID、流属性等，参看 [RemoteStreamKey](70083.md#remotestreamkey) |
-| videoState | **RemoteVideoState** | 远端视频流状态，参看 [RemoteVideoState](70083.md#remotevideostate) |
-| videoStateReason | **RemoteVideoStateChangeReason** | 远端视频流状态改变原因，参看 [RemoteVideoStateChangeReason](70083.md#remotevideostatechangereason) |
+| streamKey | **RemoteStreamKey** | 远端视频流信息，房间、用户 ID、流属性等，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| videoState | **RemoteVideoState** | 远端视频流状态，参看 [RemoteVideoState](Android-keytype.md#remotevideostate) |
+| videoStateReason | **RemoteVideoStateChangeReason** | 远端视频流状态改变原因，参看 [RemoteVideoStateChangeReason](Android-keytype.md#remotevideostatechangereason) |
 
 
 <span id="IRTCVideoEventHandler-onfirstremotevideoframerendered"></span>
@@ -990,8 +990,8 @@ SDK 内部渲染成功远端视频流首帧后，收到此回调。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| remoteStreamKey | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](70083.md#remotestreamkey) |
-| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](70083.md#videoframeinfo) |
+| remoteStreamKey | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](Android-keytype.md#videoframeinfo) |
 
 
 <span id="IRTCVideoEventHandler-onfirstremotevideoframedecoded"></span>
@@ -1007,8 +1007,8 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| remoteStreamKey | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](70083.md#remotestreamkey) |
-| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](70083.md#videoframeinfo) |
+| remoteStreamKey | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](Android-keytype.md#videoframeinfo) |
 
 
 <span id="IRTCVideoEventHandler-onfirstlocalvideoframecaptured"></span>
@@ -1024,12 +1024,12 @@ RTC SDK 在本地完成第一帧视频帧或屏幕视频帧采集时，收到此
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 流属性，参看 [StreamIndex](70083.md#streamindex-2) |
-| frameInfo | **VideoFrameInfo** | 视频信息，参看 [VideoFrameInfo](70083.md#videoframeinfo) |
+| streamIndex | **StreamIndex** | 流属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| frameInfo | **VideoFrameInfo** | 视频信息，参看 [VideoFrameInfo](Android-keytype.md#videoframeinfo) |
 
 
 **注意**
-对于采集到的本地视频帧，你可以调用 [setLocalVideoCanvas](70080.md#RTCVideo-setlocalvideocanvas) 或 [setLocalVideoSink](70080.md#RTCVideo-setlocalvideosink) 在本地渲染。
+对于采集到的本地视频帧，你可以调用 [setLocalVideoCanvas](Android-api.md#RTCVideo-setlocalvideocanvas) 或 [setLocalVideoSink](Android-api.md#RTCVideo-setlocalvideosink) 在本地渲染。
 
 <span id="IRTCVideoEventHandler-onlocalvideosizechanged"></span>
 ### onLocalVideoSizeChanged
@@ -1044,8 +1044,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onLocalVideoSize
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 流属性，参看 [StreamIndex](70083.md#streamindex-2) |
-| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](70083.md#videoframeinfo) |
+| streamIndex | **StreamIndex** | 流属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](Android-keytype.md#videoframeinfo) |
 
 
 <span id="IRTCVideoEventHandler-onremotevideosizechanged"></span>
@@ -1061,8 +1061,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onRemoteVideoSiz
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| remoteStreamKey | **RemoteStreamKey** | 远端流信息，参看 [StreamIndex](70083.md#streamindex-2) |
-| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](70083.md#videoframeinfo) |
+| remoteStreamKey | **RemoteStreamKey** | 远端流信息，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| frameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](Android-keytype.md#videoframeinfo) |
 
 
 <span id="IRTCVideoEventHandler-onconnectionstatechanged"></span>
@@ -1078,7 +1078,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onConnectionStat
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| state | **int** | 当前 SDK 与信令服务器连接状态。 详细定义参见 [ConnectionState](70083.md#connectionstate) |
+| state | **int** | 当前 SDK 与信令服务器连接状态。 详细定义参见 [ConnectionState](Android-keytype.md#connectionstate) |
 | reason | **int** | 引起信令服务器连接状态发生改变的原因，目前未启用固定为 -1 。 |
 
 
@@ -1097,11 +1097,11 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioRouteChan
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| route | **AudioRoute** | 新的音频播放路由，详见 [AudioRoute](70083.md#audioroute) |
+| route | **AudioRoute** | 新的音频播放路由，详见 [AudioRoute](Android-keytype.md#audioroute) |
 
 
 **注意**
-插拔音频外设，或调用 [setAudioRoute](70080.md#RTCVideo-setaudioroute) 都可能触发音频路由切换，详见[移动端设置音频路由](https://www.volcengine.com/docs/6348/117836) 。
+插拔音频外设，或调用 [setAudioRoute](Android-api.md#RTCVideo-setaudioroute) 都可能触发音频路由切换，详见[移动端设置音频路由](https://www.volcengine.com/docs/6348/117836) 。
 
 <span id="IRTCVideoEventHandler-onfirstlocalaudioframe"></span>
 ### onFirstLocalAudioFrame
@@ -1115,7 +1115,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onFirstLocalAudi
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 音频流属性, 详见 [StreamIndex](70083.md#streamindex-2) |
+| streamIndex | **StreamIndex** | 音频流属性, 详见 [StreamIndex](Android-keytype.md#streamindex-2) |
 
 
 **注意**
@@ -1133,7 +1133,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onFirstRemoteAud
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| remoteStreamKey | **RemoteStreamKey** | 远端音频流信息, 详见 [RemoteStreamKey](70083.md#remotestreamkey) |
+| remoteStreamKey | **RemoteStreamKey** | 远端音频流信息, 详见 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
 
 
 **注意**
@@ -1163,13 +1163,13 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onSEIMessageRece
     RemoteStreamKey remoteStreamKey,
     ByteBuffer message)
 ```
-收到通过调用 [sendSEIMessage](70080.md#RTCVideo-sendseimessage) 发送带有 SEI 消息的视频帧时，收到此回调
+收到通过调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 发送带有 SEI 消息的视频帧时，收到此回调
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| remoteStreamKey | **RemoteStreamKey** | 包含 SEI 发送者的用户名，所在的房间名和媒体流，详见 [RemoteStreamKey](70083.md#remotestreamkey) |
+| remoteStreamKey | **RemoteStreamKey** | 包含 SEI 发送者的用户名，所在的房间名和媒体流，详见 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
 | message | **ByteBuffer** | 收到的 SEI 消息内容 |
 
 
@@ -1188,12 +1188,12 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onLoginResult(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | uid | **String** | 登录用户 ID |
-| error_code | **int** | 登录结果  <br/>详见 [LoginErrorCode](70082.md#loginerrorcode)。 |
-| elapsed | **int** | 从调用 [login](70080.md#RTCVideo-login) 接口开始到返回结果所用时长。  <br/>单位为 ms。 |
+| error_code | **int** | 登录结果  <br/>详见 [LoginErrorCode](Android-errorcode.md#loginerrorcode)。 |
+| elapsed | **int** | 从调用 [login](Android-api.md#RTCVideo-login) 接口开始到返回结果所用时长。  <br/>单位为 ms。 |
 
 
 **注意**
-调用 [login](70080.md#RTCVideo-login) 后，会收到此回调。
+调用 [login](Android-api.md#RTCVideo-login) 后，会收到此回调。
 
 <span id="IRTCVideoEventHandler-onlogout"></span>
 ### onLogout
@@ -1204,7 +1204,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onLogout()
 
 
 **注意**
-调用 [logout](70080.md#RTCVideo-logout) 后，会收到此回调。
+调用 [logout](Android-api.md#RTCVideo-logout) 后，会收到此回调。
 
 <span id="IRTCVideoEventHandler-onserverparamssetresult"></span>
 ### onServerParamsSetResult
@@ -1218,11 +1218,11 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onServerParamsSe
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| error | **int** | 设置结果  <br/>• 返回 200，设置成功  <br/>• 返回其他，设置失败，详见 [UserMessageSendResult](70082.md#usermessagesendresult) |
+| error | **int** | 设置结果  <br/>• 返回 200，设置成功  <br/>• 返回其他，设置失败，详见 [UserMessageSendResult](Android-errorcode.md#usermessagesendresult) |
 
 
 **注意**
-调用 [setServerParams](70080.md#RTCVideo-setserverparams) 后，会收到此回调。
+调用 [setServerParams](Android-api.md#RTCVideo-setserverparams) 后，会收到此回调。
 
 <span id="IRTCVideoEventHandler-ongetpeeronlinestatus"></span>
 ### onGetPeerOnlineStatus
@@ -1238,11 +1238,11 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onGetPeerOnlineS
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | peerUserId | **String** | 需要查询的用户 ID |
-| status | **int** | 查询的用户登录状态  <br/>详见 [UserOnlineStatus](70083.md#useronlinestatus). |
+| status | **int** | 查询的用户登录状态  <br/>详见 [UserOnlineStatus](Android-keytype.md#useronlinestatus). |
 
 
 **注意**
-必须先调用 [getPeerOnlineStatus](70080.md#RTCVideo-getpeeronlinestatus)，才能收到此回调。
+必须先调用 [getPeerOnlineStatus](Android-api.md#RTCVideo-getpeeronlinestatus)，才能收到此回调。
 
 <span id="IRTCVideoEventHandler-onusermessagereceivedoutsideroom"></span>
 ### onUserMessageReceivedOutsideRoom
@@ -1251,7 +1251,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserMessageRec
     String uid,
     String message)
 ```
-收到房间外用户调用 [sendUserMessageOutsideRoom](70080.md#RTCVideo-sendusermessageoutsideroom) 发来的文本消息时，会收到此回调
+收到房间外用户调用 [sendUserMessageOutsideRoom](Android-api.md#RTCVideo-sendusermessageoutsideroom) 发来的文本消息时，会收到此回调
 
 **传入参数**
 
@@ -1268,7 +1268,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserBinaryMess
     String uid,
     ByteBuffer message)
 ```
-收到房间外用户调用 [sendUserBinaryMessageOutsideRoom](70080.md#RTCVideo-senduserbinarymessageoutsideroom) 发来的二进制消息时，会收到此回调
+收到房间外用户调用 [sendUserBinaryMessageOutsideRoom](Android-api.md#RTCVideo-senduserbinarymessageoutsideroom) 发来的二进制消息时，会收到此回调
 
 **传入参数**
 
@@ -1292,11 +1292,11 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onUserMessageSen
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | msgid | **long** | 本条消息的 ID  <br/>所有的 P2P 和 P2Server 消息共用一个 ID 序列。 |
-| error | **int** | 消息发送结果  <br/>详见 [UserMessageSendResult](70082.md#usermessagesendresult)。 |
+| error | **int** | 消息发送结果  <br/>详见 [UserMessageSendResult](Android-errorcode.md#usermessagesendresult)。 |
 
 
 **注意**
-当调用 [sendUserMessageOutsideRoom](70080.md#RTCVideo-sendusermessageoutsideroom) 或 [sendUserBinaryMessageOutsideRoom](70080.md#RTCVideo-senduserbinarymessageoutsideroom) 发送消息后，会收到此回调。
+当调用 [sendUserMessageOutsideRoom](Android-api.md#RTCVideo-sendusermessageoutsideroom) 或 [sendUserBinaryMessageOutsideRoom](Android-api.md#RTCVideo-senduserbinarymessageoutsideroom) 发送消息后，会收到此回调。
 
 <span id="IRTCVideoEventHandler-onservermessagesendresult"></span>
 ### onServerMessageSendResult
@@ -1313,12 +1313,12 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onServerMessageS
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | msgid | **long** | 本条消息的 ID  <br/>所有的 P2P 和 P2Server 消息共用一个 ID 序列。 |
-| error | **int** | 消息发送结果，详见 [UserMessageSendResult](70082.md#usermessagesendresult)。 |
+| error | **int** | 消息发送结果，详见 [UserMessageSendResult](Android-errorcode.md#usermessagesendresult)。 |
 | message | **ByteBuffer** | 应用服务器收到 HTTP 请求后，在 ACK 中返回的信息。消息不超过 64 KB。 |
 
 
 **注意**
-本回调为异步回调。当调用 [sendServerMessage](70080.md#RTCVideo-sendservermessage) 或 [sendServerBinaryMessage](70080.md#RTCVideo-sendserverbinarymessage) 接口发送消息后，会收到此回调。
+本回调为异步回调。当调用 [sendServerMessage](Android-api.md#RTCVideo-sendservermessage) 或 [sendServerBinaryMessage](Android-api.md#RTCVideo-sendserverbinarymessage) 接口发送消息后，会收到此回调。
 
 <span id="IRTCVideoEventHandler-onnetworkdetectionresult"></span>
 ### onNetworkDetectionResult
@@ -1332,14 +1332,14 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onNetworkDetecti
     int jitter)
 ```
 通话前网络探测结果。  <br>
-成功调用 [startNetworkDetection](70080.md#RTCVideo-startnetworkdetection) 接口开始探测后，会在 3s 内首次收到该回调，之后每 2s 收到一次该回调。
+成功调用 [startNetworkDetection](Android-api.md#RTCVideo-startnetworkdetection) 接口开始探测后，会在 3s 内首次收到该回调，之后每 2s 收到一次该回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **NetworkDetectionLinkType** | 探测网络类型为上行/下行 |
-| quality | **int** | 探测网络的质量，参看 [NetworkQuality](70083.md#networkquality)。 |
+| quality | **int** | 探测网络的质量，参看 [NetworkQuality](Android-keytype.md#networkquality)。 |
 | rtt | **int** | 探测网络的 RTT，单位：ms |
 | lost_rate | **double** | 探测网络的丢包率 |
 | bitrate | **int** | 探测网络的带宽，单位：kbps |
@@ -1354,7 +1354,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onNetworkDetecti
 ```
 通话前网络探测结束
 以下情况将停止探测并收到本一次本回调：<br>
-1. 当调用 [stopNetworkDetection](70080.md#RTCVideo-stopnetworkdetection) 接口停止探测后，会收到一次该回调；
+1. 当调用 [stopNetworkDetection](Android-api.md#RTCVideo-stopnetworkdetection) 接口停止探测后，会收到一次该回调；
 2. 当收到远端/本端音频首帧后，停止探测；
 3. 当探测超过3分钟后，停止探测；
 4. 当探测链路断开一定时间之后，停止探测。
@@ -1363,7 +1363,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onNetworkDetecti
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| reason | **NetworkDetectionStopReason** | 停止探测的原因类型,参考 [NetworkDetectionStopReason](70083.md#networkdetectionstopreason) |
+| reason | **NetworkDetectionStopReason** | 停止探测的原因类型,参考 [NetworkDetectionStopReason](Android-keytype.md#networkdetectionstopreason) |
 
 
 <span id="IRTCVideoEventHandler-onsimulcastsubscribefallback"></span>
@@ -1378,7 +1378,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onSimulcastSubsc
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| event | **RemoteStreamSwitch** | 音视频流发生变化的信息。参看 [RemoteStreamSwitch](70083.md#remotestreamswitch)。 |
+| event | **RemoteStreamSwitch** | 音视频流发生变化的信息。参看 [RemoteStreamSwitch](Android-keytype.md#remotestreamswitch)。 |
 
 
 <span id="IRTCVideoEventHandler-onperformancealarms"></span>
@@ -1397,10 +1397,10 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onPerformanceAla
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mode | **PerformanceAlarmMode** | 指示本地是否开启发布回退功能。参看 [PerformanceAlarmMode](70083.md#performancealarmmode)  <br/>• 当发布端未开启发布性能回退时，mode 值为 PERFORMANCE_ALARM_MODE_NORMAL。  <br/>• 当发布端开启发布性能回退时，mode 值为 PERFORMANCE_ALARM_MODE_SIMULCAST。 |
+| mode | **PerformanceAlarmMode** | 指示本地是否开启发布回退功能。参看 [PerformanceAlarmMode](Android-keytype.md#performancealarmmode)  <br/>• 当发布端未开启发布性能回退时，mode 值为 PERFORMANCE_ALARM_MODE_NORMAL。  <br/>• 当发布端开启发布性能回退时，mode 值为 PERFORMANCE_ALARM_MODE_SIMULCAST。 |
 | roomId | **String** | • 未开启发布性能回退时，roomId 为空 <br/>• 开启发布性能回退时，roomId 是告警影响的房间 ID。 |
-| reason | **PerformanceAlarmReason** | 告警原因，参看 [PerformanceAlarmReason](70083.md#performancealarmreason) |
-| data | **SourceWantedData** | 性能回退相关数据，详见 [SourceWantedData](70083.md#sourcewanteddata)。 |
+| reason | **PerformanceAlarmReason** | 告警原因，参看 [PerformanceAlarmReason](Android-keytype.md#performancealarmreason) |
+| data | **SourceWantedData** | 性能回退相关数据，详见 [SourceWantedData](Android-keytype.md#sourcewanteddata)。 |
 
 
 <span id="IRTCVideoEventHandler-onaudioframesendstatechanged"></span>
@@ -1418,8 +1418,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioFrameSend
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 音频发布用户所在的房间 ID |
-| user | **RtcUser** | 本地用户信息，详见 [RtcUser](70083.md#rtcuser) |
-| state | **FirstFrameSendState** | 首帧发送状态，详见 [FirstFrameSendState](70083.md#firstframesendstate) |
+| user | **RtcUser** | 本地用户信息，详见 [RtcUser](Android-keytype.md#rtcuser) |
+| state | **FirstFrameSendState** | 首帧发送状态，详见 [FirstFrameSendState](Android-keytype.md#firstframesendstate) |
 
 
 <span id="IRTCVideoEventHandler-onvideoframesendstatechanged"></span>
@@ -1437,8 +1437,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onVideoFrameSend
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 视频发布用户所在的房间 ID |
-| user | **RtcUser** | 本地用户信息，详见 [RtcUser](70083.md#rtcuser) |
-| state | **FirstFrameSendState** | 首帧发送状态，详见 [FirstFrameSendState](70083.md#firstframesendstate) |
+| user | **RtcUser** | 本地用户信息，详见 [RtcUser](Android-keytype.md#rtcuser) |
+| state | **FirstFrameSendState** | 首帧发送状态，详见 [FirstFrameSendState](Android-keytype.md#firstframesendstate) |
 
 
 <span id="IRTCVideoEventHandler-onscreenvideoframesendstatechanged"></span>
@@ -1456,8 +1456,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onScreenVideoFra
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 屏幕视频发布用户所在的房间 ID |
-| user | **RtcUser** | 本地用户信息，详见 [RtcUser](70083.md#rtcuser) |
-| state | **FirstFrameSendState** | 首帧发送状态，详见 [FirstFrameSendState](70083.md#firstframesendstate) |
+| user | **RtcUser** | 本地用户信息，详见 [RtcUser](Android-keytype.md#rtcuser) |
+| state | **FirstFrameSendState** | 首帧发送状态，详见 [FirstFrameSendState](Android-keytype.md#firstframesendstate) |
 
 
 <span id="IRTCVideoEventHandler-onaudioframeplaystatechanged"></span>
@@ -1475,8 +1475,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioFramePlay
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 音频发布用户所在的房间 ID |
-| user | **RtcUser** | 远端用户信息，详见 [RtcUser](70083.md#rtcuser) |
-| state | **FirstFramePlayState** | 首帧播放状态，详见 [FirstFramePlayState](70083.md#firstframeplaystate) |
+| user | **RtcUser** | 远端用户信息，详见 [RtcUser](Android-keytype.md#rtcuser) |
+| state | **FirstFramePlayState** | 首帧播放状态，详见 [FirstFramePlayState](Android-keytype.md#firstframeplaystate) |
 
 
 <span id="IRTCVideoEventHandler-onvideoframeplaystatechanged"></span>
@@ -1494,8 +1494,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onVideoFramePlay
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 视频发布用户所在的房间 ID |
-| user | **RtcUser** | 远端用户信息，详见 [RtcUser](70083.md#rtcuser) |
-| state | **FirstFramePlayState** | 首帧播放状态，详见 [FirstFramePlayState](70083.md#firstframeplaystate) |
+| user | **RtcUser** | 远端用户信息，详见 [RtcUser](Android-keytype.md#rtcuser) |
+| state | **FirstFramePlayState** | 首帧播放状态，详见 [FirstFramePlayState](Android-keytype.md#firstframeplaystate) |
 
 
 <span id="IRTCVideoEventHandler-onscreenvideoframeplaystatechanged"></span>
@@ -1513,8 +1513,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onScreenVideoFra
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomId | **String** | 屏幕视频发布用户所在的房间 ID |
-| user | **RtcUser** | 远端用户信息，详见 [RtcUser](70083.md#rtcuser) |
-| state | **FirstFramePlayState** | 首帧播放状态，详见 [FirstFramePlayState](70083.md#firstframeplaystate) |
+| user | **RtcUser** | 远端用户信息，详见 [RtcUser](Android-keytype.md#rtcuser) |
+| state | **FirstFramePlayState** | 首帧播放状态，详见 [FirstFramePlayState](Android-keytype.md#firstframeplaystate) |
 
 
 <span id="IRTCVideoEventHandler-onaudiodevicestatechanged"></span>
@@ -1533,9 +1533,9 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioDeviceSta
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | device_id | **String** | 设备 ID |
-| device_type | **AudioDeviceType** | 设备类型，详见 [AudioDeviceType](70083.md#audiodevicetype)。 |
-| device_state | **int** | 设备状态，详见 [MediaDeviceState](70083.md#mediadevicestate)。 |
-| device_error | **int** | 设备错误类型，详见 [MediaDeviceError](70083.md#mediadeviceerror)。 |
+| device_type | **AudioDeviceType** | 设备类型，详见 [AudioDeviceType](Android-keytype.md#audiodevicetype)。 |
+| device_state | **int** | 设备状态，详见 [MediaDeviceState](Android-keytype.md#mediadevicestate)。 |
+| device_error | **int** | 设备错误类型，详见 [MediaDeviceError](Android-keytype.md#mediadeviceerror)。 |
 
 
 <span id="IRTCVideoEventHandler-onvideodevicestatechanged"></span>
@@ -1554,9 +1554,9 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onVideoDeviceSta
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | device_id | **String** | 设备 ID |
-| device_type | **VideoDeviceType** | 设备类型，详见 [VideoDeviceType](70083.md#videodevicetype)。 |
-| device_state | **int** | 设备状态，详见 [MediaDeviceState](70083.md#mediadevicestate)。 |
-| device_error | **int** | 设备错误类型，详见 [MediaDeviceError](70083.md#mediadeviceerror)。 |
+| device_type | **VideoDeviceType** | 设备类型，详见 [VideoDeviceType](Android-keytype.md#videodevicetype)。 |
+| device_state | **int** | 设备状态，详见 [MediaDeviceState](Android-keytype.md#mediadevicestate)。 |
+| device_error | **int** | 设备错误类型，详见 [MediaDeviceError](Android-keytype.md#mediadeviceerror)。 |
 
 
 <span id="IRTCVideoEventHandler-onaudiodevicewarning"></span>
@@ -1574,8 +1574,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioDeviceWar
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | device_id | **String** | 设备 ID |
-| device_type | **AudioDeviceType** | 参看 [AudioDeviceType](70083.md#audiodevicetype) |
-| device_warning | **int** | 参看 [MediaDeviceWarning](70083.md#mediadevicewarning) |
+| device_type | **AudioDeviceType** | 参看 [AudioDeviceType](Android-keytype.md#audiodevicetype) |
+| device_warning | **int** | 参看 [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) |
 
 
 <span id="IRTCVideoEventHandler-onvideodevicewarning"></span>
@@ -1593,8 +1593,8 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onVideoDeviceWar
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | device_id | **String** | 设备 ID |
-| device_type | **VideoDeviceType** | 参看 [VideoDeviceType](70083.md#videodevicetype) |
-| device_warning | **int** | 参看 [MediaDeviceWarning](70083.md#mediadevicewarning) |
+| device_type | **VideoDeviceType** | 参看 [VideoDeviceType](Android-keytype.md#videodevicetype) |
+| device_warning | **int** | 参看 [MediaDeviceWarning](Android-keytype.md#mediadevicewarning) |
 
 
 <span id="IRTCVideoEventHandler-onhttpproxystate"></span>
@@ -1656,16 +1656,16 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onRecordingState
     RecordingInfo info)
 ```
 获取本地录制状态回调。  <br>
-该回调由 [startFileRecording](70080.md#RTCVideo-startfilerecording) 或 [stopFileRecording](70080.md#RTCVideo-stopfilerecording) 触发。
+该回调由 [startFileRecording](Android-api.md#RTCVideo-startfilerecording) 或 [stopFileRecording](Android-api.md#RTCVideo-stopfilerecording) 触发。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **StreamIndex** | 录制流的流属性，参看 [StreamIndex](70083.md#streamindex-2) |
-| state | **RecordingState** | 录制状态，参看 [RecordingState](70083.md#recordingstate) |
-| errorCode | **RecordingErrorCode** | 录制错误码，参看 [RecordingErrorCode](70083.md#recordingerrorcode) |
-| info | **RecordingInfo** | 录制文件的详细信息，参看 [RecordingInfo](70083.md#recordinginfo) |
+| type | **StreamIndex** | 录制流的流属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| state | **RecordingState** | 录制状态，参看 [RecordingState](Android-keytype.md#recordingstate) |
+| errorCode | **RecordingErrorCode** | 录制错误码，参看 [RecordingErrorCode](Android-keytype.md#recordingerrorcode) |
+| info | **RecordingInfo** | 录制文件的详细信息，参看 [RecordingInfo](Android-keytype.md#recordinginfo) |
 
 
 <span id="IRTCVideoEventHandler-onrecordingprogressupdate"></span>
@@ -1677,15 +1677,15 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onRecordingProgr
     RecordingInfo info)
 ```
 本地录制进度回调。  <br>
-该回调由 [startFileRecording](70080.md#RTCVideo-startfilerecording) 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
+该回调由 [startFileRecording](Android-api.md#RTCVideo-startfilerecording) 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **StreamIndex** | 录制流的流属性，参看 [StreamIndex](70083.md#streamindex-2) |
-| progress | **RecordingProgress** | 录制进度，参看 [RecordingProgress](70083.md#recordingprogress) |
-| info | **RecordingInfo** | 录制文件的详细信息，参看 [RecordingInfo](70083.md#recordinginfo) |
+| type | **StreamIndex** | 录制流的流属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| progress | **RecordingProgress** | 录制进度，参看 [RecordingProgress](Android-keytype.md#recordingprogress) |
+| info | **RecordingInfo** | 录制文件的详细信息，参看 [RecordingInfo](Android-keytype.md#recordinginfo) |
 
 
 <span id="IRTCVideoEventHandler-onaudiomixingstatechanged"></span>
@@ -1702,19 +1702,19 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioMixingSta
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID  <br/>使用 [IAudioMixingManager](70080.md#iaudiomixingmanager) 相关接口时传入的唯一 ID。 |
-| state | **AudioMixingState** | 混音状态  <br/>其混音状态可参考：[AudioMixingState](70083.md#audiomixingstate)。 |
-| error | **AudioMixingError** | 错误码  <br/>详见 [AudioMixingError](70083.md#audiomixingerror)。 |
+| mixId | **int** | 混音 ID  <br/>使用 [IAudioMixingManager](Android-api.md#iaudiomixingmanager) 相关接口时传入的唯一 ID。 |
+| state | **AudioMixingState** | 混音状态  <br/>其混音状态可参考：[AudioMixingState](Android-keytype.md#audiomixingstate)。 |
+| error | **AudioMixingError** | 错误码  <br/>详见 [AudioMixingError](Android-keytype.md#audiomixingerror)。 |
 
 
 **注意**
 此回调会被触发的时机汇总如下：  
 
-+ 当调用 [startAudioMixing](70080.md#IAudioMixingManager-startaudiomixing) 方法成功后，会触发 state 值为 AUDIO_MIXING_STATE_PLAYING 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
-+ 当使用相同的 ID 重复调用 [startAudioMixing](70080.md#IAudioMixingManager-startaudiomixing) 后，后一次会覆盖前一次，且本回调会以 AUDIO_MIXING_STATE_STOPPED 通知前一次混音已停止。  
-+ 当调用 [pauseAudioMixing](70080.md#IAudioMixingManager-pauseaudiomixing) 方法暂停播放成功后， 会触发 state 值为 AUDIO_MIXING_STATE_PAUSED 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
-+ 当调用 [resumeAudioMixing](70080.md#IAudioMixingManager-resumeaudiomixing) 方法恢复播放成功后，会触发 state 值为 AUDIO_MIXING_STATE_PLAYING 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
-+ 当调用 [stopAudioMixing](70080.md#IAudioMixingManager-stopaudiomixing) 方法暂停止播放成功后， 会触发 state 值为 AUDIO_MIXING_STATE_STOPPED 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
++ 当调用 [startAudioMixing](Android-api.md#IAudioMixingManager-startaudiomixing) 方法成功后，会触发 state 值为 AUDIO_MIXING_STATE_PLAYING 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
++ 当使用相同的 ID 重复调用 [startAudioMixing](Android-api.md#IAudioMixingManager-startaudiomixing) 后，后一次会覆盖前一次，且本回调会以 AUDIO_MIXING_STATE_STOPPED 通知前一次混音已停止。  
++ 当调用 [pauseAudioMixing](Android-api.md#IAudioMixingManager-pauseaudiomixing) 方法暂停播放成功后， 会触发 state 值为 AUDIO_MIXING_STATE_PAUSED 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
++ 当调用 [resumeAudioMixing](Android-api.md#IAudioMixingManager-resumeaudiomixing) 方法恢复播放成功后，会触发 state 值为 AUDIO_MIXING_STATE_PLAYING 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
++ 当调用 [stopAudioMixing](Android-api.md#IAudioMixingManager-stopaudiomixing) 方法暂停止播放成功后， 会触发 state 值为 AUDIO_MIXING_STATE_STOPPED 回调；否则触发 state 值为 AUDIO_MIXING_STATE_FAILED 的回调。  
 + 播放结束会触发 state 值为 AUDIO_MIXING_STATE_FINISHED 回调。
 
 
@@ -1736,7 +1736,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioMixingPla
 
 
 **注意**
-调用 [setAudioMixingProgressInterval](70080#IAudioMixingManager-setaudiomixingprogressinterval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing](70080#IAudioMixingManager-startaudiomixing) 将 [AudioMixingConfig](70083.md#audiomixingconfig) 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 
+调用 [setAudioMixingProgressInterval](Android-api#IAudioMixingManager-setaudiomixingprogressinterval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing](Android-api#IAudioMixingManager-startaudiomixing) 将 [AudioMixingConfig](Android-keytype.md#audiomixingconfig) 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 
 
 <span id="IRTCVideoEventHandler-onlocalaudiopropertiesreport"></span>
 ### onLocalAudioPropertiesReport
@@ -1744,14 +1744,14 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioMixingPla
 public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onLocalAudioPropertiesReport(
     LocalAudioPropertiesInfo[] audioPropertiesInfos)
 ```
-调用 [enableAudioPropertiesReport](70080.md#RTCVideo-enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
+调用 [enableAudioPropertiesReport](Android-api.md#RTCVideo-enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。  <br>
 本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioPropertiesInfos | **LocalAudioPropertiesInfo[]** | 本地音频信息，详见 [LocalAudioPropertiesInfo](70083.md#localaudiopropertiesinfo) 。 |
+| audioPropertiesInfos | **LocalAudioPropertiesInfo[]** | 本地音频信息，详见 [LocalAudioPropertiesInfo](Android-keytype.md#localaudiopropertiesinfo) 。 |
 
 
 <span id="IRTCVideoEventHandler-onaudioplaybackdevicetestvolume"></span>
@@ -1770,7 +1770,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onAudioPlaybackD
 
 
 **注意**
-调用 [startAudioPlaybackDeviceTest](70080.md#IRTCAudioDeviceManager-startaudioplaybackdevicetest) 或 [startAudioDeviceRecordTest](70080.md#IRTCAudioDeviceManager-startaudiodevicerecordtest)，开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
+调用 [startAudioPlaybackDeviceTest](Android-api.md#IRTCAudioDeviceManager-startaudioplaybackdevicetest) 或 [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest)，开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
 
 <span id="IRTCVideoEventHandler-onremoteaudiopropertiesreport"></span>
 ### onRemoteAudioPropertiesReport
@@ -1779,14 +1779,14 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onRemoteAudioPro
     RemoteAudioPropertiesInfo[] audioPropertiesInfos,
     int totalRemoteVolume)
 ```
-远端用户进房后，本地调用 [enableAudioPropertiesReport](70080.md#RTCVideo-enableaudiopropertiesreport) ，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。<br>
+远端用户进房后，本地调用 [enableAudioPropertiesReport](Android-api.md#RTCVideo-enableaudiopropertiesreport) ，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的音频信息。<br>
 远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioPropertiesInfos | **RemoteAudioPropertiesInfo[]** | 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 [RemoteAudioPropertiesInfo](70083.md#remoteaudiopropertiesinfo)。 |
+| audioPropertiesInfos | **RemoteAudioPropertiesInfo[]** | 远端音频信息，其中包含音频流属性、房间 ID、用户 ID ，详见 [RemoteAudioPropertiesInfo](Android-keytype.md#remoteaudiopropertiesinfo)。 |
 | totalRemoteVolume | **int** | 订阅的所有远端流的总音量。 |
 
 
@@ -1797,7 +1797,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onActiveSpeaker(
     String roomId,
     String uid)
 ```
-调用 [enableAudioPropertiesReport](70080.md#RTCVideo-enableaudiopropertiesreport) 后，根据设置的 `AudioPropertiesConfig.interval`，你会周期性地收到此回调，获取房间内的最活跃用户信息。
+调用 [enableAudioPropertiesReport](Android-api.md#RTCVideo-enableaudiopropertiesreport) 后，根据设置的 `AudioPropertiesConfig.interval`，你会周期性地收到此回调，获取房间内的最活跃用户信息。
 
 **传入参数**
 
@@ -1815,14 +1815,14 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onStreamSyncInfo
     StreamSycnInfoConfig.SyncInfoStreamType streamType,
     ByteBuffer data)
 ```
-音频流同步信息回调。可以通过此回调，在远端用户调用 [sendStreamSyncInfo](70080.md#RTCVideo-sendstreamsyncinfo) 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
+音频流同步信息回调。可以通过此回调，在远端用户调用 [sendStreamSyncInfo](Android-api.md#RTCVideo-sendstreamsyncinfo) 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br>
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamKey | **RemoteStreamKey** | 远端流信息，详见 [RemoteStreamKey](70083.md#remotestreamkey) 。 |
-| streamType | **StreamSycnInfoConfig.SyncInfoStreamType** | 媒体流类型，详见 [SyncInfoStreamType](70083.md#syncinfostreamtype) 。 |
+| streamKey | **RemoteStreamKey** | 远端流信息，详见 [RemoteStreamKey](Android-keytype.md#remotestreamkey) 。 |
+| streamType | **StreamSycnInfoConfig.SyncInfoStreamType** | 媒体流类型，详见 [SyncInfoStreamType](Android-keytype.md#syncinfostreamtype) 。 |
 | data | **ByteBuffer** | 消息内容。 |
 
 
@@ -1835,7 +1835,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onPushPublicStre
     int error)
 ```
 公共流发布结果回调。<br>
-调用 [startPushPublicStream](70080.md#RTCVideo-startpushpublicstream) 接口发布公共流后，启动结果通过此回调方法通知用户。
+调用 [startPushPublicStream](Android-api.md#RTCVideo-startpushpublicstream) 接口发布公共流后，启动结果通过此回调方法通知用户。
 
 **传入参数**
 
@@ -1854,7 +1854,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onPlayPublicStre
     int error)
 ```
 订阅公共流的结果回调  <br>
-调用 [startPlayPublicStream](70080.md#RTCVideo-startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到启动结果和拉流过程中的错误。
+调用 [startPlayPublicStream](Android-api.md#RTCVideo-startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到启动结果和拉流过程中的错误。
 
 **传入参数**
 
@@ -1872,7 +1872,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onPublicStreamSE
     ByteBuffer message)
 ```
 回调公共流中包含的 SEI 信息<br>
-调用 [startPlayPublicStream](70080.md#RTCVideo-startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的SEI消息。
+调用 [startPlayPublicStream](Android-api.md#RTCVideo-startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的SEI消息。
 
 **传入参数**
 
@@ -1895,14 +1895,14 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onFirstPublicStr
     VideoFrameInfo videoFrameInfo)
 ```
 公共流的首帧视频解码成功<br>
-关于订阅公共流，详见 [startPlayPublicStream](70080.md#RTCVideo-startplaypublicstream)。
+关于订阅公共流，详见 [startPlayPublicStream](Android-api.md#RTCVideo-startplaypublicstream)。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | publicStreamId | **String** | 公共流 ID |
-| videoFrameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](70083.md#videoframeinfo) |
+| videoFrameInfo | **VideoFrameInfo** | 视频帧信息，参看 [VideoFrameInfo](Android-keytype.md#videoframeinfo) |
 
 
 <span id="IRTCVideoEventHandler-onfirstpublicstreamaudioframe"></span>
@@ -1912,7 +1912,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onFirstPublicStr
     String publicStreamId)
 ```
 公共流的音频首帧解码成功<br>
-关于订阅公共流，详见 [startPlayPublicStream](70080.md#RTCVideo-startplaypublicstream)。
+关于订阅公共流，详见 [startPlayPublicStream](Android-api.md#RTCVideo-startplaypublicstream)。
 
 **传入参数**
 
@@ -1933,7 +1933,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onEchoTestResult
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| result | **EchoTestResult** | 测试结果，参看 [EchoTestResult](70083.md#echotestresult) |
+| result | **EchoTestResult** | 测试结果，参看 [EchoTestResult](Android-keytype.md#echotestresult) |
 
 
 **注意**
@@ -1949,7 +1949,7 @@ public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onEchoTestResult
 public void com.ss.bytertc.engine.handler.IRTCVideoEventHandler.onCloudProxyConnected(
     int interval)
 ```
-调用 [startCloudProxy](70080.md#RTCVideo-startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
+调用 [startCloudProxy](Android-api.md#RTCVideo-startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。
 
 **传入参数**
 
@@ -2009,10 +2009,10 @@ void com.ss.bytertc.engine.live.ILiveTranscodingObserver.onStreamMixingEvent(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| eventType | **ByteRTCStreamMixingEvent** | 转推直播任务状态, 参看 [ByteRTCStreamMixingEvent](70083.md#bytertcstreammixingevent) |
+| eventType | **ByteRTCStreamMixingEvent** | 转推直播任务状态, 参看 [ByteRTCStreamMixingEvent](Android-keytype.md#bytertcstreammixingevent) |
 | taskId | **String** | 转推直播任务 ID |
-| error | **ByteRTCTranscoderErrorCode** | 转推直播错误码，参看 [ByteRTCTranscoderErrorCode](70082.md#bytertctranscodererrorcode) |
-| mixType | **ByteRTCStreamMixingType** | 转推直播类型，参看 [ByteRTCStreamMixingType](70083.md#bytertcstreammixingtype) |
+| error | **ByteRTCTranscoderErrorCode** | 转推直播错误码，参看 [ByteRTCTranscoderErrorCode](Android-errorcode.md#bytertctranscodererrorcode) |
+| mixType | **ByteRTCStreamMixingType** | 转推直播类型，参看 [ByteRTCStreamMixingType](Android-keytype.md#bytertcstreammixingtype) |
 
 
 <span id="ILiveTranscodingObserver-onmixingaudioframe"></span>
@@ -2051,7 +2051,7 @@ void com.ss.bytertc.engine.live.ILiveTranscodingObserver.onMixingVideoFrame(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | taskId | **String** | 转推直播任务 ID |
-| videoFrame | **VideoFrame** | YUV 合流视频数据帧，参看 [VideoFrame](70083.md#videoframe) |
+| videoFrame | **VideoFrame** | YUV 合流视频数据帧，参看 [VideoFrame](Android-keytype.md#videoframe) |
 
 
 **注意**
@@ -2114,9 +2114,9 @@ void com.ss.bytertc.engine.live.IPushSingleStreamToCDNObserver.onStreamPushEvent
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| eventType | **ByteRTCStreamSinglePushEvent** | 任务状态, 参看 [ByteRTCStreamSinglePushEvent](70082.md#bytertcstreamsinglepushevent) |
+| eventType | **ByteRTCStreamSinglePushEvent** | 任务状态, 参看 [ByteRTCStreamSinglePushEvent](Android-errorcode.md#bytertcstreamsinglepushevent) |
 | taskId | **String** | 任务 ID |
-| error | **int** | 错误码，参看 [ByteRTCTranscoderErrorCode](70082.md#bytertctranscodererrorcode) |
+| error | **int** | 错误码，参看 [ByteRTCTranscoderErrorCode](Android-errorcode.md#bytertctranscodererrorcode) |
 
 
 # IFaceDetectionObserver
@@ -2142,13 +2142,13 @@ public void com.ss.bytertc.engine.video.IFaceDetectionObserver.onFaceDetectResul
     FaceDetectionResult result)
 ```
 特效 SDK 进行人脸检测结果的回调。 <br>
-调用 [registerFaceDetectionObserver](70080.md#RTCVideo-registerfacedetectionobserver) 注册了 [IFaceDetectionObserver](#ifacedetectionobserver)，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。
+调用 [registerFaceDetectionObserver](Android-api.md#RTCVideo-registerfacedetectionobserver) 注册了 [IFaceDetectionObserver](#ifacedetectionobserver)，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| result | **FaceDetectionResult** | 人脸检测结果, 参看 [FaceDetectionResult](70083.md#facedetectionresult)。 |
+| result | **FaceDetectionResult** | 人脸检测结果, 参看 [FaceDetectionResult](Android-keytype.md#facedetectionresult)。 |
 
 
 # IRangeAudioObserver
@@ -2174,14 +2174,14 @@ void com.ss.bytertc.engine.IRangeAudioObserver.onRangeAudioInfo(
     RangeAudioInfo[] range_audio_info)
 ```
 关于当前范围语音衰减系数的回调。  <br>
-手动订阅的场景下，房间内任一用户调用 [updatePosition](70080.md#IRangeAudio-updateposition) 更新自身位置或调用 [updateReceiveRange](70080.md#IRangeAudio-updatereceiverange) 更新语音接收范围时，该用户与房间内其他用户的相对距离都会发生改变，据此计算的衰减系数也会发生改变，并通过该回调通知用户。 <br>
+手动订阅的场景下，房间内任一用户调用 [updatePosition](Android-api.md#IRangeAudio-updateposition) 更新自身位置或调用 [updateReceiveRange](Android-api.md#IRangeAudio-updatereceiverange) 更新语音接收范围时，该用户与房间内其他用户的相对距离都会发生改变，据此计算的衰减系数也会发生改变，并通过该回调通知用户。 <br>
 你可以通过关注该回调中包含的远端用户的衰减系数决定是否订阅该远端用户的流。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| range_audio_info | **RangeAudioInfo[]** | 包含范围语音流信息的数组，参看 [RangeAudioInfo](70083.md#rangeaudioinfo) |
+| range_audio_info | **RangeAudioInfo[]** | 包含范围语音流信息的数组，参看 [RangeAudioInfo](Android-keytype.md#rangeaudioinfo) |
 
 
 **注意**
@@ -2209,13 +2209,13 @@ K 歌评分事件回调类。
 void com.ss.bytertc.engine.ISingScoringEventHandler.onCurrentScoringInfo(
     SingScoringRealtimeInfo info)
 ```
-实时评分信息回调。调用 [startSingScoring](70080.md#ISingScoringManager-startsingscoring) 后，会收到该回调。
+实时评分信息回调。调用 [startSingScoring](Android-api.md#ISingScoringManager-startsingscoring) 后，会收到该回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| Info | **SingScoringRealtime** | 实时评分信息。详见 [SingScoringRealtimeInfo](70083.md#singscoringrealtimeinfo)。 |
+| Info | **SingScoringRealtime** | 实时评分信息。详见 [SingScoringRealtimeInfo](Android-keytype.md#singscoringrealtimeinfo)。 |
 
 
 # ILocalEncodedVideoFrameObserver
@@ -2241,14 +2241,14 @@ void com.ss.bytertc.engine.mediaio.ILocalEncodedVideoFrameObserver.onLocalEncode
     StreamIndex streamIndex,
     RTCEncodedVideoFrame encodedVideoFrame)
 ```
-调用 [registerLocalEncodedVideoFrameObserver](70080.md#RTCVideo-registerlocalencodedvideoframeobserver) 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。
+调用 [registerLocalEncodedVideoFrameObserver](Android-api.md#RTCVideo-registerlocalencodedvideoframeobserver) 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 本地视频帧类型，参看 [StreamIndex](70083.md#StreamIndex-2) |
-| encodedVideoFrame | **RTCEncodedVideoFrame** | 本地视频帧信息，参看 [RTCEncodedVideoFrame](70083.md#rtcencodedvideoframe) |
+| streamIndex | **StreamIndex** | 本地视频帧类型，参看 [StreamIndex](Android-keytype.md#StreamIndex-2) |
+| encodedVideoFrame | **RTCEncodedVideoFrame** | 本地视频帧信息，参看 [RTCEncodedVideoFrame](Android-keytype.md#rtcencodedvideoframe) |
 
 
 **注意**
@@ -2277,14 +2277,14 @@ public abstract void com.ss.bytertc.engine.mediaio.IRemoteEncodedVideoFrameObser
     RemoteStreamKey stream_info,
     RTCEncodedVideoFrame video_stream)
 ```
-调用 [registerRemoteEncodedVideoFrameObserver](70080.md#RTCVideo-registerremoteencodedvideoframeobserver) 后，SDK 监测到远端编码后视频数据时，触发该回调
+调用 [registerRemoteEncodedVideoFrameObserver](Android-api.md#RTCVideo-registerremoteencodedvideoframeobserver) 后，SDK 监测到远端编码后视频数据时，触发该回调
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_info | **RemoteStreamKey** | 收到的远端流信息，参看 [RemoteStreamKey](70083.md#remotestreamkey) |
-| video_stream | **RTCEncodedVideoFrame** | 收到的远端视频帧信息，参看 [RTCEncodedVideoFrame](70083.md#rtcencodedvideoframe) |
+| stream_info | **RemoteStreamKey** | 收到的远端流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| video_stream | **RTCEncodedVideoFrame** | 收到的远端视频帧信息，参看 [RTCEncodedVideoFrame](Android-keytype.md#rtcencodedvideoframe) |
 
 
 **注意**
@@ -2316,14 +2316,14 @@ void com.ss.bytertc.engine.video.ISnapshotResultCallback.onTakeLocalSnapshotResu
     Bitmap image,
     int errorCode)
 ```
-调用 [takeLocalSnapshot](70080.md#RTCVideo-takelocalsnapshot) 截取视频画面时，收到此回调。
+调用 [takeLocalSnapshot](Android-api.md#RTCVideo-takelocalsnapshot) 截取视频画面时，收到此回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| taskId | **long** | 本地截图任务的编号。和 [takeLocalSnapshot](70080.md#RTCVideo-takelocalsnapshot) 的返回值一致。 |
-| streamIndex | **StreamIndex** | 截图的视频流的属性，参看 [StreamIndex](70083.md#streamindex)。 |
+| taskId | **long** | 本地截图任务的编号。和 [takeLocalSnapshot](Android-api.md#RTCVideo-takelocalsnapshot) 的返回值一致。 |
+| streamIndex | **StreamIndex** | 截图的视频流的属性，参看 [StreamIndex](Android-keytype.md#streamindex)。 |
 | image | **Bitmap** | 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。 |
 | errorCode | **int** | 截图错误码：<br/>• 0: 成功 <br/>• -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br/>• -2: 截图错误。流无效。 |
 
@@ -2337,14 +2337,14 @@ void com.ss.bytertc.engine.video.ISnapshotResultCallback.onTakeRemoteSnapshotRes
     Bitmap image,
     int errorCode)
 ```
-调用 [takeRemoteSnapshot](70080.md#RTCVideo-takeremotesnapshot) 截取视频画面时，收到此回调。
+调用 [takeRemoteSnapshot](Android-api.md#RTCVideo-takeremotesnapshot) 截取视频画面时，收到此回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| taskId | **long** | 远端截图任务的编号。和 [takeRemoteSnapshot](70080.md#RTCVideo-takeremotesnapshot) 的返回值一致。 |
-| streamKey | **RemoteStreamKey** | 截图的视频流，参看 [RemoteStreamKey](70083.md#remotestreamkey)。 |
+| taskId | **long** | 远端截图任务的编号。和 [takeRemoteSnapshot](Android-api.md#RTCVideo-takeremotesnapshot) 的返回值一致。 |
+| streamKey | **RemoteStreamKey** | 截图的视频流，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
 | image | **Bitmap** | 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。 |
 | errorCode | **int** | 截图错误码：<br/>• 0: 成功 <br/>• -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br/>• -2: 截图错误。流无效。 |
 
@@ -2380,7 +2380,7 @@ void com.ss.bytertc.engine.IAudioFrameObserver.onRecordAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频数据, 参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame** | 音频数据, 参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 <span id="IAudioFrameObserver-onplaybackaudioframe"></span>
@@ -2395,7 +2395,7 @@ void com.ss.bytertc.engine.IAudioFrameObserver.onPlaybackAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频数据, 参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame** | 音频数据, 参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 <span id="IAudioFrameObserver-onremoteuseraudioframe"></span>
@@ -2411,8 +2411,8 @@ void com.ss.bytertc.engine.IAudioFrameObserver.onRemoteUserAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_info | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](70083.md#remotestreamkey)。 |
-| audioFrame | **IAudioFrame** | 音频数据，参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| stream_info | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
+| audioFrame | **IAudioFrame** | 音频数据，参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 **注意**
@@ -2430,7 +2430,7 @@ void com.ss.bytertc.engine.IAudioFrameObserver.onMixedAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频数据, 参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame** | 音频数据, 参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 # IAudioFrameProcessor
@@ -2465,7 +2465,7 @@ int com.ss.bytertc.engine.IAudioFrameProcessor.onProcessRecordAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](70083.md#iaudioframe). |
+| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](Android-keytype.md#iaudioframe). |
 
 
 **注意**
@@ -2486,7 +2486,7 @@ int com.ss.bytertc.engine.IAudioFrameProcessor.onProcessPlayBackAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 **注意**
@@ -2505,8 +2505,8 @@ int com.ss.bytertc.engine.IAudioFrameProcessor.onProcessRemoteUserAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_info | **RemoteStreamKey** | 音频流信息，参看 [RemoteStreamKey](70083.md#remotestreamkey)。 |
-| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| stream_info | **RemoteStreamKey** | 音频流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
+| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 **注意**
@@ -2524,13 +2524,13 @@ int com.ss.bytertc.engine.IAudioFrameProcessor.onProcessEarMonitorAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频帧地址。参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame** | 音频帧地址。参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 **注意**
 
 + 此数据处理只影响耳返音频数据。  
-+ 调用 [enableAudioProcessor](70080.md#RTCVideo-enableaudioprocessor)，把返回给音频处理器的音频类型设置为耳返音频后，你将收到此回调。
++ 调用 [enableAudioProcessor](Android-api.md#RTCVideo-enableaudioprocessor)，把返回给音频处理器的音频类型设置为耳返音频后，你将收到此回调。
 
 
 <span id="IAudioFrameProcessor-onprocessscreenaudioframe"></span>
@@ -2545,7 +2545,7 @@ int com.ss.bytertc.engine.IAudioFrameProcessor.onProcessScreenAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](70083.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame** | 音频帧地址，参看 [IAudioFrame](Android-keytype.md#iaudioframe)。 |
 
 
 **注意**
@@ -2589,7 +2589,7 @@ public abstract void com.ss.bytertc.ktv.IKTVEventHandler.onMusicListResult(
 | --- | --- | --- |
 | errorCode | **int** | 错误码，成功时返回 0。 |
 | totalSize | **int** | 数据条目总数。 |
-| musics | **Music[]** | 歌曲数据数组，参看 [Music](70083.md#music)。 |
+| musics | **Music[]** | 歌曲数据数组，参看 [Music](Android-keytype.md#music)。 |
 
 
 <span id="IKTVEventHandler-onsearchmusicresult"></span>
@@ -2608,7 +2608,7 @@ public abstract void com.ss.bytertc.ktv.IKTVEventHandler.onSearchMusicResult(
 | --- | --- | --- |
 | errorCode | **int** | 错误码，成功时返回 0。 |
 | totalSize | **int** | 数据条目总数。 |
-| musics | **Music[]** | 歌曲数据数组，参看 [Music](70083.md#music)。 |
+| musics | **Music[]** | 歌曲数据数组，参看 [Music](Android-keytype.md#music)。 |
 
 
 <span id="IKTVEventHandler-onhotmusicresult"></span>
@@ -2625,7 +2625,7 @@ public abstract void com.ss.bytertc.ktv.IKTVEventHandler.onHotMusicResult(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | errorCode | **int** | 错误码，成功时返回 0。 |
-| hotMusics | **HotMusicInfo[]** | 热榜歌曲数据数组，参看 [HotMusicInfo](70083.md#hotmusicinfo)。 |
+| hotMusics | **HotMusicInfo[]** | 热榜歌曲数据数组，参看 [HotMusicInfo](Android-keytype.md#hotmusicinfo)。 |
 
 
 <span id="IKTVEventHandler-onmusicdetailresult"></span>
@@ -2642,7 +2642,7 @@ public abstract void com.ss.bytertc.ktv.IKTVEventHandler.onMusicDetailResult(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | errorCode | **int** | 错误码，成功时返回 0。 |
-| music | **Music** | 歌曲数据，参看 [Music](70083.md#music)。 |
+| music | **Music** | 歌曲数据，参看 [Music](Android-keytype.md#music)。 |
 
 
 <span id="IKTVEventHandler-ondownloadsuccess"></span>
@@ -2659,7 +2659,7 @@ public abstract void com.ss.bytertc.ktv.IKTVEventHandler.onDownloadSuccess(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | downloadId | **int** | 下载任务 ID。 |
-| result | **DownloadResult** | 下载信息，参看 [DownloadResult](70083.md#downloadresult)。 |
+| result | **DownloadResult** | 下载信息，参看 [DownloadResult](Android-keytype.md#downloadresult)。 |
 
 
 <span id="IKTVEventHandler-ondownloadfail"></span>
@@ -2746,15 +2746,15 @@ public abstract void com.ss.bytertc.ktv.IKTVPlayerEventHandler.onPlayStateChange
 | --- | --- | --- |
 | errorCode | **int** | 错误码。 |
 | musicId | **@NonNull String** | 音乐 ID。 |
-| playState | **@NonNull PlayState** | 音乐播放状态，参看 [PlayState](70083.md#playstate)。 |
+| playState | **@NonNull PlayState** | 音乐播放状态，参看 [PlayState](Android-keytype.md#playstate)。 |
 
 
 **注意**
 此回调被触发的时机汇总如下：
 
-+ 调用 [playMusic](70080.md#KTVPlayer-playmusic) 成功后，会触发 playState 值为 PLAY_STATE_PLAYING 的回调；否则会触发 playState 值为 PLAY_STATE_FAILED 的回调。
-+ 使用相同的音乐 ID 重复调用 [playMusic](70080.md#KTVPlayer-playmusic) 后，后一次播放会覆盖前一次，且会触发 playState 值为 PLAY_STATE_PLAYING 的回调，表示后一次音乐播放已开始。
-+ 调用 [pauseMusic](70080.md#KTVPlayer-pausemusic) 方法暂停播放成功后，会触发 playState 值为 PLAY_STATE_PAUSED 的回调；否则触发 playState 值为 PLAY_STATE_FAILED 的回调。
-+ 调用 [resumeMusic](70080.md#KTVPlayer-resumemusic) 方法恢复播放成功后，会触发 playState 值为 PLAY_STATE_PLAYING 的回调；否则触发 playState 值为 PLAY_STATE_FAILED 的回调。
-+ 调用 [stopMusic](70080.md#KTVPlayer-stopmusic) 方法停止播放成功后，会触发 playState 值为 PLAY_STATE_STOPPED 的回调；否则触发 playState 值为 PLAY_STATE_FAILED 的回调。
++ 调用 [playMusic](Android-api.md#KTVPlayer-playmusic) 成功后，会触发 playState 值为 PLAY_STATE_PLAYING 的回调；否则会触发 playState 值为 PLAY_STATE_FAILED 的回调。
++ 使用相同的音乐 ID 重复调用 [playMusic](Android-api.md#KTVPlayer-playmusic) 后，后一次播放会覆盖前一次，且会触发 playState 值为 PLAY_STATE_PLAYING 的回调，表示后一次音乐播放已开始。
++ 调用 [pauseMusic](Android-api.md#KTVPlayer-pausemusic) 方法暂停播放成功后，会触发 playState 值为 PLAY_STATE_PAUSED 的回调；否则触发 playState 值为 PLAY_STATE_FAILED 的回调。
++ 调用 [resumeMusic](Android-api.md#KTVPlayer-resumemusic) 方法恢复播放成功后，会触发 playState 值为 PLAY_STATE_PLAYING 的回调；否则触发 playState 值为 PLAY_STATE_FAILED 的回调。
++ 调用 [stopMusic](Android-api.md#KTVPlayer-stopmusic) 方法停止播放成功后，会触发 playState 值为 PLAY_STATE_STOPPED 的回调；否则触发 playState 值为 PLAY_STATE_FAILED 的回调。
 + 音乐播放结束会触发 playState 值为 PLAY_STATE_FINISHED 的回调。

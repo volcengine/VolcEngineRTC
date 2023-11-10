@@ -29,7 +29,7 @@ BYTERTC_API bytertc::IRTCVideo* bytertc::createRTCVideo(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | app_id | **const char*** | 每个应用的唯一标识符。只有使用相同的 app_id 生成的实例，才能够进行音视频通信。 |
-| event_handler | **bytertc::IRTCVideoEventHandler*** | SDK 回调给应用层的 Callback 对象，详见 [IRTCVideoEventHandler](85517.md#irtcvideoeventhandler) 。 |
+| event_handler | **bytertc::IRTCVideoEventHandler*** | SDK 回调给应用层的 Callback 对象，详见 [IRTCVideoEventHandler](Linux-callback.md#irtcvideoeventhandler) 。 |
 | parameters | **const char*** | 私有参数。如需使用请联系技术支持人员。 |
 
 **返回值**
@@ -90,10 +90,10 @@ BYTERTC_API IAudioFrame* bytertc::buildAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| builder | **const AudioFrameBuilder&** | 音频帧构建实例，参看 [AudioFrameBuilder](85519.md#audioframebuilder) |
+| builder | **const AudioFrameBuilder&** | 音频帧构建实例，参看 [AudioFrameBuilder](Linux-keytype.md#audioframebuilder) |
 
 **返回值**
-详见 [IAudioFrame](85519.md#iaudioframe)
+详见 [IAudioFrame](Linux-keytype.md#iaudioframe)
 
 
 ### createTranscoderParam
@@ -103,7 +103,7 @@ BYTERTC_API ITranscoderParam* bytertc::createTranscoderParam();
 创建合流转推参数实例。
 
 **返回值**
-创建的 [ITranscoderParam](85519.md#itranscoderparam) 实例。
+创建的 [ITranscoderParam](Linux-keytype.md#itranscoderparam) 实例。
 
 **注意**
 该接口创建的实例需在使用完毕后手动调用 delete 销毁。
@@ -119,10 +119,10 @@ BYTERTC_API IVideoFrame* bytertc::buildVideoFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| builder | **const VideoFrameBuilder&** | 视频帧构建实例，参看 [VideoFrameBuilder](85519.md#videoframebuilder) |
+| builder | **const VideoFrameBuilder&** | 视频帧构建实例，参看 [VideoFrameBuilder](Linux-keytype.md#videoframebuilder) |
 
 **返回值**
-[IVideoFrame](85519.md#ivideoframe) 实例
+[IVideoFrame](Linux-keytype.md#ivideoframe) 实例
 
 
 # IRTCRoom
@@ -194,8 +194,8 @@ virtual void bytertc::IRTCRoom::setUserVisibility(
 
 + 该方法在加入房间前后均可调用。 
 + 在房间内调用此方法，房间内其他用户会收到相应的回调通知：
-- 从 false 切换至 true 时，房间内其他用户会收到 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 回调通知；  
-- 从 true 切换至 false 时，房间内其他用户会收到 [onUserLeave](85517.md#IRTCRoomEventHandler-onuserleave) 回调通知。  
+- 从 false 切换至 true 时，房间内其他用户会收到 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知；  
+- 从 true 切换至 false 时，房间内其他用户会收到 [onUserLeave](Linux-callback.md#IRTCRoomEventHandler-onuserleave) 回调通知。  
 + 若调用该方法将可见性设为 false，此时尝试发布流会收到 `kWarningCodePublishStreamForbiden` 警告。
 
 
@@ -211,7 +211,7 @@ virtual void bytertc::IRTCRoom::setRTCRoomEventHandler(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| room_event_handler | **IRTCRoomEventHandler*** | 参见 [IRTCRoomEventHandler](85517.md#irtcroomeventhandler) |
+| room_event_handler | **IRTCRoomEventHandler*** | 参见 [IRTCRoomEventHandler](Linux-callback.md#irtcroomeventhandler) |
 
 
 <span id="IRTCRoom-joinroom"></span>
@@ -229,9 +229,9 @@ virtual int bytertc::IRTCRoom::joinRoom(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **const char*** | 动态密钥，用于对登录用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>• 使用不同 App ID 的 App 是不能互通的。  <br/>• 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。具体失败原因会通过 [onRoomStateChanged](85517.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。 |
-| user_info | **const UserInfo&** | 用户信息，参看 [UserInfo](85519.md#userinfo)。 |
-| config | **const RTCRoomConfig&** | 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 [RTCRoomConfig](85519.md#rtcroomconfig)。 |
+| token | **const char*** | 动态密钥，用于对登录用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>• 使用不同 App ID 的 App 是不能互通的。  <br/>• 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。具体失败原因会通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。 |
+| user_info | **const UserInfo&** | 用户信息，参看 [UserInfo](Linux-keytype.md#userinfo)。 |
+| config | **const RTCRoomConfig&** | 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 [RTCRoomConfig](Linux-keytype.md#rtcroomconfig)。 |
 
 **返回值**
 
@@ -242,9 +242,9 @@ virtual int bytertc::IRTCRoom::joinRoom(
 
 **注意**
 
-+ 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onRoomStateChanged](85517#IRTCRoomEventHandler-onroomstatechanged) 回调通知，错误类型详见 [ErrorCode](85518.md#errorcode) 中的 kErrorCodeDuplicateLogin。  
-+ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](85517.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 回调通知。关于可见性设置参看 [setUserVisibility](#IRTCRoom-setuservisibility)。  
-+ 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](85517.md#IRTCVideoEventHandler-onConnectionStateChanged] 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](85517.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。如果加入房间的用户可见，远端用户会收到 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined)。
++ 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调通知，错误类型详见 [ErrorCode](Linux-errorcode.md#errorcode) 中的 kErrorCodeDuplicateLogin。  
++ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。关于可见性设置参看 [setUserVisibility](#IRTCRoom-setuservisibility)。  
++ 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Linux-callback.md#IRTCVideoEventHandler-onConnectionStateChanged] 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。如果加入房间的用户可见，远端用户会收到 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined)。
 
 
 <span id="IRTCRoom-leaveroom"></span>
@@ -255,13 +255,13 @@ virtual void bytertc::IRTCRoom::leaveRoom()
 离开房间。  <br>
 用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
 加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
-此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](85517.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br>
+此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Linux-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br>
 
 
 **注意**
 
-+ 可见的用户离开房间后，房间内其他用户会收到 [onUserLeave](85517.md#IRTCRoomEventHandler-onuserleave) 回调通知。  
-+ 如果调用此方法后立即销毁引擎，SDK 将无法触发 [onLeaveRoom](85517.md#IRTCRoomEventHandler-onleaveroom) 回调。  
++ 可见的用户离开房间后，房间内其他用户会收到 [onUserLeave](Linux-callback.md#IRTCRoomEventHandler-onuserleave) 回调通知。  
++ 如果调用此方法后立即销毁引擎，SDK 将无法触发 [onLeaveRoom](Linux-callback.md#IRTCRoomEventHandler-onleaveroom) 回调。  
 
 
 <span id="IRTCRoom-updatetoken"></span>
@@ -272,17 +272,17 @@ virtual void bytertc::IRTCRoom::updateToken(
 ```
 
 更新 Token。
-在 Token 进房权限过期前 30 秒，会收到 [onTokenWillExpire](85517.md#IRTCRoomEventHandler-ontokenwillexpire) 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。
+在 Token 进房权限过期前 30 秒，会收到 [onTokenWillExpire](Linux-callback.md#IRTCRoomEventHandler-ontokenwillexpire) 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **const char*** | 获取的新的有效 Token。  <br/>如果传入的 Token 无效，回调错误码为 [ErrorCode](85518.md#errorcode) 中的 `–1010`。 |
+| token | **const char*** | 获取的新的有效 Token。  <br/>如果传入的 Token 无效，回调错误码为 [ErrorCode](Linux-errorcode.md#errorcode) 中的 `–1010`。 |
 
 
 **注意**
-请勿同时调用 [updateToken](85516.md#IRTCRoom-updatetoken) 和 [joinRoom](85516.md#joinroom) 方法更新 Token。若因 Token 过期或无效导致加入房间失败或已被移出房间，你应该在获取新的有效 Token 后调用 [joinRoom](85516.md#joinroom) 重新加入房间。
+请勿同时调用 [updateToken](Linux-api.md#IRTCRoom-updatetoken) 和 [joinRoom](Linux-api.md#joinroom) 方法更新 Token。若因 Token 过期或无效导致加入房间失败或已被移出房间，你应该在获取新的有效 Token 后调用 [joinRoom](Linux-api.md#joinroom) 重新加入房间。
 
 <span id="IRTCRoom-sendusermessage"></span>
 ### sendUserMessage
@@ -300,7 +300,7 @@ virtual int64_t bytertc::IRTCRoom::sendUserMessage(
 | --- | --- | --- |
 | uid | **const char*** | 消息接收用户的 ID |
 | message | **const char*** | 发送的文本消息内容。  <br/>消息不超过 64 KB。 |
-| config | **MessageConfig** | 消息类型，参看 [MessageConfig](85519.md#messageconfig)。 |
+| config | **MessageConfig** | 消息类型，参看 [MessageConfig](Linux-keytype.md#messageconfig)。 |
 
 **返回值**
 这次发送消息的编号，从 1 开始递增。
@@ -309,8 +309,8 @@ virtual int64_t bytertc::IRTCRoom::sendUserMessage(
 **注意**
 
 + 在发送房间内文本消息前，必须先调用 [joinRoom](#IRTCRoom-joinroom) 加入房间。  
-+ 调用该函数后会收到一次 [onUserMessageSendResult](85517.md#IRTCRoomEventHandler-onusermessagesendresult) 回调，通知消息发送方发送成功或失败；  
-+ 若文本消息发送成功，则 uid 所指定的用户会收到 [onUserMessageReceived](85517.md#IRTCRoomEventHandler-onusermessagereceived) 回调。
++ 调用该函数后会收到一次 [onUserMessageSendResult](Linux-callback.md#IRTCRoomEventHandler-onusermessagesendresult) 回调，通知消息发送方发送成功或失败；  
++ 若文本消息发送成功，则 uid 所指定的用户会收到 [onUserMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onusermessagereceived) 回调。
 
 
 <span id="IRTCRoom-senduserbinarymessage"></span>
@@ -331,7 +331,7 @@ virtual int64_t bytertc::IRTCRoom::sendUserBinaryMessage(
 | uid | **const char*** | 消息接收用户的 ID |
 | length | **int** | 二进制字符串的长度。 |
 | message | **const uint8_t*** | 二进制消息的内容。<br/>消息不超过 64KB。 |
-| config | **MessageConfig** | 消息类型，参看 [MessageConfig](85519.md#messageconfig)。 |
+| config | **MessageConfig** | 消息类型，参看 [MessageConfig](Linux-keytype.md#messageconfig)。 |
 
 **返回值**
 这次发送消息的编号，从 1 开始递增。
@@ -340,8 +340,8 @@ virtual int64_t bytertc::IRTCRoom::sendUserBinaryMessage(
 **注意**
 
 + 在发送房间内二进制消息前，必须先调用 [joinRoom](#IRTCRoom-joinroom) 加入房间。  
-+ 调用该函数后会收到一次 [onUserMessageSendResult](85517.md#IRTCRoomEventHandler-onusermessagesendresult) 回调，通知消息发送方发送成功或失败；  
-+ 若二进制消息发送成功，则 uid 所指定的用户会收到 [onUserBinaryMessageReceived](85517.md#IRTCRoomEventHandler-onuserbinarymessagereceived) 回调。
++ 调用该函数后会收到一次 [onUserMessageSendResult](Linux-callback.md#IRTCRoomEventHandler-onusermessagesendresult) 回调，通知消息发送方发送成功或失败；  
++ 若二进制消息发送成功，则 uid 所指定的用户会收到 [onUserBinaryMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onuserbinarymessagereceived) 回调。
 
 
 <span id="IRTCRoom-sendroommessage"></span>
@@ -362,8 +362,8 @@ virtual int64_t bytertc::IRTCRoom::sendRoomMessage(
 **注意**
 
 + 在发送房间内二进制消息前，必须先调用 [joinRoom](#IRTCRoom-joinroom) 加入房间。  
-+ 调用该函数后，会收到一次 [onRoomMessageSendResult](85517.md#IRTCRoomEventHandler-onroommessagesendresult) 回调。  
-+ 同一房间内的其他用户会收到 [onRoomMessageReceived](85517.md#IRTCRoomEventHandler-onroommessagereceived) 回调。
++ 调用该函数后，会收到一次 [onRoomMessageSendResult](Linux-callback.md#IRTCRoomEventHandler-onroommessagesendresult) 回调。  
++ 同一房间内的其他用户会收到 [onRoomMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onroommessagereceived) 回调。
 
 
 <span id="IRTCRoom-sendroombinarymessage"></span>
@@ -389,8 +389,8 @@ virtual int64_t bytertc::IRTCRoom::sendRoomBinaryMessage(
 **注意**
 
 + 在发送房间内二进制消息前，必须先调用 [joinRoom](#IRTCRoom-joinroom) 加入房间。  
-+ 调用该函数后，会收到一次 [onRoomMessageSendResult](85517.md#IRTCRoomEventHandler-onroommessagesendresult) 回调。  
-+ 同一房间内的其他用户会收到 [onRoomBinaryMessageReceived](85517.md#IRTCRoomEventHandler-onroombinarymessagereceived) 回调。
++ 调用该函数后，会收到一次 [onRoomMessageSendResult](Linux-callback.md#IRTCRoomEventHandler-onroommessagesendresult) 回调。  
++ 同一房间内的其他用户会收到 [onRoomBinaryMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onroombinarymessagereceived) 回调。
 
 
 <span id="IRTCRoom-publishstream"></span>
@@ -405,7 +405,7 @@ virtual void bytertc::IRTCRoom::publishStream(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **MediaStreamType** | 媒体流类型，用于指定发布音频/视频，参看 [MediaStreamType](85519.md#mediastreamtype) |
+| type | **MediaStreamType** | 媒体流类型，用于指定发布音频/视频，参看 [MediaStreamType](Linux-keytype.md#mediastreamtype) |
 
 
 **注意**
@@ -414,7 +414,7 @@ virtual void bytertc::IRTCRoom::publishStream(
 + 调用 [setUserVisibility](#IRTCRoom-setuservisibility) 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 
 + 如果你需要发布屏幕共享流，调用 [publishScreen](#publishscreen)。(Linux 不适用)
 + 如果你需要向多个房间发布流，调用 [startForwardStreamToRooms](#IRTCRoom-startforwardstreamtorooms)。  
-+ 调用此方法后，房间中的所有远端用户会收到 [onUserPublishStream](85517.md#IRTCRoomEventHandler-onuserpublishstream) 回调通知，其中成功收到了音频流的远端用户会收到 [onFirstRemoteAudioFrame](85517.md#IRTCVideoEventHandler-onfirstremoteaudioframe) 回调，订阅了视频流的远端用户会收到 [onFirstRemoteVideoFrameDecoded](85517.md#IRTCVideoEventHandler-onfirstremotevideoframedecoded) 回调。
++ 调用此方法后，房间中的所有远端用户会收到 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream) 回调通知，其中成功收到了音频流的远端用户会收到 [onFirstRemoteAudioFrame](Linux-callback.md#IRTCVideoEventHandler-onfirstremoteaudioframe) 回调，订阅了视频流的远端用户会收到 [onFirstRemoteVideoFrameDecoded](Linux-callback.md#IRTCVideoEventHandler-onfirstremotevideoframedecoded) 回调。
 + 调用 [unpublishStream](#IRTCRoom-unpublishstream) 取消发布。
 
 
@@ -430,13 +430,13 @@ virtual void bytertc::IRTCRoom::unpublishStream(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **MediaStreamType** | 媒体流类型，用于指定停止发布音频/视频，参看 [MediaStreamType](85519.md#mediastreamtype) |
+| type | **MediaStreamType** | 媒体流类型，用于指定停止发布音频/视频，参看 [MediaStreamType](Linux-keytype.md#mediastreamtype) |
 
 
 **注意**
 
 + 调用 [publishStream](#IRTCRoom-publishstream) 手动发布摄像头音视频流后，你需调用此接口停止发布。
-+ 调用此方法停止发布音视频流后，房间中的其他用户将会收到 [onUserUnpublishStream](85517.md#IRTCRoomEventHandler-onuserunpublishstream) 回调通知。
++ 调用此方法停止发布音视频流后，房间中的其他用户将会收到 [onUserUnpublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishstream) 回调通知。
 
 
 <span id="IRTCRoom-setremotevideoconfig"></span>
@@ -453,7 +453,7 @@ virtual void bytertc::IRTCRoom::setRemoteVideoConfig(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | user_id | **const char*** | 期望配置订阅参数的远端视频流发布用户的 ID。 |
-| remote_video_config | **const RemoteVideoConfig &** | 期望配置的远端视频流参数，参看 [RemoteVideoConfig](85519.md#remotevideoconfig)。 |
+| remote_video_config | **const RemoteVideoConfig &** | 期望配置的远端视频流参数，参看 [RemoteVideoConfig](Linux-keytype.md#remotevideoconfig)。 |
 
 
 **注意**
@@ -479,16 +479,16 @@ virtual void bytertc::IRTCRoom::subscribeStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | user_id | **const char*** | 指定订阅的远端发布音视频流的用户 ID。 |
-| type | **MediaStreamType** | 媒体流类型，用于指定订阅音频/视频。参看 [MediaStreamType](85519.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 媒体流类型，用于指定订阅音频/视频。参看 [MediaStreamType](Linux-keytype.md#mediastreamtype)。 |
 
 
 **注意**
 
 + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
-+ 你必须先通过 [onUserPublishStream](85517.md#IRTCRoomEventHandler-onuserpublishstream)} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  
-+ 调用该方法后，你会收到 [onStreamSubscribed](85517.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
++ 你必须先通过 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream)} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  
++ 调用该方法后，你会收到 [onStreamSubscribed](Linux-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream](#IRTCRoom-unsubscribestream) 取消订阅或本端用户退房。 
-+ 关于其他调用异常，你会收到 [onStreamStateChanged](85517#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](85518.md#errorcode)。
++ 关于其他调用异常，你会收到 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Linux-errorcode.md#errorcode)。
 
 
 <span id="IRTCRoom-subscribeallstreams"></span>
@@ -503,16 +503,16 @@ virtual void bytertc::IRTCRoom::subscribeAllStreams(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **MediaStreamType** | 媒体流类型，用于指定订阅音频/视频。参看 [MediaStreamType](85519.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 媒体流类型，用于指定订阅音频/视频。参看 [MediaStreamType](Linux-keytype.md#mediastreamtype)。 |
 
 
 **注意**
 
 + 多次调用订阅接口时，将根据末次调用接口和传入的参数，更新订阅配置。
 + 大会模式下，如果房间内的媒体流超过上限，建议通过调用 [subscribeStream](#IRTCRoom-subscribestream) 逐一指定需要订阅的媒体流。
-+ 调用该方法后，你会收到 [onStreamSubscribed](85517.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
++ 调用该方法后，你会收到 [onStreamSubscribed](Linux-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream](#IRTCRoom-unsubscribestream) 取消订阅或本端用户退房。 
-+ 关于其他调用异常，你会收到 [onStreamStateChanged](85517#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](85518.md#errorcode)。
++ 关于其他调用异常，你会收到 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Linux-errorcode.md#errorcode)。
 
 
 <span id="IRTCRoom-unsubscribestream"></span>
@@ -530,13 +530,13 @@ virtual void bytertc::IRTCRoom::unsubscribeStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | user_id | **const char*** | 指定取消订阅的远端发布音视频流的用户 ID。 |
-| type | **MediaStreamType** | 媒体流类型，用于指定取消订阅音频/视频。参看 [MediaStreamType](85519.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 媒体流类型，用于指定取消订阅音频/视频。参看 [MediaStreamType](Linux-keytype.md#mediastreamtype)。 |
 
 
 **注意**
 
-+ 调用该方法后，你会收到 [onStreamSubscribed](85517.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
-+ 关于其他调用异常，你会收到 [onStreamStateChanged](85517#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](85518.md#errorcode)。
++ 调用该方法后，你会收到 [onStreamSubscribed](Linux-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
++ 关于其他调用异常，你会收到 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](Linux-errorcode.md#errorcode)。
 
 
 <span id="IRTCRoom-unsubscribeallstreams"></span>
@@ -552,13 +552,13 @@ virtual void bytertc::IRTCRoom::unsubscribeAllStreams(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **MediaStreamType** | 媒体流类型，用于指定取消订阅音频/视频。参看 [MediaStreamType](85519.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 媒体流类型，用于指定取消订阅音频/视频。参看 [MediaStreamType](Linux-keytype.md#mediastreamtype)。 |
 
 
 **注意**
 
-+ 调用该方法后，你会收到 [onStreamSubscribed](85517.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
-+ 关于其他调用异常，你会收到 [onStreamStateChanged](85517#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](85518.md#errorcode)。
++ 调用该方法后，你会收到 [onStreamSubscribed](Linux-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
++ 关于其他调用异常，你会收到 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](Linux-errorcode.md#errorcode)。
 
 
 <span id="IRTCRoom-subscribescreen"></span>
@@ -575,16 +575,16 @@ virtual void bytertc::IRTCRoom::subscribeScreen(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | user_id | **const char*** | 指定订阅的远端发布屏幕流的用户 ID。 |
-| type | **MediaStreamType** | 媒体流类型，用于指定订阅音频/视频。参看 [MediaStreamType](85519.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 媒体流类型，用于指定订阅音频/视频。参看 [MediaStreamType](Linux-keytype.md#mediastreamtype)。 |
 
 
 **注意**
 
 + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
-+ 你必须先通过 [onUserPublishScreen](85517.md#IRTCRoomEventHandler-onuserpublishscreen)} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  
-+ 调用该方法后，你会收到 [onStreamSubscribed](85517.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
++ 你必须先通过 [onUserPublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserpublishscreen)} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  
++ 调用该方法后，你会收到 [onStreamSubscribed](Linux-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeScreen](#IRTCRoom-unsubscribescreen) 取消订阅或本端用户退房。 
-+ 关于其他调用异常，你会收到 [onStreamStateChanged](85517#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](85518.md#errorcode)。
++ 关于其他调用异常，你会收到 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Linux-errorcode.md#errorcode)。
 
 
 <span id="IRTCRoom-unsubscribescreen"></span>
@@ -602,13 +602,13 @@ virtual void bytertc::IRTCRoom::unsubscribeScreen(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | user_id | **const char*** | 指定取消订阅的远端发布屏幕流的用户 ID。 |
-| type | **MediaStreamType** | 媒体流类型，用于指定取消订阅音频/视频。参看 [MediaStreamType](85519.md#mediastreamtype)。 |
+| type | **MediaStreamType** | 媒体流类型，用于指定取消订阅音频/视频。参看 [MediaStreamType](Linux-keytype.md#mediastreamtype)。 |
 
 
 **注意**
 
-+ 调用该方法后，你会收到 [onStreamSubscribed](85517.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
-+ 关于其他调用异常，你会收到 [onStreamStateChanged](85517#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](85518.md#errorcode)。
++ 调用该方法后，你会收到 [onStreamSubscribed](Linux-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
++ 关于其他调用异常，你会收到 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](Linux-errorcode.md#errorcode)。
 
 
 <span id="IRTCRoom-pauseallsubscribedstream"></span>
@@ -623,7 +623,7 @@ virtual void bytertc::IRTCRoom::pauseAllSubscribedStream(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](85519.md#pauseresumecontrolmediatype)。 |
+| media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Linux-keytype.md#pauseresumecontrolmediatype)。 |
 
 
 **注意**
@@ -646,7 +646,7 @@ virtual void bytertc::IRTCRoom::resumeAllSubscribedStream(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](85519.md#pauseresumecontrolmediatype) |
+| media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Linux-keytype.md#pauseresumecontrolmediatype) |
 
 
 **注意**
@@ -675,7 +675,7 @@ virtual void bytertc::IRTCRoom::setMultiDeviceAVSync(
 
 + 该方法在进房前后均可调用。  
 + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。  
-+ 调用该接口后音画同步状态发生改变时，你会收到 [onAVSyncStateChange](85517.md#IRTCRoomEventHandler-onavsyncstatechange) 回调。  
++ 调用该接口后音画同步状态发生改变时，你会收到 [onAVSyncStateChange](Linux-callback.md#IRTCRoomEventHandler-onavsyncstatechange) 回调。  
 + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。  
 + 如需更换同步音频源，再次调用该接口传入新的 `audio_user_id` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
 
@@ -693,7 +693,7 @@ virtual int bytertc::IRTCRoom::startForwardStreamToRooms(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| configuration | **const ForwardStreamConfiguration&** | 跨房间媒体流转发指定房间的信息。参看 [ForwardStreamConfiguration](85519.md#forwardstreamconfiguration)。 |
+| configuration | **const ForwardStreamConfiguration&** | 跨房间媒体流转发指定房间的信息。参看 [ForwardStreamConfiguration](Linux-keytype.md#forwardstreamconfiguration)。 |
 
 **返回值**
 
@@ -703,9 +703,9 @@ virtual int bytertc::IRTCRoom::startForwardStreamToRooms(
 
 **注意**
 
-+ 调用本方法后，将在本端触发 [onForwardStreamStateChanged](85517.md#IRTCRoomEventHandler-onforwardstreamstatechanged) 回调。
-+ 调用本方法后，你可以通过监听 [onForwardStreamEvent](85517.md#IRTCRoomEventHandler-onforwardstreamevent) 回调来获取各个目标房间在转发媒体流过程中的相关事件。
-+ 开始转发后，目标房间中的用户将接收到本地用户进房 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 和发流 [onUserPublishStream](85517.md#IRTCRoomEventHandler-onuserpublishstream)/[onUserPublishScreen](85517.md#IRTCRoomEventHandler-onuserpublishscreen) 的回调。
++ 调用本方法后，将在本端触发 [onForwardStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onforwardstreamstatechanged) 回调。
++ 调用本方法后，你可以通过监听 [onForwardStreamEvent](Linux-callback.md#IRTCRoomEventHandler-onforwardstreamevent) 回调来获取各个目标房间在转发媒体流过程中的相关事件。
++ 开始转发后，目标房间中的用户将接收到本地用户进房 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 和发流 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream)/[onUserPublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserpublishscreen) 的回调。
 + 调用本方法后，可以调用 [updateForwardStreamToRooms](#IRTCRoom-updateforwardstreamtorooms) 更新目标房间信息，例如，增加或减少目标房间等。
 + 调用本方法后，可以调用 [stopForwardStreamToRooms](#IRTCRoom-stopforwardstreamtorooms) 停止向所有房间转发媒体流。
 + 调用本方法后，可以调用 [pauseForwardStreamToAllRooms](#IRTCRoom-pauseforwardstreamtoallrooms) 暂停向所有房间转发媒体流。
@@ -719,13 +719,13 @@ virtual int bytertc::IRTCRoom::updateForwardStreamToRooms(
 ```
 更新跨房间媒体流转发信息。<br>
 通过 [startForwardStreamToRooms](#IRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法增加或者减少目标房间，或更新房间密钥。
-调用本方法增加或删减房间后，将在本端触发 [onForwardStreamStateChanged](85517.md#IRTCRoomEventHandler-onforwardstreamstatechanged) 回调，包含发生了变动的目标房间中媒体流转发状态。
+调用本方法增加或删减房间后，将在本端触发 [onForwardStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onforwardstreamstatechanged) 回调，包含发生了变动的目标房间中媒体流转发状态。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| configuration | **const ForwardStreamConfiguration&** | 跨房间媒体流转发目标房间信息。参看 [ForwardStreamConfiguration](85519.md#forwardstreamconfiguration)。 |
+| configuration | **const ForwardStreamConfiguration&** | 跨房间媒体流转发目标房间信息。参看 [ForwardStreamConfiguration](Linux-keytype.md#forwardstreamconfiguration)。 |
 
 **返回值**
 
@@ -735,8 +735,8 @@ virtual int bytertc::IRTCRoom::updateForwardStreamToRooms(
 
 **注意**
 
-+ 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 和发布 [onUserPublishStream](85517.md#IRTCRoomEventHandler-onuserpublishstream)/[onUserPublishScreen](85517.md#IRTCRoomEventHandler-onuserpublishscreen) 的回调。
-+ 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](85517.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](85517.md#IRTCRoomEventHandler-onuserunpublishscreen) 和退房 [onUserLeave](85517.md#IRTCRoomEventHandler-onuserleave) 的回调。
++ 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 和发布 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream)/[onUserPublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserpublishscreen) 的回调。
++ 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishscreen) 和退房 [onUserLeave](Linux-callback.md#IRTCRoomEventHandler-onuserleave) 的回调。
 
 
 <span id="IRTCRoom-stopforwardstreamtorooms"></span>
@@ -750,8 +750,8 @@ virtual void bytertc::IRTCRoom::stopForwardStreamToRooms()
 
 **注意**
 
-+ 调用本方法后，将在本端触发 [onForwardStreamStateChanged](85517.md#IRTCRoomEventHandler-onforwardstreamstatechanged) 回调。
-+ 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](85517.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](85517.md#IRTCRoomEventHandler-onuserunpublishscreen) 和退房 [onUserLeave](85517.md#IRTCRoomEventHandler-onuserleave) 的回调。
++ 调用本方法后，将在本端触发 [onForwardStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onforwardstreamstatechanged) 回调。
++ 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishscreen) 和退房 [onUserLeave](Linux-callback.md#IRTCRoomEventHandler-onuserleave) 的回调。
 + 如果需要停止向指定的房间转发媒体流，请调用 [updateForwardStreamToRooms](#IRTCRoom-updateforwardstreamtorooms) 更新房间信息。
 + 如果需要暂停转发，请调用 [pauseForwardStreamToAllRooms](#IRTCRoom-pauseforwardstreamtoallrooms)，并在之后随时调用 [resumeForwardStreamToAllRooms](#IRTCRoom-resumeforwardstreamtoallrooms) 快速恢复转发。
 
@@ -767,7 +767,7 @@ virtual void bytertc::IRTCRoom::pauseForwardStreamToAllRooms()
 
 
 **注意**
-调用本方法后，目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](85517.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](85517.md#IRTCRoomEventHandler-onuserunpublishscreen) 和退房 [onUserLeave](85517.md#IRTCRoomEventHandler-onuserleave) 的回调。
+调用本方法后，目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishstream)/[onUserUnpublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserunpublishscreen) 和退房 [onUserLeave](Linux-callback.md#IRTCRoomEventHandler-onuserleave) 的回调。
 
 <span id="IRTCRoom-resumeforwardstreamtoallrooms"></span>
 ### resumeForwardStreamToAllRooms
@@ -779,7 +779,7 @@ virtual void bytertc::IRTCRoom::resumeForwardStreamToAllRooms()
 
 
 **注意**
-目标房间中的用户将接收到本地用户进房 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 和发布 [onUserPublishStream](85517.md#IRTCRoomEventHandler-onuserpublishstream)/[onUserPublishScreen](85517.md#IRTCRoomEventHandler-onuserpublishscreen) 的回调。
+目标房间中的用户将接收到本地用户进房 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 和发布 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream)/[onUserPublishScreen](Linux-callback.md#IRTCRoomEventHandler-onuserpublishscreen) 的回调。
 
 
 # IRTCVideo
@@ -889,7 +889,7 @@ virtual void bytertc::IRTCVideo::setCaptureVolume(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 流索引，指定调节主流还是调节屏幕流的音量，参看 [StreamIndex](85519.md#streamindex) |
+| index | **StreamIndex** | 流索引，指定调节主流还是调节屏幕流的音量，参看 [StreamIndex](Linux-keytype.md#streamindex) |
 | volume | **int** | 采集的音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。只改变音频数据的音量信息，不涉及本端硬件的音量调节。<br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。<br/>• 0：静音  <br/>• 100：原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
 
@@ -918,13 +918,13 @@ virtual void bytertc::IRTCVideo::startAudioCapture()
 ```
 开启内部音频采集。默认为关闭状态。  <br>
 内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
-调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](85517.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。 <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](85517.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。
+调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。 <br>
+非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Linux-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。
 
 
 **注意**
 
-+ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onWarning](85517.md#IRTCVideoEventHandler-onwarning) 回调。  
++ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onWarning](Linux-callback.md#IRTCVideoEventHandler-onwarning) 回调。  
 + 调用 [stopAudioCapture](#IRTCVideo-stopaudiocapture) 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  
 + 由于不同硬件设备初始化响应时间不同，频繁调用 [stopAudioCapture](#IRTCVideo-stopaudiocapture) 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 [publishStream](#IRTCRoom-publishstream)/[unpublishStream](#IRTCRoom-unpublishstream) 实现临时闭麦和重新开麦。
 + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  
@@ -938,8 +938,8 @@ virtual void bytertc::IRTCVideo::stopAudioCapture()
 ```
 立即关闭内部音频采集。默认为关闭状态。  <br>
 内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
-调用该方法，本地用户会收到 [onAudioDeviceStateChanged](85517.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法后，房间中的其他用户会收到 [onUserStopAudioCapture](85517.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。
+调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br>
+非隐身用户进房后调用该方法后，房间中的其他用户会收到 [onUserStopAudioCapture](Linux-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。
 
 
 **注意**
@@ -954,13 +954,13 @@ virtual void bytertc::IRTCVideo::stopAudioCapture()
 virtual void bytertc::IRTCVideo::setAudioProfile(
     AudioProfileType audio_profile)
 ```
-设置音质档位。当所选的 [RoomProfileType](85519.md#roomprofiletype) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。
+设置音质档位。当所选的 [RoomProfileType](Linux-keytype.md#roomprofiletype) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audio_profile | **AudioProfileType** | 音质档位，参看 [AudioProfileType](85519.md#audioprofiletype) |
+| audio_profile | **AudioProfileType** | 音质档位，参看 [AudioProfileType](Linux-keytype.md#audioprofiletype) |
 
 
 **注意**
@@ -981,7 +981,7 @@ virtual int bytertc::IRTCVideo::setAudioSourceType (
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **AudioSourceType** | 音频数据源，详见 [AudioSourceType](85519.md#audiosourcetype)。<br/>默认使用内部音频采集。音频采集和渲染方式无需对应。 |
+| type | **AudioSourceType** | 音频数据源，详见 [AudioSourceType](Linux-keytype.md#audiosourcetype)。<br/>默认使用内部音频采集。音频采集和渲染方式无需对应。 |
 
 **返回值**
 方法调用结果：  
@@ -1009,7 +1009,7 @@ virtual int bytertc::IRTCVideo::setAudioRenderType (
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **AudioRenderType** | 音频输出类型，详见 [AudioRenderType](85519.md#audiorendertype) <br/>默认使用内部音频渲染。音频采集和渲染方式无需对应。 |
+| type | **AudioRenderType** | 音频输出类型，详见 [AudioRenderType](Linux-keytype.md#audiorendertype) <br/>默认使用内部音频渲染。音频采集和渲染方式无需对应。 |
 
 **返回值**
 方法调用结果：  
@@ -1036,7 +1036,7 @@ virtual bool bytertc::IRTCVideo::pushExternalAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame*** | 10 ms 对应的音频数据。详见 [IAudioFrame](85519.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame*** | 10 ms 对应的音频数据。详见 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
 
 **返回值**
 方法调用结果  
@@ -1063,7 +1063,7 @@ virtual bool bytertc::IRTCVideo::pullExternalAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame*** | 获取的 10 ms 内的音频数据。详见 [IAudioFrame](85519.md#iaudioframe)。 |
+| audioFrame | **IAudioFrame*** | 获取的 10 ms 内的音频数据。详见 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
 
 **返回值**
 方法调用结果：  
@@ -1086,8 +1086,8 @@ virtual void bytertc::IRTCVideo::startVideoCapture()
 ```
 立即开启内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
-调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](85517.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
-本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](85517.md#IRTCVideoEventHandler-onuserstartvideocapture) 的回调。
+调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
+本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](Linux-callback.md#IRTCVideoEventHandler-onuserstartvideocapture) 的回调。
 
 
 **注意**
@@ -1104,8 +1104,8 @@ virtual void bytertc::IRTCVideo::stopVideoCapture()
 ```
 立即关闭内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
-调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](85517.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](85517.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。
+调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
+非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Linux-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。
 
 
 **注意**
@@ -1127,7 +1127,7 @@ virtual int bytertc::IRTCVideo::setVideoCaptureConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| videoCaptureConfig | **const VideoCaptureConfig&** | 视频采集参数。参看: [VideoCaptureConfig](85519.md#videocaptureconfig)。 |
+| videoCaptureConfig | **const VideoCaptureConfig&** | 视频采集参数。参看: [VideoCaptureConfig](Linux-keytype.md#videocaptureconfig)。 |
 
 **返回值**
 
@@ -1185,7 +1185,7 @@ virtual int bytertc::IRTCVideo::setVideoEncoderConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| max_solution | **const VideoEncoderConfig&** | 期望发布的最大分辨率视频流参数。参看 [VideoEncoderConfig](85519.md#videoencoderconfig)。 |
+| max_solution | **const VideoEncoderConfig&** | 期望发布的最大分辨率视频流参数。参看 [VideoEncoderConfig](Linux-keytype.md#videoencoderconfig)。 |
 
 **返回值**
 方法调用结果： 
@@ -1216,7 +1216,7 @@ virtual int bytertc::IRTCVideo::setVideoEncoderConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| channel_solutions | **const VideoEncoderConfig*** | 要推送的多路视频流的参数需注意，所设置的分辨率是各路流的最大分辨率。参看 [VideoEncoderConfig](85519.md#videoencoderconfig)。 |
+| channel_solutions | **const VideoEncoderConfig*** | 要推送的多路视频流的参数需注意，所设置的分辨率是各路流的最大分辨率。参看 [VideoEncoderConfig](Linux-keytype.md#videoencoderconfig)。 |
 | solution_num | **int** | 视频参数数组长度，最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。当设置了多路参数时，分辨率和帧率必须是从大到小排列。需注意，所设置的分辨率是各路流的最大分辨率。 |
 
 **返回值**
@@ -1248,8 +1248,8 @@ virtual int bytertc::IRTCVideo::setLocalVideoCanvas(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 视频流属性, 参看 [StreamIndex](85519.md#streamindex) |
-| canvas | **const VideoCanvas&** | 视图信息和渲染模式，参看：[VideoCanvas](85519.md#videocanvas) |
+| index | **StreamIndex** | 视频流属性, 参看 [StreamIndex](Linux-keytype.md#streamindex) |
+| canvas | **const VideoCanvas&** | 视图信息和渲染模式，参看：[VideoCanvas](Linux-keytype.md#videocanvas) |
 
 **返回值**
 
@@ -1277,9 +1277,9 @@ virtual void bytertc::IRTCVideo::updateLocalVideoCanvas(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 视频流属性, 参看 [StreamIndex](85519.md#streamindex) |
-| renderMode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](85519.md#rendermode) |
-| backgroundColor | **const uint32_t** | 背景颜色，参看 [VideoCanvas](85519.md#videocanvas).background_color |
+| index | **StreamIndex** | 视频流属性, 参看 [StreamIndex](Linux-keytype.md#streamindex) |
+| renderMode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Linux-keytype.md#rendermode) |
+| backgroundColor | **const uint32_t** | 背景颜色，参看 [VideoCanvas](Linux-keytype.md#videocanvas).background_color |
 
 
 **注意**
@@ -1299,8 +1299,8 @@ virtual void bytertc::IRTCVideo::setRemoteStreamVideoCanvas(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_key | **RemoteStreamKey** | 参看 [RemoteStreamKey](85519.md#remotestreamkey) |
-| canvas | **const VideoCanvas&** | 视图信息和渲染模式，参看：[VideoCanvas](85519.md#videocanvas) |
+| stream_key | **RemoteStreamKey** | 参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey) |
+| canvas | **const VideoCanvas&** | 视图信息和渲染模式，参看：[VideoCanvas](Linux-keytype.md#videocanvas) |
 
 **返回值**
 
@@ -1310,7 +1310,7 @@ virtual void bytertc::IRTCVideo::setRemoteStreamVideoCanvas(
 
 **注意**
 
-+ 你应在收到 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 或 [onFirstRemoteVideoFrameDecoded](85517.md#IRTCVideoEventHandler-onfirstremotevideoframedecoded) 后，为远端视频绑定渲染视图。这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 [onUserJoined](85517.md#IRTCRoomEventHandler-onuserjoined) 回调，而不会收到 [onFirstRemoteVideoFrameDecoded](85517.md#IRTCVideoEventHandler-onfirstremotevideoframedecoded) 回调。你不应给录制的哑亚客户端绑定视图（因为它不会发送视频流）。
++ 你应在收到 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 或 [onFirstRemoteVideoFrameDecoded](Linux-callback.md#IRTCVideoEventHandler-onfirstremotevideoframedecoded) 后，为远端视频绑定渲染视图。这两个回调的差别是：如果启用了视频录制功能，视频录制服务会作为一个哑客户端加入房间，因此其他客户端会收到对应的 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 回调，而不会收到 [onFirstRemoteVideoFrameDecoded](Linux-callback.md#IRTCVideoEventHandler-onfirstremotevideoframedecoded) 回调。你不应给录制的哑亚客户端绑定视图（因为它不会发送视频流）。
 + 本地用户离开房间时，会解除调用此 API 建立的绑定关系；远端用户离开房间则不会影响。
 
 
@@ -1328,9 +1328,9 @@ virtual void bytertc::IRTCVideo::updateRemoteStreamVideoCanvas(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](85519.md#remotestreamkey) |
-| renderMode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](85519.md#rendermode) |
-| backgroundColor | **const uint32_t** | 背景颜色，参看 [VideoCanvas](85519.md#videocanvas).background_color |
+| stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey) |
+| renderMode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Linux-keytype.md#rendermode) |
+| backgroundColor | **const uint32_t** | 背景颜色，参看 [VideoCanvas](Linux-keytype.md#videocanvas).background_color |
 
 
 **注意**
@@ -1350,16 +1350,16 @@ virtual void bytertc::IRTCVideo::setLocalVideoSink(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 视频流属性。采集的视频流/屏幕视频流，参看 [StreamIndex](85519.md#streamindex) |
-| video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](85519.md#ivideosink)。 |
-| required_format | **IVideoSink::PixelFormat** | video_sink 适用的视频帧编码格式，参看 [PixelFormat](85519.md#pixelformat) |
+| index | **StreamIndex** | 视频流属性。采集的视频流/屏幕视频流，参看 [StreamIndex](Linux-keytype.md#streamindex) |
+| video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](Linux-keytype.md#ivideosink)。 |
+| required_format | **IVideoSink::PixelFormat** | video_sink 适用的视频帧编码格式，参看 [PixelFormat](Linux-keytype.md#pixelformat) |
 
 
 **注意**
 
 + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
 + 如果需要解除绑定，必须将 video_sink 设置为 null。退房时将清除绑定状态。
-+ 一般在收到 [onFirstLocalVideoFrameCaptured](85517.md#IRTCVideoEventHandler-onfirstlocalvideoframecaptured) 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
++ 一般在收到 [onFirstLocalVideoFrameCaptured](Linux-callback.md#IRTCVideoEventHandler-onfirstlocalvideoframecaptured) 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
 
 
 <span id="IRTCVideo-setremotevideosink"></span>
@@ -1376,15 +1376,15 @@ virtual void bytertc::IRTCVideo::setRemoteVideoSink(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_key | **RemoteStreamKey** | 远端流信息，用于指定需要渲染的视频流来源及属性，参看 [RemoteStreamKey](85519.md#remotestreamkey)。 |
-| video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](85519.md#ivideosink)。 |
-| required_format | **IVideoSink::PixelFormat** | video_sink 适用的视频帧编码格式，参看 [PixelFormat](85519.md#pixelformat)。 |
+| stream_key | **RemoteStreamKey** | 远端流信息，用于指定需要渲染的视频流来源及属性，参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey)。 |
+| video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](Linux-keytype.md#ivideosink)。 |
+| required_format | **IVideoSink::PixelFormat** | video_sink 适用的视频帧编码格式，参看 [PixelFormat](Linux-keytype.md#pixelformat)。 |
 
 
 **注意**
 
 + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
-+ 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 [onUserPublishStream](85517.md#IRTCRoomEventHandler-onuserpublishstream) 回调获取到远端流信息之后，再调用该方法。
++ 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream) 回调获取到远端流信息之后，再调用该方法。
 + 如果需要解除绑定，必须将 video_sink 设置为 null。退房时将清除绑定状态。
 
 
@@ -1402,8 +1402,8 @@ virtual void bytertc::IRTCVideo::setVideoSourceType(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_index | **StreamIndex** | 视频流的属性，参看 [StreamIndex](85519.md#streamindex) |
-| type | **VideoSourceType** | 视频输入源类型，参看 [VideoSourceType](85519.md#videosourcetype) |
+| stream_index | **StreamIndex** | 视频流的属性，参看 [StreamIndex](Linux-keytype.md#streamindex) |
+| type | **VideoSourceType** | 视频输入源类型，参看 [VideoSourceType](Linux-keytype.md#videosourcetype) |
 
 
 **注意**
@@ -1426,7 +1426,7 @@ virtual bool bytertc::IRTCVideo::pushExternalVideoFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| frame | **IVideoFrame*** | 设置视频帧，参看 [IVideoFrame](85519.md#ivideoframe)。 |
+| frame | **IVideoFrame*** | 设置视频帧，参看 [IVideoFrame](Linux-keytype.md#ivideoframe)。 |
 
 
 **注意**
@@ -1477,7 +1477,7 @@ virtual int bytertc::IRTCVideo::setPublishFallbackOption(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| option | **PublishFallbackOption** | 本地发布的音视频流回退选项，参看 [PublishFallbackOption](85519.md#publishfallbackoption)。 |
+| option | **PublishFallbackOption** | 本地发布的音视频流回退选项，参看 [PublishFallbackOption](Linux-keytype.md#publishfallbackoption)。 |
 
 **返回值**
 方法调用结果： 
@@ -1490,7 +1490,7 @@ virtual int bytertc::IRTCVideo::setPublishFallbackOption(
 
 + 该方法仅在调用 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 开启了发送多路视频流的情况下生效。  
 + 该方法必须在进房前设置，进房后设置或更改设置无效。  
-+ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](85517.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调通知。  
++ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](Linux-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调通知。  
 + 你可以调用客户端 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
@@ -1507,7 +1507,7 @@ virtual int bytertc::IRTCVideo::setSubscribeFallbackOption(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| option | **SubscribeFallbackOption** | 订阅的音视频流回退选项，参看 [SubscribeFallbackOption](85519.md#subscribefallbackoption) 。 |
+| option | **SubscribeFallbackOption** | 订阅的音视频流回退选项，参看 [SubscribeFallbackOption](Linux-keytype.md#subscribefallbackoption) 。 |
 
 **返回值**
 方法调用结果： 
@@ -1519,7 +1519,7 @@ virtual int bytertc::IRTCVideo::setSubscribeFallbackOption(
 **注意**
 
 + 你必须在进房前设置，进房后设置或更改设置无效。  
-+ 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onSimulcastSubscribeFallback](85517.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 和 [onRemoteVideoSizeChanged](85517.md#IRTCVideoEventHandler-onremotevideosizechanged) 回调通知。  
++ 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onSimulcastSubscribeFallback](Linux-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 和 [onRemoteVideoSizeChanged](Linux-callback.md#IRTCVideoEventHandler-onremotevideosizechanged) 回调通知。  
 + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
@@ -1539,7 +1539,7 @@ virtual int bytertc::IRTCVideo::setRemoteUserPriority(
 | --- | --- | --- |
 | room_id | **const char*** | 房间 ID |
 | user_id | **const char*** | 远端用户的 ID |
-| priority | **RemoteUserPriority** | 远端用户的需求优先级，详见枚举类型[RemoteUserPriority](85519.md#remoteuserpriority) |
+| priority | **RemoteUserPriority** | 远端用户的需求优先级，详见枚举类型[RemoteUserPriority](Linux-keytype.md#remoteuserpriority) |
 
 **返回值**
 0: 方法调用成功  
@@ -1572,7 +1572,7 @@ virtual int bytertc::IRTCVideo::setBusinessId(
 **返回值**
 
 + 0： 成功  
-+ < 0： 失败，具体原因参照 [BusinessCheckCode](85519.md#businesscheckcode) 。  
++ < 0： 失败，具体原因参照 [BusinessCheckCode](Linux-keytype.md#businesscheckcode) 。  
 + -6001： 用户已经在房间中。  
 + -6002： 输入非法，合法字符包括所有小写字母、大写字母和数字，除此外还包括四个独立字符，分别是：英文句号，短横线，下划线和 @ 。
 
@@ -1607,14 +1607,14 @@ virtual void bytertc::IRTCVideo::setEncryptInfo(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| encrypt_type | **EncryptType** | 加密类型，详见 [EncryptType](85519.md#encrypttype) |
+| encrypt_type | **EncryptType** | 加密类型，详见 [EncryptType](Linux-keytype.md#encrypttype) |
 | key | **const char*** | 加密密钥，长度限制为 36 位，超出部分将会被截断 |
 | key_size | **int** | 参数 key 的长度 |
 
 
 **注意**
 
-+ 使用传输时内置加密时，使用此方法；如果需要使用传输时自定义加密，参看 [onEncryptData](85517.md#IEncryptHandler-onencryptdata)。 内置加密和自定义加密互斥，根据最后一个调用的方法确定传输是加密的方案。  
++ 使用传输时内置加密时，使用此方法；如果需要使用传输时自定义加密，参看 [onEncryptData](Linux-callback.md#IEncryptHandler-onencryptdata)。 内置加密和自定义加密互斥，根据最后一个调用的方法确定传输是加密的方案。  
 + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  
 
 
@@ -1625,7 +1625,7 @@ virtual void bytertc::IRTCVideo::setCustomizeEncryptHandler(
     IEncryptHandler* handler)
 ```
 设置自定义加密  <br>
-需要实现对应的加密/解密方法，详情参考 [EncryptType](85519.md#encrypttype) 。 <br>
+需要实现对应的加密/解密方法，详情参考 [EncryptType](Linux-keytype.md#encrypttype) 。 <br>
 
 **传入参数**
 
@@ -1656,12 +1656,12 @@ virtual void bytertc::IRTCVideo::enableAudioFrameCallback(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](85519.md#audioframecallbackmethod)。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRecord`、`kAudioFrameCallbackPlayback`、`kAudioFrameCallbackMixed`、`kAudioFrameCallbackRecordScreen`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRemoteUser`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。 |
-| format | **AudioFormat** | 音频参数格式，参看 [AudioFormat](85519.md#audioformat)。 |
+| method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Linux-keytype.md#audioframecallbackmethod)。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRecord`、`kAudioFrameCallbackPlayback`、`kAudioFrameCallbackMixed`、`kAudioFrameCallbackRecordScreen`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRemoteUser`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。 |
+| format | **AudioFormat** | 音频参数格式，参看 [AudioFormat](Linux-keytype.md#audioformat)。 |
 
 
 **注意**
-开启音频回调并调用 [registerAudioFrameObserver](#IRTCVideo-registeraudioframeobserver) 后，[IAudioFrameObserver](85517.md#iaudioframeobserver) 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  
+开启音频回调并调用 [registerAudioFrameObserver](#IRTCVideo-registeraudioframeobserver) 后，[IAudioFrameObserver](Linux-callback.md#iaudioframeobserver) 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  
 
 <span id="IRTCVideo-disableaudioframecallback"></span>
 ### disableAudioFrameCallback
@@ -1675,7 +1675,7 @@ virtual void bytertc::IRTCVideo::disableAudioFrameCallback(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](85519.md#audioframecallbackmethod)。 |
+| method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Linux-keytype.md#audioframecallbackmethod)。 |
 
 
 **注意**
@@ -1693,7 +1693,7 @@ virtual void bytertc::IRTCVideo::registerAudioFrameObserver(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| observer | **IAudioFrameObserver*** | 音频数据观察者，参看 [IAudioFrameObserver](85517.md#iaudioframeobserver)。如果传入 null，则取消注册。 |
+| observer | **IAudioFrameObserver*** | 音频数据观察者，参看 [IAudioFrameObserver](Linux-callback.md#iaudioframeobserver)。如果传入 null，则取消注册。 |
 
 **返回值**
 
@@ -1702,7 +1702,7 @@ virtual void bytertc::IRTCVideo::registerAudioFrameObserver(
 
 
 **注意**
-注册音频数据回调观察者并调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](85517.md#iaudioframeobserver) 会收到对应的音频回调。
+注册音频数据回调观察者并调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Linux-callback.md#iaudioframeobserver) 会收到对应的音频回调。
 
 <span id="IRTCVideo-registeraudioprocessor"></span>
 ### registerAudioProcessor
@@ -1717,7 +1717,7 @@ virtual void bytertc::IRTCVideo::registerAudioProcessor(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| processor | **IAudioFrameProcessor*** | 自定义音频处理器，详见 [IAudioFrameProcessor](85517.md#iaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
+| processor | **IAudioFrameProcessor*** | 自定义音频处理器，详见 [IAudioFrameProcessor](Linux-callback.md#iaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
 
 
 **注意**
@@ -1736,8 +1736,8 @@ virtual void bytertc::IRTCVideo::enableAudioProcessor(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](85519.md#audioprocessormethod)。可多次调用此接口，处理不同类型的音频帧。<br/>选择不同类型的音频帧将收到对应的回调：  <br/>• 选择本地采集的音频时，会收到 [onProcessRecordAudioFrame](#onprocessrecordaudioframe)。  <br/>• 选择远端音频流的混音音频时，会收到 [onProcessPlayBackAudioFrame](#onprocessplaybackaudioframe)。  <br/>• 选择远端音频流时，会收到 [onProcessRemoteUserAudioFrame](#onprocessremoteuseraudioframe)。  <br/>• 选择屏幕共享音频流时，会收到 [onProcessScreenAudioFrame](#onprocessscreenaudioframe)。（Linux 不适用） |
-| format | **AudioFormat** | 设定自定义处理时获取的音频帧格式，参看 [AudioFormat](85519.md#audioformat)。 |
+| method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](Linux-keytype.md#audioprocessormethod)。可多次调用此接口，处理不同类型的音频帧。<br/>选择不同类型的音频帧将收到对应的回调：  <br/>• 选择本地采集的音频时，会收到 [onProcessRecordAudioFrame](#onprocessrecordaudioframe)。  <br/>• 选择远端音频流的混音音频时，会收到 [onProcessPlayBackAudioFrame](#onprocessplaybackaudioframe)。  <br/>• 选择远端音频流时，会收到 [onProcessRemoteUserAudioFrame](#onprocessremoteuseraudioframe)。  <br/>• 选择屏幕共享音频流时，会收到 [onProcessScreenAudioFrame](#onprocessscreenaudioframe)。（Linux 不适用） |
+| format | **AudioFormat** | 设定自定义处理时获取的音频帧格式，参看 [AudioFormat](Linux-keytype.md#audioformat)。 |
 
 
 **注意**
@@ -1758,7 +1758,7 @@ virtual void bytertc::IRTCVideo::disableAudioProcessor(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](85519.md#audioprocessormethod)。 |
+| method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](Linux-keytype.md#audioprocessormethod)。 |
 
 
 <span id="IRTCVideo-registerlocalvideoprocessor"></span>
@@ -1776,7 +1776,7 @@ virtual int bytertc::IRTCVideo::registerLocalVideoProcessor(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | processor | **IVideoProcessor*** | 自定义视频处理器，详见 [IVideoProcessor](#ivideoprocessor)。如果传入 null，则不对 RTC SDK 采集得到的视频帧进行前处理。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
-| config | **VideoPreprocessorConfig** | 自定义视频前处理器适用的设置，详见 [VideoPreprocessorConfig](85519.md#videopreprocessorconfig)。<br/>当前，`config` 中的 `required_pixel_format` 仅支持：`kVideoPixelFormatI420` 和 `kVideoPixelFormatUnknown`：<br/>• 设置为 `kVideoPixelFormatUnknown` 时，RTC SDK 给出供 processor 处理的视频帧格式即采集的格式。<br/>你可以通过 [VideoFrameType](85519.md#videoframetype) 和 [VideoPixelFormat](85519.md#videopixelformat) 获取实际采集的视频帧格式和像素类型。<br/>• 设置为 `kVideoPixelFormatI420` 时，RTC SDK 会将采集得到的视频帧转变为对应的格式，供前处理使用。<br/>• 设置为其他值时，此方法调用失败。 |
+| config | **VideoPreprocessorConfig** | 自定义视频前处理器适用的设置，详见 [VideoPreprocessorConfig](Linux-keytype.md#videopreprocessorconfig)。<br/>当前，`config` 中的 `required_pixel_format` 仅支持：`kVideoPixelFormatI420` 和 `kVideoPixelFormatUnknown`：<br/>• 设置为 `kVideoPixelFormatUnknown` 时，RTC SDK 给出供 processor 处理的视频帧格式即采集的格式。<br/>你可以通过 [VideoFrameType](Linux-keytype.md#videoframetype) 和 [VideoPixelFormat](Linux-keytype.md#videopixelformat) 获取实际采集的视频帧格式和像素类型。<br/>• 设置为 `kVideoPixelFormatI420` 时，RTC SDK 会将采集得到的视频帧转变为对应的格式，供前处理使用。<br/>• 设置为其他值时，此方法调用失败。 |
 
 **返回值**
 
@@ -1807,7 +1807,7 @@ virtual int bytertc::IRTCVideo::sendSEIMessage(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_index | **StreamIndex** | 指定携带 SEI 数据的媒体流类型，参看 [StreamIndex](85519.md#streamindex)。  <br/>语音通话场景下，该值需设为 `kStreamIndexMain`，否则 SEI 数据会被丢弃从而无法送达远端。 |
+| stream_index | **StreamIndex** | 指定携带 SEI 数据的媒体流类型，参看 [StreamIndex](Linux-keytype.md#streamindex)。  <br/>语音通话场景下，该值需设为 `kStreamIndexMain`，否则 SEI 数据会被丢弃从而无法送达远端。 |
 | message | **const uint8_t*** | SEI 消息。 |
 | length | **int** | SEI 消息长度，不超过 4KB。 |
 | repeat_count | **int** | 消息发送重复次数。取值范围是 [0, max{29, %{视频帧率}-1}]。推荐范围 [2,4]。<br/>调用此接口后，SEI 数据会添加到从当前视频帧开始的连续 `repeat_count` 个视频帧中。 |
@@ -1823,7 +1823,7 @@ virtual int bytertc::IRTCVideo::sendSEIMessage(
 + 每秒发送的 SEI 消息数量建议不超过当前的视频帧率。在语音通话场景下，黑帧帧率为 15 fps。
 + 语音通话场景中，仅支持在内部采集模式下调用该接口发送 SEI 数据。
 + 视频帧仅携带前后 2s 内收到的 SEI 数据；语音通话场景下，若调用此接口后 1min 内未有 SEI 数据发送，则 SDK 会自动取消发布视频黑帧。  
-+ 消息发送成功后，远端会收到 [onSEIMessageReceived](85517.md#IRTCVideoEventHandler-onseimessagereceived) 回调。
++ 消息发送成功后，远端会收到 [onSEIMessageReceived](Linux-callback.md#IRTCVideoEventHandler-onseimessagereceived) 回调。
 + 视频通话场景中，使用自定义采集并通过 pushExternalVideoFrame 推送至 SDK 的视频帧，若本身未携带 SEI 数据，也可通过本接口发送 SEI 数据。
 + 语音通话切换至视频通话时，会停止 SEI 数据发送，你需再次调用该接口方可恢复发送。
 
@@ -1903,7 +1903,7 @@ virtual int bytertc::IRTCVideo::feedback(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| type | **ProblemFeedbackOption*** | 预设问题列表，参看 [ProblemFeedbackOption](85519.md#problemfeedbackoption) |
+| type | **ProblemFeedbackOption*** | 预设问题列表，参看 [ProblemFeedbackOption](Linux-keytype.md#problemfeedbackoption) |
 | count | **int** | ProblemFeedbackOption 数组长度 |
 | problem_desc | **const char*** | 预设问题以外的其他问题的具体描述 |
 
@@ -1955,7 +1955,7 @@ virtual int64_t bytertc::IRTCVideo::login(
 
 
 **注意**
-本地用户调用此方法登录后，会收到 [onLoginResult](85517.md#IRTCVideoEventHandler-onloginresult) 回调通知登录结果，远端用户不会收到通知。
+本地用户调用此方法登录后，会收到 [onLoginResult](Linux-callback.md#IRTCVideoEventHandler-onloginresult) 回调通知登录结果，远端用户不会收到通知。
 
 <span id="IRTCVideo-logout"></span>
 ### logout
@@ -1968,7 +1968,7 @@ virtual void bytertc::IRTCVideo::logout()
 **注意**
 
 + 调用本接口登出前，必须先调用 [login](#IRTCVideo-login) 登录。  
-+ 本地用户调用此方法登出后，会收到 [onLogout](85517.md#IRTCVideoEventHandler-onlogout) 回调通知结果，远端用户不会收到通知。
++ 本地用户调用此方法登出后，会收到 [onLogout](Linux-callback.md#IRTCVideoEventHandler-onlogout) 回调通知结果，远端用户不会收到通知。
 
 
 <span id="IRTCVideo-updatelogintoken"></span>
@@ -1979,7 +1979,7 @@ virtual void bytertc::IRTCVideo::updateLoginToken(
 ```
 更新用户用于登录的 Token  <br>
 Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br>
-调用 [login](#IRTCVideo-login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](85517.md#IRTCVideoEventHandler-onloginresult) 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。
+调用 [login](#IRTCVideo-login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](Linux-callback.md#IRTCVideoEventHandler-onloginresult) 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。
 
 **传入参数**
 
@@ -2015,7 +2015,7 @@ virtual void bytertc::IRTCVideo::setServerParams(
 **注意**
 
 + 用户必须调用 [login](#IRTCVideo-login) 登录后，才能调用本接口。  
-+ 调用本接口后，SDK 会使用 [onServerParamsSetResult](85517.md#IRTCVideoEventHandler-onserverparamssetresult) 返回相应结果。
++ 调用本接口后，SDK 会使用 [onServerParamsSetResult](Linux-callback.md#IRTCVideoEventHandler-onserverparamssetresult) 返回相应结果。
 
 
 <span id="IRTCVideo-getpeeronlinestatus"></span>
@@ -2036,7 +2036,7 @@ virtual void bytertc::IRTCVideo::getPeerOnlineStatus(
 **注意**
 
 + 必须调用 [login](#IRTCVideo-login) 登录后，才能调用本接口。  
-+ 调用本接口后，SDK 会使用 [onGetPeerOnlineStatus](85517.md#IRTCVideoEventHandler-ongetpeeronlinestatus) 回调通知查询结果。  
++ 调用本接口后，SDK 会使用 [onGetPeerOnlineStatus](Linux-callback.md#IRTCVideoEventHandler-ongetpeeronlinestatus) 回调通知查询结果。  
 + 在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。
 
 
@@ -2056,7 +2056,7 @@ virtual int64_t bytertc::IRTCVideo::sendUserMessageOutsideRoom(
 | --- | --- | --- |
 | uid | **const char*** | 消息接收用户的 ID |
 | message | **const char*** | 发送的文本消息内容  <br/>消息不超过 64 KB。 |
-| config | **MessageConfig** | 消息类型，参看 [MessageConfig](85519.md#messageconfig)。 |
+| config | **MessageConfig** | 消息类型，参看 [MessageConfig](Linux-keytype.md#messageconfig)。 |
 
 **返回值**
 
@@ -2068,8 +2068,8 @@ virtual int64_t bytertc::IRTCVideo::sendUserMessageOutsideRoom(
 **注意**
 
 + 在发送房间外文本消息前，必须先调用 [login](#IRTCVideo-login) 完成登录。  
-+ 用户调用本接口发送文本信息后，会收到一次 [onUserMessageSendResultOutsideRoom](85517.md#IRTCVideoEventHandler-onusermessagesendresultoutsideroom) 回调，得知消息是否成功发送。  
-+ 若文本消息发送成功，则 uid 所指定的用户会通过 [onUserMessageReceivedOutsideRoom](85517.md#IRTCVideoEventHandler-onusermessagereceivedoutsideroom) 回调收到该消息。
++ 用户调用本接口发送文本信息后，会收到一次 [onUserMessageSendResultOutsideRoom](Linux-callback.md#IRTCVideoEventHandler-onusermessagesendresultoutsideroom) 回调，得知消息是否成功发送。  
++ 若文本消息发送成功，则 uid 所指定的用户会通过 [onUserMessageReceivedOutsideRoom](Linux-callback.md#IRTCVideoEventHandler-onusermessagereceivedoutsideroom) 回调收到该消息。
 
 
 <span id="IRTCVideo-senduserbinarymessageoutsideroom"></span>
@@ -2090,7 +2090,7 @@ virtual int64_t bytertc::IRTCVideo::sendUserBinaryMessageOutsideRoom(
 | uid | **const char*** | 消息接收用户的 ID |
 | length | **int** | 二进制字符串的长度 |
 | message | **const uint8_t*** | 发送的二进制消息内容  <br/>消息不超过 64KB。 |
-| config | **MessageConfig** | 消息类型，参看 [MessageConfig](85519.md#messageconfig)。 |
+| config | **MessageConfig** | 消息类型，参看 [MessageConfig](Linux-keytype.md#messageconfig)。 |
 
 **返回值**
 
@@ -2102,8 +2102,8 @@ virtual int64_t bytertc::IRTCVideo::sendUserBinaryMessageOutsideRoom(
 **注意**
 
 + 在发送房间外二进制消息前，必须先调用 [login](#IRTCVideo-login) 完成登录。  
-+ 用户调用本接口发送二进制消息后，会收到一次 [onUserMessageSendResultOutsideRoom](85517.md#IRTCVideoEventHandler-onusermessagesendresultoutsideroom) 回调，通知消息是否发送成功。  
-+ 若二进制消息发送成功，则 uid 所指定的用户会通过 [onUserBinaryMessageReceivedOutsideRoom](85517.md#IRTCVideoEventHandler-onuserbinarymessagereceivedoutsideroom) 回调收到该条消息。
++ 用户调用本接口发送二进制消息后，会收到一次 [onUserMessageSendResultOutsideRoom](Linux-callback.md#IRTCVideoEventHandler-onusermessagesendresultoutsideroom) 回调，通知消息是否发送成功。  
++ 若二进制消息发送成功，则 uid 所指定的用户会通过 [onUserBinaryMessageReceivedOutsideRoom](Linux-callback.md#IRTCVideoEventHandler-onuserbinarymessagereceivedoutsideroom) 回调收到该条消息。
 
 
 <span id="IRTCVideo-sendservermessage"></span>
@@ -2129,7 +2129,7 @@ virtual int64_t bytertc::IRTCVideo::sendServerMessage(
 **注意**
 
 + 在向应用服务器发送文本消息前，必须先调用 [login](#IRTCVideo-login) 完成登录，随后调用 [setServerParams](#IRTCVideo-setserverparams) 设置应用服务器。  
-+ 调用本接口后，会收到一次 [onServerMessageSendResult](85517.md#IRTCVideoEventHandler-onservermessagesendresult) 回调，通知消息发送方是否发送成功。  
++ 调用本接口后，会收到一次 [onServerMessageSendResult](Linux-callback.md#IRTCVideoEventHandler-onservermessagesendresult) 回调，通知消息发送方是否发送成功。  
 + 若文本消息发送成功，则之前调用 [setServerParams](#IRTCVideo-setserverparams) 设置的应用服务器会收到该条消息。
 
 
@@ -2158,7 +2158,7 @@ virtual int64_t bytertc::IRTCVideo::sendServerBinaryMessage(
 **注意**
 
 + 在向应用服务器发送二进制消息前，必须先调用 [login](#IRTCVideo-login) 完成登录，随后调用 [setServerParams](#IRTCVideo-setserverparams) 设置应用服务器。  
-+ 调用本接口后，会收到一次 [onServerMessageSendResult](85517.md#IRTCVideoEventHandler-onservermessagesendresult) 回调，通知消息发送方发送成功或失败。  
++ 调用本接口后，会收到一次 [onServerMessageSendResult](Linux-callback.md#IRTCVideoEventHandler-onservermessagesendresult) 回调，通知消息发送方发送成功或失败。  
 + 若二进制消息发送成功，则之前调用 [setServerParams](#IRTCVideo-setserverparams) 设置的应用服务器会收到该条消息。
 
 
@@ -2183,13 +2183,13 @@ virtual NetworkDetectionStartReturn bytertc::IRTCVideo::startNetworkDetection(
 | expected_downlink_biterate | **int** | 期望下行带宽，单位：kbps范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。 |
 
 **返回值**
-开启通话前网络探测结果，详见 [NetworkDetectionStartReturn](85518.md#networkdetectionstartreturn)
+开启通话前网络探测结果，详见 [NetworkDetectionStartReturn](Linux-errorcode.md#networkdetectionstartreturn)
 
 
 **注意**
 
-+ 成功调用本接口后，会在 3s 内收到一次 [onNetworkDetectionResult](85517.md#IRTCVideoEventHandler-onnetworkdetectionresult) 回调，此后每 2s 会收到一次该回调，通知探测结果；  
-+ 若探测停止，则会收到一次 [onNetworkDetectionStopped](85517.md#IRTCVideoEventHandler-onnetworkdetectionstopped) 通知探测停止。
++ 成功调用本接口后，会在 3s 内收到一次 [onNetworkDetectionResult](Linux-callback.md#IRTCVideoEventHandler-onnetworkdetectionresult) 回调，此后每 2s 会收到一次该回调，通知探测结果；  
++ 若探测停止，则会收到一次 [onNetworkDetectionStopped](Linux-callback.md#IRTCVideoEventHandler-onnetworkdetectionstopped) 通知探测停止。
 
 
 <span id="IRTCVideo-stopnetworkdetection"></span>
@@ -2202,7 +2202,7 @@ virtual void bytertc::IRTCVideo::stopNetworkDetection()
 
 **注意**
 
-+ 调用本接口后，会收到一次 [onNetworkDetectionStopped](85517.md#IRTCVideoEventHandler-onnetworkdetectionstopped) 回调通知探测停止。
++ 调用本接口后，会收到一次 [onNetworkDetectionStopped](Linux-callback.md#IRTCVideoEventHandler-onnetworkdetectionstopped) 回调通知探测停止。
 
 <span id="IRTCVideo-startpushpublicstream"></span>
 ### startPushPublicStream
@@ -2219,11 +2219,11 @@ virtual int bytertc::IRTCVideo::startPushPublicStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | public_stream_id | **const char*** | 公共流 ID |
-| param | **IPublicStreamParam*** | 公共流参数。详见 [IPublicStreamParam](85519.md#ipublicstreamparam)。<br/>一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br/>如果指定的媒体流还未发布，则公共流将在指定流开始发布后实时更新。 |
+| param | **IPublicStreamParam*** | 公共流参数。详见 [IPublicStreamParam](Linux-keytype.md#ipublicstreamparam)。<br/>一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。<br/>如果指定的媒体流还未发布，则公共流将在指定流开始发布后实时更新。 |
 
 **返回值**
 
-+ 0: 成功。同时将收到 [onPushPublicStreamResult](85517.md#IRTCVideoEventHandler-onpushpublicstreamresult) 回调。
++ 0: 成功。同时将收到 [onPushPublicStreamResult](Linux-callback.md#IRTCVideoEventHandler-onpushpublicstreamresult) 回调。
 + !0: 失败。当参数不合法或参数为空，调用失败。
 
 
@@ -2272,7 +2272,7 @@ virtual int bytertc::IRTCVideo::updatePublicStreamParam(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | public_stream_id | **const char*** | 公共流 ID |
-| param | **IPublicStreamParam*** | 公共流参数。详见 [IPublicStreamParam](85519.md#ipublicstreamparam)。<br/>指定的流必须为当前用户所发布的。 |
+| param | **IPublicStreamParam*** | 公共流参数。详见 [IPublicStreamParam](Linux-keytype.md#ipublicstreamparam)。<br/>指定的流必须为当前用户所发布的。 |
 
 **返回值**
 
@@ -2281,7 +2281,7 @@ virtual int bytertc::IRTCVideo::updatePublicStreamParam(
 
 
 **注意**
-调用本接口前需要通过 [onPushPublicStreamResult](85517.md#IRTCVideoEventHandler-onpushpublicstreamresult) 确认公共流是否已经成功启动。
+调用本接口前需要通过 [onPushPublicStreamResult](Linux-callback.md#IRTCVideoEventHandler-onpushpublicstreamresult) 确认公共流是否已经成功启动。
 
 <span id="IRTCVideo-enableaudiopropertiesreport"></span>
 ### enableAudioPropertiesReport
@@ -2295,15 +2295,15 @@ virtual void bytertc::IRTCVideo::enableAudioPropertiesReport(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| config | **const AudioPropertiesConfig&** | 详见 [AudioPropertiesConfig](85519.md#audiopropertiesconfig) |
+| config | **const AudioPropertiesConfig&** | 详见 [AudioPropertiesConfig](Linux-keytype.md#audiopropertiesconfig) |
 
 
 **注意**
 开启提示后，你可以：  
 
-+ 通过 [onLocalAudioPropertiesReport](85517.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 回调获取本地麦克风和屏幕音频流采集的音频信息；  
-+ 通过 [onRemoteAudioPropertiesReport](85517.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 回调获取订阅的远端用户的音频信息。  
-+ 通过 [onActiveSpeaker](85517.md#IRTCVideoEventHandler-onactivespeaker) 回调获取房间内的最活跃用户信息。
++ 通过 [onLocalAudioPropertiesReport](Linux-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 回调获取本地麦克风和屏幕音频流采集的音频信息；  
++ 通过 [onRemoteAudioPropertiesReport](Linux-callback.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 回调获取订阅的远端用户的音频信息。  
++ 通过 [onActiveSpeaker](Linux-callback.md#IRTCVideoEventHandler-onactivespeaker) 回调获取房间内的最活跃用户信息。
 
 
 <span id="IRTCVideo-setremoteaudioplaybackvolume"></span>
@@ -2367,13 +2367,13 @@ virtual void bytertc::IRTCVideo::registerLocalEncodedVideoFrameObserver(
     ILocalEncodedVideoFrameObserver* observer)
 ```
 注册本地视频帧监测器。  <br>
-无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 [onLocalEncodedVideoFrame](85517.md#ILocalEncodedVideoFrameObserver-onlocalencodedvideoframe) 回调给用户
+无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 [onLocalEncodedVideoFrame](Linux-callback.md#ILocalEncodedVideoFrameObserver-onlocalencodedvideoframe) 回调给用户
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| observer | **ILocalEncodedVideoFrameObserver*** | 本地视频帧监测器，参看 [ILocalEncodedVideoFrameObserver](85517.md#ilocalencodedvideoframeobserver)。将参数设置为 nullptr 则取消注册。 |
+| observer | **ILocalEncodedVideoFrameObserver*** | 本地视频帧监测器，参看 [ILocalEncodedVideoFrameObserver](Linux-callback.md#ilocalencodedvideoframeobserver)。将参数设置为 nullptr 则取消注册。 |
 
 
 **注意**
@@ -2386,13 +2386,13 @@ virtual void bytertc::IRTCVideo::registerRemoteEncodedVideoFrameObserver(
     IRemoteEncodedVideoFrameObserver* observer)
 ```
 注册远端编码后视频数据回調。  <br>
-完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](85517.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调
+完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Linux-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| observer | **IRemoteEncodedVideoFrameObserver*** | 远端编码后视频数据监测器，参看 [IRemoteEncodedVideoFrameObserver](85517.md#iremoteencodedvideoframeobserver) |
+| observer | **IRemoteEncodedVideoFrameObserver*** | 远端编码后视频数据监测器，参看 [IRemoteEncodedVideoFrameObserver](Linux-callback.md#iremoteencodedvideoframeobserver) |
 
 
 **注意**
@@ -2414,7 +2414,7 @@ virtual void bytertc::IRTCVideo::setExternalVideoEncoderEventHandler(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| encoder_handler | **IExternalVideoEncoderEventHandler*** | 自定义编码帧回调类，参看 [IExternalVideoEncoderEventHandler](85517.md#iexternalvideoencodereventhandler) |
+| encoder_handler | **IExternalVideoEncoderEventHandler*** | 自定义编码帧回调类，参看 [IExternalVideoEncoderEventHandler](Linux-callback.md#iexternalvideoencodereventhandler) |
 
 
 **注意**
@@ -2437,9 +2437,9 @@ virtual bool bytertc::IRTCVideo::pushExternalEncodedVideoFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 需要推送的编码流的属性，参看 [StreamIndex](85519.md#streamindex) |
+| index | **StreamIndex** | 需要推送的编码流的属性，参看 [StreamIndex](Linux-keytype.md#streamindex) |
 | video_index | **int** | 对应的编码流下标，从 0 开始，如果调用 [setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig) 设置了多路流，此处数量须与之保持一致 |
-| video_stream | **IEncodedVideoFrame*** | 编码流视频帧信息，参看 [IEncodedVideoFrame](85519.md#iencodedvideoframe)。 |
+| video_stream | **IEncodedVideoFrame*** | 编码流视频帧信息，参看 [IEncodedVideoFrame](Linux-keytype.md#iencodedvideoframe)。 |
 
 
 **注意**
@@ -2462,14 +2462,14 @@ virtual void bytertc::IRTCVideo::setVideoDecoderConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| key | **RemoteStreamKey** | 远端流信息，即对哪一路视频流进行解码方式设置，参看 [RemoteStreamKey](85519.md#remotestreamkey)。 |
-| config | **VideoDecoderConfig** | 视频解码方式，参看 [VideoDecoderConfig](85519.md#videodecoderconfig)。 |
+| key | **RemoteStreamKey** | 远端流信息，即对哪一路视频流进行解码方式设置，参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey)。 |
+| config | **VideoDecoderConfig** | 视频解码方式，参看 [VideoDecoderConfig](Linux-keytype.md#videodecoderconfig)。 |
 
 
 **注意**
 
 + 该方法仅适用于手动订阅模式，并且在订阅远端流之前使用。  
-+ 当你想要对远端流进行自定义解码时，你需要先调用 [registerRemoteEncodedVideoFrameObserver](#IRTCVideo-registerremoteencodedvideoframeobserver) 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 [onRemoteEncodedVideoFrame](85517.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调出来。
++ 当你想要对远端流进行自定义解码时，你需要先调用 [registerRemoteEncodedVideoFrameObserver](#IRTCVideo-registerremoteencodedvideoframeobserver) 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 [onRemoteEncodedVideoFrame](Linux-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调出来。
 
 
 <span id="IRTCVideo-requestremotevideokeyframe"></span>
@@ -2484,7 +2484,7 @@ virtual void bytertc::IRTCVideo::requestRemoteVideoKeyFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_info | **const RemoteStreamKey&** | 远端流信息，参看 [RemoteStreamKey](85519.md#remotestreamkey)。 |
+| stream_info | **const RemoteStreamKey&** | 远端流信息，参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey)。 |
 
 
 **注意**
@@ -2501,7 +2501,7 @@ virtual int bytertc::IRTCVideo::sendStreamSyncInfo(
     int32_t length,
     const StreamSycnInfoConfig& config)
 ```
-发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 [onStreamSyncInfoReceived](85517.md#IRTCVideoEventHandler-onstreamsyncinforeceived) 回调。
+发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 [onStreamSyncInfoReceived](Linux-callback.md#IRTCVideoEventHandler-onstreamsyncinforeceived) 回调。
 
 **传入参数**
 
@@ -2509,7 +2509,7 @@ virtual int bytertc::IRTCVideo::sendStreamSyncInfo(
 | --- | --- | --- |
 | data | **const uint8_t*** | 消息内容。 |
 | length | **int32_t** | 消息长度。取值范围是 [1,255] 字节，建议小于 16 字节，否则可能占用较大带宽。 |
-| config | **const StreamSycnInfoConfig&** | 媒体流信息同步的相关配置，详见 [StreamSycnInfoConfig](85519.md#streamsycninfoconfig) 。 |
+| config | **const StreamSycnInfoConfig&** | 媒体流信息同步的相关配置，详见 [StreamSycnInfoConfig](Linux-keytype.md#streamsycninfoconfig) 。 |
 
 **返回值**
 
@@ -2517,7 +2517,7 @@ virtual int bytertc::IRTCVideo::sendStreamSyncInfo(
 + -1: 消息发送失败。消息长度大于 255 字节。  
 + -2: 消息发送失败。传入的消息内容为空。  
 + -3: 消息发送失败。通过屏幕流进行消息同步时，此屏幕流还未发布。  
-+ -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 [ErrorCode](85518.md#errorcode)。  
++ -4: 消息发送失败。通过用麦克风或自定义设备采集到的音频流进行消息同步时，此音频流还未发布，详见错误码 [ErrorCode](Linux-errorcode.md#errorcode)。  
 
 
 **注意**
@@ -2538,7 +2538,7 @@ virtual void bytertc::IRTCVideo::setLocalVoicePitch(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| pitch | **int** | 相对于语音原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [onWarning](85517#IRTCVideoEventHandler-onwarning) 回调，提示 [WarningCode](85518.md#warningcode) 错误码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法 |
+| pitch | **int** | 相对于语音原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [onWarning](Linux-callback#IRTCVideoEventHandler-onwarning) 回调，提示 [WarningCode](Linux-errorcode.md#warningcode) 错误码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法 |
 
 
 <span id="IRTCVideo-startplaypublicstream"></span>
@@ -2558,7 +2558,7 @@ virtual int bytertc::IRTCVideo::startPlayPublicStream(
 
 **返回值**
 
-+ 0: 成功。同时将收到 [onPlayPublicStreamResult](85517.md#IRTCVideoEventHandler-onplaypublicstreamresult) 回调。
++ 0: 成功。同时将收到 [onPlayPublicStreamResult](Linux-callback.md#IRTCVideoEventHandler-onplaypublicstreamresult) 回调。
 + !0: 失败。当参数不合法或参数为空，调用失败。
 
 
@@ -2567,8 +2567,8 @@ virtual int bytertc::IRTCVideo::startPlayPublicStream(
 + 在调用本接口之前，建议先绑定渲染视图。
 - 调用 [setPublicStreamVideoCanvas](#IRTCVideo-setpublicstreamvideocanvas) 绑定内部渲染视图：
 - 调用 [setPublicStreamVideoSink](#IRTCVideo-setpublicstreamvideosink) 绑定自定义渲染视图：
-+ 调用本接口后，可以通过 [onFirstPublicStreamVideoFrameDecoded](85517.md#IRTCVideoEventHandler-onfirstpublicstreamvideoframedecoded) 和 [onFirstPublicStreamAudioFrame](85517.md#IRTCVideoEventHandler-onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
-+ 调用本接口后，可以通过 [onPublicStreamSEIMessageReceived](85517.md#IRTCVideoEventHandler-onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
++ 调用本接口后，可以通过 [onFirstPublicStreamVideoFrameDecoded](Linux-callback.md#IRTCVideoEventHandler-onfirstpublicstreamvideoframedecoded) 和 [onFirstPublicStreamAudioFrame](Linux-callback.md#IRTCVideoEventHandler-onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
++ 调用本接口后，可以通过 [onPublicStreamSEIMessageReceived](Linux-callback.md#IRTCVideoEventHandler-onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
 + 订阅公共流之后，可以通过调用 [stopPlayPublicStream](#IRTCVideo-stopplaypublicstream) 接口取消订阅公共流。
 
 
@@ -2607,7 +2607,7 @@ virtual int bytertc::IRTCVideo::setPublicStreamVideoCanvas(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | public_stream_id | **const char*** | 公共流 ID |
-| canvas | **const VideoCanvas&** | 内部渲染视图，如果需要解除视频的绑定视图，把 videoCanvas 设置为空。详见 [VideoCanvas](85519.md#videocanvas)。 |
+| canvas | **const VideoCanvas&** | 内部渲染视图，如果需要解除视频的绑定视图，把 videoCanvas 设置为空。详见 [VideoCanvas](Linux-keytype.md#videocanvas)。 |
 
 **返回值**
 
@@ -2630,8 +2630,8 @@ virtual void bytertc::IRTCVideo::setPublicStreamVideoSink(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | public_stream_id | **const char*** | 公共流 ID |
-| video_sink | **IVideoSink*** | 自定义视频渲染器，自定义视频渲染器，需要释放渲染器资源时，将 videoSink 设置为 `null`。参看 [IVideoSink](85519.md#ivideosink) |
-| format | **IVideoSink::PixelFormat** | videoSink 适用的视频帧编码格式，参看 [PixelFormat](85519.md#pixelformat) |
+| video_sink | **IVideoSink*** | 自定义视频渲染器，自定义视频渲染器，需要释放渲染器资源时，将 videoSink 设置为 `null`。参看 [IVideoSink](Linux-keytype.md#ivideosink) |
+| format | **IVideoSink::PixelFormat** | videoSink 适用的视频帧编码格式，参看 [PixelFormat](Linux-keytype.md#pixelformat) |
 
 **返回值**
 
@@ -2653,9 +2653,9 @@ virtual void bytertc::IRTCVideo::setVideoWatermark(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 需要添加水印的视频流属性，参看 [StreamIndex](85519.md#streamindex)。 |
+| streamIndex | **StreamIndex** | 需要添加水印的视频流属性，参看 [StreamIndex](Linux-keytype.md#streamindex)。 |
 | image_path | **const char*** | 水印图片路径，仅支持本地文件绝对路径，长度限制为 512 字节。  <br/>水印图片为 PNG 或 JPG 格式。 |
-| config | **RTCWatermarkConfig** | 水印参数，参看 [RTCWatermarkConfig](85519.md#rtcwatermarkconfig)。 |
+| config | **RTCWatermarkConfig** | 水印参数，参看 [RTCWatermarkConfig](Linux-keytype.md#rtcwatermarkconfig)。 |
 
 
 **注意**
@@ -2678,7 +2678,7 @@ virtual void bytertc::IRTCVideo::clearVideoWatermark(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 需要移除水印的视频流属性，参看 [StreamIndex](85519.md#streamindex)。 |
+| streamIndex | **StreamIndex** | 需要移除水印的视频流属性，参看 [StreamIndex](Linux-keytype.md#streamindex)。 |
 
 
 <span id="IRTCVideo-startcloudproxy"></span>
@@ -2693,14 +2693,14 @@ virtual void bytertc::IRTCVideo::startCloudProxy(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| configuration | **const CloudProxyConfiguration&** | 云代理服务器信息列表。参看 [CloudProxyConfiguration](85519.md#cloudproxyconfiguration)。 |
+| configuration | **const CloudProxyConfiguration&** | 云代理服务器信息列表。参看 [CloudProxyConfiguration](Linux-keytype.md#cloudproxyconfiguration)。 |
 
 
 **注意**
 
 + 在加入房间前调用此接口  
 + 在开启云代理后，进行通话前网络探测 
-+ 开启云代理后，并成功链接云代理服务器后，会收到 [onCloudProxyConnected](85517.md#IRTCVideoEventHandler-oncloudproxyconnected)。
++ 开启云代理后，并成功链接云代理服务器后，会收到 [onCloudProxyConnected](Linux-callback.md#IRTCVideoEventHandler-oncloudproxyconnected)。
 + 要关闭云代理，调用 [stopCloudProxy](#IRTCVideo-stopcloudproxy)。
 
 
@@ -2794,7 +2794,7 @@ virtual int bytertc::IAudioDeviceCollection::getDevice(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | index | **int** | 设备索引号，从 0 开始，注意需小于 [getCount](#IAudioDeviceCollection-getcount) 返回值。 |
-| audio_device_info | **AudioDeviceInfo*** | 设备信息，详见 [AudioDeviceInfo](85519.md#audiodeviceinfo) |
+| audio_device_info | **AudioDeviceInfo*** | 设备信息，详见 [AudioDeviceInfo](Linux-keytype.md#audiodeviceinfo) |
 
 **返回值**
 
@@ -3356,7 +3356,7 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
 | --- | --- | --- |
 | mix_id | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。 |
 | file_path | **const char*** | 用于混音文件路径。<br/>支持在线文件的 URL、和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
-| config | **const AudioMixingConfig&** | 混音配置  <br/>可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 [AudioMixingConfig](85519.md#audiomixingconfig)。 |
+| config | **const AudioMixingConfig&** | 混音配置  <br/>可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 [AudioMixingConfig](Linux-keytype.md#audiomixingconfig)。 |
 
 
 **注意**
@@ -3511,13 +3511,13 @@ virtual int bytertc::IAudioMixingManager::setAudioMixingPlaybackSpeed(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mix_id | **int** | 混音 ID |
-| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 [AudioMixingState](85519.md#audiomixingstate) 状态为 `kAudioMixingStateFailed` 混音播放失败，[AudioMixingError](85519.md#audiomixingerror) 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。 |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 [AudioMixingState](Linux-keytype.md#audiomixingstate) 状态为 `kAudioMixingStateFailed` 混音播放失败，[AudioMixingError](Linux-keytype.md#audiomixingerror) 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。 |
 
 
 **注意**
 
 + 暂不支持对 PCM 音频数据进行变速调整。  
-+ 你需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 [AudioMixingState](85519.md#audiomixingstate) 状态为 `kAudioMixingStatePlaying`，[AudioMixingError](85519.md#audiomixingerror) 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  
++ 你需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 [AudioMixingState](Linux-keytype.md#audiomixingstate) 状态为 `kAudioMixingStatePlaying`，[AudioMixingError](Linux-keytype.md#audiomixingerror) 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  
 + 在 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `kAudioMixingStateFailed` 错误码为 `kAudioMixingErrorIdNotFound` 的 `onAudioMixingStateChanged` 回调。
 
 
@@ -3926,13 +3926,13 @@ virtual int bytertc::IVideoEffect::registerFaceDetectionObserver(
     int interval_ms)
 ```
 注册人脸检测结果回调观察者 <br>
-注册此观察者后，你会周期性收到 [onFaceDetectResult](85517.md#IFaceDetectionObserver-onfacedetectresult) 回调。
+注册此观察者后，你会周期性收到 [onFaceDetectResult](Linux-callback.md#IFaceDetectionObserver-onfacedetectresult) 回调。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| observer | **IFaceDetectionObserver*** | 人脸检测结果回调观察者，参看 [IFaceDetectionObserver](85517.md#ifacedetectionobserver)。 |
+| observer | **IFaceDetectionObserver*** | 人脸检测结果回调观察者，参看 [IFaceDetectionObserver](Linux-callback.md#ifacedetectionobserver)。 |
 | interval_ms | **int** | 时间间隔，必须大于 0。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval + 视频采集帧间隔`。 |
 
 **返回值**
@@ -3968,10 +3968,10 @@ virtual IVideoFrame* bytertc::IVideoProcessor::processVideoFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| src_frame | **IVideoFrame*** | RTC SDK 采集得到的视频帧，参看 [IVideoFrame](85519.md#ivideoframe)。 |
+| src_frame | **IVideoFrame*** | RTC SDK 采集得到的视频帧，参看 [IVideoFrame](Linux-keytype.md#ivideoframe)。 |
 
 **返回值**
-经过视频前处理后的视频帧，返回给 RTC SDK 供编码和传输，参看 [IVideoFrame](85519.md#ivideoframe)。
+经过视频前处理后的视频帧，返回给 RTC SDK 供编码和传输，参看 [IVideoFrame](Linux-keytype.md#ivideoframe)。
 
 
 **注意**
