@@ -121,7 +121,7 @@
 
 类型: <code>string | undefined</code>
 
-用户传递的额外信息，最大长度为 200 字节。会在 [onUserJoined](104479.md#onuserjoined) 中回调给远端用户。
+用户传递的额外信息，最大长度为 200 字节。会在 [onUserJoined](Web-event.md#onuserjoined) 中回调给远端用户。
 
 - **注意**
 
@@ -949,7 +949,7 @@ inactive：设备已断开连接。
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="audiomixingstatechangedevent-error"></span></p> 
 
-类型: <code>[AudioMixingError](104480.md#audiomixingerror)</code>
+类型: <code>[AudioMixingError](Web-errorcode.md#audiomixingerror)</code>
 
 混音错误
 
@@ -1302,7 +1302,7 @@ false: 音频流发布被解禁
 
 <p style="font-size: 16px;font-weight: bolder;"> errorCode <span id="subtitleevent-errorcode"></span></p> 
 
-类型: <code>[ErrorCode](104480.md#errorcode) | undefined</code>
+类型: <code>[ErrorCode](Web-errorcode.md#errorcode) | undefined</code>
 
 字幕任务错误码。
 
@@ -1455,7 +1455,7 @@ false: 音频流发布被解禁
 类型: <code>boolean | undefined</code>
 
 是否自动发布音视频流，默认为自动发布。
-取消自动发布后，通过调用 [publishStream](104478.md#publishstream) 进行音视频流发布。
+取消自动发布后，通过调用 [publishStream](Web-api.md#publishstream) 进行音视频流发布。
 
 <p style="font-size: 16px;font-weight: bolder;"> isAutoSubscribeAudio <span id="roomconfig-isautosubscribeaudio"></span></p> 
 
@@ -1463,7 +1463,7 @@ false: 音频流发布被解禁
 
 是否自动订阅音频流，默认为自动订阅。
 不包含屏幕流。
-进房后，你可以调用 [subscribeStream](104478.md#subscribestream)、[unsubscribeStream](104478.md#unsubscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](Web-api.md#subscribestream)、[unsubscribeStream](Web-api.md#unsubscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> isAutoSubscribeVideo <span id="roomconfig-isautosubscribevideo"></span></p> 
 
@@ -1471,7 +1471,7 @@ false: 音频流发布被解禁
 
 是否自动订阅视频流，默认为自动订阅。
 不包含屏幕流。
-进房后，你可以调用 [subscribeStream](104478.md#subscribestream)、[unsubscribeStream](104478.md#unsubscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](Web-api.md#subscribestream)、[unsubscribeStream](Web-api.md#unsubscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> remoteVideoConfig <span id="roomconfig-remotevideoconfig"></span></p> 
 
@@ -1548,7 +1548,7 @@ DOM
 类型: <code>number | undefined</code>
 
 视频帧顺时针的旋转角度。可选值为 0，90，180，270。默认值是 0，即不做旋转处理。<br>
-该设置仅对远端视频有效，调用 [setLocalVideoPlayer](104478.md#setlocalvideoplayer) 设置本参数不生效。
+该设置仅对远端视频有效，调用 [setLocalVideoPlayer](Web-api.md#setlocalvideoplayer) 设置本参数不生效。
 
 
 ## VideoRenderMode <span id="videorendermode"></span>
@@ -1719,7 +1719,7 @@ DOM
 类型: `enum`
 
 本地主流音量回调模式。
-该功能影响 [onActiveSpeaker](104479.md#onactivespeaker) 回调。例如，进入房间但未发布主流音频，[LocalMainReportMode](#localmainreportmode) 为 `RESET`，则该回调永远不会包含本端用户主流音频。
+该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，进入房间但未发布主流音频，[LocalMainReportMode](#localmainreportmode) 为 `RESET`，则该回调永远不会包含本端用户主流音频。
 
 - **成员**
 
@@ -1736,7 +1736,7 @@ DOM
 类型: `enum`
 
 本地主流音量回调的数据范围，控制回调中是否包含混音。
-该功能影响 [onActiveSpeaker](104479.md#onactivespeaker) 回调。例如，[AudioReportMode](#audioreportmode) 为 `AUDIOMIXING`，即使麦克风音量为 0，该回调中也可能回调本端用户主流音频。
+该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，[AudioReportMode](#audioreportmode) 为 `AUDIOMIXING`，即使麦克风音量为 0，该回调中也可能回调本端用户主流音频。
 
 - **成员**
 
@@ -2188,7 +2188,7 @@ RTC 配置下发的代理地址
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
   | DISABLE | `0` | 不开启回退功能。默认设置。 |
-  | VIDEO_STREAM_LOW | `1` | 下行网络不佳时，对视频流做降级处理。具体降级规则参看[音视频流回退](https://www.volcengine.com/docs/6348/70137)文档。<br>该设置仅对发布端调用 [EnableSimulcastMode](104478.md#enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+  | VIDEO_STREAM_LOW | `1` | 下行网络不佳时，对视频流做降级处理。具体降级规则参看[音视频流回退](https://www.volcengine.com/docs/6348/70137)文档。<br>该设置仅对发布端调用 [EnableSimulcastMode](Web-api.md#enablesimulcastmode) 开启发送多路流功能的情况生效。 |
   | AUDIO_ONLY | `2` | 下行网络不佳时，取消接收视频，仅接收音频。<br>当发布端开启发送多路流功能时，设置此选项不利于提升用户体验，因此不建议设置此选项。 |
 
 
@@ -2214,7 +2214,7 @@ RTC 配置下发的代理地址
 类型: `enum`
 
 音质档位
-调用 [setAudioProfile](104478.md#setaudioprofile) 设置的音质档位
+调用 [setAudioProfile](Web-api.md#setaudioprofile) 设置的音质档位
 
 - **成员**
 
