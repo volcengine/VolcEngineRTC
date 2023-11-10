@@ -2,8 +2,8 @@
 
 | Web 4.53 |
 | --- |
-| [概览](src/104477.md) |
-| [API 详情](src/104478.md) |
-| [事件](src/104479.md) |
-| [错误码](src/104480.md) |
-| [数据类型](src/104481.md) |
+| [概览](src/Web-overview.md) |
+| [API 详情](src/Web-api.md) |
+| [事件](src/Web-event.md) |
+| [错误码](src/Web-errorcode.md) |
+| [数据类型](src/Web-keytype.md) |
