@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>Resources/Filter/list_image_bailiang1.bmp</file>
+        <file>Resources/Filter/list_image_fennen1.bmp</file>
+        <file>Resources/Filter/list_image_lengsediao1.bmp</file>
+        <file>Resources/Filter/list_image_nuansediao1.bmp</file>
+        <file>Resources/Filter/list_image_origin.bmp</file>
+        <file>Resources/Filter/list_image_xiaoqingxin1.bmp</file>
+        <file>Resources/AR/AR/afd.png</file>
+        <file>Resources/AR/AR/armesh.png</file>
+        <file>Resources/AR/AR/baozi.png</file>
+        <file>Resources/AR/AR/bluebird.png</file>
+        <file>Resources/AR/AR/fenhudie.png</file>
+        <file>Resources/AR/AR/lanhudie.png</file>
+        <file>Resources/AR/AR/tiger.png</file>
+        <file>Resources/AR/AR/tiger_bai.png</file>
+        <file>Resources/AR/AR/tiger_huang.png</file>
+        <file>Resources/AR/AR/xiongmao.png</file>
+        <file>Resources/AR/PropMap/bling.png</file>
+        <file>Resources/AR/PropMap/fengya.png</file>
+        <file>Resources/AR/PropMap/hudie.png</file>
+        <file>Resources/AR/PropMap/juanhuzi.png</file>
+        <file>Resources/AR/PropMap/mask_hat.png</file>
+        <file>Resources/AR/PropMap/touhua.png</file>
+    </qresource>
+</RCC>
