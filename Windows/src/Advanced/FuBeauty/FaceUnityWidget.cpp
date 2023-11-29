@@ -174,7 +174,11 @@ int FaceUnityWidget::initNama()
 #ifdef CNAMASDK_H
     std::unique_lock<std::mutex> l(m_mutex_process);
     m_nama = new NamaNameSpace::Nama();
-    m_nama->InitNama();
+    if (!m_nama->InitNama()) {
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"),
+            QStringLiteral("相芯美颜初始化失败，请检查相芯证书是否填写到 authpack.h 中"), QMessageBox::Ok);
+        box.exec();
+    }
 #endif
     return 0;
 }

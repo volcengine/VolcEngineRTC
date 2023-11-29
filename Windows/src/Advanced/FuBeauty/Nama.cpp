@@ -338,9 +338,7 @@ void NamaNameSpace::Nama::setARBundles(int type1, int type2) {
 
 int NamaNameSpace::Nama::processVideoFrame(uchar* frame, int width, int height)
 {
-    std::ostringstream oss;
-    oss << std::this_thread::get_id();
-    int ret = 0;
+    if (!m_namaInited) return -1;
     do {
 
         //make env
@@ -350,7 +348,7 @@ int NamaNameSpace::Nama::processVideoFrame(uchar* frame, int width, int height)
         checkBundles();
 
         //renderer
-        ret = RenderItems(frame, width, height, 13);
+        RenderItems(frame, width, height, 13);
 
         //done env
         doneCurrent();

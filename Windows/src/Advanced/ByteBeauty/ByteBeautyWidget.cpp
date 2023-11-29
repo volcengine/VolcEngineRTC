@@ -360,7 +360,12 @@ void ByteBeautyWidget::startCheckLicense() {
 	auto licensePath = getLicenseFilePath();
     qDebug() << Q_FUNC_INFO << "license file=" << licensePath;
 	if (!QFile::exists(licensePath))
-	{
+    {
+        if (g_byte_beauty_key.empty() || g_byte_beauty_secret.empty()) {
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "请填写字节美颜key+secret 到Config.h中", QMessageBox::Ok);
+            box.exec();
+            return;
+        }
 		setCheckLicenseResultText(kRuqestLicense, QStringLiteral("正在请求鉴权。。。"));
 		requestLicense();
 		return;
@@ -377,10 +382,7 @@ QString ByteBeautyWidget::getLicenseFilePath()
 
 void ByteBeautyWidget::requestLicense()
 {
-	if (g_byte_beauty_key.empty() || g_byte_beauty_secret.empty()) {
-		qWarning() << Q_FUNC_INFO << "byte beauty key or secret is empty";
-		return;
-	}
+
 	if (m_video == nullptr) {
 		qWarning() << Q_FUNC_INFO << "not createRTCVideo ";
 		return;
