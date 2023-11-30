@@ -1,0 +1,2 @@
+3rd/mac/VolcEngineRTC/arm64/*.framework -text
+3rd/mac/VolcEngineRTC/x86/*.framework -text
