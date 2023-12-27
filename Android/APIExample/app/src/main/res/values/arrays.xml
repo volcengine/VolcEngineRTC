@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="voiceChangerType">
+        <item>VOICE_CHANGER_ORIGINAL</item>
+        <item>VOICE_CHANGER_GIANT</item>
+        <item>VOICE_CHANGER_CHIPMUNK</item>
+        <item>VOICE_CHANGER_MINIONST</item>
+        <item>VOICE_CHANGER_VIBRATO</item>
+        <item>VOICE_CHANGER_ROBOT</item>
+    </string-array>
+    <string-array name="reverbType">
+        <item>VOICE_REVERB_ORIGINAL</item>
+        <item>VOICE_REVERB_ECHO</item>
+        <item>VOICE_REVERB_CONCERT</item>
+        <item>VOICE_REVERB_ETHEREAL</item>
+        <item>VOICE_REVERB_KTV</item>
+        <item>VOICE_REVERB_STUDIO</item>
+        <item>VOICE_REVERB_VIRTUAL_STEREO</item>
+        <item>VOICE_REVERB_SPACIOUS</item>
+        <item>VOICE_REVERB_3D</item>
+    </string-array>
+    <string-array name="voiceEqualizationBandFrequency">
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_31</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_62</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_125</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_250</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_500</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_1k</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_2k</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_4k</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_8k</item>
+        <item>VOICE_EQUALIZATION_BAND_FREQUENCY_16k</item>
+    </string-array>
+    <string-array name="ansMode">
+        <item>ANS_MODE_DISABLE</item>
+        <item>ANS_MODE_LOW</item>
+        <item>ANS_MODE_MEDIUM</item>
+        <item>ANS_MODE_HIGH</item>
+        <item>ANS_MODE_AUTOMATIC</item>
+    </string-array>
+    <string-array name="renderMode">
+        <item>RENDER_MODE_HIDDEN</item>
+        <item>RENDER_MODE_FIT</item>
+        <item>RENDER_MODE_FILL</item>
+    </string-array>
+    <string-array name="mirrorType">
+        <item>MIRROR_TYPE_NONE</item>
+        <item>MIRROR_TYPE_RENDER</item>
+        <item>MIRROR_TYPE_RENDER_AND_ENCODER</item>
+    </string-array>
+    <string-array name="videoOrientation">
+        <item>Adaptive</item>
+        <item>Portrait</item>
+        <item>Landscape</item>
+    </string-array>
+    <string-array name="videoRotationMode">
+        <item>FollowApp</item>
+        <item>FollowGSensor</item>
+    </string-array>
+    <string-array name="capturePreference">
+        <item>AUTO</item>
+        <item>MANUAL</item>
+        <item>AUTO_PERFORMANCE</item>
+    </string-array>
+    <string-array name="encoderPreference">
+        <item>Disabled</item>
+        <item>MaintainFramerate</item>
+        <item>MaintainQuality</item>
+        <item>Balance</item>
+    </string-array>
+    <string-array name="layoutType">
+        <item>1x4</item>
+        <item>2x2</item>
+    </string-array>
+</resources>

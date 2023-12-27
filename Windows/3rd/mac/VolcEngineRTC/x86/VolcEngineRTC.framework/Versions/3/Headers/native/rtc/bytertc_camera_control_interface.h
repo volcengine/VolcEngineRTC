@@ -33,6 +33,7 @@ enum TorchState{
  */
 class ICameraControl {
 public:
+    virtual ~ICameraControl() = default;
     /** 
      * @type api
      * @region 视频管理

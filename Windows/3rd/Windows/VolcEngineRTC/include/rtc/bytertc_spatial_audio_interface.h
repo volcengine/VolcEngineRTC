@@ -79,7 +79,7 @@ public:
      *        调用此接口后，房间内的其他用户收听本地发声时，声源都在收听者正面。
      * @notes <br>
      *        + 调用本接口关闭朝向功能后，在当前的空间音频实例的生命周期内无法再次开启。<br>
-     *        + 调用此接口不影响本地用户收听朝向的音频效果。要改变本地用户收听朝向，参看 updateSelfOrientation{@link #ISpatialAudio#updateSelfOrientation} 和 updateListenerOrientation{@link #ISpatialAudio#updateListenerOrientation} 。
+     *        + 调用此接口不影响本地用户收听朝向的音频效果。要改变本地用户收听朝向，参看 updateSelfPosition{@link #ISpatialAudio#updateSelfPosition} 和 updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} 。
      */
     virtual void disableRemoteOrientation() = 0;
     
@@ -116,8 +116,8 @@ public:
     BYTERTC_DEPRECATED virtual int updateListenerOrientation(const HumanOrientation& orientation) = 0;
     /** 
      * @valid since 3.52
-     * @type api
      * @hidden(Linux)
+     * @type api
      * @region 音频管理
      * @brief 设置本地用户在自建空间直角坐标系中的收听坐标和收听朝向，以实现本地用户预期的空间音频收听效果。 
      * @param [in] position_info 空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
@@ -126,41 +126,43 @@ public:
      *        + <0：失败。 <br>
      *        + -2: 失败，原因是校验本地用户的三维朝向信息时，三个向量没有两两垂直。
      * @notes <br>
-     *        该方法需在进房后调用。调用该接口更新坐标前，你需调用 enableSpatialAudio{@link #ISpatialAudio#enableSpatialAudio} 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。<br>
-     *        调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+     *        + 该方法需在进房后调用。 <br>
+     *        + 调用该接口更新坐标前，你需调用 enableSpatialAudio{@link #ISpatialAudio#enableSpatialAudio} 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。<br>
+     *        + 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
      */
     virtual int updateSelfPosition(const PositionInfo& position_info) = 0;
     /** 
      * @valid since 3.52
-     * @type api
      * @hidden(Linux)
+     * @type api
      * @region 音频管理
      * @brief 设置房间内某一远端用户在本地用户自建的空间音频坐标系中的发声位置和发声朝向，以实现本地用户预期的空间音频收听效果。
-     * @param [in] uid 用户 ID
-     * @param [in] position_info 远端用户的空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
+     * @param uid 用户 ID
+     * @param position_info 远端用户的空间音频位置信息。参看 PositionInfo{@link #PositionInfo}。
      * @return  <br>
      *        + 0：成功。  <br>
      *        + <0：失败。 <br>
      *        + -2: 失败，原因是校验远端用户的三维朝向信息时，三个向量没有两两垂直。
      * @notes  <br>
-     *        该方法需在创建房间后调用。 <br>
-     *        调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+     *        + 该方法需在创建房间后调用。 <br>
+     *        + 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
      */
     virtual int updateRemotePosition(const char* uid, const PositionInfo& position_info) = 0;
     /** 
      * @valid since 3.52
-     * @type api
      * @hidden(Linux)
+     * @type api
      * @region 音频管理
      * @brief 移除调用 updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} 为某一远端用户设置的空间音频效果。
-     * @param [in] uid 远端用户 ID。
+     * @param uid 远端用户 ID。
      * @return  <br>
      *        + 0：成功。  <br>
-     *        + <0：失败。 
+     *        + <0：失败。
      */
     virtual int removeRemotePosition(const char* uid) = 0;
     /** 
      * @valid since 3.52
+     * @hidden(Linux)
      * @type api
      * @region 音频管理
      * @brief 移除调用 updateRemotePosition{@link #ISpatialAudio#updateRemotePosition} 为所有远端用户设置的空间音频效果。

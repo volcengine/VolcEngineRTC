@@ -21,11 +21,12 @@
 
 @end
 /** 
- * @type api
- * @brief 音效播放器
  * @valid since 3.53
- * @notes + 调用 setEventHandler:{@link #IAudioEffectPlayer#setEventHandler:} 设置回调句柄以获取相关回调。
-  *       + 使用混音功能时，你必须通过 [setActive:withOptions:error:](https://developer.apple.com/documentation/avfaudio/avaudiosession/1616627-setactive?language=objc) 激活应用的 audio session。直到彻底退出混音功能后，才可以关闭 audio session。
+ * @type api
+ * @brief 音效播放器。 <br>
+ * 注意：<br>
+ *      + 调用 setEventHandler:{@link #ByteRTCAudioEffectPlayer#setEventHandler:} 设置回调句柄以获取相关回调。
+ *      + 使用混音功能时，你必须通过 [setActive:withOptions:error:](https://developer.apple.com/documentation/avfaudio/avaudiosession/1616627-setactive?language=objc) 激活应用的 audio session。直到彻底退出混音功能后，才可以关闭 audio session。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
 /** 
@@ -52,6 +53,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  *           <tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
  *        </table>
  * @param config 音效配置，详见 ByteRTCAudioEffectPlayerConfig{@link #ByteRTCAudioEffectPlayerConfig}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 如果已经通过 preload:filePath:{@link #ByteRTCAudioEffectPlayer#preload:filePath:} 将文件加载至内存，确保此处的 ID 与 `preload` 设置的 ID 相同。
  *       + 开始播放音效文件后，可以调用 stop:{@link #ByteRTCAudioEffectPlayer#stop:} 方法停止播放音效文件。
@@ -61,6 +65,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @type api
  * @brief 停止播放音效文件。
  * @param effectId 音效 ID
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 方法开始播放音效文件后，可以调用本方法停止播放音效文件。
  *       + 调用本方法停止播放音效文件后，该音效文件会被自动卸载。
@@ -69,6 +76,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
 /** 
  * @type api
  * @brief 停止播放所有音效文件。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 方法开始播放音效文件后，可以调用本方法停止播放所有音效文件。
  *       + 调用本方法停止播放所有音效文件后，该音效文件会被自动卸载。
@@ -81,9 +91,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  *        如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br>
  *        如果先调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:}，再使用相同的 ID 调用本方法 ，会收到回调 onAudioEffectPlayerStateChanged:state:error:{@link #ByteRTCAudioEffectPlayerEventHandler#onAudioEffectPlayerStateChanged:state:error:}，通知前一个音效停止，然后加载下一个音效。  <br>
  *        调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 播放 B.mp3，请先调用 unload:{@link #ByteRTCAudioEffectPlayer#unload:} 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。
- * @param filePath 音效文件路径。支持在线文件的 URL、本地文件的 URI、或本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。
+ * @param filePath 音效文件路径。支持本地文件的 URI、或本地文件的绝对路径。
  *                 预加载的文件长度不得超过 20s。
  *                 不同平台支持的音效文件格式和 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 一致。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 本方法只是预加载指定音效文件，只有调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 方法才开始播放指定音效文件。
  *       + 调用本方法预加载的指定音效文件可以通过 unload:{@link #ByteRTCAudioEffectPlayer#unload:} 卸载。
@@ -92,15 +105,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
 /** 
  * @type api
  * @region 音效播放器
- * @brief 卸载指定音乐文件。
+ * @brief 卸载指定音效文件。
  * @param effectId 音效 ID
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 调用本方法卸载该文件后，关于当前的混音状态，如果设置了 setEventHandler:{@link #ByteRTCAudioEffectPlayer#setEventHandler:}，会收到回调 `onAudioEffectPlayerStateChanged`。
  */
 -(int)unload:(int)effectId;
 /** 
  * @type api
  * @region 音效播放器
- * @brief 卸载所有音乐文件。
+ * @brief 卸载所有音效文件。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 调用本方法卸载该文件后，关于当前的混音状态，如果设置了 setEventHandler:{@link #ByteRTCAudioEffectPlayer#setEventHandler:}，会收到回调 `onAudioEffectPlayerStateChanged`。
  */
 -(int)unloadAll;
@@ -108,6 +127,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @type api
  * @brief 暂停播放音效文件。
  * @param effectId 音效 ID
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 方法开始播放音效文件后，可以通过调用本方法暂停播放音效文件。
  *       + 调用本方法暂停播放音效文件后，可调用 resume:{@link #ByteRTCAudioEffectPlayer#resume:} 方法恢复播放。
@@ -116,6 +138,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
 /** 
  * @type api
  * @brief 暂停播放所有音效文件。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes
  *       + 调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 方法开始播放音效文件后，可以通过调用本方法暂停播放所有音效文件。
  *       + 调用本方法暂停播放所有音效文件后，可调用 resumeAll{@link #ByteRTCAudioEffectPlayer#resumeAll} 方法恢复所有播放。
@@ -125,12 +150,18 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @type api
  * @brief 恢复播放音效文件。
  * @param effectId 音效 ID
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 调用 pause:{@link #ByteRTCAudioEffectPlayer#pause:} 方法暂停播放音效文件后，可以通过调用本方法恢复播放。
  */
 -(int)resume:(int)effectId;
 /** 
  * @type api
  * @brief 恢复播放所有音效文件。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 调用 pauseAll{@link #ByteRTCAudioEffectPlayer#pauseAll} 方法暂停所有正在播放音效文件后，可以通过调用本方法恢复播放。
  */
 -(int)resumeAll;
@@ -140,7 +171,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @param effectId 音效 ID
  * @param position 音效文件起始播放位置，单位为毫秒。
  *        你可以通过 getDuration:{@link #ByteRTCAudioEffectPlayer#getDuration:} 获取音效文件总时长，position 的值应小于音效文件总时长。
- * @notes + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
  *        + 仅在调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 后调用此接口。
  */
 -(int)setPosition:(int)effectId position:(int)position;
@@ -151,7 +186,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @return  <br>
  *        + >0: 成功, 音效文件播放进度，单位为毫秒。
  *        + < 0: 失败
- * @notes + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
+ * @notes <br>
+ *        + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
  *        + 仅在调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 后调用此接口。
  */
 -(int)getPosition:(int)effectId;
@@ -160,6 +196,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @brief 调节指定音效的音量大小，包括音效文件和 PCM 音频。
  * @param effectId 音效 ID
  * @param volume 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 仅在调用 start:filePath:config:{@link #ByteRTCAudioEffectPlayer#start:filePath:config:} 后调用此接口。
  */
 -(int)setVolume:(int)effectId volume:(int)volume;
@@ -167,6 +206,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayer :NSObject
  * @type api
  * @brief 设置所有音效的音量大小，包括音效文件和 PCM 音效。
  * @param volume 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 该接口的优先级低于 setVolume:volume:{@link #ByteRTCAudioEffectPlayer#setVolume:volume:}，即通过 `setVolume` 单独设置了音量的音效 ID，不受该接口设置的影响。
  */
 -(int)setVolumeAll:(int)volume;

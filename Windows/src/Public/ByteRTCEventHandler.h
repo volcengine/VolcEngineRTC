@@ -4,6 +4,7 @@
 #include <QObject>
 #include "bytertc_room_event_handler.h"
 #include "bytertc_video_event_handler.h"
+#include "qglobal.h"
 #include "rtc/bytertc_audio_effect_player.h"
 #include "rtc/bytertc_media_player.h"
 #include "rtc/bytertc_transcoder_interface.h"
@@ -119,7 +120,7 @@ private:
     void onFirstLocalAudioFrame(bytertc::StreamIndex index) override;
 
     void onFirstRemoteVideoFrameRendered(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info) override;
-
+    void onFirstRemoteVideoFrameDecoded(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info) override;
 
     //from IAudioEffectPlayerEventHandler
     void onAudioEffectPlayerStateChanged(int effect_id, bytertc::PlayerState state, bytertc::PlayerError error);
@@ -206,5 +207,6 @@ Q_DECLARE_METATYPE(bytertc::MediaDeviceState)
 Q_DECLARE_METATYPE(bytertc::MediaDeviceError)
 Q_DECLARE_METATYPE(bytertc::VideoFrameInfo)
 Q_DECLARE_METATYPE(bytertc::RemoteStreamKey)
+Q_DECLARE_METATYPE(bytertc::StreamIndex)
 
 #endif // BYTERTCEVENTHANDLER_H

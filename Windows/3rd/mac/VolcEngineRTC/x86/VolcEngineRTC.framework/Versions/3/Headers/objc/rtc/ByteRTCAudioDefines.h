@@ -8,58 +8,55 @@
 /** 
  * @type keytype
  * @brief 音频场景类型。
- *        选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量。
+ *        选择音频场景后，SDK 会根据操作系统和开麦、闭麦状态，应用通话音量或媒体音量。参看[通话音量与媒体音量](https://www.volcengine.com/docs/6348/651068)了解更多相关信息。
+ *        你可以调用 `setAudioScenario:` 设置音频场景。
  *        如果以下音频场景类型无法满足你的业务需要，请联系技术支持人员。
  */
 typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
     /** 
      * @brief （默认）音乐场景。
      *        此场景适用于对音乐表现力有要求的场景，如音乐直播等。
-     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：
+     *        注意：在此场景下，使用内置扬声器/听筒时，开关麦可能发生音量突变。
+     *        不同音频设备，开麦和闭麦状态下的使用的音量类型：
      *        <table>
-     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
+     *           <tr><th></th><th>闭麦</th><th>开麦</th></tr>
+     *           <tr><td>内置扬声器</td><td>媒体音量</td><td>通话音量</td></tr>
+     *           <tr><td>内置听筒</td><td>媒体音量</td><td>通话音量</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td></tr>
      *        </table>
      */
     ByteRTCAudioScenarioMusic = 0,
     /** 
-     * @brief 高质量通话场景。  <br>
-     *        此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳机上自带的麦克风进行音频采集的场景。  <br>
-     *        此场景下，更倾向于使用媒体音量。由此，可能引起开关麦时音量突变。如不希望有此突变，请使用 `ByteRTCAudioScenarioHighqualityChat`。 <br>
-     *        此场景可以兼顾外放/使用蓝牙耳机时的音频体验，并避免使用蓝牙耳机时音量类型切换导致的听感突变。  <br>
-     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
+     * @brief 高质量通话场景。兼顾外放/蓝牙耳机时的音频体验。
+     *        注意：在此场景下，使用内置扬声器/听筒时，开关麦可能发生音量突变。使用 `ByteRTCAudioScenarioHighqualityChat` 可以避免此种情况。
+     *        不同音频设备，开麦和闭麦状态下的使用的音量类型：<br>
      *        <table>
-     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>听筒</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *           <tr><th></th><th>闭麦</th><th>开麦</th></tr>
+     *           <tr><td>内置扬声器</td><td>媒体音量</td><td>通话音量</td></tr>
+     *           <tr><td>内置听筒</td><td>媒体音量</td><td>通话音量</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr>
      *        </table>
      */
     ByteRTCAudioScenarioHighqualityCommunication = 1,
     /** 
      * @brief 纯通话音量场景。
-     *        此场景下，无论客户端音频路由情况和发布订阅状态，全程使用通话音量。
+     *        可以最大程度地消除回声，使通话清晰度达到最优。全程使用通话音量，不会有音量突变的听感。
      *        适用于需要频繁上下麦的通话或会议场景。
-     *        此场景可以保持统一的音频模式，不会有音量突变的听感；
-     *        最大程度地消除回声，使通话清晰度达到最优；
-     *        使用蓝牙耳机时，能够使用蓝牙耳机上自带的麦克风进行音频采集。
      *        但是，会压低使用媒体音量进行播放的其他音频的音量，且音质会变差。
      */
     ByteRTCAudioScenarioCommunication = 2,
     /** 
-     * @brief 纯媒体场景。一般不建议使用。
-     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。
+     * @brief 纯媒体场景。
+     *        全程使用媒体音量，不会有音量突变的听感。
      *        外放通话时，可能出现回声和啸叫，请联系技术支持人员。
      */
     ByteRTCAudioScenarioMedia = 3,
     /** 
      * @brief 游戏媒体场景。
      *        若外放通话且无游戏音效消除优化时音质不理想，请联系技术支持人员。
-     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
+     *        不同音频设备，开麦和闭麦状态下的使用的音量类型：<br>
      *        <table>
      *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
      *           <tr><td>设备自带麦克风和扬声器</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
@@ -72,16 +69,59 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioScenarioType) {
     /** 
      * @brief 高质量畅聊场景。  <br>
      *        此场景和 `ByteRTCAudioScenarioHighqualityCommunication` 高度类似，唯一的差异在于：此场景下，在使用设备自带的麦克风和扬声器/听筒进行通话时，开关麦始终采用通话音量，不会引起音量类型突变。 <br>
-     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：<br>
+     *        不同音频设备，开麦和闭麦状态下的使用的音量类型：<br>
      *        <table>
-     *           <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
-     *           <tr><td>设备自带麦克风和扬声器</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>听筒</td><td>通话音量</td><td>通话音量</td><td>/</td></tr>
-     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
-     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td><td>能够使用蓝牙耳机上自带的麦克风进行音频采集。</td></tr>
+     *           <tr><th></th><th>闭麦</th><th>开麦</th></tr>
+     *           <tr><td>内置扬声器</td><td>通话音量</td><td>通话音量</td></tr>
+     *           <tr><td>听筒</td><td>通话音量</td><td>通话音量</td></tr>
+     *           <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr>
+     *           <tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr>
      *        </table>
      */
     ByteRTCAudioScenarioHighqualityChat = 5,
+};
+ /** 
+    * @hidden internal use only
+    * @type keytype
+    * @brief 如果以下音频场景类型无法满足你的业务需要，请联系技术支持人员。
+    */
+ typedef NS_ENUM(NSInteger, ByteRTCAudioSceneType) {
+/** 
+     * @brief 默认场景 <br>
+     *        此场景适用于对音乐表现力有要求的场景，如音乐直播等。 
+     *        不同音频设备，开麦和闭麦状态下的使用的音量类型：
+     * <table>
+     *     <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *     <tr><td>内置麦克风和扬声器</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *     <tr><td>内置听筒</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *     <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *     <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
+     * </table>
+*/
+ByteRTCAudioSceneDefault = 0,
+/** 
+     * @brief 语聊场景  <br>
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量。<br>
+     *        适用于需要频繁上下麦的通话或会议场景以及视频聊天室场景。<br>
+     *        此场景可以保持统一的音频模式，不会有音量突变的听感。<br>
+     *        此场景可以最大程度地消除回声，使通话清晰度达到最优。<br>
+     *        使用蓝牙耳机时，能够使用蓝牙耳机上自带的麦克风进行音频采集。<br>
+     *        但是，此场景会压低使用媒体音量进行播放的其他音频的音量，且音质会变差。
+     */
+ByteRTCAudioSceneChatRoom = 1,
+/** 
+     * @brief 高音质语聊场景 <br>
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。<br>
+     *        外放通话时，可能出现回声和啸叫，请联系技术支持人员。<br>
+     *        此场景可以提供立体声高音质，强保证音频原声音质。<br>
+     */
+ByteRTCAudioSceneHighQualityChatRoom = 2,
+ /** 
+     * @brief 低延迟场景 <br>
+     *      适合低时延场景，如 k 歌场景。 <br>
+     *      此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。<br>
+     */
+ByteRTCAudioSceneLowLatency = 3,
 };
 
 /** 
@@ -797,7 +837,6 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaPlayerCustomSourceStreamType) {
      */
     ByteRTCMediaPlayerCustomSourceStreamTypeEncoded,
 };
-
 /** 
  * @type keytype
  * @brief 音频数据的起始读取位置。
@@ -1068,6 +1107,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFormat : NSObject
  * @brief 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
  *        最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
  *        最大值是 `2048`。超出取值范围时，采样点数取默认值。
+ *        该参数仅在设置读写回调时生效，调用 enableAudioFrameCallback:format:{@link #ByteRTCVideo#enableAudioFrameCallback:format:} 开启只读模式回调时设置该参数不生效。
  */
 @property(nonatomic, assign) int samplesPerCall;
 @end
@@ -1134,27 +1174,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFrame : NSObject
  * @param audioFrame 音频数据, 详见： ByteRTCAudioFrame{@link #ByteRTCAudioFrame}
  */
 - (void)onMixedAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-@end
-
-/** 
- * @type callback
- * @region 音频处理
- * @brief 自定义音频处理器
- * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
- */
-@protocol ByteRTCAudioProcessor <NSObject>
-/** 
- * @type callback
- * @region 音频处理
- * @brief 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
- * @param audioFrame RTC SDK 采集到的音频帧，自定义处理可直接对音频 buffer 中的数据进行修改。参看 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
- * @return  <br>
- *        0: 未处理  <br>
- *        >0: 处理成功  <br>
- *        < 0: 处理失败
- * @notes 在进行音频自定义处理前，你需要调用 `registerLocalAudioProcessor` 设置音频自定义处理器。
- */
-- (int)processAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 @end
 
 /** 
@@ -1247,15 +1266,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioDeviceManager : NSObject
 /** 
  * @type api
  * @region 音频设备管理
- * @brief 获取当前系统内音频播放设备列表。你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
+ * @brief 获取当前系统内音频播放设备列表。
  * @return 所有音频播放设备的列表，参看 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
+ * 等待超时后会返回空列表。超时时间默认为 10 s。建议通过 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 监听到 `ByteRTCMediaDeviceListUpdated` 后，再次调用本接口获取。
+ * @notes 你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
+
  */
 - (ByteRTCDeviceCollection * _Nonnull)enumerateAudioPlaybackDevices;
 /** 
  * @type api
  * @region 音频设备管理
- * @brief 获取音频采集设备列表。如果后续设备有变更，你需要重新调用本接口以获得新的设备列表。
+ * @brief 获取音频采集设备列表。
  * @return 音频采集设备列表。详见 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
+ * 等待超时后会返回空列表。超时时间默认为 10 s。建议通过 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 监听到 `ByteRTCMediaDeviceListUpdated` 后，再次调用本接口获取。
+ * @notes 你可以在收到 rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
  */
 - (ByteRTCDeviceCollection * _Nonnull)enumerateAudioCaptureDevices;
 /** 
@@ -1684,8 +1708,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
  */
 @property(assign, nonatomic) NSInteger callbackOnProgressInterval;
 /** 
- * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
- * @notes <br>
+ * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。 <br>
  *        + 仅在单个音频文件混音时使用有效。<br>
  *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
  */
@@ -1738,13 +1761,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 @property(assign, nonatomic) NSInteger startPos;
 /** 
  * @brief 设置音频文件混音时，收到 onMediaPlayerPlayingProgress:progress:{@link #ByteRTCMediaPlayerEventHandler#onMediaPlayerPlayingProgress:progress:} 的间隔。单位毫秒。
- *       + interval > 0 时，触发回调。实际间隔是 `10*(mod(10)+1)`。
+ *       + interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。
  *       + interval <= 0 时，不会触发回调。
  */
  @property(assign, nonatomic) NSInteger callbackOnProgressInterval;
 /** 
- * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
- * @notes <br>
+ * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。 <br>
  *        + 仅在单个音频文件混音时使用有效。<br>
  *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
  */
@@ -1754,7 +1776,6 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 */
 @property(assign, nonatomic) BOOL autoPlay;
 @end
-
 /** 
  * @type callback
  * @brief 内存播放数据源回调
@@ -1765,7 +1786,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaPlayerCustomSourceProvider <NSObject>
  * @type callback
  * @region 音乐播放器
  * @brief 调用 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 接口播放用户传入的内存音频数据时，会触发此回调，用户需要写入音频数据。
- * @param buffer 内存地址。在该地址中写入音频数据，写入音频数据的大小不超过 bufferSize 中填入的数值。支持的音频数据格式有: mp3，aac，m4a，3gp，wav。 <br>
+ * @param buffer 内存地址。在该地址中写入音频数据，写入音频数据的大小不超过 bufferSize 中填入的数值。支持的音频数据格式有: mp3，aac，m4a，3gp，wav。
  * @param bufferSize 音频数据大小，单位为字节。如果你想停止播放内存音频数据，可在 bufferSize 中填入小于或等于 0 的数，此时 SDK 会停止调用此接口。 
  * @return 返回实际读取的音频数据大小。
  * @notes 若 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 接口调用失败，请在 buffer 和 bufferSize 两个参数中填入 0。 此时 SDK 会停止调用此接口。
@@ -1790,9 +1811,6 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCMediaPlayerCustomSourceProvider <NSObject>
  * @brief 音频源
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerCustomSource : NSObject
-/** 
- * @brief 仅在使用内存播放时，传入对应的 ByteRTCMediaPlayerCustomSourceProvider{@link #ByteRTCMediaPlayerCustomSourceProvider} 实例。
- */
 @property(weak, nonatomic) id<ByteRTCMediaPlayerCustomSourceProvider> _Nullable provider;
 /**  
  * @type keytype
@@ -1821,15 +1839,15 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 /** 
  * @brief 是否开启音频频谱检测。
  */
-@property(assign, nonatomic) BOOL enable_spectrum;
+@property(assign, nonatomic) BOOL enableSpectrum;
 /** 
  * @brief 是否开启人声检测 (VAD)。
  */
-@property(assign, nonatomic) BOOL enable_vad;
+@property(assign, nonatomic) BOOL enableVad;
 /** 
  * @brief 音量回调模式。详见 ByteRTCAudioReportMode{@link #ByteRTCAudioReportMode}。
  */
-@property(assign, nonatomic) ByteRTCAudioReportMode local_main_report_mode;
+@property(assign, nonatomic) ByteRTCAudioReportMode localMainReportMode;
 /** 
  * @brief 适用于音频属性信息提示的平滑系数。取值范围是 `(0.0, 1.0]`。<br>
  *        默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。
@@ -1840,7 +1858,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
  * @brief rtcEngine:onLocalAudioPropertiesReport:{@link #ByteRTCVideoDelegate#rtcEngine:onLocalAudioPropertiesReport:} 中包含音频数据的范围。参看 ByteRTCAudioPropertiesMode{@link #ByteRTCAudioPropertiesMode}。
  *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
  */
-@property(assign, nonatomic) ByteRTCAudioPropertiesMode audio_report_mode;
+@property(assign, nonatomic) ByteRTCAudioPropertiesMode audioReportMode;
+
+/** 
+ * @brief 是否回调本地用户的人声基频。
+ */
+@property(assign, nonatomic) BOOL enableVoicePitch;
 @end
 
 /** 
@@ -1875,6 +1898,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
  * @brief 频谱数组。默认长度为 257。
  */
 @property(copy, nonatomic) NSArray<NSNumber*> * _Nonnull spectrum;
+/** 
+ * @brief 本地用户的人声基频，单位为赫兹。 <br>
+ *        同时满足以下两个条件时，返回的值为本地用户的人声基频：
+ *      + 调用 enableAudioPropertiesReport:{@link #ByteRTCVideo#enableAudioPropertiesReport:}，并设置参数 enableVoicePitch 的值为 `true`。 <br>
+ *      + 本地采集的音频中包含本地用户的人声。 <br>
+ *        其他情况下返回 `0`。 
+ */
+@property(assign, nonatomic) NSInteger voicePitch;
 @end
 
 /** 
@@ -1915,7 +1946,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioPropertiesInfo : NSObject
  * @type keytype
  * @brief 本地用户在房间内的位置坐标，需自行建立空间直角坐标系
  */
-BYTERTC_APPLE_EXPORT @interface Position : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCPosition : NSObject
 /** 
  * @brief x 坐标
  */
@@ -1934,7 +1965,7 @@ BYTERTC_APPLE_EXPORT @interface Position : NSObject
  * @type keytype
  * @brief 方向朝向信息
  */
-BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCOrientation : NSObject
 /** 
  * @brief x 坐标
  */
@@ -1951,21 +1982,21 @@ BYTERTC_APPLE_EXPORT @interface Orientation : NSObject
 
 /** 
  * @type keytype
- * @brief 三维朝向信息，三个向量需要两两垂直。参看 Orientation{@link #Orientation}。
+ * @brief 三维朝向信息，三个向量需要两两垂直。参看 ByteRTCOrientation{@link #ByteRTCOrientation}。
  */
-BYTERTC_APPLE_EXPORT @interface HumanOrientation : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCHumanOrientation : NSObject
 /** 
  * @brief 正前方朝向，默认值为 {1,0,0}，即正前方朝向 x 轴正方向
  */
-@property(nonatomic, strong) Orientation* _Nonnull forward;
+@property(nonatomic, strong) ByteRTCOrientation* _Nonnull forward;
 /** 
  * @brief 正右方朝向，默认值为 {0,1,0}，即右手朝向 y 轴正方向
  */
-@property(nonatomic, strong) Orientation* _Nonnull right;
+@property(nonatomic, strong) ByteRTCOrientation* _Nonnull right;
 /** 
  * @brief 正上方朝向，默认值为 {0,0,1}，即头顶朝向 z 轴正方向
  */
-@property(nonatomic, strong) Orientation* _Nonnull up;
+@property(nonatomic, strong) ByteRTCOrientation* _Nonnull up;
 @end
 
 /** 
@@ -2223,11 +2254,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEnhancementConfig: NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCPositionInfo : NSObject
 /** 
- * @brief 用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 Position{@link #Position}。
+ * @brief 用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 ByteRTCPosition{@link #ByteRTCPosition}。
  */
-@property(strong, nonatomic) Position *_Nonnull position;
+@property(strong, nonatomic) ByteRTCPosition *_Nonnull position;
 /** 
- * @brief 用户在空间音频坐标系里的三维朝向信息。三个向量需要两两垂直。参看 HumanOrientation{@link #HumanOrientation}。
+ * @brief 用户在空间音频坐标系里的三维朝向信息。三个向量需要两两垂直。参看 ByteRTCHumanOrientation{@link #ByteRTCHumanOrientation}。
  */
-@property(strong, nonatomic) HumanOrientation *_Nonnull orientation;
+@property(strong, nonatomic) ByteRTCHumanOrientation *_Nonnull orientation;
 @end

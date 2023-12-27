@@ -39,7 +39,6 @@ typedef struct Quaternionf {
  */
 class IPanoramicVideo {
 public:
-
     /** 
      * @type api
      * @brief 更新接收者的头位姿四元数。RTC 将根据头位姿下发相应的 Tile 视频。
@@ -47,6 +46,6 @@ public:
      */
     virtual int updateQuaternionf(const Quaternionf& info) = 0;
 
-    ~IPanoramicVideo() {}
+    virtual ~IPanoramicVideo() = default;
 };
 }

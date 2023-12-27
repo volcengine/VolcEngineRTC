@@ -121,6 +121,7 @@ ByteRTCEventHandler::ByteRTCEventHandler(QObject* parent)
     qRegisterMetaType<bytertc::UserOfflineReason>();
     qRegisterMetaType<bytertc::RemoteStreamKey>();
     qRegisterMetaType<bytertc::VideoFrameInfo>();
+    qRegisterMetaType<bytertc::StreamIndex>();
     
 }
 
@@ -184,6 +185,7 @@ void ByteRTCEventHandler::onSysStats(const bytertc::SysStats &stats)
 
 void ByteRTCEventHandler::onLocalVideoSizeChanged(bytertc::StreamIndex index, const bytertc::VideoFrameInfo &info)
 {
+    qDebug() << Q_FUNC_INFO << "index:" << index << ",w=" << info.width << ",h=" << info.height << ",rotation=" << info.rotation;
     emit sigLocalVideoSizeChanged(index, info);
 }
 
@@ -244,12 +246,18 @@ void ByteRTCEventHandler::onMediaPlayerPlayingProgress(int playerId, int64_t pro
 
 void ByteRTCEventHandler::onFirstRemoteVideoFrameRendered(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info)
 {
+    qDebug() << Q_FUNC_INFO << "roomid=" << key.room_id << ",uid=" << key.user_id << ",width=" << info.width << ",height=" << info.height << ",rotation=" << info.rotation;
     ByteRTCEventHandler::Stru_RemoteStreamKey skey;
     skey.room_id = key.room_id == nullptr ? "" : key.room_id;
     skey.user_id = key.user_id == nullptr ? "" : key.user_id;
     skey.stream_index = key.stream_index;
 
     emit sigFirstRemoteVideoFrameRendered(skey, info);
+}
+
+void ByteRTCEventHandler::onFirstRemoteVideoFrameDecoded(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo &info)
+{
+    qDebug() << Q_FUNC_INFO << "roomid=" << key.room_id << ",uid=" << key.user_id << ",w=" << info.width << ",h=" << info.height << ",rotation=" << info.rotation;
 }
 
 void ByteRTCRoomHandler::onForwardStreamEvent(bytertc::ForwardStreamEventInfo* infos, int info_count)

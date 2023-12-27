@@ -2,6 +2,7 @@
 #define USERWIDGET_H
 
 #include <QWidget>
+#include <QLabel>
 
 namespace Ui {
 class UserWidget;
@@ -22,12 +23,10 @@ public:
     void *getWinId();
 
 private:
-    void paintEvent(QPaintEvent* event);
-
-private:
     Ui::UserWidget *ui;
 
     std::string m_uid, m_roomid;
+    QLabel *m_label = nullptr;
 };
 
 #endif // USERWIDGET_H

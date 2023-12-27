@@ -10,13 +10,14 @@
 
 #include "Utils.h"
 #include "Config.h"
+#include "Resources.h"
 
 #include <sstream>
 
 /**
 * 功能名称： VolcEngineRTC 推流到CDN
 * 功能简单描述：对于一个音视频通话，你可以将其中的多路音视频流合为一路，并将合并得到的音视频流推送到指定的推流地址（通常是 CDN 地址）
-* 参考文档：https://www.volcengine.com/docs/6348/69822
+* 参考文档：https://www.volcengine.com/docs/6348/69817
 *
 * 此功能涉及的API及回调：
 *     createRTCVideo 创建引擎
@@ -87,7 +88,7 @@ void CDNStreamByServer::initRTCVideo()
     m_video->startVideoCapture();
 
     QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void CDNStreamByServer::cleanRTCVideo()
@@ -107,7 +108,7 @@ void CDNStreamByServer::cleanRTCVideo()
 
         m_video = nullptr;
         list = list + QStringList{ "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo" };
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
     }
     
 }
@@ -134,14 +135,14 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
         m_roomid = qstr_room.toStdString();
 
 		if (!Utils::checkIDValid(qstr_user_name, QStringLiteral("用户名"), qstr_error)) {
-			QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "uid error " + qstr_error, QMessageBox::Ok);
 			box.exec();
 			return;
 
 		}
 
 		if (!Utils::checkIDValid(qstr_room, QStringLiteral("房间号"), qstr_error)) {
-			QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "roomid error " + qstr_error, QMessageBox::Ok);
 			box.exec();
 			return;
 		}
@@ -176,7 +177,7 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
 			return;
 		}
         QStringList list = { "createRTCRoom", "setLocalVideoCanvas", "setRTCRoomEventHandler", "joinRoom" };
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
 
     }else {
         if (m_room) {
@@ -192,7 +193,7 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
         
         ui->btn_join->setText(QStringLiteral("进房"));
         QStringList list = { "leaveRoom", "destroy"};
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
     }
 }
 
@@ -212,7 +213,7 @@ void CDNStreamByServer::resetRTCVideo()
 		bytertc::destroyRTCVideo();
         m_video = nullptr;
 	}
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void CDNStreamByServer::initData()
@@ -220,10 +221,49 @@ void CDNStreamByServer::initData()
     m_widgets.push_back(ui->widget2);
     m_widgets.push_back(ui->widget3);
     m_widgets.push_back(ui->widget4);
-    for (int i = 0; i < m_widgets.size(); i++) {
-        m_widgets[i]->setUserInfo("", "");
-    }
 
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    };
+
+    ui->lineEdit_room->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_uid->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_url->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_v_h->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_v_w->setStyleSheet(APIDemo::str_qss_text);
+    ui->btn_join->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->btn_start->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_stop->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_update->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_color->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->comboBox_a_code1->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_a_code2->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_channel->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_samplerate->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_v_code->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+
+    ui->spinBox_a_bitrate->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_v_bitrate->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_v_fps->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t3->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t4->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t5->setStyleSheet(APIDemo::str_qss_label_ttile);
 }
 
 void CDNStreamByServer::updateBtns(bool btn1, bool btn2, bool btn3)
@@ -261,7 +301,7 @@ bytertc::IMixedStreamConfig* CDNStreamByServer::getMixedStreamConfig()
     videoParam.gop = 2;
     videoParam.width = 640;
     videoParam.height = 360;
-    videoParam.enable_Bframe = false;
+    videoParam.enable_bframe = false;
     if (ui->comboBox_v_code->currentText().contains("264")) {
         videoParam.video_codec = bytertc::kMixedStreamVideoCodecTypeH264; //本参数不支持过程中更新
     }
@@ -280,21 +320,21 @@ bytertc::IMixedStreamConfig* CDNStreamByServer::getMixedStreamConfig()
         lay.region_id = ite->first.c_str();
         lay.room_id = m_roomid.c_str();
 
-        lay.location_x = (i % 2) * 0.5; //确定每个流的位置
-        lay.location_y = (i / 2) * 0.5;
+        lay.location_x = (i % 2) * 0.5 * videoParam.width; //确定每个流的位置
+        lay.location_y = (i / 2) * 0.5 *  videoParam.height;
 
 
         if (m_rendered_users.size() == 1) {
-            lay.width_proportion = 0.8; //只有一路流时，为了展示背景色，设置宽度和高度为0.8
-            lay.height_proportion = 0.8;
+            lay.width = 0.8 * videoParam.width; //只有一路流时，为了展示背景色，设置宽度和高度为0.8
+            lay.height = 0.8 * videoParam.height;
         }
         else if (m_rendered_users.size() == 2) {
-            lay.width_proportion = 0.4; //有2路流时，横向并排展示，宽度0.4，高度0.8
-            lay.height_proportion = 0.8;
+            lay.width = 0.4 * videoParam.width; //有2路流时，横向并排展示，宽度0.4，高度0.8
+            lay.height = 0.8 * videoParam.height;
         }
         else {
-            lay.width_proportion = 0.4; //有3或4路流时，4宫格展示，每路流宽度0.4，高度0.4
-            lay.height_proportion = 0.4;
+            lay.width = 0.4 * videoParam.width; //有3或4路流时，4宫格展示，每路流宽度0.4，高度0.4
+            lay.height = 0.4 * videoParam.height;
         }
 
         if (ite->first == m_localid) {
@@ -334,7 +374,7 @@ bytertc::IMixedStreamConfig* CDNStreamByServer::getMixedStreamConfig()
     return mixed_stream_param;
 
     QStringList list = {"setAudioConfig", "setVideoConfig", "setLayoutConfig", "setExpectedMixingType", "setPushURL", "setRoomID", "setUserID", "setClientMixConfig"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 std::unique_ptr<ByteRTCRoomHandler> CDNStreamByServer::createRoomHandler(std::string roomid, std::string uid)
@@ -361,7 +401,7 @@ void CDNStreamByServer::onSigRoomStateChanged(std::string roomid, std::string ui
         << ",uid:" << uid
         << ",state:" << std::to_string(state)
         << ",extra:" << extra_info;
-    ui->widget_log->appendCallback(QString::fromStdString(log_str.str()));
+    appendCallback(QString::fromStdString(log_str.str()));
     if (state == 0) {
         ui->btn_join->setText(QStringLiteral("离房"));
     }
@@ -375,7 +415,7 @@ void CDNStreamByServer::onSigUserPublishStream(std::string roomid, std::string u
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (m_rendered_users.count(uid) > 0) {
         return; //已经渲染了
@@ -398,7 +438,7 @@ void CDNStreamByServer::onSigUserPublishStream(std::string roomid, std::string u
             m_rendered_users[uid] = w;
             w->setUserInfo(roomid, uid);
 
-            ui->widget_log->appendAPI("setRemoteVideoCanvas");
+            appendAPI("setRemoteVideoCanvas");
         }
     }
 
@@ -410,7 +450,7 @@ void CDNStreamByServer::onSigUserUnPublishStream(std::string roomid, std::string
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (m_rendered_users.count(uid) > 0) { //正在渲染的用户离开了
         //停止渲染原来用户
@@ -440,7 +480,7 @@ void CDNStreamByServer::onSigUserUnPublishStream(std::string roomid, std::string
                 m_unrender_users.erase(new_id);
             }
         }
-        ui->widget_log->appendAPI("setRemoteVideoCanvas");
+        appendAPI("setRemoteVideoCanvas");
 
     } else {
         if (m_unrender_users.count(uid) > 0) { //未渲染的用户离开了
@@ -453,25 +493,25 @@ void CDNStreamByServer::onSigMixingEvent(bytertc::StreamMixingEvent event, std::
 {
     QString str = "onMixingEvent, event:" + QString::number(event) + ",taskid:" + QString::fromStdString(task_id)
                   + ",error:" + QString::number(error) + ",type:" + QString::number(mix_type);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 void CDNStreamByServer::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
 {
     QString str = "onUserJoined, uid:" + QString::fromStdString(info.uid) + ",roomid:" + QString::fromStdString(info.roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 void CDNStreamByServer::onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason)
 {
     QString str = "onUserLeave, uid:" + QString::fromStdString(uid) + ",roomid:" + QString::fromStdString(roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 void CDNStreamByServer::onSigLeaveRoom(std::string roomid, std::string uid, bytertc::RtcRoomStats)
 {
     QString str = "onLeaveRoom, uid:" + QString::fromStdString(uid) + ",roomid:" + QString::fromStdString(roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 
@@ -497,7 +537,7 @@ void CDNStreamByServer::on_start_clicked()
         return;
     }
 
-    ui->widget_log->appendAPI("startPushMixedStreamToCDN");
+    appendAPI("startPushMixedStreamToCDN");
     updateBtns(false, true, true);
     ui->comboBox_v_code->setEnabled(false);
 }
@@ -514,7 +554,7 @@ void CDNStreamByServer::on_update_clicked()
         box.exec();
         return;
     }
-    ui->widget_log->appendAPI("updatePushMixedStreamToCDN");
+    appendAPI("updatePushMixedStreamToCDN");
 }
 
 void CDNStreamByServer::on_stop_clicked()
@@ -530,7 +570,7 @@ void CDNStreamByServer::on_stop_clicked()
     }
     updateBtns(true, false, false);
     ui->comboBox_v_code->setEnabled(true);
-    ui->widget_log->appendAPI("stopPushStreamToCDN");
+    appendAPI("stopPushStreamToCDN");
 }
 
 

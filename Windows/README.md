@@ -70,18 +70,18 @@
 # 目录说明
 API-Demo包含以下功能：
 - 基础功能
-	- [快速开始](快速开始)
+    - [快速开始](https://github.com/volcengine/VolcEngineRTC/tree/ApiExample_Demo/Windows/src/Basic)
 - 高阶功能
-	- [多房间](多房间)
-	- [跨房PK](跨房PK)
-	- [原始音频数据](原始音频数据)
-	- [音效混音](音效混音)
-	- [音乐混音](音乐混音)
-	- [美声与音效](美声与音效)
-	- [常用视频配置](常用视频配置)
-	- [合流转推CDN](合流转推CDN)
-	- [字节美颜](字节美颜)
-	- [相芯美颜](相芯美颜)
+    - [多房间](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/MultiRoom/MultiRoom.cpp)  
+    - [跨房PK](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/CrossRoomPK/CrossRoomPK.cpp)
+    - [原始音频数据](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/AudioMixing/RawAudioData.cpp)
+    - [音效混音](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/AudioMixing/AudioMixingEffect.cpp)
+    - [音乐混音](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/AudioMixing/AudioMixingMedia.cpp)
+    - [美声与音效](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/SoundEffects/SoundEffectsWidget.cpp)
+    - [常用视频配置](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/VideoConfig/VideoConfigWidget.cpp)
+    - [合流转推CDN](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/CDNStream/CDNStreamByServer.cpp)
+    - [字节美颜](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/ByteBeauty/ByteBeautyWidget.cpp)
+    - [相芯美颜](https://github.com/volcengine/VolcEngineRTC/blob/ApiExample_Demo/Windows/src/Advanced/FuBeauty/FaceUnityWidget.cpp)
 
 
 

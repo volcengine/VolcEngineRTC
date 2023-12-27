@@ -14,8 +14,7 @@ namespace Ui {
 class ByteBeautyWidget;
 }
 
-class ByteBeautyWidget : 
-    public BaseWidget
+class ByteBeautyWidget : public BaseWidget
 {
     Q_OBJECT
 public:

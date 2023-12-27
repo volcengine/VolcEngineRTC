@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 定义背景图层 -->
+    <item>
+        <shape>
+            <solid android:color="@color/white"/> <!-- 设置填充颜色 -->
+            <stroke android:color="#919191" android:width="0.5dp"/> <!-- 设置边框颜色和宽度 -->
+            <corners android:radius="4dp"/> <!-- 设置圆角半径 -->
+        </shape>
+    </item>
+
+    <!-- 定义箭头图标图层 -->
+    <item android:right="4dp" android:top="0dp" android:bottom="0dp">
+        <bitmap
+            android:src="@drawable/ic_down"
+            android:gravity="end|center_vertical"
+            android:adjustViewBounds="true"
+            android:layout_width="1dp"
+            android:layout_height="1dp"/>
+    </item>
+
+</layer-list>

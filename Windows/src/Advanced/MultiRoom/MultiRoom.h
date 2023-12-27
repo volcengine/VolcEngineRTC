@@ -48,6 +48,7 @@ private:
     std::unique_ptr<ByteRTCRoomHandler> createRoomHandler(std::string roomid, std::string uid);
 
     void removeCavas(std::string roomid, std::string uid);
+    void initUI();
 
 private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);

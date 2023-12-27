@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "../bytertc_engine_interface.h"
 #include <stdint.h>
 #include <stdarg.h>
 

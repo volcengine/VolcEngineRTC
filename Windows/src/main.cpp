@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
     MainWindow w;
     int width = screen_size.width() * 0.8;
-    int height = screen_size.height() * 0.8;
+    int height = screen_size.height() * 0.85;
     w.resize(width, height);
     w.move(screen->geometry().topLeft());
     w.show();

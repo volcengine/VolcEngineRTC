@@ -16,7 +16,10 @@
 /**
 * 功能名称： VolcEngineRTC 视频常用配置
 * 功能简单描述：修改视频常用的采集、编码参数，设置旋转角度、水印等功能
-* 参考文档：https://www.volcengine.com/docs/6348/70122
+* 参考文档：常用视频配置 https://www.volcengine.com/docs/6348/70122
+* 参考文档：视频旋转 https://www.volcengine.com/docs/6348/106458
+
+
 *
 * 此功能涉及的API及回调：
 *     createRTCVideo 创建引擎
@@ -55,6 +58,7 @@ VideoConfigWidget::VideoConfigWidget(QWidget *parent) :
     ui(new Ui::VideoConfigWidget)
 {
     ui->setupUi(this);
+    initUI();
     initConnections();
     initRTCVideo();
 }
@@ -80,13 +84,14 @@ void VideoConfigWidget::initConnections()
 
 void VideoConfigWidget::initRTCVideo()
 {
-    auto handler = new ByteRTCEventHandler();
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), handler, nullptr);
+    m_handler.reset(new ByteRTCEventHandler());
+    connect(m_handler.get(), &ByteRTCEventHandler::sigLocalVideoSizeChanged, this, &VideoConfigWidget::onSigLocalVideoSizeChanged);
+    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 
     QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void VideoConfigWidget::cleanRTCVideo()
@@ -105,7 +110,51 @@ void VideoConfigWidget::cleanRTCVideo()
         m_video = nullptr;
     }
     QStringList list = { "leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
+}
+
+void VideoConfigWidget::initUI()
+{
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    };
+    ui->btn_join->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->lineEdit_room->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_uid->setStyleSheet(APIDemo::str_qss_text);
+    ui->comboBox_c_render->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_remote_render->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_capture_preference->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_e_preference->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_morror->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_rotation->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->btn_fix_capture->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_fix_encoder->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->spinBox_c_fps->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_c_h->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_c_w->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_e_bps_max->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_e_bps_min->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_e_fps->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_e_h->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_e_w->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->groupBox->setStyleSheet(APIDemo::str_qss_groupbox);
+    ui->groupBox_2->setStyleSheet(APIDemo::str_qss_groupbox);
+    ui->checkBox_water->setStyleSheet(APIDemo::str_qss_checkbox);
 }
 
 ByteRTCRoomHandler* VideoConfigWidget::createRoomHandler(std::string roomid, std::string uid)
@@ -149,13 +198,13 @@ void VideoConfigWidget::onBtnJoinClicked() {
 
     if (ui->btn_join->text() == QStringLiteral("进房")) {
         if (!Utils::checkIDValid(QString::fromStdString(str_uid), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "uid error " + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
 
         if (!Utils::checkIDValid(QString::fromStdString(str_room), QStringLiteral("房间号"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "roomid error " + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -168,13 +217,14 @@ void VideoConfigWidget::onBtnJoinClicked() {
         }
 
         bytertc::VideoCanvas cavs;
-        cavs.view = (void*)ui->widget->winId();
+        cavs.view = (void*)ui->widget->getWinId();
         cavs.render_mode = getRenderMode(ui->comboBox_c_render); //渲染参数
         cavs.background_color = 0x00FF0000;
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cavs); 
+        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cavs);
+        ui->widget->setUserInfo(str_room, str_uid);
         
 
-        onBtnCaptureClicked();//采集参数
+        onBtnCaptureClicked();//采集参数, setVideoCaptureConfig 接口建议在 startVideoCapture 前调用
         onBtnEncoderClicked();//编码参数
 
         m_video->startAudioCapture();
@@ -212,7 +262,7 @@ void VideoConfigWidget::onBtnJoinClicked() {
         ui->btn_join->setText(QStringLiteral("进房"));
         list = QStringList{ "leaveRoom", "destroy"};
     }
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void VideoConfigWidget::onBtnCaptureClicked()
@@ -221,18 +271,19 @@ void VideoConfigWidget::onBtnCaptureClicked()
     bytertc::VideoCaptureConfig config;
     config.width = ui->spinBox_c_w->value(); //采集宽度
     config.height = ui->spinBox_c_h->value(); //采集高度
-    config.frameRate = ui->spinBox_c_fps->value(); //采集帧率
-    config.capturePreference = getCapturePreference(); //采集偏好设置
+    config.frame_rate = ui->spinBox_c_fps->value(); //采集帧率
+    config.capture_preference = getCapturePreference(); //采集偏好设置
     
     if (m_video) {
         
+        //当分辨率或旋转角度发生变化时，回调 onLocalVideoSizeChanged
         ret = m_video->setVideoCaptureConfig(config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setVideoCaptureConfig error"), QMessageBox::Ok);
             box.exec();
             return;
         }
-        ui->widget_log->appendAPI("setVideoCaptureConfig");
+        appendAPI("setVideoCaptureConfig");
     }
 }
 
@@ -243,17 +294,17 @@ void VideoConfigWidget::onBtnEncoderClicked()
         bytertc::VideoEncoderConfig config;
         config.width = ui->spinBox_e_w->value();
         config.height = ui->spinBox_e_h->value();
-        config.frameRate = ui->spinBox_e_fps->value();
-        config.encoderPreference = getEncoderPreference();
-        config.minBitrate = ui->spinBox_e_bps_min->value();
-        config.maxBitrate = ui->spinBox_e_bps_max->value();
+        config.frame_rate = ui->spinBox_e_fps->value();
+        config.encoder_preference = getEncoderPreference();
+        config.min_bitrate = ui->spinBox_e_bps_min->value();
+        config.max_bitrate = ui->spinBox_e_bps_max->value();
         ret = m_video->setVideoEncoderConfig(config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setVideoEncoderConfig error"), QMessageBox::Ok);
             box.exec();
             return;
         }
-        ui->widget_log->appendAPI("setVideoEncoderConfig");
+        appendAPI("setVideoEncoderConfig");
     }
 }
 
@@ -266,7 +317,7 @@ void VideoConfigWidget::onComboMirrorClicked(const QString& text) //镜像
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setLocalVideoMirrorType error"), QMessageBox::Ok);
             box.exec();
         }
-        ui->widget_log->appendAPI("setLocalVideoMirrorType");
+        appendAPI("setLocalVideoMirrorType");
     }
 }
 
@@ -278,17 +329,17 @@ void VideoConfigWidget::onComboLocalRenderTextChanged(const QString &text) //本
         cas.view = nullptr;
         m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
 
-        cas.view = (void*)ui->widget->winId();
+        cas.view = (void*)ui->widget->getWinId();
         cas.render_mode = getRenderMode(ui->comboBox_c_render);
         cas.background_color = 0; //默认黑色背景
         ret = m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
 
         if (ret < 0) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setLocalVideoMirrorType error"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setLocalVideoCanvas error"), QMessageBox::Ok);
             box.exec();
         }
 
-        ui->widget_log->appendAPI("setLocalVideoCanvas");
+        appendAPI("setLocalVideoCanvas, mode=" + QString::number(cas.render_mode));
     }
 }
 
@@ -309,13 +360,14 @@ void VideoConfigWidget::onComboRemoteRenderTextChanged(const QString &text) //�
         cas.render_mode = getRenderMode(ui->comboBox_remote_render);
         cas.view = nullptr;
         m_video->setRemoteVideoCanvas(key, cas);
-        cas.view = (void*)ui->widget_2->winId();
+        cas.view = (void*)ui->widget_2->getWinId();
         ret = m_video->setRemoteVideoCanvas(key, cas);
+        ui->widget_2->setUserInfo(m_roomid, m_rendering);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setRemoteVideoCanvas error"), QMessageBox::Ok);
             box.exec();
         }
-        ui->widget_log->appendAPI("setRemoteVideoCanvas");
+        appendAPI("setRemoteVideoCanvas");
     }
 }
 
@@ -328,20 +380,20 @@ void VideoConfigWidget::onCheckWaterClicked(int state) { //水印
     if (ui->checkBox_water->isChecked()) {
         std::string path = QApplication::applicationDirPath().toStdString() + APIDemo::str_Video_Watermark;
         bytertc::ByteWatermark mark;
-        config.visibleInPreview = true;
+        config.visible_in_preview = true;
         mark.x = 0;
         mark.y = 0;
         mark.width = 0.5;
         mark.height = 0.5;
-        config.positionInLandscapeMode = mark;
-        config.positionInPortraitMode = mark;
+        config.position_in_landscape_mode = mark;
+        config.position_in_portrait_mode = mark;
 
         ret = m_video->setVideoWatermark(bytertc::kStreamIndexMain, path.c_str(), config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setVideoWatermark error:") + QString::number(ret), QMessageBox::Ok);
             box.exec();
         }
-        ui->widget_log->appendAPI("setVideoWatermark");
+        appendAPI("setVideoWatermark");
     }
     else {
         ret = m_video->clearVideoWatermark(bytertc::kStreamIndexMain);
@@ -350,7 +402,7 @@ void VideoConfigWidget::onCheckWaterClicked(int state) { //水印
             box.exec();
         }
 
-        ui->widget_log->appendAPI("clearVideoWatermark");
+        appendAPI("clearVideoWatermark");
     }
    
 }
@@ -362,7 +414,7 @@ void VideoConfigWidget::onSigRoomStateChanged(std::string roomid, std::string ui
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(state)
         + ",extra:" + QString::fromStdString(extra_info);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
     m_roomid = roomid;
 
     if (state == 0) {
@@ -379,7 +431,7 @@ void VideoConfigWidget::onSigUserPublishStream(std::string roomid, std::string u
 {
     QString str = QString("onUserPublishStream, roomid:") + QString::fromStdString(roomid)
                       + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
     if (type & bytertc::kMediaStreamTypeVideo) {
         Stru_User user(roomid, uid);
@@ -394,10 +446,11 @@ void VideoConfigWidget::onSigUserPublishStream(std::string roomid, std::string u
                 key.user_id = uid.c_str();
                 key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
                 cas.render_mode = getRenderMode(ui->comboBox_remote_render);
-                cas.view = (void*)ui->widget_2->winId();
+                cas.view = (void*)ui->widget_2->getWinId();
                 m_video->setRemoteVideoCanvas(key, cas);
                 m_rendering = uid;
-                ui->widget_log->appendAPI("setRemoteVideoCanvas");
+                ui->widget_2->setUserInfo(roomid, uid);
+                appendAPI("setRemoteVideoCanvas");
             }
         }
     }
@@ -408,7 +461,7 @@ void VideoConfigWidget::onSigUserUnPublishStream(std::string roomid, std::string
     QString str = QString("onUserUnPublishStream, roomid:") + QString::fromStdString(roomid)
                   + ",uid:" + QString::fromStdString(uid);
 
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
     if (m_video == nullptr) return;
     if (type & bytertc::kMediaStreamTypeVideo) {
         if (m_rusers.count(uid) > 0) {
@@ -432,14 +485,21 @@ void VideoConfigWidget::onSigUserUnPublishStream(std::string roomid, std::string
                 key.user_id = m_rusers.begin()->first.c_str();
                 key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
                 cas.render_mode = getRenderMode(ui->comboBox_remote_render);
-                cas.view = (void*)ui->widget_2->winId();
+                cas.view = (void*)ui->widget_2->getWinId();
                 m_video->setRemoteVideoCanvas(key, cas);
                 m_rendering = m_rusers.begin()->first;
-                ui->widget_log->appendAPI("setRemoteVideoCanvas");
+                ui->widget_2->setUserInfo(m_rusers.begin()->second.roomId, m_rusers.begin()->first);
+                appendAPI("setRemoteVideoCanvas");
             }
         }
         
     }
+}
+
+void VideoConfigWidget::onSigLocalVideoSizeChanged(bytertc::StreamIndex index, const bytertc::VideoFrameInfo info)
+{
+    QString str = "onLocalVideoSizeChanged, w=" + QString::number(info.width) + ",h=" + QString::number(info.height) + ",rotation=" + QString::number(info.rotation);
+    appendCallback(str);
 }
 
 bytertc::VideoCaptureConfig::CapturePreference VideoConfigWidget::getCapturePreference()
@@ -447,13 +507,13 @@ bytertc::VideoCaptureConfig::CapturePreference VideoConfigWidget::getCapturePref
     bytertc::VideoCaptureConfig::CapturePreference result;
     QString str = ui->comboBox_capture_preference->currentText();
     if (str.contains("Auto")) {
-        result = bytertc::VideoCaptureConfig::CapturePreference::KAuto;
+        result = bytertc::VideoCaptureConfig::CapturePreference::kAuto;
     }
     else if (str.contains("Manual")) {
-        result = bytertc::VideoCaptureConfig::CapturePreference::KManual;
+        result = bytertc::VideoCaptureConfig::CapturePreference::kManual;
     }
     else {
-        result = bytertc::VideoCaptureConfig::CapturePreference::KAutoPerformance;
+        result = bytertc::VideoCaptureConfig::CapturePreference::kAutoPerformance;
     }
 
     return result;
@@ -520,11 +580,12 @@ bytertc::VideoRotation VideoConfigWidget::getRotation()
 void VideoConfigWidget::onComboboRotationClicked(const QString& text)
 {
     if (m_video == nullptr) return;
+    //当分辨率或旋转角度发生变化时，收到 onLocalVideoSizeChanged 回调
     int ret = m_video->setVideoCaptureRotation(getRotation());
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setVideoCaptureRotation error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
         return;
     }
-    ui->widget_log->appendAPI("setVideoCaptureRotation");
+    appendAPI("setVideoCaptureRotation");
 }

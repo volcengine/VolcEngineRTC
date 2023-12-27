@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_compat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/x20"
+        android:layout_marginBottom="@dimen/x20"
+        android:checked="true"
+        android:theme="@style/SwitchCompat"
+        android:layout_marginLeft="@dimen/x10"  />
+
+    <LinearLayout
+        android:id="@+id/fyt_bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_list"
+        android:orientation="vertical">
+
+        <com.faceunity.nama.seekbar.DiscreteSeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="@dimen/x528"
+            android:layout_height="@dimen/x48"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/x24"
+            android:layout_marginBottom="@dimen/x15"
+            app:dsb_indicatorColor="@color/main_color"
+            app:dsb_indicatorElevation="0dp"
+            app:dsb_indicatorPopupEnabled="true"
+            app:dsb_max="100"
+            app:dsb_min="0"
+            app:dsb_progressColor="@color/main_color"
+            app:dsb_rippleColor="@color/main_color"
+            app:dsb_scrubberHeight="@dimen/x4"
+            app:dsb_thumbSize="@dimen/x32"
+            app:dsb_trackBaseHeight="@dimen/x16"
+            app:dsb_trackColor="@color/colorWhite"
+            app:dsb_trackHeight="@dimen/x4"
+            app:dsb_value="0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/x180"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/lyt_beauty_recover"
+                android:layout_width="@dimen/x132"
+                android:layout_height="@dimen/x180"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_beauty_recover"
+                    android:layout_width="@dimen/x88"
+                    android:layout_height="@dimen/x88"
+                    android:layout_marginBottom="@dimen/x18"
+                    android:scaleType="centerInside"
+                    android:src="@mipmap/icon_control_recover" />
+
+
+                <TextView
+                    android:id="@+id/tv_beauty_recover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/x30"
+                    android:text="@string/recover"
+                    android:textColor="@color/tv_main_color_selector"
+                    android:textSize="@dimen/text_size_20" />
+            </LinearLayout>
+
+
+            <View
+                android:id="@+id/iv_line"
+                android:layout_width="@dimen/x1"
+                android:layout_height="@dimen/x40"
+                android:layout_marginTop="@dimen/x24"
+                android:background="@color/divider_line_color" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x180"
+                android:layout_gravity="bottom" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/x1"
+            android:background="@color/divider_line_color" />
+    </LinearLayout>
+</LinearLayout>

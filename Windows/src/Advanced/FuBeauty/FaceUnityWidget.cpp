@@ -8,6 +8,7 @@
 #include "PixTextWidget.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Resources.h"
 #include <tuple>
 #include <thread>
 
@@ -18,7 +19,10 @@
 /**
 * 功能名称： VolcEngineRTC 集成第三方美颜SDK
 * 功能简单描述：音视频通话中经常会对本地视频进行美化处理，该Demo展示如何集成相芯SDK，展示美颜功能
-* 参考文档：https://www.volcengine.com/docs/6348/79888
+* 参考文档：
+*   美颜CV：https://www.volcengine.com/docs/6348/114717
+*   第三方：https://www.volcengine.com/docs/6348/79888
+*   第三方美颜常见问题：https://www.volcengine.com/docs/6348/1178328
 *
 * 此功能涉及的RTC API及回调：
 *     createRTCVideo 创建引擎
@@ -74,10 +78,11 @@ enum {
 
 
 FaceUnityWidget::FaceUnityWidget(QWidget *parent) :
-    QWidget(parent),
+    BaseWidget(parent),
     ui(new Ui::FaceUnityWidget)
 {
     ui->setupUi(this);
+    initUI();
     resetData();
     initConnections();
     showItem();
@@ -104,11 +109,9 @@ void FaceUnityWidget::showItem()
 {
 #ifdef CNAMASDK_H //已经集成相芯SDK
     ui->stackedWidget->setCurrentWidget(ui->page_support);
-    ui->widget_log->show();
 
 #else //未集成相芯SDK
     ui->stackedWidget->setCurrentWidget(ui->page_unsupport);
-    ui->widget_log->hide();
     ui->label_path_mac->hide();
     ui->label_path_win->hide();
 
@@ -129,7 +132,7 @@ void FaceUnityWidget::initRTC()
         m_video->startVideoCapture();
     }
     QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void FaceUnityWidget::cleanRTC()
@@ -147,7 +150,8 @@ void FaceUnityWidget::cleanRTC()
         m_video->stopVideoCapture();
         bytertc::destroyRTCVideo();
         m_video = nullptr;
-        ui->widget_log->appendAPI(list);
+        ui->btn_joinroom->setText(QStringLiteral("进房"));
+        appendAPI(list);
     }
 }
 
@@ -191,6 +195,33 @@ void FaceUnityWidget::cleanNama()
     }
 }
 
+void FaceUnityWidget::initUI()
+{
+    QList<QWidget *> childWidgets = this->findChildren<QWidget *>();
+    // 遍历子控件并设置样式表
+    foreach (QWidget *childWidget, childWidgets) {
+        QLabel *label = qobject_cast<QLabel *>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit *edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    }
+    ui->lineEdit_room->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_uid->setStyleSheet(APIDemo::str_qss_text);
+    ui->btn_joinroom->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->btn_revert->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
+}
+
 int FaceUnityWidget::joinRoom()
 {
     if (m_video == nullptr) return -1;
@@ -199,13 +230,13 @@ int FaceUnityWidget::joinRoom()
     QString qstr_error;
 
     if (!Utils::checkIDValid(QString::fromStdString(uid), QStringLiteral("用户名"), qstr_error)) {
-        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "uid error " + qstr_error, QMessageBox::Ok);
         box.exec();
         return -2;
     }
 
     if (!Utils::checkIDValid(QString::fromStdString(roomid), QStringLiteral("房间号"), qstr_error)) {
-        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "roomid error " + qstr_error, QMessageBox::Ok);
         box.exec();
         return -3;
     }
@@ -239,7 +270,7 @@ int FaceUnityWidget::joinRoom()
         return -5;
     }
     QStringList list = {"registerLocalVideoProcessor", "setLocalVideoCanvas", "createRTCRoom", "setRTCRoomEventHandler", "joinRoom"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
     return 0;
 }
 
@@ -250,8 +281,11 @@ int FaceUnityWidget::leaveRoom()
         m_room->destroy();
         m_room = nullptr;
     }
+    bytertc::VideoPreprocessorConfig conf;
+    m_video->registerLocalVideoProcessor(nullptr, conf);
+    ui->btn_joinroom->setText(QStringLiteral("进房"));
     QStringList list = {"leaveRoom", "destroy"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
     return 0;
 }
 
@@ -563,7 +597,7 @@ void FaceUnityWidget::onShowErrorTips(int error, QString msg)
 }
 
 void FaceUnityWidget::onRTCState(std::string str) {
-    ui->widget_log->appendCallback(QString::fromStdString(str));
+    appendCallback(QString::fromStdString(str));
 }
 
 void FaceUnityWidget::onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info)
@@ -573,7 +607,7 @@ void FaceUnityWidget::onSigRoomStateChanged(std::string roomid, std::string uid,
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(state)
         + ",extra:" + QString::fromStdString(extra_info);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (state == 0) {
         ui->btn_joinroom->setText(QStringLiteral("离房"));
@@ -591,7 +625,7 @@ void FaceUnityWidget::onSigUserPublishStream(std::string roomid, std::string uid
 {
     QString str = "onUserPublishStream, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -599,7 +633,7 @@ void FaceUnityWidget::onSigUserUnPublishStream(std::string roomid, std::string u
 {
     QString str = "onUserUnPublishStream, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -607,7 +641,7 @@ void FaceUnityWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
              + ",uid:" + QString::fromStdString(info.uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -615,7 +649,7 @@ void FaceUnityWidget::onSigUserLeave(std::string roomid, std::string uid, bytert
 {
     QString str = "onUserLeave, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -623,8 +657,7 @@ void FaceUnityWidget::onSigLeaveRoom(std::string roomid, std::string uid, bytert
 {
     QString str = "onLeaveRoom, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
-    ui->btn_joinroom->setText(QStringLiteral("进房"));
+    appendCallback(str);
 
 }
 

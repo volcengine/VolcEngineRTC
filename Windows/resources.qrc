@@ -22,5 +22,22 @@
         <file>Resources/AR/PropMap/juanhuzi.png</file>
         <file>Resources/AR/PropMap/mask_hat.png</file>
         <file>Resources/AR/PropMap/touhua.png</file>
+        <file>Resources/ui/Frame.png</file>
+        <file>Resources/ui/room.png</file>
+        <file>Resources/ui/down.png</file>
+        <file>Resources/ui/audio.png</file>
+        <file>Resources/ui/audio2.png</file>
+        <file>Resources/ui/cdn.png</file>
+        <file>Resources/ui/cdn2.png</file>
+        <file>Resources/ui/plugin.png</file>
+        <file>Resources/ui/plugin2.png</file>
+        <file>Resources/ui/room2.png</file>
+        <file>Resources/ui/trans.png</file>
+        <file>Resources/ui/trans2.png</file>
+        <file>Resources/ui/video.png</file>
+        <file>Resources/ui/video2.png</file>
+        <file>Resources/ui/document.png</file>
+        <file>Resources/ui/spin_down.png</file>
+        <file>Resources/ui/spin_up.png</file>
     </qresource>
 </RCC>

@@ -2,6 +2,7 @@
 #define BASEWIDGET_H
 
 #include <QWidget>
+#include "LogWidget.h"
 
 class BaseWidget : public QWidget
 {
@@ -9,10 +10,15 @@ class BaseWidget : public QWidget
 public:
     explicit BaseWidget(QWidget *parent = nullptr);
 
-private:
-    void paintEvent(QPaintEvent *);
+    void appendCallback(const QString &str);
+    void appendAPI(const QString &str);
+    void appendAPI(const QStringList list);
+
 
 signals:
+
+private:
+    LogWidget *m_logwidget = nullptr;
 
 };
 

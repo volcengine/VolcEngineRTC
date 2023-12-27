@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <mutex>
+#include "BaseWidget.h"
 #include "ByteRTCEventHandler.h"
 
 #if __has_include("CNamaSDK.h")
@@ -25,9 +26,7 @@ class Nama;
 };
 
 class PixTextWidget;
-class FaceUnityWidget :
-        public QWidget,
-        public bytertc::IVideoProcessor
+class FaceUnityWidget :public BaseWidget, public bytertc::IVideoProcessor
 {
     Q_OBJECT
 
@@ -45,6 +44,7 @@ private:
     std::unique_ptr<ByteRTCRoomHandler> createRoomHandler(std::string roomid, std::string uid);
     int initNama();
     void cleanNama();
+    void initUI();
 
     int joinRoom();
     int leaveRoom();

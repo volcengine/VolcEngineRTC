@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">API Example</string>
+
+    <string name="app_id">5a7451222679214f668e7085</string>
+
+    <string name="player_app_id">260323</string>
+
+    <string name="title_quick_start">快速开始</string>
+    <string name="title_multi_room">多房间</string>
+    <string name="title_cross_room_pk">跨房间pk</string>
+    <string name="title_raw_audio_data">原始音频数据</string>
+    <string name="title_audio_mixing">音乐混音</string>
+    <string name="title_voice_effect">声音特效</string>
+    <string name="title_picture_in_picture">画中画</string>
+    <string name="title_video_config">视频配置</string>
+    <string name="title_cdn_stream">推流到CDN</string>
+    <string name="title_media_player">媒体播放器</string>
+    <string name="title_third_beauty">第三方美颜</string>
+    <string name="title_byte_beauty">字节美颜</string>
+    <string name="title_fu_beauty">相芯美颜</string>
+</resources>

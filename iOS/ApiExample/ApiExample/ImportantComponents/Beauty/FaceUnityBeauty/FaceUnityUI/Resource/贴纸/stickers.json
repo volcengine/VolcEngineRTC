@@ -1,0 +1,22 @@
+[
+    {
+        "bundleName":"remove",
+        "icon":"remove"
+    },
+    {
+        "bundleName":"CatSparks",
+        "icon":"CatSparks"
+    },
+    {
+        "bundleName":"sdlr",
+        "icon":"sdlr"
+    },
+    {
+        "bundleName":"sdlu",
+        "icon":"sdlu"
+    },
+    {
+        "bundleName":"fashi",
+        "icon":"fashi"
+    }
+]

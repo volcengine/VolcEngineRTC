@@ -5,8 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_AUDIO_MIXING_MANAGER_H__
-#define BYTE_RTC_AUDIO_MIXING_MANAGER_H__
 #include "bytertc_audio_frame.h"
 
 namespace bytertc {
@@ -32,7 +30,7 @@ public:
 };
 
 /** 
- * @deprecated since 353. Use IAudioEffectPlayer and IMediaPlayer instead.
+ * @deprecated since 353. Use IAudioEffectPlayer{@link #IAudioEffectPlayer} and IMediaPlayer{@link #IMediaPlayer} instead.
  * @type api
  * @brief 混音管理类
  */
@@ -45,13 +43,13 @@ public:
     IAudioMixingManager() {
     }
     /** 
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 开始播放音频文件。
      *        可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
      * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
-     *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。
+     *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调通知前一次混音已停止。
      * @param [in] file_path 用于混音文件路径。
      *        支持在线文件的 URL 和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。
      *        推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。
@@ -73,7 +71,7 @@ public:
      *        可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 AudioMixingConfig{@link #AudioMixingConfig}。
      * @notes  <br>
      *       + 如果已经通过 preloadAudioMixing{@link #IAudioMixingManager#preloadAudioMixing} 将文件加载至内存，确保此处的 ID 与预加载时设置的 ID 相同。  <br>
-     *       + 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  <br>
+     *       + 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged}。  <br>
      *       + 开始播放音频文件后，可以调用 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 方法停止播放音频文件。  <br>
      *       + 本方法的混音数据来源于外部文件，而 enableAudioMixingFrame{@link #IAudioMixingManager#enableAudioMixingFrame} 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
      */
@@ -81,14 +79,13 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 停止播放音频文件及混音。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @notes  <br>
      *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以调用本方法停止播放音频文件及混音。  <br>
-     *       + 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 `onAudioMixingStateChanged`。  <br>
+     *       + 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged}。  <br>
      *       + 调用本方法停止播放音频文件后，该音乐文件会被自动卸载。
      */
     virtual void stopAudioMixing(int mix_id) = 0;
@@ -99,14 +96,13 @@ public:
      * @brief 停止播放所有音频文件及混音。
      * @notes  <br>
      *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以调用本方法停止播放所有音频文件及混音。  <br>
-     *       + 调用本方法停止播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放和混音。  <br>
+     *       + 调用本方法停止播放所有音频文件及混音后，会收到 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调，通知已停止播放和混音。  <br>
      *       + 调用本方法停止播放所有音频文件及混音后，该音频文件会被自动卸载。
      */
     virtual void stopAllAudioMixing() = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 暂停播放音频文件及混音。
      * @param [in] mix_id  <br>
@@ -114,55 +110,53 @@ public:
      * @notes  <br>
      *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放音频文件及混音。  <br>
      *       + 调用本方法暂停播放音频文件及混音后，可调用 resumeAudioMixing{@link #IAudioMixingManager#resumeAudioMixing} 方法恢复播放及混音。  <br>
-     *       + 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 `onAudioMixingStateChanged`。
+     *       + 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged}。
      */
     virtual void pauseAudioMixing(int mix_id) = 0;
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IAudioEffectPlayer instead
      * @hidden(Linux)
      * @region 混音
      * @brief 暂停播放所有音频文件及混音。
      * @notes  <br>
      *       + 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放所有音频文件及混音。  <br>
      *       + 调用本方法暂停播放所有音频文件及混音后，可调用 resumeAllAudioMixing{@link #IAudioMixingManager#resumeAllAudioMixing} 方法恢复所有播放及混音。  <br>
-     *       + 调用本方法暂停播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放和混音。
+     *       + 调用本方法暂停播放所有音频文件及混音后，会收到 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调，通知已暂停播放和混音。
      */
     virtual void pauseAllAudioMixing() = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 恢复播放音频文件及混音。
      * @param [in] mix_id  <br>
      *        混音 ID
      * @notes  <br>
      *       + 调用 pauseAudioMixing{@link #IAudioMixingManager#pauseAudioMixing} 方法暂停播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  <br>
-     *       + 调用本方法恢复播放音频文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 `onAudioMixingStateChanged`。
+     *       + 调用本方法恢复播放音频文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged}。
      */
     virtual void resumeAudioMixing(int mix_id) = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IAudioEffectPlayer instead
      * @hidden(Linux)
      * @region 混音
      * @brief 恢复播放所有音频文件及混音。
      * @notes  <br>
      *       + 调用 pauseAllAudioMixing{@link #IAudioMixingManager#pauseAllAudioMixing} 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  <br>
-     *       + 调用本方法恢复播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放和混音。
+     *       + 调用本方法恢复播放所有音频文件及混音后，会收到 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调，通知已恢复播放和混音。
      */
     virtual void resumeAllAudioMixing() = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
      * @param [in] mix_id 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br>
      *        如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br>
-     *        如果先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing}，再使用相同的 ID 调用本方法 ，会先回调 `onAudioMixingStateChanged` 通知上一个混音停止，然后加载后一个混音。  <br>
+     *        如果先调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing}，再使用相同的 ID 调用本方法 ，会先回调 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 通知上一个混音停止，然后加载后一个混音。  <br>
      *        调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 播放 B.mp3，请先调用 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载 A.mp3。
      * @param [in] file_path 混音文件路径。仅支持本地文件的绝对路径。预加载的文件长度不得超过 20s。
      *        不同平台支持的音频文件格式：
@@ -174,26 +168,25 @@ public:
      *        </table>
      * @notes  <br>
      *       + 本方法只是预加载指定音频文件，只有调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 方法才开始播放指定音频文件。 <br>
-     *       + 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  <br>
+     *       + 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged}。  <br>
      *       + 调用本方法预加载的指定音频文件可以通过 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载。
      */
     virtual void preloadAudioMixing(int mix_id, const char* file_path) = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 卸载指定音乐文件。
      * @param [in] mix_id  <br>
      *        混音 ID
-     * @notes 不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 `onAudioMixingStateChanged`。
+     * @notes 不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged}。
      */
     virtual void unloadAudioMixing(int mix_id) = 0;
 
     /** 
      * @hidden(Windows,Linux,macOS)
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IAudioEffectPlayer instead
      * @region 混音
      * @brief 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
      * @param volume 混音音量相对原音量的比值。范围为 `[0, 400]`，建议范围是 `[0, 100]`。  <br>
@@ -210,7 +203,6 @@ public:
     /** 
      * @hidden(Linux)
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
      * @param mix_id 需调节音量的混音 ID
@@ -225,7 +217,6 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 获取音频文件时长。
      * @param [in] mix_id  <br>
@@ -239,7 +230,6 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 获取音频文件播放进度。
      * @param [in] mix_id  <br>
@@ -254,7 +244,6 @@ public:
     /** 
      * @hidden(Linux,macOS)
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 获取混音音频文件的实际播放时长（单位：毫秒）。
      * @param [in] mix_id 混音 ID。
@@ -269,7 +258,6 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 设置音频文件的起始播放位置
      * @param [in] mix_id 混音 ID
@@ -281,7 +269,7 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 设置当前音频文件的声道模式
      * @param [in] mix_id 混音 ID
@@ -294,36 +282,35 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
      * @region 混音
      * @brief 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
      *        使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
      * @param [in] mix_id 混音 ID
      * @param [in] pitch 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br>
      *        取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br>
-     *        超出取值范围则设置失败，并且会触发 `onAudioMixingStateChanged` 回调，提示 AudioMixingState{@link #AudioMixingState} 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，AudioMixingError{@link #AudioMixingError} 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。
-     * @notes 本方法需要在调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音频文件后、调用 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错
+     *        超出取值范围则设置失败，并且会触发 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调，提示 AudioMixingState{@link #AudioMixingState} 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，AudioMixingError{@link #AudioMixingError} 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。
+     * @notes 本方法需要在调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音频文件后、调用 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 停止播放音频文件前使用，否则会触发 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调报错
      */
     virtual void setAudioMixingPitch(int mix_id, int pitch) = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 设置混音时音频文件的播放速度
      * @param [in] mix_id 混音 ID
      * @param [in] speed 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br>
-     *        超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 AudioMixingState{@link #AudioMixingState} 状态为 `kAudioMixingStateFailed` 混音播放失败，AudioMixingError{@link #AudioMixingError} 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。
+     *        超出取值范围则设置失败，你会收到 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调，提示 AudioMixingState{@link #AudioMixingState} 状态为 `kAudioMixingStateFailed` 混音播放失败，AudioMixingError{@link #AudioMixingError} 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。
      * @notes   <br>
      *        + 暂不支持对 PCM 音频数据进行变速调整。  <br>
-     *        + 你需要在调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 AudioMixingState{@link #AudioMixingState} 状态为 `kAudioMixingStatePlaying`，AudioMixingError{@link #AudioMixingError} 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  <br>
-     *        + 在 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 停止混音或 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载音频文件后调用该 API，会收到状态为 `kAudioMixingStateFailed` 错误码为 `kAudioMixingErrorIdNotFound` 的 `onAudioMixingStateChanged` 回调。
+     *        + 你需要在调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始混音，并且收到onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调提示 AudioMixingState{@link #AudioMixingState} 状态为 `kAudioMixingStatePlaying`，AudioMixingError{@link #AudioMixingError} 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  <br>
+     *        + 在 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 停止混音或 unloadAudioMixing{@link #IAudioMixingManager#unloadAudioMixing} 卸载音频文件后调用该 API，会收到状态为 `kAudioMixingStateFailed` 错误码为 `kAudioMixingErrorIdNotFound` 的 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调。
      */
     virtual int setAudioMixingPlaybackSpeed(int mix_id, int speed) = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer  instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer  instead
      * @region 混音
      * @brief 设置混音时音频文件播放进度回调的间隔
      * @param [in] mix_id 混音 ID  <br>
@@ -331,14 +318,14 @@ public:
      * @param [in] interval 音频文件播放进度回调的时间间隔，单位毫秒。  <br>
      *       + interval 的值为大于 0 的 10 的倍数，当设置的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。设置完成后 SDK 将会按照设置的时间间隔触发 `onAudioMixingPlayingProgress` 回调。  <br>
      *       + interval 的值小于等于 0 时，不会触发进度回调。  <br>
-     * @notes 本方法需要在调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音频文件后、调用 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错。  <br>
+     * @notes 本方法需要在调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 开始播放音频文件后、调用 stopAudioMixing{@link #IAudioMixingManager#stopAudioMixing} 停止播放音频文件前使用，否则会触发 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 回调报错。  <br>
      *        若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 startAudioMixing{@link #IAudioMixingManager#startAudioMixing} 在 AudioMixingConfig{@link #AudioMixingConfig} 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
      */
     virtual void setAudioMixingProgressInterval(int mix_id, int64_t interval) = 0;
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
      * @param [in] mix_id 混音 ID
@@ -350,16 +337,14 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 启动 PCM 音频数据混音。<br>
-     *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
+     *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 mix_id。
      * @param [in] mix_id 混音 ID，用于标识混音，保证混音 ID 唯一性。  <br>
-     *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 `onAudioMixingStateChanged` 通知前一次混音已停止。
+     *        如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 onAudioMixingStateChanged`{@link #IRTCVideoEventHandler#onaudiomixingstatechanged} 通知前一次混音已停止。
      * @param [in] type 混音播放类型  <br>
      *        是否本地播放、以及是否发送到远端，详见 AudioMixingType{@link #AudioMixingType}。
-     * @brief 启动 PCM 音频数据混音。<br>
-     *        要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 mix_id。
      * @notes  <br>
      *       + 必须先调用本方法启动 PCM 音频数据混音，随后调用 pushAudioMixingFrame{@link #pushAudioMixingFrame} 方法，才会开始混音。 <br>
      *       + 如要结束 PCM 音频数据混音，使用 disableAudioMixingFrame{@link #IAudioMixingManager#disableAudioMixingFrame}。
@@ -368,7 +353,7 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 关闭 PCM 混音
      * @param mix_id 混音 ID。
@@ -377,7 +362,7 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 推送 PCM 音频帧数据用于混音
      * @param mix_id 混音 ID。
@@ -393,7 +378,7 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 获取当前音频文件的音轨索引
      * @param [in] mix_id 混音 ID
@@ -408,7 +393,7 @@ public:
 
     /** 
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @region 混音
      * @brief 指定当前音频文件的播放音轨
      * @param [in] mix_id 混音 ID
@@ -420,9 +405,9 @@ public:
      */
     virtual void selectAudioTrack(int mix_id, int audio_track_index) = 0;
     /** 
+     * @deprecated since 353.1, will be deleted in 359, use IMediaPlayer instead
      * @hidden(Linux)
      * @type api
-     * @deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
      * @brief 注册本地音频文件混音的音频帧观察者。
      *        当本地音频文件混音时，会收到相关回调。
      * @param observer 参看 IAudioFileFrameObserver{@link #IAudioFileFrameObserver}。
@@ -438,5 +423,3 @@ public:
 };
 
 }  // namespace bytertc
-
-#endif // BYTE_RTC_AUDIO_MIXING_MANAGER_H__

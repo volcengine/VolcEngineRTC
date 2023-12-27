@@ -13,6 +13,7 @@
 #include "bytertc_room.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Resources.h"
 
 /**
 * 功能名称： VolcEngineRTC 跨房转推
@@ -61,6 +62,8 @@ CrossRoomPK::CrossRoomPK(QWidget *parent) :
     ui(new Ui::CrossRoomPK)
 {
     ui->setupUi(this);
+
+    initUI();
     connect(ui->btn_join1, &QPushButton::clicked, this, &CrossRoomPK::onBtnJoinClicked);
     connect(ui->btn_cross_start, &QPushButton::clicked, this, &CrossRoomPK::onBtnCrossStartClicked);
     connect(ui->btn_cross_pause, &QPushButton::clicked, this, &CrossRoomPK::onBtnCrossPauseClicked);
@@ -80,7 +83,7 @@ CrossRoomPK::~CrossRoomPK()
 void CrossRoomPK::onBtnCrossStartClicked()
 {
     if (m_video == nullptr || m_room1 == nullptr) return;
-    std::string uid = str_uid1;
+    std::string uid = m_uid;
 
     QStringList list = ui->lineEdit_cross->text().split(" ", Qt::SkipEmptyParts);
 
@@ -89,7 +92,10 @@ void CrossRoomPK::onBtnCrossStartClicked()
 
     for (int i=0; i<list.size(); i++) {
         roomids.push_back(list[i].toStdString());
-        tokens.push_back(Utils::generateToken(roomids[i], uid));
+        std::string token = Utils::generateToken(roomids[i], uid);
+        tokens.push_back(token);
+        qDebug() << Q_FUNC_INFO << "roomid:" << list[i] << ",uid:" << QString::fromStdString(uid)
+                 << ",token:" << QString::fromStdString(token);
     }
 
     for (int i=0; i<list.size(); i++) {
@@ -109,7 +115,7 @@ void CrossRoomPK::onBtnCrossStartClicked()
         box.exec();
         return;
     }
-    ui->widget_log1->appendAPI("startForwardStreamToRooms");
+    appendAPI("startForwardStreamToRooms");
     ui->btn_cross_start->setEnabled(false);
 
 }
@@ -146,7 +152,7 @@ void CrossRoomPK::onBtnCrossUpdateClicked()
         box.exec();
         return;
     }
-    ui->widget_log1->appendAPI("updateForwardStreamToRooms");
+    appendAPI("updateForwardStreamToRooms");
 }
 
 
@@ -170,7 +176,7 @@ void CrossRoomPK::onBtnCrossResumeClicked()
         box.exec();
         return;
     }
-    ui->widget_log1->appendAPI("resumeForwardStreamToAllRooms");
+    appendAPI("resumeForwardStreamToAllRooms");
 }
 
 void CrossRoomPK::onBtnCrossStopClicked()
@@ -182,7 +188,7 @@ void CrossRoomPK::onBtnCrossStopClicked()
         box.exec();
     }
     ui->btn_cross_start->setEnabled(true);
-    ui->widget_log1->appendAPI("stopForwardStreamToRooms");
+    appendAPI("stopForwardStreamToRooms");
 }
 
 void CrossRoomPK::onBtnJoinClicked() {
@@ -195,13 +201,13 @@ void CrossRoomPK::onBtnJoinClicked() {
     if (ui->btn_join1->text() == QStringLiteral("进房")) {
         
         if (!Utils::checkIDValid(QString::fromStdString(roomid), QStringLiteral("房间id"), str_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid invalid"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid error ") + str_error, QMessageBox::Ok);
             box.exec();
             return;
         }
 
         if (!Utils::checkIDValid(QString::fromStdString(uid), QStringLiteral("uid"), str_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid invalid"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid error ") + str_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -217,8 +223,8 @@ void CrossRoomPK::onBtnJoinClicked() {
 
         bytertc::VideoCanvas cavas;
         cavas.view = (void*)ui->widget->getWinId();
-        ui->widget->setUserInfo(roomid, uid);
         m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, cavas);
+        ui->widget->setUserInfo(roomid, uid);
 
 
         token = Utils::generateToken(roomid, uid);
@@ -230,7 +236,7 @@ void CrossRoomPK::onBtnJoinClicked() {
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
         int ret = m_room1->joinRoom(token.c_str(), info, config);
-        m_str_roomid1 = roomid;
+        m_uid = uid;
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("createRTCRoom error"), QMessageBox::Ok);
             box.exec();
@@ -249,7 +255,7 @@ void CrossRoomPK::onBtnJoinClicked() {
         ui->btn_cross_start->setEnabled(true);
         ui->btn_cross_stop->setEnabled(true);
     }
-    ui->widget_log1->appendAPI(list);
+    appendAPI(list);
 }
 
 void CrossRoomPK::initRTCVideo()
@@ -260,7 +266,7 @@ void CrossRoomPK::initRTCVideo()
     m_video->startVideoCapture();
 
     QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
-    ui->widget_log1->appendAPI(list);
+    appendAPI(list);
 }
 
 void CrossRoomPK::cleanRTCVideo()
@@ -278,9 +284,45 @@ void CrossRoomPK::cleanRTCVideo()
         m_video->stopVideoCapture();
         bytertc::destroyRTCVideo();
         m_video = nullptr;
-        ui->widget_log1->appendAPI(list);
+        appendAPI(list);
     }
     
+}
+
+void CrossRoomPK::initUI()
+{
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    }
+    ui->btn_join1->setStyleSheet(APIDemo::str_qss_btn1);
+    auto func_sty = [this](QPushButton *btn){
+        if (btn) {
+            btn->setStyleSheet(APIDemo::str_qss_btn2_3);
+            btn->setFixedSize(80, 24);
+        }
+    };
+
+    func_sty(ui->btn_cross_pause);
+    func_sty(ui->btn_cross_resume);
+    func_sty(ui->btn_cross_start);
+    func_sty(ui->btn_cross_stop);
+    func_sty(ui->btn_cross_update);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
 }
 
 std::unique_ptr<ByteRTCRoomHandler> CrossRoomPK::createRoomHandler(std::string roomid, std::string uid)
@@ -307,7 +349,7 @@ void CrossRoomPK::onSigRoomStateChanged(std::string roomid, std::string uid, int
         + ",state:" + QString::number(state)
         + ",extra:" + QString::fromStdString(extra_info);
 
-    ui->widget_log1->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (state == 0) {
         ui->btn_join1->setText(QStringLiteral("离房"));
@@ -325,7 +367,7 @@ void CrossRoomPK::onSigUserPublishStream(std::string roomid, std::string uid, by
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(type);
-    ui->widget_log1->appendCallback(log_str);
+    appendCallback(log_str);
 }
 
 void CrossRoomPK::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason)
@@ -334,7 +376,7 @@ void CrossRoomPK::onSigUserUnPublishStream(std::string roomid, std::string uid, 
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(type);
-    ui->widget_log1->appendCallback(log_str);
+    appendCallback(log_str);
 
 }
 
@@ -342,7 +384,7 @@ void CrossRoomPK::onSigLeaveRoom(std::string roomid, std::string uid, const byte
 {
     ui->btn_join1->setText(QStringLiteral("进房"));
     QString str = "onLeaveRoom, roomid:" + QString::fromStdString(roomid) + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log1->appendCallback(str);
+    appendCallback(str);
 }
 
 void CrossRoomPK::onSigForwardStreamStateChanged(std::vector<ByteRTCRoomHandler::Stru_ForwardStreamStateInfo> result)
@@ -353,7 +395,9 @@ void CrossRoomPK::onSigForwardStreamStateChanged(std::vector<ByteRTCRoomHandler:
     for (unsigned int i = 0; i < result.size(); i++) {
         stream << ",roomid:" << result[i].roomid << ", state:" << result[i].state << ", error:" << result[i].error;
     }
-    ui->widget_log1->appendCallback(QString::fromStdString(stream.str()));
+    appendCallback(QString::fromStdString(stream.str()));
+
+    qDebug() << Q_FUNC_INFO << QString::fromStdString(stream.str());
 
 }
 
@@ -364,5 +408,5 @@ void CrossRoomPK::onForwardStreamEvent(std::vector<ByteRTCRoomHandler::Stru_Forw
     for (unsigned int i = 0; i < events.size(); i++) {
         stream << ",roomid:" << events[i].roomid << ", state:" << events[i].event << ", event:" << events[i].event;
     }
-    ui->widget_log1->appendCallback(QString::fromStdString(stream.str()));
+    appendCallback(QString::fromStdString(stream.str()));
 }

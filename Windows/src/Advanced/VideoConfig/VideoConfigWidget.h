@@ -5,7 +5,6 @@
 #include <map>
 #include <vector>
 
-#include "Utils.h"
 #include "ByteRTCEventHandler.h"
 #include "BaseWidget.h"
 
@@ -41,6 +40,7 @@ private:
     void initConnections();
     void initRTCVideo();
     void cleanRTCVideo();
+    void initUI();
     ByteRTCRoomHandler* createRoomHandler(std::string roomid, std::string uid);
     bytertc::RenderMode getRenderMode(QComboBox *box);
     bytertc::VideoCaptureConfig::CapturePreference getCapturePreference();
@@ -62,6 +62,8 @@ private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
     void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
     void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
+    void onSigLocalVideoSizeChanged(bytertc::StreamIndex index,
+                                  const bytertc::VideoFrameInfo info);
 
 private:
     Ui::VideoConfigWidget *ui;
@@ -70,6 +72,7 @@ private:
     std::string m_roomid;
     std::map<std::string, Stru_User> m_rusers;
     std::string m_rendering;
+    std::unique_ptr<ByteRTCEventHandler> m_handler;
 
 };
 

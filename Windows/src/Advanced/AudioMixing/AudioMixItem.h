@@ -28,6 +28,9 @@ private slots:
     void onSpinTimeChanged(int );
     void onSpinVolumeChanged(int);
 
+private:
+    void paintEvent(QPaintEvent *);
+
 public:
     QLabel* getID();
     QLabel* getState();

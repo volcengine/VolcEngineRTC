@@ -1,6 +1,7 @@
 #ifndef QUICKSTARTWIDGET_H
 #define QUICKSTARTWIDGET_H
 
+#include "BaseWidget.h"
 #include "ByteRTCEventHandler.h"
 #include <memory>
 
@@ -15,7 +16,7 @@ namespace Ui {
 class QuickStartWidget;
 }
 
-class QuickStartWidget : public QWidget
+class QuickStartWidget : public BaseWidget
 {
     Q_OBJECT
 
@@ -25,6 +26,7 @@ public:
 
 private:
     void initConnections();
+    void initUI();
 
 private slots:
     void onBtnCreateVideoClicked();

@@ -144,9 +144,26 @@ enum LoginErrorCode {
 
 /** 
  * @type keytype
+ * @brief 用户登出的原因
+ */
+enum LogoutReason {
+    /** 
+     * @brief 用户主动退出
+     *        用户调用 `logout` 接口登出，或者销毁引擎登出。
+     */
+    kLogoutReasonLogout = 0,
+    /** 
+     * @brief 用户被动退出
+     *        另一个用户以相同 UserId 进行了 `login`，导致本端用户被踢出。
+     */
+    kLogoutReasonDuplicateLogin = 1,
+};
+
+/** 
+ * @type keytype
  * @brief 用户在线状态。
  */
-enum USER_ONLINE_STATUS {
+enum UserOnlineStatus {
     /** 
      * @brief 对端用户离线  <br>
      *        对端用户已调用 `logout`，或者没有调用 `login` 进行登录。
@@ -176,7 +193,7 @@ struct ServerACKMsg {
     /** 
      * @brief 回调消息内容
      */
-    char* ACKMsg;
+    char* ack_msg;
 };
 
 /** 
@@ -199,7 +216,7 @@ enum MessageConfig {
 };
 
 /** 
- * @type keytype
+ * @type errorcode
  * @brief 发送消息结果，成功或失败，及失败原因
  */
 enum UserMessageSendResult {
@@ -227,6 +244,16 @@ enum UserMessageSendResult {
      * @brief 超过 QPS 限制
      */
     kUserMessageSendResultExceedQPS = 5,
+    /** 
+     * @brief 消息发送失败。应用服务器未收到客户端发送的消息。<br>
+     *        由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。
+     */
+    kUserMessageSendResultE2BSSendFailed = 17,
+    /** 
+     * @brief 消息发送失败。应用服务器接收到了客户端发送的消息，但响应失败。<br>
+     *        由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。
+     */
+    kUserMessageSendResultE2BSReturnFailed = 18,
     /** 
      * @brief 消息发送方没有加入房间
      */
@@ -478,6 +505,7 @@ enum RtsErrorCode {
  */
 enum RtsWarningCode {
     /** 
+     * @hidden
      * @deprecated since 3.46 and will be deleted in 3.51.
      */
     kRtsWarningCodeGetRoomFailed = -2000,
@@ -527,13 +555,13 @@ enum BusinessCheckCode {
      * @brief 用户已经在房间中。  <br>
      *        业务标识需要在加入房间之前设置，加入后设置无效。  <br>
      */
-    ERROR_ALREADY_IN_ROOM = -6001,
+    kBusinessCheckCodeAlreadyInRoom = -6001,
 
     /** 
      * @brief 输入参数非法。  <br>
      *        用户传入的业务标识参数非法，参数合法性参考 `setBusinessId` 方法的参数说明。  <br>
      */
-    ERROR_INPUT_INVALIDATE = -6002,
+    kBusinessCheckCodeInputInvalidate = -6002,
 };
 
 /** 
@@ -589,15 +617,15 @@ enum HttpProxyState {
     /** 
      * @brief HTTP/HTTPS 初始化状态
      */
-    kHttpInit,
+    kHttpProxyStateInit,
     /** 
      * @brief HTTP/HTTPS 连接成功
      */
-    kHttpConnected,
+    kHttpProxyStateConnected,
     /** 
      * @brief HTTP/HTTPS 连接失败
      */
-    kHttpError
+    kHttpProxyStateError
 };
 
 /** 
@@ -818,18 +846,27 @@ enum class LocalLogLevel {
  */
 struct LogConfig {
     /** 
-     * @brief 日志存储路径。
-     */ 
+     * @brief 日志存储路径，必填。
+     */
     const char* log_path = nullptr;
     /** 
-     * @brief 日志等级，参看 LocalLogLevel{@link #LocalLogLevel}，默认为警告级别。
-     */ 
+     * @brief 日志等级，参看 LocalLogLevel{@link #LocalLogLevel}，默认为警告级别，选填。
+     */
     LocalLogLevel log_level = LocalLogLevel::kWarning;
 
     /** 
-     * @brief 日志可使用的最大缓存空间，单位为 MB。取值范围为 1～100 MB，默认值为 10 MB。
-     */ 
+     * @brief 日志文件最大占用的总空间，单位为 MB，选填。取值范围为 1～100 MB，默认值为 10 MB。
+     *        若 `log_file_size` < 1，取 1 MB。若 `log_file_size` > 100，取 100 MB。<br>
+     *        其中，单个日志文件最大为 2 MB：
+     *        <ul><li> 若 1 ≤ <code>log_file_size</code> ≤ 2，则会生成一个日志文件。</li><li>若 <code>log_file_size</code> > 2，假设 <code>log_file_size/2</code> 的整数部分为 N，则前 N 个文件，每个文件会写满 2 MB，第 N+1 个文件大小不超过 <code>log_file_size mod 2</code>，否则会删除最老的文件，以此类推。</li></ul>
+     */
     uint32_t log_file_size = 10;
+
+    /** 
+     * @brief 日志文件名前缀，选填。该字符串必须符合正则表达式：[a-zA-Z0-9_@\-\.]{1,128}。
+     *        最终的日志文件名为`前缀 + "_" + 文件创建时间 + "_rtclog".log`，如 `logPrefix_2023-05-25_172324_rtclog.log`。
+     */
+    const char* log_filename_prefix = nullptr;
 };
 
 }  // namespace bytertc

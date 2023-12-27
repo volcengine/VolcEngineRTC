@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://artifact.bytedance.com/repository/Volcengine/' }
+        maven { url 'https://maven.faceunity.com/repository/maven-public/' }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://artifact.bytedance.com/repository/Volcengine/' }
+        maven { url 'https://maven.faceunity.com/repository/maven-public/' }
+    }
+}
+rootProject.name = "APIExample"
+include ':app', ':faceunity'

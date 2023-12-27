@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.APIExample"
+        tools:targetApi="31">
+        <activity
+            android:name=".examples.QuickStartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.ThirdBeauty.Fubeauty.FuBeautyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.ThirdBeauty.byteBeauty.ByteBeautyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.ThirdBeauty.ThirdBeautyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.mediaplayer.MediaPlayerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.CDNStreamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.VideoConfigActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.PictureInPicture.PictureInPictureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.VoiceEffectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.AudioMixing.AudioMediaMixingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.AudioMixing.AudioEffectMixingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.AudioMixing.AudioMixingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.RawAudioDataActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.CrossRoomPKActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.MultiRoomActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

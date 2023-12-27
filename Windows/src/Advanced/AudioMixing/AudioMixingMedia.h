@@ -39,6 +39,7 @@ private:
     void cleanRTCVideo();
     void initFile();
     void cleanFile();
+    void initUI();
     std::unique_ptr<ByteRTCRoomHandler> createRoomHandler(std::string roomid, std::string uid);
     bytertc::AudioMixingDualMonoMode getAudioDualMode();
 
@@ -63,6 +64,7 @@ private slots:
     void onBtnPcmStartClicked();
     void onBtnPcmStopClicked();
     void onSpinPcmVolumeChanged(int);
+    void onSpinBoxTrackValueChanged(int);
 
 private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
@@ -79,6 +81,8 @@ private slots:
 
 private slots:
     void onPushDataTimer();
+
+
 
 private:
     Ui::AudioMixingMedia *ui;

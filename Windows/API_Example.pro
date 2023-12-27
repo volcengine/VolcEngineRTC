@@ -32,17 +32,25 @@ INCLUDEPATH += \
     src/Public \
     src/Public/token \
     src/Advanced/MultiRoom \
+    src/Advanced/AudioMixing \
+    src/Advanced/RawAudioData \
+    src/Advanced/ByteBeauty \
+    src/Advanced/CDNStream \
+    src/Advanced/FuBeauty \
+    src/Advanced/SoundEffects \
+    src/Advanced/VideoConfig \
+    src/Advanced/CrossRoomPK \
     src/Public/http \
     src/Advanced/FuBeauty \
     src/Advanced/FuBeauty/Sound \
     src/Advanced/ \
-    src/Basic \
+    src/Basic
 
 SOURCES += \
     src/Advanced/AudioMixing/AudioMixItem.cpp \
     src/Advanced/AudioMixing/AudioMixingEffect.cpp \
     src/Advanced/AudioMixing/AudioMixingMedia.cpp \
-    src/Advanced/AudioMixing/RawAudioData.cpp \
+    src/Advanced/RawAudioData/RawAudioData.cpp \
     src/Advanced/ByteBeauty/ByteBeautyWidget.cpp \
     src/Advanced/CDNStream/CDNStreamByServer.cpp \
     src/Advanced/CrossRoomPK/CrossRoomPK.cpp \
@@ -69,7 +77,7 @@ HEADERS += \
     src/Advanced/AudioMixing/AudioMixItem.h \
     src/Advanced/AudioMixing/AudioMixingEffect.h \
     src/Advanced/AudioMixing/AudioMixingMedia.h \
-    src/Advanced/AudioMixing/RawAudioData.h \
+    src/Advanced/RawAudioData/RawAudioData.h \
     src/Advanced/ByteBeauty/ByteBeautyWidget.h \
     src/Advanced/CDNStream/CDNStreamByServer.h \
     src/Advanced/CrossRoomPK/CrossRoomPK.h \
@@ -137,7 +145,7 @@ FORMS += \
     src/Advanced/AudioMixing/AudioMixItem.ui \
     src/Advanced/AudioMixing/AudioMixingEffect.ui \
     src/Advanced/AudioMixing/AudioMixingMedia.ui \
-    src/Advanced/AudioMixing/RawAudioData.ui \
+    src/Advanced/RawAudioData/RawAudioData.ui \
     src/Advanced/ByteBeauty/ByteBeautyWidget.ui \
     src/Advanced/CDNStream/CDNStreamByServer.ui \
     src/Advanced/CrossRoomPK/CrossRoomPK.ui \
@@ -261,6 +269,7 @@ macx: {
 
         LIBS += -L$$PWD/3rd/mac/openssl/lib/ -lcrypto
         LIBS += -L$$PWD/3rd/mac/FaceUnity/lib/arm64/ -lCnamaSDK #相芯美颜
+        LIBS += -L$$PWD/3rd/mac/VolcEngineRTC/arm64/ -lbdaudioeffect
         LIBS += $$PWD/3rd/mac/VolcEngineRTC/arm64/VolcEngineRTC.framework/Versions/3/VolcEngineRTC
         PATH1=$$PWD/3rd/mac/VolcEngineRTC/arm64/*
         PATH2=$$PWD/3rd/mac/FaceUnity/lib/arm64/*.dylib #相芯美颜
@@ -273,6 +282,7 @@ macx: {
 
         LIBS += -L$$PWD/3rd/mac/openssl/lib/ -lcrypto
         LIBS += -L$$PWD/3rd/mac/FaceUnity/lib/x86_64/ -lCnamaSDK #相芯美颜
+        LIBS += -L$$PWD/3rd/mac/VolcEngineRTC/x86/ -lbdaudioeffect
         LIBS += $$PWD/3rd/mac/VolcEngineRTC/x86/VolcEngineRTC.framework/Versions/3/VolcEngineRTC
         PATH1=$$PWD/3rd/mac/VolcEngineRTC/x86/*
         PATH2=$$PWD/3rd/mac/FaceUnity/lib/x86_64/*.dylib #相芯美颜

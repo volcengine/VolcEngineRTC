@@ -3,20 +3,23 @@
 
 #include "bytertc_video.h"
 
+
 #include <QDebug>
 #include <vector>
 
 #include "MultiRoom.h"
 #include "FaceUnityWidget.h"
-#include "ByteBeauty/ByteBeautyWidget.h"
-#include "CDNStream/CDNStreamByServer.h"
-#include "SoundEffects/SoundEffectsWidget.h"
-#include "CrossRoomPK/CrossRoomPK.h"
-#include "VideoConfig/VideoConfigWidget.h"
-#include "AudioMixing/AudioMixingEffect.h"
-#include "AudioMixing/AudioMixingMedia.h"
-#include "AudioMixing/RawAudioData.h"
-#include "Basic/QuickStartWidget.h"
+#include "ByteBeautyWidget.h"
+#include "CDNStreamByServer.h"
+#include "SoundEffectsWidget.h"
+#include "CrossRoomPK.h"
+#include "VideoConfigWidget.h"
+#include "AudioMixingEffect.h"
+#include "AudioMixingMedia.h"
+#include "RawAudioData.h"
+#include "QuickStartWidget.h"
+#include "Resources.h"
+
 
 enum FunctionTyp{
     TYPE_BEGIN,
@@ -35,11 +38,13 @@ enum FunctionTyp{
 };
 
 std::vector<int> g_types;
+MainWindow* g_mainWindow = nullptr;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    g_mainWindow = this;
 
     for (int i = TYPE_BEGIN + 1; i < TYPE_END; i++) {
         g_types.push_back(i);
@@ -57,12 +62,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+LogWidget *MainWindow::getLogWidget()
+{
+    return ui->widget_log;
+}
+
 void MainWindow::initUI()
 {
     setWindowTitle("API-Demo");
     initListViews();
     std::string version = bytertc::getSDKVersion() == nullptr ? "" : bytertc::getSDKVersion();
     ui->label_version->setText(QString::fromStdString(version));
+    ui->label_version->setStyleSheet(APIDemo::str_qss_label);
+    ui->label_v->setStyleSheet(APIDemo::str_qss_label);
 }
 
 QString getStringByType(int type) {
@@ -109,8 +121,8 @@ QString getStringByType(int type) {
     return result;
 }
 
-QWidget* createFunctionWidget(int type, QWidget* parent = nullptr) {
-    QWidget*item = nullptr;
+BaseWidget* MainWindow::createFunctionWidget(int type, QWidget* parent) {
+    BaseWidget*item = nullptr;
     switch (type) {
 
     case TYPE_QUICK_START:
@@ -150,10 +162,13 @@ QWidget* createFunctionWidget(int type, QWidget* parent = nullptr) {
     default:
         break;
     }
+
     return item;
 }
 
 QListWidgetItem *MainWindow::createListItem(int type, QListWidget *&widget){
+
+    qDebug() << Q_FUNC_INFO << "createListItem:" << type;
     QListWidgetItem *item = nullptr;
     switch (type) {
     case TYPE_QUICK_START:
@@ -185,9 +200,12 @@ QListWidgetItem *MainWindow::createListItem(int type, QListWidget *&widget){
         break;
     }
     item = new QListWidgetItem(getStringByType(type), widget, type);
+    item->setSizeHint(QSize(200, 34));
     if (widget) {
         widget->addItem(item);
-        
+        widget->setStyleSheet("QListWidget{font-family: PingFang SC;font-size: 13px;font-style: normal;font-weight: 400;}"
+                              "QListWidget::item:selected { background-color: #E0EAFA; color: #1664FF; font-family: PingFang SC;font-size: 13px;font-style: normal;font-weight: 400;}"
+                              "QListWidget::item:!selected { background-color: #f6f8fa; color: #020814; font-family: PingFang SC;font-size: 13px;font-style: normal;font-weight: 400;}");
     }
 
     return item;
@@ -202,19 +220,23 @@ void MainWindow::initListViews()
 
         connect(widget, &QListWidget::itemClicked, this, [this](QListWidgetItem* item){
             qDebug() << Q_FUNC_INFO << item->text();
-            if (m_currentText != item->text()) {
+            if (m_lastWidget != item) {
 
                 if (m_currentItem) {
                     delete m_currentItem;
                     m_currentItem = nullptr;
                 }
+                if (m_lastWidget) {
+                    m_lastWidget->setSelected(false);
+                }
                 m_currentItem = createFunctionWidget(item->type(), this);
-                m_currentText = item->text();
                 if (m_currentItem == nullptr) return;
                 ui->verticalLayout_widget->addWidget(dynamic_cast<QWidget*>(m_currentItem));
             } else {
                 //ignore
             }
+
+            m_lastWidget = item;
         });
     }
 

@@ -35,6 +35,7 @@ private slots:
 private:
     void initRTCVideo();
     void cleanRTCVideo();
+    void initUI();
     std::unique_ptr<ByteRTCRoomHandler> createRoomHandler(std::string roomid, std::string uid);
 
 private slots:
@@ -47,13 +48,11 @@ private slots:
 
 private:
     Ui::CrossRoomPK *ui;
-    std::string m_roomid, m_uid;
+    std::string m_uid;
     bytertc::IRTCVideo* m_video = nullptr;
     bytertc::IRTCRoom* m_room1 = nullptr;
     std::unique_ptr<ByteRTCEventHandler> m_handler;
     std::unique_ptr<ByteRTCRoomHandler>  m_room_handler1, m_room_handler2;
-
-    std::string m_str_roomid1, m_str_roomid2;
 };
 
 #endif // CROSSROOMPK_H

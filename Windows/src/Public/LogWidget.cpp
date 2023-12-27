@@ -2,12 +2,16 @@
 #include "ui_LogWidget.h"
 
 #include <QDateTime>
+#include <QScrollBar>
+#include "Resources.h"
 
 LogWidget::LogWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::LogWidget)
 {
     ui->setupUi(this);
+    ui->textEdit->verticalScrollBar()->setStyleSheet(APIDemo::str_qss_scrollstyle);
+    //color: var(--text-color-text-2, #42464E);font-family: Menlo;font-size: 12px;font-style: normal;font-weight: 400;line-height: 150%;
 }
 
 LogWidget::~LogWidget()

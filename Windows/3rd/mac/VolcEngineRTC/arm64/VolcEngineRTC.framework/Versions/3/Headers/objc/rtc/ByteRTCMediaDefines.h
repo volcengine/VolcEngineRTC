@@ -297,11 +297,11 @@ typedef NS_ENUM(NSInteger,  ByteRTCSEICountPerFrame) {
     /** 
      * @brief 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。
      */
-    kSingleSEIPerFrame = 0,
+    ByteRTCSEICountPerFrameSingle = 0,
     /** 
      * @brief 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。
      */
-    kMultiSEIPerFrame = 1,
+    ByteRTCSEICountPerFrameMulti = 1,
 };
 
 /** 
@@ -359,6 +359,7 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
     ByteRTCErrorCodeRoomDismiss = -1011,
 
     /** 
+     * @hidden internal use only
      * @brief 加入房间错误。  <br>
      *        调用 `joinRoom:userInfo:roomConfig:` 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
      */
@@ -375,34 +376,42 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      */
     ByteRTCUserIDDifferent = -1014,
     /** 
+     * @hidden internal use only
      * @brief 服务端license过期，拒绝进房。 <br>
      */
     ByteRTCErrorCodeJoinRoomServerLicenseExpired = -1017,
     /** 
+     * @hidden internal use only
      * @brief 超过服务端license许可的并发量上限，拒绝进房。 <br>
      */
     ByteRTCErrorCodeJoinRoomExceedsTheUpperLimit = -1018,
     /** 
+     * @hidden internal use only
      * @brief license参数错误，拒绝进房。 <br>
      */
     ByteRTCErrorCodeJoinRoomLicenseParameterError = -1019,
     /** 
+     * @hidden internal use only
      * @brief license证书路径错误。 <br>
      */
     ByteRTCErrorCodeJoinRoomLicenseFilePathError = -1020,
     /** 
+     * @hidden internal use only
      * @brief license证书不合法。 <br>
      */
     ByteRTCErrorCodeJoinRoomLicenseIllegal = -1021,
     /** 
+     * @hidden internal use only
      * @brief license证书已经过期，拒绝进房。 <br>
      */
     ByteRTCErrorCodeJoinRoomLicenseExpired = -1022,
     /** 
+     * @hidden internal use only
      * @brief license证书内容不匹配。 <br>
      */
     ByteRTCErrorCodeJoinRoomLicenseInformationNotMatch = -1023,
     /** 
+     * @hidden internal use only
      * @brief license当前证书与缓存证书不匹配。 <br>
      */
     ByteRTCErrorCodeJoinRoomLicenseNotMatchWithCache = -1024,
@@ -425,12 +434,13 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      */
     ByteRTCErrorCodeOverStreamPublishLimit = -1080,
     /** 
+     * @deprecated since 3.52, use ByteRTCErrorCodeOverStreamPublishLimit-1080）instead
      * @brief 发布屏幕流失败，发布流总数超过上限。
      *        RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。
      */
     ByteRTCErrorCodeOverScreenPublishLimit = -1081,
     /** 
-     * @deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead
+     * @deprecated since 3.52, use ByteRTCErrorCodeOverStreamPublishLimit-1080）instead
      * @brief 发布视频流总数超过上限。
      *        RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。
      */
@@ -451,6 +461,11 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode) {
      * @brief 在一路流推多房间的场景下，在至少有两个房间在发布同一路流时，其中一个房间取消发布失败，此时需要业务方重试或者由业务方通知用户重试取消发布。 <br>
      */
     ByteRTCErrorCodeMultiRoomUnpublishFailed = -1085,
+    /** 
+     * @hidden for internal use only
+     * @brief 指定服务区域时传入错误参数。<br>
+     */
+    ByteRTCErrorCodeWrongAreaCode = -1086,
 };
 
 /** 
@@ -558,43 +573,50 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode) {
      */
     ByteRTCWarningCodeNoCameraPermission            = -5001,
     /** 
-     * @brief 麦克风权限异常，当前应用没有获取麦克风权限
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceNoPermission 代替。<br>
+     *        麦克风权限异常，当前应用没有获取麦克风权限。
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceNoPermission instead.
      */
     ByteRTCWarningCodeNoMicrophonePermission        = -5002,
     /** 
-     * @brief 音频采集设备启动失败。  <br>
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceFailure 代替。<br>
+     *        音频采集设备启动失败。  <br>
      *        启动音频采集设备失败，当前设备可能被其他应用占用。
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceFailure instead.
      */
     ByteRTCWarningCodeAudioDeviceManagerRecordingStartFail     = -5003,
     /** 
-     * @brief 音频播放设备启动失败警告。  <br>
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceFailure 代替.<br>
+     *        音频播放设备启动失败警告。  <br>
      *        可能由于系统资源不足，或参数错误。
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceFailure instead.
      */
     ByteRTCWarningCodeAudioDeviceManagerPlayoutStartFail = -5004,
     /** 
-     * @brief 无可用音频采集设备。  <br>
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceNotFound 代替。<br>
+     *        无可用音频采集设备。  <br>
      *        启动音频采集设备失败，请插入可用的音频采集设备。
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceNotFound instead.
      */
     ByteRTCWarningCodeNoRecordingDevice = -5005,
     /** 
-     * @brief 无可用音频播放设备。  <br>
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceNotFound 代替。<br>
+     *        无可用音频播放设备。  <br>
      *        启动音频播放设备失败，请插入可用的音频播放设备。
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceError{@link #ByteRTCMediaDeviceError}.ByteRTCMediaDeviceErrorDeviceNotFound instead.
      */
     ByteRTCWarningCodeNoPlayoutDevice = -5006,
     /** 
-     * @brief 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning}.ByteRTCMediaDeviceWarningCaptureSilence 代替。<br>
+     *        当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning}.ByteRTCMediaDeviceWarningCaptureSilence instead.
      */
     ByteRTCWarningCodeRecordingSilence = -5007,
     /** 
-     * @brief 媒体设备误操作警告。  <br>
+     * @brief 已在 3.33 版本中废弃，使用 ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning}.ByteRTCMediaDeviceWarningOperationDenied 代替。<br>
+     *        媒体设备误操作警告。  <br>
      *        使用自定义采集时，不可调用内部采集开关，调用时触发此警告。
-     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning} instead.
+     * @deprecated since 3.33 and will be delted in 3.51, use ByteRTCMediaDeviceWarning{@link #ByteRTCMediaDeviceWarning}.ByteRTCMediaDeviceWarningOperationDenied instead.
      */
     ByteRTCWarningCodeMediaDeviceOperationDennied = -5008,
     /** 
@@ -1051,8 +1073,8 @@ typedef NS_ENUM(NSInteger, ByteRTCRemoteVideoState) {
      */
     ByteRTCRemoteVideoStateFrozen = 3,
      /** 
-      * @brief 远端音频流播放失败 <br>
-      * @notes 如果内部处理远端视频流失败，则会回调该方法， 对应错误码 ByteRTCRemoteVideoStateChangeReason{@link #ByteRTCRemoteVideoStateChangeReason} 中的 ByteRTCRemoteVideoStateChangeReasonInternal
+      * @brief 远端视频流播放失败 <br>
+      *        如果内部处理远端视频流失败，则会回调该方法， 对应错误码 ByteRTCRemoteVideoStateChangeReason{@link #ByteRTCRemoteVideoStateChangeReason} 中的 ByteRTCRemoteVideoStateChangeReasonInternal
       */
      ByteRTCRemoteVideoStateFailed = 4,
 };
@@ -1153,10 +1175,12 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceState) {
     ByteRTCMediaDeviceStateRuntimeError = 3,
     /** 
      * @brief 设备已插入
+     * 你可以调用获取设备接口更新设备列表。
      */
     ByteRTCMediaDeviceStateAdded = 10,
     /** 
      * @brief 设备被移除
+     * 你可以调用获取设备接口更新设备列表。
      */
     ByteRTCMediaDeviceStateRemoved = 11,
     /** 
@@ -1169,7 +1193,8 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceState) {
     ByteRTCMediaDeviceStateInterruptionEnded = 13,
     /** 
      * @hidden(iOS)
-     * @brief 设备列表更新通知。请调用 enumerateVideoCaptureDevices{@link #ByteRTCVideoDeviceManager#enumerateVideoCaptureDevices} 更新设备列表。
+     * @brief 获取设备列表超时后，收到设备列表通知。
+     * 再次调用获取设备接口更新设备列表。
      */
     ByteRTCMediaDeviceListUpdated = 16,
 
@@ -1543,8 +1568,8 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoCodecType) {
 };
 
 /** 
+ * @hidden(macOS)
  * @type keytype
- * @hidden for internal use only
  * @brief 超分模式。
  */
 typedef NS_ENUM(NSInteger, ByteRTCVideoSuperResolutionMode) {
@@ -1559,6 +1584,7 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSuperResolutionMode) {
 };
 
 /** 
+ * @hidden(macOS)
  * @type keytype
  * @brief 视频降噪模式。
  */
@@ -1592,19 +1618,19 @@ typedef NS_ENUM(NSInteger, ByteRTCMuteState) {
  * @type keytype
  * @brief 黑帧视频流状态
  */
-typedef NS_ENUM(NSInteger,  ByteSEIStreamEventType) {
+typedef NS_ENUM(NSInteger,  ByteRTCSEIStreamEventType) {
     /** 
      * @brief 远端用户发布黑帧视频流。  <br>
      *        纯语音通话场景下，远端用户调用 sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:{@link #ByteRTCVideo#sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:} 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。
      */
-    ByteSEIStreamEventTypeStreamAdd = 0,
+    ByteRTCSEIStreamEventTypeStreamAdd = 0,
     /** 
      * @brief 远端黑帧视频流移除。该回调的触发时机包括：  <br>
      *        + 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br>
      *        + 远端用户调用 sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:{@link #ByteRTCVideo#sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:} 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br>
      *        + 远端用户调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 切换至自定义视频采集时，黑帧视频流停止发布。
      */
-     ByteSEIStreamEventTypeStreamRemove = 1,
+     ByteRTCSEIStreamEventTypeStreamRemove = 1,
 };
 
 /** 
@@ -1621,7 +1647,51 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamIndex) {
     /** 
      * @brief 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
      */
-    ByteRTCStreamIndexScreen = 1
+    ByteRTCStreamIndexScreen = 1,
+    /**
+     * @hidden for internal use only
+     */
+    ByteRTCStreamIndex3rd,
+    /**
+     * @hidden for internal use only
+     */
+    ByteRTCStreamIndex4th,
+    /**
+     * @hidden for internal use only
+     */
+    ByteRTCStreamIndex5th,
+    /**
+     * @hidden for internal use only
+     */
+    ByteRTCStreamIndex6th,
+    /**
+     * @hidden for internal use only
+     */
+    ByteRTCStreamIndex7th,
+    /**
+     * @hidden for internal use only
+     */
+    ByteRTCStreamIndexMax,
+};
+
+/** 
+ *  @valid since 3.56
+ *  @type keytype
+ *  @brief 流聚合策略
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAggregationOption) {
+    /** 
+     * @brief 流聚合向下取值  （默认策略）
+     */
+    ByteRTCAggregationOptionMin = 0,
+    /** 
+     * @brief 流聚合向上取值
+     */
+    ByteRTCAggregationOptionMax = 1,
+    /** 
+     * @brief 流聚合按比例取值，比例相同时，向下取值
+     */
+    ByteRTCAggregationOptionMajority = 2
 };
 
 /** 
@@ -1752,15 +1822,15 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingState) {
     /** 
      * @brief 录制异常
      */
-    RecordingStateError = 0,
+    ByteRTCRecordingStateError = 0,
     /** 
      * @brief 录制进行中
      */
-    RecordingStateProcessing = 1,
+    ByteRTCRecordingStateProcessing = 1,
     /** 
      * @brief 录制文件保存成功，调用 `stopFileRecording:` 结束录制之后才会收到该状态码。
      */
-    RecordingStateSuccess = 2,
+    ByteRTCRecordingStateSuccess = 2,
 };
 
 /** 
@@ -1771,19 +1841,19 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingErrorCode) {
     /** 
      * @brief 录制正常
      */
-    RecordingErrorCodeOk = 0,
+    ByteRTCRecordingErrorCodeOk = 0,
     /** 
      * @brief 没有文件写权限
      */
-    RecordingErrorCodeNoPermission = -1,
+    ByteRTCRecordingErrorCodeNoPermission = -1,
     /** 
      * @brief 当前版本 SDK 不支持本地录制功能，请联系技术支持人员
      */
-    RecordingErrorCodeNotSupport = -2,
+    ByteRTCRecordingErrorCodeNotSupport = -2,
     /** 
      * @brief 其他异常
      */
-    RecordingErrorCodeOther = -3,
+    ByteRTCRecordingErrorCodeOther = -3,
 };
 
 /** 
@@ -1794,11 +1864,11 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingFileType) {
     /** 
      * @brief aac 格式文件
      */
-    RecordingFileTypeAAC = 0,
+    ByteRTCRecordingFileTypeAAC = 0,
     /** 
      * @brief mp4 格式文件
      */
-    RecordingFileTypeMP4 = 1,
+    ByteRTCRecordingFileTypeMP4 = 1,
 };
 
 /** 
@@ -1809,20 +1879,20 @@ typedef NS_ENUM(NSInteger, ByteRTCAVSyncState) {
     /** 
      * @brief 音视频开始同步
      */
-    AVSyncStateAVStreamSyncBegin = 0,
+    ByteRTCAVSyncStateAVStreamSyncBegin = 0,
     /** 
      * @brief 音视频同步过程中音频移除，但不影响当前的同步关系
      */
-    AVSyncStateAudioStreamRemove = 1,
+    ByteRTCAVSyncStateAudioStreamRemove = 1,
     /** 
      * @brief 音视频同步过程中视频移除，但不影响当前的同步关系
      */
-    AVSyncStateVdieoStreamRemove = 2,
+    ByteRTCAVSyncStateVideoStreamRemove = 2,
     /** 
      * @hidden for internal use only
      * @brief 订阅端设置同步  <br>
      */
-    AVSyncStateSetAVSyncStreamId = 3,
+    ByteRTCAVSyncStateSetAVSyncStreamId = 3,
 };
 /** 
  * @type keytype
@@ -1832,35 +1902,35 @@ typedef NS_ENUM(NSInteger, ByteRTCEchoTestResult) {
     /** 
      * @brief 接收到采集的音视频的回放，通话回路检测成功
      */
-    EchoTestSuccess = 0,
+    ByteRTCEchoTestResultSuccess = 0,
     /** 
      * @brief 测试超过 60s 仍未完成，已自动停止
      */
-    EchoTestTimeout = 1,
+    ByteRTCEchoTestResultTimeout = 1,
     /** 
      * @brief 上一次测试结束和下一次测试开始之间的时间间隔少于 5s
      */
-    EchoTestIntervalShort = 2,
+    ByteRTCEchoTestResultIntervalShort = 2,
     /** 
      * @brief 音频采集异常
      */
-    EchoTestAudioDeviceError = 3,
+    ByteRTCEchoTestResultAudioDeviceError = 3,
     /** 
      * @brief 视频采集异常
      */
-    EchoTestVideoDeviceError = 4,
+    ByteRTCEchoTestResultVideoDeviceError = 4,
     /** 
      * @brief 音频接收异常
      */
-    EchoTestAudioReceiveError = 5,
+    ByteRTCEchoTestResultAudioReceiveError = 5,
     /** 
      * @brief 视频接收异常
      */
-    EchoTestVideoReceiveError = 6,
+    ByteRTCEchoTestResultVideoReceiveError = 6,
     /** 
      * @brief 内部错误，不可恢复
      */
-    EchoTestInternalError = 7
+    ByteRTCEchoTestResultInternalError = 7
 };
 
 /** 
@@ -1960,7 +2030,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
  *        + true：是  <br>
  *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
  *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame:{@link #ByteRTCVideo#pushExternalAudioFrame:} 将采集到的音频推送给 SDK  <br>
- *        + flase：否  <br>
+ *        + false：否  <br>
  */
 @property(assign, nonatomic) BOOL enableAudio;
 /** 
@@ -1968,8 +2038,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
  *        + true：是  <br>
  *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
  *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame:{@link #ByteRTCVideo#pushExternalVideoFrame:} 将采集到的视频推送给 SDK  <br>
- *        + flase：否  <br>
- * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
+ *        + false：否  <br>
+ *        视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
  */
 @property(assign, nonatomic) BOOL enableVideo;
 /** 
@@ -2071,12 +2141,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
  */
 // @property(assign, nonatomic) double cpuTotalUsage;
 
-
 /** 
+ * @hidden currently not available
  * @brief 系统上行网络抖动（ms）
  */
 @property(assign, nonatomic) NSInteger txJitter;
 /** 
+ * @hidden currently not available
  * @brief 系统下行网络抖动（ms）
  */
 @property(assign, nonatomic) NSInteger rxJitter;
@@ -2158,8 +2229,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
  * @brief 视频上行网络抖动，单位为 ms。  <br>
  */
 @property(assign, nonatomic) NSInteger jitter;
-
 /** 
+ * @hidden(macOS)
  * @brief 视频降噪模式。具体参看 ByteRTCVideoDenoiseMode{@link #ByteRTCVideoDenoiseMode} 。
  */
 @property(assign, nonatomic) ByteRTCVideoDenoiseMode videoDenoiseMode;
@@ -2242,7 +2313,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
  */
 @property(assign, nonatomic) NSInteger jitter;
 /** 
- * @hidden for internal use only
+ * @hidden(macOS)
  * @brief 远端视频超分模式，参看 ByteRTCVideoSuperResolutionMode{@link #ByteRTCVideoSuperResolutionMode}。
  */
 @property(assign, nonatomic) ByteRTCVideoSuperResolutionMode superResolutionMode;
@@ -2332,7 +2403,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
 /** 
  * @brief 发送端——服务端——接收端全链路数据传输往返时延。单位为 ms 。  <br>
  */
-@property(assign, nonatomic) NSInteger total_rtt;
+@property(assign, nonatomic) NSInteger totalRtt;
 /** 
  * @brief 远端用户发送的音频流质量。值含义参考 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality} 。  <br>
  */
@@ -2385,25 +2456,25 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
 /** 
  * @brief 本地设备发送音频流的统计信息，详见 ByteRTCLocalAudioStats{@link #ByteRTCLocalAudioStats}
  */
-@property(strong, nonatomic) ByteRTCLocalAudioStats *_Nonnull audio_stats;
+@property(strong, nonatomic) ByteRTCLocalAudioStats *_Nonnull audioStats;
 /** 
  * @brief 本地设备发送视频流的统计信息，详见 ByteRTCLocalVideoStats{@link #ByteRTCLocalVideoStats}
  */
-@property(strong, nonatomic) ByteRTCLocalVideoStats *_Nonnull video_stats;
+@property(strong, nonatomic) ByteRTCLocalVideoStats *_Nonnull videoStats;
 /** 
  * @brief 所属用户的媒体流上行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
  * @deprecated since 3.36 and will be deleted in 3.51, use rtcRoom:onNetworkQuality:remoteQualities:{@link #ByteRTCRoomDelegate#rtcRoom:onNetworkQuality:remoteQualities:} instead
  */
-@property(assign, nonatomic) ByteRTCNetworkQuality tx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality txQuality;
 /** 
  * @brief 所属用户的媒体流下行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
  * @deprecated since 3.36 and will be deleted in 3.51, use rtcRoom:onNetworkQuality:remoteQualities:{@link #ByteRTCRoomDelegate#rtcRoom:onNetworkQuality:remoteQualities:} instead
  */
-@property(assign, nonatomic) ByteRTCNetworkQuality rx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 /** 
  * @brief 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
  */
-@property(nonatomic, assign) BOOL is_screen;
+@property(nonatomic, assign) BOOL isScreen;
 @end
 
 /** 
@@ -2420,25 +2491,25 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
 /** 
  * @brief 远端音频流的统计信息，详见 ByteRTCRemoteAudioStats{@link #ByteRTCRemoteAudioStats}
  */
-@property(strong, nonatomic) ByteRTCRemoteAudioStats *_Nonnull audio_stats;
+@property(strong, nonatomic) ByteRTCRemoteAudioStats *_Nonnull audioStats;
 /** 
  * @brief 远端视频流的统计信息，详见 ByteRTCRemoteVideoStats{@link #ByteRTCRemoteVideoStats}
  */
-@property(strong, nonatomic) ByteRTCRemoteVideoStats *_Nonnull video_stats;
+@property(strong, nonatomic) ByteRTCRemoteVideoStats *_Nonnull videoStats;
 /** 
  * @brief 所属用户的媒体流上行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
  * @deprecated since 3.36 and will be deleted in 3.51, use rtcRoom:onNetworkQuality:remoteQualities:{@link #ByteRTCRoomDelegate#rtcRoom:onNetworkQuality:remoteQualities:} instead
  */
-@property(assign, nonatomic) ByteRTCNetworkQuality tx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality txQuality;
 /** 
  * @brief 所属用户的媒体流下行网络质量，详见 ByteRTCNetworkQuality{@link #ByteRTCNetworkQuality}
  * @deprecated since 3.36 and will be deleted in 3.51, use rtcRoom:onNetworkQuality:remoteQualities:{@link #ByteRTCRoomDelegate#rtcRoom:onNetworkQuality:remoteQualities:} instead
  */
-@property(assign, nonatomic) ByteRTCNetworkQuality rx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 /** 
  * @brief 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
  */
-@property(nonatomic, assign) BOOL is_screen;
+@property(nonatomic, assign) BOOL isScreen;
 @end
 
 /** 
@@ -2598,7 +2669,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCStreamSycnInfoConfig : NSObject
  * @type keytype
  * @brief 媒体流跨房间转发的目标房间的相关信息
  */
-BYTERTC_APPLE_EXPORT @interface ForwardStreamConfiguration: NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCForwardStreamConfiguration: NSObject
     /** 
      * @brief 跨房间转发媒体流过程中目标房间 ID<br>
      */
@@ -2615,7 +2686,7 @@ BYTERTC_APPLE_EXPORT @interface ForwardStreamConfiguration: NSObject
  * @type keytype
  * @brief 跨房间转发媒体流过程中的不同目标房间的状态和错误信息
  */
-BYTERTC_APPLE_EXPORT @interface ForwardStreamStateInfo: NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCForwardStreamStateInfo: NSObject
     /** 
      * @brief 跨房间转发媒体流过程中目标房间 ID<br>
      *        空字符串代表所有目标房间
@@ -2635,7 +2706,7 @@ BYTERTC_APPLE_EXPORT @interface ForwardStreamStateInfo: NSObject
  * @type keytype
  * @brief 跨房间转发媒体流过程中的不同目标房间发生的事件
  */
-BYTERTC_APPLE_EXPORT @interface ForwardStreamEventInfo: NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCForwardStreamEventInfo: NSObject
     /** 
      * @brief 跨房间转发媒体流过程中的发生该事件的目标房间 ID<br>
      *        空字符串代表所有目标房间
@@ -2914,6 +2985,23 @@ typedef NS_ENUM(NSInteger,ByteRTCSetRoomExtraInfoResult) {
      */
     ByteRTCSetRoomExtraInfoResultServerError = -500
 };
+/**  
+ * @type keytype
+ * @hidden internal use only
+ * @brief 特效错误类型。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCEffectErrorType) {
+    /** 
+     * @hidden 仅用于会议
+     * @brief 虚拟背景设置错误。
+     */
+    ByteRTCEffectErrorVirtualBackgroundFailure = 1,
+    /** 
+     * @hidden 仅用于会议
+     * @brief 特效独立进程崩溃。
+     */
+    ByteRTCEffectErrorChildProcTerminate = 2
+};
 
 #pragma mark - ByteRTCSubtitle
 /**  
@@ -2996,11 +3084,11 @@ typedef NS_ENUM(NSInteger, ByteRTCSubtitleErrorCode) {
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleConfig : NSObject
 /** 
- * @brief 字幕模式。
+ * @brief 字幕模式。可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。参看 ByteRTCSubtitleMode{@link #ByteRTCSubtitleMode}。
  */
 @property(assign, nonatomic) ByteRTCSubtitleMode mode;
 /** 
- * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%E7%9B%AE%E6%A0%87%E8%AF%AD%E8%A8%80-2) 查看翻译服务最新支持的语种信息。
+ * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%F0%9F%93%A2%E5%AE%9E%E6%97%B6%E8%AF%AD%E9%9F%B3%E7%BF%BB%E8%AF%91) 查看翻译服务最新支持的语种信息。
  */
 @property(copy, nonatomic) NSString *_Nonnull targetLanguage;
 @end
@@ -3017,6 +3105,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleMessage : NSObject
  * @brief 语音识别或翻译后的文本, 采用 UTF-8 编码。
  */
 @property(copy, nonatomic) NSString *_Nonnull text;
+/** 
+ * @brief 字幕语种，根据字幕模式为原文或译文对应的语种。
+ */
+@property(copy, nonatomic) NSString *_Nonnull language;
+/** 
+ * @brief 字幕模式，参看 SubtitleMode{@link #SubtitleMode}。
+ */
+@property(assign, nonatomic) NSInteger mode;
 /** 
  * @brief 语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
  */

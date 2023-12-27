@@ -41,6 +41,7 @@ private:
     std::unique_ptr<ByteRTCRoomHandler> createRoomHandler(std::string roomid, std::string uid);
 
     void addItem();
+    void initUI();
 
 private slots:
     void onBtnJoinClicked(); //进房

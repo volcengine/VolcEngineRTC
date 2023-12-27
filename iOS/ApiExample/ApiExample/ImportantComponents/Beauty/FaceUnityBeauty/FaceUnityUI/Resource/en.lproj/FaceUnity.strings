@@ -1,0 +1,75 @@
+/*
+  FaceUnity.strings
+  XPYCamera
+
+  Created by 项林平 on 2021/6/15.
+  
+*/
+
+/// Modules
+"美肤" = "Skin";
+"美型" = "Reshape";
+"滤镜" = "Filter";
+"贴纸" = "Sticker";
+"美妆" = "Makeup";
+"美体" = "Body Shape";
+"游戏" = "Game";
+"人像分割" = "Portrait Segmentation";
+
+/// Skin
+"精细磨皮" = "Fine Smooth";
+"美白" = "Whiten";
+"红润" = "Ruddy";
+"锐化" = "Sharpen";
+"五官立体" = "Face Threed";
+"亮眼" = "Eye Brighten";
+"美牙" = "Tooth Whiten";
+"去黑眼圈" = "Circles";
+"去法令纹" = "Wrinkles";
+
+/// Reshape
+"瘦脸" = "Cheek Thin";
+"v脸" = "Cheek V";
+"窄脸" = "Cheek Narrow";
+"短脸" = "Cheek Short";
+"小脸" = "Cheek Small";
+"瘦颧骨" = "Cheekbones";
+"瘦下颌骨" = "Lower Jaw";
+"圆眼" = "Eye Circle";
+"大眼" = "Eye Enlarge";
+"下巴" = "Chin";
+"额头" = "Forehead";
+"瘦鼻" = "Nose";
+"嘴型" = "Mouth";
+"嘴唇厚度" = "Lip Thick";
+"眼睛位置" = "Eye Height";
+"开眼角" = "Canthus";
+"眼睑下至" = "Eye Lid";
+"眼距" = "Eye Space";
+"眼睛角度" = "Eye Rotate";
+"长鼻" = "Long Nose";
+"缩人中" = "Philtrum";
+"微笑嘴角" = "Smile";
+"眉毛上下" = "Brow Height";
+"眉间距" = "Brow Space";
+"眉毛粗细" = "Brow Thick";
+
+/// Body
+"瘦身" = "Slim";
+"长腿" = "Long leg";
+"细腰" = "Thin waist";
+"美肩" = "Shoulder";
+"美臀" = "Buttock";
+"小头" = "Head";
+"瘦腿" = "Thin leg";
+
+/// Filter
+"origin" = "Origin";
+"ziran1" = "Nature1";
+"zhiganhui1" = "Texture grey1";
+"bailiang1" = "Bright1";
+"fennen1" = "Pink1";
+"lengsediao1"= "Cold tone1";
+
+"卸妆" = "Remove";
+"恢复" = "Recover";

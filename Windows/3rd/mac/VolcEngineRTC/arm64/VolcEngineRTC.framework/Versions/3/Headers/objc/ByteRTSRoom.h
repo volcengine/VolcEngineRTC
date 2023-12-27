@@ -25,7 +25,7 @@
   * @param uid 用户 ID。
   * @param state 房间状态码。  <br>
   *              + 0: 加入房间成功。  <br>
-  *              + !0: 加入房间失败、异常退房、发生房间相关的警告或错误。具体原因参看 ByteRTCErrorCode{@link #ByteRTCErrorCode} 及 ByteRTCWarningCode{@link #ByteRTCWarningCode}。
+  *              + !0: 加入房间失败、异常退房、发生房间相关的警告或错误。
   * @param extraInfo 额外信息，如 `{"elapsed":1187,"join_type":0}`。
   *                  `join_type`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
   *                  `elapsed`表示加入房间耗时，即本地用户从调用 joinRoom{@link #RTSRoom#joinRoom} 到加入房间成功所经历的时间间隔，单位为 ms。
@@ -40,11 +40,14 @@
  * @brief 离开房间成功回调。  <br>
  *        用户调用 leaveRoom{@link #RTSRoom#leaveRoom} 方法后，SDK 会停止房间内消息的收发，并在释放所有相关资源后，通过此回调通知用户离开房间成功。  <br>
  * @param rtsRoom rtsRoom 对象。  <br>
- * @notes 用户调用 leaveRoom{@link #RTSRoom#leaveRoom} 方法离开房间后，如果立即销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ * @notes
+ *       + 用户调用 leaveRoom{@link #RTSRoom#leaveRoom} 方法离开房间后，如果立即调用 destroy{@link #RTSRoom#destroy} 销毁房间实例或 destroyRTS{@link #RTS#destroyRTS} 方法销毁 RTS 引擎，则将无法收到此回调事件。  <br>
+ *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
  */
 - (void)rtsRoomOnLeaveRoom:(RTSRoom *_Nonnull)rtsRoom;
 
 /** 
+ * @hidden
  * @deprecated since 3.46 and will be deleted in 3.52, use rtsRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #RTSRoomDelegate#rtsRoom:onRoomStateChanged:withUid:state:extraInfo:} instead.
  * @type callback
  * @region 多房间
@@ -129,6 +132,7 @@ BYTERTC_APPLE_EXPORT @interface RTSRoom : NSObject
  */
 - (void)destroy;
 /** 
+ * @hidden
  * @deprecated since 3.46 and will be deleted in 3.52.
  * @type api
  * @region 多房间
@@ -142,7 +146,7 @@ BYTERTC_APPLE_EXPORT @interface RTSRoom : NSObject
  * @param roomDelegate 参见 RTSRoomDelegate{@link #RTSRoomDelegate}。
  * @return  <br>
  *        + 0: 调用成功。
- *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
 - (int)setRTSRoomDelegate:(id<RTSRoomDelegate> _Nullable)roomDelegate;
 

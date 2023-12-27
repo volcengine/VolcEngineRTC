@@ -2,7 +2,10 @@
 #include "ui_AudioMixItem.h"
 
 #include <QSpinBox>
+#include <QPainter>
+
 #include <QButtonGroup>
+#include "Resources.h"
 
 AudioMixItem::AudioMixItem(QWidget *parent) :
     QWidget(parent),
@@ -22,6 +25,24 @@ AudioMixItem::AudioMixItem(QWidget *parent) :
     connect(ui->btn_resume, &QPushButton::clicked, this, &AudioMixItem::onBtnResumeClicked);
     connect(ui->spinBox_volume, SIGNAL(valueChanged(int)), this, SLOT(onSpinVolumeChanged(int)));
     connect(ui->spinBox_time, SIGNAL(valueChanged(int)), this, SLOT(onSpinTimeChanged(int)));
+
+    QList<QWidget *> childWidgets = this->findChildren<QWidget *>();
+    // 遍历子控件并设置样式表
+    foreach (QWidget *childWidget, childWidgets) {
+        QLabel *label = qobject_cast<QLabel *>(childWidget);
+        if (label) {
+            label->setStyleSheet(APIDemo::str_qss_label);
+        }
+    }
+
+    ui->label_state->setStyleSheet("QLabel{color:#0C0D0E;font-family: PingFang SC;font-size: 14px;}");
+    ui->label_id->setStyleSheet("QLabel{color:#737A87;font-family: PingFang SC;font-size: 16px;}");
+    ui->btn_stop->setStyleSheet(APIDemo::str_qss_btn4);
+    ui->btn_pause->setStyleSheet(APIDemo::str_qss_btn4);
+    ui->btn_resume->setStyleSheet(APIDemo::str_qss_btn4);
+    ui->btn_start->setStyleSheet(APIDemo::str_qss_btn4);
+    ui->spinBox_time->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_volume->setStyleSheet(APIDemo::str_qss_spinbox);
 }
 
 AudioMixItem::~AudioMixItem()
@@ -74,6 +95,14 @@ void AudioMixItem::onSpinVolumeChanged(int)
     int id = ui->label_id->text().toInt();
     int volume = ui->spinBox_volume->value();
     emit sigSpinVolumeChanged(id, volume);
+}
+
+void AudioMixItem::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+    p.fillRect(rect(), QBrush(QColor("#fcfdfe")));
+    p.setPen(QPen(QBrush("#EAEDF1"), 2));
+    p.drawRect(rect());
 }
 
 QLabel* AudioMixItem::getID() 

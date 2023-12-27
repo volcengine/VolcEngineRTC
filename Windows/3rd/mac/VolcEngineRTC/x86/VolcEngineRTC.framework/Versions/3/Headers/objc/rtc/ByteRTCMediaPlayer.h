@@ -19,7 +19,6 @@
 - (void)onFrame:(int)playerId audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 
 @end
-
 /** 
  * @type callback
  * @brief ByteRTCMediaPlayer{@link #ByteRTCMediaPlayer} 对应的回调句柄。你必须调用 setEventHandler:{@link #ByteRTCMediaPlayer#setEventHandler:} 完成设置后，才能收到对应回调。
@@ -43,10 +42,10 @@
 
 @end
 /** 
- * @type api
- * @brief 音乐播放器
  * @valid since 3.53
- * @notes 调用 setEventHandler{@link #ByteRTCMediaPlayer#setEventHandler} 设置回调句柄以获取相关回调。
+ * @type api
+ * @brief 音乐播放器<br>
+ *        调用 setEventHandler:{@link #ByteRTCMediaPlayer#setEventHandler:} 设置回调句柄以获取相关回调。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
 /** 
@@ -72,12 +71,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  *           <tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr>
  *        </table>
  * @param config 详见 ByteRTCMediaPlayerConfig{@link #ByteRTCMediaPlayerConfig}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
 - (int)open:(NSString *_Nullable)filePath config:(ByteRTCMediaPlayerConfig *_Nullable)config;
 /** 
  * @type api
  * @brief 播放音乐。你仅需要在调用 open:config:{@link #ByteRTCMediaPlayer#open:config:}，且未开启自动播放时，调用此方法。
- * @notes 调用本方法播放音频文件后，可调用 stop{@link #ByteRTCMediaPlayer#stop} 方法暂停播放。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ * + 要播放 PCM 格式的音频数据，参看 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:}。`openWithCustomSource` 和此 API 互斥。
+ * + 调用本方法播放音频文件后，可调用 stop{@link #ByteRTCMediaPlayer#stop} 方法暂停播放。
  */
 - (int)start;
 /** 
@@ -89,22 +96,38 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @notes  <br>
  *       + 调用本方法启动后，再调用 pushExternalAudioFrame:{@link #ByteRTCMediaPlayer#pushExternalAudioFrame:} 推送音频数据，才会开始混音。
  *       + 如要结束 PCM 音频数据混音，调用 stop{@link #ByteRTCMediaPlayer#stop}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
 - (int)openWithCustomSource:(ByteRTCMediaPlayerCustomSource *_Nullable)source config:(ByteRTCMediaPlayerConfig *_Nullable)config;
 /** 
  * @type api
  * @brief 调用 open:config:{@link #ByteRTCMediaPlayer#open:config:}, start{@link #ByteRTCMediaPlayer#start}, 或 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 开始播放后，可以调用本方法停止。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
 - (int)stop;
 /** 
  * @type api
  * @brief 调用 open:config:{@link #ByteRTCMediaPlayer#open:config:}，或 start{@link #ByteRTCMediaPlayer#start} 开始播放音频文件后，调用本方法暂停播放。
- * @notes 调用本方法暂停播放后，可调用 resume{@link #ByteRTCMediaPlayer#resume} 恢复播放。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ * + 调用本方法暂停播放后，可调用 resume{@link #ByteRTCMediaPlayer#resume} 恢复播放。
+ * + 此接口仅支持音频文件，不支持 PCM 数据。
  */
 - (int)pause;
 /** 
  * @type api
  * @brief 调用 pause{@link #ByteRTCMediaPlayer#pause} 暂停音频播放后，调用本方法恢复播放。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        此接口仅支持音频文件，不支持 PCM 数据。
  */
 - (int)resume;
 /** 
@@ -112,6 +135,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @brief 调节指定混音的音量大小，包括音乐文件混音和 PCM 混音。
  * @param volume 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。
  * @param type 详见 ByteRTCAudioMixingType{@link #ByteRTCAudioMixingType}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes 仅在音频播放进行状态时，调用此方法。
  */
  - (int)setVolume:(int)volume type:(ByteRTCAudioMixingType)type;
@@ -131,7 +157,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @return  <br>
  *        + >0: 成功, 音乐文件时长，单位为毫秒。  <br>
  *        + < 0: 失败
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 此接口仅支持音频文件，不支持 PCM 数据。
  */
 - (int)getTotalDuration;
@@ -143,7 +170,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  *        + < 0: 失败。
  * @notes <br>
  *        + 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。
- *        + 仅在音频播放进行状态时，调用此方法。
+ *        + 仅在音频播放进行状态，且 setProgressInterval:{@link #ByteRTCMediaPlayer#setProgressInterval:} 设置间隔大于 `0` 时，调用此方法。
  *        + 此接口仅支持音频文件，不支持 PCM 数据。
  */
 - (int)getPlaybackDuration;
@@ -153,7 +180,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @return  <br>
  *        + >0: 成功, 音乐文件播放进度，单位为毫秒。
  *        + < 0: 失败
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 此接口仅支持音频文件，不支持 PCM 数据。
  */
 - (int)getPosition;
@@ -161,8 +189,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @type api
  * @brief 开启变调功能，多用于 K 歌场景。
  * @param pitch 与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。
- * @notes + 仅在音频播放进行状态时，调用此方法。
- *        + 支持音乐文件混音和 PCM 混音。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
+ *        + 仅支持音乐文件混音，不支持 PCM 数据。
  */
 - (int)setAudioPitch:(int)pitch;
 /** 
@@ -170,14 +202,23 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @brief 设置音乐文件的起始播放位置。
  * @param position 音乐文件起始播放位置，单位为毫秒。  <br>
  *        你可以通过 getTotalDuration{@link #ByteRTCMediaPlayer#getTotalDuration} 获取音乐文件总时长，position 的值应小于音乐文件总时长。
- * @notes 在播放在线文件时，调用此接口可能造成播放延迟的现象。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 此接口仅支持音频文件，不支持 PCM 数据。
+ *        + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
  */
 - (int)setPosition:(int)position;
 /** 
  * @type api
  * @brief 设置当前音乐文件的声道模式
  * @param mode 声道模式。默认的声道模式和源文件一致，详见 ByteRTCAudioMixingDualMonoMode{@link #ByteRTCAudioMixingDualMonoMode}。
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 仅支持音频文件，不支持 PCM 数据。
  */
 - (int)setAudioDualMonoMode:(ByteRTCAudioMixingDualMonoMode)mode;
@@ -186,7 +227,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @brief 获取当前音乐文件的音轨数
  * @return + >= 0：成功，返回当前音乐文件的音轨数
  *         + < 0：方法调用失败
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 此方法仅支持音乐文件，不支持 PCM 数据。
  */
 - (int)getAudioTrackCount;
@@ -195,7 +237,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @brief 指定当前音乐文件的播放音轨
  * @param index 指定的播放音轨，从 0 开始，取值范围为 `[0, getAudioTrackCount()-1]`。
  *        设置的参数值需要小于 getAudioTrackCount{@link #ByteRTCMediaPlayer#getAudioTrackCount} 的返回值
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 此方法仅支持音乐文件，不支持 PCM 数据。
  */
 - (int)selectAudioTrack:(int)index;
@@ -203,17 +249,25 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @type api
  * @brief 设置播放速度
  * @param speed 播放速度与原始文件速度的比例，单位：%，取值范围为 `[50,200]`，默认值为 100。
- * @notes + 仅在音频播放进行状态时，调用此方法。
- *        + 此方法对音频文件和音频裸数据播放都可用。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
+ *        + 此方法对音频文件可用，不支持 PCM 数据。
  */
 - (int)setPlaybackSpeed:(int)speed;
 /** 
  * @type api
  * @brief 设置音频文件混音时，收到 onMediaPlayerPlayingProgress:progress:{@link #ByteRTCMediaPlayerEventHandler#onMediaPlayerPlayingProgress:progress:} 的间隔。
  * @param interval 时间间隔，单位毫秒。
- *       + interval > 0 时，触发回调。实际间隔是 `10*(mod(10)+1)`。
+ *       + interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。
  *       + interval <= 0 时，不会触发回调。
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 此方法仅支持音频文件，不支持 PCM 数据。
  */
  - (int)setProgressInterval:(int64_t)interval;
@@ -222,7 +276,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @brief 如果你需要使用 enableVocalInstrumentBalance:{@link #ByteRTCVideo#enableVocalInstrumentBalance:} 对音频文件/PCM 音频数据设置音量均衡，你必须通过此接口传入其原始响度。
  * @param loudness 原始响度，单位：lufs，取值范围为 `[-70.0, 0.0]`。
  *        当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音量均衡处理。默认值为 1.0lufs，即不做处理。
- * @notes + 仅在音频播放进行状态时，调用此方法。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        + 仅在音频播放进行状态时，调用此方法。
  *        + 此方法对音频文件和音频裸数据播放都可用。
  */
 - (int)setLoudness:(float)loudness;
@@ -230,19 +288,26 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayer :NSObject
  * @type api
  * @brief 注册回调句柄以在本地音乐文件混音时，收到相关回调。
  * @param observer 参看 ByteRTCMediaPlayerAudioFrameObserver{@link #ByteRTCMediaPlayerAudioFrameObserver}。
+ * @return  <br>
+ *        + 0: 调用成功。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes <br>
+ *        此接口仅支持音频文件，不支持 PCM 数据。
  */
 - (int)registerAudioFrameObserver:(_Nullable id<ByteRTCMediaPlayerAudioFrameObserver>)observer;
 /** 
  * @type api
  * @brief 推送用于混音的 PCM 音频帧数据
  * @param audioFrame 音频帧，详见 ByteRTCAudioFrame{@link #ByteRTCAudioFrame}。
+ *        + 音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。
+ *        + 必须指定具体的采样率和声道数，不支持设置为自动。
  * @return  <br>
  *       + 0: 成功  <br>
  *       + < 0: 失败
  * @notes
  *      + 调用该方法前，须通过 openWithCustomSource:config:{@link #ByteRTCMediaPlayer#openWithCustomSource:config:} 启动外部音频流混音。
  *      + 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 200 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。
- *。    + 如果要暂停播放，暂停推送即可。
+ *      + 如果要暂停播放，暂停推送即可。
  */
 - (int)pushExternalAudioFrame:(ByteRTCAudioFrame *_Nullable)audioFrame;
 /** 

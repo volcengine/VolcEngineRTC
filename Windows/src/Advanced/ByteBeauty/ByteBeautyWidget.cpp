@@ -9,20 +9,27 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QNetworkReply>
+#include <QList>
 
 #include <string>
+#include <vector>
 #include <sstream>
 
 #include "Public/http/http.h"
+#include "QtCore/qglobal.h"
 #include "bytertc_video.h"
 #include "bytertc_room.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Resources.h"
 
 /**
 * 功能名称： VolcEngineRTC 美颜功能
 * 功能简单描述：通过视频自定义处理实现视频帧的美颜、美白、滤镜、贴纸等效果
-* 参考文档：https://www.volcengine.com/docs/6348/114717
+* 参考文档：
+*   美颜CV：https://www.volcengine.com/docs/6348/114717
+*   第三方：https://www.volcengine.com/docs/6348/79888
+*   第三方美颜常见问题：https://www.volcengine.com/docs/6348/1178328
 *
 * 此功能涉及的API及回调：
 *     createRTCVideo 创建引擎
@@ -137,6 +144,24 @@ void ByteBeautyWidget::paintEvent(QPaintEvent *event) {
 }
 
 void ByteBeautyWidget::initUI() {
+
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    };
+
 	//beauty group
 	m_beautyBtnGroup = new QButtonGroup(this);
 	auto beautyButtonClickedHander = [=](int beautyType) {
@@ -215,6 +240,30 @@ void ByteBeautyWidget::initUI() {
     m_colorFilterBtnGroup->addButton(ui->filterBtn_2, kClearColorFIlter);
     m_colorFilterBtnGroup->addButton(ui->filterBtn_3, kNightColorFilter);
     m_colorFilterBtnGroup->addButton(ui->filterBtn_4, kColdOxygenColorFilter);
+
+    std::vector<QPushButton*> btnLists = {ui->whiteBtn, ui->bigEyeBtn, ui->gridThinBtn, ui->thinFaceBtn,
+                                     ui->filterBtn_1, ui->filterBtn_2, ui->filterBtn_3, ui->filterBtn_4, ui->stickerBtn_1,
+                                     ui->stickerBtn_2, ui->stickerBtn_3, ui->stickerBtn_4, ui->stickerBtn_5, ui->stickerBtn_6, ui->stickerBtn_7, ui->stickerBtn_8};
+    for (int i=0; i<btnLists.size(); i++) {
+        btnLists[i]->setStyleSheet(APIDemo::str_qss_btn2_3);
+        btnLists[i]->setFixedSize(86, 24);
+    }
+
+    ui->btn_joinRoom->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->lineEdit_room->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_user->setStyleSheet(APIDemo::str_qss_text);
+    ui->btn_check->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
+
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t3->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t4->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t5->setStyleSheet(APIDemo::str_qss_label_ttile);
+   
+
 }
 
 void ByteBeautyWidget::initData() {
@@ -274,7 +323,7 @@ void ByteBeautyWidget::updateColorFilter() {
 		effectPtr->setColorFilter(nullptr);
 		list = QStringList{"setColorFilter"};
 	}
-	ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void ByteBeautyWidget::updateEffectNodes(){
@@ -304,7 +353,7 @@ void ByteBeautyWidget::updateEffectNodes(){
 	}
 	
 	ret = effectPtr->setEffectNodes(effectNodeArray, i);
-	ui->widget_log->appendAPI("setEffectNodes");
+    appendAPI("setEffectNodes");
 	if (ret != 0) {
 		QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "setEffectNodes error:" + QString::number(ret), QMessageBox::Ok);
 		box.exec();
@@ -324,7 +373,7 @@ void ByteBeautyWidget::updateEffectNodes(){
 			path = m_videoEffectType2Path[kReshapePath].toStdString();
 		}
         ret = effectPtr->updateEffectNode(path.c_str(),info.keyName.c_str(),info.value);
-		ui->widget_log->appendAPI("updateEffectNode");
+        appendAPI("updateEffectNode");
         if (ret != 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "updateEffectNode error:" + QString::number(ret), QMessageBox::Ok);
             box.exec();
@@ -412,7 +461,7 @@ void ByteBeautyWidget::requestLicense()
 	char *pMsg = nullptr;
 	int len = 0;
 	effectPtr->getAuthMessage(&pMsg, &len);
-	ui->widget_log->appendAPI("getAuthMessage");
+    appendAPI("getAuthMessage");
 	if (pMsg == NULL) 
 	{
 		setCheckLicenseResultText(kLicenseError, QStringLiteral("获取授权消息失败"));
@@ -421,7 +470,7 @@ void ByteBeautyWidget::requestLicense()
 	QString authMsg = pMsg;
 	postDataObj["authMsg"] = authMsg;
 	effectPtr->freeAuthMessage(pMsg);
-	ui->widget_log->appendAPI("freeAuthMessage");
+    appendAPI("freeAuthMessage");
 	qint64 nonceNum = QRandomGenerator::global()->generate64() % 99999999;  //随机生成0到9的随机数
 	postDataObj["nonce"] = nonceNum;
 
@@ -539,7 +588,7 @@ void ByteBeautyWidget::checkLicense() {
 			return;
 		}
 		list = QStringList{"getVideoEffectInterface", "initCVResource", "enableVideoEffect"};
-		ui->widget_log->appendAPI(list);
+        appendAPI(list);
 		QFile::remove(licensePath.c_str());
 		updateEffectNodes();
 		updateColorFilter();
@@ -586,20 +635,22 @@ void ByteBeautyWidget::on_joinRoom_clicked()
 		std::string str_room = qstr_room.toStdString();
 
 		if (!Utils::checkIDValid(qstr_user_name, QStringLiteral("用户名"), qstr_error)) {
-			QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "uid error " + qstr_error, QMessageBox::Ok);
 			box.exec();
 			return;
 
 		}
 
 		if (!Utils::checkIDValid(qstr_room, QStringLiteral("房间号"), qstr_error)) {
-			QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "roomid error" + qstr_error, QMessageBox::Ok);
 			box.exec();
 			return;
 		}
 
-		bytertc::VideoCanvas canvas((void*)ui->widget->getWinId(), bytertc::RenderMode::kRenderModeHidden, 0);
+        bytertc::VideoCanvas canvas;
+        canvas.view = (void*)ui->widget->getWinId();
 		m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, canvas);
+		ui->widget->setUserInfo(str_room, str_user_name);
 
 		m_room = m_video->createRTCRoom(qstr_room.toStdString().c_str());
 		if (m_room == nullptr) {
@@ -635,7 +686,7 @@ void ByteBeautyWidget::on_joinRoom_clicked()
 		list = QStringList{ "leaveRoom", "destroy"};
         ui->btn_joinRoom->setText(QStringLiteral("进房"));
     }
-	ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void ByteBeautyWidget::resetUI() {
@@ -685,7 +736,7 @@ void ByteBeautyWidget::initRTCVideo()
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 	QStringList list = { "createRTCVideo","startAudioCapture","startVideoCapture", };
-	ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void ByteBeautyWidget::cleanRTCVideo()
@@ -706,7 +757,7 @@ void ByteBeautyWidget::cleanRTCVideo()
         m_video = nullptr;
 		list = list + QStringList{"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
     }
-	ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 std::unique_ptr<ByteRTCRoomHandler> ByteBeautyWidget::createRoomHandler(std::string roomid, std::string uid)
@@ -729,7 +780,7 @@ void ByteBeautyWidget::onRoomStateChanged(const char* room_id, const char* uid, 
 	if (room_id == nullptr || uid == nullptr) {
 		return;
     }
-    ui->widget_log->appendCallback("onRoomStateChanged: roomid" + QString::fromStdString(room_id) + ",uid:" + QString::fromStdString(uid) + ",state:" + QString::number(state));
+    appendCallback("onRoomStateChanged: roomid" + QString::fromStdString(room_id) + ",uid:" + QString::fromStdString(uid) + ",state:" + QString::number(state));
 
 }
 
@@ -741,7 +792,7 @@ void ByteBeautyWidget::onSigRoomStateChanged(std::string roomid, std::string uid
         << ",uid:" << uid
         << ",state:" << std::to_string(state)
         << ",extra:" << extra_info;
-    ui->widget_log->appendCallback(QString::fromStdString(log_str.str()));
+    appendCallback(QString::fromStdString(log_str.str()));
     if (state == 0) {
         ui->btn_joinRoom->setText(QStringLiteral("离房"));
     }
@@ -754,7 +805,7 @@ void ByteBeautyWidget::onSigUserPublishStream(std::string roomid, std::string ui
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 }
 
 void ByteBeautyWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type , bytertc::StreamRemoveReason)
@@ -763,17 +814,17 @@ void ByteBeautyWidget::onSigUserUnPublishStream(std::string roomid, std::string 
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 }
 
 void ByteBeautyWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
 {
     QString str = "onUserJoined, uid:" + QString::fromStdString(info.uid) + ",roomid:" + QString::fromStdString(info.roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 void ByteBeautyWidget::onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason)
 {
     QString str = "onUserLeave, uid:" + QString::fromStdString(uid) + ",roomid:" + QString::fromStdString(roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }

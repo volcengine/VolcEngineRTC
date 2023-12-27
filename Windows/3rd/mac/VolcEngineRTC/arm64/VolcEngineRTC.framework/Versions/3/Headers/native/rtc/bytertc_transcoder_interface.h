@@ -173,6 +173,7 @@ public:
     virtual ~ITranscoderObserver() = default;
 };
 /** 
+ * @hidden(Linux)
  * @type callback
  * @region 转推直播
  * @brief 单流转推直播观察者。  <br>
@@ -186,7 +187,7 @@ public:
      * @brief 单流转推直播状态回调
      * @param event 任务状态, 参看 SingleStreamPushEvent{@link #SingleStreamPushEvent}
      * @param task_id 任务 ID
-     * @param error 错误码，参看 TransCodingError{@link #TransCodingError}
+     * @param error 错误码，参看 StreamMixingErrorCode{@link #StreamMixingErrorCode}
      */
     virtual void onStreamPushEvent(SingleStreamPushEvent event, const char *task_id, int error) = 0;
     /**

@@ -78,6 +78,7 @@ struct AudioFormat {
      * @brief 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
      *        最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
      *        最大值是 `2048`。超出取值范围时，采样点数取默认值。
+     *        该参数仅在设置读写回调时生效，调用 enableAudioFrameCallback{@link #IRTCVideo#enableAudioFrameCallback} 开启只读模式回调时设置该参数不生效。
      */
     int samples_per_call = 0;
 };
@@ -89,25 +90,25 @@ enum AudioProcessorMethod{
     /** 
      * @brief 本地采集的音频。
      */
-    kAudioFrameProcessorRecord = 0,
+    kAudioProcessorMethodRecord = 0,
     /** 
      * @brief 远端音频流的混音音频。
      */
-    kAudioFrameProcessorPlayback = 1,
+    kAudioProcessorMethodPlayback = 1,
     /** 
      * @brief 各个远端音频流。
      */
-    kAudioFrameProcessorRemoteUser = 2,
+    kAudioProcessorMethodRemoteUser = 2,
     /** 
      * @hidden(Windows,Linux,macOS)
      * @brief 软件耳返音频。
      */
-    kAudioFrameProcessorEarMonitor = 3,
+    kAudioProcessorMethodEarMonitor = 3,
     /** 
      * @hidden(Linux)
      * @brief 屏幕共享音频。
      */
-    kAudioFrameProcessorScreen = 4,
+    kAudioProcessorMethodScreen = 4,
 };
 /** 
  * @type keytype
@@ -263,6 +264,48 @@ enum AudioScenarioType {
      *        </table>
      */
     kAudioScenarioTypeHighQualityChat = 5,
+};
+ /** 
+    * @hidden internal use only.
+    * @type keytype
+    * @brief 如果以下音频场景类型无法满足你的业务需要，请联系技术支持人员。
+    */
+ enum AudioSceneType {
+/** 
+     * @brief 默认场景 <br>
+     *        此场景适用于对音乐表现力有要求的场景，如音乐直播等。 
+     *        音频采集播放设备和采集播放状态，到音量类型的映射如下：
+     * <table>
+     *     <tr><th></th><th>不采集音频</th><th>采集音频</th><th>备注</th></tr>
+     *     <tr><td>内置麦克风和扬声器</td><td>媒体音量</td><td>通话音量</td><td>/</td></tr>
+     *     <tr><td>内置听筒</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *     <tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td><td>/</td></tr>
+     *     <tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td><td>即使蓝牙耳机有麦克风，也只能使用设备自带麦克风进行本地音频采集。</td></tr>
+     * </table>
+*/
+kAudioSceneTypeDefault = 0,
+/** 
+     * @brief 语聊场景  <br>
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量。<br>
+     *        适用于需要频繁上下麦的通话或会议场景以及视频聊天室场景。<br>
+     *        此场景可以保持统一的音频模式，不会有音量突变的听感。<br>
+     *        此场景可以最大程度地消除回声，使通话清晰度达到最优。<br>
+     *        使用蓝牙耳机时，能够使用蓝牙耳机上自带的麦克风进行音频采集。<br>
+     *        但是，此场景会压低使用媒体音量进行播放的其他音频的音量，且音质会变差。
+     */
+kAudioSceneTypeChatRoom = 1,
+/** 
+     * @brief 高音质语聊场景 <br>
+     *        此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。<br>
+     *        外放通话时，可能出现回声和啸叫，请联系技术支持人员。<br>
+     */
+kAudioSceneTypeHighQualityChatRoom = 2,
+    /** 
+     * @brief 低延迟场景 <br>
+     *      适合低时延场景，如 k 歌场景。 <br>
+     *      此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用媒体音量。<br>
+     */
+kAudioSceneTypeLowLatency = 3,
 };
 
 /** 
@@ -708,12 +751,27 @@ enum AudioCodecType {
      * @brief Opus 编码类型
      */
     kAudioCodecTypeOpus,
-    /** 
-     * @brief AAC 编码类型
+    /**
+     * @hidden internal use only
      */
     kAudioCodecTypeAac,
+    /**
+     * @hidden internal use only
+     */
+    kAudioCodecTypeAacLC = 2,
+    /**
+     * @hidden internal use only
+     */
+    kAudioCodecTypeAacHEv1,
+    /**
+     * @hidden internal use only
+     */
+    kAudioCodecTypeAacHEv2,
+    /**
+     * @hidden internal use only
+     */
+    kAudioCodecTypeAacLCadts,
 };
-
 /** 
  * @type keytype
  * @brief 音频输入格式
@@ -911,8 +969,7 @@ struct AudioMixingConfig {
       */
      int64_t callback_on_progress_interval = 0;
     /** 
-     * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
-     * @notes <br>
+     * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。 <br>
      *        + 仅在单个音频文件混音时使用有效。<br>
      *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
      */
@@ -958,7 +1015,7 @@ struct AudioEffectPlayerConfig {
      */
     int play_count = 1;
     /** 
-     * @brief 混音起始位置。默认值为 0，单位为毫秒。
+     * @brief 与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。
      */
     int pitch = 0;
     /** 
@@ -984,13 +1041,12 @@ struct MediaPlayerConfig {
     int start_pos = 0;
     /** 
      * @brief 设置音频文件混音时，收到 onMediaPlayerPlayingProgress{@link #IMediaPlayerEventHandler#onMediaPlayerPlayingProgress} 的间隔。单位毫秒。
-     *       + interval > 0 时，触发回调。实际间隔是 `10*(mod(10)+1)`。
+     *       + interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。
      *       + interval <= 0 时，不会触发回调。
      */
      int64_t callback_on_progress_interval = 0;
     /** 
-     * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
-     * @notes <br>
+     * @brief 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。 <br>
      *        + 仅在单个音频文件混音时使用有效。<br>
      *        + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
      */
@@ -1080,6 +1136,10 @@ struct AudioPropertiesConfig {
      *        默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
      */
     AudioPropertiesMode audio_report_mode = kAudioPropertiesModeMicrophone;
+    /** 
+     * @brief 是否回调本地用户的人声基频。
+     */
+    bool enable_voice_pitch = false;
 };
 /** 
  * @type keytype
@@ -1113,6 +1173,15 @@ struct AudioPropertiesInfo {
      *        + -1: 未开启 VAD。<br>
      */
     int vad = -1;
+    
+    /** 
+     * @brief 本地用户的人声基频，单位为赫兹。 <br>
+     *        同时满足以下两个条件时，返回的值为本地用户的人声基频：
+     *      + 调用 enableAudioPropertiesReport{@link #IRTCVideo#enableAudioPropertiesReport}，并设置参数 enable_voice_pitch 的值为 `true`。 <br>
+     *      + 本地采集的音频中包含本地用户的人声。 <br>
+     *        其他情况下返回 `0`。 
+     */
+    double voice_pitch = 0;
 };
 
 /** 
@@ -1303,11 +1372,11 @@ enum AudioAbilityType {
     /** 
      * @brief 音量可设置
      */
-    kAudioAbilityAble = 0,
+    kAudioAbilityTypeAble = 0,
     /** 
      * @brief 音量不可设置
      */
-    kAudioAbilityUnable = 1,
+    kAudioAbilityTypeUnable = 1,
 };
 /** 
  * @type keytype
@@ -1317,11 +1386,11 @@ enum AudioAlignmentMode {
     /** 
      * @brief 不对齐
      */
-    kAudioAlighmentModeOff,
+    kAudioAlignmentModeOff,
     /** 
      * @brief 远端音频流都对齐伴奏进度同步播放
      */
-    kAudioAlighmentModeAudioMixing,
+    kAudioAlignmentModeAudioMixing,
 };
 
 /** 
@@ -1606,15 +1675,15 @@ enum AudioRecordingErrorCode {
     /** 
      * @brief 没有进入房间
      */
-    kAudioRecordingErrorNotInRoom = -2,
+    kAudioRecordingErrorCodeNotInRoom = -2,
     /** 
      * @brief 录制已经开始
      */
-    kAudioRecordingAlreadyStarted = -3,
+    kAudioRecordingErrorCodeAlreadyStarted = -3,
     /** 
      * @brief 录制还未开始
      */
-    kAudioRecordingNotStarted = -4,
+    kAudioRecordingErrorCodeNotStarted = -4,
     /** 
      * @brief 录制失败。文件格式不支持。
      */

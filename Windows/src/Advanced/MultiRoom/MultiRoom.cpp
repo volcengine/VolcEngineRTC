@@ -6,6 +6,7 @@
 
 #include "Config.h"
 #include "Utils.h"
+#include "Resources.h"
 
 
 #include <QDebug>
@@ -51,6 +52,8 @@ MultiRoom::MultiRoom(QWidget *parent) :
     ui(new Ui::MultiRoom)
 {
     ui->setupUi(this);
+    initUI();
+
     connect(ui->btn1, &QPushButton::clicked, this, &MultiRoom::onBtn1Clicked);
     connect(ui->btn2, &QPushButton::clicked, this, &MultiRoom::onBtn2Clicked);
 
@@ -76,12 +79,12 @@ void MultiRoom::onBtn1Clicked()
 
     if (m_room1 == nullptr) {
         if (!Utils::checkIDValid(QString::fromStdString(room1), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid1 invalid"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid1 error ") + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
         if (!Utils::checkIDValid(QString::fromStdString(uid1), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid1 invalid"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid1 error ") + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -97,9 +100,8 @@ void MultiRoom::onBtn1Clicked()
         m_room1->setRTCRoomEventHandler(m_room_handler1.get());
 
         cavas.view = (void*)ui->widget->getWinId();
-        ui->widget->setUserInfo(room1, uid1);
-        cavas.render_mode = bytertc::kRenderModeHidden;
         m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, cavas);
+        ui->widget->setUserInfo(room1, uid1);
 
         bytertc::UserInfo user;
         bytertc::RTCRoomConfig config;
@@ -118,7 +120,7 @@ void MultiRoom::onBtn1Clicked()
         m_uid1 = uid1;
         m_remote_u1.roomid = room1;
         QStringList list = { "createRTCRoom", "setRTCRoomEventHandler", "setLocalVideoCanvas", "joinRoom" };
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
     }
     else {
         
@@ -133,7 +135,7 @@ void MultiRoom::onBtn1Clicked()
         ui->btn1->setText(QStringLiteral("进房"));
         ui->widget_2->setUserInfo("", "");
         QStringList list = { "leaveRoom", "setRTCRoomEventHandler", "destroy"};
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
     }
 }
 
@@ -146,12 +148,12 @@ void MultiRoom::onBtn2Clicked()
 
     if (m_room2 == nullptr) {
         if (!Utils::checkIDValid(QString::fromStdString(room2), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid2 invalid"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid2 error ") + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
         if (!Utils::checkIDValid(QString::fromStdString(uid2), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid2 invalid"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid2 error ") + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -183,7 +185,7 @@ void MultiRoom::onBtn2Clicked()
         m_uid2 = uid2;
         m_remote_u2.roomid = room2;
         QStringList list = { "createRTCRoom", "setRTCRoomEventHandler", "setLocalVideoCanvas", "joinRoom" };
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
 
     }
     else {
@@ -197,7 +199,7 @@ void MultiRoom::onBtn2Clicked()
 
         ui->btn2->setText(QStringLiteral("进房"));
         QStringList list = { "leaveRoom", "setRTCRoomEventHandler", "destroy" };
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
 
     }
 }
@@ -210,7 +212,7 @@ void MultiRoom::createRTC()
     m_video->startAudioCapture();
     m_video->startVideoCapture();
     QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void MultiRoom::cleanRTC()
@@ -233,7 +235,7 @@ void MultiRoom::cleanRTC()
         m_video = nullptr;
     }
     QStringList list = { "leaveRoom", "destroy", "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 
@@ -261,7 +263,7 @@ void MultiRoom::onSigRoomStateChanged(std::string roomid, std::string uid, int s
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(state)
         + ",extra_info:" + QString::fromStdString(extra_info);
-    ui->widget_log->appendCallback(str_log);
+    appendCallback(str_log);
 
     QPushButton* btn = nullptr;
     if (state == 0) {
@@ -290,7 +292,7 @@ void MultiRoom::onSigUserPublishStream(std::string roomid, std::string uid, byte
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(str_log);
+    appendCallback(str_log);
 
     //仅渲染room1和room2的一个远端用户
 
@@ -319,7 +321,7 @@ void MultiRoom::onSigUserPublishStream(std::string roomid, std::string uid, byte
         }
     }
     m_video->setRemoteVideoCanvas(key, cavas);
-    ui->widget_log->appendAPI("setRemoteVideoCanvas");
+    appendAPI("setRemoteVideoCanvas");
 }
 
 void MultiRoom::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)
@@ -329,7 +331,7 @@ void MultiRoom::onSigUserUnPublishStream(std::string roomid, std::string uid, by
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type)
         + ",reason:" + QString::number(reason);
-    ui->widget_log->appendCallback(str_log);
+    appendCallback(str_log);
 
     if (type & bytertc::kMediaStreamTypeVideo) {
         removeCavas(roomid, uid);
@@ -341,7 +343,7 @@ void MultiRoom::onSigUserJoined(ByteRTCRoomHandler::UserInfo userinfo, int elaps
     QString str_log = "onUserJoined,roomid:"
         + QString::fromStdString(userinfo.roomid)
         + ",uid:" + QString::fromStdString(userinfo.uid);
-    ui->widget_log->appendCallback(str_log);
+    appendCallback(str_log);
 }
 
 void MultiRoom::onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason)
@@ -349,7 +351,7 @@ void MultiRoom::onSigUserLeave(std::string roomid, std::string uid, bytertc::Use
     QString str_log = "onUserLeave,roomid:"
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str_log);
+    appendCallback(str_log);
 }
 
 void MultiRoom::onSigLeaveRoom(std::string roomid, std::string uid, bytertc::RtcRoomStats) 
@@ -357,7 +359,7 @@ void MultiRoom::onSigLeaveRoom(std::string roomid, std::string uid, bytertc::Rtc
     QString str_log = "onLeaveRoom,roomid:"
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str_log);
+    appendCallback(str_log);
 
     removeCavas(roomid, uid);
 }
@@ -376,7 +378,7 @@ void MultiRoom::removeCavas(std::string roomid, std::string uid)
     key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
     cavas.view = nullptr;
     m_video->setRemoteVideoCanvas(key, cavas);
-    ui->widget_log->appendAPI("setRemoteVideoCanvas");
+    appendAPI("setRemoteVideoCanvas");
 
     if (roomid == m_remote_u1.roomid && uid == m_remote_u1.uid) {
         m_remote_u1.widget->setUserInfo("", "");
@@ -390,4 +392,29 @@ void MultiRoom::removeCavas(std::string roomid, std::string uid)
     }
 
     this->update();
+}
+
+void MultiRoom::initUI()
+{
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    }
+
+    ui->btn1->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->btn2->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
 }

@@ -4,6 +4,7 @@
 #include "bytertc_video.h"
 #include "Config.h"
 #include "Utils.h"
+#include "Resources.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -15,7 +16,7 @@
 /**
 * 功能名称： VolcEngineRTC 音效混音
 * 功能简单描述：如果需要在通话过程中播放音效或音乐文件等，而且让房间内的其他成员也听到声音，需要使用混音功能。混音功能可以将麦克风采集的音频数据与音频文件、PCM 音频数据等合并为一路音频流后，发布到房间内
-* 参考文档：https://www.volcengine.com/docs/6348/70141
+* 参考文档：https://www.volcengine.com/docs/6348/1178326
 *
 * 此功能涉及的API及回调：
 *     createRTCVideo 创建引擎
@@ -63,6 +64,7 @@ AudioMixingEffect::AudioMixingEffect(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    initUI();
     initConnections();
     initRTCVideo();
 }
@@ -90,14 +92,12 @@ void AudioMixingEffect::initRTCVideo()
     m_handler.reset(new ByteRTCEventHandler());
     connect(m_handler.get(), &ByteRTCEventHandler::sigAudioEffectPlayerStateChanged, this, &AudioMixingEffect::onSigAudioEffectPlayerStateChanged);
     m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
-    m_video->startAudioCapture();
-    m_video->startVideoCapture();
 
     m_player = m_video->getAudioEffectPlayer();
     m_player->setEventHandler(m_handler.get());
 
     QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture", "getAudioEffectPlayer", "setEventHandler"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void AudioMixingEffect::cleanRTCVideo()
@@ -118,7 +118,7 @@ void AudioMixingEffect::cleanRTCVideo()
     }
 
     list = list + QStringList{ "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo" };
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 std::unique_ptr<ByteRTCRoomHandler> AudioMixingEffect::createRoomHandler(std::string roomid, std::string uid)
@@ -150,14 +150,14 @@ void AudioMixingEffect::onBtnJoinClicked() {
 
     if (ui->btn_join->text() == QStringLiteral("进房")) {
         if (!Utils::checkIDValid(QString::fromStdString(str_uid), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "uid error " + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
 
         }
 
         if (!Utils::checkIDValid(QString::fromStdString(str_room), QStringLiteral("房间号"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"),  "roomid error " + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -170,15 +170,18 @@ void AudioMixingEffect::onBtnJoinClicked() {
         }
 
         bytertc::VideoCanvas cavs;
-        cavs.view = (void*)ui->widget->winId();
+        cavs.view = (void*)ui->widget_user->winId();
         cavs.render_mode = bytertc::kRenderModeHidden;
 
         m_room_handler = createRoomHandler(str_room, str_uid);
         m_room->setRTCRoomEventHandler(m_room_handler.get());
 
+        m_video->startAudioCapture();
+        m_video->startVideoCapture();
+
         bytertc::VideoCanvas cas;
-        cas.view = (void*)ui->widget->getWinId();
-        ui->widget->setUserInfo(str_room, str_uid);
+        cas.view = (void*)ui->widget_user->getWinId();
+        ui->widget_user->setUserInfo(str_room, str_uid);
         m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
 
         bytertc::UserInfo info;
@@ -198,13 +201,16 @@ void AudioMixingEffect::onBtnJoinClicked() {
         }    
 
         QStringList list = {"createRTCRoom", "setRTCRoomEventHandler", "setLocalVideoCanvas", "joinRoom"};
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
     }
     else {
         if (m_room) {
-            m_room->leaveRoom(); 
+            m_room->leaveRoom();
+            m_room->destroy();
+            m_room = nullptr;
         }
-        ui->widget_log->appendAPI("leaveRoom");
+        ui->btn_join->setText(QStringLiteral("进房"));
+        appendAPI("leaveRoom");
     }
 }
 
@@ -263,6 +269,42 @@ void AudioMixingEffect::addItem() {
     ui->verticalLayout_list->addItem(ui->verticalSpacer);
 }
 
+void AudioMixingEffect::initUI()
+{
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    };
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->btn_join->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->btn_broswer->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_add->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btnPauseAll->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btnResumeAll->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btnStopAll->setStyleSheet(APIDemo::str_qss_btn2_3);
+
+    ui->scrollArea->setStyleSheet(APIDemo::str_qss_scrollstyle);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->lineEdit->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_roomid->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_uid->setStyleSheet(APIDemo::str_qss_text);
+    ui->spinBox_volume->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
+}
+
 
 void AudioMixingEffect::onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info) {
     QString log_str = QString("onRoomStateChanged,roomid:")
@@ -270,12 +312,12 @@ void AudioMixingEffect::onSigRoomStateChanged(std::string roomid, std::string ui
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(state)
         + ",extra:" + QString::fromStdString(extra_info);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
     m_roomid = roomid;
 
     if (state == 0) {
         ui->btn_join->setText(QStringLiteral("离房"));
-        ui->widget->setUserInfo(roomid, uid);
+        ui->widget_user->setUserInfo(roomid, uid);
     }
     else {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("onRoomStateChanged:") + QString::number(state), QMessageBox::Ok);
@@ -288,7 +330,7 @@ void AudioMixingEffect::onBtnStopAllClicked()
 {
     if (m_player == nullptr) return;
     int ret = m_player->stopAll();
-    ui->widget_log->appendAPI("stopAll");
+    appendAPI("stopAll");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("stopAll error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -299,7 +341,7 @@ void AudioMixingEffect::onBtnStopAllClicked()
 void AudioMixingEffect::onBtnPuaseAllClicked()
 {
     int ret = m_player->pauseAll();
-    ui->widget_log->appendAPI("pauseAll");
+    appendAPI("pauseAll");
     if (m_player == nullptr) return;
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("stopAll error:") + QString::number(ret), QMessageBox::Ok);
@@ -323,7 +365,7 @@ void AudioMixingEffect::onItemBtnStartClicked(int id, int type)
     //2. 建议 start 后不要马上调用 getDuration getVolume 等 get 类接口， 内部 start 是异步执行，get 是同步执行，同时调用无法保证前后执行顺序
     //   应该在收到 start 对应的回调后再执行get接口
     int ret = m_player->start(id, m_infos[id].path.c_str(), config);
-    ui->widget_log->appendAPI("start");
+    appendAPI("start");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("start error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -336,7 +378,7 @@ void AudioMixingEffect::onItemBtnPauseClicked(int id)
     if (m_player == nullptr) return;
     if (m_infos.count(id) == 0) return;
     int ret = m_player->pause(id);
-    ui->widget_log->appendAPI("pause");
+    appendAPI("pause");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("pause error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -349,7 +391,7 @@ void AudioMixingEffect::onItemBtnResumeClicked(int id)
     if (m_player == nullptr) return;
     if (m_infos.count(id) == 0) return;
     int ret = m_player->resume(id);
-    ui->widget_log->appendAPI("resume");
+    appendAPI("resume");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("resume error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -362,7 +404,7 @@ void AudioMixingEffect::onItemSpinVolumeChanged(int id, int volume)
     if (m_player == nullptr) return;
     if (m_infos.count(id) == 0) return;
     int ret = m_player->setVolume(id, volume);
-    ui->widget_log->appendAPI("setVolume");
+    appendAPI("setVolume");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setVolume error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -375,7 +417,7 @@ void AudioMixingEffect::onItemSpinPosChanged(int id, int pos)
     if (m_player == nullptr) return;
     if (m_infos.count(id) == 0) return;
     int ret = m_player->setPosition(id, pos);
-    ui->widget_log->appendAPI("setPosition");
+    appendAPI("setPosition");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setPosition error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -388,7 +430,7 @@ void AudioMixingEffect::onItemBtnStopClicked(int id)
     if (m_player == nullptr) return;
     if (m_infos.count(id) == 0) return;
     int ret = m_player->stop(id);
-    ui->widget_log->appendAPI("stop");
+    appendAPI("stop");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("stop error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -400,7 +442,7 @@ void AudioMixingEffect::onBtnResumeAllClicked()
 {
     if (m_player == nullptr) return;
     int ret = m_player->resumeAll();
-    ui->widget_log->appendAPI("resumeAll");
+    appendAPI("resumeAll");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("resumeAll error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -413,13 +455,13 @@ void AudioMixingEffect::onSigAudioEffectPlayerStateChanged(int effect_id, bytert
 
     std::stringstream stream;
     stream << "onAudioEffectPlayerStateChanged, id:" << effect_id << ",state:" << state << ",error:" << error;
-    ui->widget_log->appendCallback(QString::fromStdString(stream.str()));
+    appendCallback(QString::fromStdString(stream.str()));
 
     if (m_infos.count(effect_id) > 0) {
         m_infos[effect_id].widget->getState()->setText("state:" + QString::number(state) + ",err:" + QString::number(error));
         if (state == bytertc::kPlayerStatePlaying) {
             int ret = m_player->getDuration(effect_id);
-            ui->widget_log->appendAPI("getDuration");
+            appendAPI("getDuration");
             m_infos[effect_id].widget->getDuration()->setText(QString::number(ret));
             if (ret < 0) {
                 QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("getDuration error:") + QString::number(ret), QMessageBox::Ok);
@@ -427,7 +469,7 @@ void AudioMixingEffect::onSigAudioEffectPlayerStateChanged(int effect_id, bytert
             }
 
             ret = m_player->getVolume(effect_id);
-            ui->widget_log->appendAPI("getVolume");
+            appendAPI("getVolume");
             m_infos[effect_id].widget->getVolumeSpin()->blockSignals(true);
             m_infos[effect_id].widget->getVolumeSpin()->setValue(ret);
             m_infos[effect_id].widget->getVolumeSpin()->blockSignals(false);
@@ -444,14 +486,14 @@ void AudioMixingEffect::onSigUserPublishStream(std::string roomid, std::string u
 {
     QString str = "onUserPublishStream, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 void AudioMixingEffect::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason)
 {
     QString str = "onUserUnPublishStream, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -459,7 +501,7 @@ void AudioMixingEffect::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
              + ",uid:" + QString::fromStdString(info.uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -467,7 +509,7 @@ void AudioMixingEffect::onSigUserLeave(std::string roomid, std::string uid, byte
 {
     QString str = "onUserLeave, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 
 }
 
@@ -475,7 +517,7 @@ void AudioMixingEffect::onSigLeaveRoom(std::string roomid, std::string uid, byte
 {
     QString str = "onLeaveRoom, roomid:" + QString::fromStdString(roomid)
              + ",uid:" + QString::fromStdString(uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
     ui->btn_join->setText(QStringLiteral("进房"));
 
 }
@@ -484,7 +526,7 @@ void AudioMixingEffect::onSpinVolumeChanged(int value)
 {
     if (m_player == nullptr) return;
     int ret = m_player->setVolumeAll(value);
-    ui->widget_log->appendAPI("setVolumeAll");
+    appendAPI("setVolumeAll");
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("resumeAll error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();

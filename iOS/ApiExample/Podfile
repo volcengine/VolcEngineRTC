@@ -1,0 +1,22 @@
+source 'https://cdn.cocoapods.org/'
+source 'https://github.com/volcengine/volcengine-specs.git'
+
+
+platform :ios, '11.0'
+
+target 'ApiExample' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  pod 'VolcEngineRTC', '3.57.1.2200'
+  pod 'SnapKit'
+  
+  # 请求token需要依赖
+  pod 'OpenSSL-Universal'
+  
+  # 键盘遮挡
+  pod 'IQKeyboardManagerSwift'
+  
+  # 相芯美颜SDK
+  pod 'FURenderKit', '8.7.0'
+end

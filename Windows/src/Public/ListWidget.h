@@ -8,11 +8,10 @@ class ListWidget : public QListWidget
 {
 public:
     ListWidget(QWidget* parent = nullptr);
-    void setItemHeight(int height);
     void autoAdjustHeight();
 
 private:
-    int m_itemHeight = 20;
+    int m_itemHeight = 34;
 };
 
 #endif // LISTWIDGET_H

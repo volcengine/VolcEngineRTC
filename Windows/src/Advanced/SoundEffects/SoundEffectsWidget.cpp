@@ -13,12 +13,13 @@
 #include "Config.h"
 #include "Utils.h"
 #include "ByteRTCEventHandler.h"
+#include "Resources.h"
 
 
 /**
 * 功能名称： VolcEngineRTC 美声与音效
 * 功能简单描述：该功能展示了混响、变声、降噪等功能
-* 参考文档：https://www.volcengine.com/docs/6489/171423
+* 参考文档：https://www.volcengine.com/docs/6348/1178327
 *
 * 此功能涉及的API及回调：
 *     createRTCVideo 创建引擎
@@ -119,7 +120,7 @@ void SoundEffectsWidget::initRTCVideo()
     m_video->startAudioCapture();
     m_video->startVideoCapture();
     list = list + QStringList{"startAudioCapture", "startVideoCapture"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void SoundEffectsWidget::cleanRTCVideo()
@@ -136,10 +137,36 @@ void SoundEffectsWidget::cleanRTCVideo()
         m_video = nullptr;
     }
     QStringList list = {"leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "destroyRTCVideo"};
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 void SoundEffectsWidget::initUI() {
+
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    };
+    ui->btn_joinroom->setStyleSheet(APIDemo::str_qss_btn1);
+    ui->lineEdit_room->setStyleSheet(APIDemo::str_qss_text);
+    ui->lineEdit_uid->setStyleSheet(APIDemo::str_qss_text);
+    ui->comboBox_ans->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_biansheng->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->comboBox_hunxiang->setStyleSheet(APIDemo::str_qss_combobox);
+    ui->btn_changeVoiceReverbPara->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_changeVoiceReverbPara->setFixedHeight(32);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
 
     QStringList list = {str_VoiceChangerTypeOriginal,
                         str_VoiceChangerTypeGiant,
@@ -161,6 +188,16 @@ void SoundEffectsWidget::initUI() {
                        str_VoiceReverbType3D};
 
     ui->comboBox_hunxiang->addItems(list);
+    ui->spinBox_delay->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_o_qiangdu->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_qiangdu->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_room->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_tuowei->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->spinBox_zuni->setStyleSheet(APIDemo::str_qss_spinbox);
+    ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t3->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->label_t4->setStyleSheet(APIDemo::str_qss_label_ttile);
 
 }
 
@@ -171,11 +208,11 @@ void SoundEffectsWidget::onSigRoomStateChanged(std::string roomid, std::string u
         + ",uid:" + QString::fromStdString(uid) 
         + ",state:" + QString::number(state) 
         + ",extra:" + QString::fromStdString(extra_info);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (state == 0) {
         ui->btn_joinroom->setText(QStringLiteral("离房"));
-        ui->widget->setUserInfo(roomid, uid);
+        //ui->widget->setUserInfo(roomid, uid);
     } else {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("onRoomStateChanged:") + QString::number(state), QMessageBox::Ok);
         box.exec();
@@ -188,7 +225,7 @@ void SoundEffectsWidget::onSigUserPublishStream(std::string roomid, std::string 
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 }
 
 void SoundEffectsWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)
@@ -198,7 +235,7 @@ void SoundEffectsWidget::onSigUserUnPublishStream(std::string roomid, std::strin
         + ",uid:" + QString::fromStdString(uid)
         + ",state:" + QString::number(type)
         + ",reason:" + QString::number(reason);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 }
 
 
@@ -213,13 +250,13 @@ void SoundEffectsWidget::onBtnJoinClicked() {
 
 
         if (!Utils::checkIDValid(QString::fromStdString(uid), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "uid error" + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
 
         if (!Utils::checkIDValid(QString::fromStdString(roomid), QStringLiteral("房间号"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), "roomid error " + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -235,9 +272,9 @@ void SoundEffectsWidget::onBtnJoinClicked() {
         m_room->setRTCRoomEventHandler(roomH);
 
         bytertc::VideoCanvas cas;
-        cas.view = (void*)ui->widget->getWinId();
+        cas.view = (void*)ui->widget_user->getWinId();
         m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
-        ui->widget->setUserInfo(roomid, uid);
+        ui->widget_user->setUserInfo(roomid, uid);
 
         token = Utils::generateToken(roomid, uid);
         bytertc::UserInfo info;
@@ -257,7 +294,7 @@ void SoundEffectsWidget::onBtnJoinClicked() {
        
     }
     else {
-        ui->widget->setUserInfo("", "");
+        ui->widget_user->setUserInfo("", "");
         if (m_room) {
             m_room->leaveRoom();
             m_room->destroy();
@@ -266,7 +303,7 @@ void SoundEffectsWidget::onBtnJoinClicked() {
         ui->btn_joinroom->setText(QStringLiteral("进房"));
         list = QStringList{"leaveRoom", "destroy"};
     }
-    ui->widget_log->appendAPI(list);
+    appendAPI(list);
 }
 
 bytertc::VoiceReverbType getVoiceReverType(const QString &text) {
@@ -358,7 +395,7 @@ void SoundEffectsWidget::onComboxHXTextChanged(const QString& text)
             QString("setVoiceReverbType error"), QMessageBox::Ok);
        return;
     }
-    ui->widget_log->appendAPI("setVoiceReverbType");
+    appendAPI("setVoiceReverbType");
 }
 
 void SoundEffectsWidget::onComboxBSTextChanged(const QString& text)
@@ -372,7 +409,7 @@ void SoundEffectsWidget::onComboxBSTextChanged(const QString& text)
             QString("setVoiceChangerType error"), QMessageBox::Ok);
        return;
     }
-    ui->widget_log->appendAPI("setVoiceChangerType");
+    appendAPI("setVoiceChangerType");
 }
 
 void SoundEffectsWidget::onSliderPitchValueChanged(int value)
@@ -385,7 +422,7 @@ void SoundEffectsWidget::onSliderPitchValueChanged(int value)
             QString("setLocalVoicePitch error"), QMessageBox::Ok);
        return;
     }
-    ui->widget_log->appendAPI("setLocalVoicePitch");
+    appendAPI("setLocalVoicePitch");
 }
 
 void SoundEffectsWidget::onBtnChangeVoiceReverbParaClicked()
@@ -405,7 +442,7 @@ void SoundEffectsWidget::onBtnChangeVoiceReverbParaClicked()
             QString("setLocalVoiceReverbParam error"), QMessageBox::Ok);
        return;
     }
-    ui->widget_log->appendAPI("setLocalVoiceReverbParam");
+    appendAPI("setLocalVoiceReverbParam");
 }
 
 bytertc::AnsMode getAnsMode(int value) {
@@ -438,7 +475,7 @@ void SoundEffectsWidget::onComboxAnsIndexChanged(int value)
     if (m_video == nullptr) return;
     bytertc::AnsMode mode = getAnsMode(value);
     int ret = m_video->setAnsMode(mode);
-    ui->widget_log->appendAPI("setAnsMode");
+    appendAPI("setAnsMode");
     if (ret < 0) {
        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"),
             QString("setAnsMode error"), QMessageBox::Ok);
@@ -448,7 +485,7 @@ void SoundEffectsWidget::onComboxAnsIndexChanged(int value)
 
 ByteRTCRoomHandler* SoundEffectsWidget::createRoomHandler(std::string roomid, std::string uid)
 {
-    auto roomH = new ByteRTCRoomHandler(roomid, uid); //TODO 内存泄露
+    auto roomH = new ByteRTCRoomHandler(roomid, uid);
     connect(roomH, &ByteRTCRoomHandler::sigRoomStateChanged, this, &SoundEffectsWidget::onSigRoomStateChanged);
     connect(roomH, &ByteRTCRoomHandler::sigUserPublishStream, this, &SoundEffectsWidget::onSigUserPublishStream);
     connect(roomH, &ByteRTCRoomHandler::sigUserUnPublishStream, this, &SoundEffectsWidget::onSigUserUnPublishStream);
@@ -461,12 +498,12 @@ void SoundEffectsWidget::onSigUserLeave(std::string roomid, std::string uid, byt
 {
     QString str = "onUserLeave: roomid:" + QString::fromStdString(roomid) 
         + ",uid:" + QString::fromStdString(uid) + ",reason:" + QString::number(reason);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 void SoundEffectsWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int elapsed)
 {
     QString str = "onUserJoined: roomid:" + QString::fromStdString(info.roomid)
         + ",uid:" + QString::fromStdString(info.uid) + ",elapsed:" + QString::number(elapsed);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }

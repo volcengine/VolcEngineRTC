@@ -15,7 +15,28 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextEdit" name="textEdit"/>
+    <widget class="QTextEdit" name="textEdit">
+     <property name="styleSheet">
+      <string notr="true">color: var(--text-color-text-2, #42464E);
+font-family: Menlo;
+font-size: 12px;
+font-style: normal;
+font-weight: 400;
+line-height: 150%; </string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
+     <property name="placeholderText">
+      <string>运行日志API和Callback</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -6,6 +6,8 @@
 
 #include "Config.h"
 #include "Utils.h"
+#include "BaseWidget.h"
+#include "Resources.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -38,10 +40,11 @@
 */
 
 QuickStartWidget::QuickStartWidget(QWidget *parent) :
-    QWidget(parent),
+    BaseWidget(parent),
     ui(new Ui::QuickStartWidget)
 {
     ui->setupUi(this);
+    initUI();
     initConnections();
 }
 
@@ -64,6 +67,46 @@ void QuickStartWidget::initConnections()
 
 }
 
+void QuickStartWidget::initUI()
+{
+    QList<QWidget*> childWidgets = this->findChildren<QWidget*>();
+    // 遍历子控件并设置样式表
+    foreach(QWidget * childWidget, childWidgets) {
+        QLabel* label = qobject_cast<QLabel*>(childWidget);
+        if (label) {
+            if (label->objectName() != "label_user_id") {
+                label->setStyleSheet(APIDemo::str_qss_label);
+            } else {
+                label->setStyleSheet(APIDemo::str_qss_label_user_info);
+            }
+        }
+        QLineEdit* edit = qobject_cast<QLineEdit*>(childWidget);
+        if (edit) {
+            edit->setStyleSheet(APIDemo::str_qss_text);
+        }
+    }
+    auto func_style = [this](QPushButton *btn){
+        if (btn) {
+            btn->setStyleSheet(APIDemo::str_qss_btn1);
+            btn->setFixedSize(124, 24);
+        }
+    };
+
+    func_style(ui->btn_createVideo);
+    func_style(ui->btn_destroyvideo);
+    func_style(ui->btn_destroyroom);
+    func_style(ui->btn_joinroom);
+    func_style(ui->btn_setLocalView);
+    func_style(ui->btn_startCapture);
+    ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+#ifdef Q_OS_MAC
+    ui->label_doc->setText("<a href=\"https://www.volcengine.com/docs/6348/1169314\">参考文档");
+#else
+    ui->label_doc->setText(QStringLiteral("<a href=\"https://www.volcengine.com/docs/6348/70130\">参考文档"));
+#endif
+
+}
+
 //创建引擎
 void QuickStartWidget::onBtnCreateVideoClicked() 
 {
@@ -72,7 +115,7 @@ void QuickStartWidget::onBtnCreateVideoClicked()
         m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
 
         QString str_log = "createRTCVideo";
-        ui->widget_log->appendAPI(str_log);
+        appendAPI(str_log);
         if (m_video == nullptr) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("CreateRTCVideo error"), QMessageBox::Ok);
             box.exec();
@@ -93,7 +136,7 @@ void QuickStartWidget::onBtnStartCaptureClicked()
         m_video->startAudioCapture();
         m_video->startVideoCapture();
         QStringList str_log = { "startAudioCapture", "startVideoCapture" };
-        ui->widget_log->appendAPI(str_log);
+        appendAPI(str_log);
     }
     else {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("RTCVideo has't been created."), QMessageBox::Ok);
@@ -118,19 +161,19 @@ void QuickStartWidget::onBtnJoinRoomClicked()
         roomid = ui->lineEdit_room->text().toStdString();
         uid = ui->lineEdit_uid->text().toStdString();
         if (!Utils::checkIDValid(QString::fromStdString(roomid), QStringLiteral("房间id"), str_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid is error."), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid error ") + str_error, QMessageBox::Ok);
             box.exec();
             return;
         }
         if (!Utils::checkIDValid(QString::fromStdString(uid), QStringLiteral("uid"), str_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid is error."), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid error ") + str_error, QMessageBox::Ok);
             box.exec();
             return;
         }
         m_roomHandler = createRoomHandler(roomid, uid);
         token = Utils::generateToken(roomid, uid);
         m_room = m_video->createRTCRoom(roomid.c_str());
-        ui->widget_log->appendAPI("createRTCRoom");
+        appendAPI("createRTCRoom");
         if (m_room == nullptr) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("createRTCRoom error"), QMessageBox::Ok);
             box.exec();
@@ -138,7 +181,7 @@ void QuickStartWidget::onBtnJoinRoomClicked()
         }
 
         m_room->setRTCRoomEventHandler(m_roomHandler.get());
-        ui->widget_log->appendAPI("setRTCRoomEventHandler");
+        appendAPI("setRTCRoomEventHandler");
 
         bytertc::UserInfo uinfo;
         uinfo.uid = uid.c_str();
@@ -149,7 +192,9 @@ void QuickStartWidget::onBtnJoinRoomClicked()
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
         ret = m_room->joinRoom(token.c_str(), uinfo, config);
-        ui->widget_log->appendAPI("joinRoom");
+        appendAPI("joinRoom");
+        ui->widget_local->setUserInfo(ui->lineEdit_room->text().toStdString(), ui->lineEdit_uid->text().toStdString());
+
 
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error, ret=") + QString::number(ret), QMessageBox::Ok);
@@ -172,8 +217,8 @@ void QuickStartWidget::onBtnLeaveRoomClicked()
     }
     m_remote_rendered = false;
 
-    ui->widget_log->appendAPI("leaveRoom");
-    ui->widget_log->appendAPI("destroy");
+    appendAPI("leaveRoom");
+    appendAPI("destroy");
 }
 
 //销毁引擎
@@ -192,9 +237,11 @@ void QuickStartWidget::onBtnDestroyVideoClicked()
         m_video->stopVideoCapture();
         bytertc::destroyRTCVideo();
         m_video = nullptr;
-        ui->widget_log->appendAPI(list);
+        appendAPI(list);
     }
     m_remote_rendered = false;
+    ui->widget_local->setUserInfo("", "");
+    ui->widget_remote->setUserInfo("", "");
 }
 
 //设置本地视频渲染窗口
@@ -209,11 +256,10 @@ void QuickStartWidget::onBtnSetLocalViewClicked()
     else {
         bytertc::VideoCanvas cas;
         cas.background_color = 0x00000000;
-        cas.render_mode = bytertc::kRenderModeFit;
+        cas.render_mode = bytertc::kRenderModeHidden;
         cas.view = (void*)ui->widget_local->getWinId();
-        ui->widget_local->setUserInfo(ui->lineEdit_room->text().toStdString(), ui->lineEdit_uid->text().toStdString());
         ret = m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
-        ui->widget_log->appendAPI("setLocalVideoCanvas");
+        appendAPI("setLocalVideoCanvas");
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setLocalVideoCanvas error, ret=") + QString::number(ret), QMessageBox::Ok);
             box.exec();
@@ -247,7 +293,7 @@ void QuickStartWidget::onSigRoomStateChanged(std::string roomid, std::string uid
         + ",uid:" + QString::fromStdString(uid)
         + ",state:"  + QString::number(state)
         + ",extra:" + QString::fromStdString( extra_info);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 }
 
 //远端用户发流
@@ -257,7 +303,7 @@ void QuickStartWidget::onSigUserPublishStream(std::string roomid, std::string ui
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (!m_remote_rendered) {
         bytertc::VideoCanvas cas;
@@ -266,7 +312,7 @@ void QuickStartWidget::onSigUserPublishStream(std::string roomid, std::string ui
         key.user_id = uid.c_str();
         key.stream_index = bytertc::kStreamIndexMain;
         cas.background_color = 0;
-        cas.render_mode = bytertc::kRenderModeFit;
+        cas.render_mode = bytertc::kRenderModeHidden;
         cas.view = nullptr;
         m_video->setRemoteVideoCanvas(key, cas);
 
@@ -285,7 +331,7 @@ void QuickStartWidget::onSigUserUnPublishStream(std::string roomid, std::string 
         + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
         + ",type:" + QString::number(type);
-    ui->widget_log->appendCallback(log_str);
+    appendCallback(log_str);
 
     if (m_remote_rendered) {
         if (ui->widget_remote->getRoomid() == roomid && ui->widget_remote->getUid() == uid) {
@@ -295,7 +341,7 @@ void QuickStartWidget::onSigUserUnPublishStream(std::string roomid, std::string 
             key.user_id = uid.c_str();
             key.stream_index = bytertc::kStreamIndexMain;
             cas.background_color = 0;
-            cas.render_mode = bytertc::kRenderModeFit;
+            cas.render_mode = bytertc::kRenderModeHidden;
             cas.view = nullptr;
             m_video->setRemoteVideoCanvas(key, cas);
             ui->widget_remote->setUserInfo("", "");
@@ -310,19 +356,19 @@ void QuickStartWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
         + ",uid:" + QString::fromStdString(info.uid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 //远端用户离开
 void QuickStartWidget::onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason)
 {
     QString str = "onUserLeave, uid:" + QString::fromStdString(uid) + ",roomid:" + QString::fromStdString(roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
 
 //离房
 void QuickStartWidget::onSigLeaveRoom(std::string roomid, std::string uid, bytertc::RtcRoomStats)
 {
     QString str = "onLeaveRoom, uid:" + QString::fromStdString(uid) + ",roomid:" + QString::fromStdString(roomid);
-    ui->widget_log->appendCallback(str);
+    appendCallback(str);
 }
