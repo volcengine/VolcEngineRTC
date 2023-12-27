@@ -1,6 +1,6 @@
 package com.ss.video.rtc.demo.advanced;
 
-import static com.ss.bytertc.engine.type.MessageConfig.MessageConfigReliableOrdered;
+
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -36,8 +36,8 @@ import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.handler.AppExecutors;
 import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.type.MessageConfig;
 import com.ss.bytertc.engine.type.NetworkDetectionLinkType;
-import com.ss.bytertc.engine.type.NetworkDetectionStartReturn;
 import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
 import com.ss.video.rtc.demo.basic_module.ui.CommonListDialog;
@@ -284,13 +284,13 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
                 super.onNetworkDetectionResult(type, quality, rtt, lostRate, bitrate, jitter);
                 mMainHandler.post(() -> {
                     String network = quality + "";
-                    if (type == NetworkDetectionLinkType.NetworkDetectionLinkTypeUp) {
+                    if (type == NetworkDetectionLinkType.UP) {
                         mUplinkNetwork.setValue(network);
                         mUplinkRTT.setValue(rtt + "ms");
                         mUplinkLossRate.setValue(lostRate * 100 + "%");
                         mUplinkBandwidth.setValue(bitrate + "kbps");
                         mUplinkJitter.setValue(jitter + "ms");
-                    } else if (type == NetworkDetectionLinkType.NetworkDetectionLinkTypeDown) {
+                    } else if (type == NetworkDetectionLinkType.DOWN) {
                         mDownlinkNetwork.setValue(network);
                         mDownlinkRTT.setValue(rtt + "ms");
                         mDownlinkLossRate.setValue(lostRate * 100 + "%");
@@ -633,7 +633,7 @@ public class PreJoinSettingsDialog extends DialogFragment implements LifecycleEv
 
                     @Override
                     void action(String input) {
-                        mRTCVideo.sendUserMessageOutsideRoom(mSendUid, input, MessageConfigReliableOrdered);
+                        mRTCVideo.sendUserMessageOutsideRoom(mSendUid, input, MessageConfig.RELIABLE_ORDERED);
                     }
                 };
                 LinkedList<CommonInputDialog.IInputCallback> callbacks = new LinkedList<>();

@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.bytedance.realx.video.RXScreenCaptureService;
+import com.ss.bytertc.base.media.screen.RXScreenCaptureService;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.ScreenVideoEncoderConfig;
@@ -142,7 +142,7 @@ public class ShareScreenComponent implements LifecycleEventObserver {
         config.maxBitrate = mVideoConfig.getBitRate() > 0 ? mVideoConfig.getBitRate() : 1600;
         mRTCVideo.setScreenVideoEncoderConfig(config);
         // 开启屏幕视频数据采集
-        mRTCVideo.startScreenCapture(ScreenMediaType.SCREEN_MEDIA_TYPE_VIDEO_AND_AUDIO, data);
+        int res = mRTCVideo.startScreenCapture(ScreenMediaType.SCREEN_MEDIA_TYPE_VIDEO_AND_AUDIO, data);
     }
 
     private void startRXScreenCaptureService(@Nullable Intent data) {

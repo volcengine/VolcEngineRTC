@@ -13,26 +13,26 @@
  * @type keytype
  * @brief 空间音频音量随距离衰减模式
  */
- typedef NS_ENUM(NSInteger, AttenuationType) {
+ typedef NS_ENUM(NSInteger, ByteRTCAttenuationType) {
     /** 
      * @brief 不随距离衰减
      */
-    AttenuationTypeNone = 0,
+    ByteRTCAttenuationTypeNone = 0,
     /** 
      * @brief 线性衰减，音量随距离增大而线性减小
      */
-    AttenuationTypeLinear = 1,
+    ByteRTCAttenuationTypeLinear = 1,
     /** 
      * @brief 指数型衰减，音量随距离增大进行指数衰减
      */
-    AttenuationTypeExponential = 2
+    ByteRTCAttenuationTypeExponential = 2
 };
 
 /** 
  * @type keytype
  * @brief 本地用户能收听到、且具有衰减效果的音频接收范围
  */
-BYTERTC_APPLE_EXPORT @interface ReceiveRange : NSObject
+BYTERTC_APPLE_EXPORT @interface ByteRTCReceiveRange : NSObject
 /** 
  * @brief 能够接收语音、并且具有衰减效果的最小距离值，该值须 ≥ 0，但 ≤ max。  <br>
  *        小于该值的范围内没有范围语音效果，即收听到的音频音量相同。
@@ -67,36 +67,36 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @type api
  * @region 范围语音
  * @brief 更新本地用户的音频收听范围。
- * @param range 音频收听范围，参看 ReceiveRange{@link #ReceiveRange}。
+ * @param range 音频收听范围，参看 ByteRTCReceiveRange{@link #ByteRTCReceiveRange}。
  * @return 方法调用结果：  <br>
  *        + 0：成功；  <br>
  *        + !0: 失败。
  */
-- (int)updateReceiveRange:(ReceiveRange* _Nonnull) range;
+- (int)updateReceiveRange:(ByteRTCReceiveRange* _Nonnull) range;
 /** 
  * @type api
  * @region 范围语音
  * @brief 更新本地用户在房间内空间直角坐标系中的位置坐标。
- * @param pos 三维坐标的值，默认为 [0, 0, 0]，参看 [Position](70088#position-2)。
+ * @param pos 三维坐标的值，默认为 [0, 0, 0]，参看 [ByteRTCPosition](70088#position-2)。
  * @return 方法调用结果： <br>
  *        + 0：成功；  <br>
  *        + !0：失败。
  * @notes 调用该接口更新坐标后，你需调用 enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} 开启范围语音功能以收听范围语音效果。 <br>
  */
-- (int)updatePosition:(Position* _Nonnull) pos;
+- (int)updatePosition:(ByteRTCPosition* _Nonnull) pos;
 
 /** 
  * @type api
  * @region 范围语音
  * @brief 设置范围语音的音量衰减模式。
- * @param type 音量衰减模式。默认为线性衰减。详见 AttenuationType{@link #AttenuationType}。
+ * @param type 音量衰减模式。默认为线性衰减。详见 ByteRTCAttenuationType{@link #ByteRTCAttenuationType}。
  * @param coefficient 指数衰减模式下的音量衰减系数，默认值为 1。范围 [0.1,100]，推荐设置为 `50`。数值越大，音量的衰减速度越快。
  * @return 调用是否成功<br>
  *         + `0`:调用成功<br>
  *         + `-1`:调用失败。原因为在调用 enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} 开启范围语音前或进房前调用本接口
  * @notes 音量衰减范围通过 updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} 进行设置。
  */
-- (int)setAttenuationModel:(AttenuationType) type coefficient:(float)coefficient;
+- (int)setAttenuationModel:(ByteRTCAttenuationType) type coefficient:(float)coefficient;
 
 /** 
  * @type api

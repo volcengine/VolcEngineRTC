@@ -38,7 +38,7 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name="com.bytedance.realx.video.RXScreenCaptureService"
+            android:name="com.ss.bytertc.base.media.screen.RXScreenCaptureService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />

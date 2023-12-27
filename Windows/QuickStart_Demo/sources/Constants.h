@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 
 /**
@@ -16,7 +16,7 @@ public:
 	 static  std::string INPUT_REGEX;
 };
 
-std::string Constants::APP_ID = "";
+std::string Constants::APP_ID = ;
 
 std::string Constants::TOKEN = "";
 

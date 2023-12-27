@@ -187,6 +187,7 @@ void Setting::initView(const SettingModel& model,
       utils::getIdxFromResolution(setting_.camera.resolution));
   ui->cmb_screen_resolution->setCurrentIndex(
       utils::getIdxFromResolution(setting_.screen.resolution));
+  ui->cmb_screen_fps->setCurrentIndex(getFpsCmbIdxFromFps(setting_.screen.fps));
   
   ui->cmb_camera->clear();
   int idx = 0;

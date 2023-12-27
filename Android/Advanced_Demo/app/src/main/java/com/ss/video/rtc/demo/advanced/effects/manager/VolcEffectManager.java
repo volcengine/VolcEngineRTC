@@ -122,10 +122,10 @@ public class VolcEffectManager {
         if (selected) {
             VirtualBackgroundSource backgroundSource = new VirtualBackgroundSource();
             if (TextUtils.equals(type, "color")) {
-                backgroundSource.sourceType = VirtualBackgroundSourceType.SourceTypeColor;
+                backgroundSource.sourceType = VirtualBackgroundSourceType.COLOR;
                 backgroundSource.sourceColor = Color.parseColor("#1278ff");
             } else if (TextUtils.equals(type, "image")) {
-                backgroundSource.sourceType = VirtualBackgroundSourceType.SourceTypeImage;
+                backgroundSource.sourceType = VirtualBackgroundSourceType.IMAGE;
                 backgroundSource.sourcePath = EffectResource.getExternalResourcePath() + File.separator + "virtual_background.png";
             } else {
                 return;

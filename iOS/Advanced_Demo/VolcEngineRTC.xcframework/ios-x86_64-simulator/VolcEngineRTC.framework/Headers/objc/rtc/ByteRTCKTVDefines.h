@@ -171,7 +171,7 @@ typedef NS_ENUM(NSInteger, ByteRTCDownloadLyricType) {
 };
 
 /** 
- * @type keytype
+ * @type errorcode
  * @brief KTV 错误码。
  */
 typedef NS_ENUM(NSInteger, ByteRTCKTVErrorCode) {

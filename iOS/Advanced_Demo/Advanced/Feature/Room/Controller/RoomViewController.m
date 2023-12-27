@@ -271,6 +271,8 @@
         [self.rtcVideo setRemoteVideoSink:streamKey withSink:userLiveView.customRenderView withPixelFormat:ByteRTCVideoSinkPixelFormatNV12];
         NSString *uid = streamKey.userId;
         userLiveView.uid = uid;
+        
+        userLiveView.streamKey = streamKey;
     } else {
         NSString *uid = streamKey.userId;
         ByteRTCRenderMode rtcRenderMode =  [self RTCRenderModeFromRenderMode:self.preJoinSetting.remoteRenderMode];
@@ -279,6 +281,8 @@
         canvas.view = userLiveView.liveView;
         canvas.renderMode = rtcRenderMode;
         userLiveView.uid = uid;
+        
+        userLiveView.streamKey = streamKey;
                 
         /// 设置远端用户视频渲染视图
         [self.rtcVideo setRemoteVideoCanvas:streamKey withCanvas:canvas];
@@ -288,22 +292,26 @@
 #pragma mark - RTC delegate
 
 - (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserPublishStream:(NSString *)userId type:(ByteRTCMediaStreamType)type {
+
     if (type == ByteRTCMediaStreamTypeVideo || type == ByteRTCMediaStreamTypeBoth) {
         ByteRTCRemoteStreamKey *streamKey = [[ByteRTCRemoteStreamKey alloc] init];
         streamKey.userId = userId;
         streamKey.streamIndex = ByteRTCStreamIndexMain;
         streamKey.roomId = self.roomID;
         [self setRemoteView:streamKey];
+        NSLog(@"streamLog onUserPublishStream = %@",userId);
     }
 }
 
 - (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserPublishScreen:(NSString *)userId type:(ByteRTCMediaStreamType)type {
+
     if (type == ByteRTCMediaStreamTypeVideo || type == ByteRTCMediaStreamTypeBoth) {
         ByteRTCRemoteStreamKey *streamKey = [[ByteRTCRemoteStreamKey alloc] init];
         streamKey.userId = userId;
         streamKey.streamIndex = ByteRTCStreamIndexScreen;
         streamKey.roomId = self.roomID;
         [self setRemoteView:streamKey];
+        NSLog(@"streamLog onUserPublishScreen = %@",userId);
     }
     
 }
@@ -342,27 +350,34 @@
 }
 
 - (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserUnpublishScreen:(NSString *)userId type:(ByteRTCMediaStreamType)type reason:(ByteRTCStreamRemoveReason)reason {
+
     if (type != ByteRTCMediaStreamTypeAudio) {
         dispatch_async(dispatch_get_main_queue(), ^{
             
             for (UserLiveView *liveView in self.containerView.subviews) {
-                if ([userId isEqualToString:liveView.uid]) {
+                if ([userId isEqualToString:liveView.uid] &&
+                    liveView.streamKey.streamIndex == ByteRTCStreamIndexScreen) {
                     liveView.uid = @"";
                 }
             }
         });
+        
+        NSLog(@"streamLog onUserUnpublishScreen = %@",userId);
     }
 }
 
 - (void)rtcRoom:(ByteRTCRoom *)rtcRoom onUserUnpublishStream:(NSString *)userId type:(ByteRTCMediaStreamType)type reason:(ByteRTCStreamRemoveReason)reason {
+
     if (type != ByteRTCMediaStreamTypeAudio) {
         dispatch_async(dispatch_get_main_queue(), ^{
             for (UserLiveView *liveView in self.containerView.subviews) {
-                if ([userId isEqualToString:liveView.uid]) {
+                if ([userId isEqualToString:liveView.uid] &&
+                    liveView.streamKey.streamIndex == ByteRTCStreamIndexMain) {
                     liveView.uid = @"";
                 }
             }
         });
+        NSLog(@"streamLog onUserUnpublishStream = %@  type==%d",userId,type);
     }
 }
 
@@ -376,6 +391,7 @@
                 self.localView.uid = @"正在共享";
                 self.screenShareBtn.selected = YES;
                 self.screenShareBtn.imageView.backgroundColor = UIColor.clearColor;
+                NSLog(@"streamLog 正在共享");
             });
         } else if (device_state == ByteRTCMediaDeviceStateStopped ||
                    device_state == ByteRTCMediaDeviceStateRuntimeError) {
@@ -385,6 +401,7 @@
                 self.localView.uid = @"等待屏幕共享";
                 self.screenShareBtn.selected = NO;
                 self.screenShareBtn.imageView.backgroundColor = UIColor.lightGrayColor;
+                NSLog(@"streamLog 等待屏幕共享");
             });
         }
     }
@@ -549,7 +566,7 @@
         solution.maxBitrate = self.roomSetting.bitrate;
         [self.rtcVideo setMaxVideoEncoderConfig:solution];
         
-        if (!self.preJoinSetting.useCustomRender) {
+//        if (!self.preJoinSetting.useCustomRender) {
             if (self.roomSetting.localRenderMirror == 0) {
                 [self.rtcVideo setLocalVideoMirrorType:ByteRTCMirrorTypeNone];
             } else if (self.roomSetting.localRenderMirror == 1) {
@@ -559,7 +576,7 @@
             } else {
                 //error
             }
-        }
+//        }
     }
 }
 

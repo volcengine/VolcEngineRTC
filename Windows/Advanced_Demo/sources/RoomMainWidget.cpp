@@ -402,14 +402,32 @@ void RoomMainWidget::setupSignals() {
           utils::getVideoCaptureDevices(m_rtc_video, devices);
           dlg->initView(m_settingModel, devices);
           connect(dlg, &Setting::sigSettingChanged, this, [=](SettingModel model) {
-                m_settingModel = model;
+                
                 utils::setVideoCaptureDevice(m_rtc_video, devices[model.camera_idx].device_id);
-                utils::setScreenProfile(m_rtc_video, model.screen.resolution.width,
-                    model.screen.resolution.height, model.screen.fps,model.screen.kbps);
-                utils::setVideoProfile(m_rtc_video, model.camera.resolution.width,
-                    model.camera.resolution.height, model.camera.fps, model.camera.kbps);
+
+                if (model.screen.resolution.width != m_settingModel.screen.resolution.width ||
+                    model.screen.resolution.height != m_settingModel.screen.resolution.height ||
+                    model.screen.fps != m_settingModel.screen.fps ||
+                    model.screen.kbps != m_settingModel.screen.kbps) {
+
+                    utils::setScreenProfile(m_rtc_video, model.screen.resolution.width,
+                        model.screen.resolution.height, model.screen.fps, model.screen.kbps);
+                }
+                
+                if (model.camera.resolution.width != m_settingModel.camera.resolution.width ||
+                    model.camera.resolution.height != m_settingModel.camera.resolution.height ||
+                    model.camera.fps != m_settingModel.camera.fps ||
+                    model.camera.kbps != m_settingModel.camera.kbps) {
+
+                    utils::setVideoProfile(m_rtc_video, model.camera.resolution.width,
+                        model.camera.resolution.height, model.camera.fps, model.camera.kbps);
+                }
+                
+
+                m_settingModel = model;
               });
           dlg->exec();
+          dlg->deleteLater();
 
         }
     });

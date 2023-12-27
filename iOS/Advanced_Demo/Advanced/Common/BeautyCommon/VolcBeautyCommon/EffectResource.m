@@ -14,7 +14,7 @@
 
 #else
 
-#define CVLicenseName @"rtc_test_20230524_20230831_com.ss.rtc.demo.advanced.ios_4.4.2_347.licbag"
+#define CVLicenseName @"rtc_test_20230829_20240131_com.ss.rtc.demo.advanced.ios_4.4.2_633.licbag"
 
 #endif
 
@@ -47,7 +47,7 @@
 
 + (NSString *)beautyCameraPath {
     NSString *bunldePath = [[NSBundle mainBundle] pathForResource:@"ComposeMakeup" ofType:@"bundle"];
-    NSString *beautyCameraPath = [NSString stringWithFormat:@"%@/ComposeMakeup/beauty_IOS_live", bunldePath];
+    NSString *beautyCameraPath = [NSString stringWithFormat:@"%@/ComposeMakeup/beauty_IOS_lite", bunldePath];
 
     [self checkPathExsit:beautyCameraPath];
 
@@ -56,7 +56,7 @@
 
 + (NSString *)reshapeCameraPath {
     NSString *bunldePath = [[NSBundle mainBundle] pathForResource:@"ComposeMakeup" ofType:@"bundle"];
-    NSString *reshapeCameraPath = [NSString stringWithFormat:@"%@/ComposeMakeup/reshape_live", bunldePath];
+    NSString *reshapeCameraPath = [NSString stringWithFormat:@"%@/ComposeMakeup/reshape_lite", bunldePath];
 
     [self checkPathExsit:reshapeCameraPath];
 

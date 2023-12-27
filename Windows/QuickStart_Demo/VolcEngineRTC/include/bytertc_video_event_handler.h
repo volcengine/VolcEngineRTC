@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_LITE_EVENT_HANDLER_H__
-#define BYTE_RTC_LITE_EVENT_HANDLER_H__
-
 #include "rtc/bytertc_defines.h"
 
 namespace bytertc {
@@ -70,6 +67,7 @@ public:
 
 
     /** 
+     * @deprecated since 353. Use IMediaPlayerEventHandler{@link #IMediaPlayerEventHandler} and IAudioEffectPlayerEventHandler{@link #IAudioEffectPlayerEventHandler} instead.
      * @type callback
      * @region 混音
      * @brief  音频混音文件播放状态改变时回调
@@ -177,8 +175,8 @@ public:
     /** 
      * @type callback
      * @region 音视频回退
-     * @brief 本地未开启发布性能回退，检测到设备性能不足时，收到此回调。<br>
-     *        本地开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。
+     * @brief 本地未通过 setPublishFallbackOption{@link #IRTCVideo#setPublishFallbackOption} 开启发布性能回退，检测到设备性能不足时，收到此回调。<br>
+     *        本地通过 setPublishFallbackOption{@link #IRTCVideo#setPublishFallbackOption} 开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。
      * @param [in] mode 指示本地是否开启发布回退功能。参看 PerformanceAlarmMode{@link #PerformanceAlarmMode}  <br>
      *                  + 当发布端未开启发布性能回退时，mode 值为 kPerformanceAlarmModeNormal。  <br>
      *                  + 当发布端开启发布性能回退时，mode 值为 kPerformanceAlarmModeSimulcast。
@@ -315,8 +313,8 @@ public:
     }
 
     /** 
+     * @deprecated since 3.52, will be deleted at 3.57, use onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} instead
      * @type callback
-     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTP 代理连接状态改变时，收到该回调。
      * @param [in] state 当前 HTTP 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -325,8 +323,8 @@ public:
     }
 
     /** 
+     * @deprecated since 3.52, will be deleted at 3.57, use onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} instead
      * @type callback
-     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief HTTPS 代理连接状态改变时，收到该回调。
      * @param  [out] state 当前 HTTPS 代理连接状态，详见 HttpProxyState{@link #HttpProxyState}
@@ -335,8 +333,8 @@ public:
     }
 
     /** 
+     * @deprecated since 3.52, will be deleted at 3.57, use onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} instead
      * @type callback
-     * @deprecated 在3.52及之后废弃，将在3.57删除，使用 onLocalProxyStateChanged{@link #IRTCVideoEventHandler#onLocalProxyStateChanged} 替换
      * @region 代理回调
      * @brief SOCKS5 代理状态改变时，收到该回调。
      * @param [out] state SOCKS5 代理连接状态
@@ -409,9 +407,10 @@ public:
      * @type callback
      * @region 实时消息通信
      * @brief 登出结果回调
-     * @notes 调用 logout{@link #IRTCVideo#logout} 后，会收到此回调。
+     * @param reason 用户登出的原因，参看 LogoutReason{@link #LogoutReason}
+     * @notes 在以下两种情况下会收到此回调：调用 logout{@link #IRTCVideo#logout} 接口主动退出；或其他用户以相同 UserId 进行 `login` 导致本地用户被动登出。
      */
-    virtual void onLogout() {
+    virtual void onLogout(LogoutReason reason) {
     }
     /** 
      * @type callback
@@ -434,7 +433,7 @@ public:
      *        需要查询的用户 ID
      * @param [in] status  <br>
      *        查询的用户登录状态  <br>
-     *        详见 USER_ONLINE_STATUS{@link #USER_ONLINE_STATUS}.
+     *        详见 UserOnlineStatus{@link #UserOnlineStatus}.
      * @notes 必须先调用 getPeerOnlineStatus{@link #IRTCVideo#getPeerOnlineStatus}，才能收到此回调。
      */
     virtual void onGetPeerOnlineStatus(const char* peer_user_id, int status) {
@@ -706,11 +705,12 @@ public:
      *        调用 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。
      * @param [in] public_stream_id 公共流 ID。
      * @param [in] message 收到的 SEI 消息内容。
-     * 本回调可以获取通过调用客户端 [sendSEIMessage](70095#sendseimessage-2) 插入的 SEI 信息。
+     * 通过调用客户端 `sendSEIMessage` 插入的 SEI 信息。
      * 当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
      * @param [in] message_length SEI 信息的长度。
      * @param [in] source_type SEI 消息类型，自 3.52.1 版本后固定为 `0`，自定义消息。参看 DataMessageSourceType{@link #DataMessageSourceType}。
-     * @notes 通过 Open API 插入的 SEI 信息，应通过回调 onPublicStreamDataMessageReceived{@link #IRTCVideoEventHandler#onPublicStreamDataMessageReceived} 获取。
+     * @notes  <br>
+     * 通过 Open API 插入的自定义信息，应通过回调 onPublicStreamDataMessageReceived{@link #IRTCVideoEventHandler#onPublicStreamDataMessageReceived} 获取。
      */
     virtual void onPublicStreamSEIMessageReceived(const char* public_stream_id,
         const uint8_t* message,
@@ -721,15 +721,46 @@ public:
         (void)message_length;
         (void)source_type;
     }
+
+    /** 
+     * @valid since 3.56
+     * @hidden currently not available
+     * @type callback
+     * @brief 回调公共流中包含的 SEI 信息。
+     *        调用 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。
+     * @param public_stream_id 公共流 ID。
+     * @param channel_id SEI 的消息传输通道，取值范围 [0 - 255]。通过此参数，你可以为不同接受方设置不同的 ChannelID，这样不同接收方可以根据回调中的 ChannelID 选择应关注的 SEI 信息。
+     * @param message 收到的 SEI 消息内容。
+     * 通过调用客户端 `sendPublicStreamSEIMessage` 插入的 SEI 信息。
+     * @param message_length SEI 信息的长度。
+     */
+    virtual void onPublicStreamSEIMessageReceivedWithChannel(const char* public_stream_id, int channel_id,
+                                                  const uint8_t* message, int message_length) {
+        (void)public_stream_id;
+        (void)channel_id;
+        (void)message;
+        (void)message_length;
+    }
     /** 
      * @type callback
      * @valid since 3.52
      * @brief 回调公共流中包含的数据信息。
-     *        通过 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
+     *        通过 startPlayPublicStream{@link #IRTCVideo#startPlayPublicStream} 订阅公共流后，通过监听本回调获取公共流中的数据消息，包括调用 Open API 发送的 SEI 消息和音量回调。
      * @param [in] public_stream_id 公共流 ID
      * @param [in] message 收到的数据消息内容，如下：
-     * + 调用公共流 OpenAPI 发送的 SEI 消息。当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
-     * + 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。
+     * + 调用公共流 OpenAPI 发送的自定义消息。
+     * + 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。JSON 格式说明如下：
+     * {
+     * &nbsp;&nbsp;&nbsp;&nbsp;"Type"&nbsp;:&nbsp;"VolumeIndication", //具体业务类型
+     * &nbsp;&nbsp;&nbsp;&nbsp;"VolumeInfos"[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 业务类型对应信息
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"RoomId":"1000001", // 房间ID
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"UserId":"1000001", // 用户ID
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"StreamType":0, // 0:摄像头流；1:屏幕流
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LinearVolume":1 // 线性音量大小
+     * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+     * &nbsp;&nbsp;&nbsp;&nbsp;]
+     * }
      * @param [in] message_length 消息的长度
      * @param [in] source_type 数据消息来源，参看 DataMessageSourceType{@link #DataMessageSourceType}。
      * @notes 通过调用客户端 API 插入的 SEI 信息，应通过回调 onPublicStreamSEIMessageReceived{@link #IRTCVideoEventHandler#onPublicStreamSEIMessageReceived} 获取。
@@ -767,6 +798,7 @@ public:
      * @type callback
      * @region 视频事件回调
      * @brief 房间内的可见用户调用 stopVideoCapture{@link #IRTCVideo#stopVideoCapture} 关闭内部视频采集时，房间内其他用户会收到此回调。
+     *        若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。
      * @param [in] room_id ID of the room where the remote video stream stops being published.
      * @param [in] user_id 关闭视频采集的远端用户 ID
      */
@@ -876,6 +908,7 @@ public:
      * @param [in] key 远端视频流的信息，房间、用户 ID、流属性等。参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] state 远端视频流状态，参看 RemoteVideoState{@link #RemoteVideoState}。
      * @param [in] reason 远端视频流状态改变的原因，参看 RemoteVideoStateChangeReason{@link #RemoteVideoStateChangeReason}。
+     * @notes 本回调仅适用于主流，不适用于屏幕流。
      */
     virtual void onRemoteVideoStateChanged(
             RemoteStreamKey key, RemoteVideoState state, RemoteVideoStateChangeReason reason) {
@@ -885,8 +918,9 @@ public:
     }
 
     /** 
+     * @valid since 3.54
+     * @hidden(Windows, macOS, Linux)
      * @type callback
-     * @hidden for internal use only on Android, iOS, macOS, and Windows
      * @region 音视频处理
      * @brief 远端视频流的超分状态发生改变时，房间内订阅此流的用户会收到该回调。
      * @param [in] stream_key 远端流信息，包括房间 ID、用户 ID、流属性，参看 RemoteStreamKey{@link #RemoteStreamKey}。
@@ -901,8 +935,9 @@ public:
     }
 
     /** 
+     * @valid since 3.54
+     * @hidden(Windows, macOS, Linux)
      * @type callback
-     * @hidden for internal use only
      * @region 音视频处理
      * @brief 降噪模式状态变更回调。当降噪模式的运行状态发生改变，SDK 会触发该回调，提示用户降噪模式改变后的运行状态及状态发生改变的原因。          
      * @param [in] mode 视频降噪模式，参看 VideoDenoiseMode{@link #VideoDenoiseMode}。
@@ -1112,6 +1147,7 @@ public:
     virtual void onNetworkTimeSynchronized() {
     }
     /** 
+     * @hidden internal use only
      * @type callback
      * @brief license 过期提醒。在剩余天数低于 30 天时，收到此回调。
      * @param [in] days license 剩余有效天数
@@ -1148,7 +1184,7 @@ public:
      * @notes <br>
      *        + 通话前调用 startHardwareEchoDetection{@link #IRTCVideo#startHardwareEchoDetection} 后，将触发本回调返回检测结果。<br>
      *        + 建议在收到检测结果后，调用 stopHardwareEchoDetection{@link #IRTCVideo#stopHardwareEchoDetection} 停止检测，释放对音频设备的占用。<br>
-     *        + 如果 SDK 在通话中检测到回声，将通过 onAudioDeviceWarning{@link #IRTCVideoEventHandler#onAudioDeviceWarning} 回调 `kMediaDeviceWarningLeakEchoDetected`。
+     *        + 如果 SDK 在通话中检测到回声，将通过 onAudioDeviceWarning{@link #IRTCVideoEventHandler#onAudioDeviceWarning} 回调 `kMediaDeviceWarningDetectLeakEcho`。
      */
     virtual void onHardwareEchoDetectionResult(HardwareEchoDetectionResult hardware_echo_detection_result) {
         (void)hardware_echo_detection_result;
@@ -1167,9 +1203,34 @@ public:
         (void)local_proxy_state;
         (void)local_proxy_error;
     }
+    /** 
+     * @hidden internal use only
+     * @type callback
+     * @brief 当特效设置失败时，收到此回调。
+     * @param error 特效错误类型。参看 EffectErrorType{@link #EffectErrorType}。
+     * @param msg 错误信息。
+     */
+    virtual void onEffectError(EffectErrorType error, const char* msg) {
+        (void)error;
+        (void)msg;
+    }
+
+
+    /** 
+     * @type callback
+     * @region 视频渲染
+     * @hidden for internal use only
+     * @brief SDK 远端视频渲染发生错误时收到此回调
+     * @param [in] key 远端流信息。参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] info 视频帧信息。参看 VideoFrameInfo{@link #VideoFrameInfo}。
+     * @notes 本回调暂时仅内部使用，开发者无需关注。
+     */
+    virtual void onRemoteRenderError(const RemoteStreamKey key, RenderError error, const char* message) {
+        (void)key;
+        (void)error;
+        (void)message;
+    }
 
 };
 
 } // namespace bytertc
-
-#endif // BYTE_RTC_LITE_EVENT_HANDLER_H__

@@ -23,16 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
  * @brief 歌曲列表回调。
  * @param musics 歌曲数据数组，参看 ByteRTCMusicInfo{@link #ByteRTCMusicInfo}。
  * @param totalSize 数据条目总数。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVErrorCode{@link #ByteRTCKTVErrorCode}。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicListResult:(NSArray<ByteRTCMusicInfo *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVErrorCode)errorCode;
 
 /** 
  * @type callback
  * @brief 搜索歌曲结果回调。
- * @param musics 歌曲数据数组，参看 ByteRTCMusic{@link #ByteRTCMusic}。
+ * @param musics 歌曲数据数组，参看 ByteRTCMusicInfo{@link #ByteRTCMusicInfo}。
  * @param totalSize 数据条目总数。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVErrorCode{@link #ByteRTCKTVErrorCode}。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onSearchMusicResult:(NSArray<ByteRTCMusicInfo *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVErrorCode)errorCode;
 
@@ -40,15 +40,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @type callback
  * @brief 热榜歌曲结果回调。
  * @param hotMusicInfos 热榜歌曲数据数组，参看 ByteRTCHotMusicInfo{@link #ByteRTCHotMusicInfo}。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVErrorCode{@link #ByteRTCKTVErrorCode}。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onHotMusicResult:(NSArray<ByteRTCHotMusicInfo *> * _Nullable)hotMusicInfos errorCode:(ByteRTCKTVErrorCode)errorCode;
 
 /** 
  * @type callback
  * @brief 歌曲详细信息回调。
- * @param music 歌曲数据，参看 ByteRTCMusic{@link #ByteRTCMusic}。
- * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
+ * @param music 歌曲数据，参看 ByteRTCMusicInfo{@link #ByteRTCMusicInfo}。
+ * @param errorCode 错误码，成功时返回 0，其余值参看 ByteRTCKTVErrorCode{@link #ByteRTCKTVErrorCode}。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicDetailResult:(ByteRTCMusicInfo * _Nullable)music errorCode:(ByteRTCKTVErrorCode)errorCode;
 
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @type callback
  * @brief 下载失败回调。
  * @param downloadId 下载任务 ID。
- * @param errorCode 错误码，参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
+ * @param errorCode 错误码，参看 ByteRTCKTVErrorCode{@link #ByteRTCKTVErrorCode}。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadFailed:(int)downloadId errorCode:(ByteRTCKTVErrorCode)errorCode;
 
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** 
  * @type callback
  * @brief 清理文件缓存结果回调。
- * @param errorCode 错误码，非0为失败，参看 ByteRTCKTVError{@link #ByteRTCKTVError}。
+ * @param errorCode 错误码，非0为失败，参看 ByteRTCKTVErrorCode{@link #ByteRTCKTVErrorCode}。
  */
 - (void)ktvManager:(ByteRTCKTVManager *)ktvManager onClearCacheResult:(ByteRTCKTVErrorCode)errorCode;
 @end
@@ -118,7 +118,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCKTVManager : NSObject
 /** 
  * @type api
  * @brief 根据热榜获取每个榜单的歌曲列表。
- * @param hotType 热榜类别，参看 ByteRTCKTVMusicHotType{@link #ByteRTCKTVMusicHotType}。多个热榜类别可以按位或组合。
+ * @param hotType 热榜类别，参看 ByteRTCMusicHotType{@link #ByteRTCMusicHotType}。多个热榜类别可以按位或组合。
  * @param filterType 歌曲过滤方式，参看 ByteRTCMusicFilterType{@link #ByteRTCMusicFilterType}。多个过滤方式可以按位或组合。
  * @notes 调用接口后，你会收到 ktvManager:onHotMusicResult:errorCode:{@link #ByteRTCKTVManagerDelegate#ktvManager:onHotMusicResult:errorCode:} 回调歌曲列表。
  */

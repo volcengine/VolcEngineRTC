@@ -209,7 +209,8 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         public void onUserLeave(String uid, int reason) {
             super.onUserLeave(uid, reason);
             Log.d(TAG, "onUserLeave: " + uid);
-            runOnUiThread(() -> removeRemoteView(uid));
+            runOnUiThread(() -> removeRemoteView(uid, StreamIndex.STREAM_INDEX_MAIN));
+            runOnUiThread(() -> removeRemoteView(uid, StreamIndex.STREAM_INDEX_SCREEN));
         }
 
         /**
@@ -231,7 +232,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         public void onUserUnpublishScreen(String uid, MediaStreamType type, StreamRemoveReason reason) {
             Log.d(TAG, "onUserUnPublishScreen: " + uid);
             if (type != MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO) {
-                runOnUiThread(() -> removeRemoteView(uid));
+                runOnUiThread(() -> removeRemoteView(uid, StreamIndex.STREAM_INDEX_SCREEN));
             }
         }
 
@@ -252,9 +253,9 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
          */
         @Override
         public void onUserUnpublishStream(String uid, MediaStreamType type, StreamRemoveReason reason) {
-            Log.d(TAG, "onUserUnPublishStream: " + uid);
+            Log.d(TAG, "onUserUnPublishStream: " + uid + " type: " + type + " reason: " + reason);
             if (type != MediaStreamType.RTC_MEDIA_STREAM_TYPE_AUDIO) {
-                runOnUiThread(() -> removeRemoteView(uid));
+                runOnUiThread(() -> removeRemoteView(uid, StreamIndex.STREAM_INDEX_MAIN));
             }
         }
 
@@ -332,6 +333,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
 
         @Override
         public void onVideoDeviceStateChanged(String deviceId, VideoDeviceType deviceType, int deviceState, int deviceError) {
+            Log.i(TAG, "onVideoDeviceStateChanged, type: " + deviceType + " state:" + deviceState);
             if (deviceType == VideoDeviceType.VIDEO_DEVICE_TYPE_SCREEN_CAPTURE_DEVICE) {
                 if (mShareScreenComponent == null) {
                     return;
@@ -578,10 +580,10 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
         }
     }
 
-    private void removeRemoteView(String uid) {
+    private void removeRemoteView(String uid, StreamIndex index) {
         for (int i = 0; i < mShowRemoteStreamArray.length; i++) {
             String showedUid = mShowRemoteStreamArray[i] == null ? null : mShowRemoteStreamArray[i].getUserId();
-            if (TextUtils.equals(uid, showedUid)) {
+            if (TextUtils.equals(uid, showedUid) && index == mShowRemoteStreamArray[i].streamIndex) {
                 mShowRemoteStreamArray[i] = null;
                 TextView textView = mUserIdTvArray[i];
                 Log.d(TAG, "removeRemoteView :" + textView.getText());
@@ -709,7 +711,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
                 directBuffer.limit(vStart + uvSize);
                 ByteBuffer directBufferV = directBuffer.slice();
 
-                CpuBufferVideoFrameBuilder builder = new CpuBufferVideoFrameBuilder(VideoPixelFormat.kVideoPixelFormatI420);
+                CpuBufferVideoFrameBuilder builder = new CpuBufferVideoFrameBuilder(VideoPixelFormat.I420);
                 builder.setWidth(width)
                         .setHeight(height)
                         .setRotation(rotation)
@@ -745,7 +747,7 @@ public class RTCRoomActivity extends AppCompatActivity implements ConfigManger.C
             mPushStreamHandler = new Handler(mPushStreamThread.getLooper());
             mPushStreamHandler.post(() -> CustomCapture.ins().startCapture(this, mPreviewCallback));
         } else {
-            mRTCVideo.setVideoOrientation(VideoOrientation.Portrait);
+            mRTCVideo.setVideoOrientation(VideoOrientation.PORTRAIT);
             mRTCVideo.startVideoCapture();
         }
     }

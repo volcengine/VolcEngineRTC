@@ -83,7 +83,9 @@ public:
      * @type api
      * @region 视频设备管理
      * @brief 获取当前系统内视频采集设备列表。
-     * @return 包含系统中所有视频采集设备的列表，参看 IVideoDeviceCollection{@link #IVideoDeviceCollection}。  <br>
+     * @return 包含系统中所有视频采集设备的列表，参看 IVideoDeviceCollection{@link #IVideoDeviceCollection}。
+     * 等待超时后会返回空列表。超时时间默认为 10 s。建议通过 onVideoDeviceStateChanged{@link #IRTCVideoEventHandler#onVideoDeviceStateChanged} 监听到 `kMediaDeviceListUpdated` 后，再次调用本接口获取。
+     * @notes 你可以在收到 onVideoDeviceStateChanged{@link #IRTCVideoEventHandler#onVideoDeviceStateChanged} 了解设备变更后，重新调用本接口以获得新的设备列表。
      */
     virtual IVideoDeviceCollection* enumerateVideoCaptureDevices() = 0;
     /** 

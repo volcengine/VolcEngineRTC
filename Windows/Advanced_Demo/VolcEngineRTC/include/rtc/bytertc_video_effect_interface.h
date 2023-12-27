@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_VIDEO_EFFECT_INTERFACE_H__
-#define BYTE_RTC_VIDEO_EFFECT_INTERFACE_H__
-
 #include <stdint.h>
 #include "bytertc_defines.h"
 
@@ -20,11 +17,11 @@ enum VirtualBackgroundSourceType {
     /** 
      * @brief 使用纯色背景替换视频原有背景。
      */
-    kVirtualBackgroundSourceColor = 0,
+    kVirtualBackgroundSourceTypeColor = 0,
     /** 
      * @brief 使用自定义图片替换视频原有背景。
      */
-    kVirtualBackgroundSourceImage = 1,
+    kVirtualBackgroundSourceTypeImage = 1,
 };
 
 /** 
@@ -63,7 +60,7 @@ struct VirtualBackgroundSource {
     /** 
      * @brief 虚拟背景类型，详见 VirtualBackgroundSourceType{@link #VirtualBackgroundSourceType} 。
      */
-    VirtualBackgroundSourceType source_type = kVirtualBackgroundSourceColor;
+    VirtualBackgroundSourceType source_type = kVirtualBackgroundSourceTypeColor;
     /** 
      * @brief 纯色背景使用的颜色。<br>
      *        格式为 0xAARRGGBB 。
@@ -217,10 +214,12 @@ public:
 /** 
  * @type api
  * @region 音视频处理
- * @brief 高级视频特效。
+ * @brief 高级视频特效，参看[集成指南](https://www.volcengine.com/docs/6348/114717)。
  */
 class IVideoEffect {
 public:
+    virtual ~IVideoEffect() = default;
+
     /** 
      * @type api
      * @brief 检查视频特效证书，设置算法模型路径，并初始化特效模块。
@@ -486,7 +485,7 @@ public:
      *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
      * @notes 调用本方法前，必须先调用 enableVideoEffect{@link #IVideoEffect#enableVideoEffect}。
      */
-    virtual int ApplyStickerEffect(const char* sticker_path) = 0;
+    virtual int applyStickerEffect(const char* sticker_path) = 0;
 
     /** 
      * @hidden(Linux)
@@ -604,5 +603,3 @@ public:
 };
 
 }  // namespace bytertc
-
-#endif // BYTE_RTC_VIDEO_EFFECT_INTERFACE_H__

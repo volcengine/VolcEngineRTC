@@ -135,235 +135,6 @@ struct RemoteStreamSwitch {
 
 /** 
  * @type keytype
- * @brief 转推直播包含内容。
- */
-enum LiveTranscodingContentControl {
-    /** 
-     * @brief 输出的混流包含音频和视频
-     */
-    kVideoAndAudio = 0,
-    /** 
-     * @brief 输出的混流只包含音频
-     */
-    kAudioOnly,
-    /** 
-     * @brief 输出的混流只包含视频
-     */
-    kVideoOnly,
-};
-
-/** 
- * @type keytype
- * @brief 转推直播视频编码器格式。
- */
-enum LiveTranscodingVideoCodec {
-    /** 
-     * @brief 使用 H264 编码格式
-     */
-    kLiveTranscondingH264,
-    /** 
-     * @brief 自定义编码器
-     */
-    kLiveTranscodingByteVC1,
-};
-
-/** 
- * @type keytype
- * @brief 转推直播音频编码格式。
- */
-enum LiveTranscodingAudioCodec {
-    /** 
-     * @brief 使用 AAC 编码格式
-     */
-    kLiveTranscodingAAC,
-};
-
-/** 
- * @type keytype
- * @brief AAC 编码等级。
- */
-enum LiveTranscodingAudioProfile {
-    /** 
-     * @brief 编码等级 AAC-LC （默认）
-     */
-    kLiveTranscodingAACLC,
-    /** 
-     * @brief 编码等级 AAC-MAIN
-     */
-    kLiveTranscodingAACMAIN,
-    /** 
-     * @brief 编码等级 HE-AAC v1
-     */
-    kLiveTranscodingHEV1,
-    /** 
-     * @brief 编码等级 HE-AAC v2
-     */
-    KLiveTranscodingHEV2,
-};
-
-/** 
- * @type keytype
- * @brief 转推视频配置。
- */
-struct LiveTranscodingVideoConfig {
-    /** 
-     * @brief 转推直播视频编码器格式。详见 LiveTranscodingVideoCodec{@link #LiveTranscodingVideoCodec}
-     */
-    LiveTranscodingVideoCodec codec;
-    /** 
-     * @brief 合流视频帧率信息
-     */
-    int fps;
-    /** 
-     * @brief 视频 I 帧间隔。
-     */
-    int gop;
-    /** 
-     * @brief 是否使用低延时特性。取值含义如下:  <br>
-     *        + true: 使用低延时特性  <br>
-     *        + false: 不使用低延时特性
-     */
-    bool low_latency;
-    /** 
-     *  @brief 合流视频码率，单位为 bps 。
-     */
-    int bitrate;
-    /** 
-     * @brief 宽（像素）
-     */
-    int width;
-    /** 
-     * @brief 高（像素）
-     */
-    int height;
-};
-
-/** 
- * @type keytype
- * @brief 转推音频配置。
- */
-struct LiveTranscodingAudioConfig {
-    /** 
-     * @brief 转推直播音频编码器格式。详见 LiveTranscodingAudioCodec{@link #LiveTranscodingAudioCodec}
-     */
-    LiveTranscodingAudioCodec codec = kLiveTranscodingAAC;
-    /** 
-     * @brief 合流音频码率，单位为 bps 。
-     */
-    int bitrate;
-    /** 
-     * @brief 音频帧采样率，单位 HZ。目前支持的采样率有：8000HZ， 16000HZ， 32000HZ， 44100HZ，48000HZ。
-     */
-    int sample_rate;
-    /** 
-     * @brief 音频声道数，可取 1 或 2。
-     */
-    int channels;
-    /** 
-     * @brief AAC 编码等级。详见 LiveTranscodingAudioProfile{@link #LiveTranscodingAudioProfile}
-     */
-    LiveTranscodingAudioProfile aac_profile = kLiveTranscodingAACLC;
-};
-
-/** 
- * @type keytype
- * @brief 单个视频流在合流中的布局信息。
- */
-struct LiveTranscodingRegion {
-    /** 
-     * @brief 视频流发布用户的用户 ID 。必填。
-     */
-    const char* uid = nullptr;
-    /** 
-     * @brief 视频流发布用户的房间 ID 。必填。
-     */
-    const char* roomId = nullptr;
-    /** 
-     * @brief 用户视频布局相对画布左侧的偏移量。相对值，范围为[0.0, 1.0]。
-     */
-    double x;
-    /** 
-     * @brief 用户视频布局相对画布顶端的偏移量。相对值，范围为[0.0, 1.0]。
-     */
-    double y;
-    /** 
-     * @brief 用户视频宽度相对用户原始视频宽度的比例。相对值，范围为[0.0, 1.0]。
-     */
-    double w;
-    /** 
-     * @brief 用户视频高度相对用户原始视频高度的比例。相对值，范围为[0.0, 1.0]。
-     */
-    double h;
-    /** 
-     * @brief 用户视频布局在画布中的层级。0为底层，值越大越上层，范围为[0, 100]。
-     */
-    int zorder;
-    /** 
-     * @brief 透明度。范围为 [0.0, 1.0]。
-     */
-    double alpha;
-    /** 
-     * @brief 转推直播包含内容。详见 LiveTranscodingContentControl{@link #LiveTranscodingContentControl}
-     */
-    LiveTranscodingContentControl content_control = kVideoAndAudio;
-    /** 
-     * @brief 渲染模式
-     */
-    RenderMode render_mode = kRenderModeHidden;
-};
-
-/** 
- * @type keytype
- * @brief 转推流布局设置。
- */
-struct LiveTranscodingLayout {
-    /** 
-     * @brief SEI 信息，长度不得超 4096 bytes
-     */
-    const char* app_data = nullptr;
-    /** 
-     * @brief 视频的背景颜色。格式为 RGB 定义下的 Hex 值，如 #FFB6C1 表示浅粉色。默认值 #000000，表示为黑色
-     */
-    const char* background_color = nullptr;
-    /** 
-     * @brief 转推直播布局信息。详见 LiveTranscodingRegion{@link #LiveTranscodingRegion}
-     */
-    LiveTranscodingRegion* regions = nullptr;
-    /** 
-     * @brief 合流的数量
-     */
-    int regions_num = 0;
-};
-
-/** 
- * @type keytype
- * @brief 转推直播配置信息。
- */
-struct LiveTranscodingConfig {
-    /** 
-     * @brief 设置推流地址。
-     */
-    const char* url = nullptr;
-    /** 
-     * @brief 转推视频配置。详见 LiveTranscodingVideoConfig{@link #LiveTranscodingVideoConfig}
-     */
-    LiveTranscodingVideoConfig video_config;
-    /** 
-     * @brief 转推音频配置。详见 LiveTranscodingAudioConfig{@link #LiveTranscodingAudioConfig}
-     */
-    LiveTranscodingAudioConfig audio_config;
-    /** 
-     * @brief 转推流布局设置。详见 LiveTranscodingLayout{@link #LiveTranscodingLayout}
-     */
-    LiveTranscodingLayout layout;
-    /** 
-     * @brief 设置动态扩展自定义参数。
-     */
-    const char* advanced_config = nullptr;
-};
-
-/** 
- * @type keytype
  * @brief 背景模式
  */
 enum BackgroundMode {
@@ -413,7 +184,7 @@ struct MediaStreamInfo {
      * @hidden for internal use only
      * @brief 该流的标识 ID，用户内唯一。
      */
-    const char* stream_name;
+    StreamIndex stream_index;
     /** 
      * @brief 此流是否为共享屏幕流。
      */
@@ -584,8 +355,8 @@ public:
     bool operator==(const SubscribeConfig& config) const {
         // sub_width * sub_height valid
         bool common_result = is_screen == config.is_screen && sub_video == config.sub_video
-                                          && sub_audio == config.sub_audio && priority == config.priority
-                                          && svc_layer == config.svc_layer && framerate == config.framerate;
+                             && sub_audio == config.sub_audio && priority == config.priority
+                             && svc_layer == config.svc_layer && framerate == config.framerate;
         bool result;
         if(sub_width * sub_height > 0 && config.sub_width * config.sub_height > 0) {
           result = common_result && sub_width == config.sub_width && sub_height == config.sub_height ;
@@ -624,27 +395,50 @@ enum VideoStreamType {
 
 /** 
  * @type keytype
- * @brief 视频帧渲染设置。<br>
- *        调用 setLocalVideoCanvas{@link #IRTCVideo#setLocalVideoCanvas} 将视频流绑定到本地视图。
+ * @brief 渲染目标类型
+ */
+enum RenderTargetType {
+    /** 
+     * @brief 指定渲染目标类型为 SurfaceView/TextureView (Android), UIView(iOS), NSView(macOS), HWND (Windows)
+     */
+    kRenderTargetTypeView = 0,
+    /** 
+     * @brief 仅在 Android 平台生效，指定渲染目标类型为 Surface
+     */
+    kRenderTargetTypeSurface = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 视频帧渲染设置。
  */
 struct VideoCanvas {
     /** 
      * @brief 本地视图句柄
      */
-    void* view;
+    void* view = NULL;
     /** 
      * @brief 视频渲染模式，参看 RenderMode{@link #RenderMode}
      */
-    int render_mode;
+    int render_mode = kRenderModeHidden;
     /** 
      * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
      */
-    uint32_t background_color;
+    uint32_t background_color = 0;
+    /** 
+     * @brief 渲染目标的类型。参看 RenderTargetType{@link #RenderTargetType}。
+     */
+    RenderTargetType render_target_type = kRenderTargetTypeView;
+    /** 
+     * @brief 视频帧旋转角度。参看 VideoRotation{@link #VideoRotation}。默认为 0 度，即不做旋转处理。<br>
+     *        该设置仅对远端视频有效，对本地视频设置不生效。
+     */
+    VideoRotation render_rotation = kVideoRotation0;
     /** 
      * @hidden constructor/destructor
      * @brief 构造函数
      */
-    VideoCanvas() : view(NULL), render_mode(kRenderModeHidden), background_color(0) {
+    VideoCanvas() : view(NULL), render_mode(kRenderModeHidden), background_color(0), render_target_type(kRenderTargetTypeView) {
     }
     /** 
      * @hidden constructor/destructor
@@ -652,6 +446,29 @@ struct VideoCanvas {
      */
     VideoCanvas(void* v, int m, uint32_t c) : view(v), render_mode(m), background_color(c) {
     }
+};
+
+/** 
+ * @type keytype
+ * @brief 远端视频帧渲染设置
+ */
+struct RemoteVideoRenderConfig {
+    /** 
+     * @brief 渲染模式：
+     *        + 1（`RENDER_MODE_HIDDEN`）视窗填满优先，默认值。视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
+     *        + 2（`RENDER_MODE_FIT`）视频帧内容全部显示优先。视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将填充 `backgroundColor`。缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
+     *        + 3（`RENDER_MODE_FILL`）视频帧自适应画布。视频帧非等比缩放，直至画布被填满。在此过程中，视频帧的长宽比例可能会发生变化。
+     */
+    int render_mode = kRenderModeHidden;
+    /** 
+     * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+     */
+    uint32_t background_color = 0;
+
+    /** 
+     * @brief 用户自定义画面旋转。可选值 0, 90, 180, 270， 默认值是0。其中0代表保持原始画面，90, 180, 270代表顺时针旋转原始canvas相应角度。
+     */
+    VideoRotation render_rotation = kVideoRotation0;
 };
 
 /** 
@@ -891,6 +708,111 @@ public:
      * @brief 析构函数
      */
     virtual ~IVideoSink() = default;
+
+    /** 
+     * @hidden sink id
+     * @brief sink id
+     */
+    virtual void* uniqueId() const { return (void *)this; }
+};
+
+/** 
+ * @type keytype
+ * @brief 本地视频帧回调位置。
+ */
+enum LocalVideoRenderPosition {
+    /** 
+     * @brief 采集后。
+     */
+    kLocalVideoRenderPositionAfterCapture,
+    /** 
+     * @brief （默认值）前处理后。
+     */
+    kLocalVideoRenderPositionAfterPreProcess
+};
+
+/** 
+ * @type keytype
+ * @brief 是否将视频帧自动转正。
+ */
+enum VideoApplyRotation {
+    /** 
+     * @brief （默认值）不旋转。
+     */
+    kVideoApplyRotationDefault = -1,
+    /** 
+     * @brief 自动转正视频，即根据视频帧的旋转角信息将视频帧旋转到 0 度。
+     */
+    kVideoApplyRotation0 = 0,
+};
+
+/** 
+ * @type keytype
+ * @brief 是否将视频帧镜像。
+ */
+enum VideoRenderMirrorType {
+    /**  
+     * @brief 开启镜像。
+     */
+    kVideoSinkMirrorTypeON = 1,
+    /**  
+     * @brief （默认值）不开启镜像。
+     */
+    kVideoSinkMirrorTypeOFF = 2,
+};
+
+/** 
+ * @type keytype
+ * @brief 本地视频帧回调配置。
+ */
+struct LocalVideoSinkConfig {
+    /** 
+     * @brief 本地视频帧回调位置，参看 LocalVideoRenderPosition{@link #LocalVideoRenderPosition}，默认回调前处理后的视频帧。
+     */
+    LocalVideoRenderPosition position = kLocalVideoRenderPositionAfterPreProcess;
+    /** 
+     * @brief 本地视频帧回调格式，参看 VideoPixelFormat{@link #VideoPixelFormat}，默认值为 0。
+     */
+    VideoPixelFormat pixel_format = kVideoPixelFormatUnknown;
+};
+
+/** 
+ * @type keytype
+ * @brief 远端视频帧回调位置。
+ */
+enum RemoteVideoRenderPosition {
+    /** 
+     * @brief 解码后。
+     */
+    kRemoteVideoRenderPositionAfterDecoder,
+    /** 
+     * @brief （默认值）后处理后。
+     */
+    kRemoteVideoRenderPositionAfterPostProcess
+};
+
+/** 
+ * @type keytype
+ * @brief 远端视频帧回调配置。
+ */
+struct RemoteVideoSinkConfig {
+    /** 
+     * @brief 远端视频帧回调位置，参看 RemoteVideoRenderPosition{@link #RemoteVideoRenderPosition}，默认回调后处理后的视频帧。
+     */
+    RemoteVideoRenderPosition position = kRemoteVideoRenderPositionAfterPostProcess;
+    /** 
+     * @brief 远端视频帧回调格式，参看 VideoPixelFormat{@link #VideoPixelFormat}，默认值为 0。
+     */
+    VideoPixelFormat pixel_format = kVideoPixelFormatUnknown;
+    /** 
+     * @brief 是否将视频帧自动转正，参看 VideoApplyRotation{@link #VideoApplyRotation}，默认为不旋转。
+     */
+    VideoApplyRotation apply_rotation = kVideoApplyRotationDefault;
+    /** 
+     * @brief 是否将视频帧镜像。参看 VideoRenderMirrorType{@link #VideoRenderMirrorType}，默认为不镜像。
+     *        本设置与 setRemoteVideoMirrorType{@link #IRTCVideo#setRemoteVideoMirrorType} （适用于内部渲染）相互独立。
+     */
+    VideoRenderMirrorType mirror_type = kVideoSinkMirrorTypeOFF;
 };
 
 /** 
@@ -914,7 +836,7 @@ enum MirrorMode {
  * @type keytype
  * @brief 镜像类型
  */
-enum MirrorType {
+enum MirrorType : int {
     /** 
      * @brief 本地预览和编码传输时均无镜像效果
      */
@@ -929,19 +851,35 @@ enum MirrorType {
     kMirrorTypeRenderAndEncoder = 3,
 };
 
+
+/** 
+ * @type keytype
+ * @brief 远端流的镜像类型。
+ */
+enum RemoteMirrorType {
+    /** 
+     * @brief （默认值）远端视频渲染无镜像效果。
+     */
+    kRemoteMirrorTypeNone = 0,
+    /** 
+     * @brief 远端视频渲染有镜像效果。
+     */
+    kRemoteMirrorTypeRender = 1,
+};
+
 /** 
  * @type keytype
  * @brief 弱光适应类型
  */
-enum AdjustedMode {
+enum VideoEnhancementMode {
     /** 
      * @brief 关闭弱光适应
      */
-    kAdjustedModeDisabled = 0,
+    kVideoEnhancementModeDisabled = 0,
     /** 
      * @brief 开启弱光适应
      */
-    kAdjustedModeEnabled = 1,
+    kVideoEnhancementModeAuto = 1,
 };
 
 /** 
@@ -977,11 +915,11 @@ enum ZoomConfigType {
     /** 
      * @brief 设置缩放系数
      */
-    kZoomFocusOffset = 0, 
+    kZoomConfigTypeFocusOffset = 0, 
     /** 
      * @brief 设置移动步长
      */
-    kZoomMoveOffset,
+    kZoomConfigTypeMoveOffset,
 };
 
 /** 
@@ -992,31 +930,31 @@ enum ZoomDirectionType {
     /** 
      * @brief 相机向左移动
      */
-    kCameraMoveLeft = 0,
+    kZoomDirectionTypeMoveLeft = 0,
     /** 
      * @brief 相机向右移动
      */
-    kCameraMoveRight,
+    kZoomDirectionTypeMoveRight,
     /** 
      * @brief 相机向上移动
      */
-    kCameraMoveUp,
+    kZoomDirectionTypeMoveUp,
     /** 
      * @brief 相机向下移动
      */
-    kCameraMoveDown,
+    kZoomDirectionTypeMoveDown,
     /** 
      * @brief 相机缩小焦距
      */
-    kCameraZoomOut,
+    kZoomDirectionTypeZoomOut,
     /** 
      * @brief 相机放大焦距
      */
-    kCameraZoomIn,
+    kZoomDirectionTypeZoomIn,
     /** 
      * @brief 恢复到原始画面
      */
-    kCameraReset,
+    kZoomDirectionTypeReset,
 };
 
 /** 
@@ -1107,20 +1045,20 @@ struct VideoCaptureConfig {
         * @brief （默认）自动设置采集参数。
         *        SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。
         */
-       KAuto = 0,
+       kAuto = 0,
        /** 
         * @brief 手动设置采集参数，包括采集分辨率、帧率。
         */
-       KManual = 1,
+       kManual = 1,
        /** 
         * @brief 采集参数与编码参数一致，即在 setVideoEncoderConfig{@link #IRTCVideo#setVideoEncoderConfig} 中设置的参数。
         */
-       KAutoPerformance = 2,
+       kAutoPerformance = 2,
     };
     /** 
      * @brief 视频采集模式，参看 [CapturePreference](#capturepreference-2)
      */
-    CapturePreference capturePreference = CapturePreference::KAuto;
+    CapturePreference capture_preference = CapturePreference::kAuto;
 
     /** 
      * @brief 视频采集分辨率的宽度，单位：px。
@@ -1133,7 +1071,7 @@ struct VideoCaptureConfig {
     /** 
      * @brief 视频采集帧率，单位：fps。
     */
-   int frameRate = 0;
+   int frame_rate = 0;
 };
 
 /** 
@@ -1144,15 +1082,15 @@ enum RecordingType {
     /** 
      * @brief 只录制音频
      */
-    kRecordAudioOnly = 0,
+    kRecordingTypeAudioOnly = 0,
     /** 
      * @brief 只录制视频
      */
-    kRecordVideoOnly = 1,
+    kRecordingTypeVideoOnly = 1,
     /** 
      * @brief 同时录制音频和视频
      */
-    kRecordVideoAndAudio = 2,
+    kRecordingTypeVideoAndAudio = 2,
 };
 
 /** 
@@ -1336,21 +1274,45 @@ enum ScreenMediaType {
 
 /** 
  * @type keytype
- * @brief 基础美颜模式
+ * @brief 基础美颜模式。
  */
 enum EffectBeautyMode {
     /** 
-     * @brief 美白
+     * @brief 美白。
      */
-    kEffectBeautyWhite = 0,
+    kEffectBeautyModeWhite = 0,
     /** 
-     * @brief 磨皮
+     * @brief 磨皮。
      */
-    kEffectBeautySmooth = 1,
+    kEffectBeautyModeSmooth = 1,
     /** 
-     * @brief 锐化
+     * @brief 锐化。
      */
-    kEffectBeautySharpen = 2,
+    kEffectBeautyModeSharpen = 2,
+    /** 
+     * @valid since 3.55
+     * @brief 清晰，需集成 v4.4.2+ 版本的特效 SDK。
+     */
+    kEffectBeautyModeClear = 3,
+};
+
+/**  
+ * @type keytype
+ * @brief 视频设备朝向类型
+ */
+enum VideoDeviceFacing {
+    /**  
+     * @brief 前置摄像头
+     */
+    kVideoDeviceFacingFront = 0,
+    /**  
+     * @brief 后置摄像头
+     */
+    kVideoDeviceFacingBack = 1,
+    /**  
+     * @brief 未知类型
+     */
+    kVideoDeviceFacingUnknown = 2,
 };
 
 /** 
@@ -1378,6 +1340,10 @@ struct VideoDeviceInfo {
      * @brief 设备的传输方式
      */
     DeviceTransportType transport_type;
+    /**  
+     * @brief 视频设备朝向类型
+     */
+    VideoDeviceFacing device_facing;
     /**
      * @hidden constructor/destructon
      */
@@ -1387,6 +1353,7 @@ struct VideoDeviceInfo {
         this->device_vid = 0;
         this->device_pid = 0;
         this->transport_type = DeviceTransportType::kDeviceTransportTypeUnknown;
+        this->device_facing = VideoDeviceFacing::kVideoDeviceFacingFront;
     };
 
     /**
@@ -1401,6 +1368,7 @@ struct VideoDeviceInfo {
             device_vid = src.device_vid;
             device_pid = src.device_pid;
             transport_type = src.transport_type;
+            device_facing = src.device_facing;
         }
 
         return *this;
@@ -1427,8 +1395,8 @@ enum VideoOrientation {
 };
 
 /** 
+ * @hidden(Windows, Linux, macOS)
  * @type keytype
- * @hidden for internal use only
  * @brief 超分状态改变原因。
  */
 enum VideoSuperResolutionModeChangedReason {
@@ -1475,7 +1443,7 @@ enum VideoSuperResolutionModeChangedReason {
 };
 
 /** 
- * @hidden for internal use only
+ * @hidden(Windows, Linux, macOS)
  * @type keytype
  * @brief 视频降噪模式状态改变原因。
  */
@@ -1574,7 +1542,7 @@ struct ScreenCaptureSourceInfo {
      * @brief 共享的屏幕是否为主屏。<br>
      *        当共享对象为屏幕时有效 <br>
      */
-     bool primaryMonitor = false;
+     bool primary_monitor = false;
     /** 
      * @brief 屏幕共享对象的坐标。详见 Rectangle{@link #Rectangle}。<br>
      *        仅在采集源为显示器屏幕时有效。<br>
@@ -1670,6 +1638,17 @@ public:
      * @param [in] video_index 对应编码流的下标
      */
     virtual void onRequestKeyFrame(StreamIndex index, int32_t video_index) = 0;
+    /** 
+     * @valid since 3.56
+     * @type callback
+     * @brief 作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。
+     *        你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。
+     * @param index 远端编码流的属性，参看 StreamIndex{@link #StreamIndex}。
+     * @param video_index 对应编码流的下标
+     * @param active 该路流可发送状态
+     * @notes 要收到此回调，必须调用 setVideoSourceType{@link #IRTCVideo#setVideoSourceType} 设置视频源是自定义编码，且通过 setExternalVideoEncoderEventHandler{@link #IRTCVideo#setExternalVideoEncoderEventHandler} 设置了回调句柄。
+     */
+    virtual void onActiveVideoLayer(StreamIndex index, int32_t video_index, bool active) = 0;
 };
 
 /** 
@@ -1800,17 +1779,17 @@ public:
      * @type callback
      * @region 视频管理
      * @brief 获取采集成功的本地屏幕视频帧，用于自定义处理或渲染。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     * @param [in] video_frame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
-    virtual bool onLocalScreenFrame(IVideoFrame* videoFrame) = 0;
+    virtual bool onLocalScreenFrame(IVideoFrame* video_frame) = 0;
 
     /** 
      * @type callback
      * @region 视频管理
      * @brief 获取采集成功的本地摄像头流视频帧，用于自定义处理或渲染。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     * @param [in] video_frame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
-    virtual bool onLocalVideoFrame(IVideoFrame* videoFrame) = 0;
+    virtual bool onLocalVideoFrame(IVideoFrame* video_frame) = 0;
 
     /** 
      * @type callback
@@ -1818,9 +1797,9 @@ public:
      * @brief 获取采集成功的远端屏幕视频帧，用于自定义处理或渲染。
      * @param [in] roomid 房间 ID。
      * @param [in] uid 远端用户 ID。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     * @param [in] video_frame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      */
-    virtual bool onRemoteScreenFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
+    virtual bool onRemoteScreenFrame(const char* roomid, const char* uid, IVideoFrame* video_frame) = 0;
 
     /** 
      * @type callback
@@ -1828,10 +1807,10 @@ public:
      * @brief 获取采集成功的远端摄像头流视频帧，用于自定义处理或渲染。
      * @param [in] roomid 房间 ID。
      * @param [in] uid 远端用户 ID。
-     * @param [in] videoFrame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
+     * @param [in] video_frame 视频数据，参看 IVideoFrame{@link #IVideoFrame}。
      * @notes 不同的平台上（macOS, Windows, Linux）上获取的视频帧的 pixelFormat 可能不同。
      */
-    virtual bool onRemoteVideoFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) = 0;
+    virtual bool onRemoteVideoFrame(const char* roomid, const char* uid, IVideoFrame* video_frame) = 0;
 
     /** 
      * @type callback
@@ -1839,9 +1818,9 @@ public:
      * @brief 拼接视频数据回调
      * @param [in] roomid 房间 id
      * @param [in] uid 远端用户ID
-     * @param [in] videoFrame 视频数据，详见 IVideoFrame{@link #IVideoFrame}
+     * @param [in] video_frame 视频数据，详见 IVideoFrame{@link #IVideoFrame}
      */
-    virtual bool onMergeFrame(const char* roomid, const char* uid, IVideoFrame* videoFrame) {
+    virtual bool onMergeFrame(const char* roomid, const char* uid, IVideoFrame* video_frame) {
         return false;
     }
 };
@@ -1860,27 +1839,29 @@ public:
     /** 
      * @type callback
      * @brief 调用 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 截取视频画面时，收到此回调。
-     * @param [in] taskId 本地截图任务的编号。和 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 的返回值一致。
-     * @param [in] streamIndex 截图的视频流的属性，参看 StreamIndex{@link #StreamIndex}。
+     * @param [in] task_id 本地截图任务的编号。和 takeLocalSnapshot{@link #IRTCVideo#takeLocalSnapshot} 的返回值一致。
+     * @param [in] stream_index 截图的视频流的属性，参看 StreamIndex{@link #StreamIndex}。
      * @param [in] image 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。
-     * @param [in] errorCode 截图错误码：<br>
+     * @param [in] error_code 截图错误码：<br>
      *        + 0: 成功 <br>
      *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
      *        + -2: 截图错误。流无效。
+     *        + -3: 截图错误。截图超时,超时时间1秒。
      */
-    virtual void onTakeLocalSnapshotResult(long taskId, StreamIndex streamIndex, IVideoFrame* image, int errorCode) = 0;
+    virtual void onTakeLocalSnapshotResult(long task_id, StreamIndex stream_index, IVideoFrame* image, int error_code) = 0;
     /** 
      * @type callback
      * @brief 调用 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 截取视频画面时，收到此回调。
-     * @param [in] taskId 远端截图任务的编号。和 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 的返回值一致。
-     * @param [in] streamKey 截图的视频流，参看 RemoteStreamKey{@link #RemoteStreamKey}。
+     * @param [in] task_id 远端截图任务的编号。和 takeRemoteSnapshot{@link #IRTCVideo#takeRemoteSnapshot} 的返回值一致。
+     * @param [in] stream_key 截图的视频流，参看 RemoteStreamKey{@link #RemoteStreamKey}。
      * @param [in] image 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。
-     * @param [in] errorCode 截图错误码：<br>
+     * @param [in] error_code 截图错误码：<br>
      *        + 0: 成功 <br>
      *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
      *        + -2: 截图错误。流无效。
+     *        + -3: 截图错误。截图超时,超时时间1秒。
      */
-    virtual void onTakeRemoteSnapshotResult(long taskId, RemoteStreamKey streamKey, IVideoFrame* image, int errorCode) = 0;
+    virtual void onTakeRemoteSnapshotResult(long task_id, RemoteStreamKey stream_key, IVideoFrame* image, int error_code) = 0;
 };
 /** 
  * @hidden(macOS, Windows, Linux)

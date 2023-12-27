@@ -297,17 +297,17 @@ public:
     /** 
      * @type api
      * @brief 设置歌曲文件最大占用的本地缓存。
-     * @param [in] max_cache_size_MB 本地缓存，单位 MB。
+     * @param [in] max_cache_size_mb 本地缓存，单位 MB。
      *        设置值小于等于 0 时，使用默认值 1024 MB。
      */
-    virtual void setMaxCacheSize(int max_cache_size_MB) = 0;
+    virtual void setMaxCacheSize(int max_cache_size_mb) = 0;
 
     /** 
      * @type api
      * @brief 设置 KTV 回调接口。
-     * @param [in] ktvManagerEventHandler KTV 回调类，参看 IKTVManagerEventHandler{@link #IKTVManagerEventHandler}。
+     * @param [in] ktv_manager_event_handler KTV 回调类，参看 IKTVManagerEventHandler{@link #IKTVManagerEventHandler}。
      */
-    virtual void setKTVManagerEventHandler(IKTVManagerEventHandler *ktvManagerEventHandler) = 0;
+    virtual void setKTVManagerEventHandler(IKTVManagerEventHandler *ktv_manager_event_handler) = 0;
 
     /** 
      * @type api

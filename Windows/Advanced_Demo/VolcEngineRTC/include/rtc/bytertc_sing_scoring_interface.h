@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_SING_SCORING_INTERFACE_H__
-#define BYTE_SING_SCORING_INTERFACE_H__
-
 #include "bytertc_audio_defines.h"
 
 namespace bytertc {
@@ -159,5 +156,3 @@ public:
 };
 
 }  // namespace bytertc
-
-#endif // BYTE_SING_SCORING_INTERFACE_H__

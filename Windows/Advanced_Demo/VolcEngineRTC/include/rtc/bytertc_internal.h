@@ -5,10 +5,7 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_INTERNAL_H__
-#define BYTE_RTC_INTERNAL_H__
-
-#include "bytertc_engine_interface.h"
+#include "bytertc_defines.h"
 #include <stdint.h>
 #include <stdarg.h>
 
@@ -72,37 +69,7 @@ enum StreamFlag {
     kStreamFlagMCU = 1 << 2,
     kStreamFlagMeetTogether = 1 << 3,
     // 1 << 4 被服务端占用用作 sip 流
-    kStreamFlagMultiStream = 1 << 5
 };
 
-class IEngineInternalEventHandler {
-public:
-    virtual ~IEngineInternalEventHandler() {
-    }
-    /** 
-     * @brief 当前引擎是否启用ice复用功能
-     * @param [in] muxed 当前引擎是否启用ice复用  <br>
-     *       + true  :启用ice复用
-     *       + false :不启用ice复用
-     */
-    virtual void onPeerConnectionICEMux(bool muxed){};
-    //TODO(shenpengliang) remove this method
-    virtual void onSystemInfoLog(double app_cpu_usage, double total_cpu_usage, double app_memery_usage){};
-    virtual void onSignalingAddrChanged(const char* addr){};
-    virtual void onConfigAddrChanged(const char* addr){};
-    virtual void onMediaServerAddrChanged(const char* addr){};
-};
-
-/** 
- * @brief 设置当前引擎的内部回调事件
- * @param [in] engine 当前app应用的RTC引擎
- * @param [in] handler 当前app应用的内部事件回调句柄
- * @notes 必须在join channel前调用该函数
- */
-BYTERTC_API void setEngineInternalEventHandler(
-      void *engine,
-      IEngineInternalEventHandler* handler);
-      
 }  // namespace bytertc
 
-#endif // BYTE_RTC_INTERNAL_H__ 

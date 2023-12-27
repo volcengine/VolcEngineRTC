@@ -34,7 +34,7 @@ enum TranscoderRoomStatus {
  * @type keytype
  * @brief 合流输出内容类型
  */
-enum TranscoderContentControlType {
+enum class TranscoderContentControlType {
     /** 
      * @brief 输出的混流包含音频和视频
      */
@@ -115,17 +115,17 @@ public:
      * @type api
      * @region 转推直播
      * @brief 将合流参数转成 json 字符串
-     * @param [in] contentType 内容属性，表明是合流信令
+     * @param [in] content_type 内容属性，表明是合流信令
      * @param [in] action 合流状态，可选取值如下：  <br>
      *               + started: 开启合流  <br>
      *               + layoutChanged: 更新合流布局  <br>
      *               + stopped: 停止合流
      * @return 转换后的 json 字符串
      */
-    virtual const char* flatten(const char* contentType, const char* action) = 0;
+    virtual const char* flatten(const char* content_type, const char* action) = 0;
     /**
      * @hidden constructor/destructor
      */
-    ~ITranscoderParamBase() = default;
+    virtual ~ITranscoderParamBase() = default;
 };
 }/*namespace bytertc*/

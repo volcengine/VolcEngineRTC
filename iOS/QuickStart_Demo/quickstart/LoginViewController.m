@@ -115,12 +115,12 @@
     BOOL userIDValid = [self checkVaild:userID];
     
     if (!roomIDValid) {
-        [self showAlertWithTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-"];
+        [self showAlertWithTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-,长度小于128字符"];
         return;;
     }
     
     if (!userIDValid) {
-        [self showAlertWithTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-"];
+        [self showAlertWithTitle:@"输入不合法" message:@"只支持数字、大小写字母、@._-,长度小于128字符"];
         return;;
     }
     

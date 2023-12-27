@@ -49,11 +49,6 @@
 		2BC1A99F27B6569400DD0557 /* PreJoinSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A99A27B6569400DD0557 /* PreJoinSettingsViewController.m */; };
 		2BC1A9A027B6569400DD0557 /* PreJoinSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A99D27B6569400DD0557 /* PreJoinSetting.m */; };
 		2BC1A9A527B658BC00DD0557 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9A327B658BC00DD0557 /* LoginViewController.m */; };
-		2BC1A9AF27B6625400DD0557 /* ModelResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AA27B6625400DD0557 /* ModelResource.bundle */; };
-		2BC1A9B027B6625400DD0557 /* ComposeMakeup.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AB27B6625400DD0557 /* ComposeMakeup.bundle */; };
-		2BC1A9B127B6625400DD0557 /* StickerResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AC27B6625400DD0557 /* StickerResource.bundle */; };
-		2BC1A9B227B6625400DD0557 /* LicenseBag.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AD27B6625400DD0557 /* LicenseBag.bundle */; };
-		2BC1A9B327B6625400DD0557 /* FilterResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2BC1A9AE27B6625400DD0557 /* FilterResource.bundle */; };
 		2BC1A9B827B662B300DD0557 /* BeautyBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9B427B662B300DD0557 /* BeautyBarView.m */; };
 		2BC1A9B927B662B300DD0557 /* EffectButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9B527B662B300DD0557 /* EffectButton.m */; };
 		2BC1A9BD27B662C000DD0557 /* EffectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1A9BC27B662C000DD0557 /* EffectModel.m */; };
@@ -73,8 +68,6 @@
 		2BE077E027E0810700166688 /* SettingButtonModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE077DF27E0810700166688 /* SettingButtonModel.m */; };
 		2BE077E327E0866800166688 /* PreJoinNetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE077E227E0866800166688 /* PreJoinNetViewController.m */; };
 		2BE077E627E0893A00166688 /* SettingTextFieldModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE077E527E0893A00166688 /* SettingTextFieldModel.m */; };
-		9E5DCF8A2A1B14DB0050ECD8 /* effect-sdk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */; };
-		9E5DCF912A1B14F00050ECD8 /* effect-sdk.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9EEB53142A405F56007C603E /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */; };
 		CC2AE8C526CB6A21009D594D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC2AE8C326CB6A21009D594D /* Main.storyboard */; };
 		CC2AE8C726CB6A24009D594D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC2AE8C626CB6A24009D594D /* Assets.xcassets */; };
@@ -88,6 +81,8 @@
 		CC51ECE72A4333BB004F8987 /* bytenn.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CC51ECEC2A4333CF004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */; };
 		CC51ECED2A4333CF004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCC608082B27119D000EFE3B /* RealXBase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC608062B271197000EFE3B /* RealXBase.xcframework */; };
+		CCC608092B27119D000EFE3B /* RealXBase.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCC608062B271197000EFE3B /* RealXBase.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,10 +124,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9E5DCF912A1B14F00050ECD8 /* effect-sdk.framework in Embed Frameworks */,
 				CC51ECE72A4333BB004F8987 /* bytenn.xcframework in Embed Frameworks */,
 				CC51ECE32A4333B5004F8987 /* VolcEngineRTCScreenCapturer.xcframework in Embed Frameworks */,
 				CC51ECE52A4333B7004F8987 /* VolcEngineRTC.xcframework in Embed Frameworks */,
+				CCC608092B27119D000EFE3B /* RealXBase.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,11 +226,6 @@
 		2BC1A99E27B6569400DD0557 /* PreJoinSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreJoinSetting.h; sourceTree = "<group>"; };
 		2BC1A9A327B658BC00DD0557 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		2BC1A9A427B658BC00DD0557 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
-		2BC1A9AA27B6625400DD0557 /* ModelResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ModelResource.bundle; sourceTree = "<group>"; };
-		2BC1A9AB27B6625400DD0557 /* ComposeMakeup.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ComposeMakeup.bundle; sourceTree = "<group>"; };
-		2BC1A9AC27B6625400DD0557 /* StickerResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = StickerResource.bundle; sourceTree = "<group>"; };
-		2BC1A9AD27B6625400DD0557 /* LicenseBag.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = LicenseBag.bundle; sourceTree = "<group>"; };
-		2BC1A9AE27B6625400DD0557 /* FilterResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FilterResource.bundle; sourceTree = "<group>"; };
 		2BC1A9B427B662B300DD0557 /* BeautyBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeautyBarView.m; sourceTree = "<group>"; };
 		2BC1A9B527B662B300DD0557 /* EffectButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EffectButton.m; sourceTree = "<group>"; };
 		2BC1A9B627B662B300DD0557 /* EffectButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectButton.h; sourceTree = "<group>"; };
@@ -264,7 +254,6 @@
 		2BE077E527E0893A00166688 /* SettingTextFieldModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingTextFieldModel.m; sourceTree = "<group>"; };
 		3BE1A58E03A709961486F17D /* Pods-Advanced.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Advanced.debug.xcconfig"; path = "Target Support Files/Pods-Advanced/Pods-Advanced.debug.xcconfig"; sourceTree = "<group>"; };
 		9BB33BD86BD9FAC6A68B4200 /* Pods-Advanced.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Advanced.release.xcconfig"; path = "Target Support Files/Pods-Advanced/Pods-Advanced.release.xcconfig"; sourceTree = "<group>"; };
-		9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "effect-sdk.framework"; sourceTree = "<group>"; };
 		CC2AE8B726CB6A21009D594D /* Advanced.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Advanced.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC2AE8BA26CB6A21009D594D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CC2AE8C426CB6A21009D594D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -276,6 +265,7 @@
 		CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTCScreenCapturer.xcframework; sourceTree = "<group>"; };
 		CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = bytenn.xcframework; sourceTree = "<group>"; };
 		CC51ECDC2A4333AB004F8987 /* VolcEngineRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = VolcEngineRTC.xcframework; sourceTree = "<group>"; };
+		CCC608062B271197000EFE3B /* RealXBase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RealXBase.xcframework; sourceTree = "<group>"; };
 		CF204D15E7C0CD41573D450F /* Pods_Advanced.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Advanced.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -306,8 +296,8 @@
 				2BC1A9C827B66B7700DD0557 /* MetalPerformanceShaders.framework in Frameworks */,
 				CC51ECE62A4333BB004F8987 /* bytenn.xcframework in Frameworks */,
 				2BC1A9C627B66B6A00DD0557 /* CoreMotion.framework in Frameworks */,
+				CCC608082B27119D000EFE3B /* RealXBase.xcframework in Frameworks */,
 				2BC1A9C427B66B6200DD0557 /* libz.tbd in Frameworks */,
-				9E5DCF8A2A1B14DB0050ECD8 /* effect-sdk.framework in Frameworks */,
 				2BC1A9C227B66B4200DD0557 /* CoreML.framework in Frameworks */,
 				29B566F369D3E77B976F57FD /* Pods_Advanced.framework in Frameworks */,
 			);
@@ -619,11 +609,6 @@
 		2BC1A9A927B6625400DD0557 /* EffectResource */ = {
 			isa = PBXGroup;
 			children = (
-				2BC1A9AA27B6625400DD0557 /* ModelResource.bundle */,
-				2BC1A9AB27B6625400DD0557 /* ComposeMakeup.bundle */,
-				2BC1A9AC27B6625400DD0557 /* StickerResource.bundle */,
-				2BC1A9AD27B6625400DD0557 /* LicenseBag.bundle */,
-				2BC1A9AE27B6625400DD0557 /* FilterResource.bundle */,
 			);
 			path = EffectResource;
 			sourceTree = "<group>";
@@ -688,10 +673,10 @@
 		CC2AE90826CCF39A009D594D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CCC608062B271197000EFE3B /* RealXBase.xcframework */,
 				CC51ECDB2A4333A6004F8987 /* bytenn.xcframework */,
 				CC51ECDC2A4333AB004F8987 /* VolcEngineRTC.xcframework */,
 				CC51ECD82A43339D004F8987 /* VolcEngineRTCScreenCapturer.xcframework */,
-				9E5DCF842A1B14DB0050ECD8 /* effect-sdk.framework */,
 				2BC1A9D727B66BC200DD0557 /* ReplayKit.framework */,
 				2BC1A9D527B66BBD00DD0557 /* SystemConfiguration.framework */,
 				2BC1A9D327B66BB800DD0557 /* CoreTelephony.framework */,
@@ -798,15 +783,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BC1A9B227B6625400DD0557 /* LicenseBag.bundle in Resources */,
 				CC2AE8CA26CB6A24009D594D /* LaunchScreen.storyboard in Resources */,
-				2BC1A9B027B6625400DD0557 /* ComposeMakeup.bundle in Resources */,
-				2BC1A9B327B6625400DD0557 /* FilterResource.bundle in Resources */,
-				2BC1A9AF27B6625400DD0557 /* ModelResource.bundle in Resources */,
 				CC2AE8C726CB6A24009D594D /* Assets.xcassets in Resources */,
 				CC2AE8C526CB6A21009D594D /* Main.storyboard in Resources */,
 				2BA8028B27E85F9E00AFE337 /* background.jpg in Resources */,
-				2BC1A9B127B6625400DD0557 /* StickerResource.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -935,11 +915,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_ENTITLEMENTS = AdvanceScreenShare/Advanced.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
+				DEVELOPMENT_TEAM = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -956,7 +934,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.debug.screenShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = veRTC_Development_Extension_20211117;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1116,10 +1093,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3XMD9D6A65;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)",
@@ -1141,7 +1116,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.advanced.ios.debug;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = veRTC_Development_20211117;
 				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

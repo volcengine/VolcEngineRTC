@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ktvPlayer 当前 ktvPlayer 对象，参看 ByteRTCKTVPlayer{@link #ByteRTCKTVPlayer}。
  * @param musicId 音乐 ID。
  * @param state 音乐播放状态，参看 ByteRTCPlayState{@link #ByteRTCPlayState}。
- * @param error 错误码，参看 ByteRTCKTVPlayerError{@link #ByteRTCKTVPlayerError}。
+ * @param error 错误码，参看 ByteRTCKTVPlayerErrorCode{@link #ByteRTCKTVPlayerErrorCode}。
  * @notes <br>
  *       此回调被触发的时机汇总如下：
  *       + 调用 playMusic:audioTrackType:audioPlayType:{@link #ByteRTCKTVPlayer#playMusic:audioTrackType:audioPlayType:} 成功后，会触发 playState 值为 ByteRTCPlayStatePlaying 的回调；否则会触发 playState 值为 ByteRTCPlayStateFailed 的回调。

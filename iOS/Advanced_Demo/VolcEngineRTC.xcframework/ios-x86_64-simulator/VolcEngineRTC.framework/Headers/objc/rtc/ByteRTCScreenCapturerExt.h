@@ -23,7 +23,7 @@ BYTE_RTC_EXPORT @protocol ByteRtcScreenCapturerExtDelegate <NSObject>
  * @type api
  * @region 视频管理
  * @brief 通知 Broadcast Upload Extension 停止采集屏幕并退出。
- * @notes 用户调用 stopScreenCapture{@link #ByteRTCVideo#stopScreenCapture} 后，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
+ * @notes iOS 端调用 stopScreenCapture{@link #ByteRTCVideo#stopScreenCapture}，或 macOS 端调用 stopScreenVideoCapture{@link #ByteRTCVideo#stopScreenVideoCapture}，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
  */
 - (void)onQuitFromApp;
 /** 

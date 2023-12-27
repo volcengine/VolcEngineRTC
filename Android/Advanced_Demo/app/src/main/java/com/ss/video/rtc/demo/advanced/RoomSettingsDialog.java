@@ -1,6 +1,6 @@
 package com.ss.video.rtc.demo.advanced;
 
-import static com.ss.bytertc.engine.type.MessageConfig.MessageConfigReliableOrdered;
+
 
 import android.content.Context;
 import android.os.Bundle;
@@ -25,6 +25,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCVideo;
 import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.type.MessageConfig;
 import com.ss.rtc.demo.advanced.R;
 import com.ss.video.rtc.demo.advanced.entity.VideoConfigEntity;
 import com.ss.video.rtc.demo.basic_module.ui.CommonListDialog;
@@ -461,9 +462,9 @@ public class RoomSettingsDialog extends DialogFragment implements LifecycleEvent
                     }
                     if (mRTCVideo != null) {
                         if (mIsBinary) {
-                            mRTCRoom.sendUserBinaryMessage(userId, content.getBytes(), MessageConfigReliableOrdered);
+                            mRTCRoom.sendUserBinaryMessage(userId, content.getBytes(), MessageConfig.RELIABLE_ORDERED);
                         } else {
-                            mRTCRoom.sendUserMessage(userId, content, MessageConfigReliableOrdered);
+                            mRTCRoom.sendUserMessage(userId, content, MessageConfig.RELIABLE_ORDERED);
                         }
                     }
                     dismiss();

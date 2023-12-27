@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTS_INTERFACE_H__
-#define BYTE_RTS_INTERFACE_H__
-
 #include <stddef.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -107,11 +104,10 @@ public:
      * @region 实时消息通信
      * @brief 设置应用服务器参数  <br>
      *        客户端调用 sendServerMessage{@link #IRTS#sendServerMessage} 或 sendServerBinaryMessage{@link #IRTS#sendServerBinaryMessage} 发送消息给业务服务器之前，必须设置有效签名和业务服务器地址。
-     * @param [in] signature  <br>
-     *        动态签名  <br>
-     *        应用服务器会使用该签名对请求进行鉴权验证。
-     * @param [in] url  <br>
-     *        应用服务器的地址
+     * @param [in] signature 动态签名，应用服务器可使用该签名验证消息来源。<br>
+     *        签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br>
+     *        设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。
+     * @param [in] url 应用服务器的地址
      * @return  <br>
      *        + 0: 调用成功。
      *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
@@ -288,7 +284,7 @@ BYTERTC_API bytertc::IRTS* createRTS(const char* app_id,
  * @notes  <br>
  *        + 请确保和需要销毁的 IRTS{@link #IRTS} 实例相关的业务场景全部结束后，才调用此方法。  <br>
  *        + 该方法在调用之后，会销毁所有和此 IRTS{@link #IRTS} 实例相关的内存，并且停止与媒体服务器的任何交互。  <br>
- *        + 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。
+ *        + 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，会导致死锁。同时此方法是耗时操作，不建议在主线程调用本方法，避免主线程阻塞。
  */
 BYTERTC_API void destroyRTS();
 
@@ -313,7 +309,7 @@ BYTERTC_API const char* getSDKVersion();
 /** 
  * @type api
  * @region 引擎管理
- * @brief 配置 SDK 本地日志参数，包括日志级别、存储路径、可使用的最大缓存空间。
+ * @brief 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间、日志文件名前缀。
  * @param [in] log_config 本地日志参数，参看 LogConfig{@link #LogConfig}。
  * @return <br>
  *        + 0：成功。
@@ -325,4 +321,3 @@ BYTERTC_API int setLogConfig(const LogConfig& log_config);
 
 }    // namespace bytertc
 
-#endif  // BYTE_RTS_INTERFACE_H__

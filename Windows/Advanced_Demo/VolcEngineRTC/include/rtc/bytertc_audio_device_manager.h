@@ -137,6 +137,8 @@ public:
      * @region 音频设备管理
      * @brief 获取当前系统内音频播放设备列表。如果后续设备有变更，你会收到 `onAudioMediaDeviceStateChanged` 回调通知，然后需要重新调用本接口以获得新的设备列表。
      * @return 包含系统中所有音频播放设备的列表，参看 IAudioDeviceCollection{@link #IAudioDeviceCollection}。
+     * 等待超时后会返回空列表。超时时间默认为 10 s。建议通过 onAudioDeviceStateChanged{@link #IRTCVideoEventHandler#onAudioDeviceStateChanged} 监听到 `kMediaDeviceListUpdated` 后，再次调用本接口获取。
+     * @notes 你可以在收到 onAudioDeviceStateChanged{@link #IRTCVideoEventHandler#onAudioDeviceStateChanged} 了解设备变更后，重新调用本接口以获得新的设备列表。
      */
     virtual IAudioDeviceCollection* enumerateAudioPlaybackDevices() = 0;
     /** 
@@ -144,6 +146,8 @@ public:
      * @region 音频设备管理
      * @brief 获取当前系统内音频采集设备列表。如果后续设备有变更，你需要重新调用本接口以获得新的设备列表。
      * @return 一个包含系统中所有音频采集设备列表的对象，详见 IAudioDeviceCollection{@link #IAudioDeviceCollection}。
+     * 等待超时后会返回空列表。超时时间默认为 10 s。建议通过 onAudioDeviceStateChanged{@link #IRTCVideoEventHandler#onAudioDeviceStateChanged} 监听到 `kMediaDeviceListUpdated` 后，再次调用本接口获取。
+     * @notes 你可以在收到 onAudioDeviceStateChanged{@link #IRTCVideoEventHandler#onAudioDeviceStateChanged} 了解设备变更后，重新调用本接口以获得新的设备列表。
      */
     virtual IAudioDeviceCollection* enumerateAudioCaptureDevices() = 0;
 
@@ -317,7 +321,7 @@ public:
      * @type api
      * @region 音频设备管理
      * @brief 尝试初始化音频播放设备，可检测出设备不存在、权限被拒绝/禁用等异常问题。
-     * @param [in] deviceId 设备索引号
+     * @param [in] device_id 设备索引号
      * @return 设备状态错误码
      *        + 0: 设备检测结果正常
      *        + -1: 接口状态不正确，例如在正常启动采集后再调用该接口进行检测
@@ -328,12 +332,12 @@ public:
      * @notes 1. 该接口需在进房前调用；  <br>
      *        2. 检测成功不代表设备一定可以启动成功，还可能因设备被其他应用进程独占，或 CPU/内存不足等原因导致启动失败。
      */
-    virtual int initAudioPlaybackDeviceForTest(const char deviceId[MAX_DEVICE_ID_LENGTH]) = 0;
+    virtual int initAudioPlaybackDeviceForTest(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
     /** 
      * @type api
      * @region 音频设备管理
      * @brief 尝试初始化音频采集设备，可检测设备不存在、权限被拒绝/禁用等异常问题。
-     * @param [in] deviceId 设备索引
+     * @param [in] device_id 设备索引
      * @return 设备状态错误码
      *        + 0: 设备检测结果正常
      *        + -1: 接口状态不正确，例如在正常启动采集后再调用该接口进行检测
@@ -344,7 +348,7 @@ public:
      * @notes 1. 该接口需在进房前调用;  <br>
      *        2. 检测成功不代表设备一定可以启动成功，还可能因设备被其他应用进程独占，或 CPU/内存不足等原因导致启动失败。
      */
-    virtual int initAudioCaptureDeviceForTest(const char deviceId[MAX_DEVICE_ID_LENGTH]) = 0;
+    virtual int initAudioCaptureDeviceForTest(const char device_id[MAX_DEVICE_ID_LENGTH]) = 0;
 
     /** 
      * @type api
@@ -414,7 +418,6 @@ public:
 
     /** 
      * @type api
-     * @hidden currently not available
      * @region 音频设备管理
      * @brief 开启/关闭过滤无声设备功能。
      * @param [in] enable 是否开启过滤无声设备功能:

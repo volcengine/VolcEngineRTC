@@ -108,6 +108,10 @@ enum ReturnStatus {
      * @brief 失败，无效对象。
      */
     kReturnStatusNativeInvalid = -201,
+    /** 
+     * @brief 警告。推送视频帧到 RTC SDK 时，相邻视频帧的时间戳差异应当和推帧操作的间隔相同。如果不同，会收到此警告。
+     */
+    kReturnStatusVideoTimeStampWarning = -202,
 };
 
 /** 
@@ -204,11 +208,11 @@ enum SEICountPerFrame {
     /** 
      * @brief 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。
      */
-    kSingleSEIPerFrame = 0,
+    kSEICountPerFrameSingle = 0,
     /** 
      * @brief 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。
      */
-    kMultiSEIPerFrame,
+    kSEICountPerFrameMulti,
 };
 
 /** 
@@ -258,7 +262,7 @@ struct NetworkQualityStats {
  *        根据所需场景，选择合适的房间模式，应用不同的音视频算法、视频参数和网络配置 <br>
  *        调用 `setAudioProfile` 改变音频参数配置
  */
-enum RoomProfileType {
+enum RoomProfileType : int {
     /** 
      * @brief 默认场景，通用模式<br>
      *        与 `kRoomProfileTypeMeeting = 16` 配置相同。<br>
@@ -329,6 +333,7 @@ enum RoomProfileType {
      */
     kRoomProfileTypeChorus = 12,
     /** 
+     * @valid since 3.45
      * @brief 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声。
      */
     kRoomProfileTypeVRChat = 13,
@@ -444,34 +449,36 @@ enum MediaDeviceState {
     kMediaDeviceStateResumed = 5,
     /** 
      * @brief 设备已插入
+     * 你可以调用获取设备接口更新设备列表。
      */
     kMediaDeviceStateAdded = 10,
     /** 
      * @brief 设备被移除
+     * 你可以调用获取设备接口更新设备列表。
      */
     kMediaDeviceStateRemoved = 11,
     /** 
      * @brief 用户合盖打断了视频通话。如果系统未休眠或关机，将在开盖后自动恢复视频通话。
      */
-    kMediaDeviceInterruptionBegan = 12,
+    kMediaDeviceStateInterruptionBegan = 12,
     /** 
      * @brief 视频通话已从合盖打断中恢复
      */
-    kMediaDeviceInterruptionEnded = 13,
+    kMediaDeviceStateInterruptionEnded = 13,
     /** 
      * @brief 设备成为系统默认
      */
-    kMediaDeviceBecomeSystemDefault = 14,
+    kMediaDeviceStateBecomeSystemDefault = 14,
     /** 
      * @brief 设备不再是系统默认
      */
-    kMediaDeviceResignSystemDefault = 15,
+    kMediaDeviceStateResignSystemDefault = 15,
 
     /** 
-     * @brief 设备列表更新通知。请调用 enumerateVideoCaptureDevices{@link
-     * #IVideoDeviceManager#enumerateVideoCaptureDevices} 更新设备列表。
+     * @brief 获取设备列表超时后，收到设备列表通知。
+     * 再次调用获取设备接口更新设备列表。
      */
-    kMediaDeviceListUpdated = 16,
+    kMediaDeviceStateListUpdated = 16,
 };
 
 /** 
@@ -601,10 +608,8 @@ enum MediaDeviceWarning {
     kMediaDeviceWarningCaptureDetectSilenceDisappear = 15,
     /** 
      * @hidden(Linux)
-     * @brief
-     * 啸叫。触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。
-     *        仅 kRoomProfileTypeCommunication、kRoomProfileTypeMeeting、kRoomProfileTypeMeetingRoom
-     * 三种房间模式支持啸叫抑制。 建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。
+     * @brief 啸叫。<br>
+     *        触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。仅 kRoomProfileTypeCommunication、kRoomProfileTypeMeeting、kRoomProfileTypeMeetingRoom 三种房间模式支持啸叫抑制。 建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。
      */
     kMediaDeviceWarningCaptureDetectHowling = 16,
 
@@ -894,6 +899,7 @@ enum ErrorCode {
      */
     kErrorCodeRoomDismiss = -1011,
     /** 
+     * @hidden internal use only
      * @brief 加入房间错误。 <br>
      *        进房时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。
      */
@@ -908,34 +914,42 @@ enum ErrorCode {
      */
     kErrorCodeUserIDDifferent = -1014,
     /** 
+     * @hidden internal use only
      * @brief 服务端license过期，拒绝进房。 <br>
      */
     kErrorCodeJoinRoomServerLicenseExpired = -1017,
     /** 
+     * @hidden internal use only
      * @brief 超过服务端license许可的并发量上限，拒绝进房。 <br>
      */
     kErrorCodeJoinRoomExceedsTheUpperLimit = -1018,
     /** 
+     * @hidden internal use only
      * @brief license参数错误，拒绝进房。 <br>
      */
     kErrorCodeJoinRoomLicenseParameterError = -1019,
     /** 
+     * @hidden internal use only
      * @brief license证书路径错误。 <br>
      */
     kErrorCodeJoinRoomLicenseFilePathError = -1020,
     /** 
+     * @hidden internal use only
      * @brief license证书不合法。 <br>
      */
     kErrorCodeJoinRoomLicenseIllegal = -1021,
     /** 
+     * @hidden internal use only
      * @brief license证书已经过期，拒绝进房。 <br>
      */
     kErrorCodeJoinRoomLicenseExpired = -1022,
     /** 
+     * @hidden internal use only
      * @brief license证书内容不匹配。 <br>
      */
     kErrorCodeJoinRoomLicenseInformationNotMatch = -1023,
     /** 
+     * @hidden internal use only
      * @brief license当前证书与缓存证书不匹配。 <br>
      */
     kErrorCodeJoinRoomLicenseNotMatchWithCache = -1024,
@@ -948,6 +962,7 @@ enum ErrorCode {
      */
     kErrorCodeJoinRoomUserForbidden = -1026,
     /** 
+     * @hidden internal use only
      * @brief license 计费方法没有加载成功。可能是因为 license 相关插件未正确集成。<br>
      */
     kErrorCodeJoinRoomLicenseFunctionNotFound = -1027,
@@ -962,6 +977,7 @@ enum ErrorCode {
      */
     kErrorCodeOverStreamPublishLimit = -1080,
     /** 
+     * @deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead
      * @brief 发布屏幕流失败，发布流总数超过上限。
      *        RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。
      */
@@ -988,6 +1004,11 @@ enum ErrorCode {
      * @brief 在一路流推多房间的场景下，在至少有两个房间在发布同一路流时，其中一个房间取消发布失败，此时需要业务方重试或者由业务方通知用户重试取消发布。 <br>
      */
     kErrorCodeMultiRoomUnpublishFailed = -1085,
+    /** 
+     * @hidden for internal use only
+     * @brief 指定服务区域时传入错误参数。<br>
+     */
+    kErrorCodeWrongAreaCode = -1086,
     /**
      * @hidden for internal use only
      */
@@ -1073,39 +1094,39 @@ enum WarningCode {
      */
     kWarningCodeNoCameraPermission = -5001,
     /** 
-     * @brief 麦克风权限异常，当前应用没有获取麦克风权限。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 MediaDeviceError{@link #MediaDeviceError}.kMediaDeviceErrorDeviceNoPermission 代替。<br>
+     *        麦克风权限异常，当前应用没有获取麦克风权限。
      */
     kWarningCodeNoMicrophonePermission = -5002,
     /** 
-     * @brief 音频采集设备启动失败，当前设备可能被其他应用占用。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 MediaDeviceError{@link #MediaDeviceError}.kMediaDeviceErrorDeviceFailure 代替。<br>
+     *        音频采集设备启动失败，当前设备可能被其他应用占用。
      */
     kWarningCodeRecodingDeviceStartFailed = -5003,
     /** 
-     * @brief 音频播放设备启动失败警告，可能由于系统资源不足，或参数错误。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 use MediaDeviceError{@link #MediaDeviceError}.kMediaDeviceErrorDeviceFailure 代替。<br>
+     *        音频播放设备启动失败警告，可能由于系统资源不足，或参数错误。
      */
     kWarningCodePlayoutDeviceStartFailed = -5004,
     /** 
-     * @brief 无可用音频采集设备，请插入可用的音频采集设备。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 MediaDeviceError{@link #MediaDeviceError}.kMediaDeviceErrorDeviceNotFound 代替。<br>
+     *        无可用音频采集设备，请插入可用的音频采集设备。
      */
     kWarningCodeNoRecordingDevice = -5005,
     /** 
-     * @brief 无可用音频播放设备，请插入可用的音频播放设备。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 MediaDeviceError{@link #MediaDeviceError}.kMediaDeviceErrorDeviceNotFound 代替。<br>
+     *        无可用音频播放设备，请插入可用的音频播放设备。
      */
     kWarningCodeNoPlayoutDevice = -5006,
     /** 
-     * @brief 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
+     * @brief 已在 3.33 版本中废弃，使用 MediaDeviceWarning{@link #MediaDeviceWarning}.kMediaDeviceWarningCaptureSilence 代替。<br>
+     *        当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
      */
     kWarningCodeRecordingSilence = -5007,
     /** 
-     * @brief 媒体设备误操作警告。  <br>
+     * @brief 已在 3.33 版本中废弃，使用 MediaDeviceWarning{@link #MediaDeviceWarning}.kMediaDeviceWarningOperationDenied 代替。<br>
+     *        媒体设备误操作警告。  <br>
      *        使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。
-     * @deprecated since 3.33 and will be deleted in 3.51, use MediaDeviceWarning{@link #MediaDeviceWarning} instead.
      */
     kWarningCodeMediaDeviceOperationDenied = -5008,
 
@@ -1134,7 +1155,6 @@ enum WarningCode {
      * @brief 非法的远端流索引
      */
     kWarningCodeInvalidRemoteStreamKey = -5014,
-
     /** 
      * @brief 指定的内部渲染画布句柄无效。  <br>
      *        当你调用 setLocalVideoCanvas{@link #IRTCVideo#setLocalVideoCanvas} 时指定了无效的画布句柄，触发此回调。
@@ -1201,13 +1221,13 @@ enum LocalAudioStreamState {
      * @brief 本地音频静音成功后回调该状态。
      *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager#setAudioCaptureDeviceMute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
-    kLocalAudioStreamMute,
+    kLocalAudioStreamStateMute,
 
     /** 
      * @brief 本地音频解除静音成功后回调该状态。
      *        调用 setAudioCaptureDeviceMute{@link #IAudioDeviceManager#setAudioCaptureDeviceMute} 成功后回调，对应错误码 LocalAudioStreamError{@link #LocalAudioStreamError} 中的 kLocalAudioStreamErrorOk 。  <br>
      */
-    kLocalAudioStreamUnmute
+    kLocalAudioStreamStateUnmute
 };
 
 /** 
@@ -1508,11 +1528,11 @@ struct RtcRoomStats {
     /** 
      * @brief 当前应用的上行丢包率，取值范围为 [0, 1]
      */
-    float txLostrate;
+    float tx_lostrate;
     /** 
      * @brief 当前应用的下行丢包率，取值范围为 [0, 1]
      */
-    float rxLostrate;
+    float rx_lostrate;
     /** 
      * @brief 客户端到服务端数据传输的往返时延（单位 ms）
      */
@@ -1575,10 +1595,12 @@ struct RtcRoomStats {
      */
     double cpu_total_usage;
     /** 
+     * @hidden currently not available
      * @brief 系统上行网络抖动（ms）
      */
     int tx_jitter;
     /** 
+     * @hidden currently not available
      * @brief 系统下行网络抖动（ms）
      */
     int rx_jitter;
@@ -1613,8 +1635,8 @@ enum VideoCodecType {
 
 
 /** 
+ * @hidden(Windows, Linux, macOS)
  * @type keytype
- * @hidden for internal use only
  * @brief 超分模式。
  */
 enum VideoSuperResolutionMode {
@@ -1629,6 +1651,7 @@ enum VideoSuperResolutionMode {
 };
 
 /** 
+ * @hidden(Windows, Linux, macOS)
  * @type keytype
  * @brief 视频降噪模式。
  */
@@ -1651,7 +1674,7 @@ enum VideoDenoiseMode {
  */
 struct LocalAudioStats {
     /** 
-     * @brief 音频丢包率。此次统计周期内的音频上行丢包率，单位为 % ，取值范围为 [0, 1]。  <br>
+     * @brief 音频丢包率。此次统计周期内的音频上行丢包率，取值范围为 [0, 1]。  <br>
      */
     float audio_loss_rate;
     /** 
@@ -1838,6 +1861,7 @@ struct LocalVideoStats {
      */
     int jitter;
     /** 
+     * @hidden(Windows, Linux, macOS)
      * @brief 视频降噪模式。具体参看 VideoDenoiseMode{@link #VideoDenoiseMode} 。
      */
     VideoDenoiseMode video_denoise_mode;
@@ -1864,7 +1888,7 @@ struct RemoteVideoStats {
      */
     int height;
     /** 
-     * @brief 视频丢包率。统计周期内的视频下行丢包率，单位为 % ，取值范围：[0，1] 。
+     * @brief 视频丢包率。统计周期内的视频下行丢包率，取值范围：[0，1] 。
      */
     float video_loss_rate;
     /** 
@@ -1921,7 +1945,7 @@ struct RemoteVideoStats {
      */
     int jitter;
     /** 
-     * @hidden for internal use only
+     * @hidden(Windows, Linux, macOS)
      * @brief 远端视频超分模式，参看 VideoSuperResolutionMode{@link #VideoSuperResolutionMode}。
      */
     VideoSuperResolutionMode super_resolution_mode;
@@ -2300,6 +2324,51 @@ enum StreamIndex {
      * @brief 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。
      */
     kStreamIndexScreen = 1,
+    /**
+     * @hidden for internal use only
+     */
+    kStreamIndex3rd,
+    /**
+     * @hidden for internal use only
+     */
+    kStreamIndex4th,
+    /**
+     * @hidden for internal use only
+     */
+    kStreamIndex5th,
+    /**
+     * @hidden for internal use only
+     */
+    kStreamIndex6th,
+    /**
+     * @hidden for internal use only
+     */
+    kStreamIndex7th,
+    /**
+     * @hidden for internal use only
+     */
+    kStreamIndexMax,
+};
+
+/** 
+ *  @valid since 3.56
+ *  @type keytype
+ *  @brief 流聚合策略
+ */
+enum AggregationOption {
+    /** 
+   * @brief 流聚合向下取值  （默认策略）
+   */
+    kAggregationOptionMin = 0,
+    /** 
+   * @brief 流聚合向上取值
+   */
+    kAggregationOptionMax = 1,
+    /** 
+   * @brief 流聚合按比例取值，比例相同时，向下取值
+   */
+    kAggregationOptionMajority = 2,
+
 };
 
 /** 
@@ -2440,27 +2509,27 @@ enum UserWorkerType {
     /** 
      * @brief 正常用户，没有任何特殊属性  <br>
      */
-    UserWorkerNormal = 0,
+    kUserWorkerTypeNormal = 0,
     /** 
      * @brief 用户支持SIP流，信令只下发SIP流  <br>
      */
-    UserWorkerSupportSip = (1 << 0),
+    kUserWorkerTypeSupportSip = (1 << 0),
     /** 
      * @brief 用户支持屏幕流的bytevc1到H264转码  <br>
      */
-    UserWorkerByteVc1Transcoder = (1 << 1),
+    kUserWorkerTypeByteVc1Transcoder = (1 << 1),
     /** 
      * @brief 用户需要信令服务器下发全量的用户列表和回调函数  <br>
      */
-    UserWorkerNeedUserListAndCb = (1 << 2),
+    kUserWorkerTypeNeedUserListAndCb = (1 << 2),
     /** 
      * @brief 用户需要在房间进入多人模式时获取房间内所有流的相关回调  <br>
      */
-    UserWorkerNeedStreamCallBack = (1 << 3),
+    kUserWorkerTypeNeedStreamCallBack = (1 << 3),
     /** 
      * @brief 用户选择设置不支持音频选路功能  <br>
      */
-    UserWorkerAudioSelectionExemption = (1 << 4),
+    kUserWorkerTypeAudioSelectionExemption = (1 << 4),
 };
 
 /** 
@@ -2712,17 +2781,17 @@ struct RTCWatermarkConfig {
      * @type keytype
      * @brief 水印是否在视频预览中可见，默认可见。
      */
-    bool visibleInPreview = true;
+    bool visible_in_preview = true;
     /** 
      * @type keytype
      * @brief 横屏时的水印位置和大小，参看 ByteWatermark{@link #ByteWatermark}。
      */
-    ByteWatermark positionInLandscapeMode;
+    ByteWatermark position_in_landscape_mode;
     /** 
      * @type keytype
      * @brief 视频编码的方向模式为竖屏时的水印位置和大小，参看 ByteWatermark{@link #ByteWatermark}。
      */
-    ByteWatermark positionInPortraitMode;
+    ByteWatermark position_in_portrait_mode;
 };
 
 /** 
@@ -2829,25 +2898,25 @@ struct EchoTestConfig {
      *        + true：是  <br>
      *            - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioPropertiesReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
      *            - 若使用自定义采集，此时你需调用 pushExternalAudioFrame{@link #IRTCVideo#pushExternalAudioFrame} 将采集到的音频推送给 SDK  <br>
-     *        + flase：否  <br>
+     *        + false：否  <br>
      */
-    bool enableAudio;
+    bool enable_audio;
     /** 
      * @brief 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
      *        + true：是  <br>
      *            - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
      *            - 若使用自定义采集，此时你需调用 pushExternalVideoFrame{@link #IRTCVideo#pushExternalVideoFrame} 将采集到的视频推送给 SDK  <br>
-     *        + flase：否  <br>
+     *        + false：否  <br>
      * @notes 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
      */
-    bool enableVideo;
+    bool enable_video;
     /** 
      * @brief 音量信息提示间隔，单位：ms，默认为 100ms <br>
      *       + `<= 0`: 关闭信息提示  <br>
      *       + `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms  <br>
      *       + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
      */
-    int audioPropertiesReportInterval;
+    int audio_properties_report_interval;
     /** 
      * @brief 进行音视频通话回路测试的用户 ID
      */
@@ -2855,7 +2924,7 @@ struct EchoTestConfig {
     /** 
      * @brief 测试用户加入的房间 ID。  <br>
      */
-    const char* roomId;
+    const char* room_id;
     /** 
      * @brief 对用户进房时进行鉴权验证的动态密钥，用于保证音视频通话回路测试的安全性。
      */
@@ -2870,27 +2939,27 @@ enum AudioDumpStatus {
     /** 
      * @brief 音频dump启动失败
      */
-     kAudioDumpStartFailure = 0,
+     kAudioDumpStatusStartFailure = 0,
     /** 
      * @brief 音频dump启动成功
      */
-    kAudioDumpStartSuccess = 1,
+    kAudioDumpStatusStartSuccess = 1,
     /** 
      * @brief 音频dump停止失败
      */
-    kAudioDumpStopFailure = 2,
+    kAudioDumpStatusStopFailure = 2,
     /** 
      * @brief 音频dump停止成功
      */
-    kAudioDumpStopSuccess = 3,
+    kAudioDumpStatusStopSuccess = 3,
     /** 
      * @brief 音频dump运行失败
      */
-    kAudioDumpRunningFailure = 4,
+    kAudioDumpStatusRunningFailure = 4,
     /** 
      * @brief 音频dump运行成功
      */
-    kAudioDumpRunningSuccess = 5,
+    kAudioDumpStatusRunningSuccess = 5,
 };
 
 /** 
@@ -2989,19 +3058,19 @@ enum HardwareEchoDetectionResult{
     /** 
      * @brief 主动调用 `stopHardwareEchoDetection` 结束流程时，未有回声检测结果。
      */
-    kHardwareEchoDetectionCanceled = 0,
+    kHardwareEchoDetectionResultCanceled = 0,
     /** 
      * @brief 未检测出结果。建议重试，如果仍然失败请联系技术支持协助排查。
      */
-    kHardwareEchoDetectionUnknown = 1,
+    kHardwareEchoDetectionResultUnknown = 1,
     /** 
      * @brief 无回声
      */
-    kHardwareEchoDetectionNormal = 2,
+    kHardwareEchoDetectionResultNormal = 2,
     /** 
      * @brief 有回声。可通过 UI 建议用户使用耳机设备入会。
      */
-    kHardwareEchoDetectionPoor = 3,
+    kHardwareEchoDetectionResultPoor = 3,
 };
 
 /** 
@@ -3027,47 +3096,47 @@ enum SetRoomExtraInfoResult {
     /** 
      * @brief 设置房间附加信息成功
      */
-    kSetRoomExtraInfoSuccess = 0,
+    kSetRoomExtraInfoResultSuccess = 0,
     /** 
      * @brief 设置失败，尚未加入房间
      */
-    kSetRoomExtraInfoErrorNotJoinRoom = -1,
+    kSetRoomExtraInfoResultErrorNotJoinRoom = -1,
     /** 
      * @brief 设置失败，key 指针为空
      */
-    kSetRoomExtraInfoErrorKeyIsNull = -2,
+    kSetRoomExtraInfoResultErrorKeyIsNull = -2,
     /** 
      * @brief 设置失败，value 指针为空
      */
-    kSetRoomExtraInfoErrorValueIsNull = -3,
+    kSetRoomExtraInfoResultErrorValueIsNull = -3,
     /** 
      * @brief 设置失败，未知错误
      */
-    kSetRoomExtraInfoResultUnknow = -99,
+    kSetRoomExtraInfoResultResultUnknow = -99,
     /** 
      * @brief 设置失败，key 长度为 0
      */
-    kSetRoomExtraInfoErrorKeyIsEmpty = -400,
+    kSetRoomExtraInfoResultErrorKeyIsEmpty = -400,
     /** 
      * @brief 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。
      */
-    kSetRoomExtraInfoErrorTooOften = -406,
+    kSetRoomExtraInfoResultErrorTooOften = -406,
     /** 
      * @brief 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。
      */
-    kSetRoomExtraInfoErrorSilentUser = -412,
+    kSetRoomExtraInfoResultErrorSilentUser = -412,
     /** 
      * @brief 设置失败，Key 长度超过 10 字节
      */
-    kSetRoomExtraInfoErrorKeyTooLong = -413,
+    kSetRoomExtraInfoResultErrorKeyTooLong = -413,
     /** 
      * @brief 设置失败，value 长度超过 128 字节
      */
-    kSetRoomExtraInfoErrorValueTooLong = -414,
+    kSetRoomExtraInfoResultErrorValueTooLong = -414,
     /** 
      * @brief 设置失败，服务器错误
      */
-    kSetRoomExtraInfoErrorServer = -500
+    kSetRoomExtraInfoResultErrorServer = -500
 };
 /**  
  * @type keytype
@@ -3087,7 +3156,7 @@ enum SubtitleState {
      */
     kSubtitleStateError
 };
-/**  
+/** 
  * @type keytype
  * @brief 字幕模式。
  */
@@ -3102,7 +3171,7 @@ enum SubtitleMode {
     kSubtitleModeTranslation
 };
 /**  
- * @type keytype
+ * @type errorcode
  * @brief 字幕任务错误码。
  */
 enum SubtitleErrorCode {
@@ -3148,14 +3217,14 @@ enum SubtitleErrorCode {
  * @brief 字幕配置信息。
  */
 struct SubtitleConfig {
-   /** 
-    * @brief 字幕模式。
-    */
-   SubtitleMode mode = kSubtitleModeRecognition;
-   /** 
-    * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%E7%9B%AE%E6%A0%87%E8%AF%AD%E8%A8%80-2) 查看翻译服务最新支持的语种信息。
-    */
-   const char* target_language = "";
+    /** 
+     * @brief 字幕模式。可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。参看 SubtitleMode{@link #SubtitleMode}。
+     */
+    SubtitleMode mode = kSubtitleModeRecognition;
+    /** 
+     * @brief 目标翻译语言。可点击 [语言支持](https://www.volcengine.com/docs/4640/35107#%F0%9F%93%A2%E5%AE%9E%E6%97%B6%E8%AF%AD%E9%9F%B3%E7%BF%BB%E8%AF%91) 查看翻译服务最新支持的语种信息。
+     */
+    const char* target_language = "";
 };
 /**  
  * @type keytype
@@ -3167,11 +3236,19 @@ struct SubtitleMessage {
      */
     const char* user_id;
     /** 
-     * @brief 语音识别或翻译后的文本, 采用 UTF-8 编码。
+     * @brief 字幕文本, 采用 UTF-8 编码。
      */
     const char* text;
     /** 
-     * @brief 语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
+     * @brief 字幕语种，根据字幕模式为原文或译文对应的语种。
+     */
+    const char* language;
+    /** 
+     * @brief 字幕模式，参看 SubtitleMode{@link #SubtitleMode}。
+     */
+    SubtitleMode mode;
+    /** 
+     * @brief 字幕文本序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
      */
     int sequence;
     /** 
@@ -3179,5 +3256,42 @@ struct SubtitleMessage {
      */
     bool definite;
 };
+/**  
+ * @type keytype
+ * @hidden internal use only
+ * @brief 特效错误类型。
+ */
+enum EffectErrorType {
+    /** 
+     * @hidden 仅用于会议
+     * @brief 虚拟背景设置错误。
+     */
+    kEffectErrorVirtualBackgroundFailure = 1,
+    /** 
+     * @hidden 仅用于会议
+     * @brief 特效独立进程崩溃。
+     */
+    kEffectErrorChildProcTerminate,
+};
 
+/**  
+ * @type render error code
+ * @hidden for internal use only 
+ * @brief 渲染错误码。
+ */
+enum RenderError {
+    /** 
+     * @brief 渲染正常
+     */
+    kRenderErrorOk = 0,
+    /** 
+     * @brief Android 外部直显时使用了内部 surface
+     */
+    kRenderErrorUsingInternalSurface = -1,
+    /** 
+     * @brief 设置 Android 外部直显时使用软解
+     */
+    kRenderErrorUsingSoftwareDecoder = -2,
+
+};
 }  // namespace bytertc

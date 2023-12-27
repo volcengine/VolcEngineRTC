@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_ROOM_INTERFACE_H__
-#define BYTE_RTC_ROOM_INTERFACE_H__
-
 #include "rtc/bytertc_video_effect_interface.h"  // NOLINT
 #include "rtc/bytertc_defines.h"
 #include "bytertc_room_event_handler.h"
@@ -42,6 +39,7 @@ public:
      * @type api
      * @region 多房间
      * @brief 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
+     *        默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
      * @param [in] enable 设置用户是否对房间内其他用户可见：  <br>
      *        + true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
      *        + false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
@@ -75,21 +73,23 @@ public:
     /** 
      * @type api
      * @region 多房间
-     * @brief 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
-     *        同一房间内的用户间可以相互通话。  <br>
+     * @brief 加入房间。<br>
+     *        调用 createRTCRoom{@link #IRTCVideo#createRTCRoom} 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br>
      * @param [in] token 动态密钥，用于对登录用户进行鉴权验证。  <br>
      *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br>
      *       + 使用不同 App ID 的 App 是不能互通的。  <br>
-     *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。具体失败原因会通过 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调告知。  <br>
+     *       + 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。
      * @param [in] user_info 用户信息，参看 UserInfo{@link #UserInfo}。  <br>
      * @param [in] config 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 RTCRoomConfig{@link #RTCRoomConfig}。  <br>
      * @return  <br>
      *        +  0: 成功  <br>
      *        + -1：room_id / user_info.uid 包含了无效的参数。  <br>
      *        + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:{@link #IRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
+     *        调用失败时，具体失败原因会通过 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调告知。  <br>
      * @notes  <br>
      *       + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知，错误类型详见 ErrorCode{@link #ErrorCode} 中的 kErrorCodeDuplicateLogin。  <br>
-     *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined} 回调通知。关于可见性设置参看 setUserVisibility{@link #IRTCRoom#setUserVisibility}。  <br>
+     *       + 本地用户调用此方法加入房间成功后，会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 onUserJoined{@link #IRTCRoomEventHandler#onUserJoined} 回调通知。<br>
+     *       + 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要在其进房后调用 setUserVisibility{@link #IRTCRoom#setUserVisibility 更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，其中最多 30 人可同时上麦，更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。<br>
      *       + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 onConnectionStateChanged{@link #IRTCVideoEventHandler#onConnectionStateChanged} 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged} 回调通知。
      */
     virtual int joinRoom(const char* token, const UserInfo& user_info, const RTCRoomConfig& config) = 0;
@@ -113,9 +113,9 @@ public:
     /** 
      * @type api
      * @brief 更新 Token。
-     *        Token 中同时包含进房、发布和订阅权限，各权限有一定的有效期，并且到期前 30 秒会触发回调，提示用户更新 Token 相关权限。此时需要重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
-     * @param [in] token 重新获取的有效 Token。
-     *        如果传入的 Token 无效，回调错误码为 ErrorCode{@link #ErrorCode} 中的 `-1010`。
+     *        收到 onTokenWillExpire{@link #IRTCRoomEventHandler#onTokenWillExpire}，onPublishPrivilegeTokenWillExpire{@link #IRTCRoomEventHandler#onPublishPrivilegeTokenWillExpire}， 或 onSubscribePrivilegeTokenWillExpire{@link #IRTCRoomEventHandler#onSubscribePrivilegeTokenWillExpire} 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
+     * @param token 重新获取的有效 Token。
+     *        如果 Token 无效，你会收到 onRoomStateChanged{@link #IRTCRoomEventHandler#onRoomStateChanged}，错误码是 `-1010`。
      * @return 方法调用结果：
      *        + 0：成功；
      *        + <0：失败。具体失败原因参看 ReturnStatus{@link #ReturnStatus}。
@@ -303,8 +303,8 @@ public:
      *        + 0：成功；
      *        + <0：失败。具体失败原因参看 ReturnStatus{@link #ReturnStatus}。
      * @notes  <br>
-     *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
-     *        + 你必须先通过 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream}} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
+     *        + 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。<br>
+     *        + 你必须先通过 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
      *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream{@link #IRTCRoom#unsubscribeStream} 取消订阅或本端用户退房。 <br>
      *        + 关于其他调用异常，你会收到 onStreamStateChanged{@link #IRTCRoomEventHandler#onStreamStateChanged} 回调通知，具体异常原因参看 ErrorCode{@link #ErrorCode}。
@@ -366,7 +366,7 @@ public:
      *        + 0：成功；
      *        + <0：失败。具体失败原因参看 ReturnStatus{@link #ReturnStatus}。
      * @notes  <br>
-     *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
+     *        + 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。<br>
      *        + 你必须先通过 onUserPublishScreen{@link #IRTCRoomEventHandler#onUserPublishScreen}} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
      *        + 调用该方法后，你会收到 onStreamSubscribed{@link #IRTCRoomEventHandler#onStreamSubscribed} 通知方法调用结果。  <br>
      *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeScreen{@link #IRTCRoom#unsubscribeScreen} 取消订阅或本端用户退房。 <br>
@@ -447,7 +447,7 @@ public:
     /**
      * @hidden for internal use only.
      */
-    virtual int updateCloudRendering(const char* cloudrenderJsonString) = 0;
+    virtual int updateCloudRendering(const char* cloudrender_json_string) = 0;
 
 
     /**
@@ -623,21 +623,29 @@ public:
     virtual int64_t setRoomExtraInfo(const char*key,const char*value) = 0;
 
     /** 
+     * @valid since 3.52
      * @type api
      * @region 字幕翻译服务
      * @brief 识别或翻译房间内所有用户的语音，形成字幕。<br>
-     *        语音识别或翻译的结果会通过 onSubtitleMessageReceived{@link #IRTCRoomEventHandler#onSubtitleMessageReceived} 事件回调给你。<br> 
+     *        调用该方法时，可以在 SubtitleMode{@link #SubtitleMode} 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 onSubtitleMessageReceived{@link #IRTCRoomEventHandler#onSubtitleMessageReceived} 事件回调给你；<br>
+     *        如果选择翻译模式，你会同时收到两个 onSubtitleMessageReceived{@link #IRTCRoomEventHandler#onSubtitleMessageReceived} 回调，分别包含字幕原文及字幕译文。<br>
      *        调用该方法后，用户会收到 onSubtitleStateChanged{@link #IRTCRoomEventHandler#onSubtitleStateChanged} 回调，通知字幕是否开启。
-     * @param [in] subtitle_config 字幕配置信息。参看 SubtitleConfig{@link #SubtitleConfig}。
+     * @param subtitle_config 字幕配置信息。参看 SubtitleConfig{@link #SubtitleConfig}。
      * @return  <br>
      *        +  0: 调用成功。  <br>
      *        + !0: 调用失败。
      * @notes <br>
-     *         此方法需要在进房后调用。  <br> 
-     *         如果想要指定源语言，你需要在进房前调用 `joinRoom` 接口，通过 extraInfo 参数传入 `"SourceLanguage": "zh"` 字符串来指定自己的源语言，目前仅支持指定中文、英文和日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。 
+     *        + 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。<br>
+     *        + 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。<br>
+     *        + 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。<br>
+     *        + 此方法需要在进房后调用。  <br> 
+     *        + 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 extraInfo 参数传入格式为`"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
+     *          + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
+     *          + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。   
      */ 
     virtual int startSubtitle(const SubtitleConfig& subtitle_config) = 0;
     /** 
+     * @valid since 3.52
      * @type api
      * @region 字幕翻译服务
      * @brief 关闭字幕。 <br>
@@ -648,8 +656,8 @@ public:
      */
     virtual int stopSubtitle() = 0;
     /** 
-     * @type api
      * @valid since 3.53
+     * @type api
      * @brief 获取房间 ID。
      * @return 房间 ID。
      */
@@ -657,5 +665,3 @@ public:
 };
 
 } // namespace bytertc
-
-#endif // BYTE_RTC_ROOM_INTERFACE_H__

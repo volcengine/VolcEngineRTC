@@ -30,13 +30,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSpatialAudio :NSObject
  * @region 空间音频
  * @brief 更新本地用户发声时，在房间内空间直角坐标系中的位置坐标。  <br>
  *        如果未调用 updateListenerPosition:{@link #ByteRTCSpatialAudio#updateListenerPosition:} 设定收听位置，默认的收听位置和发声位置一致。
- * @param pos 三维坐标的值，默认为 [0, 0, 0]。参看 Position{@link #Position}。
+ * @param pos 三维坐标的值，默认为 [0, 0, 0]。参看 ByteRTCPosition{@link #ByteRTCPosition}。
  * @return  <br>
  *        + 0: 成功；  <br>
  *        + !0: 失败。  <br>
  * @notes 调用该接口更新坐标前，你需调用 enableSpatialAudio:{@link #ByteRTCSpatialAudio#enableSpatialAudio:} 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。 <br>
  */
--(int)updatePosition:(Position* _Nonnull) pos
+-(int)updatePosition:(ByteRTCPosition* _Nonnull) pos
 __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
 
 /** 
@@ -45,7 +45,7 @@ __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
  * @region 空间音频
  * @brief 更新本地用户发声时，在空间音频坐标系下的朝向。  <br>
  *        如果未调用 updateListenerOrientation:{@link #ByteRTCSpatialAudio#updateListenerOrientation:} 设定收听朝向，默认的收听位朝向和发声朝向一致。
- * @param orientation 参看 HumanOrientation{@link #HumanOrientation}。
+ * @param orientation 参看 ByteRTCHumanOrientation{@link #ByteRTCHumanOrientation}。
  * @return 方法调用结果：  <br>
  *        + 0：成功  <br>
  *        + !0：失败
@@ -53,7 +53,7 @@ __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
  *        + 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。<br>
  *        + 调用 disableRemoteOrientation{@link #ByteRTCSpatialAudio#disableRemoteOrientation} 可关闭声源朝向效果。
  */
--(int)updateSelfOrientation:(HumanOrientation* _Nonnull) orientation
+-(int)updateSelfOrientation:(ByteRTCHumanOrientation* _Nonnull) orientation
 __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
 
 /** 
@@ -63,7 +63,7 @@ __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
  *        调用此接口后，房间内的其他用户收听本地发声时，声源都在收听者正面。
  * @notes <br>
  *        + 调用本接口关闭朝向功能后，在当前的空间音频实例的生命周期内无法再次开启。<br>
- *        + 调用此接口不影响本地用户收听朝向的音频效果。要改变本地用户收听朝向，参看 updateSelfOrientation:{@link #ByteRTCSpatialAudio#updateSelfOrientation:} 和 updateListenerOrientation:{@link #ByteRTCSpatialAudio#updateListenerOrientation:} 。
+ *        + 调用此接口不影响本地用户收听朝向的音频效果。要改变本地用户收听朝向，参看 updateSelfPosition:{@link #ByteRTCSpatialAudio#updateSelfPosition:} 和 updateRemotePosition:positionInfo:{@link #ByteRTCSpatialAudio#updateRemotePosition:positionInfo:} 。
  */
 -(void)disableRemoteOrientation;
 /** 
@@ -72,7 +72,7 @@ __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
  * @region 空间音频
  * @brief 更新在房间内收听音频时的位置。<br>
  *        通过此接口，你可以设定本地发声位置和收听位置不同。
- * @param pos 空间直角坐标系下的坐标值。参看 Position{@link #Position}。<br>
+ * @param pos 空间直角坐标系下的坐标值。参看 ByteRTCPosition{@link #ByteRTCPosition}。<br>
  *            如果未调用此接口设定收听位置，那么默认值为通过 updatePosition:{@link #ByteRTCSpatialAudio#updatePosition:} 设定的值。
  * @return  <br>
  *        + 0: 成功；  <br>
@@ -81,7 +81,7 @@ __deprecated_msg("deprecated since 352, use updateSelfPosition instead");
  *        + 调用此接口前，你需调用 enableSpatialAudio:{@link #ByteRTCSpatialAudio#enableSpatialAudio:} 开启空间音频功能。<br>
  *        + 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
  */
--(int)updateListenerPosition:(Position* _Nonnull) pos
+-(int)updateListenerPosition:(ByteRTCPosition* _Nonnull) pos
 __deprecated_msg("deprecated since 352, use updateRemotePosition instead");
 /** 
  * @deprecated since 3.52, will be deleted in 3.58, use updateRemotePosition:positionInfo:{@link #ByteRTCSpatialAudio#updateRemotePosition:positionInfo:} instead
@@ -89,14 +89,14 @@ __deprecated_msg("deprecated since 352, use updateRemotePosition instead");
  * @region 空间音频
  * @brief 更新在房间内收听音频时的朝向。<br>
  *        通过此接口，你可以设定本地用户的发声朝向和收听朝向不同。
- * @param [in] orientation 自身朝向信息，参看 HumanOrientation{@link #HumanOrientation}。<br>
+ * @param [in] orientation 自身朝向信息，参看 ByteRTCHumanOrientation{@link #ByteRTCHumanOrientation}。<br>
  *                         如果未调用此接口设定收听朝向，那么默认值为通过 updateSelfOrientation:{@link #ByteRTCSpatialAudio#updateSelfOrientation:} 设定的值。
  * @return 方法调用结果：  <br>
  *        + 0：成功  <br>
  *        + !0：失败
  * @notes 空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
  */
--(int)updateListenerOrientation:(HumanOrientation* _Nonnull)orientation
+-(int)updateListenerOrientation:(ByteRTCHumanOrientation* _Nonnull)orientation
 __deprecated_msg("deprecated since 352, use updateRemotePosition instead");
 /** 
  * @valid since 3.52
@@ -109,8 +109,9 @@ __deprecated_msg("deprecated since 352, use updateRemotePosition instead");
  *        + <0：失败。 <br>
  *        + -2: 失败，原因是校验本地用户的三维朝向信息时，三个向量没有两两垂直。
  * @notes <br>
- *        该方法需在进房后调用。调用该接口更新坐标前，你需调用 enableSpatialAudio:{@link #ByteRTCSpatialAudio#enableSpatialAudio:} 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。<br>
- *        调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+ *        + 该方法需在进房后调用。 <br>
+ *        + 调用该接口更新坐标前，你需调用 enableSpatialAudio:{@link #ByteRTCSpatialAudio#enableSpatialAudio:} 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。<br>
+ *        + 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
  */
 -(int)updateSelfPosition:(ByteRTCPositionInfo* _Nonnull)positionInfo;
 /** 
@@ -138,7 +139,7 @@ __deprecated_msg("deprecated since 352, use updateRemotePosition instead");
  * @param uid 远端用户 ID。
  * @return  <br>
  *        + 0：成功。  <br>
- *        + <0：失败。 
+ *        + <0：失败。
  */
 -(int)removeRemotePosition:(NSString * _Nonnull)uid;
 /** 

@@ -119,7 +119,7 @@ public:
      * @brief 转推直播状态回调
      * @param [in] event 转推直播任务状态，参看 StreamMixingEvent{@link #StreamMixingEvent}
      * @param [in] task_id 转推直播任务 ID
-     * @param [in] error 转推直播错误码，参看 TransCodingError{@link #TransCodingError}。
+     * @param [in] error 转推直播错误码，参看 StreamMixingErrorCode{@link #StreamMixingErrorCode}。
      * @param [in] mix_type 转推直播类型，参看 StreamMixingType{@link #StreamMixingType}
      */
     virtual void onStreamMixingEvent(
@@ -173,6 +173,7 @@ public:
     virtual ~ITranscoderObserver() = default;
 };
 /** 
+ * @hidden(Linux)
  * @type callback
  * @region 转推直播
  * @brief 单流转推直播观察者。  <br>
@@ -186,7 +187,7 @@ public:
      * @brief 单流转推直播状态回调
      * @param event 任务状态, 参看 SingleStreamPushEvent{@link #SingleStreamPushEvent}
      * @param task_id 任务 ID
-     * @param error 错误码，参看 TransCodingError{@link #TransCodingError}
+     * @param error 错误码，参看 StreamMixingErrorCode{@link #StreamMixingErrorCode}
      */
     virtual void onStreamPushEvent(SingleStreamPushEvent event, const char *task_id, int error) = 0;
     /**
@@ -210,8 +211,8 @@ public:
      * @type callback
      * @brief 调用 startChorusCacheSync{@link #IRTCVideo#startChorusCacheSync}，并设置为 `consumer` 的用户会通过此回调获取经缓存同步后的视频帧。获取频率通过启动同步时的 `fps` 进行设置。
      * @param count `uids` 和 `videoFrames` 的数组长度
-     * @param uids 参与合唱缓存同步的 `producer` 和 `retransmitter` 的列表，不包括参与但未发送媒体数据的用户。
-     * @param videoFrames 对应 `uids` 的视频帧。参看 IVideoFrame{@link #IVideoFrame}。
+     * @param uids[] 参与合唱缓存同步的 `producer` 和 `retransmitter` 的列表，不包括参与但未发送媒体数据的用户。
+     * @param video_frames[] 对应 `uids` 的视频帧。参看 IVideoFrame{@link #IVideoFrame}。
      */
     virtual void onSyncedVideoFrames(int count, const char* uids[], bytertc::IVideoFrame* video_frames[]) = 0;
     /** 

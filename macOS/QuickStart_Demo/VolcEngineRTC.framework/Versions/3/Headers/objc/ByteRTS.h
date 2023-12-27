@@ -88,9 +88,10 @@
  * @region 实时消息通信
  * @brief 登出结果回调
  * @param engine RTS 对象
- * @notes 调用 logout{@link #RTS#logout} 后，会收到此回调。
+ * @param reason 用户登出的原因，参看 ByteRTCLogoutReason{@link #ByteRTCLogoutReason} 
+ * @notes 在以下两种情况下会收到此回调：调用 logout{@link #RTS#logout} 接口主动退出；或其他用户以相同 UserId 进行 `login` 导致本地用户被动登出。
  */
-- (void)rtsEngineOnLogout:(RTS * _Nonnull)engine;
+- (void)rtsEngine:(RTS * _Nonnull)engine onLogout:(ByteRTCLogoutReason)reason;
 /** 
  * @type callback
  * @region 实时消息通信
@@ -190,7 +191,7 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @notes  <br>
  *      + 请确保和需要销毁的 RTS 实例相关的业务场景全部结束后，才调用此方法。  <br>
  *      + 该方法在调用之后，会销毁所有和此 RTS 实例相关的内存，并且停止与媒体服务器的任何交互。  <br>
- *      + 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。  <br>
+ *      + 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，会导致死锁。同时此方法是耗时操作，不建议在主线程调用本方法，避免主线程阻塞。  <br>
  *      + 可以通过 Objective-C 的ARC机制，在 dealloc 时自动触发销毁逻辑。
  */
 + (void)destroyRTS;
@@ -206,7 +207,7 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
 /** 
  * @type api
  * @region 引擎管理
- * @brief 配置 SDK 本地日志参数，包括日志级别、存储路径、可使用的最大缓存空间。
+ * @brief 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间、日志文件名前缀。
  * @param logConfig 本地日志参数，参看 ByteRTCLogConfig{@link #ByteRTCLogConfig}。
  * @return <br>
  *        + 0：成功。
@@ -236,7 +237,7 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @param parameters 保留参数
  * @return  <br>
  *        + 0: 调用成功。
- *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  */
 - (int)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
 
@@ -282,8 +283,8 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  *        调用本接口登出后，无法再调用消息相关的方法或收到相关回调。
  * @return  <br>
  *        + 0: 调用成功。
- *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
- * @notes 本地用户调用此方法登出后，会收到 rtcEngineOnLogout:{@link #RTSDelegate#rtsEngineOnLogout:}  回调通知结果，远端用户不会收到通知。
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
+ * @notes 本地用户调用此方法登出后，会收到 rtcEngineOnLogout:{@link #RTSDelegate#rtsEngineOnLogout:} 回调通知结果，远端用户不会收到通知。
  */
 - (int)logout;
 /** 
@@ -296,7 +297,7 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  *        更新的动态密钥  <br>
  * @return  <br>
  *        + 0: 调用成功。
- *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 如果 Token 无效导致登录失败，则调用此方法更新 Token 后，SDK 会自动重新登录，而用户不需要自己调用 login:uid:{@link #RTS#login:uid:} 方法。  <br>
  *       + Token 过期时，如果已经成功登录，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 登录时，或因本地网络状况不佳导致断网重新登录时通知给用户。
@@ -307,12 +308,12 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @region 实时消息通信
  * @brief 设置应用服务器参数  <br>
  *        客户端调用 sendServerMessage:{@link #RTS#sendServerMessage:} 或 sendServerBinaryMessage:{@link #RTS#sendServerBinaryMessage:} 发送消息给应用服务器之前，必须需要设置有效签名和应用服务器地址。
- * @param signature 动态签名  <br>
- *        应用服务器会使用该签名对请求进行鉴权验证。  <br>
- * @param url 应用服务器的地址
+ * @param signature 动态签名，应用服务器可使用该签名验证消息来源。<br>
+ *        签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br>
+ *        设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。
  * @return  <br>
  *        + 0: 调用成功。
- *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 用户必须调用 login:uid:{@link #RTS#login:uid:} 登录后，才能调用本接口。  <br>
  *       + 调用本接口后，SDK 会使用 rtsEngine:onServerParamsSetResult:{@link #RTSDelegate#rtsEngine:onServerParamsSetResult:} 返回相应结果。
@@ -326,7 +327,7 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  * @param peerUserId  需要查询的用户 ID
  * @return  <br>
  *        + 0: 调用成功。
- *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link ByteRTCReturnStatus 获得更多错误说明
+ *        + < 0 : 调用失败。查看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus} 获得更多错误说明
  * @notes  <br>
  *       + 必须调用 login:uid:{@link #RTS#login:uid:} 登录后，才能调用本接口。  <br>
  *       + 调用本接口后，SDK 会使用 rtsEngine:onGetPeerOnlineStatus:status:{@link #RTSDelegate#rtsEngine:onGetPeerOnlineStatus:status:} 回调通知查询结果。  <br>
@@ -411,7 +412,7 @@ BYTERTC_APPLE_EXPORT @interface RTS : NSObject
  *        调用此接口设置本地代理后，若想清空当前已有的代理设置，可再次调用此接口，选择不设置任何代理即可清空。
  * @notes <br>
  *       + 该方法需要在进房前调用。<br>
- *       + 调用该方法设置本地代理后，SDK 会触发 rtcEngine:onLocalProxyStateChanged:withProxyState:withProxyError:{@link #RTSDelegate#rtcEngine:onLocalProxyStateChanged:withProxyState:withProxyError:} ，返回代理连接的状态。
+ *       + 调用该方法设置本地代理后，SDK 会触发 rtsEngine:onLocalProxyStateChanged:withProxyState:withProxyError:{@link #RTSDelegate#rtsEngine:onLocalProxyStateChanged:withProxyState:withProxyError:} ，返回代理连接的状态。
  */
 - (int)setLocalProxy:(NSArray <ByteRTCLocalProxyInfo *> * _Nonnull)configurations;
 

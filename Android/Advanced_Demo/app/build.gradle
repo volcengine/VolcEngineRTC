@@ -40,6 +40,30 @@ android {
             }
         }
     }
+
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/arm64-v8a/libbytertc_nico_extension.so'
+        pickFirst 'lib/arm64-v8a/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/arm64-v8a/libh265enc.so'
+
+        pickFirst 'lib/armeabi-v7a/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/armeabi-v7a/libbytertc_nico_extension.so'
+        pickFirst 'lib/armeabi-v7a/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/armeabi-v7a/libh265enc.so'
+
+        pickFirst 'lib/x86/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/x86/libbytertc_nico_extension.so'
+        pickFirst 'lib/x86/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/x86/libh265enc.so'
+
+
+        pickFirst 'lib/x86_64/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/x86_64/libbytertc_nico_extension.so'
+        pickFirst 'lib/x86_64/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/x86_64/libh265enc.so'
+    }
+
 }
 
 dependencies {
@@ -54,5 +78,5 @@ dependencies {
 
     implementation(name: 'BasicModule', ext: 'aar')
     implementation(name: 'ByteEffect', ext: 'aar')
-    implementation 'com.volcengine:VolcEngineRTC:3.54.0.542800'
+    implementation 'com.volcengine:VolcEngineRTC:3.57.1.2400'
 }

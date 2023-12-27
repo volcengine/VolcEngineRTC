@@ -21,7 +21,7 @@ enum AudioFrameType {
     /** 
      * @brief PCM 16bit
      */
-    kFrameTypePCM16 = 0
+    kAudioFrameTypePCM16 = 0
 };
 
 /** 
@@ -152,23 +152,23 @@ enum class AudioFrameCallbackMethod{
     /** 
      * @brief 本地麦克风录制的音频数据回调
      */
-    kAudioFrameCallbackRecord,
+    kRecord,
     /** 
      * @brief 订阅的远端所有用户混音后的音频数据回调
      */
-    kAudioFrameCallbackPlayback,
+    kPlayback,
     /** 
      * @brief 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调
      */
-    kAudioFrameCallbackMixed,
+    kMixed,
     /** 
      * @brief 订阅的远端每个用户混音前的音频数据回调
      */
-    kAudioFrameCallbackRemoteUser,
+    kRemoteUser,
     /** 
      * @brief 本地屏幕录制的音频数据回调
      */
-    kAudioFrameCallbackRecordScreen,
+    kRecordScreen,
 };
 
 /** 
@@ -235,28 +235,6 @@ public:
     }
 };
 /** 
- * @deprecated since 3.42 and will be deleted in 3.51, use IAudioFrameProcessor{@link #IAudioFrameProcessor} instead.
- * @type callback
- * @region 音频处理
- * @brief 自定义音频处理器
- * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
- */
-class IAudioProcessor{
-public:
-    /** 
-     * @type callback
-     * @region 音频处理
-     * @brief 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
-     * @param [in] audio_frame RTC SDK 采集到的音频帧，自定义处理可直接对音频 data 中的数据进行修改。参看 IAudioFrame{@link #IAudioFrame}。
-     * @return  <br>
-     *        0: 未处理  <br>
-     *        >0: 处理成功  <br>
-     *        < 0: 处理失败
-     * @notes 在进行音频自定义处理前，你需要调用 `registerLocalAudioProcessor` 设置音频自定义处理器。
-     */
-    virtual int processAudioFrame(const IAudioFrame& audio_frame) = 0;
-};
-/** 
  * @type callback
  * @brief 自定义音频处理器。
  * 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
@@ -266,34 +244,34 @@ public:
     /** 
      * @type callback
      * @brief 回调本地采集的音频帧地址，供自定义音频处理。
-     * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
      * @notes <br>
      *        + 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。 <br>
      *        + 调用 `enableAudioProcessor`，并在参数中选择本地采集的音频时，每 10 ms 收到此回调。
      */
-    virtual int onProcessRecordAudioFrame(IAudioFrame& audioFrame) = 0;
+    virtual int onProcessRecordAudioFrame(IAudioFrame& audio_frame) = 0;
     /** 
      * @type callback
      * @brief 回调远端音频混音的音频帧地址，供自定义音频处理。
-     * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
      * @notes 调用 `enableAudioProcessor`，并在参数中选择远端音频流的的混音音频时，每 10 ms 收到此回调。
      */
-    virtual int onProcessPlayBackAudioFrame(IAudioFrame& audioFrame) = 0;
+    virtual int onProcessPlayBackAudioFrame(IAudioFrame& audio_frame) = 0;
     /** 
      * @type callback
      * @brief 回调单个远端用户的音频帧地址，供自定义音频处理。
      * @param [in] stream_info 音频流信息，参看 RemoteStreamKey{@link #RemoteStreamKey}
-     * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
+     * @param [in] audio_frame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}
      * @notes 调用 `enableAudioProcessor`，并在参数中选择各个远端音频流时，每 10 ms 收到此回调。
      */
-    virtual int onProcessRemoteUserAudioFrame(const RemoteStreamKey& stream_info, IAudioFrame& audioFrame) = 0;
+    virtual int onProcessRemoteUserAudioFrame(const RemoteStreamKey& stream_info, IAudioFrame& audio_frame) = 0;
     /** 
      * @hidden(macOS, Windows, Linux)
      * @valid since 3.50
      * @type callback
      * @brief 软件耳返音频数据的回调。你可根据此回调自定义处理音频。
      *        耳返音频中包含通过调用 `setVoiceReverbType` 和 `setVoiceChangerType` 设置的音频特效。
-     * @param audioFrame 音频帧地址。参看 IAudioFrame{@link #IAudioFrame}。
+     * @param audio_frame 音频帧地址。参看 IAudioFrame{@link #IAudioFrame}。
      * @notes  <br>
      *        + 此数据处理只影响软件耳返音频数据。  <br>
      *        + 要启用此回调，必须调用 `enableAudioProcessor`，并选择耳返音频，每 10 ms 收到此回调。
@@ -301,14 +279,20 @@ public:
      *        + 0： 成功。  <br>
      *        + < 0： 失败。  <br>
      */
-    virtual int onProcessEarMonitorAudioFrame(IAudioFrame& audioFrame) = 0;
+    virtual int onProcessEarMonitorAudioFrame(IAudioFrame& audio_frame) = 0;
     /** 
      * @type callback
      * @brief 屏幕共享的音频帧地址回调。你可根据此回调自定义处理音频。
-     * @param [in] audioFrame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}。
+     * @param [in] audio_frame 音频帧地址，参看 IAudioFrame{@link #IAudioFrame}。
      * @notes 调用 `enableAudioProcessor`，把返回给音频处理器的音频类型设置为屏幕共享音频后，每 10 ms 收到此回调。
      */
-    virtual int onProcessScreenAudioFrame(IAudioFrame& audioFrame) = 0;
+    virtual int onProcessScreenAudioFrame(IAudioFrame& audio_frame) = 0;
+    /** 
+     * @hidden constructor/destructor
+     * @brief 析构函数
+     */
+    virtual ~IAudioFrameProcessor() {
+    }
 };
 
 /** 

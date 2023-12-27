@@ -33,6 +33,7 @@ enum TorchState{
  */
 class ICameraControl {
 public:
+    virtual ~ICameraControl() = default;
     /** 
      * @type api
      * @region 视频管理
@@ -171,7 +172,7 @@ public:
      *        + 0: 成功. <br>
      *        + !0: 失败.
      * @notes <br>
-     *        + 对 Android，你必须在调用 startVideoCapture{@link #RTCVideo#startVideoCapture} 开启内部采集前，调用此接口方可生效。
+     *        + 对 Android，你必须在调用 startVideoCapture{@link #IRTCVideo#startVideoCapture} 开启内部采集前，调用此接口方可生效。
      *        + 对 iOS，在采集前或采集中调用此接口均可生效。
      */
     virtual int enableCameraAutoExposureFaceMode(bool enable) = 0;
@@ -182,12 +183,12 @@ public:
      * @valid since 353
      * @brief 设置内部采集适用动态帧率时，帧率的最小值。
      * @param framerate 最小值。单位为 fps。默认值是 7。
-     *                  动态帧率的最大帧率是通过 setVideoCaptureConfig{@link #RTCVideo#setVideoCaptureConfig} 设置的帧率值。当传入参数大于最大帧率时，使用固定帧率模式，帧率为最大帧率；当传入参数小于最大帧率时，使用动态帧率。
+     *                  动态帧率的最大帧率是通过 setVideoCaptureConfig{@link #IRTCVideo#setVideoCaptureConfig} 设置的帧率值。当传入参数大于最大帧率时，使用固定帧率模式，帧率为最大帧率；当传入参数小于最大帧率时，使用动态帧率。
      * @return  <br>
      *        + 0: 成功. <br>
      *        + !0: 失败.
      * @notes <br>
-     *        + 你必须在调用 startVideoCapture{@link #RTCVideo#startVideoCapture} 开启内部采集前，调用此接口方可生效。
+     *        + 你必须在调用 startVideoCapture{@link #IRTCVideo#startVideoCapture} 开启内部采集前，调用此接口方可生效。
      *        + 如果由于性能降级、静态适配等原因导致采集最大帧率变化时，已设置的最小帧率值会与新的采集最大帧率值重新比较。比较结果变化可能导致固定/动态帧率模式切换。
      */
     virtual int setCameraAdaptiveMinimumFrameRate(int framerate) = 0;

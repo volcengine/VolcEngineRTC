@@ -44,7 +44,7 @@ public:
      * @brief 离开房间回调。  <br>
      *        用户调用 leaveRoom{@link #IRTSRoom#leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音频资源后，通过此回调通知用户离开房间成功。  <br>
      * @notes  <br>
-     *       + 用户调用 leaveRoom{@link #IRTSRoom#leaveRoom} 方法离开房间后，若立即调用 destroyRTS{@link #destroyRTS} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+     *       + 用户调用 leaveRoom{@link #IRTSRoom#leaveRoom} 方法离开房间后，如果立即调用 destroy{@link #IRTSRoom#destroy} 销毁房间实例或 destroyRTS{@link #destroyRTS} 方法销毁 RTS 引擎，则将无法收到此回调事件。  <br>
      *       + 离开房间后，如果 App 需要使用系统音频设备，则建议收到此回调后再初始化音频设备，否则可能由于 SDK 占用音频设备而导致初始化失败。  <br>
      */
     virtual void onLeaveRoom() {

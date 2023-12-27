@@ -37,8 +37,6 @@ typedef NSImage  ByteRTCImage;
 #define BYTERTC_APPLE_EXPORT __attribute__((visibility("default")))
 
 
-
-
 /**
  * @hidden currently not available
  */
@@ -228,7 +226,6 @@ typedef NS_ENUM(NSInteger, ByteRTSErrorCode) {
      */
     ByteRTSErrorCodeRoomIdIllegal = -1007,
 
-
     /** 
      * @brief Token 过期。调用 `joinRoomByKey:roomId:userInfo:rtcRoomConfig:` 使用新的 Token 重新加入房间。
      */
@@ -246,13 +243,13 @@ typedef NS_ENUM(NSInteger, ByteRTSErrorCode) {
     /** 
      * @brief 通话回路检测已经存在同样 roomId 的房间了
      */
-    ByteRTSRoomAlreadyExist = -1013,
+    ByteRTSErrorRoomAlreadyExist = -1013,
 
     /** 
      * @brief 加入多个房间时使用了不同的 uid。<br>
      *        同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。
      */
-    ByteRTSUserIDDifferent = -1014,
+    ByteRTSErrorUserIDDifferent = -1014,
 
     /** 
      * @brief 服务端异常状态导致退出房间。  <br>
@@ -268,6 +265,7 @@ typedef NS_ENUM(NSInteger, ByteRTSErrorCode) {
  */
 typedef NS_ENUM(NSInteger, ByteRTSWarningCode) {
     /** 
+     * @hidden
      * @deprecated since 3.46 and will be deleted in 3.52.
      */
     ByteRTSWarningCodeGetRoomFailed              = -2000,
@@ -296,6 +294,7 @@ typedef NS_ENUM(NSInteger, ByteRTSWarningCode) {
      */
     ByteRTSWarningCodeSendCustomMessage = -2011,
     /** 
+     * @hidden
      * @deprecated since 3.46 and will be deleted in 3.52.
      * @brief 同样roomid的房间已经存在了
      */
@@ -365,6 +364,23 @@ typedef NS_ENUM(NSInteger, ByteRTCLoginErrorCode) {
 
 /** 
  * @type keytype
+ * @brief 用户登出的原因
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCLogoutReason) {
+    /** 
+     * @brief 用户主动退出
+     *        用户调用 `logout` 接口登出，或者销毁引擎登出。
+     */
+    ByteRTCLogoutReasonLogout = 0,
+    /** 
+     * @brief 用户被动退出
+     *        另一个用户以相同 UserId 进行了 `login`，导致本端用户被踢出。
+     */
+    ByteRTCLogoutReasonDuplicateLogin = 1,
+};
+
+/** 
+ * @type keytype
  * @brief 发送消息的可靠有序类型
  */
 typedef NS_ENUM(NSInteger, ByteRTCMessageConfig) {
@@ -411,6 +427,16 @@ typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult) {
      * @brief 超过 QPS 限制
      */
     ByteRTCUserMessageSendResultExceedQPS = 5,
+    /** 
+     * @brief 消息发送失败。应用服务器未收到客户端发送的消息。<br>
+     *        由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。
+     */
+    ByteRTCUserMessageSendResultE2BSSendFailed = 17,
+    /** 
+     * @brief 消息发送失败。应用服务器接收到了客户端发送的消息，但响应失败。<br>
+     *        由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。
+     */
+    ByteRTCUserMessageSendResultE2BSReturnFailed = 18,
     /** 
      * @brief 消息发送方没有加入房间
      */
@@ -562,40 +588,40 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSysStats : NSObject
 /** 
  * @brief 当前系统 cpu 核数
  */
-@property(assign, nonatomic) unsigned int cpu_cores;
+@property(assign, nonatomic) unsigned int cpuCores;
 /** 
  * @brief 当前应用的 CPU 使用率，取值范围为 [0, 1]。
  */
-@property(assign, nonatomic) double cpu_app_usage;
+@property(assign, nonatomic) double cpuAppUsage;
 /** 
  * @hidden currently not available
  * @brief 当前系统的 CPU 使用率，取值范围为 [0, 1]。
  */
-@property(assign, nonatomic) double cpu_total_usage;
+@property(assign, nonatomic) double cpuTotalUsage;
 /** 
  * @brief 当前App的内存使用（单位 MB）
  */
-@property(assign, nonatomic) double memory_usage;
+@property(assign, nonatomic) double memoryUsage;
 /** 
  * @brief 全量内存（单位MB）
  */
-@property(assign, nonatomic) unsigned long long full_memory;
+@property(assign, nonatomic) unsigned long long fullMemory;
 /** 
  * @brief 系统已使用内存（单位MB）
  */
-@property(assign, nonatomic) unsigned long long total_memory_usage;
+@property(assign, nonatomic) unsigned long long totalMemoryUsage;
 /** 
  * @brief 空闲可分配内存（单位MB）
  */
-@property(assign, nonatomic) unsigned long long free_memory;
+@property(assign, nonatomic) unsigned long long freeMemory;
 /** 
  * @brief 当前应用的内存使用率（单位 %）
  */
-@property(assign, nonatomic) double memory_ratio;
+@property(assign, nonatomic) double memoryRatio;
 /** 
  * @brief 系统内存使用率（单位 %）
  */
-@property(assign, nonatomic) double total_memory_ratio;
+@property(assign, nonatomic) double totalMemoryRatio;
 @end
 
 /** 
@@ -604,19 +630,28 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSysStats : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCLogConfig : NSObject
 /** 
- * @brief 日志存储路径。
- */ 
+ * @brief 日志存储路径，必填。
+ */
 @property(copy, nonatomic) NSString *_Nonnull logPath;
 
 /** 
- * @brief 日志等级，参看 ByteRTCLocalLogLevel{@link #ByteRTCLocalLogLevel}，默认为警告级别。
- */ 
+ * @brief 日志等级，参看 ByteRTCLocalLogLevel{@link #ByteRTCLocalLogLevel}，默认为警告级别，选填。
+ */
 @property(assign, nonatomic) ByteRTCLocalLogLevel logLevel;
 
 /** 
- * @brief 日志可使用的最大缓存空间，单位为 MB。取值范围为 1～100 MB，默认值为 10 MB。
- */ 
+ * @brief 日志文件最大占用的总空间，单位为 MB，选填。取值范围为 1～100 MB，默认值为 10 MB。
+ *        若 `logFileSize` < 1，取 1 MB。若 `logFileSize` > 100，取 100 MB。<br>
+ *        其中，单个日志文件最大为 2 MB：
+ *        <ul><li> 若 1 ≤ <code>logFileSize</code> ≤ 2，则会生成一个日志文件。</li><li>若 <code>logFileSize</code> > 2，假设 <code>logFileSize/2</code> 的整数部分为 N，则前 N 个文件，每个文件会写满 2 MB，第 N+1 个文件大小不超过 <code>logFileSize mod 2</code>，否则会删除最老的文件，以此类推。</li></ul>
+ */
 @property(assign, nonatomic) int logFileSize;
+
+/** 
+ * @brief 日志文件名前缀，选填。该字符串必须符合正则表达式：[a-zA-Z0-9_@\-\.]{1,128}。
+ *        最终的日志文件名为`前缀 + "_" + 文件创建时间 + "_rtclog".log`，如 `logPrefix_2023-05-25_172324_rtclog.log`。
+ */
+@property(copy, nonatomic) NSString *_Nonnull logFilenamePrefix;
 @end
 
 /** 

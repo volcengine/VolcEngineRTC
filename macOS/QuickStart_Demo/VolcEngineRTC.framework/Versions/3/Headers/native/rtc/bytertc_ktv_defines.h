@@ -272,7 +272,7 @@ struct DownloadResult {
 
 
 /** 
- * @type keytype
+ * @type errorcode
  * @brief KTV 错误码。
  */
 enum KTVErrorCode {

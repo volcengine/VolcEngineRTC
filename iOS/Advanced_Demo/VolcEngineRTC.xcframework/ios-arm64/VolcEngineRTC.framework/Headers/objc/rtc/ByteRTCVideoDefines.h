@@ -173,21 +173,41 @@ typedef NS_ENUM(NSUInteger, ByteRTCMirrorType) {
 
 /** 
  * @type keytype
- * @brief 基础美颜模式
+ * @brief 远端流的镜像类型。
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCRemoteMirrorType) {
+    /** 
+     * @brief （默认值）远端视频渲染无镜像效果。
+     */
+    ByteRTCRemoteMirrorTypeNone = 0,
+    /** 
+     * @brief 远端视频渲染有镜像效果。
+     */
+    ByteRTCRemoteMirrorTypeRender = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 基础美颜模式。
  */
 typedef NS_ENUM(NSUInteger, ByteRTCEffectBeautyMode) {
     /** 
-     * @brief 美白
+     * @brief 美白。
      */
-    ByteRTCEffectWhiteMode = 0,
+    ByteRTCEffectBeautyModeWhite = 0,
     /** 
-     * @brief 磨皮
+     * @brief 磨皮。
      */
-    ByteRTCEffectSmoothMode = 1,
+    ByteRTCEffectBeautyModeSmooth = 1,
     /** 
-     * @brief 锐化
+     * @brief 锐化。
      */
-    ByteRTCEffectSharpenMode = 2,
+    ByteRTCEffectBeautyModeSharpen = 2,
+    /** 
+     * @valid since 3.55
+     * @brief 清晰，需集成 v4.4.2+ 版本的特效 SDK。
+     */
+    ByteRTCEffectBeautyModeClear = 3,
 };
 
 /** 
@@ -492,6 +512,36 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoPixelFormat) {
 
 /** 
  * @type keytype
+ * @brief 本地视频帧回调位置。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCLocalVideoRenderPosition) {
+    /** 
+     * @brief 采集后。
+     */
+    ByteRTCLocalVideoRenderPositionAfterCapture = 0,
+    /** 
+     * @brief （默认值）前处理后。
+     */
+    ByteRTCLocalVideoRenderPositionAfterPreprocess = 1
+};
+
+/** 
+ * @type keytype
+ * @brief 远端视频帧回调位置。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCRemoteVideoRenderPosition) {
+    /** 
+     * @brief 解码后。
+     */
+    ByteRTCRemoteVideoRenderPositionAfterDecoder = 0,
+    /** 
+     * @brief （默认值）后处理后。
+     */
+    ByteRTCRemoteVideoRenderPositionAfterPostprocess = 1
+};
+
+/** 
+ * @type keytype
  * @brief 视频帧编码格式
  */
 typedef NS_ENUM(NSInteger, ByteRTCVideoSinkPixelFormat) {
@@ -519,7 +569,37 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSinkPixelFormat) {
 
 /** 
  * @type keytype
- * @hidden for internal use only
+ * @brief 是否将视频帧自动转正。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVideoApplyRotation) {
+    /** 
+     * @brief （默认值）不旋转。
+     */
+    ByteRTCVideoApplyRotationDefault = -1,
+    /** 
+     * @brief 自动转正视频，即根据视频帧的旋转角信息将视频帧旋转到 0 度。
+     */
+    ByteRTCVideoApplyRotation0 = 0
+};
+
+/** 
+ * @type keytype
+ * @brief 是否将视频帧镜像。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCVideoRenderMirrorType) {
+    /**  
+     * @brief 开启镜像。
+     */
+    ByteRTCVideoRenderMirrorTypeOn = 1,
+    /**  
+     * @brief （默认值）不开启镜像。
+     */
+    ByteRTCVideoRenderMirrorTypeOff = 2,
+};
+
+/** 
+ * @hidden(macOS)
+ * @type keytype
  * @brief 超分状态改变原因。
  */
 typedef NS_ENUM(NSInteger, ByteRTCVideoSuperResolutionModeChangedReason) {
@@ -566,7 +646,7 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSuperResolutionModeChangedReason) {
 };
 
 /** 
- * @hidden for internal use only
+ * @hidden(macOS)
  * @type keytype
  * @brief 视频降噪模式状态改变原因。
  */
@@ -616,11 +696,11 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoDenoiseModeChangedReason) {
  */
 typedef NS_ENUM(NSUInteger, ByteRTCStreamMixingType) {
     /** 
-     * @brief 通过服务端转推
+     * @brief 服务端合流
      */
     ByteRTCStreamMixingTypeByServer = 0,
     /** 
-     * @brief 端云一体转推
+     * @brief 端云一体合流。SDK 智能决策在客户端或服务端完成合流。
      */
     ByteRTCStreamMixingTypeByClient = 1,
 };
@@ -714,7 +794,8 @@ typedef NS_ENUM(NSUInteger, ByteRTCMixedStreamType) {
      */
     ByteRTCMixedStreamByServer = 0,
     /** 
-     * @brief 端云一体转推
+     * @brief 端云一体合流。SDK 智能决策在客户端或服务端完成合流。
+     *        使用前，请联系技术支持同学开通，否则不生效。
      */
     ByteRTCMixedStreamByClient = 1,
 };
@@ -815,6 +896,26 @@ typedef NS_ENUM(NSUInteger, ByteRTCMixedStreamLayoutRegionType) {
      */
     ByteRTCMixedStreamLayoutRegionTypeImage = 1,
 };
+
+/** 
+ * @type keytype
+ * @brief 合流同步策略
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCMixedStreamSyncStrategy) {
+    /** 
+     * @brief 不使用同步策略
+     */
+    ByteRTCMixedStreamSyncStrategyNoSync = 0,
+    /** 
+     * @brief 使用音频精准同步策略
+     */
+    ByteRTCMixedStreamSyncStrategyAudioPreciseSync = 1,
+    /** 
+     * @brief 使用单通模式同步策略
+     */
+    ByteRTCMixedStreamSyncStrategySimplexModeSync = 2,
+};
+
 /** 
  * @type keytype
  * @brief region 中流的类型属性
@@ -872,6 +973,52 @@ typedef NS_ENUM(NSUInteger, ByteRTCTranscodingVideoCodec) {
     ByteRTCTranscodingVideoCodecH265 = 1,
 };
 
+/** 
+ * @type keytype
+ * @brief 服务端合流转推 SEI 内容。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamSEIContentMode) {
+    /** 
+     * @brief 视频流中包含全部的 SEI 信息。默认设置。
+     */
+    ByteRTCMixedStreamSEIContentModeDefault = 0,
+    /** 
+     * @brief 随非关键帧传输的 SEI 数据中仅包含音量信息。<br>
+     *        当设置 `ByteRTCMixedStreamServerControlConfig.enableVolumeIndication` 为 True 时，此参数设置生效。
+     */
+    ByteRTCMixedStreamSEIContentModeEnableVolumeIndication = 1,
+};
+
+/** 
+ * @type keytype
+ * @brief 服务端合流转推发起模式。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamPushMode) {
+    /** 
+     * @brief 无用户发布媒体流时，发起合流任务无效。默认设置。<br>
+     *        当有用户发布媒体流时，才能发起合流任务。
+     */
+    ByteRTCMixedStreamPushModeOnStream = 0,
+    /** 
+     * @brief 无用户发布媒体流时，可以使用占位图发起合流任务。<br>
+     *        占位图设置参看 alternateImageUrl{@link #ByteRTCMixedStreamLayoutRegionConfig#alternateImageUrl} 和 alternateImageFillMode{@link #ByteRTCMixedStreamLayoutRegionConfig#alternateImageFillMode}
+     */
+    ByteRTCMixedStreamPushModeOnStartRequest = 1,
+};
+/** 
+ * @type keytype
+ * @brief 服务端合流占位图填充模式。
+ */
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamAlternateImageFillMode) {
+    /** 
+     * @brief 占位图跟随用户原始视频帧相同的比例缩放。默认设置。
+     */
+    ByteRTCMixedStreamAlternateImageFillModeFit = 0,
+    /** 
+     * @brief 占位图不跟随用户原始视频帧相同的比例缩放，保持图片原有比例。
+     */
+    ByteRTCMixedStreamAlternateImageFillModeFill = 1,
+};
 /** 
  * @type errorcode
  * @brief 单流转推直播错误码
@@ -983,14 +1130,14 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSourceType) {
     ByteRTCVideoSourceTypeInternal = 1,
     /** 
      * @brief 自定义编码视频源。  <br>
-     *        SDK 不会自动生成多路流，你需要自行生成并推送多路流
-     */
-    ByteRTCVideoSourceTypeEncodedManualSimulcast = 2,
-    /** 
-     * @brief 自定义编码视频源。  <br>
      *        你仅需推送分辨率最大的一路编码后视频流，SDK 将自动转码生成多路小流
      */
-    ByteRTCVideoSourceTypeEncodedAutoSimulcast = 3
+    ByteRTCVideoSourceTypeEncodedAutoSimulcast = 2,
+    /** 
+     * @brief 自定义编码视频源。  <br>
+     *        SDK 不会自动生成多路流，你需要自行生成并推送多路流
+     */
+    ByteRTCVideoSourceTypeEncodedManualSimulcast = 3
 };
 
 /** 
@@ -1001,11 +1148,11 @@ typedef NS_ENUM(NSInteger, ByteRTCZoomConfigType) {
     /** 
      * @brief 设置缩放系数
      */
-    ByteRTCZoomFocusOffset = 0,
+    ByteRTCZoomConfigTypeFocusOffset = 0,
     /** 
      * @brief 设置移动步长
      */
-    ByteRTCZoomMoveOffset = 1
+    ByteRTCZoomConfigTypeMoveOffset = 1
 };
 
 /** 
@@ -1016,31 +1163,31 @@ typedef NS_ENUM(NSInteger, ByteRTCZoomDirectionType) {
     /** 
      * @brief 相机向左移动
      */
-    ByteRTCCameraMoveLeft = 0,
+    ByteRTCZoomDirectionTypeMoveLeft = 0,
     /** 
      * @brief 相机向右移动
      */
-    ByteRTCCameraMoveRight = 1,
+    ByteRTCZoomDirectionTypeMoveRight = 1,
     /** 
      * @brief 相机向上移动
      */
-    ByteRTCCameraMoveUp = 2,
+    ByteRTCZoomDirectionTypeMoveUp = 2,
     /** 
      * @brief 相机向下移动
      */
-    ByteRTCCameraMoveDown = 3,
+    ByteRTCZoomDirectionTypeMoveDown = 3,
     /** 
      * @brief 相机缩小焦距
      */
-    ByteRTCCameraZoomOut = 4,
+    ByteRTCZoomDirectionTypeZoomOut = 4,
     /** 
      * @brief 相机放大焦距
      */
-    ByteRTCCameraZoomIn = 5,
+    ByteRTCZoomDirectionTypeZoomIn = 5,
     /** 
      * @brief 恢复到原始画面
      */
-    ByteRTCCameraReset = 6
+    ByteRTCZoomDirectionTypeReset = 6
 };
 
 /** 
@@ -1189,7 +1336,7 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamMixingErrorCode) {
     /** 
      * @brief 状态错误，需要在状态机正常状态下发起操作
      */
-    ByteRTCStreamMixingrrorCodeInvalidState = 1092,
+    ByteRTCStreamMixingErrorCodeInvalidState = 1092,
     /** 
      * @brief 无效操作
      */
@@ -1244,15 +1391,15 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingType) {
     /** 
      * @brief 只录制音频
      */
-    RecordAudioOnly = 0,
+    ByteRTCRecordingTypeAudioOnly = 0,
     /** 
      * @brief 只录制视频
      */
-    RecordVideoOnly = 1,
+    ByteRTCRecordingTypeVideoOnly = 1,
     /** 
      * @brief 同时录制音频和视频
      */
-    RecordVideoAndAudio = 2,
+    ByteRTCRecordingTypeVideoAndAudio = 2,
 };
 
 /** 
@@ -1419,6 +1566,22 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode) {
 
 /** 
  * @type keytype
+ * @brief 弱光适应类型
+ */
+typedef NS_ENUM(NSUInteger, ByteRTCVideoEnhancementMode) {
+    /** 
+     * @brief 关闭弱光适应
+     */
+    ByteRTCVideoEnhancementModeDisabled = 0,
+
+    /** 
+     * @brief 开启弱光适应
+     */
+    ByteRTCVideoEnhancementModeAuto = 1,
+};
+
+/** 
+ * @type keytype
  * @brief 人像属性检测参数
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectConfig : NSObject
@@ -1578,7 +1741,32 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCanvas : NSObject
  * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`,格式为 BGR。默认值是 `0x00000000`。其中，透明度设置无效。
  */
 @property(assign, nonatomic) NSInteger backgroundColor;
+/** 
+ * @brief 视频帧旋转角度。参看 ByteRTCVideoRotation{@link #ByteRTCVideoRotation}。默认为 0 度，即不做旋转处理。<br>
+ *        该设置仅对远端视频有效，对本地视频设置不生效。
+ */
+@property(assign, nonatomic) ByteRTCVideoRotation renderRotation;
 @end
+
+/** 
+ * @type keytype
+ * @brief 远端视频帧渲染设置
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoRenderConfig : NSObject
+/** 
+ * @brief 渲染模式，参看 ByteRTCRenderMode{@link #ByteRTCRenderMode}
+ */
+@property(assign, nonatomic) ByteRTCRenderMode renderMode;
+/** 
+ * @brief 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`,格式为 BGR。默认值是 `0x00000000`。其中，透明度设置无效。
+ */
+@property(assign, nonatomic) NSInteger backgroundColor;
+/** 
+ * @brief 视频帧旋转角度。参看 ByteRTCVideoRotation{@link #ByteRTCVideoRotation}。默认为 0 度，即不做旋转处理。
+ */
+@property(assign, nonatomic) ByteRTCVideoRotation renderRotation;
+@end
+
 
 /** 
  * @type keytype
@@ -1836,8 +2024,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrame : NSObject
 @property(strong, nonatomic) NSData * _Nonnull supplementaryInfo;
 
 /** 
- * @brief 视频帧颜色 plane 数量; 当 textureBuf 有值时, 该值无意义
- * @notes yuv 数据存储格式分为打包（packed）存储格式和平面（planar）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
+ * @brief 视频帧颜色 plane 数量; 当 textureBuf 有值时, 该值无意义。<br>
+ *        yuv 数据存储格式分为打包（packed）存储格式和平面（planar）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
  */
 @property (assign, nonatomic) int numberOfPlanes;
 
@@ -1962,8 +2150,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
  */
 @property(assign, nonatomic) CGFloat alpha;
 /** 
- * @brief （仅服务端合流支持设置）圆角半径相对画布宽度的比例。默认值为 `0.0`。
- * @notes 做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
+ * @brief （仅服务端合流支持设置）圆角半径相对画布宽度的比例。默认值为 `0.0`。<br>
+ *         做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
  */
 @property(assign, nonatomic) CGFloat cornerRadius;
 /** 
@@ -1989,10 +2177,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 @property (strong, nonatomic) ByteRTCTranscoderLayoutRegionDataParam * _Nullable dataParam;
 /** 
  * @type keytype
- * @brief 空间位置。参看 Position{@link #Position}。
+ * @brief 空间位置。参看 ByteRTCPosition{@link #ByteRTCPosition}。
  */
-@property (strong, nonatomic) Position * _Nullable spatialPosition;
-
+@property (strong, nonatomic) ByteRTCPosition * _Nullable spatialPosition;
+/** 
+ * @brief 设置某用户是否应用空间音频效果：
+ *        + Yes：启用（默认值）
+ *        + No：禁用
+ */ 
 @property(assign, nonatomic) BOOL applySpatialAudio;
 
 @end
@@ -2106,20 +2298,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingSpatialConfig : NSObject
 /** 
- * @brief 是否开启推流 CDN 时的空间音频效果。
- * @notes 当你启用此效果时，你需要设定推流中各个 ByteRTCTranscodingSpatialConfig{@link #ByteRTCTranscodingSpatialConfig} 的 `spatialPosition` 值，实现空间音频效果。
+ * @brief 是否开启推流 CDN 时的空间音频效果。<br>
+ *        当你启用此效果时，你需要设定推流中各个 ByteRTCTranscodingSpatialConfig{@link #ByteRTCTranscodingSpatialConfig} 的 `spatialPosition` 值，实现空间音频效果。
  */
 @property(assign, nonatomic) BOOL enableSpatialRender;
 /** 
- * @brief 听众的空间位置。参看 Position{@link #Position}。<br>
+ * @brief 听众的空间位置。参看 ByteRTCPosition{@link #ByteRTCPosition}。<br>
  *        听众指收听来自 CDN 的音频流的用户。
  */
-@property (strong, nonatomic) Position * _Nullable audienceSpatialPosition;
+@property (strong, nonatomic) ByteRTCPosition * _Nullable audienceSpatialPosition;
 /** 
- * @brief 听众的空间朝向。参看 HumanOrientation{@link #HumanOrientation}。<br>
+ * @brief 听众的空间朝向。参看 ByteRTCHumanOrientation{@link #ByteRTCHumanOrientation}。<br>
  *        听众指收听来自 CDN 的音频流的用户。
  */
-@property(strong, nonatomic) HumanOrientation * _Nullable audienceSpatialOrientation;
+@property(strong, nonatomic) ByteRTCHumanOrientation * _Nullable audienceSpatialOrientation;
 
 @end
 /** 
@@ -2160,8 +2352,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingSyncControlParam : NSObject
  */
 @property(copy, nonatomic) NSString * _Nullable syncBaseUser;
 /** 
- * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 0。
- * @notes 参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
+ * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 0。<br>
+ *        参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
  */
 @property(assign, nonatomic) NSInteger syncQueueLengthMs;
 /** 
@@ -2264,40 +2456,39 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionImageWaterMarkConf
 
 /** 
  * @type keytype
- * @brief 单个图片或视频流在合流中的布局信息。(新)<br>
- *        开启转推直播功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
- * @notes  <br>
- *         + 视频流对应区域左上角的实际坐标是通过画面尺寸和归一化比例相乘，并四舍五入取整得到的。假如：Canvas.Width = 1920, Region.LocationX = 0.33，那么该画布左上角的横坐标为 634（1920×0.33=633.6，四舍五入取整）。
- *         + 视频流对应区域宽度和高度的像素值是通过画面尺寸和归一化比例相乘，四舍五入取整，并向上转换为偶数得到的。假如：Canvas.Width = 1920, Region.WidthProportion = 0.21，那么该画布横向宽度为 404px（1920x0.21=403.2，四舍五入取整后，再向上转换为偶数）。
+ * @brief 单个图片或视频流在合流中的布局信息。(新)
+ *        开启合流功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
 /** 
- * @brief 视频流发布用户的用户 ID 。必填。
+ * @brief 视频流发布用户的用户 ID 。建议设置。
  */
 @property(copy, nonatomic) NSString * _Nonnull userID;
 /** 
- * @brief 图片或视频流所在房间的房间 ID。必填。
+ * @brief 图片或视频流所在房间的房间 ID。建议设置。
  *        如果此图片或视频流是通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
  */
 @property(copy, nonatomic) NSString * _Nonnull roomID;
 /** 
- * @brief 视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
+ * @brief 单个用户画面左上角在整个画布坐标系中的 X 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的横向位移。<br>
+ *        取值范围为 [0, 整体画布宽度)。默认值为 0。
  */
-@property(assign, nonatomic) CGFloat locationX;
+@property(assign, nonatomic) NSInteger locationX;
 /** 
- * @brief 视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
+ * @brief 单个用户画面左上角在整个画布坐标系中的 Y 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的纵向位移。<br>
+ *        取值范围为 [0, 整体画布高度)。默认值为 0。
  */
-@property(assign, nonatomic) CGFloat locationY;
+@property(assign, nonatomic) NSInteger locationY;
 /** 
- * @brief 视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。
+ * @brief 单个用户画面的宽度。取值范围为 [0, 整体画布宽度]，默认值为 360。
  */
-@property(assign, nonatomic) CGFloat widthProportion;
+@property(assign, nonatomic) NSInteger width;
 /** 
- * @brief 视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。
+ * @brief 单个用户画面的高度。取值范围为 [0, 整体画布高度]，默认值为 640。
  */
-@property(assign, nonatomic) CGFloat heightProportion;
+@property(assign, nonatomic) NSInteger height;
 /** 
- * @brief 用户视频布局在画布中的层级。取值范围为 [0 - 100]，0 为底层，值越大越上层。默认值为 0。
+ * @brief 用户视频布局在画布中的层级。取值范围为 [0 - 100]，0 为底层，值越大越上层。默认值为 0。建议设置。
  */
 @property(assign, nonatomic) NSInteger zOrder;
 /** 
@@ -2313,8 +2504,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
  */
 @property(assign, nonatomic) CGFloat alpha;
 /** 
- * @brief 圆角半径相对画布宽度的比例。默认值为 `0.0`。
- * @notes 做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
+ * @brief 圆角半径相对画布宽度的比例。默认值为 `0.0`。<br>
+ *        做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
  */
 @property(assign, nonatomic) CGFloat cornerRadius;
 /** 
@@ -2326,7 +2517,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
  */
 @property(assign, nonatomic) ByteRTCMixedStreamRenderMode renderMode;
 /** 
- * @brief 合流布局区域类型。参看 ByteRTCMixedStreamLayoutRegionType{@link #ByteRTCMixedStreamLayoutRegionType}。
+ * @brief 合流布局区域类型。参看 ByteRTCMixedStreamLayoutRegionType{@link #ByteRTCMixedStreamLayoutRegionType}。建议设置。
  */
 @property (assign, nonatomic) ByteRTCMixedStreamLayoutRegionType regionContentType;
 /** 
@@ -2334,33 +2525,44 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
  */
 @property (strong, nonatomic) NSData * _Nullable imageWaterMark;
 /** 
- * @type keytype
  * @brief 合流布局区域数据的对应参数。当类型为视频流时传空，类型为图片时传入对应图片的参数，参看 ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig{@link #ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig}。
  */
 @property (strong, nonatomic) ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig * _Nullable imageWaterMarkConfig;
 /** 
- * @type keytype
- * @brief 空间位置。参看 Position{@link #Position}。
+ * @brief 空间位置。参看 ByteRTCPosition{@link #ByteRTCPosition}。
  */
-@property (strong, nonatomic) Position * _Nullable spatialPosition;
-
+@property (strong, nonatomic) ByteRTCPosition * _Nullable spatialPosition;
+/** 
+ * @brief 设置某用户是否应用空间音频效果：
+ *        + Yes：启用（默认值）
+ *        + No：禁用
+ */ 
 @property(assign, nonatomic) BOOL applySpatialAudio;
-
+/** 
+ * @valid since 3.57
+ * @brief 设置占位图的填充模式。<br>
+ *        该参数用来控制当用户停止发布视频流，画面恢复为占位图后，此时占位图的填充模式。参看 ByteRTCMixedStreamAlternateImageFillMode{@link #ByteRTCMixedStreamAlternateImageFillMode}。
+ */
+@property (assign, nonatomic)ByteRTCMixedStreamAlternateImageFillMode alternateImageFillMode;
+/** 
+ * @valid since 3.57
+ * @brief 设置占位图的 URL，长度小于 1024 字符.
+ */
+@property(copy, nonatomic)NSString * alternateImageUrl;
 @end
 
 /** 
  * @type keytype
  * @brief 视频流合流整体布局信息。(新)<br>
- *        开启转推直播功能后，你可以设置参与合流的每路视频流的预设布局信息和合流背景信息等。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutConfig : NSObject
 /** 
- * @brief 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。
+ * @brief 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。建议设置。
  *        值不合法或未设置时，自动使用默认值。
  */
 @property(copy, nonatomic) NSString *_Nonnull backgroundColor;
 /** 
- * @brief 用户布局信息列表。每条流的具体布局参看 ByteRTCMixedStreamLayoutRegionConfig{@link #ByteRTCMixedStreamLayoutRegionConfig}。
+ * @brief 用户布局信息列表。每条流的具体布局参看 ByteRTCMixedStreamLayoutRegionConfig{@link #ByteRTCMixedStreamLayoutRegionConfig}。建议设置。
  *        值不合法或未设置时，自动使用默认值。
  */
 @property(copy, nonatomic) NSArray<ByteRTCMixedStreamLayoutRegionConfig *> * _Nonnull regions;
@@ -2368,6 +2570,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutConfig : NSObject
  * @brief 用户透传的额外数据。
  */
 @property(copy, nonatomic) NSString *_Nonnull userConfigExtraInfo;
+/** 
+ * @valid since 3.57
+ * @brief 设置合流后整体画布的背景图片 URL，长度最大为 1024 bytes。<br>
+ *        支持的图片格式包括：JPG, JPEG, PNG。如果背景图片的宽高和整体屏幕的宽高不一致，背景图片会缩放到铺满屏幕。
+ */
+@property(copy, nonatomic) NSString *_Nonnull backgroundImageUrl;
 @end
 
 /** 
@@ -2377,31 +2585,31 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamVideoConfig : NSObject
 /** 
- * @brief 视频编码格式，参看 ByteRTCMixedStreamVideoCodecType{@link #ByteRTCMixedStreamVideoCodecType}。默认值为 `0`。
+ * @brief 视频编码格式，参看 ByteRTCMixedStreamVideoCodecType{@link #ByteRTCMixedStreamVideoCodecType}。默认值为 `0`。建议设置。
  *        本参数不支持过程中更新。
  */
 @property(assign, nonatomic) ByteRTCMixedStreamVideoCodecType videoCodec;
 /** 
- * @brief 合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。
+ * @brief 合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。建议设置。
  *        设置值为非偶数时，自动向上取偶数。
  */
 @property(assign, nonatomic) NSInteger width;
 /** 
- * @brief 合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。
+ * @brief 合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。建议设置。
  *        设置值为非偶数时，自动向上取偶数。
  */
 @property(assign, nonatomic) NSInteger height;
 /** 
- * @brief 合流视频帧率。单位为 FPS，取值范围为 [1,60]，默认值为 15 FPS。
+ * @brief 合流视频帧率。单位为 FPS，取值范围为 [1,60]，默认值为 15 FPS。建议设置。
  */
 @property(assign, nonatomic) NSInteger fps;
 /** 
- * @brief 视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。
+ * @brief 视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。建议设置。
  *        本参数不支持过程中更新。
  */
 @property(assign, nonatomic) NSInteger gop;
 /** 
- * @brief 合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。
+ * @brief 合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。建议设置。
  */
 @property(assign, nonatomic) NSInteger bitrate;
 /** 
@@ -2419,23 +2627,23 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamVideoConfig : NSObject
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamAudioConfig : NSObject
 /** 
  * @brief 音频编码格式。
- * @param codec 音频编码格式，参看 ByteRTCMixedStreamAudioCodecType{@link #ByteRTCMixedStreamAudioCodecType}。默认值为 `0`。
+ * @param codec 音频编码格式，参看 ByteRTCMixedStreamAudioCodecType{@link #ByteRTCMixedStreamAudioCodecType}。默认值为 `0`。建议设置。
  */
 @property(assign, nonatomic) ByteRTCMixedStreamAudioCodecType audioCodec;
 /** 
- * @brief 音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。
+ * @brief 音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。建议设置。
  */
 @property(assign, nonatomic) NSInteger sampleRate;
 /** 
- * @brief 音频声道数。可取 1（单声道）、2（双声道），默认值为 2。
+ * @brief 音频声道数。可取 1（单声道）、2（双声道），默认值为 2。建议设置。
  */
 @property(assign, nonatomic) NSInteger channels;
 /** 
- * @brief 音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。
+ * @brief 音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。建议设置。
  */
 @property(assign, nonatomic) NSInteger bitrate;
 /** 
- * @brief AAC 编码规格，参看 ByteRTCMixedStreamAudioProfile{@link #ByteRTCMixedStreamAudioProfile}。默认值为 `0`。
+ * @brief AAC 编码规格，参看 ByteRTCMixedStreamAudioProfile{@link #ByteRTCMixedStreamAudioProfile}。默认值为 `0`。建议设置。
  */
 @property(assign, nonatomic) ByteRTCMixedStreamAudioProfile audioProfile;
 /**
@@ -2451,20 +2659,20 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamAudioConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamSpatialAudioConfig : NSObject
 /** 
- * @brief 是否开启推流 CDN 时的空间音频效果。
- * @notes 当你启用此效果时，你需要设定推流中各个 ByteRTCMixedStreamLayoutRegionConfig{@link #ByteRTCMixedStreamLayoutRegionConfig} 的 `spatialPosition` 值，实现空间音频效果。
+ * @brief 是否开启推流 CDN 时的空间音频效果。<br>
+ *        当你启用此效果时，你需要设定推流中各个 ByteRTCMixedStreamLayoutRegionConfig{@link #ByteRTCMixedStreamLayoutRegionConfig} 的 `spatialPosition` 值，实现空间音频效果。
  */
 @property(assign, nonatomic) BOOL enableSpatialRender;
 /** 
- * @brief 听众的空间位置。参看 Position{@link #Position}。<br>
+ * @brief 听众的空间位置。参看 ByteRTCPosition{@link #ByteRTCPosition}。<br>
  *        听众指收听来自 CDN 的音频流的用户。
  */
-@property (strong, nonatomic) Position * _Nullable audienceSpatialPosition;
+@property (strong, nonatomic) ByteRTCPosition * _Nullable audienceSpatialPosition;
 /** 
- * @brief 听众的空间朝向。参看 HumanOrientation{@link #HumanOrientation}。<br>
+ * @brief 听众的空间朝向。参看 ByteRTCHumanOrientation{@link #ByteRTCHumanOrientation}。<br>
  *        听众指收听来自 CDN 的音频流的用户。
  */
-@property(strong, nonatomic) HumanOrientation * _Nullable audienceSpatialOrientation;
+@property(strong, nonatomic) ByteRTCHumanOrientation * _Nullable audienceSpatialOrientation;
 
 @end
 
@@ -2491,18 +2699,16 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamClientMixConfig : NSObject
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamSyncControlConfig : NSObject
 /** 
- * @brief 是否在转推直播时，启用单通模式。默认为 false，不启用。
- *        启用单通模式时，RTC SDK 会对指定的多个用户的媒体流进行同步处理，再合流后推送到 CDN，但基准流所属用户不会播放来自其他用户的媒体流。你需要设定以下参数。
- *        非单通模式时，RTC SDK 不会对媒体流进行同步处理，只是简单合流后推送到 CDN。以下参数设定无效。
+ * @brief 同步策略
  */
-@property(assign, nonatomic) BOOL enableSync;
+@property(assign, nonatomic)ByteRTCMixedStreamSyncStrategy syncStrategy;
 /** 
  * @brief 在进行同步处理时，基准流所属用户的 ID。默认为空。
  */
 @property(copy, nonatomic) NSString * _Nullable baseUserID;
 /** 
- * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 0。
- * @notes 参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
+ * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 2000。<br>
+ *        参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
  */
 @property(assign, nonatomic) NSInteger maxCacheTimeMs;
 /** 
@@ -2514,11 +2720,80 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamSyncControlConfig : NSObject
 
 /** 
  * @type keytype
+ * @brief 服务端合流控制参数
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamServerControlConfig : NSObject
+/** 
+ * @valid since 3.56
+ * @brief 是否开启单独发送声音提示 SEI 的功能：<br>
+ *        + True：开启；
+ *        + False：关闭。（默认值）
+ *        开启后，你可以通过 `ByteRTCMixedStreamServerControlConfig.seiContentMode` 控制 SEI 的内容是否只携带声音信息。
+ */
+@property(assign, nonatomic) BOOL enableVolumeIndication;
+/** 
+ * @valid since 3.56
+ * @brief 声音提示间隔，单位为秒，取值范围为 [0.3,+∞)，默认值为 2。<br>
+ *        此值仅取整百毫秒。若传入两位及以上小数，则四舍五入取第一位小数的值。例如，若传入 0.36，则取 0.4。
+ */
+@property(assign, nonatomic) CGFloat volumeIndicationInterval;
+/** 
+ * @valid since 3.56
+ * @brief 有效音量大小，取值范围为 [0, 255]，默认值为 0。<br>
+ *        超出取值范围则自动调整为默认值，即 0。
+ */
+@property(assign, nonatomic) NSInteger talkVolume;
+/** 
+ * @valid since 3.56
+ * @brief 声音信息 SEI 是否包含音量值：
+ *        + True：是；
+ *        + False：否，默认值。
+ */
+@property(assign, nonatomic) BOOL isAddVolumeValue;
+/** 
+ * @valid since 3.56
+ * @brief 设置 SEI 内容。参看 ByteRTCMixedStreamSEIContentMode{@link #ByteRTCMixedStreamSEIContentMode}。
+ */
+@property(assign, nonatomic) ByteRTCMixedStreamSEIContentMode seiContentMode;
+/** 
+ * @valid since 3.56
+ * @brief SEI 信息的 payload type。<br>
+ *        默认值为 `100`，只支持设置 `5` 和 `100`。<br>
+ *        在转推直播的过程中，该参数不支持变更。  
+ */
+@property(assign, nonatomic) NSInteger seiPayloadType;
+/** 
+ * @valid since 3.56
+ * @brief SEI 信息的 payload UUID。
+ * @notes PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  <br>
+ *         PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   <br>
+ *         该参数长度需为32位，否则会收到错误码为1091的回调。  <br>
+ *         该参数每个字符的范围需为 [0, 9] [a, f] [A, F] <br>
+ *         该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。<br>
+ *         在转推直播的过程中，该参数不支持变更。       
+ */
+@property(copy, nonatomic) NSString *seiPayloadUUID;
+/** 
+ * @valid since 3.57
+ * @brief 设置合流推到 CDN 时输出的媒体流类型。参看 ByteRTCMixedStreamMediaType{@link #ByteRTCMixedStreamMediaType}。<br>
+ *        默认输出音视频流。支持输出纯音频流，但暂不支持输出纯视频流。
+ */
+@property(assign, nonatomic) ByteRTCMixedStreamMediaType mediaType;
+/** 
+ * @valid since 3.57
+ * @brief 设置是否在没有用户发布流的情况下发起转推直播。具体参看 ByteRTCMixedStreamPushMode{@link #ByteRTCMixedStreamPushMode}。<br>
+ *        该参数在发起合流任务后的转推直播过程中不支持动态变更。
+ */
+@property(assign, nonatomic) ByteRTCMixedStreamPushMode pushStreamMode;
+@end
+
+/** 
+ * @type keytype
  * @brief 转推直播配置参数。(新)
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
 /** 
- * @brief 合流类型，详见 ByteRTCMixedStreamType{@link #ByteRTCMixedStreamType} 数据类型。
+ * @brief 合流类型，详见 ByteRTCMixedStreamType{@link #ByteRTCMixedStreamType} 数据类型。建议设置。
  */
 @property(assign, nonatomic) ByteRTCMixedStreamType expectedMixingType;
 /** 
@@ -2527,15 +2802,15 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
  */
 @property(strong, nonatomic) ByteRTCMixedStreamLayoutConfig * _Nonnull layoutConfig;
 /** 
- * @brief 视频转码配置参数。详见 ByteRTCMixedStreamVideoConfig{@link #ByteRTCMixedStreamVideoConfig} 数据类型。
+ * @brief 视频转码配置参数。详见 ByteRTCMixedStreamVideoConfig{@link #ByteRTCMixedStreamVideoConfig} 数据类型。建议设置。
  */
 @property(strong, nonatomic) ByteRTCMixedStreamVideoConfig * _Nonnull videoConfig;
 /** 
- * @brief 音频合流配置参数，参看 ByteRTCMixedStreamAudioConfig{@link #ByteRTCMixedStreamAudioConfig}。
+ * @brief 音频合流配置参数，参看 ByteRTCMixedStreamAudioConfig{@link #ByteRTCMixedStreamAudioConfig}。建议设置。
  */
 @property(strong, nonatomic) ByteRTCMixedStreamAudioConfig * _Nonnull audioConfig;
 /** 
- * @brief 客户端合流配置。详见 ByteRTCMixedStreamClientMixConfig{@link #ByteRTCMixedStreamClientMixConfig} 。
+ * @brief 客户端合流配置。详见 ByteRTCMixedStreamClientMixConfig{@link #ByteRTCMixedStreamClientMixConfig} 。建议设置。
  */
 @property(strong, nonatomic) ByteRTCMixedStreamClientMixConfig * _Nullable clientMixConfig;
 /** 
@@ -2548,7 +2823,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
  * @brief 转推 CDN 空间音频配置。详见 ByteRTCMixedStreamSpatialAudioConfig{@link #ByteRTCMixedStreamSpatialAudioConfig} 。
  */
 @property(strong, nonatomic) ByteRTCMixedStreamSpatialAudioConfig * _Nonnull spatialAudioConfig;
-
+/** 
+ * @brief 服务端合流控制参数。详见 ByteRTCMixedStreamServerControlConfig{@link #ByteRTCMixedStreamServerControlConfig} 。
+ */
+@property(strong, nonatomic) ByteRTCMixedStreamServerControlConfig * _Nonnull serverControlConfig;
 /** 
  * @hidden for internal use only
  * @brief 动态扩展自定义参数。
@@ -2560,17 +2838,17 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
  */
 @property(strong, nonatomic) NSMutableDictionary *  _Nullable authInfo;
 /** 
- * @brief 推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。
+ * @brief 推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。建议设置。
  *        本参数不支持过程中更新。
  */
 @property(copy, nonatomic) NSString * _Nullable pushURL;
 /** 
- * @brief 推流房间 ID。`roomID` 和 `userID` 长度相加不得超过 126 字节。
+ * @brief 推流房间 ID。`roomID` 和 `userID` 长度相加不得超过 126 字节。建议设置。
  *        本参数不支持过程中更新。
  */
 @property(copy, nonatomic) NSString * _Nonnull roomID;
 /** 
- * @brief 推流用户 ID。`roomID` 和 `userID` 长度相加不得超过 126 字节。
+ * @brief 推流用户 ID。`roomID` 和 `userID` 长度相加不得超过 126 字节。建议设置。
  *        本参数不支持过程中更新。
  */
 @property(copy, nonatomic) NSString * _Nonnull userID;
@@ -2750,6 +3028,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkProtocol <NSObject>
  * @brief 自定义视频渲染器
  */
 BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
+@optional
 /** 
  * @deprecated since 3.54, use onFrame: instead
  * @type api
@@ -2848,6 +3127,48 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoFrameObserver <NSObject>
 
 /** 
  * @type keytype
+ * @brief 本地视频帧回调配置。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoSinkConfig : NSObject
+/** 
+ * @brief 本地视频帧回调位置，参看 ByteRTCLocalVideoRenderPosition{@link #ByteRTCLocalVideoRenderPosition}，默认回调前处理后的视频帧。
+ */
+@property(nonatomic, assign) ByteRTCLocalVideoRenderPosition position;
+/** 
+ * @brief 本地视频帧回调格式，参看 ByteRTCVideoSinkPixelFormat{@link #ByteRTCVideoSinkPixelFormat}，默认值为 0。
+ */
+@property(nonatomic, assign) ByteRTCVideoSinkPixelFormat requiredPixelFormat;
+
+@end
+
+/** 
+ * @type keytype
+ * @brief 远端视频帧回调配置。
+ */
+BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoSinkConfig : NSObject
+/** 
+ * @brief 远端视频帧回调位置，参看 ByteRTCRemoteVideoRenderPosition{@link #ByteRTCRemoteVideoRenderPosition}，默认回调后处理后的视频帧。
+ */
+@property(nonatomic, assign) ByteRTCRemoteVideoRenderPosition position;
+
+/** 
+ * @brief 远端视频帧回调格式，参看 ByteRTCVideoSinkPixelFormat{@link #ByteRTCVideoSinkPixelFormat}，默认值为 0。
+ */
+@property(nonatomic, assign) ByteRTCVideoSinkPixelFormat requiredPixelFormat;
+/** 
+ * @brief 是否将视频帧自动转正，参看 ByteRTCVideoApplyRotation{@link #ByteRTCVideoApplyRotation}，默认为不旋转。
+ */
+@property(nonatomic, assign) ByteRTCVideoApplyRotation applyRotation;
+/** 
+ * @brief 是否将视频帧镜像。参看 ByteRTCVideoRenderMirrorType{@link #ByteRTCVideoRenderMirrorType}，默认为不镜像。
+ *        本设置与 setRemoteVideoMirrorType:withMirrorType:{@link #ByteRTCVideo#setRemoteVideoMirrorType:withMirrorType:} （适用于内部渲染）相互独立。
+ */
+@property(nonatomic, assign) ByteRTCVideoRenderMirrorType mirrorType;
+
+@end
+
+/** 
+ * @type keytype
  * @brief 视频处理配置参数
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideoPreprocessorConfig : NSObject
@@ -2855,7 +3176,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoPreprocessorConfig : NSObject
  * @brief 视频帧的像素格式，参看 ByteRTCVideoPixelFormat{@link #ByteRTCVideoPixelFormat}。
  *        当前仅支持 `ByteRTCVideoPixelFormatI420` 和 `ByteRTCVideoPixelFormatUnknown` 格式。
  */
-@property(nonatomic, assign) ByteRTCVideoPixelFormat required_pixel_format;
+@property(nonatomic, assign) ByteRTCVideoPixelFormat requiredPixelFormat;
 
 @end
 
@@ -3074,6 +3395,20 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCExternalVideoEncoderEventHandler<NSObject>
  */
 - (void)onRequestKeyFrame:(ByteRTCStreamIndex)streamIndex
            withVideoIndex:(NSInteger)videoIndex;
+@required
+/** 
+ * @valid since 3.56
+ * @type callback
+ * @brief 作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。
+ *        你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。
+ * @param streamIndex 远端编码流的属性，参看 ByteRTCStreamIndex{@link #ByteRTCStreamIndex}。
+ * @param videoIndex 对应编码流的下标
+ * @param active 该路流可发送状态
+ * @notes 要收到此回调，必须调用 setVideoSourceType:WithStreamIndex:{@link #ByteRTCVideo#setVideoSourceType:WithStreamIndex:} 设置视频源是自定义编码，且通过 setExternalVideoEncoderEventHandler:{@link #ByteRTCVideo#setExternalVideoEncoderEventHandler:} 设置了回调句柄。
+ */
+- (void)onActiveVideoLayer:(ByteRTCStreamIndex)streamIndex
+            withVideoIndex:(NSInteger)videoIndex
+                withActive:(BOOL)active;
 @end
 
 #pragma mark - ByteRTCEngineRemoteEncodedVideoFrameObserver
@@ -3484,19 +3819,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSourceCropInfo : NSObject
 /** 
  * @brief 裁剪后得到的视频帧左上角横坐标相对于裁剪前整体画面的比例，取值范围[0.0, 1.0)
  */
-@property(assign, nonatomic) CGFloat LocationX;
+@property(assign, nonatomic) CGFloat locationX;
 /** 
  * @brief 裁剪后得到的视频帧左上角纵坐标相对于裁剪前整体画面的比例，取值范围[0.0, 1.0)
  */
-@property(assign, nonatomic) CGFloat LocationY;
+@property(assign, nonatomic) CGFloat locationY;
 /** 
  * @brief 裁剪后得到的视频帧宽度相对于裁剪前整体画面的比例，取值范围(0.0, 1.0]
  */
-@property(assign, nonatomic) CGFloat WidthProportion;
+@property(assign, nonatomic) CGFloat widthProportion;
 /** 
  * @brief 裁剪后得到的视频帧高度相对于裁剪前整体画面的比例，取值范围(0.0, 1.0]
  */
-@property(assign, nonatomic) CGFloat HeightProportion;
+@property(assign, nonatomic) CGFloat heightProportion;
 @end
 /** 
  * @type keytype
@@ -3726,7 +4061,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoDeviceManager : NSObject
  * @type api
  * @region 视频设备管理
  * @brief 获取视频采集设备列表。
- * @return ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}
+ * @return 包含系统中所有视频采集设备的列表，参看 ByteRTCDeviceCollection{@link #ByteRTCDeviceCollection}。
+ * 等待超时后会返回空列表。超时时间默认为 10 s。建议通过 rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:} 监听到 `ByteRTCMediaDeviceListUpdated` 后，再次调用本接口获取。
+ * @notes 你可以在收到 rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:{@link #ByteRTCVideoDelegate#rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:} 了解设备变更后，重新调用本接口以获得新的设备列表。
  */
 - (ByteRTCDeviceCollection * _Nonnull)enumerateVideoCaptureDevices;
 /** 
@@ -3767,6 +4104,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSnapshotCallbackDelegate <NSObject>
  *        + 0: 成功 <br>
  *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
  *        + -2: 截图错误。流无效。
+ *        + -3: 截图错误。截图超时,超时时间1秒。
  */
 - (void)onTakeLocalSnapshotResult:(NSInteger) taskId
                       streamIndex:(ByteRTCStreamIndex)streamIndex
@@ -3782,6 +4120,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSnapshotCallbackDelegate <NSObject>
  *        + 0: 成功 <br>
  *        + -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br>
  *        + -2: 截图错误。流无效。
+ *        + -3: 截图错误。截图超时,超时时间1秒。
  */
 - (void)onTakeRemoteSnapshotResult:(NSInteger)taskId
                          streamKey:(ByteRTCRemoteStreamKey * _Nonnull)streamKey
@@ -3792,7 +4131,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSnapshotCallbackDelegate <NSObject>
 /** 
  * @type api
  * @region 音视频处理
- * @brief 高级视频特效。
+ * @brief 高级视频特效，参看[集成指南](https://www.volcengine.com/docs/6348/114717)。
  */
 BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEffect : NSObject
 
@@ -3810,6 +4149,26 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEffect : NSObject
  *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
  */
 - (int) setAlgoModelResourceFinder:(void*_Nonnull)finder deleter:(void*_Nonnull)deteter;
+
+#if BYTERTC_TARGET_MAC
+/** 
+ * @type api
+ * @hidden(iOS)
+ * @region 视频特效
+ * @brief 从特效 SDK 获取授权消息，用于获取在线许可证。
+ * @param ppmsg 授权消息字符串地址
+ * @return  <br>
+ *      + 0: 调用成功。
+ *      + –1000: 未集成特效 SDK。
+ *      + –1001: 特效 SDK 不支持该功能。
+ *      + –1002: 特效 SDK 版本不兼容。
+ *      + < 0: 调用失败，错误码对应具体描述参看 [错误码表](https://www.volcengine.com/docs/6705/102042)。
+ * @notes <br>
+ *        + 使用视频特效的功能前，你必须获取特效 SDK 的在线许可证。  <br>
+ *        + 通过此接口获取授权消息后，参考 [在线授权说明](https://www.volcengine.com/docs/6705/102012)，自行实现获取在线许可证的业务逻辑。获取许可证后，你必须调用 initCVResource:withAlgoModelDir:{@link #ByteRTCVideoEffect#initCVResource:withAlgoModelDir:} 确认许可证有效。然后，你才可以使用 CV 功能。  <br>
+ */
+- (int)getAuthMessage:(NSString *_Nullable*_Nullable)ppmsg;
+#endif
 
 /** 
  * @type api
@@ -4129,7 +4488,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCChorusCacheSyncMode) {
 
 /** 
  * @type keytype
- * @hidden
+ * @hidden for internal use
  * @brief 合唱缓存同步事件。
  */
 typedef NS_ENUM(NSUInteger, ByteRTCChorusCacheSyncEvent) {
@@ -4144,53 +4503,52 @@ typedef NS_ENUM(NSUInteger, ByteRTCChorusCacheSyncEvent) {
 };
 
 /** 
-* @hidden internal use only
-* @type errorcode
-* @brief 缓存同步错误码。
-*/
+ * @hidden for internal use only
+ * @type errorcode
+ * @brief 缓存同步错误码。
+ */
 typedef NS_ENUM(NSUInteger, ByteRTCChorusCacheSyncError) {
     /** 
      * @brief 成功。
      */
     ByteRTCChorusCacheSyncErrorOK = 0,
-   /** 
-    * @brief 失败。推送至 CDN 时，应进行以下设置：
-    *        + `IMixedStreamConfig.MixedStreamSyncControlConfig.enable_sync = true`；
-    *        + `IMixedStreamConfig.MixedStreamSyncControlConfig.base_user_id = {uid of producer}`。
-    */
+    /** 
+     * @brief 失败。推送至 CDN 时，应进行以下设置：
+     *        + `IMixedStreamConfig.MixedStreamSyncControlConfig.enable_sync = true`；
+     *        + `IMixedStreamConfig.MixedStreamSyncControlConfig.base_user_id = {uid of producer}`。
+     */
     ByteRTCChorusCacheSyncErrorWrongState = 1,
     /** 
-    * @brief 缓存同步功能已启动，不需要重复开启。
-    */
+     * @brief 缓存同步功能已启动，不需要重复开启。
+     */
     ByteRTCChorusCacheSyncErrorAlreadyRunning = 2
 };
 
 /** 
-* @hidden internal use only
-* @type keytype
-* @brief 缓存同步配置。
-*/
+ * @hidden for internal use only
+ * @type keytype
+ * @brief 缓存同步配置。
+ */
 BYTERTC_APPLE_EXPORT @interface ByteRTCChorusCacheSyncConfig: NSObject
 /** 
-* @brief 最大媒体缓存时长（ms）。
-*        取值范围是 `[500, 2500]`，默认值是 `2000`。
-*        值越大，同步效果越好，但会造成占用内存较大。如果参与缓存同步的各路媒体流之间的时间差超过此值，会造成丢帧。
-*/
+ * @brief 最大媒体缓存时长（ms）。
+ *        取值范围是 `[500, 2500]`，默认值是 `2000`。
+ *        值越大，同步效果越好，但会造成占用内存较大。如果参与缓存同步的各路媒体流之间的时间差超过此值，会造成丢帧。
+ */
 @property(assign, nonatomic) int maxCacheTimeMs;
 /** 
-  * @brief 模式。参看 ByteRTCChorusCacheSyncMode{@link #ByteRTCChorusCacheSyncMode}. 默认值是 `retransmitter`。  
-  */
- @property (assign, nonatomic) ByteRTCChorusCacheSyncMode mode;
+ * @brief 模式。参看 ByteRTCChorusCacheSyncMode{@link #ByteRTCChorusCacheSyncMode}. 默认值是 `retransmitter`。  
+ */
+@property (assign, nonatomic) ByteRTCChorusCacheSyncMode mode;
 /** 
-  * @brief 收到 onSyncedVideoFrames:withUids:{@link #ByteRTCChorusCacheSyncObserver#onSyncedVideoFrames:withUids:} 的频率。
-  *        默认值是 `15`。此值通常应小于等于原始视频帧率；如果大于原始视频帧率，可能会收到重复帧。
-  */
- @property(assign, nonatomic) int videoFps;
-
-+ (instancetype _Nonnull)defaultCacheSyncConfig;
+ * @brief 收到 onSyncedVideoFrames:withUids:{@link #ByteRTCChorusCacheSyncObserver#onSyncedVideoFrames:withUids:} 的频率。
+ *        默认值是 `15`。此值通常应小于等于原始视频帧率；如果大于原始视频帧率，可能会收到重复帧。
+ */
+@property(assign, nonatomic) int videoFps;
 @end
 
 /** 
+ * @hidden for internal use only
  * @type callback
  * @brief 缓存同步 Observer
  */

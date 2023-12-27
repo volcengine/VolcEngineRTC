@@ -17,10 +17,10 @@
 
 
 // group id 使用您的帐号登录 https://developer.apple.com/ ，进行操作
-#define APP_GROUP @""
+#define APP_GROUP @"group.rtc.demo.advanced.ios.screenShare"
 
 // 扩展的buundleID
-#define EXTENSION_BUNDLE_ID @""
+#define EXTENSION_BUNDLE_ID @"com.ss.rtc.demo.advanced.ios.screenShare"
 
 
 

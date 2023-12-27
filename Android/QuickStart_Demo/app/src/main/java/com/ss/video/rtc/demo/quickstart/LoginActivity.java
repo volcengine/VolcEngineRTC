@@ -64,11 +64,11 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         if (!Pattern.matches(Constants.INPUT_REGEX, roomId)) {
-            Toast.makeText(this, "输入不合法，只支持数字、大小写字母、@._-", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "输入不合法，只支持数字、大小写字母、@._-，长度需小于128字符", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!Pattern.matches(Constants.INPUT_REGEX, userId)) {
-            Toast.makeText(this, "输入不合法，只支持数字、大小写字母、@._-", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "输入不合法，只支持数字、大小写字母、@._-, 长度需小于128字符", Toast.LENGTH_SHORT).show();
             return;
         }
         Intent intent = new Intent(this, RTCRoomActivity.class);

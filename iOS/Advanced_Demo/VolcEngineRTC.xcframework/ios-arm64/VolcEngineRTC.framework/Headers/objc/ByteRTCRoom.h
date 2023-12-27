@@ -59,7 +59,7 @@
  * @param rtcRoom  ByteRTCRoom 对象。  <br>
  * @param stats 保留参数，目前为空。
  * @notes  <br>
- *       + 用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 方法离开房间后，如果立即调用 destroyRTCVideo{@link #ByteRTCVideo#destroyRTCVideo} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+ *       + 用户调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 方法离开房间后，如果立即调用 destroy{@link #ByteRTCRoom#destroy} 销毁房间实例或 destroyRTCVideo{@link #ByteRTCVideo#destroyRTCVideo} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
  *       + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  <br>
  */
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onLeaveRoom:(ByteRTCRoomStats *_Nonnull)stats;
@@ -421,17 +421,17 @@
      * @region 多房间
      * @brief 跨房间媒体流转发状态和错误回调
      * @param rtcRoom ByteRTCRoom 对象
-     * @param infos 跨房间媒体流转发目标房间信息数组，详见 ForwardStreamStateInfo{@link #ForwardStreamStateInfo}
+     * @param infos 跨房间媒体流转发目标房间信息数组，详见 ByteRTCForwardStreamStateInfo{@link #ByteRTCForwardStreamStateInfo}
      */
-    - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onForwardStreamStateChanged:(NSArray<ForwardStreamStateInfo *> * _Nonnull)infos;
+    - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onForwardStreamStateChanged:(NSArray<ByteRTCForwardStreamStateInfo *> * _Nonnull)infos;
     /** 
      * @type callback
      * @region 多房间
      * @brief 跨房间媒体流转发事件回调
      * @param rtcRoom ByteRTCRoom 对象
-     * @param infos 跨房间媒体流转发目标房间事件数组，详见 ForwardStreamEventInfo{@link #ForwardStreamEventInfo}
+     * @param infos 跨房间媒体流转发目标房间事件数组，详见 ByteRTCForwardStreamEventInfo{@link #ByteRTCForwardStreamEventInfo}
      */
-    - (void)rtcRoom:( ByteRTCRoom * _Nonnull)rtcRoom onForwardStreamEvent:(NSArray<ForwardStreamEventInfo *> * _Nonnull)infos;
+    - (void)rtcRoom:( ByteRTCRoom * _Nonnull)rtcRoom onForwardStreamEvent:(NSArray<ByteRTCForwardStreamEventInfo *> * _Nonnull)infos;
 
 /** 
  * @type callback
@@ -513,17 +513,18 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @param token 动态密钥，用于对进房用户进行鉴权验证。  <br>
  *        进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br>
  *        使用不同 AppID 的 App 是不能互通的。  <br>
- *        请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。具体失败原因会通过 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调告知。  <br>
+ *        请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。
  * @param userInfo 用户信息。参看 ByteRTCUserInfo{@link #ByteRTCUserInfo}。  <br>
  * @param roomConfig 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 ByteRTCRoomConfig{@link #ByteRTCRoomConfig}。  <br>
  * @return 方法调用结果。  <br>
  *        +  0: 成功  <br>
  *        + -1: 参数无效  <br>
  *        + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom{@link #ByteRTCRoom#leaveRoom} 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  <br>
- *        + -3: room 为空 <br>
+ *        调用失败时，具体失败原因会通过 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调告知。  <br>
  * @notes  <br>
  *        + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知，错误类型为重复登录 ByteRTCErrorCodeDuplicateLogin。  <br>
- *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。关于可见性设置参看 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:}。  <br>
+ *        + 本地用户调用此方法加入房间成功后，会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:} 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 回调通知。<br>
+ *        + 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用 setUserVisibility:{@link #ByteRTCRoom#setUserVisibility:} 更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，其中最多 30 人可同时上麦，更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。<br>
  *        + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 rtcEngine:onConnectionStateChanged:{@link #ByteRTCVideoDelegate#rtcEngine:onConnectionStateChanged:} 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:}。
  */
 - (int)joinRoom:(NSString *_Nullable)token userInfo:(ByteRTCUserInfo *_Nonnull)userInfo roomConfig:(ByteRTCRoomConfig *_Nonnull)roomConfig NS_SWIFT_NAME(joinRoom(_:userInfo:roomConfig:));
@@ -532,6 +533,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  * @type api
  * @region 多房间
  * @brief 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
+ *        默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
  * @param enable 设置用户是否对房间内其他用户可见：  <br>
  *        + YES: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
  *        + NO: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
@@ -587,9 +589,9 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 /** 
  * @type api
  * @brief 更新 Token。
- *        Token 中同时包含进房、发布和订阅权限，各权限有一定的有效期，并且到期前 30 秒会触发回调，提示用户更新 Token 相关权限。此时需要重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
+ *        收到 onTokenWillExpire:{@link #ByteRTCRoomDelegate#onTokenWillExpire:}，onPublishPrivilegeTokenWillExpire:{@link #ByteRTCRoomDelegate#onPublishPrivilegeTokenWillExpire:}，或 onSubscribePrivilegeTokenWillExpire:{@link #ByteRTCRoomDelegate#onSubscribePrivilegeTokenWillExpire:} 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
  * @param token 重新获取的有效 Token。
- *        如果传入的 Token 无效，回调错误码为 ByteRTCErrorCode{@link #ByteRTCErrorCode} 中的 `-1010` 提示传入的 Token 无效。
+ *        如果 Token 无效，你会收到 rtcRoom:onRoomStateChanged:withUid:state:extraInfo:{@link #ByteRTCRoomDelegate#rtcRoom:onRoomStateChanged:withUid:state:extraInfo:}，错误码是 `-1010`。
  * @return <br>
  *        + 0：成功；
  *        + !0：失败。
@@ -702,7 +704,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        + 0：成功；
  *        + <0：失败。具体失败原因参看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus}。
  * @notes  <br>
- *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
+ *        + 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。<br>
  *        + 你必须先通过 rtcRoom:onUserPublishStream:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishStream:type:} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
  *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeStream:mediaStreamType:{@link #ByteRTCRoom#unsubscribeStream:mediaStreamType:} 取消订阅或本端用户退房。 <br>
@@ -765,7 +767,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
  *        + 0：成功；
  *        + <0：失败。具体失败原因参看 ByteRTCReturnStatus{@link #ByteRTCReturnStatus}。
  * @notes  <br>
- *        + 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。<br>
+ *        + 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。<br>
  *        + 你必须先通过 rtcRoom:onUserPublishScreen:type:{@link #ByteRTCRoomDelegate#rtcRoom:onUserPublishScreen:type:} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  <br>
  *        + 调用该方法后，你会收到 rtcRoom:onStreamSubscribed:userId:subscribeConfig:{@link #ByteRTCRoomDelegate#rtcRoom:onStreamSubscribed:userId:subscribeConfig:} 通知方法调用结果。  <br>
  *        + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 unsubscribeScreen:mediaStreamType:{@link #ByteRTCRoom#unsubscribeScreen:mediaStreamType:} 取消订阅或本端用户退房。 <br>
@@ -891,7 +893,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
      * @region 多房间
      * @brief 开始跨房间转发媒体流。
      *        在调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:} 后调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。<br>
-     * @param configurations 跨房间媒体流转发指定房间的信息。参看 ForwardStreamConfiguration{@link #ForwardStreamConfiguration}。
+     * @param configurations 跨房间媒体流转发指定房间的信息。参看 ByteRTCForwardStreamConfiguration{@link #ByteRTCForwardStreamConfiguration}。
      * @return  <br>
      *        0: 方法调用成功
      *        <0: 方法调用失败  <br>
@@ -903,21 +905,21 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
      *        + 调用本方法后，可以调用 stopForwardStreamToRooms{@link #ByteRTCRoom#stopForwardStreamToRooms} 停止向所有房间转发媒体流。
      *        + 调用本方法后，可以调用 pauseForwardStreamToAllRooms{@link #ByteRTCRoom#pauseForwardStreamToAllRooms} 暂停向所有房间转发媒体流。
      */
-    - (int)startForwardStreamToRooms:(NSArray <ForwardStreamConfiguration *> * _Nullable)configurations NS_SWIFT_NAME(startForwardStreamToRooms(_:));
+    - (int)startForwardStreamToRooms:(NSArray <ByteRTCForwardStreamConfiguration *> * _Nullable)configurations NS_SWIFT_NAME(startForwardStreamToRooms(_:));
     /** 
      * @type api
      * @region 多房间
      * @brief 更新跨房间媒体流转发信息。<br>
      *        通过 startForwardStreamToRooms:{@link #ByteRTCRoom#startForwardStreamToRooms:} 发起媒体流转发后，可调用本方法增加或者减少目标房间，或更新房间密钥。
      *        调用本方法增加或删减房间后，将在本端触发 rtcRoom:onForwardStreamStateChanged:{@link #ByteRTCRoomDelegate#rtcRoom:onForwardStreamStateChanged:} 回调，包含发生了变动的目标房间中媒体流转发状态。
-     * @param configurations 跨房间媒体流转发目标房间信息。参看 ForwardStreamConfiguration{@link #ForwardStreamConfiguration}。
+     * @param configurations 跨房间媒体流转发目标房间信息。参看 ByteRTCForwardStreamConfiguration{@link #ByteRTCForwardStreamConfiguration}。
      * @return  <br>
      *        + 0: 方法调用成功  <br>
      * @notes <br>
      *        + 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 和发布 rtcRoom:onUserJoined:elapsed:{@link #ByteRTCRoomDelegate#rtcRoom:onUserJoined:elapsed:} 的回调。
      *        + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 rtcRoom:onUserUnpublishStream:type:reason: {@link #ByteRTCRoomDelegate#rtcRoom:onUserUnpublishStream:type:reason:} 和退房 rtcRoom:onUserLeave:reason:{@link #ByteRTCRoomDelegate#rtcRoom:onUserLeave:reason:} 的回调。
      */
-    - (int)updateForwardStreamToRooms:(NSArray <ForwardStreamConfiguration *> * _Nullable)configurations NS_SWIFT_NAME(updateForwardStreamToRooms(_:));
+    - (int)updateForwardStreamToRooms:(NSArray <ByteRTCForwardStreamConfiguration *> * _Nullable)configurations NS_SWIFT_NAME(updateForwardStreamToRooms(_:));
 /** 
  * @type api
  * @region 多房间
@@ -1070,27 +1072,33 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoom : NSObject
 
 
 /** 
+ * @valid since 3.52
  * @type api
  * @region 字幕翻译服务
  * @brief 识别或翻译房间内所有用户的语音，形成字幕。<br>
- *        语音识别或翻译的结果会通过 rtcRoom:onSubtitleMessageReceived:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleMessageReceived:} 事件回调给你。<br>
+ *        调用该方法时，可以在 SubtitleMode{@link #SubtitleMode} 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 rtcRoom:onSubtitleMessageReceived:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleMessageReceived:} 事件回调给你；<br>
+ *        如果选择翻译模式，你会同时收到两个 rtcRoom:onSubtitleMessageReceived:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleMessageReceived:} 回调，分别包含字幕原文及字幕译文。<br>
  *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:} 回调，通知字幕是否开启。
  * @param subtitleConfig 字幕配置信息。参看 ByteRTCSubtitleConfig{@link #ByteRTCSubtitleConfig}。
  * @return  <br>
  *        +  0: 调用成功。  <br>
  *        + !0: 调用失败。 
  * @notes <br>
- *         此方法需要在进房后调用。  <br> 
- *         如果想要指定源语言，你需要在进房前调用 `joinRoom` 接口，通过 extraInfo 参数传入 `"source_language": "zh"` JSON 字符串，设置源语言为中文；传入 `"source_language": "en"`JSON 字符串，设置源语言为英文；传入 `"source_language": "ja"` JSON 字符串，设置源语言为日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。  <br> 
- *         调用此方法前，你还需要前往[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
+ *        + 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。<br>
+ *        + 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。<br>
+ *        + 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。<br> *        + 此方法需要在进房后调用。  <br> 
+ *        + 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 extraInfo 参数传入格式为`"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
+ *          + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
+ *          + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。       
  */
 - (int)startSubtitle:(ByteRTCSubtitleConfig *_Nonnull)subtitleConfig;
 
 /** 
+ * @valid since 3.52
  * @type api
  * @region 字幕翻译服务
  * @brief 关闭字幕。 <br>
- *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link  #ByteRTCRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:}  回调，通知字幕是否关闭。
+ *        调用该方法后，用户会收到 rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:{@link #ByteRTCRoomDelegate#rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:}  回调，通知字幕是否关闭。
  * @return  <br>
  *        +  0: 调用成功。  <br>
  *        + !0: 调用失败。 

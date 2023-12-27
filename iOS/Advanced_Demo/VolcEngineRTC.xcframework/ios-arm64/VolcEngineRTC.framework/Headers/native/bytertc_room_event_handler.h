@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_ROOM_EVENT_HANDLER_INTERFACE_H__
-#define BYTE_RTC_ROOM_EVENT_HANDLER_INTERFACE_H__
-
 #include "rtc/bytertc_defines.h"
 
 namespace bytertc {
@@ -69,7 +66,7 @@ public:
      *        用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 方法后，SDK 会停止所有的发布订阅流，并在释放所有与通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br>
      * @param [in] stats 保留参数，目前为空。
      * @notes  <br>
-     *       + 用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 方法离开房间后，若立即调用 destroyRTCVideo{@link #destroyRTCVideo} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
+     *       + 用户调用 leaveRoom{@link #IRTCRoom#leaveRoom} 方法离开房间后，如果立即调用 destroy{@link #IRTCRoom#destroy} 销毁房间实例或 destroyRTCVideo{@link #destroyRTCVideo} 方法销毁 RTC 引擎，则将无法收到此回调事件。  <br>
      *       + 离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  <br>
      */
      virtual void onLeaveRoom(const RtcRoomStats& stats) {
@@ -572,4 +569,3 @@ public:
 
 } // namespace bytertc
 
-#endif // BYTE_RTC_ROOM_EVENT_HANDLER_INTERFACE_H__

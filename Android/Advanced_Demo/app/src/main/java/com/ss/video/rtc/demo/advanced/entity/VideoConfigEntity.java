@@ -55,8 +55,8 @@ public class VideoConfigEntity {
         // 1920 * 1080
         // width * height
         String[] split = str.split("\\*");
-        return new Pair<>(Integer.parseInt(split[1].trim()),
-                Integer.parseInt(split[0].trim()));
+        return new Pair<>(Integer.parseInt(split[0].trim()),
+                Integer.parseInt(split[1].trim()));
     }
 
     public Pair<Integer, Integer> getBitRatePair() {

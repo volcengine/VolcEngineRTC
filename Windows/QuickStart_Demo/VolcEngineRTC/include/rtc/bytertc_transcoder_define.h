@@ -17,77 +17,77 @@ enum StreamMixingEvent {
     /**
      * @hidden for internal use only
      */
-    kStreamMixingBase = 0,
+    kStreamMixingEventBase = 0,
     /** 
      * @brief 请求发起转推直播任务
      */
-    kStreamMixingStart = 1,
+    kStreamMixingEventStart = 1,
     /** 
      * @brief 发起转推直播任务成功
      */
-    kStreamMixingStartSuccess = 2,
+    kStreamMixingEventStartSuccess = 2,
     /** 
      * @brief 发起转推直播任务失败
      */
-    kStreamMixingStartFailed = 3,
+    kStreamMixingEventStartFailed = 3,
     /** 
      * @brief 请求更新转推直播任务配置
      */
-    kStreamMixingUpdate = 4,
+    kStreamMixingEventUpdate = 4,
     /** 
      * @brief 成功更新转推直播任务配置
      */
-    kStreamMixingUpdateSuccess = 5,
+    kStreamMixingEventUpdateSuccess = 5,
     /** 
      * @brief 更新转推直播任务配置失败
      */
-    kStreamMixingUpdateFailed = 6,
+    kStreamMixingEventUpdateFailed = 6,
     /** 
      * @brief 请求结束转推直播任务
      */
-    kStreamMixingStop = 7,
+    kStreamMixingEventStop = 7,
     /** 
      * @brief 结束转推直播任务成功
      */
-    kStreamMixingStopSuccess = 8,
+    kStreamMixingEventStopSuccess = 8,
     /** 
      * @brief 结束转推直播任务失败
      */
-    kStreamMixingStopFailed = 9,
+    kStreamMixingEventStopFailed = 9,
     /** 
      * @brief 更新转推直播任务配置的请求超时
      */
-    kStreamMixingChangeMixType = 10,
+    kStreamMixingEventChangeMixType = 10,
     /** 
      * @brief 得到客户端合流音频首帧
      */
-    kStreamMixingFirstAudioFrameByClientMix = 11,
+    kStreamMixingEventFirstAudioFrameByClientMix = 11,
     /** 
      * @brief 收到客户端合流视频首帧
      */
-    kStreamMixingFirstVideoFrameByClientMix = 12,
+    kStreamMixingEventFirstVideoFrameByClientMix = 12,
     /** 
      * @brief 更新转推直播任务配置超时
      */
-    kStreamMixingUpdateTimeout = 13,
+    kStreamMixingEventUpdateTimeout = 13,
     /** 
      * @brief 发起转推直播任务配置超时
      */
-    kStreamMixingStartTimeout = 14,
+    kStreamMixingEventStartTimeout = 14,
     /** 
      * @brief 合流布局参数错误
      */
-    kStreamMixingRequestParamError = 15,
+    kStreamMixingEventRequestParamError = 15,
     /** 
     * @brief 合流加图片
     */
-    kStreamMixingMixImageEvent = 16,
+    kStreamMixingEventMixImageEvent = 16,
     /** 
      * @hidden internal use only
      * @valid since 3.50
      * @brief 单通合唱事件
      */
-    kStreamMixingMixSingleWayChorusEvent = 17,
+    kStreamMixingEventMixSingleWayChorusEvent = 17,
 };
 
 
@@ -99,31 +99,31 @@ enum SingleStreamPushEvent {
     /**
      * @hidden for internal use only
      */
-    kSingleStreamPushBase = 0,
+    kSingleStreamPushEventBase = 0,
     /** 
     * @brief 开始推流。
     */
-   kSingleStreamPushStart = 1,
+   kSingleStreamPushEventStart = 1,
     /** 
     * @brief 推流成功。
     */
-   kSingleStreamPushSuccess = 2,
+   kSingleStreamPushEventSuccess = 2,
     /** 
     * @brief 推流失败。
     */
-   kSingleStreamPushFailed = 3,
+   kSingleStreamPushEventFailed = 3,
     /** 
      * @brief 停止推流。
      */
-    kSingleStreamPushStop = 4,
+    kSingleStreamPushEventStop = 4,
     /** 
     * @brief 单流转推直播任务处理超时，请检查网络状态并重试。
     */
-   kSingleStreamPushTimeout = 5,
+   kSingleStreamPushEventTimeout = 5,
     /** 
      * @brief 参数错误。
      */
-    kSingleStreamPushParamError = 6,
+    kSingleStreamPushEventParamError = 6,
 };
 
 /** 
@@ -134,70 +134,70 @@ enum StreamMixingErrorCode {
     /** 
      * @brief 推流成功。
      */
-    kStreamMixingErrorOK = 0,
+    kStreamMixingErrorCodeOK = 0,
     /** 
      * @brief 未定义的合流错误
      */
-    kStreamMixingErrorBase= 1090,
+    kStreamMixingErrorCodeBase= 1090,
     /** 
      * @brief 客户端 SDK 检测到无效推流参数。
      */
-    kStreamMixingErrorInvalidParam = 1091,
+    kStreamMixingErrorCodeInvalidParam = 1091,
     /** 
      * @brief 状态错误，需要在状态机正常状态下发起操作
      */
-    kStreamMixingErrorInvalidState = 1092,
+    kStreamMixingErrorCodeInvalidState = 1092,
     /** 
      * @brief 无效操作
      */
-    kStreamMixingErrorInvalidOperator = 1093,
+    kStreamMixingErrorCodeInvalidOperator = 1093,
     /** 
      * @brief 转推直播任务处理超时，请检查网络状态并重试
      */
-    kStreamMixingErrorTimeout = 1094,
+    kStreamMixingErrorCodeTimeout = 1094,
     /** 
      * @brief 服务端检测到错误的推流参数
      */
-    kStreamMixingErrorInvalidParamByServer = 1095,
+    kStreamMixingErrorCodeInvalidParamByServer = 1095,
     /** 
      * @brief 对流的订阅超时
      */
-    kStreamMixingErrorSubTimeoutByServer = 1096,
+    kStreamMixingErrorCodeSubTimeoutByServer = 1096,
     /** 
      * @brief 合流服务端内部错误。
      */
-    kStreamMixingErrorInvalidStateByServer = 1097,
+    kStreamMixingErrorCodeInvalidStateByServer = 1097,
     /** 
      * @brief 合流服务端推 CDN 失败。
      */
-    kStreamMixingErrorAuthenticationByCDN  = 1098,
+    kStreamMixingErrorCodeAuthenticationByCDN  = 1098,
     /** 
      * @brief 服务端接收信令超时，请检查网络状态并重试。
      */
-    kStreamMixingErrorTimeoutBySignaling = 1099,
+    kStreamMixingErrorCodeTimeoutBySignaling = 1099,
     /** 
      * @brief 图片合流失败。
      */
-    kStreamMixingErrorMixImageFail = 1100,
+    kStreamMixingErrorCodeMixImageFail = 1100,
     /** 
      * @brief 服务端未知错误。
      */
-    kStreamMixingErrorUnKnownByServer = 1101,
+    kStreamMixingErrorCodeUnKnownByServer = 1101,
     /** 
      * @hidden internal use only
      * @valid since 3.50
      * @brief 缓存未同步。
      */
-    kStreamMixingErrorStreamSyncWorse = 1102,
+    kStreamMixingErrorCodeStreamSyncWorse = 1102,
     /** 
      * @hidden 只供内部使用
      * @brief 合流消息中的用户布局信息发生了变化。
      */
-    kStreamMixingErrorUpdateRegionChanged = 1103,
+    kStreamMixingErrorCodeUpdateRegionChanged = 1103,
     /**
      * @hidden for internal use only
      */
-    kStreamMixingErrorMax = 1199,
+    kStreamMixingErrorCodeMax = 1199,
 };
 
 /** 
@@ -210,7 +210,8 @@ enum MixedStreamType {
      */
     kMixedStreamTypeByServer = 0,
     /** 
-     * @brief 端云一体合流
+     * @brief 端云一体合流。SDK 智能决策在客户端或服务端完成合流。
+     *        使用前，请联系技术支持同学开通，否则不生效。
      */
     kMixedStreamTypeByClient = 1,
 };
@@ -235,6 +236,25 @@ enum MixedStreamAudioProfile {
     kMixedStreamAudioProfileHEv2 = 2,
 };
 
+/**
+ * @hidden
+ * @brief notes missing
+ */
+enum MixedStreamSyncStrategy {
+    /** 
+     * @brief 不使用同步策略
+     */
+    kMixedStreamSyncStrategyNoSync = 0,
+    /** 
+     * @brief 使用音频精准同步策略
+     */
+    kMixedStreamSyncStrategyAudioPreciseSync = 1,
+    /** 
+     * @brief 使用单通模式同步策略
+     */
+    kMixedStreamSyncStrategySimplexModeSync = 2,
+};
+
 /** 
  * @type keytype
  * @brief 音频编码格式。(新)
@@ -244,6 +264,22 @@ enum MixedStreamAudioCodecType {
      * @brief AAC 格式。
      */
     kMixedStreamAudioCodecTypeAAC = 0,
+};
+
+/** 
+ * @type keytype
+ * @brief 服务端合流转推 SEI 内容。
+ */
+enum MixedStreamSEIContentMode {
+    /** 
+     * @brief 视频流中包含全部的 SEI 信息。默认设置。
+     */
+    kMixedStreamSEIContentModeDefault = 0,
+    /** 
+     * @brief 随非关键帧传输的 SEI 数据中仅包含音量信息。<br>
+     *        当设置 `MixedStreamServerControlConfig.enable_volume_indication` 为 True 时，此参数设置生效。
+     */
+    kMixedStreamSEIContentModeEnableVolumeIndication = 1,
 };
 
 /** 
@@ -346,7 +382,45 @@ enum MixedStreamClientMixVideoFormat {
 };
 /** 
  * @type keytype
- * @brief region中流的类型属性
+ * @brief 服务端合流转推发起模式。
+ */
+enum MixedStreamPushMode {
+    /** 
+     * @brief 无用户发布媒体流时，发起合流任务无效。默认设置。<br>
+     *        当有用户发布媒体流时，才能发起合流任务。
+     */
+    kMixedStreamPushModeOnStream = 0,
+    /** 
+     * @brief 无用户发布媒体流时，可以使用占位图发起合流任务。<br>
+     *        占位图设置参看 alternate_image_url{@link #MixedStreamLayoutRegionConfig#alternate_image_url} 和 alternate_image_fill_mode{@link #MixedStreamLayoutRegionConfig#alternate_image_fill_mode}
+     */
+    kMixedStreamPushModeOnStartRequest = 1,
+};
+/** 
+ * @type keytype
+ * @brief 服务端合流占位图填充模式。
+ */
+enum MixedStreamAlternateImageFillMode {
+    /** 
+     * @brief 占位图跟随用户原始视频帧相同的比例缩放。默认设置。
+     */
+    /**
+     * {en}
+     * @brief The placeholder image is scaled with the same aspect ratio as the user's original video frame. Default setting.
+     */
+    kMixedStreamAlternateImageFillModeFit = 0,
+    /** 
+     * @brief 占位图不跟随用户原始视频帧相同的比例缩放，保持图片原有比例。
+     */
+    /**
+     * {en}
+     * @brief The placeholder image is not scaled with the same aspect ratio as the user's original video frame. It maintains the original aspect ratio.
+     */
+    kMixedStreamAlternateImageFillModeFill = 1,
+};
+/** 
+ * @type keytype
+ * @brief region 中流的类型属性
  */
 enum MixedStreamVideoType {
     /** 
@@ -369,27 +443,29 @@ enum MixedStreamVideoType {
  */
 typedef struct MixedStreamAudioConfig {
     /** 
-     * @brief 音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。
+     * @brief 音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。建议设置。
      */
     int32_t sample_rate = 48000;
     /** 
-     * @brief 音频声道数。可取 1（单声道）、2（双声道），默认值为 2。
+     * @brief 音频声道数。可取 1（单声道）、2（双声道），默认值为 2。建议设置。
      */
     int32_t channels = 2;
     /** 
-     * @brief 音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。
+     * @brief 音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。建议设置。
      */
     int32_t bitrate = 64;
     /** 
-     * @brief AAC 编码规格，参看 MixedStreamAudioProfile{@link #MixedStreamAudioProfile}。默认值为 `0`。
+     * @brief AAC 编码规格，参看 MixedStreamAudioProfile{@link #MixedStreamAudioProfile}。默认值为 `0`。建议设置。
      */
     MixedStreamAudioProfile audio_profile = MixedStreamAudioProfile::kMixedStreamAudioProfileLC;
     /** 
-     * @brief 音频编码格式，参看 MixedStreamAudioCodecType{@link #MixedStreamAudioCodecType}。默认值为 `0`。
+     * @brief 音频编码格式，参看 MixedStreamAudioCodecType{@link #MixedStreamAudioCodecType}。默认值为 `0`。建议设置。
      */
     MixedStreamAudioCodecType audio_codec = MixedStreamAudioCodecType::kMixedStreamAudioCodecTypeAAC;
 } MixedStreamAudioConfig;
 
+#define MIXED_STREAM_VIDEO_DEFAULT_WIDTH 360
+#define MIXED_STREAM_DEFAULT_VIDEO_HEIGHT 640
 /** 
  * @type keytype
  * @brief 视频合流配置参数。(新)<br>
@@ -397,30 +473,30 @@ typedef struct MixedStreamAudioConfig {
  */
 typedef struct MixedStreamVideoConfig {
     /** 
-     * @brief 合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。
+     * @brief 合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。建议设置。
      *        设置值为非偶数时，自动向上取偶数。
      */
-    int32_t width = 360;
+    int32_t width = MIXED_STREAM_VIDEO_DEFAULT_WIDTH;
     /** 
-     * @brief 合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。
+     * @brief 合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。建议设置。
      *        设置值为非偶数时，自动向上取偶数。
      */
-    int32_t height = 640;
+    int32_t height = MIXED_STREAM_DEFAULT_VIDEO_HEIGHT;
     /** 
-     * @brief 合流视频帧率。单位为 FPS，取值范围为 [1,60]，默认值为 15 FPS。
+     * @brief 合流视频帧率。单位为 FPS，取值范围为 [1,60]，默认值为 15 FPS。建议设置。
      */
     int32_t fps = 15;
     /** 
-     * @brief 视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。
+     * @brief 视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。建议设置。
      *        本参数不支持过程中更新。
      */
     int32_t gop = 2;
     /** 
-     * @brief 合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。
+     * @brief 合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。建议设置。
      */
     int32_t bitrate = 500;
     /** 
-     * @brief 视频编码格式，参看 MixedStreamVideoCodecType{@link #MixedStreamVideoCodecType}。默认值为 `0`。
+     * @brief 视频编码格式，参看 MixedStreamVideoCodecType{@link #MixedStreamVideoCodecType}。默认值为 `0`。建议设置。
      *        本参数不支持过程中更新。
      */
     MixedStreamVideoCodecType video_codec = MixedStreamVideoCodecType::kMixedStreamVideoCodecTypeH264;
@@ -429,7 +505,7 @@ typedef struct MixedStreamVideoConfig {
       *        + true: 是  <br>
       *        + false: 否
       */
-     bool enable_Bframe = false;
+     bool enable_bframe = false;
 } MixedStreamVideoConfig;
 
 /** 
@@ -454,20 +530,23 @@ typedef struct MixedStreamClientMixConfig {
  */
 typedef struct MixedStreamSyncControlConfig {
     /** 
+     * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 2000。
+     * @notes 参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
+     */
+    int32_t max_cache_time_ms = 2000;
+    /** 
      * @brief 是否在转推直播时，启用单通模式。默认为 false，不启用。
      *        启用单通模式时，RTC SDK 会对指定的多个用户的媒体流进行同步处理，再合流后推送到 CDN，但基准流所属用户不会播放来自其他用户的媒体流。你需要设定以下参数。
      *        非单通模式时，RTC SDK 不会对媒体流进行同步处理，只是简单合流后推送到 CDN。以下参数设定无效。
      */
-    bool enable_sync = false;
+    /** 
+     * @brief 同步策略
+     */
+    MixedStreamSyncStrategy sync_strategy = MixedStreamSyncStrategy::kMixedStreamSyncStrategyNoSync;
     /** 
      * @brief 在进行同步处理时，基准流所属用户的 ID。默认为空。
      */
     const char* base_user_id = nullptr;
-    /** 
-     * @brief 在进行同步处理时，缓存音视频流的最大长度。单位为毫秒。默认值为 0。
-     * @notes 参与转推直播的这些媒体流延迟越高，应该将此值设置的越大。但此值越大，因缓存媒体流造成的内存占用也会更大。推荐值为 `2000`。
-     */
-    int32_t max_cache_time_ms = 0;
     /** 
      * @brief 是否通过 RTC SDK 进行转推直播。默认为 True。
      *        如果选择 `False`，你会通过 onCacheSyncVideoFrames{@link #ITranscoderObserver#onCacheSyncVideoFrames} 收到同步的帧，你可以使用此视频帧，自行实现合流转推。
@@ -514,35 +593,106 @@ typedef struct MixedStreamSpatialAudioConfig {
 
 /** 
  * @type keytype
+ * @brief 服务端合流控制参数
+ */
+typedef struct MixedStreamServerControlConfig {
+    /** 
+     * @valid since 3.56
+     * @brief 是否开启单独发送声音提示 SEI 的功能：<br>
+     *        + True：开启；
+     *        + False：关闭。（默认值）
+     *        开启后，你可以通过 `MixedStreamServerControlConfig.sei_content_mode` 控制 SEI 的内容是否只携带声音信息。
+     */
+    bool enable_volume_indication = false;
+    /** 
+     * @valid since 3.56
+     * @brief 声音提示间隔，单位为秒，取值范围为 [0.3,+∞)，默认值为 2。<br>
+     *        此值仅取整百毫秒。若传入两位及以上小数，则四舍五入取第一位小数的值。例如，若传入 0.36，则取 0.4。
+     */
+    float volume_indication_interval = 2.0f;
+    /** 
+     * @valid since 3.56
+     * @brief 有效音量大小，取值范围为 [0, 255]，默认值为 0。<br>
+     *        超出取值范围则自动调整为默认值，即 0。
+     */
+    int talk_volume = 0;
+    /** 
+     * @valid since 3.56
+     * @brief 声音信息 SEI 是否包含音量值：
+     *        + True：是；
+     *        + False：否，默认值。
+     */
+    bool is_add_volume_value = false;
+    /** 
+     * @valid since 3.56
+     * @brief 设置 SEI 内容。参看 MixedStreamSEIContentMode{@link #MixedStreamSEIContentMode}。
+     */
+    MixedStreamSEIContentMode sei_content_mode = kMixedStreamSEIContentModeDefault;
+    /** 
+     * @valid since 3.56
+     * @brief SEI 信息的 payload type。<br>
+     *        默认值为 `100`，只支持设置 `5` 和 `100`。<br>
+     *        在转推直播的过程中，该参数不支持变更。
+     */
+    int sei_payload_type = 100;
+    /** 
+     * @valid since 3.56
+     * @brief SEI 信息的 payload UUID。
+     * @notes PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  <br>
+     *         PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   <br>
+     *         该参数长度需为32位，否则会收到错误码为1091的回调。  <br>
+     *         该参数每个字符的范围需为 [0, 9] [a, f] [A, F] <br>
+     *         该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。<br>
+     *         在转推直播的过程中，该参数不支持变更。
+     */
+     const char* sei_payload_uuid = nullptr;
+     /** 
+      * @valid since 3.57
+      * @brief 设置合流推到 CDN 时输出的媒体流类型。参看 MixedStreamMediaType{@link #MixedStreamMediaType}。<br>
+      *        默认输出音视频流。支持输出纯音频流，但暂不支持输出纯视频流。
+      */
+     MixedStreamMediaType media_type = MixedStreamMediaType::kMixedStreamMediaTypeAudioAndVideo;
+     /** 
+      * @valid since 3.57
+      * @brief 设置是否在没有用户发布流的情况下发起转推直播。具体参看 MixedStreamPushMode{@link #MixedStreamPushMode}。<br>
+      *        该参数在发起合流任务后的转推直播过程中不支持动态变更。
+      */
+     MixedStreamPushMode push_stream_mode = MixedStreamPushMode::kMixedStreamPushModeOnStream;
+} MixedStreamServerControlConfig;
+
+/** 
+ * @type keytype
  * @brief 单个图片或视频流在合流中的布局信息。(新)
  *        开启合流功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
  */
 typedef struct MixedStreamLayoutRegionConfig {
     /** 
-     * @brief 合流用户的 ID。必填。
+     * @brief 合流用户的 ID。建议设置。
      */
     const char* region_id = nullptr;
    /** 
-     * @brief 图片或视频流所在房间的房间 ID。必填。<br>
+     * @brief 图片或视频流所在房间的房间 ID。建议设置。<br>
      *        如果此图片或视频流是通过 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms} 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
      */
     const char* room_id = nullptr;
     /** 
-     * @brief 视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
+     * @brief 单个用户画面左上角在整个画布坐标系中的 X 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的横向位移。<br>
+     *        取值范围为 [0, 整体画布宽度)。默认值为 0。
      */
-    float location_x = 0.0f;
+    int location_x = 0;
     /** 
-     * @brief 视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
+     * @brief 单个用户画面左上角在整个画布坐标系中的 Y 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的纵向位移。<br>
+     *        取值范围为 [0, 整体画布高度)。默认值为 0。
      */
-    float location_y = 0.0f;
+    int location_y = 0;
     /** 
-     * @brief 视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。
+     * @brief 单个用户画面的宽度。取值范围为 [0, 整体画布宽度]，默认值为 360。
      */
-    float width_proportion = 1.0f;
+    int width = MIXED_STREAM_VIDEO_DEFAULT_WIDTH;
     /** 
-     * @brief 视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。
+     * @brief 单个用户画面的高度。取值范围为 [0, 整体画布高度]，默认值为 640。
      */
-    float height_proportion = 1.0f;
+    int height = MIXED_STREAM_DEFAULT_VIDEO_HEIGHT;
     /** 
      * @brief 透明度，可选范围为 (0.0, 1.0]，0.0 为全透明。默认值为 1.0。
      */
@@ -572,7 +722,7 @@ typedef struct MixedStreamLayoutRegionConfig {
      */
     MixedStreamMediaType media_type = MixedStreamMediaType::kMixedStreamMediaTypeAudioAndVideo;
     /** 
-     * @brief 图片或视频流的缩放模式，参看 MixedStreamRenderMode{@link #MixedStreamRenderMode}。默认值为 1。
+     * @brief 图片或视频流的缩放模式，参看 MixedStreamRenderMode{@link #MixedStreamRenderMode}。默认值为 1。建议设置。
      */
     MixedStreamRenderMode render_mode = MixedStreamRenderMode::kMixedStreamRenderModeHidden;
     /** 
@@ -591,6 +741,17 @@ typedef struct MixedStreamLayoutRegionConfig {
      */
     MixedStreamLayoutRegionImageWaterMarkConfig image_water_mark_param;
     /** 
+     * @valid since 3.57
+     * @brief 设置占位图的填充模式。<br>
+     *        该参数用来控制当用户停止发布视频流，画面恢复为占位图后，此时占位图的填充模式。参看 MixedStreamAlternateImageFillMode{@link #MixedStreamAlternateImageFillMode}。
+     */
+    MixedStreamAlternateImageFillMode alternate_image_fill_mode = kMixedStreamAlternateImageFillModeFit;
+    /** 
+     * @valid since 3.57
+     * @brief 设置占位图的 URL，长度小于 1024 字符.
+     */
+    const char* alternate_image_url = nullptr;
+    /** 
      * @type keytype
      * @brief 空间位置。参看 Position{@link #Position}。
      */
@@ -607,11 +768,11 @@ typedef struct MixedStreamLayoutRegionConfig {
  */
 enum StreamMixingType {
     /** 
-     * @brief 服务端合流
+     * @brief 服务端合流。
      */
     kStreamMixingTypeByServer = 0,
     /** 
-     * @brief 端云一体合流
+     * @brief 端云一体合流。SDK 智能决策在客户端或服务端完成合流。
      */
     kStreamMixingTypeByClient = 1,
 };
@@ -855,7 +1016,7 @@ typedef struct TranscoderLayoutRegion {
     /** 
      * @brief （仅服务端合流支持设置）合流内容控制。默认值为 `kHasAudioAndVideo`，参看 TranscoderContentControlType{@link #TranscoderContentControlType}。
      */
-    TranscoderContentControlType content_control = kHasAudioAndVideo;
+    TranscoderContentControlType content_control = TranscoderContentControlType::kHasAudioAndVideo;
     /** 
      * @brief 图片或视频流的缩放模式，参看 TranscoderRenderMode{@link #TranscoderRenderMode}。默认值为 1。
      */
@@ -969,6 +1130,10 @@ typedef struct TranscoderSyncControlParam {
      *        非单通模式时，RTC SDK 不会对媒体流进行同步处理，只是简单合流后推送到 CDN。以下参数设定无效。
      */
     bool sync_stream = false;
+    /** 
+    * @hidden
+    */
+    MixedStreamSyncStrategy sync_strategy = MixedStreamSyncStrategy::kMixedStreamSyncStrategyNoSync;
     /** 
      * @brief 在进行同步处理时，基准流所属用户的 ID。默认为空。
      */
@@ -1187,17 +1352,17 @@ public:
      * @type api
      * @region 转推直播
      * @brief 设置动态扩展自定义参数
-     * @param [in] advancedConfig 动态扩展自定义参数
+     * @param [in] advanced_config 动态扩展自定义参数
      */
-    virtual void setAdvancedConfig(const char* advancedConfig) = 0;
+    virtual void setAdvancedConfig(const char* advanced_config) = 0;
     /** 
      * @hidden for internal use only
      * @type api
      * @region 转推直播
      * @brief 设置业务透传鉴权信息
-     * @param [in] authInfo 业务透传鉴权信息
+     * @param [in] auth_info 业务透传鉴权信息
      */
-    virtual void setAuthInfo(const char* authInfo) = 0;
+    virtual void setAuthInfo(const char* auth_info) = 0;
     /** 
      * @hidden internal use only
      * @valid since 3.50
@@ -1233,6 +1398,14 @@ public:
      * @return 生成的 ITranscoderParam 结构体
      */
     virtual ITranscoderParam* defaultTranscoding() = 0;
+    /**
+     * @hidden only provide for IMixedStreamConfig
+     */
+    virtual MixedStreamServerControlConfig getServerControlConfig() = 0;
+    /**
+     * @hidden only provide for IMixedStreamConfig
+     */
+    virtual void setServerControlConfig(MixedStreamServerControlConfig& config) = 0;
     /**
      * @hidden constructor/destructor
      */
@@ -1333,20 +1506,20 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置合流类型。
+     * @brief 设置合流类型。建议设置。
      * @param [in] expected_mix_type 合流类型，参看 MixedStreamType{@link #MixedStreamType}
      */
     virtual void setExpectedMixingType(MixedStreamType expected_mix_type) = 0;
     /** 
      * @type api
-     * @brief 设置推流用户 ID。`room_id` 和 `user_id` 长度相加不得超过 126 字节。
+     * @brief 设置推流用户 ID。`room_id` 和 `user_id` 长度相加不得超过 126 字节。建议设置。
      *        本参数不支持过程中更新。
      * @param [in] user_id 推流用户 ID。
      */
     virtual void setUserID(const char* user_id) = 0;
     /** 
      * @type api
-     * @brief 设置推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。
+     * @brief 设置推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。建议设置。
      *        本参数不支持过程中更新。
      * @param [in] url 推流地址。
      */
@@ -1354,14 +1527,14 @@ public:
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置音频参数。参看 MixedStreamAudioConfig{@link #MixedStreamAudioConfig}。
+     * @brief 设置音频参数。参看 MixedStreamAudioConfig{@link #MixedStreamAudioConfig}。建议设置。
      *        本参数不支持过程中更新。
      */
     virtual void setAudioConfig(const MixedStreamAudioConfig&) = 0;
     /** 
      * @type api
      * @region 转推直播
-     * @brief 设置视频参数。参看 MixedStreamVideoConfig{@link #MixedStreamVideoConfig}。
+     * @brief 设置视频参数。参看 MixedStreamVideoConfig{@link #MixedStreamVideoConfig}。建议设置。
      */
     virtual void setVideoConfig(const MixedStreamVideoConfig&) = 0;
     /** 
@@ -1375,9 +1548,9 @@ public:
      * @region 转推直播
      * @brief 设置视频流合流整体布局信息。
      * @param [in] regions[] 用户布局信息列表。为 MixedStreamLayoutRegionConfig{@link #MixedStreamLayoutRegionConfig} 数据类型的数组。每一个该类型对象为一路单独的视频流的布局信息。
-     *                       值不合法或未设置时，自动使用默认值。
-     * @param [in] regions_size 合流视窗数量。
-     * @param [in] background_color 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。
+     *                       值不合法或未设置时，自动使用默认值。建议设置。
+     * @param [in] regions_size 合流视窗数量。建议设置。
+     * @param [in] background_color 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。建议设置。
      *                      值不合法或未设置时，自动使用默认值。
      * @param [in] user_extra_info 透传的 App 数据。
      */
@@ -1390,17 +1563,17 @@ public:
      * @type api
      * @region 转推直播
      * @brief 设置动态扩展自定义参数
-     * @param [in] advancedConfig 动态扩展自定义参数
+     * @param [in] advanced_config 动态扩展自定义参数
      */
-    virtual void setAdvancedConfig(const char* advancedConfig) = 0;
+    virtual void setAdvancedConfig(const char* advanced_config) = 0;
     /** 
      * @hidden for internal use only
      * @type api
      * @region 转推直播
      * @brief 设置业务透传鉴权信息
-     * @param [in] authInfo 业务透传鉴权信息
+     * @param [in] auth_info 业务透传鉴权信息
      */
-    virtual void setAuthInfo(const char* authInfo) = 0;
+    virtual void setAuthInfo(const char* auth_info) = 0;
     /** 
      * @type api
      * @brief 设置客户端合流信息，参看 MixedStreamClientMixConfig{@link #MixedStreamClientMixConfig}。
@@ -1412,7 +1585,38 @@ public:
      * @brief 设置转推直播同步参数。参看 MixedStreamSyncControlConfig{@link #MixedStreamSyncControlConfig}。
      */
     virtual void setSyncControlConfig(MixedStreamSyncControlConfig&) = 0;
-
+    /** 
+     * @type api
+     * @brief 获取服务端合流控制参数。参看 MixedStreamServerControlConfig{@link #MixedStreamServerControlConfig}。
+     */
+    virtual MixedStreamServerControlConfig getServerControlConfig() = 0;
+    /** 
+     * @type api
+     * @brief 设置服务端合流控制参数。参看 MixedStreamServerControlConfig{@link #MixedStreamServerControlConfig}。
+     */
+    virtual void setServerControlConfig(MixedStreamServerControlConfig& config) = 0;
+    /** 
+     * @valid since 3.57
+     * @type api
+     * @brief 设置合流后整体画布的背景图片 URL，长度最大为 1024 bytes。<br>
+     *        支持的图片格式包括：JPG, JPEG, PNG。如果背景图片的宽高和整体屏幕的宽高不一致，背景图片会缩放到铺满屏幕。
+     */
+    virtual void setBackgroundImageURL(const char* background_image_url) = 0;
+    /** 
+     * @valid since 3.57
+     * @type api
+     * @brief 获取背景图片的地址。
+     */
+    virtual const char* getBackgroundImageURL() = 0;
+    /** 
+     * @hidden for internal use only
+     * @type api
+     * @region 转推直播
+     * @brief 将输入的 json 格式的字符串转成 ITranscoderParam 结构体
+     * @param [in] json_str json 格式字符串
+     * @return 转换后的 ITranscoderParam 结构体
+     */
+    virtual IMixedStreamConfig* inflatten(const char* json_str) = 0;
     /** 
      * @type api
      * @region 转推直播
@@ -1421,13 +1625,19 @@ public:
      */
     virtual IMixedStreamConfig* defaultMixedStreamConfig() = 0;
     /**
-     * @hidden convertToTranscoderParam
-     */
-    virtual ITranscoderParam* convertToTranscoderParam() = 0;
-    /**
      * @hidden constructor/destructor
      */
     virtual ~IMixedStreamConfig() = default;
+    /**
+     * @hidden for internal use only
+     * @type api
+     */
+    virtual void setConvertFromOldTranscodeParam(bool is_from_old_param) = 0;
+    /**
+     * @hidden for internal use only
+     * @type api
+     */
+    virtual bool getIsConvertFromOldTranscodeParam() = 0;
 };
 
 /** 
@@ -1451,7 +1661,7 @@ typedef struct PushSingleStreamParam {
     /** 
      * @brief 媒体流是否为屏幕流。
      */
-    const bool is_screen_stream;
+    bool is_screen_stream;
 }PushSingleStreamParam;
 
 /** 

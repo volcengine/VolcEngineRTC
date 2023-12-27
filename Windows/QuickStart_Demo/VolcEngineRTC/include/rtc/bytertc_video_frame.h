@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTC_VIDEO_FRAME_H__
-#define BYTE_RTC_VIDEO_FRAME_H__
-
 #include <stdint.h>
 #include <stddef.h>
 #include <memory>
@@ -101,15 +98,15 @@ enum VideoCodecMode {
     /** 
      * @brief 自动选择
      */
-    kCodecModeAuto = 0,
+    kVideoCodecModeAuto = 0,
     /** 
      * @brief 硬编码
      */
-    kCodecModeHardware,
+    kVideoCodecModeHardware,
     /** 
      * @brief 软编码
      */
-    kCodecModeSoftware,
+    kVideoCodecModeSoftware,
 };
 
 /** 
@@ -274,13 +271,13 @@ struct VideoEncoderConfig {
     /** 
      * @brief 视频帧率，单位：fps
      */
-    int frameRate;
+    int frame_rate;
     /** 
      * @brief 最大编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。  <br>
      *        内部采集模式下默认值为 -1，即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。 <br>
      *        设为 0 则不对视频流进行编码发送。
      */
-    int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
+    int max_bitrate = SEND_KBPS_AUTO_CALCULATE;
     /** 
      * @brief 视频最小编码码率, 单位 kbps。编码码率不会低于 `minBitrate`。<br>
      *        默认值为 `0`。<br>
@@ -289,11 +286,11 @@ struct VideoEncoderConfig {
      *        + 当 `maxBitrate` 为 `0` 时，不对视频流进行编码发送。<br>
      *        + 当 `maxBitrate` < `0` 时，适配码率模式。
      */
-     int minBitrate = 0;
+     int min_bitrate = 0;
     /** 
      * @brief 编码策略偏好，默认为帧率优先。参看 VideoEncodePreference{@link #VideoEncodePreference}。
      */
-    VideoEncodePreference encoderPreference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
+    VideoEncodePreference encoder_preference = VideoEncodePreference::kVideoEncodePreferenceFramerate;
 };
 
 /** 
@@ -335,7 +332,7 @@ struct VideoSolutionDescription {
     /** 
      * @brief 视频的编码模式。参看 VideoCodecMode{@link #VideoCodecMode}
      */
-    VideoCodecMode codec_mode = VideoCodecMode::kCodecModeAuto;
+    VideoCodecMode codec_mode = VideoCodecMode::kVideoCodecModeAuto;
     /** 
      * @brief 视频编码质量偏好策略。参看 VideoEncodePreference{@link #VideoEncodePreference}
      */
@@ -967,26 +964,24 @@ struct ScreenVideoEncoderConfig {
     /** 
      * @brief 视频帧率，单位：fps。
      */
-    int frameRate;
+    int frame_rate;
     /** 
      * @brief 最大编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
      *        设为 -1 即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。
      *        设为 0 则不对视频流进行编码发送。
      *        3.44 及以上版本，内部采集时默认值为 -1，3.44 以前版本无默认值，需手动设置。
      */
-    int maxBitrate = SEND_KBPS_AUTO_CALCULATE;
+    int max_bitrate = SEND_KBPS_AUTO_CALCULATE;
     /** 
      * @brief 最小编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
      *        最小编码码率必须小于或等于最大编码，否则不对视频流进行编码发送。
      */
-    int minBitrate = 0;
+    int min_bitrate = 0;
     /** 
      * @brief 屏幕流编码模式。参见 ScreenVideoEncodePreference{@link #ScreenVideoEncodePreference}。
      */
-    ScreenVideoEncodePreference encoderPreference = ScreenVideoEncodePreference::kScreenVideoEncodePreferenceQuality;
+    ScreenVideoEncodePreference encoder_preference = ScreenVideoEncodePreference::kScreenVideoEncodePreferenceQuality;
 };
 
 
 }  // namespace bytertc
-
-#endif // BYTE_RTC_VIDEO_FRAME_H__

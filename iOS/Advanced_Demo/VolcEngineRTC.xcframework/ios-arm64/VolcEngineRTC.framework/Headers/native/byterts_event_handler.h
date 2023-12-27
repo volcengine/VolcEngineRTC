@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef BYTE_RTS_EVENT_HANDLER_H__
-#define BYTE_RTS_EVENT_HANDLER_H__
-
 #include "rtc/bytertc_rts_defines.h"
 
 namespace bytertc {
@@ -50,7 +47,7 @@ public:
     * @type callback
     * @brief 当访问插件失败时，收到此回调。
     *        RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。
-    * @param [in] extensionName 插件名字
+    * @param [in] extension_name 插件名字
     * @param [in] msg 失败说明
     */
     /**
@@ -59,11 +56,11 @@ public:
     * @type callback
     * @brief Failed to access the extension.
     *        RTC SDK provides some features with extensions. Without implementing the extension, you cannot use the corresponding feature.
-    * @param [in] extensionName The name of extension.
+    * @param [in] extension_name The name of extension.
     * @param [in] msg Error message.
     */
-     void onExtensionAccessError(const char* extensionName, const char* msg) {
-        (void)extensionName;
+     void onExtensionAccessError(const char* extension_name, const char* msg) {
+        (void)extension_name;
         (void)msg;
      }
 
@@ -183,9 +180,10 @@ public:
      * @type callback
      * @region 实时消息通信
      * @brief 登出结果回调
-     * @notes 调用 logout{@link #IRTS#logout} 后，会收到此回调。
+     * @param reason 用户登出的原因，参看 LogoutReason{@link #LogoutReason}
+     * @notes 在以下两种情况下会收到此回调：调用 logout{@link #IRTS#logout} 接口主动退出；或其他用户以相同 UserId 进行 `login` 导致本地用户被动登出。
      */
-    virtual void onLogout() {
+    virtual void onLogout(LogoutReason reason) {
     }
     /** 
      * @type callback
@@ -208,7 +206,7 @@ public:
      *        需要查询的用户 ID
      * @param [in] status  <br>
      *        查询的用户登录状态  <br>
-     *        详见 USER_ONLINE_STATUS{@link #USER_ONLINE_STATUS}.
+     *        详见 UserOnlineStatus{@link #UserOnlineStatus}.
      * @notes 必须先调用 getPeerOnlineStatus{@link #IRTS#getPeerOnlineStatus}，才能收到此回调。
      */
     virtual void onGetPeerOnlineStatus(const char* peer_user_id, int status) {
@@ -290,17 +288,16 @@ public:
      * @type callback
      * @brief 调用 setLocalProxy{@link #IRTS#setLocalProxy} 设置本地代理，SDK对代理连接的状态
      * 回调此接口。
-     * @param [in] localProxyType 本地代理类型：sock5 或 httptunnel
-     * @param [in] localProxyState 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。  <br>
-     * @param [in] localProxyError 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。  <br>
+     * @param [in] local_proxy_type 本地代理类型：sock5 或 httptunnel
+     * @param [in] local_proxy_state 本地代理状态。参看 LocalProxyState{@link #LocalProxyState}。  <br>
+     * @param [in] local_proxy_error 本地代理错误。参看 LocalProxyError{@link #LocalProxyError}。  <br>
      */
-    virtual void onLocalProxyStateChanged(LocalProxyType localProxyType, LocalProxyState localProxyState, LocalProxyError localProxyError) {
-        (void)localProxyType;
-        (void)localProxyState;
-        (void)localProxyError;
+    virtual void onLocalProxyStateChanged(LocalProxyType local_proxy_type, LocalProxyState local_proxy_state, LocalProxyError local_proxy_error) {
+        (void)local_proxy_type;
+        (void)local_proxy_state;
+        (void)local_proxy_error;
     }
 };
 
 } // namespace bytertc
 
-#endif // BYTE_RTS_EVENT_HANDLER_H__

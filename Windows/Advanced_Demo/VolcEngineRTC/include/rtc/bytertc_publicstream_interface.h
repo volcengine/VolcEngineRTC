@@ -24,11 +24,11 @@ enum StreamLayoutMode {
     /** 
      * @brief 自动布局
      */
-    kLayoutAutoMode = 0,
+    kStreamLayoutModeAuto = 0,
     /** 
      * @brief 自定义
      */
-    kLayoutCustomerMode = 2
+    kStreamLayoutModeCustom = 2
 };
 
 /** 
@@ -39,19 +39,19 @@ typedef struct SourceCrop {
     /** 
      * @brief 裁剪后得到的视频帧左上角横坐标相对于裁剪前整体画面的归一化比例，取值范围[0.0, 1.0)
      */
-    float LocationX = 0.0;
+    float location_x = 0.0;
     /** 
      * @brief 裁剪后得到的视频帧左上角纵坐标相对于裁剪前整体画面的归一化比例，取值范围[0.0, 1.0)
      */
-    float LocationY = 0.0;
+    float location_y = 0.0;
     /** 
      * @brief 裁剪后得到的视频帧宽度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]
      */
-    float WidthProportion = 0.0;
+    float width_proportion = 0.0;
     /** 
      * @brief 裁剪后得到的视频帧高度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]
      */
-    float HeightProportion = 0.0;
+    float height_proportion = 0.0;
 } SourceCrop;
 /** 
  * @type keytype
@@ -171,13 +171,13 @@ struct PublicStreamLayout {
      *        + `0`: 自动模式。默认值。 <br>
      *        + `2`: 自定义模式。
      */
-    int layoutMode;
+    int layout_mode;
     /** 
      * @brief 插帧模式<br>
      *         + `0`: 补最后一帧<br>
      *         + `1`: 补背景图片，如果没有设置背景图片则补黑帧
      */
-    int interMode;
+    int interpolation_mode;
     /** 
      * @brief 背景图片
      */

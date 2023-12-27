@@ -29,6 +29,8 @@
 		CC6C6A1726CD32490041F9B0 /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = CC6C6A0C26CD32490041F9B0 /* MASConstraint.m */; };
 		CC6C6A1826CD32490041F9B0 /* MASViewConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = CC6C6A0E26CD32490041F9B0 /* MASViewConstraint.m */; };
 		CC6C6A1926CD32490041F9B0 /* MASViewAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = CC6C6A0F26CD32490041F9B0 /* MASViewAttribute.m */; };
+		CCC608042B270FC3000EFE3B /* RealXBase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CCC608022B270FBB000EFE3B /* RealXBase.xcframework */; };
+		CCC608052B270FC3000EFE3B /* RealXBase.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CCC608022B270FBB000EFE3B /* RealXBase.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -39,6 +41,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CC51ECF32A433419004F8987 /* bytenn.xcframework in Embed Frameworks */,
+				CCC608052B270FC3000EFE3B /* RealXBase.xcframework in Embed Frameworks */,
 				CC51ECF52A43341B004F8987 /* VolcEngineRTC.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -89,6 +92,7 @@
 		CC6C6A0D26CD32490041F9B0 /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		CC6C6A0E26CD32490041F9B0 /* MASViewConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewConstraint.m; sourceTree = "<group>"; };
 		CC6C6A0F26CD32490041F9B0 /* MASViewAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewAttribute.m; sourceTree = "<group>"; };
+		CCC608022B270FBB000EFE3B /* RealXBase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = RealXBase.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +101,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC51ECF22A433419004F8987 /* bytenn.xcframework in Frameworks */,
+				CCC608042B270FC3000EFE3B /* RealXBase.xcframework in Frameworks */,
 				CC51ECF42A43341B004F8987 /* VolcEngineRTC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -147,6 +152,7 @@
 		CC2AE8D326CB6C0A009D594D /* VolcEngineRTC */ = {
 			isa = PBXGroup;
 			children = (
+				CCC608022B270FBB000EFE3B /* RealXBase.xcframework */,
 				CC51ECEF2A433416004F8987 /* bytenn.xcframework */,
 				CC51ECEE2A433412004F8987 /* VolcEngineRTC.xcframework */,
 			);
@@ -444,7 +450,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = vertc.veRTCDemo.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = QuickStartInHouse.dist;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = veRTC_Development_20211117;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = veRTC_Development_20230823;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -455,6 +461,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = X46375UBYG;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
@@ -475,10 +482,10 @@
 					"$(PROJECT_DIR)/quickstart/VolcEngineRTC",
 				);
 				MARKETING_VERSION = 3.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ss.rtc.demo.quickstart.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = rtc.veRTCDemo.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = QuickStartInHouse.dist;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = QuickStartInHouse.dist;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VERTCDemoInHouseDist;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

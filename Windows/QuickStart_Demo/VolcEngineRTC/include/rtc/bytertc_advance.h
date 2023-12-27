@@ -1,14 +1,11 @@
-﻿/*
+/*
  * Copyright (c) 2020 The VolcEngineRTC project authors. All Rights Reserved.
  * @brief VolcEngineRTC Advance API
 */
 
 #pragma once
 
-#ifndef BYTE_RTC_ADVANCE_H__
-#define BYTE_RTC_ADVANCE_H__
-
-#include "bytertc_engine_interface.h"
+#include "../bytertc_video.h"
 
 #include <stdint.h>
 #ifdef __ANDROID__
@@ -49,6 +46,7 @@ struct RTCAudioSampleConfigure {
     bool external_audio_in_enable = false;
     bool pitchfilter_out_enable = false;
     bool decoder_out_enable = false;
+    bool front_aec_near_ref_enable = false;
     void reset() {
         aec_near_in_enable = false;
         aec_far_in_enable = false;
@@ -65,13 +63,14 @@ struct RTCAudioSampleConfigure {
         external_audio_in_enable = false;
         pitchfilter_out_enable = false;
         decoder_out_enable = false;
+        front_aec_near_ref_enable = false;
     }
-    void NormalMode() {
+    void normalMode() {
         aec_near_in_enable = true;
         aec_far_in_ref_enable = true;
         mix_out_enable = true;
     }
-    void AllMode() {
+    void allMode() {
         aec_near_in_enable = true;
         aec_far_in_enable = true;
         aec_far_in_ref_enable = true;
@@ -87,6 +86,7 @@ struct RTCAudioSampleConfigure {
         external_audio_in_enable = true;
         pitchfilter_out_enable = true;
         decoder_out_enable = true;
+        front_aec_near_ref_enable = true;
     }
 };
 
@@ -140,9 +140,9 @@ BYTERTC_API BYTERTC_DEPRECATED void setDeviceId(const char* device_id);
  * @brief 设置应用的状态
  * @param [in] engine
  *       要通知的引擎
- * @param [in] appState 应用状态字符串
+ * @param [in] app_state 应用状态字符串
  */
-BYTERTC_API void setAppState(void* engine, const char* appState);
+BYTERTC_API void setAppState(void* engine, const char* app_state);
 
 attribute_deprecated
 /** 
@@ -294,6 +294,7 @@ enum HWDeviceContextKey {
  */
 class IHWDeviceContext {
 public:
+    virtual ~IHWDeviceContext() = default;
     /** 
      * @brief 获取硬件加速设备 context 类型
      * @return 硬件加速设备类型，详见 HWDeviceType{@link #HWDeviceType}
@@ -398,6 +399,7 @@ public:
     virtual void setStreamMemory(const ManagedMemory& memory) = 0;
     virtual uint8_t* data() const = 0;
     virtual int dataSize() const = 0;
+    virtual int frameLength() const = 0;
 };
 
 /**
@@ -639,4 +641,3 @@ BYTERTC_API IAudioDeviceManagerEx* createAudioDeviceManager(IAudioDeviceEventHan
 
 }  // namespace bytertc
 
-#endif  // BYTE_RTC_ADVANCE_H__
