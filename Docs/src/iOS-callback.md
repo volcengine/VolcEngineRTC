@@ -36,6 +36,7 @@
 | **void** | [rtcRoom:onRoomMessageSendResult:error:](#ByteRTCRoomDelegate-rtcroom-onroommessagesendresult-error) |
 | **void** | [rtcRoom:onSetRoomExtraInfoResult:error:](#ByteRTCRoomDelegate-rtcroom-onsetroomextrainforesult-error) |
 | **void** | [rtcRoom:onRoomExtraInfoUpdate:value:lastUpdateUserId:lastUpdateTimeMs:](#ByteRTCRoomDelegate-rtcroom-onroomextrainfoupdate-value-lastupdateuserid-lastupdatetimems) |
+| **void** | [rtcRoom:onUserVisibilityChanged:errorCode:](#ByteRTCRoomDelegate-rtcroom-onuservisibilitychanged-errorcode) |
 | **void** | [rtcRoom:onVideoStreamBanned:isBanned:](#ByteRTCRoomDelegate-rtcroom-onvideostreambanned-isbanned) |
 | **void** | [rtcRoom:onAudioStreamBanned:isBanned:](#ByteRTCRoomDelegate-rtcroom-onaudiostreambanned-isbanned) |
 | **void** | [rtcRoom:onForwardStreamStateChanged:](#ByteRTCRoomDelegate-rtcroom-onforwardstreamstatechanged) |
@@ -106,7 +107,7 @@
 
 **注意**
 
-+ 用户调用 [leaveRoom](iOS-api.md#ByteRTCRoom-leaveroom) 方法离开房间后，如果立即调用 [destroyRTCVideo](iOS-api.md#ByteRTCVideo-destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。  
++ 用户调用 [leaveRoom](iOS-api.md#ByteRTCRoom-leaveroom) 方法离开房间后，如果立即调用 [destroy](iOS-api.md#ByteRTCRoom-destroy) 销毁房间实例或 [destroyRTCVideo](iOS-api.md#ByteRTCVideo-destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。  
 + 离开房间结束通话后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用了导致 App 初始化音视频设备失败。  
 
 
@@ -222,7 +223,7 @@ SDK 运行时出现了错误。SDK 通常无法自动恢复，应用需要采取
 
 - (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onUserJoined:(ByteRTCUserInfo *_Nonnull)userInfo elapsed:(NSInteger)elapsed;
 ```
-远端可见用户加入房间，或房内隐身用户切换为可见的回调。<br>
+远端可见用户加入房间，或房内不可见用户切换为可见的回调。<br>
 1. 远端用户调用 [setUserVisibility:](iOS-api.md#ByteRTCRoom-setuservisibility) 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br>
 2. 远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br>
 3. 房间内隐身远端用户调用 [setUserVisibility:](iOS-api.md#ByteRTCRoom-setuservisibility) 方法切换至可见时，房间内其他用户将收到该事件。  <br>
@@ -266,7 +267,7 @@ Token 进房权限过期前 30 秒将触发该回调。<br>
 **注意**
 若 Token 进房权限过期且未及时更新： + 用户此时尝试进房会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调，提示错误码为 `-1000` Token 无效； 
 
-+ 用户已在房间内则会被移出房间，本地用户会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调，提示错误码为 `-1009` Token 过期，同时远端用户会收到 [rtcRoom:onUserLeave:reason:](#ByteRTCRoomDelegate-rtcroom-onuserleave-reason) 回调，提示原因为 `2` Token 进房权限过期。
++ 用户已在房间内则会被移出房间，本地用户会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调，提示错误码为 `-1009` Token 过期，同时远端用户会收到 [rtcRoom:onUserLeave:reason:](#ByteRTCRoomDelegate-rtcroom-onuserleave-reason) 回调，提示原因为 `1` Token 进房权限过期。
 
 
 <span id="ByteRTCRoomDelegate-onpublishprivilegetokenwillexpire"></span>
@@ -597,6 +598,24 @@ Token 订阅权限过期前 30 秒将触发该回调。<br>
 | lastUpdateTimeMs | **NSInteger** | 最后更新这条附加信息的Unix时间，时间精度是毫秒 |
 
 
+<span id="ByteRTCRoomDelegate-rtcroom-onuservisibilitychanged-errorcode"></span>
+### rtcRoom:onUserVisibilityChanged:errorCode:
+```objectivec
+
+- (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onUserVisibilityChanged:(BOOL)currentUserVisibility errorCode:(ByteRTCUserVisibilityChangeError)errorCode;
+```
+> Available since 3.54
+
+用户调用 [setUserVisibility:](iOS-api.md#ByteRTCRoom-setuservisibility) 设置用户可见性的回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| currentUserVisibility | **BOOL** | 当前用户的可见性。  <br/>• YES: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。<br/>• NO: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+| errorCode | **ByteRTCUserVisibilityChangeError** | 设置用户可见性错误码，参看 [ByteRTCUserVisibilityChangeError](iOS-keytype.md#bytertcuservisibilitychangeerror)。 |
+
+
 <span id="ByteRTCRoomDelegate-rtcroom-onvideostreambanned-isbanned"></span>
 ### rtcRoom:onVideoStreamBanned:isBanned:
 ```objectivec
@@ -713,7 +732,7 @@ Token 订阅权限过期前 30 秒将触发该回调。<br>
 | --- | --- | --- |
 | rtcRoom | **ByteRTCRoom*** | ByteRTCRoom 实例。 |
 | state | **ByteRTCSubtitleState** | 字幕状态。参看 [ByteRTCSubtitleState](iOS-keytype.md#bytertcsubtitlestate)。 |
-| errorCode | **ByteRTCSubtitleErrorCode** | 字幕任务错误码。参看 [ByteRTCSubtitleErrorCode](iOS-keytype.md#bytertcsubtitleerrorcode)。 |
+| errorCode | **ByteRTCSubtitleErrorCode** | 字幕任务错误码。参看 [ByteRTCSubtitleErrorCode](iOS-errorcode.md#bytertcsubtitleerrorcode)。 |
 | errorMessage | **NSString*** | 第三方服务出现的错误。当因第三方服务出现错误，导致字幕状态改变时，用户可通过此参数获取具体的错误信息。如果不是因为第三方服务导致字幕状态改变，该字段为空。 |
 
 
@@ -784,6 +803,8 @@ ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理�
 | **void** | [rtcEngine:onSysStats:](#ByteRTCVideoDelegate-rtcengine-onsysstats) |
 | **void** | [rtcEngine:onRemoteAudioStateChanged:state:reason:](#ByteRTCVideoDelegate-rtcengine-onremoteaudiostatechanged-state-reason) |
 | **void** | [rtcEngine:onRemoteVideoStateChanged:withVideoState:withVideoStateReason:](#ByteRTCVideoDelegate-rtcengine-onremotevideostatechanged-withvideostate-withvideostatereason) |
+| **void** | [rtcEngine:onRemoteVideoSuperResolutionModeChanged:withMode:withReason:](#ByteRTCVideoDelegate-rtcengine-onremotevideosuperresolutionmodechanged-withmode-withreason) |
+| **void** | [rtcEngine:onVideoDenoiseModeChanged:withReason:](#ByteRTCVideoDelegate-rtcengine-onvideodenoisemodechanged-withreason) |
 | **void** | [rtcEngine:onLoginResult:errorCode:elapsed:](#ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed) |
 | **void** | [rtcEngineOnLogout:](#ByteRTCVideoDelegate-rtcengineonlogout) |
 | **void** | [rtcEngine:onServerParamsSetResult:](#ByteRTCVideoDelegate-rtcengine-onserverparamssetresult) |
@@ -794,7 +815,6 @@ ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理�
 | **void** | [rtcEngine:onServerMessageSendResult:error:message:](#ByteRTCVideoDelegate-rtcengine-onservermessagesendresult-error-message) |
 | **void** | [rtcEngine:onNetworkDetectionResult:quality:rtt:lostRate:bitrate:jitter:](#ByteRTCVideoDelegate-rtcengine-onnetworkdetectionresult-quality-rtt-lostrate-bitrate-jitter) |
 | **void** | [rtcEngine:onNetworkDetectionStopped:](#ByteRTCVideoDelegate-rtcengine-onnetworkdetectionstopped) |
-| **void** | [rtcEngine:onAudioMixingStateChanged:state:error:](#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) |
 | **void** | [rtcEngine:onAudioMixingPlayingProgress:progress:](#ByteRTCVideoDelegate-rtcengine-onaudiomixingplayingprogress-progress) |
 | **void** | [rtcEngine:onPerformanceAlarms:roomId:reason:sourceWantedData:](#ByteRTCVideoDelegate-rtcengine-onperformancealarms-roomid-reason-sourcewanteddata) |
 | **void** | [rtcEngine:onSimulcastSubscribeFallback:](#ByteRTCVideoDelegate-rtcengine-onsimulcastsubscribefallback) |
@@ -810,17 +830,17 @@ ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理�
 | **void** | [rtcEngine:onCloudProxyConnected:](#ByteRTCVideoDelegate-rtcengine-oncloudproxyconnected) |
 | **void** | [rtcEngine:onEchoTestResult:](#ByteRTCVideoDelegate-rtcengine-onechotestresult) |
 | **void** | [rtcEngineOnNetworkTimeSynchronized:](#ByteRTCVideoDelegate-rtcengineonnetworktimesynchronized) |
-| **void** | [rtcEngine:onLicenseWillExpire:](#ByteRTCVideoDelegate-rtcengine-onlicensewillexpire) |
 | **void** | [rtcEngine:onHardwareEchoDetectionResult:](#ByteRTCVideoDelegate-rtcengine-onhardwareechodetectionresult) |
 | **void** | [rtcEngine:onLocalProxyStateChanged:withProxyState:withProxyError:](#ByteRTCVideoDelegate-rtcengine-onlocalproxystatechanged-withproxystate-withproxyerror) |
+| **void** | [rtcEngine:onLocalAudioStateChanged:error:](#ByteRTCVideoDelegate-rtcengine-onlocalaudiostatechanged-error) |
+| **void** | [rtcEngine:onLocalVideoStateChanged:withStreamState:withStreamError:](#ByteRTCVideoDelegate-rtcengine-onlocalvideostatechanged-withstreamstate-withstreamerror) |
 | **void** | [[deprecated] rtcEngine:onUserMuteAudio:uid:muteState:](#ByteRTCVideoDelegate-rtcengine-onusermuteaudio-uid-mutestate) |
 | **void** | [[deprecated] rtcEngine:onUserMuteVideo:uid:withMuteState:](#ByteRTCVideoDelegate-rtcengine-onusermutevideo-uid-withmutestate) |
 | **void** | [[deprecated] rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:](#ByteRTCVideoDelegate-rtcengine-onmediadevicestatechanged-device_type-device_state-device_error) |
 | **void** | [[deprecated] rtcEngine:onMediaDeviceWarning:deviceType:deviceWarning:](#ByteRTCVideoDelegate-rtcengine-onmediadevicewarning-devicetype-devicewarning) |
 | **void** | [[deprecated] rtcEngine:onAudioPlaybackDeviceChanged:](#ByteRTCVideoDelegate-rtcengine-onaudioplaybackdevicechanged) |
-| **void** | [[deprecated] rtcEngine:onLocalAudioStateChanged:error:](#ByteRTCVideoDelegate-rtcengine-onlocalaudiostatechanged-error) |
-| **void** | [[deprecated] rtcEngine:onLocalVideoStateChanged:withStreamState:withStreamError:](#ByteRTCVideoDelegate-rtcengine-onlocalvideostatechanged-withstreamstate-withstreamerror) |
 | **void** | [[deprecated] rtcEngine:log:](#ByteRTCVideoDelegate-rtcengine-log) |
+| **void** | [[deprecated] rtcEngine:onAudioMixingStateChanged:state:error:](#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) |
 | **void** | [[deprecated] rtcEngine:onHttpProxyState:](#ByteRTCVideoDelegate-rtcengine-onhttpproxystate) |
 | **void** | [[deprecated] rtcEngine:onHttpsProxyState:](#ByteRTCVideoDelegate-rtcengine-onhttpsproxystate) |
 | **void** | [[deprecated] rtcEngine:onSocks5ProxyState:cmd:proxy_address:local_address:remote_address:](#ByteRTCVideoDelegate-rtcengine-onsocks5proxystate-cmd-proxy_address-local_address-remote_address) |
@@ -831,7 +851,7 @@ ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理�
 ### rtcEngine:onWarning:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onWarning:(ByteRTCWarningCode)Code;
+- (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onWarning:(ByteRTCWarningCode)code;
 ```
 发生警告回调。  <br>
 SDK 运行时出现了警告。SDK 通常会自动恢复，警告信息可以忽略。
@@ -841,7 +861,7 @@ SDK 运行时出现了警告。SDK 通常会自动恢复，警告信息可以忽
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 对象。 |
-| Code | **ByteRTCWarningCode** | 警告代码，参看 [ByteRTCWarningCode](iOS-errorcode.md#bytertcwarningcode)。 |
+| code | **ByteRTCWarningCode** | 警告代码，参看 [ByteRTCWarningCode](iOS-errorcode.md#bytertcwarningcode)。 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onerror"></span>
@@ -1097,7 +1117,9 @@ SDK 当前网络连接类型改变回调。
 
 - (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onUserStopVideoCapture:(NSString * _Nonnull)roomId uid:(NSString * _Nonnull)uid;
 ```
-房间内的可见用户调用 [stopVideoCapture](iOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
+
+- 房间内的可见用户调用 [stopVideoCapture](iOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
+- 若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。
 
 **传入参数**
 
@@ -1203,7 +1225,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 ### rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onMediaDeviceStateChanged:(NSString*_Nonnull)device_id device_type:(ByteRTCMediaDeviceType)device_type device_state:(ByteRTCMediaDeviceState)device_state device_error:(ByteRTCMediaDeviceError)device_error;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onMediaDeviceStateChanged:(NSString*_Nonnull)deviceID device_type:(ByteRTCMediaDeviceType)deviceType device_state:(ByteRTCMediaDeviceState)deviceState device_error:(ByteRTCMediaDeviceError)deviceError;
 ```
 > Deprecated  since 3.37 and will be deleted in 3.51, use [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) and [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) instead.
 
@@ -1214,17 +1236,17 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 实例 |
-| device_id | **NSString*** | 设备 ID |
-| device_type | **ByteRTCMediaDeviceType** | 设备类型，参看 [ByteRTCMediaDeviceType](iOS-keytype.md#bytertcmediadevicetype)。 |
-| device_state | **ByteRTCMediaDeviceState** | 设备状态，参看 [ByteRTCMediaDeviceState](iOS-keytype.md#bytertcmediadevicestate)。 |
-| device_error | **ByteRTCMediaDeviceError** | 设备错误类型，参看 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror)。 |
+| deviceID | **NSString*** | 设备 ID |
+| deviceType | **ByteRTCMediaDeviceType** | 设备类型，参看 [ByteRTCMediaDeviceType](iOS-keytype.md#bytertcmediadevicetype)。 |
+| deviceState | **ByteRTCMediaDeviceState** | 设备状态，参看 [ByteRTCMediaDeviceState](iOS-keytype.md#bytertcmediadevicestate)。 |
+| deviceError | **ByteRTCMediaDeviceError** | 设备错误类型，参看 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror)。 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error"></span>
 ### rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onAudioDeviceStateChanged:(NSString*_Nonnull)device_id device_type:(ByteRTCAudioDeviceType)device_type device_state:(ByteRTCMediaDeviceState)device_state device_error:(ByteRTCMediaDeviceError)device_error;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onAudioDeviceStateChanged:(NSString*_Nonnull)deviceID device_type:(ByteRTCAudioDeviceType)deviceType device_state:(ByteRTCMediaDeviceState)deviceState device_error:(ByteRTCMediaDeviceError)deviceError;
 ```
 音频设备状态回调。提示音频采集、音频播放等设备的状态。
 
@@ -1233,17 +1255,17 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 实例 |
-| device_id | **NSString*** | 设备 ID |
-| device_type | **ByteRTCAudioDeviceType** | 设备类型，参看 [ByteRTCAudioDeviceType](iOS-keytype.md#bytertcaudiodevicetype)。 |
-| device_state | **ByteRTCMediaDeviceState** | 设备状态，参看 [ByteRTCMediaDeviceState](iOS-keytype.md#bytertcmediadevicestate)。 |
-| device_error | **ByteRTCMediaDeviceError** | 设备错误类型，参看 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror)。 |
+| deviceID | **NSString*** | 设备 ID |
+| deviceType | **ByteRTCAudioDeviceType** | 设备类型，参看 [ByteRTCAudioDeviceType](iOS-keytype.md#bytertcaudiodevicetype)。 |
+| deviceState | **ByteRTCMediaDeviceState** | 设备状态，参看 [ByteRTCMediaDeviceState](iOS-keytype.md#bytertcmediadevicestate)。 |
+| deviceError | **ByteRTCMediaDeviceError** | 设备错误类型，参看 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror)。 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error"></span>
 ### rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onVideoDeviceStateChanged:(NSString*_Nonnull)device_id device_type:(ByteRTCVideoDeviceType)device_type device_state:(ByteRTCMediaDeviceState)device_state device_error:(ByteRTCMediaDeviceError)device_error;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onVideoDeviceStateChanged:(NSString*_Nonnull)deviceID device_type:(ByteRTCVideoDeviceType)deviceType device_state:(ByteRTCMediaDeviceState)deviceState device_error:(ByteRTCMediaDeviceError)deviceError;
 ```
 视频设备状态发生改变回调。当设备的视频状态发生改变时，SDK 会触发该回调，提示摄像头视频采集、屏幕视频采集等设备的状态。
 
@@ -1251,10 +1273,10 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| device_id | **NSString*** | 设备 ID |
-| device_type | **ByteRTCVideoDeviceType** | 设备类型，参看 [ByteRTCVideoDeviceType](iOS-keytype.md#bytertcvideodevicetype)。 |
-| device_state | **ByteRTCMediaDeviceState** | 设备状态，参看 [ByteRTCMediaDeviceState](iOS-keytype.md#bytertcmediadevicestate)。 |
-| device_error | **ByteRTCMediaDeviceError** | 设备错误类型，参看 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror)。 |
+| deviceID | **NSString*** | 设备 ID |
+| deviceType | **ByteRTCVideoDeviceType** | 设备类型，参看 [ByteRTCVideoDeviceType](iOS-keytype.md#bytertcvideodevicetype)。 |
+| deviceState | **ByteRTCMediaDeviceState** | 设备状态，参看 [ByteRTCMediaDeviceState](iOS-keytype.md#bytertcmediadevicestate)。 |
+| deviceError | **ByteRTCMediaDeviceError** | 设备错误类型，参看 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror)。 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onmediadevicewarning-devicetype-devicewarning"></span>
@@ -1555,7 +1577,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onLocalAudioStateChanged:(ByteRTCLocalAudioStreamState)state error:(ByteRTCLocalAudioStreamError)error;
 ```
-> Deprecated  since 3.50 and will be deleted in 3.55. Use [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) instead.
 
 本地音频流的状态发生改变时，收到此回调。
 
@@ -1592,7 +1613,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onLocalVideoStateChanged:(ByteRTCStreamIndex)streamIndex withStreamState:(ByteRTCLocalVideoStreamState)state withStreamError:(ByteRTCLocalVideoStreamError)error;
 ```
-> Deprecated  since 3.50 and will be deleted in 3.55. Use [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) instead.
 
 本地视频流的状态发生改变时，收到该事件。
 
@@ -1613,6 +1633,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onRemoteVideoStateChanged:(ByteRTCRemoteStreamKey*_Nonnull)streamKey withVideoState:(ByteRTCRemoteVideoState)state withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 ```
 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
+本回调仅适用于主流，不适用于屏幕流。
 
 **传入参数**
 
@@ -1622,6 +1643,43 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | streamKey | **ByteRTCRemoteStreamKey*** | 远端视频流信息，房间、用户 ID、流属性等，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey) |
 | state | **ByteRTCRemoteVideoState** | 远端视频流的当前状态，参看 [ByteRTCRemoteVideoState](iOS-keytype.md#bytertcremotevideostate) |
 | reason | **ByteRTCRemoteVideoStateChangeReason** | 远端视频流状态改变的原因，参看 [ByteRTCRemoteVideoStateChangeReason](iOS-keytype.md#bytertcremotevideostatechangereason) |
+
+
+<span id="ByteRTCVideoDelegate-rtcengine-onremotevideosuperresolutionmodechanged-withmode-withreason"></span>
+### rtcEngine:onRemoteVideoSuperResolutionModeChanged:withMode:withReason:
+```objectivec
+
+- (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onRemoteVideoSuperResolutionModeChanged:(ByteRTCRemoteStreamKey*_Nonnull)streamKey withMode:(ByteRTCVideoSuperResolutionMode)mode withReason:(ByteRTCVideoSuperResolutionModeChangedReason)reason;
+```
+> Available since 3.54
+
+远端视频流的超分状态发生改变时，房间内订阅此流的用户会收到该回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| streamKey | **ByteRTCRemoteStreamKey*** | 远端流信息，包括房间 ID、用户 ID、流属性，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey)。 |
+| mode | **ByteRTCVideoSuperResolutionMode** | 超分模式，参看 [ByteRTCVideoSuperResolutionMode](iOS-keytype.md#bytertcvideosuperresolutionmode)。 |
+| reason | **ByteRTCVideoSuperResolutionModeChangedReason** | 超分模式改变原因，参看 [ByteRTCVideoSuperResolutionModeChangedReason](iOS-keytype.md#bytertcvideosuperresolutionmodechangedreason)。 |
+
+
+<span id="ByteRTCVideoDelegate-rtcengine-onvideodenoisemodechanged-withreason"></span>
+### rtcEngine:onVideoDenoiseModeChanged:withReason:
+```objectivec
+
+- (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onVideoDenoiseModeChanged:(ByteRTCVideoDenoiseMode)mode withReason:(ByteRTCVideoDenoiseModeChangedReason)reason;
+```
+> Available since 3.54
+
+降噪模式状态变更回调。当降噪模式的运行状态发生改变，SDK 会触发该回调，提示用户降噪模式改变后的运行状态及状态发生改变的原因。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **ByteRTCVideoDenoiseMode** | 视频降噪模式，参看 [ByteRTCVideoDenoiseMode](iOS-keytype.md#bytertcvideodenoisemode)。 |
+| reason | **ByteRTCVideoDenoiseModeChangedReason** | 视频降噪模式改变的原因，参看 [ByteRTCVideoDenoiseModeChangedReason](iOS-keytype.md#bytertcvideodenoisemodechangedreason)。 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed"></span>
@@ -1781,7 +1839,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 ### rtcEngine:onNetworkDetectionResult:quality:rtt:lostRate:bitrate:jitter:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onNetworkDetectionResult:(ByteRTCNetworkDetectionLinkType)type quality:(ByteRTCNetworkQuality)quality rtt:(int)rtt lostRate:(double)lost_rate bitrate:(int)bitrate jitter:(int)jitter;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onNetworkDetectionResult:(ByteRTCNetworkDetectionLinkType)type quality:(ByteRTCNetworkQuality)quality rtt:(int)rtt lostRate:(double)lostRate bitrate:(int)bitrate jitter:(int)jitter;
 ```
 通话前网络探测结果的回调。  <br>
 成功调用 [startNetworkDetection:uplinkBandwidth:downlink:downlinkBandwidth:](iOS-api.md#ByteRTCVideo-startnetworkdetection-uplinkbandwidth-downlink-downlinkbandwidth) 接口开始探测后，会在 3s 内首次收到该回调，之后每 2s 收到一次该回调。
@@ -1794,7 +1852,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | type | **ByteRTCNetworkDetectionLinkType** | 探测网络类型为上行/下行 |
 | quality | **ByteRTCNetworkQuality** | 探测网络的质量，参看 [ByteRTCNetworkQuality](iOS-keytype.md#bytertcnetworkquality)。 |
 | rtt | **int** | 探测网络的 RTT，单位：ms |
-| lost_rate | **double** | 探测网络的丢包率 |
+| lostRate | **double** | 探测网络的丢包率 |
 | bitrate | **int** | 探测网络的带宽，单位：kbps |
 | jitter | **int** | 探测网络的抖动,单位：ms |
 
@@ -1803,7 +1861,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 ### rtcEngine:onNetworkDetectionStopped:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onNetworkDetectionStopped:(ByteRTCNetworkDetectionStopReason)err_code;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onNetworkDetectionStopped:(ByteRTCNetworkDetectionStopReason)errorCode;
 ```
 通话前网络探测结束  <br>
 以下情况将停止探测并收到一次本回调：<br>
@@ -1817,7 +1875,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 对象 |
-| err_code | **ByteRTCNetworkDetectionStopReason** | 停止探测的原因类型,参考 [ByteRTCNetworkDetectionStopReason](iOS-keytype.md#bytertcnetworkdetectionstopreason) |
+| errorCode | **ByteRTCNetworkDetectionStopReason** | 停止探测的原因类型,参考 [ByteRTCNetworkDetectionStopReason](iOS-keytype.md#bytertcnetworkdetectionstopreason) |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-log"></span>
@@ -1845,6 +1903,8 @@ SDK 内部运行时，会把日志回调给业务方，方便排查问题。
 
 - (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onAudioMixingStateChanged:(NSInteger)mixId state:(ByteRTCAudioMixingState)state error:(ByteRTCAudioMixingError)error;
 ```
+> Deprecated  since 353. Use [ByteRTCAudioEffectPlayerEventHandler](#bytertcaudioeffectplayereventhandler) and [ByteRTCMediaPlayerEventHandler](#bytertcmediaplayereventhandler) instead.
+
 音频混音文件播放状态改变时回调
 
 **传入参数**
@@ -1894,8 +1954,8 @@ SDK 内部运行时，会把日志回调给业务方，方便排查问题。
 
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onPerformanceAlarms:(ByteRTCPerformanceAlarmMode)mode roomId:(NSString *_Nonnull)roomId reason:(ByteRTCPerformanceAlarmReason)reason sourceWantedData:(ByteRTCSourceWantedData *_Nonnull)data;
 ```
-本地未开启发布性能回退，检测到设备性能不足时，收到此回调。  <br>
-本地开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。  <br>
+本地未通过 [setPublishFallbackOption:](iOS-api.md#ByteRTCVideo-setpublishfallbackoption) 开启发布性能回退，检测到设备性能不足时，收到此回调。  <br>
+本地通过 [setPublishFallbackOption:](iOS-api.md#ByteRTCVideo-setpublishfallbackoption) 开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。  <br>
 
 **传入参数**
 
@@ -1963,7 +2023,7 @@ HTTPS 代理连接状态改变时，收到该回调。
 ### rtcEngine:onSocks5ProxyState:cmd:proxy_address:local_address:remote_address:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onSocks5ProxyState:(NSInteger)state cmd:(NSString *_Nonnull)cmd proxy_address:(NSString *_Nonnull)proxy_address local_address:(NSString *_Nonnull)local_address remote_address:(NSString *_Nonnull)remote_address;
+- (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onSocks5ProxyState:(NSInteger)state cmd:(NSString *_Nonnull)cmd proxy_address:(NSString *_Nonnull)proxyAddress local_address:(NSString *_Nonnull)localAddress remote_address:(NSString *_Nonnull)remoteAddress;
 ```
 > Deprecated  在3.52及之后废弃，将在3.57删除，使用 [rtcEngine:onLocalProxyStateChanged:withProxyState:withProxyError:](#ByteRTCVideoDelegate-rtcengine-onlocalproxystatechanged-withproxystate-withproxyerror) 替换
 
@@ -1976,16 +2036,16 @@ SOCKS5 代理状态改变时，收到该回调。
 | engine | **ByteRTCVideo*** | ByteRTCVideo 对象 |
 | state | **NSInteger** | SOCKS5 代理连接状态 |
 | cmd | **NSString*** | 代理连接的每一步操作命令 |
-| proxy_address | **NSString*** | 代理地址信息 |
-| local_address | **NSString*** | 当前连接使用的本地地址 |
-| remote_address | **NSString*** | 远端的连接地址 |
+| proxyAddress | **NSString*** | 代理地址信息 |
+| localAddress | **NSString*** | 当前连接使用的本地地址 |
+| remoteAddress | **NSString*** | 远端的连接地址 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onrecordingstateupdate-state-error_code-recording_info"></span>
 ### rtcEngine:onRecordingStateUpdate:state:error_code:recording_info:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo* _Nonnull)engine onRecordingStateUpdate:(ByteRTCStreamIndex)type state:(ByteRTCRecordingState)state error_code:(ByteRTCRecordingErrorCode)error_code recording_info:(ByteRTCRecordingInfo* _Nonnull)recording_info;
+- (void)rtcEngine:(ByteRTCVideo* _Nonnull)engine onRecordingStateUpdate:(ByteRTCStreamIndex)type state:(ByteRTCRecordingState)state error_code:(ByteRTCRecordingErrorCode)errorCode recording_info:(ByteRTCRecordingInfo* _Nonnull)recordingInfo;
 ```
 获取本地录制状态回调。  <br>
 该回调由 [startFileRecording:withRecordingConfig:type:](iOS-api.md#ByteRTCVideo-startfilerecording-withrecordingconfig-type) 或 [stopFileRecording:](iOS-api.md#ByteRTCVideo-stopfilerecording) 触发。
@@ -1997,15 +2057,15 @@ SOCKS5 代理状态改变时，收到该回调。
 | engine | **ByteRTCVideo*** | ByteRTCVideo 对象 |
 | type | **ByteRTCStreamIndex** | 录制流的流属性，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
 | state | **ByteRTCRecordingState** | 录制状态，参看 [ByteRTCRecordingState](iOS-keytype.md#bytertcrecordingstate) |
-| error_code | **ByteRTCRecordingErrorCode** | 录制错误码，参看 [ByteRTCRecordingErrorCode](iOS-keytype.md#bytertcrecordingerrorcode) |
-| recording_info | **ByteRTCRecordingInfo*** | 录制文件的详细信息，参看 [ByteRTCRecordingInfo](iOS-keytype.md#bytertcrecordinginfo) |
+| errorCode | **ByteRTCRecordingErrorCode** | 录制错误码，参看 [ByteRTCRecordingErrorCode](iOS-keytype.md#bytertcrecordingerrorcode) |
+| recordingInfo | **ByteRTCRecordingInfo*** | 录制文件的详细信息，参看 [ByteRTCRecordingInfo](iOS-keytype.md#bytertcrecordinginfo) |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onrecordingprogressupdate-process-recording_info"></span>
 ### rtcEngine:onRecordingProgressUpdate:process:recording_info:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo* _Nonnull)engine onRecordingProgressUpdate:(ByteRTCStreamIndex)type process:(ByteRTCRecordingProgress* _Nonnull)process recording_info:(ByteRTCRecordingInfo* _Nonnull)recording_info;
+- (void)rtcEngine:(ByteRTCVideo* _Nonnull)engine onRecordingProgressUpdate:(ByteRTCStreamIndex)type process:(ByteRTCRecordingProgress* _Nonnull)process recording_info:(ByteRTCRecordingInfo* _Nonnull)recordingInfo;
 ```
 本地录制进度回调。  <br>
 该回调由 [startFileRecording:withRecordingConfig:type:](iOS-api.md#ByteRTCVideo-startfilerecording-withrecordingconfig-type) 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
@@ -2017,14 +2077,14 @@ SOCKS5 代理状态改变时，收到该回调。
 | engine | **ByteRTCVideo*** | ByteRTCVideo 对象 |
 | type | **ByteRTCStreamIndex** | 录制流的流属性，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
 | process | **ByteRTCRecordingProgress*** | 录制进度，参看 [ByteRTCRecordingProgress](iOS-keytype.md#bytertcrecordingprogress) |
-| recording_info | **ByteRTCRecordingInfo*** | 录制文件的详细信息，参看 [ByteRTCRecordingInfo](iOS-keytype.md#bytertcrecordinginfo) |
+| recordingInfo | **ByteRTCRecordingInfo*** | 录制文件的详细信息，参看 [ByteRTCRecordingInfo](iOS-keytype.md#bytertcrecordinginfo) |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onaudiorecordingstateupdate-error_code"></span>
 ### rtcEngine:onAudioRecordingStateUpdate:error_code:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo* _Nonnull)engine onAudioRecordingStateUpdate:(ByteRTCAudioRecordingState)state error_code:(ByteRTCAudioRecordingErrorCode)error_code;
+- (void)rtcEngine:(ByteRTCVideo* _Nonnull)engine onAudioRecordingStateUpdate:(ByteRTCAudioRecordingState)state error_code:(ByteRTCAudioRecordingErrorCode)errorCode;
 ```
 调用 [startAudioRecording:](iOS-api.md#ByteRTCVideo-startaudiorecording) 或者 [stopAudioRecording](iOS-api.md#ByteRTCVideo-stopaudiorecording) 改变音频文件录制状态时，收到此回调。
 
@@ -2033,7 +2093,7 @@ SOCKS5 代理状态改变时，收到该回调。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | state | **ByteRTCAudioRecordingState** | 录制状态，参看 [ByteRTCAudioRecordingState](iOS-keytype.md#bytertcaudiorecordingstate) |
-| error_code | **ByteRTCAudioRecordingErrorCode** | 录制错误码，参看 [ByteRTCAudioRecordingErrorCode](iOS-errorcode.md#bytertcaudiorecordingerrorcode) |
+| errorCode | **ByteRTCAudioRecordingErrorCode** | 录制错误码，参看 [ByteRTCAudioRecordingErrorCode](iOS-errorcode.md#bytertcaudiorecordingerrorcode) |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onpushpublicstreamresult-publicstreamid-errorcode"></span>
@@ -2094,7 +2154,7 @@ SOCKS5 代理状态改变时，收到该回调。
 
 
 **注意**
-通过 Open API 插入的 SEI 信息，应通过回调 [rtcEngine:onPublicStreamDataMessageReceived:andMessage:andSourceType:](#ByteRTCVideoDelegate-rtcengine-onpublicstreamdatamessagereceived-andmessage-andsourcetype) 获取。
+通过 Open API 插入的自定义信息，应通过回调 [rtcEngine:onPublicStreamDataMessageReceived:andMessage:andSourceType:](#ByteRTCVideoDelegate-rtcengine-onpublicstreamdatamessagereceived-andmessage-andsourcetype) 获取。
 
 <span id="ByteRTCVideoDelegate-rtcengine-onpublicstreamdatamessagereceived-andmessage-andsourcetype"></span>
 ### rtcEngine:onPublicStreamDataMessageReceived:andMessage:andSourceType:
@@ -2105,7 +2165,7 @@ SOCKS5 代理状态改变时，收到该回调。
 > Available since 3.52
 
 回调公共流中包含的数据信息。<br>
-通过 [startPlayPublicStream:](iOS-api.md#ByteRTCVideo-startplaypublicstream) 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
+通过 [startPlayPublicStream:](iOS-api.md#ByteRTCVideo-startplaypublicstream) 开始播放公共流后，通过此回调收到公共流中的数据消息。
 
 **传入参数**
 
@@ -2113,7 +2173,7 @@ SOCKS5 代理状态改变时，收到该回调。
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 实例。 |
 | publicStreamId | **NSString*** | 公共流 ID |
-| message | **NSData*** | 收到的数据消息内容，如下：<br/>• 调用公共流 OpenAPI 发送的 SEI 消息。当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。<br/>• 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。 |
+| message | **NSData*** | 收到的数据消息内容，如下：<br/>• 调用公共流 OpenAPI 发送的自定义消息。<br/>• 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。JSON 格式说明如下：<br/>{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"Type"&nbsp;:&nbsp;"VolumeIndication", //具体业务类型<br/>&nbsp;&nbsp;&nbsp;&nbsp;"VolumeInfos"[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 业务类型对应信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"RoomId":"1000001", // 房间ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"UserId":"1000001", // 用户ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"StreamType":0, // 0:摄像头流；1:屏幕流<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LinearVolume":1 // 线性音量大小<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;]<br/>}|
 | sourceType | **ByteRTCDataMessageSourceType** | 数据消息来源，参看 [ByteRTCDataMessageSourceType](iOS-keytype.md#bytertcdatamessagesourcetype)。 |
 
 
@@ -2206,21 +2266,6 @@ SOCKS5 代理状态改变时，收到该回调。
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | [ByteRTCVideo](iOS-api.md#bytertcvideo) 对象 |
 
-
-<span id="ByteRTCVideoDelegate-rtcengine-onlicensewillexpire"></span>
-### rtcEngine:onLicenseWillExpire:
-```objectivec
-
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onLicenseWillExpire:(NSInteger)days;
-```
-license过期时间提醒
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| engine | **ByteRTCVideo*** | [ByteRTCVideo](iOS-api.md#bytertcvideo) 对象 |
-| days | **NSInteger** | 过期时间天数 |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onhardwareechodetectionresult"></span>
@@ -2352,6 +2397,8 @@ license过期时间提醒
 @protocol ByteRTCAudioProcessor <NSObject>
 ```
 
+> Deprecated since 3.42, use [ByteRTCAudioFrameProcessor](#bytertcaudioframeprocessor) instead.
+
 自定义音频处理器
 注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
 
@@ -2457,7 +2504,7 @@ license过期时间提醒
 ### onProcessRemoteUserAudioFrame:audioFrame:
 ```objectivec
 
-- (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)stream_info audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
+- (int)onProcessRemoteUserAudioFrame:(ByteRTCRemoteStreamKey * _Nonnull)streamKey audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
 ```
 回调单个远端用户的音频帧地址，供自定义音频处理。
 
@@ -2465,7 +2512,7 @@ license过期时间提醒
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_info | **ByteRTCRemoteStreamKey*** | 音频流信息，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey) |
+| streamKey | **ByteRTCRemoteStreamKey*** | 音频流信息，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey) |
 | audioFrame | **ByteRTCAudioFrame*** | 音频帧地址，参看 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe) |
 
 
@@ -2581,6 +2628,101 @@ license过期时间提醒
 | errorMessage | **NSString*** | 错误原因说明 |
 
 
+# ByteRTCMediaPlayerCustomSourceProvider
+```objectivec
+@protocol ByteRTCMediaPlayerCustomSourceProvider <NSObject>
+```
+
+内存播放数据源回调
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **int** | [onReadData:bufferSize:](#ByteRTCMediaPlayerCustomSourceProvider-onreaddata-buffersize) |
+| **int64_t** | [onSeek:whence:](#ByteRTCMediaPlayerCustomSourceProvider-onseek-whence) |
+
+
+## 函数说明
+<span id="ByteRTCMediaPlayerCustomSourceProvider-onreaddata-buffersize"></span>
+### onReadData:bufferSize:
+```objectivec
+-(int)onReadData:(uint8_t*_Nonnull) buffer bufferSize:(int)bufferSize;
+```
+> Available since 3.53
+
+调用 [openWithCustomSource:config:](iOS-api.md#ByteRTCMediaPlayer-openwithcustomsource-config) 接口播放用户传入的内存音频数据时，会触发此回调，用户需要写入音频数据。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| buffer | **uint8_t*** | 内存地址。在该地址中写入音频数据，写入音频数据的大小不超过 bufferSize 中填入的数值。支持的音频数据格式有: mp3，aac，m4a，3gp，wav。 |
+| bufferSize | **int** | 音频数据大小，单位为字节。如果你想停止播放内存音频数据，可在 bufferSize 中填入小于或等于 0 的数，此时 SDK 会停止调用此接口。 |
+
+**返回值**
+返回实际读取的音频数据大小。
+
+
+**注意**
+若 [openWithCustomSource:config:](iOS-api.md#ByteRTCMediaPlayer-openwithcustomsource-config) 接口调用失败，请在 buffer 和 bufferSize 两个参数中填入 0。 此时 SDK 会停止调用此接口。
+
+<span id="ByteRTCMediaPlayerCustomSourceProvider-onseek-whence"></span>
+### onSeek:whence:
+```objectivec
+-(int64_t)onSeek:(int64_t)offset whence:(ByteRTCMediaPlayerCustomSourceSeekWhence)whence;
+```
+> Available since 3.53
+
+根据设置好的内存音频数据的读取位置和读取偏移量对音频数据进行偏移，以便 SDK 读取和分析音频数据。 <br>
+在调用 [openWithCustomSource:config:](iOS-api.md#ByteRTCMediaPlayer-openwithcustomsource-config) 接口传入内存音频数据，或者调用 [setPosition:position:](iOS-api.md#ByteRTCAudioEffectPlayer-setposition-position) 设置了音频数据的起始播放位置后，SDK 会对音频数据进行读取和分析，此时会触发该回调，你需要根据参数中设置的起始读取位置和偏移量进行操作。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| offset | **int64_t** | 音频数据读取偏移量，单位为字节，取值可正可负。 |
+| whence | **ByteRTCMediaPlayerCustomSourceSeekWhence** | 音频数据的起始读取位置。参看 [ByteRTCMediaPlayerCustomSourceSeekWhence](iOS-keytype.md#bytertcmediaplayercustomsourceseekwhence) |
+
+**返回值**
+
+定位成功，返回偏移后的位置信息，或返回音频数据的大小。
+定位失败，返回 -1。
+
+
+# ByteRTCAudioEffectPlayerEventHandler
+```objectivec
+@protocol ByteRTCAudioEffectPlayerEventHandler <NSObject>
+```
+
+[ByteRTCAudioEffectPlayer](iOS-api.md#bytertcaudioeffectplayer) 对应的回调句柄。你必须调用 [setEventHandler:](iOS-api.md#ByteRTCAudioEffectPlayer-seteventhandler) 完成设置后，才能收到对应回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **void** | [onAudioEffectPlayerStateChanged:state:error:](#ByteRTCAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged-state-error) |
+
+
+## 函数说明
+<span id="ByteRTCAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged-state-error"></span>
+### onAudioEffectPlayerStateChanged:state:error:
+```objectivec
+-(void)onAudioEffectPlayerStateChanged:(int)effectId state:(ByteRTCPlayerState)state error:(ByteRTCPlayerError)error;
+```
+播放状态改变时回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | [ByteRTCAudioEffectPlayer](iOS-api.md#bytertcaudioeffectplayer) 的 ID。通过 [getAudioEffectPlayer](iOS-api.md#ByteRTCVideo-getaudioeffectplayer) 设置。 |
+| state | **ByteRTCPlayerState** | 混音状态。参考 [ByteRTCPlayerState](iOS-keytype.md#bytertcplayerstate)。 |
+| error | **ByteRTCPlayerError** | 错误码。参考 [ByteRTCPlayerError](iOS-keytype.md#bytertcplayererror)。 |
+
+
 # ByteRTCAudioFileFrameObserver
 ```objectivec
 @protocol ByteRTCAudioFileFrameObserver <NSObject>
@@ -2594,7 +2736,7 @@ license过期时间提醒
 
 | 返回 | 名称 |
 | --- | --- |
-| **void** | [onAudioFileFrame:audioFrame:](#ByteRTCAudioFileFrameObserver-onaudiofileframe-audioframe) |
+| **void** | [[deprecated] onAudioFileFrame:audioFrame:](#ByteRTCAudioFileFrameObserver-onaudiofileframe-audioframe) |
 
 
 ## 函数说明
@@ -2602,16 +2744,18 @@ license过期时间提醒
 ### onAudioFileFrame:audioFrame:
 ```objectivec
 
-- (void)onAudioFileFrame:(int)mix_id audioFrame:(ByteRTCAudioFrame * _Nonnull)audio_frame;
+- (void)onAudioFileFrame:(int)mixID audioFrame:(ByteRTCAudioFrame *_Nonnull)audioFrame __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 当本地音频文件混音时，回调播放的音频帧。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mix_id | **int** | 混音 ID。 |
-| audio_frame | **ByteRTCAudioFrame*** | 参看 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe)。 |
+| mixID | **int** | 混音 ID。 |
+| audioFrame | **ByteRTCAudioFrame*** | 参看 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe)。 |
 
 
 # ByteRTCEncryptHandler
@@ -2710,6 +2854,7 @@ KTV 事件回调接口。
 | **void** | [ktvManager:onDownloadSuccess:downloadResult:](#ByteRTCKTVManagerDelegate-ktvmanager-ondownloadsuccess-downloadresult) |
 | **void** | [ktvManager:onDownloadFailed:errorCode:](#ByteRTCKTVManagerDelegate-ktvmanager-ondownloadfailed-errorcode) |
 | **void** | [ktvManager:onDownloadMusicProgress:progress:](#ByteRTCKTVManagerDelegate-ktvmanager-ondownloadmusicprogress-progress) |
+| **void** | [ktvManager:onClearCacheResult:](#ByteRTCKTVManagerDelegate-ktvmanager-onclearcacheresult) |
 
 
 ## 函数说明
@@ -2717,7 +2862,7 @@ KTV 事件回调接口。
 ### ktvManager:onMusicListResult:totalSize:errorCode:
 ```objectivec
 
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicListResult:(NSArray<ByteRTCKTVMusic *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVError)errorCode;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicListResult:(NSArray<ByteRTCMusicInfo *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVErrorCode)errorCode;
 ```
 歌曲列表回调。
 
@@ -2725,16 +2870,16 @@ KTV 事件回调接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| musics | **NSArray<ByteRTCKTVMusic*>*** | 歌曲数据数组，参看 [ByteRTCKTVMusic](iOS-keytype.md#bytertcktvmusic)。 |
+| musics | **NSArray<ByteRTCMusicInfo*>*** | 歌曲数据数组，参看 [ByteRTCMusicInfo](iOS-keytype.md#bytertcmusicinfo)。 |
 | totalSize | **int** | 数据条目总数。 |
-| errorCode | **ByteRTCKTVError** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVError](iOS-keytype.md#bytertcktverror)。 |
+| errorCode | **ByteRTCKTVErrorCode** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVErrorCode](iOS-errorcode.md#bytertcktverrorcode)。 |
 
 
 <span id="ByteRTCKTVManagerDelegate-ktvmanager-onsearchmusicresult-totalsize-errorcode"></span>
 ### ktvManager:onSearchMusicResult:totalSize:errorCode:
 ```objectivec
 
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onSearchMusicResult:(NSArray<ByteRTCKTVMusic *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVError)errorCode;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onSearchMusicResult:(NSArray<ByteRTCMusicInfo *> * _Nullable)musics totalSize:(int)totalSize errorCode:(ByteRTCKTVErrorCode)errorCode;
 ```
 搜索歌曲结果回调。
 
@@ -2742,16 +2887,16 @@ KTV 事件回调接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| musics | **NSArray<ByteRTCKTVMusic*>*** | 歌曲数据数组，参看 [ByteRTCKTVMusic](iOS-keytype.md#bytertcktvmusic)。 |
+| musics | **NSArray<ByteRTCMusicInfo*>*** | 歌曲数据数组，参看 [ByteRTCMusicInfo](iOS-keytype.md#bytertcmusicinfo)。 |
 | totalSize | **int** | 数据条目总数。 |
-| errorCode | **ByteRTCKTVError** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVError](iOS-keytype.md#bytertcktverror)。 |
+| errorCode | **ByteRTCKTVErrorCode** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVErrorCode](iOS-errorcode.md#bytertcktverrorcode)。 |
 
 
 <span id="ByteRTCKTVManagerDelegate-ktvmanager-onhotmusicresult-errorcode"></span>
 ### ktvManager:onHotMusicResult:errorCode:
 ```objectivec
 
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onHotMusicResult:(NSArray<ByteRTCKTVHotMusicInfo *> * _Nullable)hotMusicInfos errorCode:(ByteRTCKTVError)errorCode;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onHotMusicResult:(NSArray<ByteRTCHotMusicInfo *> * _Nullable)hotMusicInfos errorCode:(ByteRTCKTVErrorCode)errorCode;
 ```
 热榜歌曲结果回调。
 
@@ -2759,15 +2904,15 @@ KTV 事件回调接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| hotMusicInfos | **NSArray<ByteRTCKTVHotMusicInfo*>*** | 热榜歌曲数据数组，参看 [ByteRTCKTVHotMusicInfo](iOS-keytype.md#bytertcktvhotmusicinfo)。 |
-| errorCode | **ByteRTCKTVError** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVError](iOS-keytype.md#bytertcktverror)。 |
+| hotMusicInfos | **NSArray<ByteRTCHotMusicInfo*>*** | 热榜歌曲数据数组，参看 [ByteRTCHotMusicInfo](iOS-keytype.md#bytertchotmusicinfo)。 |
+| errorCode | **ByteRTCKTVErrorCode** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVErrorCode](iOS-errorcode.md#bytertcktverrorcode)。 |
 
 
 <span id="ByteRTCKTVManagerDelegate-ktvmanager-onmusicdetailresult-errorcode"></span>
 ### ktvManager:onMusicDetailResult:errorCode:
 ```objectivec
 
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicDetailResult:(ByteRTCKTVMusic * _Nullable)music errorCode:(ByteRTCKTVError)errorCode;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onMusicDetailResult:(ByteRTCMusicInfo * _Nullable)music errorCode:(ByteRTCKTVErrorCode)errorCode;
 ```
 歌曲详细信息回调。
 
@@ -2775,15 +2920,15 @@ KTV 事件回调接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| music | **ByteRTCKTVMusic*** | 歌曲数据，参看 [ByteRTCKTVMusic](iOS-keytype.md#bytertcktvmusic)。 |
-| errorCode | **ByteRTCKTVError** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVError](iOS-keytype.md#bytertcktverror)。 |
+| music | **ByteRTCMusicInfo*** | 歌曲数据，参看 [ByteRTCMusicInfo](iOS-keytype.md#bytertcmusicinfo)。 |
+| errorCode | **ByteRTCKTVErrorCode** | 错误码，成功时返回 0，其余值参看 [ByteRTCKTVErrorCode](iOS-errorcode.md#bytertcktverrorcode)。 |
 
 
 <span id="ByteRTCKTVManagerDelegate-ktvmanager-ondownloadsuccess-downloadresult"></span>
 ### ktvManager:onDownloadSuccess:downloadResult:
 ```objectivec
 
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadSuccess:(int)downloadId downloadResult:(ByteRTCKTVDownloadResult *)result;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadSuccess:(int)downloadId downloadResult:(ByteRTCDownloadResult *)result;
 ```
 下载成功回调。
 
@@ -2792,14 +2937,14 @@ KTV 事件回调接口。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | downloadId | **int** | 下载任务 ID。 |
-| result | **ByteRTCKTVDownloadResult*** | 下载信息，参看 [ByteRTCKTVDownloadResult](iOS-keytype.md#bytertcktvdownloadresult)。 |
+| result | **ByteRTCDownloadResult*** | 下载信息，参看 [ByteRTCDownloadResult](iOS-keytype.md#bytertcdownloadresult)。 |
 
 
 <span id="ByteRTCKTVManagerDelegate-ktvmanager-ondownloadfailed-errorcode"></span>
 ### ktvManager:onDownloadFailed:errorCode:
 ```objectivec
 
-- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadFailed:(int)downloadId errorCode:(ByteRTCKTVError)errorCode;
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onDownloadFailed:(int)downloadId errorCode:(ByteRTCKTVErrorCode)errorCode;
 ```
 下载失败回调。
 
@@ -2808,7 +2953,7 @@ KTV 事件回调接口。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | downloadId | **int** | 下载任务 ID。 |
-| errorCode | **ByteRTCKTVError** | 错误码，参看 [ByteRTCKTVError](iOS-keytype.md#bytertcktverror)。 |
+| errorCode | **ByteRTCKTVErrorCode** | 错误码，参看 [ByteRTCKTVErrorCode](iOS-errorcode.md#bytertcktverrorcode)。 |
 
 
 <span id="ByteRTCKTVManagerDelegate-ktvmanager-ondownloadmusicprogress-progress"></span>
@@ -2825,6 +2970,21 @@ KTV 事件回调接口。
 | --- | --- | --- |
 | downloadId | **int** | 下载任务 ID。 |
 | downloadPercentage | **int** | 下载进度百分比，取值范围 [0,100]。 |
+
+
+<span id="ByteRTCKTVManagerDelegate-ktvmanager-onclearcacheresult"></span>
+### ktvManager:onClearCacheResult:
+```objectivec
+
+- (void)ktvManager:(ByteRTCKTVManager *)ktvManager onClearCacheResult:(ByteRTCKTVErrorCode)errorCode;
+```
+清理文件缓存结果回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| errorCode | **ByteRTCKTVErrorCode** | 错误码，非0为失败，参看 [ByteRTCKTVErrorCode](iOS-errorcode.md#bytertcktverrorcode)。 |
 
 
 # ByteRTCKTVPlayerDelegate
@@ -2866,7 +3026,7 @@ KTV 播放器回调接口。
 ### ktvPlayer:onPlayStateChanged:state:error:
 ```objectivec
 
-- (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChanged:(NSString *)musicId state:(ByteRTCKTVPlayState)state error:(ByteRTCKTVPlayerError)error;
+- (void)ktvPlayer:(ByteRTCKTVPlayer *)ktvPlayer onPlayStateChanged:(NSString *)musicId state:(ByteRTCPlayState)state error:(ByteRTCKTVPlayerErrorCode)error;
 ```
 音乐播放状态改变回调。
 
@@ -2876,19 +3036,99 @@ KTV 播放器回调接口。
 | --- | --- | --- |
 | ktvPlayer | **ByteRTCKTVPlayer*** | 当前 ktvPlayer 对象，参看 [ByteRTCKTVPlayer](iOS-api.md#bytertcktvplayer)。 |
 | musicId | **NSString*** | 音乐 ID。 |
-| state | **ByteRTCKTVPlayState** | 音乐播放状态，参看 [ByteRTCKTVPlayState](iOS-keytype.md#bytertcktvplaystate)。 |
-| error | **ByteRTCKTVPlayerError** | 错误码，参看 [ByteRTCKTVPlayerError](iOS-keytype.md#bytertcktvplayererror)。 |
+| state | **ByteRTCPlayState** | 音乐播放状态，参看 [ByteRTCPlayState](iOS-keytype.md#bytertcplaystate)。 |
+| error | **ByteRTCKTVPlayerErrorCode** | 错误码，参看 [ByteRTCKTVPlayerErrorCode](iOS-keytype.md#bytertcktvplayererrorcode)。 |
 
 
 **注意**
 此回调被触发的时机汇总如下：
 
-+ 调用 [playMusic:audioTrackType:audioPlayType:](iOS-api.md#ByteRTCKTVPlayer-playmusic-audiotracktype-audioplaytype) 成功后，会触发 playState 值为 ByteRTCKTVPlayStatePlaying 的回调；否则会触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
-+ 使用相同的音乐 ID 重复调用 [playMusic:audioTrackType:audioPlayType:](iOS-api.md#ByteRTCKTVPlayer-playmusic-audiotracktype-audioplaytype) 后，后一次播放会覆盖前一次，且会触发 playState 值为 ByteRTCKTVPlayStatePlaying 的回调，表示后一次音乐播放已开始。
-+ 调用 [pauseMusic:](iOS-api.md#ByteRTCKTVPlayer-pausemusic) 方法暂停播放成功后，会触发 playState 值为 ByteRTCKTVPlayStatePaused 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
-+ 调用 [resumeMusic:](iOS-api.md#ByteRTCKTVPlayer-resumemusic) 方法恢复播放成功后，会触发 playState 值为 ByteRTCKTVPlayStatePlaying 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
-+ 调用 [stopMusic:](iOS-api.md#ByteRTCKTVPlayer-stopmusic) 方法停止播放成功后，会触发 playState 值为 ByteRTCKTVPlayStateStoped 的回调；否则触发 playState 值为 ByteRTCKTVPlayStateFailed 的回调。
-+ 音乐播放结束会触发 playState 值为 ByteRTCKTVPlayStateFinished 的回调。
++ 调用 [playMusic:audioTrackType:audioPlayType:](iOS-api.md#ByteRTCKTVPlayer-playmusic-audiotracktype-audioplaytype) 成功后，会触发 playState 值为 ByteRTCPlayStatePlaying 的回调；否则会触发 playState 值为 ByteRTCPlayStateFailed 的回调。
++ 使用相同的音乐 ID 重复调用 [playMusic:audioTrackType:audioPlayType:](iOS-api.md#ByteRTCKTVPlayer-playmusic-audiotracktype-audioplaytype) 后，后一次播放会覆盖前一次，且会触发 playState 值为 ByteRTCPlayStatePlaying 的回调，表示后一次音乐播放已开始。
++ 调用 [pauseMusic:](iOS-api.md#ByteRTCKTVPlayer-pausemusic) 方法暂停播放成功后，会触发 playState 值为 ByteRTCPlayStatePaused 的回调；否则触发 playState 值为 ByteRTCPlayStateFailed 的回调。
++ 调用 [resumeMusic:](iOS-api.md#ByteRTCKTVPlayer-resumemusic) 方法恢复播放成功后，会触发 playState 值为 ByteRTCPlayStatePlaying 的回调；否则触发 playState 值为 ByteRTCPlayStateFailed 的回调。
++ 调用 [stopMusic:](iOS-api.md#ByteRTCKTVPlayer-stopmusic) 方法停止播放成功后，会触发 playState 值为 ByteRTCPlayStateStoped 的回调；否则触发 playState 值为 ByteRTCPlayStateFailed 的回调。
++ 音乐播放结束会触发 playState 值为 ByteRTCPlayStateFinished 的回调。
+
+
+# ByteRTCMediaPlayerAudioFrameObserver
+```objectivec
+@protocol ByteRTCMediaPlayerAudioFrameObserver <NSObject>
+```
+
+本地音频文件混音的音频帧观察者。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **void** | [onFrame:audioFrame:](#ByteRTCMediaPlayerAudioFrameObserver-onframe-audioframe) |
+
+
+## 函数说明
+<span id="ByteRTCMediaPlayerAudioFrameObserver-onframe-audioframe"></span>
+### onFrame:audioFrame:
+```objectivec
+
+- (void)onFrame:(int)playerId audioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
+```
+当本地音频文件混音时，回调播放的音频帧。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** |  |
+| audioFrame | **ByteRTCAudioFrame*** | 参看 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe)。 |
+
+
+# ByteRTCMediaPlayerEventHandler
+```objectivec
+@protocol ByteRTCMediaPlayerEventHandler <NSObject>
+```
+
+[ByteRTCMediaPlayer](iOS-api.md#bytertcmediaplayer) 对应的回调句柄。你必须调用 [setEventHandler:](iOS-api.md#ByteRTCMediaPlayer-seteventhandler) 完成设置后，才能收到对应回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **void** | [onMediaPlayerStateChanged:state:error:](#ByteRTCMediaPlayerEventHandler-onmediaplayerstatechanged-state-error) |
+| **void** | [onMediaPlayerPlayingProgress:progress:](#ByteRTCMediaPlayerEventHandler-onmediaplayerplayingprogress-progress) |
+
+
+## 函数说明
+<span id="ByteRTCMediaPlayerEventHandler-onmediaplayerstatechanged-state-error"></span>
+### onMediaPlayerStateChanged:state:error:
+```objectivec
+-(void)onMediaPlayerStateChanged:(int)playerId state:(ByteRTCPlayerState)state error:(ByteRTCPlayerError)error;
+```
+播放状态改变时回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** | [ByteRTCMediaPlayer](iOS-api.md#bytertcmediaplayer) 的 ID。通过 [getMediaPlayer:](iOS-api.md#ByteRTCVideo-getmediaplayer) 设置。 |
+| state | **ByteRTCPlayerState** | 混音状态。参考 [ByteRTCPlayerState](iOS-keytype.md#bytertcplayerstate)。 |
+| error | **ByteRTCPlayerError** | 错误码。参考 [ByteRTCPlayerError](iOS-keytype.md#bytertcplayererror)。 |
+
+
+<span id="ByteRTCMediaPlayerEventHandler-onmediaplayerplayingprogress-progress"></span>
+### onMediaPlayerPlayingProgress:progress:
+```objectivec
+-(void)onMediaPlayerPlayingProgress:(int)playerId progress:(int64_t)progress;
+```
+播放进度周期性回调。回调周期通过 [setProgressInterval:](iOS-api.md#ByteRTCMediaPlayer-setprogressinterval) 设置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** | [ByteRTCMediaPlayer](iOS-api.md#bytertcmediaplayer) 的 ID。通过 [getMediaPlayer:](iOS-api.md#ByteRTCVideo-getmediaplayer) 设置。 |
+| progress | **int64_t** | 进度。单位 ms。 |
 
 
 # ByteRtcScreenCapturerExtDelegate
@@ -2996,7 +3236,7 @@ K 歌评分事件回调类。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| Info | **ByteRTCSingScoringRealtime** | 实时评分信息。详见 [ByteRTCSingScoringRealtimeInfo](iOS-keytype.md#bytertcsingscoringrealtimeinfo)。 |
+| info | **ByteRTCSingScoringRealtimeInfo*** | 实时评分信息。详见 [ByteRTCSingScoringRealtimeInfo](iOS-keytype.md#bytertcsingscoringrealtimeinfo)。 |
 
 
 # ByteRTCVideoProcessorDelegate
@@ -3020,7 +3260,7 @@ K 歌评分事件回调类。
 ### processVideoFrame:
 ```objectivec
 
-- (ByteRTCVideoFrame* _Nullable)processVideoFrame:(ByteRTCVideoFrame* _Nonnull)src_frame;
+- (ByteRTCVideoFrame* _Nullable)processVideoFrame:(ByteRTCVideoFrame* _Nonnull)srcFrame;
 ```
 获取 RTC SDK 采集得到的视频帧，根据 [registerLocalVideoProcessor:withConfig:](iOS-api.md#ByteRTCVideo-registerlocalvideoprocessor-withconfig) 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。
 
@@ -3028,7 +3268,7 @@ K 歌评分事件回调类。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| src_frame | **ByteRTCVideoFrame*** | RTC SDK 采集得到的视频帧，参考: [ByteRTCVideoFrame](iOS-keytype.md#bytertcvideoframe) |
+| srcFrame | **ByteRTCVideoFrame*** | RTC SDK 采集得到的视频帧，参考: [ByteRTCVideoFrame](iOS-keytype.md#bytertcvideoframe) |
 
 **返回值**
 经过视频前处理后的视频帧，返回给 RTC SDK 供编码和传输，参考: [ByteRTCVideoFrame](iOS-keytype.md#bytertcvideoframe)
@@ -3238,7 +3478,7 @@ K 歌评分事件回调类。
 | --- | --- | --- |
 | event | **ByteRTCStreamMixingEvent** | 转推直播任务状态，参看 [ByteRTCStreamMixingEvent](iOS-keytype.md#bytertcstreammixingevent)。 |
 | taskId | **NSString*** | 转推直播任务 ID。 |
-| Code | **ByteRtcTranscoderErrorCode** | 转推直播错误码，参看 [ByteRtcTranscoderErrorCode](iOS-errorcode.md#bytertctranscodererrorcode) 和 [ByteRTCTranscodingError](iOS-errorcode.md#bytertctranscodingerror)。 |
+| Code | **ByteRtcTranscoderErrorCode** | 转推直播错误码，参看 [ByteRtcTranscoderErrorCode](iOS-errorcode.md#bytertctranscodererrorcode)。 |
 | mixType | **ByteRTCStreamMixingType** | 转推直播类型，参看 [ByteRTCStreamMixingType](iOS-keytype.md#bytertcstreammixingtype)。 |
 
 
@@ -3339,7 +3579,7 @@ K 歌评分事件回调类。
 ### onMixingEvent:taskId:error:mixType:
 ```objectivec
 
-- (void)onMixingEvent:(ByteRTCStreamMixingEvent)event taskId:(NSString *_Nonnull)taskId error:(ByteRTCStreamMixingErrorCode)Code mixType:(ByteRTCMixedStreamType)mixType;
+- (void)onMixingEvent:(ByteRTCStreamMixingEvent)event taskId:(NSString *_Nonnull)taskId error:(ByteRTCStreamMixingErrorCode)errorCode mixType:(ByteRTCMixedStreamType)mixType;
 ```
 转推直播状态回调
 
@@ -3349,7 +3589,7 @@ K 歌评分事件回调类。
 | --- | --- | --- |
 | event | **ByteRTCStreamMixingEvent** | 转推直播任务状态，参看 [ByteRTCStreamMixingEvent](iOS-keytype.md#bytertcstreammixingevent)。 |
 | taskId | **NSString*** | 转推直播任务 ID。 |
-| Code | **ByteRTCStreamMixingErrorCode** | 转推直播错误码，参看 [ByteRTCStreamMixingErrorCode](iOS-errorcode.md#bytertcstreammixingerrorcode) 和 [ByteRTCStreamMixingErrorCode](iOS-errorcode.md#bytertcstreammixingerrorcode)。 |
+| errorCode | **ByteRTCStreamMixingErrorCode** | 转推直播错误码，参看 [ByteRTCStreamMixingErrorCode](iOS-errorcode.md#bytertcstreammixingerrorcode) 和 [ByteRTCStreamMixingErrorCode](iOS-errorcode.md#bytertcstreammixingerrorcode)。 |
 | mixType | **ByteRTCMixedStreamType** | 转推直播类型，参看 [ByteRTCMixedStreamType](iOS-keytype.md#bytertcmixedstreamtype)。 |
 
 
@@ -3429,7 +3669,7 @@ K 歌评分事件回调类。
 ### onStreamPushEvent:taskId:error:
 ```objectivec
 
-- (void)onStreamPushEvent:(ByteRTCSingleStreamPushEvent)event taskId:(NSString *_Nonnull)taskId error:(NSInteger)Code;
+- (void)onStreamPushEvent:(ByteRTCSingleStreamPushEvent)event taskId:(NSString *_Nonnull)taskID error:(NSInteger)errorCode;
 ```
 单流转推直播状态回调
 
@@ -3438,8 +3678,8 @@ K 歌评分事件回调类。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | event | **ByteRTCSingleStreamPushEvent** | 任务状态, 参看 [ByteRTCSingleStreamPushEvent](iOS-errorcode.md#bytertcsinglestreampushevent). |
-| taskId | **NSString*** | 任务 ID |
-| Code | **NSInteger** | 错误码，参看 [ByteRtcTranscoderErrorCode](iOS-errorcode.md#bytertctranscodererrorcode)。 |
+| taskID | **NSString*** | 任务 ID |
+| errorCode | **NSInteger** | 错误码，参看 [ByteRtcTranscoderErrorCode](iOS-errorcode.md#bytertctranscodererrorcode)。 |
 
 
 # ByteRTCFaceDetectionObserver

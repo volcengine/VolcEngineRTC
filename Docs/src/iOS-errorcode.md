@@ -41,17 +41,8 @@ typedef NS_ENUM(NSInteger, ByteRTCErrorCode)
 | ByteRTCErrorCodeTokenExpired | -1009 | Token 过期。加入房间后 Token 过期时，返回此错误码。需使用新的 Token 重新加入房间。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
 | ByteRTCErrorCodeUpdateTokenWithInvalidToken | -1010 | 调用 `updateToken:` 传入的 Token 无效。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
 | ByteRTCErrorCodeRoomDismiss | -1011 | 服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCJoinRoomWithoutLicenseAuthenticateSDK | -1012 | 加入房间错误。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。<br/>调用 `joinRoom:userInfo:roomConfig:` 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。 |
 | ByteRTCRoomAlreadyExist | -1013 | 通话回路检测已经存在同样 roomId 的房间了。通过 onCreatrtcEngine:onCreateRoomStateChanged:errorCode:eRoomStateChanged[rtcEngine:onCreateRoomStateChanged:errorCode:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-oncreateroomstatechanged-errorcode) 回调。 |
 | ByteRTCUserIDDifferent | -1014 | 加入多个房间时使用了不同的 uid。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。<br/>同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。 |
-| ByteRTCErrorCodeJoinRoomServerLicenseExpired | -1017 | 服务端license过期，拒绝进房。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomExceedsTheUpperLimit | -1018 | 超过服务端license许可的并发量上限，拒绝进房。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomLicenseParameterError | -1019 | license参数错误，拒绝进房。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomLicenseFilePathError | -1020 | license证书路径错误。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomLicenseIllegal | -1021 | license证书不合法。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomLicenseExpired | -1022 | license证书已经过期，拒绝进房。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomLicenseInformationNotMatch | -1023 | license证书内容不匹配。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
-| ByteRTCErrorCodeJoinRoomLicenseNotMatchWithCache | -1024 | license当前证书与缓存证书不匹配。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
 | ByteRTCErrorCodeJoinRoomRoomForbidden | -1025 | 房间被封禁。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
 | ByteRTCErrorCodeJoinRoomUserForbidden | -1026 | 用户被封禁。通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调。 |
 | ByteRTCErrorCodeOverStreamSubscribeLimit | -1070 | 订阅音视频流失败，订阅音视频流总数超过上限。通过 [rtcRoom:onStreamStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onstreamstatechanged-withuid-state-extrainfo) 回调。<br/>游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。 |
@@ -98,13 +89,13 @@ typedef NS_ENUM(NSInteger, ByteRTCWarningCode)
 | [deprecated] ByteRTCWarningCodeGetRoomFailed | -2000 |  |
 | [deprecated] ByteRTCWarningCodeSubscribeStreamForbiden | -2010 | 自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。  <br><br/>你需在进房前关闭自动订阅模式，再调用 [subscribeStream:mediaStreamType:](iOS-api.md#ByteRTCRoom-subscribestream-mediastreamtype) 方法手动订阅音视频流。 |
 | [deprecated] ByteRTCWarningCodeRoomAlreadyExist | -2015 | 同样roomid的房间已经存在了 |
-| [deprecated] ByteRTCWarningCodeNoMicrophonePermission | -5002 | 麦克风权限异常，当前应用没有获取麦克风权限。<br> 已废弃，使用 [ByteRTCMediaDeviceError.ByteRTCMediaDeviceErrorDeviceNoPermission](iOS-keytype.md#bytertcmediadeviceerror) 代替。 |
-| [deprecated] ByteRTCWarningCodeAudioDeviceManagerRecordingStartFail | -5003 | 音频采集设备启动失败。  <br> 启动音频采集设备失败，当前设备可能被其他应用占用。<br> 已废弃，使用 [ByteRTCMediaDeviceError.ByteRTCMediaDeviceErrorDeviceFailure](iOS-keytype.md#bytertcmediadeviceerror) 代替。 |
-| [deprecated] ByteRTCWarningCodeAudioDeviceManagerPlayoutStartFail | -5004 | 音频播放设备启动失败警告。  <br>可能由于系统资源不足，或参数错误。<br> 已废弃，使用 [ByteRTCMediaDeviceError.ByteRTCMediaDeviceErrorDeviceFailure](iOS-keytype.md#bytertcmediadeviceerror) 代替。 |
-| [deprecated] ByteRTCWarningCodeNoRecordingDevice | -5005 | 无可用音频采集设备。  <br> 启动音频采集设备失败，请插入可用的音频采集设备。<br> 已废弃，使用 [ByteRTCMediaDeviceError.ByteRTCMediaDeviceErrorDeviceNotFound](iOS-keytype.md#bytertcmediadeviceerror) 代替。 |
-| [deprecated] ByteRTCWarningCodeNoPlayoutDevice | -5006 | 无可用音频播放设备。  <br>启动音频播放设备失败，请插入可用的音频播放设备。 <br> 已废弃，使用 [ByteRTCMediaDeviceError.ByteRTCMediaDeviceErrorDeviceNotFound](iOS-keytype.md#bytertcmediadeviceerror) 代替。|
-| [deprecated] ByteRTCWarningCodeRecordingSilence | -5007 | 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。 <br> 已废弃，使用 [ByteRTCMediaDeviceWarning.ByteRTCMediaDeviceWarningCaptureSilence](iOS-keytype.md#bytertcmediadevicewarning) 代替。 |
-| [deprecated] ByteRTCWarningCodeMediaDeviceOperationDennied | -5008 | 媒体设备误操作警告。  <br>使用自定义采集时，不可调用内部采集开关，调用时触发此警告。 <br> 已废弃，使用 [ByteRTCMediaDeviceWarning.ByteRTCMediaDeviceWarningOperationDenied](iOS-keytype.md#bytertcmediadevicewarning) 代替。 |
+| [deprecated] ByteRTCWarningCodeNoMicrophonePermission | -5002 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror).ByteRTCMediaDeviceErrorDeviceNoPermission 代替。<br><br/>麦克风权限异常，当前应用没有获取麦克风权限。 |
+| [deprecated] ByteRTCWarningCodeAudioDeviceManagerRecordingStartFail | -5003 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror).ByteRTCMediaDeviceErrorDeviceFailure 代替。<br><br/>音频采集设备启动失败。  <br><br/>启动音频采集设备失败，当前设备可能被其他应用占用。 |
+| [deprecated] ByteRTCWarningCodeAudioDeviceManagerPlayoutStartFail | -5004 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror).ByteRTCMediaDeviceErrorDeviceFailure 代替.<br><br/>音频播放设备启动失败警告。  <br><br/>可能由于系统资源不足，或参数错误。 |
+| [deprecated] ByteRTCWarningCodeNoRecordingDevice | -5005 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror).ByteRTCMediaDeviceErrorDeviceNotFound 代替。<br><br/>无可用音频采集设备。  <br><br/>启动音频采集设备失败，请插入可用的音频采集设备。 |
+| [deprecated] ByteRTCWarningCodeNoPlayoutDevice | -5006 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceError](iOS-keytype.md#bytertcmediadeviceerror).ByteRTCMediaDeviceErrorDeviceNotFound 代替。<br><br/>无可用音频播放设备。  <br><br/>启动音频播放设备失败，请插入可用的音频播放设备。 |
+| [deprecated] ByteRTCWarningCodeRecordingSilence | -5007 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceWarning](iOS-keytype.md#bytertcmediadevicewarning).ByteRTCMediaDeviceWarningCaptureSilence 代替。<br><br/>当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。 |
+| [deprecated] ByteRTCWarningCodeMediaDeviceOperationDennied | -5008 | 已在 3.33 版本中废弃，使用 [ByteRTCMediaDeviceWarning](iOS-keytype.md#bytertcmediadevicewarning).ByteRTCMediaDeviceWarningOperationDenied 代替。<br><br/>媒体设备误操作警告。  <br><br/>使用自定义采集时，不可调用内部采集开关，调用时触发此警告。 |
 
 
 # ByteRTCPublicStreamErrorCode
@@ -146,6 +137,63 @@ typedef NS_ENUM(NSInteger, ByteRTCNetworkDetectionStartReturn)
 | ByteRTCNetworkDetectionStartReturnStreaming | 2 | 开始探测失败。失败原因为，本地已经开始推拉流 |
 | ByteRTCNetworkDetectionStartReturnStarted | 3 | 已经开始探测，无需重复开启 |
 | ByteRTCNNetworkDetectionStartReturnNotSupport | 4 | 不支持该功能 |
+
+
+# ByteRTCSubtitleErrorCode
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCSubtitleErrorCode)
+```
+
+字幕任务错误码。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCSubtitleErrorCodeUnknow | -1 | 客户端无法识别云端媒体处理发送的错误码。 |
+| ByteRTCSubtitleErrorCodeSuccess | 0 | 字幕已开启。 |
+| ByteRTCSubtitleErrorCodePostProcessError | 1 | 云端媒体处理内部出现错误，请联系技术支持。 |
+| ByteRTCSubtitleErrorCodeASRConnectionError | 2 | 第三方服务连接失败，请联系技术支持。 |
+| ByteRTCSubtitleErrorCodeASRServiceError | 3 | 第三方服务内部出现错误，请联系技术支持。 |
+| ByteRTCSubtitleErrorCodeBeforeJoinRoom | 4 | 未进房导致调用`startSubtitle`失败。请加入房间后再调用此方法。 |
+| ByteRTCSubtitleErrorCodeAlreadyOn | 5 | 字幕已开启，无需重复调用 `startSubtitle`。 |
+| ByteRTCSubtitleErrorCodeUnsupportedLanguage | 6 | 用户选择的目标语言目前暂不支持。 |
+| ByteRTCSubtitleErrorCodePostProcessTimeout | 7 | 云端媒体处理超时未响应，请联系技术支持。 |
+
+
+# ByteRTCKTVErrorCode
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCKTVErrorCode)
+```
+
+KTV 错误码。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCKTVErrorCodeOK | 0 | 成功。 |
+| ByteRTCKTVErrorCodeAppidInValid | -3000 | AppID 异常。 |
+| ByteRTCKTVErrorCodeParasInValid | -3001 | 非法参数，传入的参数不正确。 |
+| ByteRTCKTVErrorCodeGetMusicFailed | -3002 | 获取歌曲资源失败。 |
+| ByteRTCKTVErrorCodeGetLyricFailed | -3003 | 获取歌词失败。 |
+| ByteRTCKTVErrorCodeMusicTakedown | -3004 | 歌曲下架。 |
+| ByteRTCKTVErrorCodeMusicDownload | -3005 | 歌曲文件下载失败。 |
+| ByteRTCKTVErrorCodeMidiDownloadFailed | -3006 | MIDI 文件下载失败。 |
+| ByteRTCKTVErrorCodeSystemBusy | -3007 | 系统繁忙。 |
+| ByteRTCKTVErrorCodeNetwork | -3008 | 网络异常。 |
+| ByteRTCKTVErrorCodeNotJoinRoom | -3009 | KTV 功能未加入房间。 |
+| ByteRTCKTVErrorCodeParseData | -3010 | 解析数据失败。 |
+| ByteRTCKTVErrorCodeDownloading | -3012 | 已在下载中。 |
+| ByteRTCKTVErrorCodeInternal | -3013 | 内部错误，联系技术支持人员。 |
+| ByteRTCKTVErrorCodeInsufficientDiskSpace | -3014 | 下载失败，磁盘空间不足。清除缓存后重试。 |
+| ByteRTCKTVErrorCodeMusicDecryptionFailed | -3015 | 下载失败，音乐文件解密失败，联系技术支持人员。 |
+| ByteRTCKTVErrorCodeFileRenameFailed | -3016 | 下载失败，音乐文件重命名失败，请重试。 |
+| ByteRTCKTVErrorCodeDownloadTimeOut | -3017 | 下载失败，下载超时，请重试。 |
+| ByteRTCKTVErrorCodeClearCacheFailed | -3018 | 清除缓存失败，可能原因是文件被占用或者系统异常，请重试。 |
+| ByteRTCKTVErrorCodeDownloadCanceled | -3019 | 取消下载。 |
 
 
 # ByteRTSErrorCode
@@ -264,25 +312,6 @@ typedef NS_ENUM(NSInteger, ByteRTCRoomMessageSendResult)
 | ByteRTCRoomMessageSendResultNoConnection | 102 | 失败，没有可用的连接。 |
 | ByteRTCRoomMessageSendResultExceedMaxLength | 103 | 消息超过最大长度，当前为 64KB |
 | ByteRTCRoomMessageSendResultUnknown | 1000 | 失败，未知错误。 |
-
-
-# ByteRTCTranscodingError
-```objectivec
-typedef NS_ENUM(NSInteger, ByteRTCTranscodingError)
-```
-
-转推直播功能错误码。
-
-
-### 枚举值
-
-| 类型 | 值 | 说明 |
-| --- | --- | --- |
-| ByteRTCTranscodingErrorOK | 0 | 推流成功。 |
-| ByteRTCTranscodingErrorInvalidArgument | 1 | 推流参数错误。你必须更新合流参数并重试。 |
-| ByteRTCTranscodingErrorSubscribe | 2 | 和 RTC 服务端建立连接失败。会自动重连 |
-| ByteRTCTranscodingErrorProcessing | 3 | 合流服务中间过程存在错误，建议重试。 |
-| ByteRTCTranscodingErrorPublish | 4 | 推流失败，可以等待服务端重新推流。 |
 
 
 # ByteRTCSingleStreamPushEvent

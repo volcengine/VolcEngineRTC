@@ -7,18 +7,18 @@
 | 方法 | 描述 |
 | :-- | :-- |
 | [onPlayerEvent](#engineevents-onplayerevent) | 播放器事件 |
-| [onUserJoined](#engineevents-onuserjoined) | 远端可见用户加入房间，或房内隐身用户切换为可见的回调 |
+| [onUserJoined](#engineevents-onuserjoined) | 远端可见用户加入房间，或房内不可见用户切换为可见的回调 |
 | [onUserLeave](#engineevents-onuserleave) | 远端可见用户离开房间，或房内可见用户切换为隐身的回调 |
 | [onConnectionStateChanged](#engineevents-onconnectionstatechanged) | 连接状态发生变化 |
 | [onUserPublishStream](#engineevents-onuserpublishstream) | 房间内新增远端摄像头/麦克风采集音视频流的回调。 |
 | [onUserUnpublishStream](#engineevents-onuserunpublishstream) | 房间内远端摄像头/麦克风采集的媒体流移除的回调。 |
 | [onUserPublishScreen](#engineevents-onuserpublishscreen) | 房间内新增远端屏幕共享音视频流的回调。 |
 | [onUserUnpublishScreen](#engineevents-onuserunpublishscreen) | 房间内远端屏幕共享音视频流移除的回调。 |
-| [onRemoteVideoFirstFrame](#engineevents-onremotevideofirstframe) | 视频首帧解码 |
+| [onRemoteVideoFirstFrame](#engineevents-onremotevideofirstframe) | 视频首帧渲染 |
 | [onRemoteAudioFirstFrame](#engineevents-onremoteaudiofirstframe) | 远端音频首帧播放事件 |
 | [onVideoDeviceStateChanged](#engineevents-onvideodevicestatechanged) | 视频媒体设备状态改变。 |
 | [onAudioDeviceStateChanged](#engineevents-onaudiodevicestatechanged) | 音频媒体设备状态改变。 |
-| [onTrackEnded](#engineevents-ontrackended) | 断流事件 |
+| [onTrackEnded](#engineevents-ontrackended) | 断流事件，建议在回调里重新采集。 |
 | [onRoomMessageReceived](#engineevents-onroommessagereceived) | 接收到房间内广播消息的事件。 |
 | [onRoomBinaryMessageReceived](#engineevents-onroombinarymessagereceived) | 接收到房间内二进制广播消息的事件。 |
 | [onUserMessageReceived](#engineevents-onusermessagereceived) | 收到来自房间中其他用户通过 [sendUserMessage](Web-api.md#sendusermessage) 发来的点对点文本消息时，会收到此事件 |
@@ -35,14 +35,19 @@
 | [onUserStartVideoCapture](#engineevents-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。 |
 | [onUserStopVideoCapture](#engineevents-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Web-api.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。 |
 | [onSEIMessageReceived](#engineevents-onseimessagereceived) | 接收到包含 SEI 数据的视频帧事件 |
+| [onSEIStreamUpdate](#engineevents-onseistreamupdate) | 包含 SEI 信息的流更新事件。<br>在语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过此事件回调本地用户。<br>你可以通过此事件判断携带 SEI 数据的视频帧为黑帧，从而不对该视频帧进行渲染。 |
 | [onAutoSubscribeResult](#engineevents-onautosubscriberesult) | 如果开启了自动订阅，订阅成功或者失败后可以收到此事件 |
 | [onAutoPublishResult](#engineevents-onautopublishresult) | 如果开启了自动发布，发布成功或者失败后可以收到此事件 |
 | [onAutoplayFailed](#engineevents-onautoplayfailed) | 自动播放失败 |
-| [onError](#engineevents-onerror) | 当 SDK 内部发生不可逆转错误时触发该回调 |
+| [onError](#engineevents-onerror) | 当 SDK 内部发生不可逆转错误时触发该回调。 |
 | [onAudioMixingStateChanged](#engineevents-onaudiomixingstatechanged) | 音频混音文件播放状态改变事件 |
 | [onUserMessageReceivedOutsideRoom](#engineevents-onusermessagereceivedoutsideroom) | 接收到房间外消息的事件。 |
 | [onUserBinaryMessageReceivedOutsideRoom](#engineevents-onuserbinarymessagereceivedoutsideroom) | 接收到房间外二进制消息的事件。 |
 | [onTokenWillExpire](#engineevents-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。<br>调用 [updateToken](Web-api.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。 |
+| [onTokenPublishPrivilegeWillExpire](#engineevents-ontokenpublishprivilegewillexpire) | Token 发布权限过期前 30 秒将触发该回调。<br>收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
+| [onTokenPublishPrivilegeDidExpired](#engineevents-ontokenpublishprivilegedidexpired) | Token 发布权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
+| [onTokenSubscribePrivilegeWillExpire](#engineevents-ontokensubscribeprivilegewillexpire) | Token 订阅权限过期前 30 秒将触发该回调。<br>收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
+| [onTokenSubscribePrivilegeDidExpired](#engineevents-ontokensubscribeprivilegedidexpired) | Token 订阅权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
 | [onCloudProxyConnected](#engineevents-oncloudproxyconnected) | 调用 [startCloudProxy](Web-api.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。 |
 | [onPushPublicStreamResult](#engineevents-onpushpublicstreamresult) | 公共流发布结果回调。<br>调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布公共流后，结果通过此回调通知用户。 |
 | [onPublicStreamSEIMessageReceived](#engineevents-onpublicstreamseimessagereceived) | 回调公共流中包含的 SEI 信息。<br>调用 [startPlayPublicStream](Web-api.md#startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。 |
@@ -81,7 +86,7 @@
 
 ### onUserJoined <span id="engineevents-onuserjoined"></span> 
 
-远端可见用户加入房间，或房内隐身用户切换为可见的回调
+远端可见用户加入房间，或房内不可见用户切换为可见的回调
 
 - **类型**
 
@@ -243,7 +248,7 @@
 
 ### onRemoteVideoFirstFrame <span id="engineevents-onremotevideofirstframe"></span> 
 
-视频首帧解码
+视频首帧渲染
 
 - **类型**
 
@@ -311,8 +316,7 @@
 
 ### onTrackEnded <span id="engineevents-ontrackended"></span> 
 
-断流事件。
-建议在回调里重新采集。
+断流事件，建议在回调里重新采集。
 
 - **类型**
 
@@ -646,6 +650,26 @@
 
     SEI 数据事件
 
+### onSEIStreamUpdate <span id="engineevents-onseistreamupdate"></span> 
+
+包含 SEI 信息的流更新事件。
+在语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过此事件回调本地用户。
+你可以通过此事件判断携带 SEI 数据的视频帧为黑帧，从而不对该视频帧进行渲染。
+
+- **类型**
+
+  ```ts
+  (event: onSEIStreamUpdateEvent) => void
+  ```
+
+- **参数**
+
+  - **event**
+
+    类型: <code>[onSEIStreamUpdateEvent](Web-keytype.md#onseistreamupdateevent)</code>
+
+    包含 SEI 信息的流更新事件。
+
 ### onAutoSubscribeResult <span id="engineevents-onautosubscriberesult"></span> 
 
 如果开启了自动订阅，订阅成功或者失败后可以收到此事件
@@ -715,25 +739,26 @@
 
 ### onError <span id="engineevents-onerror"></span> 
 
-当 SDK 内部发生不可逆转错误时触发该回调
+当 SDK 内部发生不可逆转错误时触发该回调。
 
 - **类型**
 
   ```ts
-  (event: { errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.EXPIRED_TOKEN | ErrorCode.RECONNECT_FAILED;}) => void
+  (event: { errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.TOKEN_EXPIRED | ErrorCode.RECONNECT_FAILED | ErrorCode.KICKED_OUT | ErrorCode.ROOM_DISMISS; forbiddenTime?: number;}) => void
   ```
 
 - **参数**
 
   - **event**
 
-    类型: <code>{ errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.EXPIRED_TOKEN | ErrorCode.RECONNECT_FAILED; }</code>
+    类型: <code>{ errorCode: ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.TOKEN_EXPIRED | ErrorCode.RECONNECT_FAILED | ErrorCode.KICKED_OUT | ErrorCode.ROOM_DISMISS; forbiddenTime?: number | undefined; }</code>
 
     - **成员**
 
       | 名称 | 类型 | 描述 |
       | :-- | :-- | :-- |
-      | errorCode | `ErrorCode.EXPIRED_TOKEN | ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.RECONNECT_FAILED` | 查看错误码和发生错误的原因 |
+      | errorCode | `ErrorCode.KICKED_OUT | ErrorCode.ROOM_DISMISS | ErrorCode.TOKEN_EXPIRED | ErrorCode.DUPLICATE_LOGIN | ErrorCode.RTM_DUPLICATE_LOGIN | ErrorCode.RTM_TOKEN_ERROR | ErrorCode.RECONNECT_FAILED` | 错误码，具体错误原因参看 [ErrorCode](Web-errorcode.md#errorcode)。 |
+      | forbiddenTime | `number | undefined` | （可选参数）房间解封时间，unix 时间戳，单位毫秒。<br> 当 `forbiddenTime` 为 0 时，代表允许用户重新进房。 |
 
 
 ### onAudioMixingStateChanged <span id="engineevents-onaudiomixingstatechanged"></span> 
@@ -794,6 +819,85 @@ Token 过期前 30 秒将触发该回调。
   ```ts
   () => void
   ```
+
+### onTokenPublishPrivilegeWillExpire <span id="engineevents-ontokenpublishprivilegewillexpire"></span> 
+
+Token 发布权限过期前 30 秒将触发该回调。
+收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  若未及时更新 Token，发布权限过期后，已在发布中的流会停止发布，发布端会收到 [onTokenPublishPrivilegeDidExpired](Web-event.md#ontokenpublishprivilegedidexpired) 回调；同时远端用户会收到 [onUserUnpublishStream](Web-event.md#onuserunpublishstream)/[onUserUnpublishScreen](Web-event.md#onuserunpublishscreen) 回调，移除原因为 `STREAM_REMOVE_REASON_TOKEN_PRIVILEGE_EXPIRED`。
+
+### onTokenPublishPrivilegeDidExpired <span id="engineevents-ontokenpublishprivilegedidexpired"></span> 
+
+Token 发布权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  (e: { errorCode?: ErrorCode; message?: String;}) => void
+  ```
+
+- **参数**
+
+  - **e**
+
+    类型: <code>{ errorCode?: [ErrorCode](Web-errorcode.md#errorcode) | undefined; message?: String | undefined; }</code>
+
+    - **成员**
+
+      | 名称 | 类型 | 描述 |
+      | :-- | :-- | :-- |
+      | errorCode | `ErrorCode | undefined` | 错误码，`TOKEN_NO_PUBLISH_PERMISSION` 代表 Token 发布权限过期。 |
+      | message | `String | undefined` | 错误信息。 |
+
+
+### onTokenSubscribePrivilegeWillExpire <span id="engineevents-ontokensubscribeprivilegewillexpire"></span> 
+
+Token 订阅权限过期前 30 秒将触发该回调。
+收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  若收到该回调后未及时更新 Token，Token 订阅权限过期后，已订阅的流会取消订阅，订阅端会收到 [onTokenSubscribePrivilegeDidExpired](Web-event.md#ontokensubscribeprivilegedidexpired) 回调。
+  此时尝试新订阅流会失败，并返回错误码 `TOKEN_NO_SUBSCRIBE_PERMISSION` 提示 Token 订阅权限过期。
+
+### onTokenSubscribePrivilegeDidExpired <span id="engineevents-ontokensubscribeprivilegedidexpired"></span> 
+
+Token 订阅权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  (e: { errorCode?: ErrorCode; message?: String;}) => void
+  ```
+
+- **参数**
+
+  - **e**
+
+    类型: <code>{ errorCode?: [ErrorCode](Web-errorcode.md#errorcode) | undefined; message?: String | undefined; }</code>
+
+    - **成员**
+
+      | 名称 | 类型 | 描述 |
+      | :-- | :-- | :-- |
+      | errorCode | `ErrorCode | undefined` | 错误码，`TOKEN_NO_SUBSCRIBE_PERMISSION` 代表 Token 订阅权限过期。 |
+      | message | `String | undefined` | 错误信息。 |
+
 
 ### onCloudProxyConnected <span id="engineevents-oncloudproxyconnected"></span> 
 

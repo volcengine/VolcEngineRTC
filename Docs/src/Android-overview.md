@@ -11,6 +11,7 @@
 | [setRtcVideoEventHandler](Android-api#RTCVideo-setrtcvideoeventhandler) | 设置引擎事件回调的接收类，必须继承自 [IRTCVideoEventHandler](Android-callback.md#irtcvideoeventhandler) 。 |
 | [setBusinessId](Android-api.md#RTCVideo-setbusinessid) | 设置业务标识参数  <br><br/>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
 | [setRuntimeParameters](Android-api.md#RTCVideo-setruntimeparameters) | 设置运行时的参数 |
+| [setLogConfig](Android-api.md#RTCVideo-setlogconfig) | 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。 |
 
 ## 房间管理
 
@@ -22,8 +23,8 @@
 | [joinRoom](Android-api.md#RTCRoom-joinroom) | 加入房间。<br><br/>多房间场景下，调用 [createRTCRoom](Android-api.md#RTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
 | [setRoomExtraInfo](Android-api.md#RTCRoom-setroomextrainfo) | 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。 |
 | [leaveRoom](Android-api#RTCRoom-leaveroom) | 离开房间。  <br><br/>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br><br/>此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Android-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br> |
-| [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br> |
-| [updateToken](Android-api.md#RTCRoom-updatetoken) | 更新 Token。<br/>Token 中同时包含进房、发布和订阅权限，各权限有一定的有效期，并且到期前 30 秒会触发回调，提示用户更新 Token 相关权限。此时需要重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。 |
+| [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
+| [updateToken](Android-api#RTCRoom-updatetoken) | 更新 Token。<br/>收到 [onTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire)， 或 [onSubscribePrivilegeTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。 |
 
 ## 音频管理
 
@@ -36,17 +37,14 @@
 | [setRemoteAudioPlaybackVolume](Android-api.md#RTCVideo-setremoteaudioplaybackvolume) | 调节来自指定远端用户的音频播放音量。 |
 | [setRemoteRoomAudioPlaybackVolume](Android-api.md#RTCRoom-setremoteroomaudioplaybackvolume) | 调节某个房间内所有远端用户的音频播放音量。 |
 | [enableAudioPropertiesReport](Android-api#RTCVideo-enableaudiopropertiesreport) | 启用音频信息提示。开启提示后，你可以收到 [onLocalAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport)，[onRemoteAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 和 [onActiveSpeaker](Android-callback.md#IRTCVideoEventHandler-onactivespeaker)。 |
-| [startAudioCapture](Android-api#RTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。 |
-| [stopAudioCapture](Android-api#RTCVideo-stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。 |
+| [startAudioCapture](Android-api#RTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。 |
+| [stopAudioCapture](Android-api#RTCVideo-stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。 |
 | [setAudioScenario](Android-api.md#RTCVideo-setaudioscenario) | 设置音频场景类型。<br/>你可以根据你的应用所在场景，选择合适的音频场景类型。<br/>选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量。 |
 | [setAudioProfile](Android-api#RTCVideo-setaudioprofile) | 设置音质档位。<br><br/>当所选的 [ChannelProfile](Android-keytype.md#channelprofile) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。 |
 | [enableExternalSoundCard](Android-api.md#RTCVideo-enableexternalsoundcard) | 启用匹配外置声卡的音频处理模式 |
 | [getAudioDeviceManager](Android-api.md#RTCVideo-getaudiodevicemanager) | 获取音频设备管理接口 |
 | [startAudioPlaybackDeviceTest](Android-api.md#IRTCAudioDeviceManager-startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 `onAudioPlaybackDeviceTestVolume` 回调播放时的音量信息。 |
 | [stopAudioPlaybackDeviceTest](Android-api.md#IRTCAudioDeviceManager-stopaudioplaybackdevicetest) | 停止音频播放测试。 |
-| [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br> |
-| [stopAudioDeviceRecordAndPlayTest](Android-api.md#IRTCAudioDeviceManager-stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br><br/>调用 [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
-| [stopAudioDevicePlayTest](Android-api.md#IRTCAudioDeviceManager-stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest) 开始的音频播放设备测试。<br/>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
 | [startHardwareEchoDetection](Android-api.md#RTCVideo-starthardwareechodetection) | 开启通话前回声检测 |
 | [stopHardwareEchoDetection](Android-api.md#RTCVideo-stophardwareechodetection) | 停止通话前回声检测 |
 
@@ -55,7 +53,7 @@
 | 方法 | 描述 |
 | --- | --- |
 | [startVideoCapture](Android-api#RTCVideo-startvideocapture) | 立即开启内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br><br/>调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br><br/>本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartvideocapture) 的回调。 |
-| [stopVideoCapture](Android-api#RTCVideo-stopvideocapture) | 立即关闭内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br/>调用该方法，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。 |
+| [stopVideoCapture](Android-api#RTCVideo-stopvideocapture) | 立即关闭内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br/>调用该方法，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。 |
 | [setVideoCaptureConfig](Android-api.md#RTCVideo-setvideocaptureconfig) | 设置 RTC SDK 内部采集时的视频采集参数。<br><br/>如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数包括模式、分辨率、帧率。 |
 | [setVideoRotationMode](Android-api.md#RTCVideo-setvideorotationmode) | 设置采集视频的旋转模式。默认以 App 方向为旋转参考系。<br><br/>接收端渲染视频时，将按照和发送端相同的方式进行旋转。<br> |
 | [setLocalVideoCanvas](Android-api.md#RTCVideo-setlocalvideocanvas) | 设置本地视频渲染时使用的视图，并设置渲染模式。 |
@@ -82,7 +80,7 @@
 | --- | --- |
 | [publishStream](Android-api.md#RTCRoom-publishstream) | 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流 |
 | [unpublishStream](Android-api.md#RTCRoom-unpublishstream) | 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中 |
-| [setDummyCaptureImagePath](Android-api.md#RTCVideo-setdummycaptureimagepath) | 摄像头处于关闭状态时，使用静态图片填充本地推送的视频流。<br/>可重复调用该接口来更新图片。若要停止发送图片，可传入空字符串或启用内部摄像头采集。 |
+| [setDummyCaptureImagePath](Android-api.md#RTCVideo-setdummycaptureimagepath) | 摄像头处于关闭状态时，使用静态图片填充本地推送的视频流。<br/>调用 `stopVideoCapture` 接口时，会开始推静态图片。若要停止发送图片，可传入空字符串或启用内部摄像头采集。<br/>可重复调用该接口来更新图片。 |
 | [subscribeStream](Android-api.md#RTCRoom-subscribestream) | 订阅房间内指定的通过摄像头/麦克风采集的媒体流，或更新对指定远端用户的订阅选项 |
 | [unsubscribeStream](Android-api.md#RTCRoom-unsubscribestream) | 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br><br/>该方法对自动订阅和手动订阅模式均适用。 |
 | [subscribeAllStreams](Android-api.md#RTCRoom-subscribeallstreams) | 订阅房间内所有通过摄像头/麦克风采集的媒体流，或更新订阅选项。 |
@@ -109,6 +107,8 @@
 
 | 方法 | 描述 |
 | --- | --- |
+| [setVideoDenoiser](Android-api.md#RTCVideo-setvideodenoiser) | 设置视频降噪模式。 |
+| [setRemoteVideoSuperResolution](Android-api.md#RTCVideo-setremotevideosuperresolution) | 设置远端视频超分模式。 |
 | [setLocalVideoMirrorType](Android-api.md#RTCVideo-setlocalvideomirrortype) | 为采集到的视频流开启镜像 |
 | [setVideoOrientation](Android-api.md#RTCVideo-setvideoorientation) | 在自定义视频前处理及编码前，设置 RTC 链路中的视频帧朝向，默认为 Adaptive 模式。<br/>移动端开启视频特效贴纸，或使用自定义视频前处理时，建议固定视频帧朝向为 Portrait 模式。单流转推场景下，建议根据业务需要固定视频帧朝向为 Portrait 或 Landscape 模式。不同模式的具体显示效果参看[视频帧朝向](https://www.volcengine.com/docs/6348/128787)。 |
 | [setVideoWatermark](Android-api.md#RTCVideo-setvideowatermark) | 在指定视频流上添加水印。 |
@@ -156,7 +156,7 @@
 | [setAudioSourceType](Android-api.md#RTCVideo-setaudiosourcetype) | 切换音频采集方式 |
 | [setAudioRenderType](Android-api.md#RTCVideo-setaudiorendertype) | 切换音频渲染方式 |
 | [pushExternalAudioFrame](Android-api.md#RTCVideo-pushexternalaudioframe) | 推送自定义采集的音频数据到 RTC SDK。 |
-| [pullExternalAudioFrame](Android-api.md#RTCVideo-pullexternalaudioframe) | 拉取远端音频数据。<br><br/>可用于自定义音频渲染。 |
+| [pullExternalAudioFrame](Android-api.md#RTCVideo-pullexternalaudioframe) | 拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
 | [registerLocalVideoProcessor](Android-api.md#RTCVideo-registerlocalvideoprocessor) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你能够调用 [processVideoFrame](Android-api.md#IVideoProcessor-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
 | [processVideoFrame](Android-api.md#IVideoProcessor-processvideoframe) | 获取 RTC SDK 采集得到的视频帧，根据 [registerLocalVideoProcessor](Android-api.md#RTCVideo-registerlocalvideoprocessor) 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。 |
 | [onGLEnvInitiated](Android-api.md#IVideoProcessor-onglenvinitiated) | OpenGL 环境创建完成时，收到此回调。 |
@@ -213,7 +213,6 @@
 | --- | --- |
 | [startPushMixedStreamToCDN](Android-api.md#RTCVideo-startpushmixedstreamtocdn) | 新增合流转推直播任务，并设置合流的图片、视频视图布局和音频属性。  <br><br/>同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。 |
 | [updatePushMixedStreamToCDN](Android-api.md#RTCVideo-updatepushmixedstreamtocdn) | 更新合流转推直播参数，会收到 [onMixingEvent](Android-callback#IMixedStreamObserver-onmixingevent) 回调。  <br><br/>使用 [startPushMixedStreamToCDN](Android-api.md#RTCVideo-startpushmixedstreamtocdn) 启用转推直播功能后，使用此方法更新功能配置参数。 |
-| [setAudioAlignmentProperty](Android-api.md#RTCVideo-setaudioalignmentproperty) | 在听众端，设置订阅的所有远端音频流精准对齐后播放。 |
 | [startPushSingleStreamToCDN](Android-api.md#RTCVideo-startpushsinglestreamtocdn) | 新增单流转推直播任务。 |
 | [stopPushStreamToCDN](Android-api.md#RTCVideo-stoppushstreamtocdn) | 停止转推直播。<br><br/>该方法可用于停止单流转推直播或停止合流转推直播，通过 taskId 区分需要停止的任务。 |
 
@@ -221,35 +220,47 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [getAudioMixingManager](Android-api.md#RTCVideo-getaudiomixingmanager) | 混音管理接口创建 |
-| [enableAudioMixingFrame](Android-api.md#IAudioMixingManager-enableaudiomixingframe) | 启动 PCM 音频数据混音。<br><br/>要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。 |
-| [disableAudioMixingFrame](Android-api.md#IAudioMixingManager-disableaudiomixingframe) | 关闭 PCM 混音 |
-| [pushAudioMixingFrame](Android-api.md#IAudioMixingManager-pushaudiomixingframe) | 推送 PCM 音频帧数据用于混音 |
-| [startAudioMixing](Android-api.md#IAudioMixingManager-startaudiomixing) | 开始播放音频文件。<br><br/>可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。 |
-| [stopAudioMixing](Android-api.md#IAudioMixingManager-stopaudiomixing) | 停止播放音频文件及混音。 |
-| [pauseAudioMixing](Android-api.md#IAudioMixingManager-pauseaudiomixing) | 暂停播放音频文件及混音。 |
-| [resumeAudioMixing](Android-api.md#IAudioMixingManager-resumeaudiomixing) | 恢复播放音频文件及混音。 |
-| [setAudioMixingVolume](Android-api.md#IAudioMixingManager-setaudiomixingvolume) | 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。 |
-| [setAllAudioMixingVolume](Android-api.md#IAudioMixingManager-setallaudiomixingvolume) | 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。 |
-| [enableVocalInstrumentBalance](Android-api.md#RTCVideo-enablevocalinstrumentbalance) | 开启/关闭音量均衡功能。  <br><br/>开启音量均衡功能后，人声的响度会调整为 -16lufs。如果已调用 [setAudioMixingLoudness](Android-api.md#IAudioMixingManager-setaudiomixingloudness) 传入了混音音乐的原始响度，此音乐播放时，响度会调整为 -20lufs。 |
-| [setAudioMixingLoudness](Android-api.md#IAudioMixingManager-setaudiomixingloudness) | 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。 |
-| [enablePlaybackDucking](Android-api.md#RTCVideo-enableplaybackducking) | 打开/关闭音量闪避功能，适用于在 RTC 通话过程中会同时播放短视频或音乐的场景，如“一起看”、“在线 KTV”等。  <br><br/>开启该功能后，当检测到远端人声时，本地的媒体播放音量会自动减弱，从而保证远端人声的清晰可辨；当远端人声消失时，本地媒体音量会恢复到闪避前的音量水平。 |
-| [setAudioMixingPitch](Android-api.md#IAudioMixingManager-setaudiomixingpitch) | 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br><br/>使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。 |
-| [getAudioMixingCurrentPosition](Android-api.md#IAudioMixingManager-getaudiomixingcurrentposition) | 获取音频文件播放进度。 |
-| [setAudioMixingPosition](Android-api.md#IAudioMixingManager-setaudiomixingposition) | 设置音频文件的起始播放位置。 |
-| [getAudioTrackCount](Android-api.md#IAudioMixingManager-getaudiotrackcount) | 获取当前音频文件的音轨索引 |
-| [selectAudioTrack](Android-api.md#IAudioMixingManager-selectaudiotrack) | 指定当前音频文件的播放音轨 |
-| [setAudioMixingPlaybackSpeed](Android-api.md#IAudioMixingManager-setaudiomixingplaybackspeed) | 设置混音时音频文件的播放速度 |
-| [setAudioMixingDualMonoMode](Android-api.md#IAudioMixingManager-setaudiomixingdualmonomode) | 设置当前音频文件的声道模式 |
-| [setAudioMixingProgressInterval](Android-api.md#IAudioMixingManager-setaudiomixingprogressinterval) | 设置混音时音频文件播放进度回调的间隔 |
-| [preloadAudioMixing](Android-api.md#IAudioMixingManager-preloadaudiomixing) | 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。 |
-| [unloadAudioMixing](Android-api.md#IAudioMixingManager-unloadaudiomixing) | 卸载指定音乐文件。 |
-| [getAudioMixingDuration](Android-api.md#IAudioMixingManager-getaudiomixingduration) | 获取音频文件时长。 |
-| [getAudioMixingPlaybackDuration](Android-api.md#IAudioMixingManager-getaudiomixingplaybackduration) | 获取混音音频文件的实际播放时长（单位：毫秒）。 |
-| [stopAllAudioMixing](Android-api.md#IAudioMixingManager-stopallaudiomixing) | 停止播放所有音频文件及混音。 |
-| [pauseAllAudioMixing](Android-api.md#IAudioMixingManager-pauseallaudiomixing) | 暂停播放所有音频文件及混音。 |
-| [resumeAllAudioMixing](Android-api.md#IAudioMixingManager-resumeallaudiomixing) | 恢复播放所有音频文件及混音。 |
-| [registerAudioFileFrameObserver](Android-api.md#IAudioMixingManager-registeraudiofileframeobserver) | 注册本地音频文件混音的音频帧观察者。<br/>当本地音频文件混音时，会收到相关回调。 |
+| [getAudioEffectPlayer](Android-api.md#RTCVideo-getaudioeffectplayer) | 创建音效播放器实例。 |
+| [start](Android-api.md#IAudioEffectPlayer-start) | 开始播放音效文件。<br><br/>可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个音效文件，实现音效叠加。 |
+| [stop](Android-api.md#IAudioEffectPlayer-stop) | 停止播放音效文件。 |
+| [stopAll](Android-api.md#IAudioEffectPlayer-stopall) | 停止播放所有音效文件。 |
+| [preload](Android-api.md#IAudioEffectPlayer-preload) | 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。 |
+| [unload](Android-api.md#IAudioEffectPlayer-unload) | 卸载指定音效文件。 |
+| [unloadAll](Android-api.md#IAudioEffectPlayer-unloadall) | 卸载所有音效文件。 |
+| [pause](Android-api.md#IAudioEffectPlayer-pause) | 暂停播放音效文件。 |
+| [pauseAll](Android-api.md#IAudioEffectPlayer-pauseall) | 暂停播放所有音效文件。 |
+| [resume](Android-api.md#IAudioEffectPlayer-resume) | 恢复播放音效文件。 |
+| [resumeAll](Android-api.md#IAudioEffectPlayer-resumeall) | 恢复播放所有音效文件。 |
+| [setPosition](Android-api.md#IAudioEffectPlayer-setposition) | 设置音效文件的起始播放位置。 |
+| [getPosition](Android-api.md#IAudioEffectPlayer-getposition) | 获取音效文件播放进度。 |
+| [setVolume](Android-api.md#IAudioEffectPlayer-setvolume) | 调节指定音效的音量大小，包括音效文件和 PCM 音频。 |
+| [setVolumeAll](Android-api.md#IAudioEffectPlayer-setvolumeall) | 设置所有音效的音量大小，包括音效文件和 PCM 音效。 |
+| [getVolume](Android-api.md#IAudioEffectPlayer-getvolume) | 获取当前音量。 |
+| [getDuration](Android-api.md#IAudioEffectPlayer-getduration) | 获取音效文件时长。 |
+| [setEventHandler](Android-api.md#IAudioEffectPlayer-seteventhandler) | 设置回调句柄。 |
+| [getMediaPlayer](Android-api.md#RTCVideo-getmediaplayer) | 创建音乐播放器实例。 |
+| [open](Android-api.md#IMediaPlayer-open) | 打开音乐文件。<br/>一个播放器实例仅能够同时打开一个音乐文件。如果需要同时打开多个音乐文件，请创建多个音乐播放器实例。<br/>要播放 PCM 格式的音频数据，参看 [openWithCustomSource](Android-api.md#IMediaPlayer-openwithcustomsource)。`openWithCustomSource` 和此 API 互斥。 |
+| [start](Android-api.md#IMediaPlayer-start) | 播放音乐。你仅需要在调用 [open](Android-api.md#IMediaPlayer-open)，且未开启自动播放时，调用此方法。 |
+| [openWithCustomSource](Android-api.md#IMediaPlayer-openwithcustomsource) | 启动音频裸数据混音。<br/>要播放音乐文件，参看 [open](Android-api.md#IMediaPlayer-open)。`open` 与此 API 互斥。 |
+| [stop](Android-api.md#IMediaPlayer-stop) | 调用 [open](Android-api.md#IMediaPlayer-open), [start](Android-api.md#IMediaPlayer-start), 或 [openWithCustomSource](Android-api.md#IMediaPlayer-openwithcustomsource) 开始播放后，可以调用本方法停止。 |
+| [pause](Android-api.md#IMediaPlayer-pause) | 调用 [open](Android-api.md#IMediaPlayer-open)，或 [start](Android-api.md#IMediaPlayer-start) 开始播放音频文件后，调用本方法暂停播放。 |
+| [resume](Android-api.md#IMediaPlayer-resume) | 调用 [pause](Android-api.md#IMediaPlayer-pause) 暂停音频播放后，调用本方法恢复播放。 |
+| [setVolume](Android-api.md#IMediaPlayer-setvolume) | 调节指定混音的音量大小，包括音乐文件混音和 PCM 混音。 |
+| [getVolume](Android-api.md#IMediaPlayer-getvolume) | 获取当前音量 |
+| [getTotalDuration](Android-api.md#IMediaPlayer-gettotalduration) | 获取音乐文件时长。 |
+| [getPlaybackDuration](Android-api.md#IMediaPlayer-getplaybackduration) | 获取混音音乐文件的实际播放时长，单位为毫秒。 |
+| [getPosition](Android-api.md#IMediaPlayer-getposition) | 获取音乐文件播放进度。 |
+| [setAudioPitch](Android-api.md#IMediaPlayer-setaudiopitch) | 开启变调功能，多用于 K 歌场景。 |
+| [setPosition](Android-api.md#IMediaPlayer-setposition) | 设置音乐文件的起始播放位置。 |
+| [setAudioDualMonoMode](Android-api.md#IMediaPlayer-setaudiodualmonomode) | 设置当前音乐文件的声道模式 |
+| [getAudioTrackCount](Android-api.md#IMediaPlayer-getaudiotrackcount) | 获取当前音乐文件的音轨数 |
+| [selectAudioTrack](Android-api.md#IMediaPlayer-selectaudiotrack) | 指定当前音乐文件的播放音轨 |
+| [setPlaybackSpeed](Android-api.md#IMediaPlayer-setplaybackspeed) | 设置播放速度 |
+| [setProgressInterval](Android-api#IMediaPlayer-setprogressinterval) | 设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Android-callback.md#IMediaPlayerEventHandler-onmediaplayerplayingprogress) 的间隔。 |
+| [setLoudness](Android-api.md#IMediaPlayer-setloudness) | 如果你需要使用 [enableVocalInstrumentBalance](Android-api.md#RTCVideo-enablevocalinstrumentbalance) 对音频文件/PCM 音频数据设置音量均衡，你必须通过此接口传入其原始响度。 |
+| [registerAudioFrameObserver](Android-api.md#IMediaPlayer-registeraudioframeobserver) | 注册回调句柄以在本地音乐文件混音时，收到相关回调。 |
+| [pushExternalAudioFrame](Android-api.md#IMediaPlayer-pushexternalaudioframe) | 推送用于混音的 PCM 音频帧数据 |
+| [setEventHandler](Android-api.md#IMediaPlayer-seteventhandler) | 设置回调句柄。 |
 
 ## 屏幕分享
 
@@ -314,31 +325,31 @@
 | [startSubtitle](Android-api#RTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Android-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br><br/>调用该方法后，你会收到 [onSubtitleStateChanged](Android-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
 | [stopSubtitle](Android-api#RTCRoom-stopsubtitle) | 关闭字幕。 <br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Android-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
 
-## 音乐及打分
+## 在线 KTV
 
 | 方法 | 描述 |
 | --- | --- |
 | [getKTVManager](Android-api.md#RTCVideo-getktvmanager) | 创建 KTV 管理接口。 |
-| [setMaxCacheSize](Android-api.md#KTVManager-setmaxcachesize) | 设置歌曲文件最大占用的本地缓存。 |
-| [getMusicList](Android-api.md#KTVManager-getmusiclist) | 获取歌曲列表。|
-| [searchMusic](Android-api.md#KTVManager-searchmusic) | 根据关键词搜索歌曲。|
-| [getHotMusic](Android-api.md#KTVManager-gethotmusic) | 根据热榜类别获取每个榜单的歌曲列表。|
-| [getMusicDetail](Android-api.md#KTVManager-getmusicdetail) | 获取音乐详细信息。|
-| [downloadMusic](Android-api.md#KTVManager-downloadmusic) | 下载音乐。|
-| [downloadLyric](Android-api.md#KTVManager-downloadlyric) | 下载歌词。|
-| [downloadMidi](Android-api.md#KTVManager-downloadmidi) | 下载 MIDI 文件。|
-| [cancelDownload](Android-api.md#KTVManager-canceldownload) | 取消下载任务。|
-| [clearCache](Android-api.md#KTVManager-clearcache) | 清除当前音乐缓存文件，包括音乐音频和歌词。 |
-| [getKTVPlayer](Android-api.md#KTVManager-getktvplayer) | 获取 KTV 播放器。 |
-| [setPlayerEventHandler](Android-api.md#KTVPlayer-setplayereventhandler) | 设置 KTV 播放器进度及状态回调接口。 |
-| [playMusic](Android-api.md#KTVPlayer-playmusic) | 播放歌曲。 |
-| [pauseMusic](Android-api.md#KTVPlayer-pausemusic) | 暂停播放歌曲。 |
-| [resumeMusic](Android-api.md#KTVPlayer-resumemusic) | 继续播放歌曲。 |
-| [stopMusic](Android-api.md#KTVPlayer-stopmusic) | 停止播放歌曲。 |
-| [seekMusic](Android-api.md#KTVPlayer-seekmusic) | 设置音乐文件的起始播放位置。 |
-| [setMusicVolume](Android-api.md#KTVPlayer-setmusicvolume) | 设置歌曲播放音量，只能在开始播放后进行设置。 |
-| [switchAudioTrackType](Android-api.md#KTVPlayer-switchaudiotracktype) | 切换歌曲原唱伴唱。 |
-| [setMusicPitch](Android-api.md#KTVPlayer-setmusicpitch) | 对播放中的音乐设置升降调信息。 |
+| [setMaxCacheSize](Android-api.md#IKTVManager-setmaxcachesize) | 设置歌曲文件最大占用的本地缓存。 |
+| [getMusicList](Android-api.md#IKTVManager-getmusiclist) | 获取歌曲列表。 |
+| [searchMusic](Android-api.md#IKTVManager-searchmusic) | 根据关键词搜索歌曲。 |
+| [getHotMusic](Android-api.md#IKTVManager-gethotmusic) | 根据热榜类别获取每个榜单的歌曲列表。 |
+| [getMusicDetail](Android-api.md#IKTVManager-getmusicdetail) | 获取音乐详细信息。 |
+| [downloadMusic](Android-api.md#IKTVManager-downloadmusic) | 下载音乐。 |
+| [downloadLyric](Android-api.md#IKTVManager-downloadlyric) | 下载歌词。 |
+| [downloadMidi](Android-api.md#IKTVManager-downloadmidi) | 下载 MIDI 文件。 |
+| [cancelDownload](Android-api.md#IKTVManager-canceldownload) | 取消下载任务。 |
+| [clearCache](Android-api.md#IKTVManager-clearcache) | 清除当前音乐缓存文件，包括音乐音频和歌词。 |
+| [getKTVPlayer](Android-api.md#IKTVManager-getktvplayer) | 获取 KTV 播放器。 |
+| [setPlayerEventHandler](Android-api.md#IKTVPlayer-setplayereventhandler) | 设置 KTV 播放器进度及状态回调接口。 |
+| [playMusic](Android-api.md#IKTVPlayer-playmusic) | 播放歌曲。 |
+| [pauseMusic](Android-api.md#IKTVPlayer-pausemusic) | 暂停播放歌曲。 |
+| [resumeMusic](Android-api.md#IKTVPlayer-resumemusic) | 继续播放歌曲。 |
+| [stopMusic](Android-api.md#IKTVPlayer-stopmusic) | 停止播放歌曲。 |
+| [seekMusic](Android-api.md#IKTVPlayer-seekmusic) | 设置音乐文件的起始播放位置。 |
+| [setMusicVolume](Android-api.md#IKTVPlayer-setmusicvolume) | 设置歌曲播放音量，只能在开始播放后进行设置。 |
+| [switchAudioTrackType](Android-api.md#IKTVPlayer-switchaudiotracktype) | 切换歌曲原唱伴唱。 |
+| [setMusicPitch](Android-api.md#IKTVPlayer-setmusicpitch) | 对播放中的音乐设置升降调信息。 |
 | [getSingScoringManager](Android-api.md#RTCVideo-getsingscoringmanager) | 创建 K 歌评分管理接口。 |
 | [initSingScoring](Android-api.md#ISingScoringManager-initsingscoring) | 初始化 K 歌评分。 |
 | [setSingScoringConfig](Android-api.md#ISingScoringManager-setsingscoringconfig) | 设置 K 歌评分参数。 |
@@ -348,6 +359,7 @@
 | [getLastSentenceScore](Android-api.md#ISingScoringManager-getlastsentencescore) | 获取上一句的演唱评分。调用 [startSingScoring](Android-api.md#ISingScoringManager-startsingscoring) 开始评分后可以调用该接口。 |
 | [getTotalScore](Android-api.md#ISingScoringManager-gettotalscore) | 获取当前演唱总分。调用 [startSingScoring](Android-api.md#ISingScoringManager-startsingscoring) 开始评分后可以调用该接口。 |
 | [getAverageScore](Android-api.md#ISingScoringManager-getaveragescore) | 获取当前演唱歌曲的平均分。 |
+| [setAudioAlignmentProperty](Android-api.md#RTCVideo-setaudioalignmentproperty) | 在听众端，设置订阅的所有远端音频流精准对齐后播放。 |
 
 # 回调
 ## 引擎管理
@@ -361,7 +373,6 @@
 | [onTokenWillExpire](Android-callback#IRTCRoomEventHandler-ontokenwillexpire) | Token 进房权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken](Android-api.md#RTCRoom-updatetoken) 更新 Token 进房权限。 |
 | [onPublishPrivilegeTokenWillExpire](Android-callback#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire) | Token 发布权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken](Android-api.md#RTCRoom-updatetoken) 更新 Token 发布权限。 |
 | [onSubscribePrivilegeTokenWillExpire](Android-callback#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) | Token 订阅权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken](Android-api.md#RTCRoom-updatetoken) 更新 Token 订阅权限有效期。 |
-| [onLicenseWillExpire](Android-callback.md#IRTCVideoEventHandler-onlicensewillexpire) | license 过期时间提醒 |
 
 ## 房间管理
 
@@ -370,8 +381,9 @@
 | [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) | 房间状态改变回调，加入房间、异常退出房间、发生房间相关的警告或错误时会收到此回调。 |
 | [onCreateRoomStateChanged](Android-callback.md#IRTCVideoEventHandler-oncreateroomstatechanged) | 创建房间失败回调。 |
 | [onLeaveRoom](Android-callback#IRTCRoomEventHandler-onleaveroom) | 离开房间成功回调。  <br><br/>用户调用 [leaveRoom](Android-api.md#RTCRoom-leaveroom) 方法后，SDK 会停止所有的发布订阅流，并在释放所有通话相关的音视频资源后，通过此回调通知用户离开房间成功。  <br> |
-| [onUserJoined](Android-callback#IRTCRoomEventHandler-onuserjoined) | 远端可见用户加入房间，或房内隐身用户切换为可见的回调。<br><br/>1.远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br><br/>2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br><br/>3.房间内隐身远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 方法切换至可见时，房间内其他用户将收到该事件。  <br><br/>4.新进房用户也会收到进房前已在房内的可见用户的进房回调通知。  <br> |
+| [onUserJoined](Android-callback#IRTCRoomEventHandler-onuserjoined) | 远端可见用户加入房间，或房内不可见用户切换为可见的回调。<br><br/>1.远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br><br/>2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br><br/>3.房间内隐身远端用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 方法切换至可见时，房间内其他用户将收到该事件。  <br><br/>4.新进房用户也会收到进房前已在房内的可见用户的进房回调通知。  <br> |
 | [onUserLeave](Android-callback.md#IRTCRoomEventHandler-onuserleave) | 远端用户离开房间，或切至不可见时，房间内其他用户会收到此事件 |
+| [onUserVisibilityChanged](Android-callback#IRTCRoomEventHandler-onuservisibilitychanged) | 用户调用 [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) 设置用户可见性的回调。 |
 | [onRoomStats](Android-callback.md#IRTCRoomEventHandler-onroomstats) | 房间内通话统计信息回调。  <br><br/>用户进房开始通话后，每 2s 收到一次本回调。 |
 | [onSetRoomExtraInfoResult](Android-callback#IRTCRoomEventHandler-onsetroomextrainforesult) | 调用 [setRoomExtraInfo](Android-api.md#RTCRoom-setroomextrainfo) 设置房间附加信息结果的回调。 |
 | [onRoomExtraInfoUpdate](Android-callback#IRTCRoomEventHandler-onroomextrainfoupdate) | 接收同一房间内，其他用户调用 [setRoomExtraInfo](Android-api.md#RTCRoom-setroomextrainfo) 设置的房间附加信息的回调。 |
@@ -437,6 +449,13 @@
 | [onFirstPublicStreamVideoFrameDecoded](Android-callback#IRTCVideoEventHandler-onfirstpublicstreamvideoframedecoded) | 公共流的首帧视频解码成功<br><br/>关于订阅公共流，详见 [startPlayPublicStream](Android-api.md#RTCVideo-startplaypublicstream)。 |
 | [onFirstPublicStreamAudioFrame](Android-callback#IRTCVideoEventHandler-onfirstpublicstreamaudioframe) | 公共流的音频首帧解码成功<br><br/>关于订阅公共流，详见 [startPlayPublicStream](Android-api.md#RTCVideo-startplaypublicstream)。 |
 
+## 视频处理
+
+| 回调 | 描述 |
+| --- | --- |
+| [onVideoDenoiseModeChanged](Android-callback.md#IRTCVideoEventHandler-onvideodenoisemodechanged) | 降噪模式状态变更回调。当降噪模式的运行状态发生改变，SDK 会触发该回调，提示用户降噪模式改变后的运行状态及状态发生改变的原因。 |
+| [onRemoteVideoSuperResolutionModeChanged](Android-callback.md#IRTCVideoEventHandler-onremotevideosuperresolutionmodechanged) | 远端视频流的超分状态发生改变时，房间内订阅此流的用户会收到该回调。 |
+
 ## 自定义流处理
 
 | 回调 | 描述 |
@@ -461,7 +480,7 @@
 
 | 回调 | 描述 |
 | --- | --- |
-| [onPerformanceAlarms](Android-callback.md#IRTCVideoEventHandler-onperformancealarms) | 本地未开启发布性能回退，检测到设备性能不足时，收到此回调。  <br><br/>本地开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。 |
+| [onPerformanceAlarms](Android-callback#IRTCVideoEventHandler-onperformancealarms) | 本地未通过 [setPublishFallbackOption](Android-api.md#RTCVideo-setpublishfallbackoption) 开启发布性能回退，检测到设备性能不足时，收到此回调。  <br><br/>本地通过 [setPublishFallbackOption](Android-api.md#RTCVideo-setpublishfallbackoption) 开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。 |
 | [onSimulcastSubscribeFallback](Android-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) | 音视频流因网络环境变化等原因发生回退，或从回退中恢复时，触发该回调。 |
 | [onNetworkDetectionResult](Android-callback#IRTCVideoEventHandler-onnetworkdetectionresult) | 通话前网络探测结果。  <br><br/>成功调用 [startNetworkDetection](Android-api.md#RTCVideo-startnetworkdetection) 接口开始探测后，会在 3s 内首次收到该回调，之后每 2s 收到一次该回调。 |
 | [onNetworkDetectionStopped](Android-callback#IRTCVideoEventHandler-onnetworkdetectionstopped) | 通话前网络探测结束<br/>以下情况将停止探测并收到本一次本回调：<br><br/>1. 当调用 [stopNetworkDetection](Android-api.md#RTCVideo-stopnetworkdetection) 接口停止探测后，会收到一次该回调；<br/>2. 当收到远端/本端音频首帧后，停止探测；<br/>3. 当探测超过3分钟后，停止探测；<br/>4. 当探测链路断开一定时间之后，停止探测。 |
@@ -506,9 +525,12 @@
 
 | 回调 | 描述 |
 | --- | --- |
-| [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) | 音频混音文件播放状态改变时回调 |
-| [onAudioMixingPlayingProgress](Android-callback.md#IRTCVideoEventHandler-onaudiomixingplayingprogress) | 混音音频文件播放进度回调 |
-| [onAudioFileFrame](Android-callback.md#IAudioFileFrameObserver-onaudiofileframe) | 当本地音频文件混音时，回调播放的音频帧。 |
+| [onAudioEffectPlayerStateChanged](Android-callback.md#IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged) | 播放状态改变时回调。 |
+| [onFrame](Android-callback.md#IMediaPlayerAudioFrameObserver-onframe) | 当本地音频文件混音时，回调播放的音频帧。 |
+| [onMediaPlayerStateChanged](Android-callback.md#IMediaPlayerEventHandler-onmediaplayerstatechanged) | 播放状态改变时回调。 |
+| [onMediaPlayerPlayingProgress](Android-callback#IMediaPlayerEventHandler-onmediaplayerplayingprogress) | 播放进度周期性回调。回调周期通过 [setProgressInterval](Android-api.md#IMediaPlayer-setprogressinterval) 设置。 |
+| [onReadData](Android-callback#IMediaPlayerCustomSourceProvider-onreaddata) | 调用 [openWithCustomSource](Android-api.md#IMediaPlayer-openwithcustomsource) 接口播放用户传入的内存音频数据时，会触发此回调，用户需要写入音频数据。 |
+| [onSeek](Android-callback#IMediaPlayerCustomSourceProvider-onseek) | 根据设置好的内存音频数据的读取位置和读取偏移量对音频数据进行偏移，以便 SDK 读取和分析音频数据。 <br><br/>在调用 [openWithCustomSource](Android-api.md#IMediaPlayer-openwithcustomsource) 接口传入内存音频数据，或者调用 [setPosition](Android-api.md#IMediaPlayer-setposition) 设置了音频数据的起始播放位置后，SDK 会对音频数据进行读取和分析，此时会触发该回调，你需要根据参数中设置的起始读取位置和偏移量进行操作。 |
 
 ## 屏幕分享
 
@@ -532,6 +554,7 @@
 
 | 回调 | 描述 |
 | --- | --- |
+| [onExtensionAccessError](Android-callback.md#IRTCVideoEventHandler-onextensionaccesserror) | 当访问插件失败时，收到此回调。<br/>RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。 |
 | [onRecordingStateUpdate](Android-callback#IRTCVideoEventHandler-onrecordingstateupdate) | 获取本地录制状态回调。  <br><br/>该回调由 [startFileRecording](Android-api.md#RTCVideo-startfilerecording) 或 [stopFileRecording](Android-api.md#RTCVideo-stopfilerecording) 触发。 |
 | [onRecordingProgressUpdate](Android-callback#IRTCVideoEventHandler-onrecordingprogressupdate) | 本地录制进度回调。  <br><br/>该回调由 [startFileRecording](Android-api.md#RTCVideo-startfilerecording) 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。 |
 | [onAudioRecordingStateUpdate](Android-callback#IRTCVideoEventHandler-onaudiorecordingstateupdate) | 调用 [startAudioRecording](Android-api.md#RTCVideo-startaudiorecording) 或 [stopAudioRecording](Android-api.md#RTCVideo-stopaudiorecording) 改变音频文件录制状态时，收到此回调。 |

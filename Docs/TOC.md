@@ -2,7 +2,7 @@
 
 ## Native SDK
 
-| Android 3.52 | iOS 3.52 | macOS 3.52 | Windows 3.52 | Linux 3.52 | 
+| Android 3.54 | iOS 3.54 | macOS 3.54 | Windows 3.54 | Linux 3.54 | 
 | --- | --- | --- | --- | --- |
 | [概览](src/Android-overview.md) | [概览](src/iOS-overview.md) | [概览](src/macOS-overview.md) | [概览](src/Windows-overview.md) | [概览](src/Linux-overview.md) | 
 | [API 详情](src/Android-api.md) | [API 详情](src/iOS-api.md) | [API 详情](src/macOS-api.md) | [API 详情](src/Windows-api.md) | [API 详情](src/Linux-api.md) | 
@@ -14,9 +14,9 @@
 
 | Electron 3.52 |
 | --- |
-| [概览](src/85530.md) |
-| [API 详情](src/85532.md) |
-| [回调](src/85533.md) |
-| [错误码](src/85534.md) |
-| [类型详情](src/85535.md) |
+| [概览](src/Electron-overview.md) |
+| [API 详情](src/Electron-api.md) |
+| [回调](src/Electron-event.md) |
+| [错误码](src/Electron-errorcode.md) |
+| [类型详情](src/Electron-keytype.md) |
 

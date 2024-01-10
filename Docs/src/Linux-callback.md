@@ -40,6 +40,7 @@ class bytertc::IRTCRoomEventHandler
 | **virtual void** | [onNetworkQuality](#IRTCRoomEventHandler-onnetworkquality) |
 | **virtual void** | [onSetRoomExtraInfoResult](#IRTCRoomEventHandler-onsetroomextrainforesult) |
 | **virtual void** | [onRoomExtraInfoUpdate](#IRTCRoomEventHandler-onroomextrainfoupdate) |
+| **virtual void** | [onUserVisibilityChanged](#IRTCRoomEventHandler-onuservisibilitychanged) |
 | **virtual void** | [onSubtitleStateChanged](#IRTCRoomEventHandler-onsubtitlestatechanged) |
 | **virtual void** | [onSubtitleMessageReceived](#IRTCRoomEventHandler-onsubtitlemessagereceived) |
 | **BYTERTC_DEPRECATED virtual void** | [[deprecated] onRoomWarning](#IRTCRoomEventHandler-onroomwarning) |
@@ -109,7 +110,7 @@ virtual void bytertc::IRTCRoomEventHandler::onLeaveRoom(
 
 **注意**
 
-+ 用户调用 [leaveRoom](Linux-api.md#IRTCRoom-leaveroom) 方法离开房间后，若立即调用 [destroyRTCVideo](Linux-api.md#destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。  
++ 用户调用 [leaveRoom](Linux-api.md#IRTCRoom-leaveroom) 方法离开房间后，如果立即调用 [destroy](Linux-api.md#IRTCRoom-destroy) 销毁房间实例或 [destroyRTCVideo](Linux-api.md#destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。  
 + 离开房间后，如果 App 需要使用系统音视频设备，则建议收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备而导致初始化失败。  
 
 
@@ -161,7 +162,7 @@ Token 进房权限过期前 30 秒将触发该回调。<br>
 **注意**
 若未能及时更新 Token 进房权限导致其过期实效： + 用户此时尝试进房会收到 [onRoomStateChanged](#IRTCRoomEventHandler-onroomstatechanged) 回调，提示错误码为 `-1000` Token 过期； 
 
-+ 用户已在房间内则会被移出房间，本地用户会收到 [onRoomStateChanged](#IRTCRoomEventHandler-onroomstatechanged) 回调，提示错误码为 `-1009` Token 过期，同时远端用户会收到 [onUserLeave](#IRTCRoomEventHandler-onuserleave) 回调，提示原因为 `2` Token 进房权限过期。
++ 用户已在房间内则会被移出房间，本地用户会收到 [onRoomStateChanged](#IRTCRoomEventHandler-onroomstatechanged) 回调，提示错误码为 `-1009` Token 过期，同时远端用户会收到 [onUserLeave](#IRTCRoomEventHandler-onuserleave) 回调，提示原因为 `1` Token 进房权限过期。
 
 
 <span id="IRTCRoomEventHandler-onpublishprivilegetokenwillexpire"></span>
@@ -230,7 +231,7 @@ virtual void bytertc::IRTCRoomEventHandler::onUserJoined(
     const UserInfo& user_info,
     int elapsed)
 ```
-远端可见用户加入房间，或房内隐身用户切换为可见的回调。<br>
+远端可见用户加入房间，或房内不可见用户切换为可见的回调。<br>
 1. 远端用户调用 [setUserVisibility](Linux-api.md#IRTCRoom-setuservisibility) 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。  <br>
 2. 远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。  <br>
 3. 房间内隐身远端用户调用 [setUserVisibility](Linux-api.md#IRTCRoom-setuservisibility) 方法切换至可见时，房间内其他用户将收到该事件。  <br>
@@ -634,9 +635,9 @@ virtual void bytertc::IRTCRoomEventHandler::onForwardStreamEvent(
 ### onNetworkQuality
 ```cpp
 virtual void bytertc::IRTCRoomEventHandler::onNetworkQuality(
-    const NetworkQualityStats& localQuality,
-    const NetworkQualityStats* remoteQualities,
-    int remoteQualityNum)
+    const NetworkQualityStats& local_quality,
+    const NetworkQualityStats* remote_qualities,
+    int remote_quality_num)
 ```
 加入房间并发布或订阅流后， 以每 2 秒一次的频率，报告本地用户和已订阅的远端用户的上下行网络质量信息。
 
@@ -644,9 +645,9 @@ virtual void bytertc::IRTCRoomEventHandler::onNetworkQuality(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| localQuality | **const NetworkQualityStats&** | 本端网络质量，详见 [NetworkQualityStats](Linux-keytype.md#networkqualitystats)。 |
-| remoteQualities | **const NetworkQualityStats*** | 已订阅用户的网络质量，详见 [NetworkQualityStats](Linux-keytype.md#networkqualitystats)。 |
-| remoteQualityNum | **int** | `remoteQualities` 数组长度 |
+| local_quality | **const NetworkQualityStats&** | 本端网络质量，详见 [NetworkQualityStats](Linux-keytype.md#networkqualitystats)。 |
+| remote_qualities | **const NetworkQualityStats*** | 已订阅用户的网络质量，详见 [NetworkQualityStats](Linux-keytype.md#networkqualitystats)。 |
+| remote_quality_num | **int** | `remoteQualities` 数组长度 |
 
 
 **注意**
@@ -656,8 +657,8 @@ virtual void bytertc::IRTCRoomEventHandler::onNetworkQuality(
 ### onSetRoomExtraInfoResult
 ```cpp
 virtual void bytertc::IRTCRoomEventHandler::onSetRoomExtraInfoResult(
-    int64_t taskId,
-    SetRoomExtraInfoResult errCode)
+    int64_t task_id,
+    SetRoomExtraInfoResult error_code)
 ```
 > Available since 3.52.
 
@@ -667,8 +668,8 @@ virtual void bytertc::IRTCRoomEventHandler::onSetRoomExtraInfoResult(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| taskId | **int64_t** | 调用 setRoomExtraInfo 的任务编号。 |
-| errCode | **SetRoomExtraInfoResult** | 设置房间附加信息的结果，详见 [SetRoomExtraInfoResult](Linux-keytype.md#setroomextrainforesult) |
+| task_id | **int64_t** | 调用 setRoomExtraInfo 的任务编号。 |
+| error_code | **SetRoomExtraInfoResult** | 设置房间附加信息的结果，详见 [SetRoomExtraInfoResult](Linux-keytype.md#setroomextrainforesult) |
 
 
 <span id="IRTCRoomEventHandler-onroomextrainfoupdate"></span>
@@ -677,8 +678,8 @@ virtual void bytertc::IRTCRoomEventHandler::onSetRoomExtraInfoResult(
 virtual void bytertc::IRTCRoomEventHandler::onRoomExtraInfoUpdate(
     const char*key,
     const char* value,
-    const char* lastUpdateUserId,
-    int64_t lastUpdateTimeMs)
+    const char* last_update_user_id,
+    int64_t last_update_time_ms)
 ```
 > Available since 3.52.
 
@@ -690,12 +691,31 @@ virtual void bytertc::IRTCRoomEventHandler::onRoomExtraInfoUpdate(
 | --- | --- | --- |
 | key | **const char*** | 房间附加信息的键值 |
 | value | **const char*** | 房间附加信息的内容 |
-| lastUpdateUserId | **const char*** | 最后更新本条信息的用户 ID。 |
-| lastUpdateTimeMs | **int64_t** | 最后更新本条信息的 Unix 时间，单位：毫秒。 |
+| last_update_user_id | **const char*** | 最后更新本条信息的用户 ID。 |
+| last_update_time_ms | **int64_t** | 最后更新本条信息的 Unix 时间，单位：毫秒。 |
 
 
 **注意**
 新进房的用户会收到进房前房间内已有的全部附加信息通知。
+
+<span id="IRTCRoomEventHandler-onuservisibilitychanged"></span>
+### onUserVisibilityChanged
+```cpp
+virtual void bytertc::IRTCRoomEventHandler::onUserVisibilityChanged(
+    bool current_user_visibility,
+    UserVisibilityChangeError error_code)
+```
+> Available since 3.54
+
+用户调用 [setUserVisibility](Linux-api.md#IRTCRoom-setuservisibility) 设置用户可见性的回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| current_user_visibility | **bool** | 当前用户的可见性。  <br/>• true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。<br/>• false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+| error_code | **UserVisibilityChangeError** | 设置用户可见性错误码，参看 [UserVisibilityChangeError](Linux-keytype.md#uservisibilitychangeerror)。 |
+
 
 <span id="IRTCRoomEventHandler-onsubtitlestatechanged"></span>
 ### onSubtitleStateChanged
@@ -713,7 +733,7 @@ virtual void bytertc::IRTCRoomEventHandler::onSubtitleStateChanged(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | state | **SubtitleState** | 字幕状态。参看 [SubtitleState](Linux-keytype.md#subtitlestate)。 |
-| error_code | **SubtitleErrorCode** | 字幕任务错误码。参看 [SubtitleErrorCode](Linux-keytype.md#subtitleerrorcode)。 |
+| error_code | **SubtitleErrorCode** | 字幕任务错误码。参看 [SubtitleErrorCode](Linux-errorcode.md#subtitleerrorcode)。 |
 | error_message | **const char*** | 与第三方服务有关的错误信息。 |
 
 
@@ -751,7 +771,6 @@ class bytertc::IRTCVideoEventHandler
 | **virtual void** | [onWarning](#IRTCVideoEventHandler-onwarning) |
 | **virtual void** | [onError](#IRTCVideoEventHandler-onerror) |
 | **virtual void** | [onExtensionAccessError](#IRTCVideoEventHandler-onextensionaccesserror) |
-| **virtual void** | [onAudioMixingStateChanged](#IRTCVideoEventHandler-onaudiomixingstatechanged) |
 | **virtual void** | [onAudioMixingPlayingProgress](#IRTCVideoEventHandler-onaudiomixingplayingprogress) |
 | **virtual void** | [onLogReport](#IRTCVideoEventHandler-onlogreport) |
 | **virtual void** | [onConnectionStateChanged](#IRTCVideoEventHandler-onconnectionstatechanged) |
@@ -813,17 +832,17 @@ class bytertc::IRTCVideoEventHandler
 | **virtual void** | [onPushPublicStreamResult](#IRTCVideoEventHandler-onpushpublicstreamresult) |
 | **virtual void** | [onFirstPublicStreamAudioFrame](#IRTCVideoEventHandler-onfirstpublicstreamaudioframe) |
 | **virtual void** | [onCloudProxyConnected](#IRTCVideoEventHandler-oncloudproxyconnected) |
-| **virtual void** | [onLicenseWillExpire](#IRTCVideoEventHandler-onlicensewillexpire) |
 | **virtual void** | [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) |
+| **virtual void** | [onLocalAudioStateChanged](#IRTCVideoEventHandler-onlocalaudiostatechanged) |
+| **virtual void** | [onLocalVideoStateChanged](#IRTCVideoEventHandler-onlocalvideostatechanged) |
+| **virtual void** | [[deprecated] onAudioMixingStateChanged](#IRTCVideoEventHandler-onaudiomixingstatechanged) |
 | **BYTERTC_DEPRECATED virtual void** | [[deprecated] onMediaDeviceStateChanged](#IRTCVideoEventHandler-onmediadevicestatechanged) |
 | **BYTERTC_DEPRECATED virtual void** | [[deprecated] onMediaDeviceWarning](#IRTCVideoEventHandler-onmediadevicewarning) |
 | **virtual void** | [[deprecated] onHttpProxyState](#IRTCVideoEventHandler-onhttpproxystate) |
 | **virtual void** | [[deprecated] onHttpsProxyState](#IRTCVideoEventHandler-onhttpsproxystate) |
 | **virtual void** | [[deprecated] onSocks5ProxyState](#IRTCVideoEventHandler-onsocks5proxystate) |
-| **virtual void** | [[deprecated] onLocalAudioStateChanged](#IRTCVideoEventHandler-onlocalaudiostatechanged) |
 | **BYTERTC_DEPRECATED virtual void** | [[deprecated] onUserMuteAudio](#IRTCVideoEventHandler-onusermuteaudio) |
 | **BYTERTC_DEPRECATED virtual void** | [[deprecated] onUserMuteVideo](#IRTCVideoEventHandler-onusermutevideo) |
-| **virtual void** | [[deprecated] onLocalVideoStateChanged](#IRTCVideoEventHandler-onlocalvideostatechanged) |
 
 
 ## 函数说明
@@ -864,7 +883,7 @@ SDK 运行时出现了网络或媒体相关的错误，且无法自动恢复时�
 ### onExtensionAccessError
 ```cpp
 virtual void bytertc::IRTCVideoEventHandler::onExtensionAccessError(
-    const char* extensionName,
+    const char* extension_name,
     const char* msg)
 ```
 > Available since 3.52
@@ -876,7 +895,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| extensionName | **const char*** | 插件名字 |
+| extension_name | **const char*** | 插件名字 |
 | msg | **const char*** | 失败说明 |
 
 
@@ -888,6 +907,8 @@ virtual void bytertc::IRTCVideoEventHandler::onAudioMixingStateChanged(
     bytertc::AudioMixingState state,
     bytertc::AudioMixingError error)
 ```
+> Deprecated  since 353. Use [IMediaPlayerEventHandler](#imediaplayereventhandler) and [IAudioEffectPlayerEventHandler](#iaudioeffectplayereventhandler) instead.
+
 音频混音文件播放状态改变时回调
 
 **传入参数**
@@ -1008,8 +1029,8 @@ virtual void bytertc::IRTCVideoEventHandler::onPerformanceAlarms(
     bytertc::PerformanceAlarmReason reason,
     const bytertc::SourceWantedData& data)
 ```
-本地未开启发布性能回退，检测到设备性能不足时，收到此回调。<br>
-本地开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。
+本地未通过 [setPublishFallbackOption](Linux-api.md#IRTCVideo-setpublishfallbackoption) 开启发布性能回退，检测到设备性能不足时，收到此回调。<br>
+本地通过 [setPublishFallbackOption](Linux-api.md#IRTCVideo-setpublishfallbackoption) 开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。
 
 **传入参数**
 
@@ -1183,7 +1204,7 @@ virtual void bytertc::IRTCVideoEventHandler::onCreateRoomStateChanged(
 virtual void bytertc::IRTCVideoEventHandler::onHttpProxyState(
     int state)
 ```
-> Deprecated  在3.52及之后废弃，将在3.57删除，使用 [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) 替换
+> Deprecated  since 3.52, will be deleted at 3.57, use [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) instead
 
 HTTP 代理连接状态改变时，收到该回调。
 
@@ -1200,7 +1221,7 @@ HTTP 代理连接状态改变时，收到该回调。
 virtual void bytertc::IRTCVideoEventHandler::onHttpsProxyState(
     int state)
 ```
-> Deprecated  在3.52及之后废弃，将在3.57删除，使用 [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) 替换
+> Deprecated  since 3.52, will be deleted at 3.57, use [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) instead
 
 HTTPS 代理连接状态改变时，收到该回调。
 
@@ -1221,7 +1242,7 @@ virtual void bytertc::IRTCVideoEventHandler::onSocks5ProxyState(
     const char* local_address,
     const char* remote_address)
 ```
-> Deprecated  在3.52及之后废弃，将在3.57删除，使用 [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) 替换
+> Deprecated  since 3.52, will be deleted at 3.57, use [onLocalProxyStateChanged](#IRTCVideoEventHandler-onlocalproxystatechanged) instead
 
 SOCKS5 代理状态改变时，收到该回调。
 
@@ -1564,7 +1585,6 @@ virtual void bytertc::IRTCVideoEventHandler::onLocalAudioStateChanged(
     LocalAudioStreamState state,
     LocalAudioStreamError error)
 ```
-> Deprecated  since 3.50 and will be deleted in 3.55, use [onAudioDeviceStateChanged](#IRTCVideoEventHandler-onaudiodevicestatechanged) instead.
 
 本地音频流的状态发生改变时，收到此回调。
 
@@ -1699,7 +1719,7 @@ virtual void bytertc::IRTCVideoEventHandler::onNetworkDetectionStopped(
 ```cpp
 virtual void bytertc::IRTCVideoEventHandler::onPlayPublicStreamResult(
     const char* public_stream_id,
-    PublicStreamErrorCode errorCode)
+    PublicStreamErrorCode error_code)
 ```
 订阅公共流的结果回调<br>
 通过 [startPlayPublicStream](Linux-api.md#IRTCVideo-startplaypublicstream) 订阅公共流后，可以通过本回调获取订阅结果。
@@ -1709,7 +1729,7 @@ virtual void bytertc::IRTCVideoEventHandler::onPlayPublicStreamResult(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | public_stream_id | **const char*** | 公共流的 ID |
-| errorCode | **PublicStreamErrorCode** | 公共流订阅结果状态码。详见 [PublicStreamErrorCode](Linux-keytype.md#publicstreamerrorcode)。 |
+| error_code | **PublicStreamErrorCode** | 公共流订阅结果状态码。详见 [PublicStreamErrorCode](Linux-errorcode.md#publicstreamerrorcode)。 |
 
 
 <span id="IRTCVideoEventHandler-onpublicstreamseimessagereceived"></span>
@@ -1735,7 +1755,7 @@ virtual void bytertc::IRTCVideoEventHandler::onPublicStreamSEIMessageReceived(
 
 
 **注意**
-通过 Open API 插入的 SEI 信息，应通过回调 [onPublicStreamDataMessageReceived](#IRTCVideoEventHandler-onpublicstreamdatamessagereceived) 获取。
+通过 Open API 插入的自定义信息，应通过回调 [onPublicStreamDataMessageReceived](#IRTCVideoEventHandler-onpublicstreamdatamessagereceived) 获取。
 
 <span id="IRTCVideoEventHandler-onpublicstreamdatamessagereceived"></span>
 ### onPublicStreamDataMessageReceived
@@ -1749,14 +1769,14 @@ virtual void bytertc::IRTCVideoEventHandler::onPublicStreamDataMessageReceived(
 > Available since 3.52
 
 回调公共流中包含的数据信息。
-通过 [startPlayPublicStream](Linux-api.md#IRTCVideo-startplaypublicstream) 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
+通过 [startPlayPublicStream](Linux-api.md#IRTCVideo-startplaypublicstream) 开始播放公共流后，通过此回调收到公共流中的数据消息。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | public_stream_id | **const char*** | 公共流 ID |
-| message | **const uint8_t*** | 收到的数据消息内容，如下：<br/>• 调用公共流 OpenAPI 发送的 SEI 消息。当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。<br/>• 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。 |
+| message | **const uint8_t*** | 收到的数据消息内容，如下：<br/>• 调用公共流 OpenAPI 发送的自定义消息。<br/>• 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。JSON 格式说明如下：<br/>{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"Type"&nbsp;:&nbsp;"VolumeIndication", //具体业务类型<br/>&nbsp;&nbsp;&nbsp;&nbsp;"VolumeInfos"[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 业务类型对应信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"RoomId":"1000001", // 房间ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"UserId":"1000001", // 用户ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"StreamType":0, // 0:摄像头流；1:屏幕流<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LinearVolume":1 // 线性音量大小<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;]<br/>}|
 | message_length | **int** | 消息的长度 |
 | source_type | **DataMessageSourceType** | 数据消息来源，参看 [DataMessageSourceType](Linux-keytype.md#datamessagesourcetype)。 |
 
@@ -1806,7 +1826,9 @@ virtual void bytertc::IRTCVideoEventHandler::onUserStopVideoCapture(
     const char* room_id,
     const char* user_id)
 ```
-房间内的可见用户调用 [stopVideoCapture](Linux-api.md#IRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
+
+- 房间内的可见用户调用 [stopVideoCapture](Linux-api.md#IRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
+- 若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。
 
 **传入参数**
 
@@ -1955,7 +1977,6 @@ virtual void bytertc::IRTCVideoEventHandler::onLocalVideoStateChanged(
     LocalVideoStreamState state,
     LocalVideoStreamError error)
 ```
-> Deprecated  since 3.50 and will be deleted in 3.55. Use [onVideoDeviceStateChanged](#IRTCVideoEventHandler-onvideodevicestatechanged) instead.
 
 本地视频流的状态发生改变时，收到该事件。
 
@@ -1977,6 +1998,7 @@ virtual void bytertc::IRTCVideoEventHandler::onRemoteVideoStateChanged(
     RemoteVideoStateChangeReason reason)
 ```
 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
+本回调仅适用于主流，不适用于屏幕流。
 
 **传入参数**
 
@@ -2203,7 +2225,7 @@ virtual void bytertc::IRTCVideoEventHandler::onFirstLocalAudioFrame(
 virtual void bytertc::IRTCVideoEventHandler::onPushPublicStreamResult(
     const char* room_id,
     const char* public_streamid,
-    PublicStreamErrorCode errorCode)
+    PublicStreamErrorCode error_code)
 ```
 公共流发布结果回调。<br>
 调用 [startPushPublicStream](Linux-api.md#IRTCVideo-startpushpublicstream) 接口发布公共流后，启动结果通过此回调方法通知用户。
@@ -2214,7 +2236,7 @@ virtual void bytertc::IRTCVideoEventHandler::onPushPublicStreamResult(
 | --- | --- | --- |
 | room_id | **const char*** | 公共流的发布房间的 ID |
 | public_streamid | **const char*** | 公共流 ID |
-| errorCode | **PublicStreamErrorCode** | 公共流发布结果状态码。详见 [PublicStreamErrorCode](Linux-keytype.md#publicstreamerrorcode) |
+| error_code | **PublicStreamErrorCode** | 公共流发布结果状态码。详见 [PublicStreamErrorCode](Linux-errorcode.md#publicstreamerrorcode) |
 
 
 <span id="IRTCVideoEventHandler-onfirstpublicstreamaudioframe"></span>
@@ -2248,20 +2270,6 @@ virtual void bytertc::IRTCVideoEventHandler::onCloudProxyConnected(
 | interval | **int** | 从开启云代理到连接成功经过的时间，单位为 ms |
 
 
-<span id="IRTCVideoEventHandler-onlicensewillexpire"></span>
-### onLicenseWillExpire
-```cpp
-virtual void bytertc::IRTCVideoEventHandler::onLicenseWillExpire(
-    int days)
-```
-license 过期提醒。在剩余天数低于 30 天时，收到此回调。
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| days | **int** | license 剩余有效天数 |
-
 
 <span id="IRTCVideoEventHandler-onlocalproxystatechanged"></span>
 ### onLocalProxyStateChanged
@@ -2271,15 +2279,57 @@ virtual void bytertc::IRTCVideoEventHandler::onLocalProxyStateChanged(
     LocalProxyState local_proxy_state,
     LocalProxyError local_proxy_error)
 ```
-本地代理状态发生改变回调。调用 [setLocalProxy](Linux-api.md#IRTCVideo-setlocalproxy) 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。  <br>
+本地代理状态发生改变回调。调用 [setLocalProxy](Linux-api.md#IRTCVideo-setlocalproxy) 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| local_proxy_type | **LocalProxyType** | 本地代理类型。参看 [LocalProxyType](Linux-keytype.md#localproxytype) 。 |
+| local_proxy_type | **LocalProxyType** | 本地代理类型。参看 [LocalProxyType](Linux-keytype.md#localproxytype)。 |
 | local_proxy_state | **LocalProxyState** | 本地代理状态。参看 [LocalProxyState](Linux-keytype.md#localproxystate)。 |
 | local_proxy_error | **LocalProxyError** | 本地代理错误。参看 [LocalProxyError](Linux-keytype.md#localproxyerror)。 |
+
+
+# IAudioEffectPlayerEventHandler
+```cpp
+class bytertc::IAudioEffectPlayerEventHandler
+```
+
+[IAudioEffectPlayer](Linux-api.md#iaudioeffectplayer) 对应的回调句柄。你必须调用 [setEventHandler](Linux-api.md#IAudioEffectPlayer-seteventhandler) 完成设置后，才能收到对应回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **virtual** | [~IAudioEffectPlayerEventHandler](#IAudioEffectPlayerEventHandler-~iaudioeffectplayereventhandler) |
+| **virtual void** | [onAudioEffectPlayerStateChanged](#IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged) |
+
+
+## 函数说明
+<span id="IAudioEffectPlayerEventHandler-~iaudioeffectplayereventhandler"></span>
+### ~IAudioEffectPlayerEventHandler
+```cpp
+virtual bytertc::IAudioEffectPlayerEventHandler::~IAudioEffectPlayerEventHandler()
+```
+
+<span id="IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged"></span>
+### onAudioEffectPlayerStateChanged
+```cpp
+virtual void bytertc::IAudioEffectPlayerEventHandler::onAudioEffectPlayerStateChanged(
+    int effect_id,
+    PlayerState state,
+    PlayerError error)
+```
+播放状态改变时回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | [IAudioEffectPlayer](Linux-api.md#iaudioeffectplayer) 的 ID。通过 [getAudioEffectPlayer](Linux-api.md#IRTCVideo-getaudioeffectplayer) 设置。 |
+| state | **PlayerState** | 混音状态。参考 [PlayerState](Linux-keytype.md#playerstate)。 |
+| error | **PlayerError** | 错误码。参考 [PlayerError](Linux-keytype.md#playererror)。 |
 
 
 # IAudioFrameObserver
@@ -2405,7 +2455,7 @@ class bytertc::IAudioProcessor
 ### processAudioFrame
 ```cpp
 virtual int bytertc::IAudioProcessor::processAudioFrame(
-    const IAudioFrame& audioFrame)
+    const IAudioFrame& audio_frame)
 ```
 获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
 
@@ -2413,7 +2463,7 @@ virtual int bytertc::IAudioProcessor::processAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **const IAudioFrame&** | RTC SDK 采集到的音频帧，自定义处理可直接对音频 data 中的数据进行修改。参看 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
+| audio_frame | **const IAudioFrame&** | RTC SDK 采集到的音频帧，自定义处理可直接对音频 data 中的数据进行修改。参看 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
 
 **返回值**
 
@@ -2425,9 +2475,104 @@ virtual int bytertc::IAudioProcessor::processAudioFrame(
 **注意**
 在进行音频自定义处理前，你需要调用 `registerLocalAudioProcessor` 设置音频自定义处理器。
 
-# IRemoteAudioFrameObserver
+# IAudioFrameProcessor
+```cpp
+class bytertc::IAudioFrameProcessor
+```
 
-> Deprecated  since 3.37 and will be deleted in 3.51
+自定义音频处理器。
+注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **virtual int** | [onProcessRecordAudioFrame](#IAudioFrameProcessor-onprocessrecordaudioframe) |
+| **virtual int** | [onProcessPlayBackAudioFrame](#IAudioFrameProcessor-onprocessplaybackaudioframe) |
+| **virtual int** | [onProcessRemoteUserAudioFrame](#IAudioFrameProcessor-onprocessremoteuseraudioframe) |
+| **virtual int** | [onProcessScreenAudioFrame](#IAudioFrameProcessor-onprocessscreenaudioframe) |
+
+
+## 函数说明
+<span id="IAudioFrameProcessor-onprocessrecordaudioframe"></span>
+### onProcessRecordAudioFrame
+```cpp
+virtual int bytertc::IAudioFrameProcessor::onProcessRecordAudioFrame(
+    IAudioFrame& audioFrame)
+```
+回调本地采集的音频帧地址，供自定义音频处理。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| audioFrame | **IAudioFrame&** | 音频帧地址，参看 [IAudioFrame](Linux-keytype.md#iaudioframe) |
+
+
+**注意**
+
++ 完成自定义音频处理后，SDK 会对处理后的音频帧进行编码，并传输到远端。 
++ 调用 `enableAudioProcessor`，并在参数中选择本地采集的音频时，每 10 ms 收到此回调。
+
+
+<span id="IAudioFrameProcessor-onprocessplaybackaudioframe"></span>
+### onProcessPlayBackAudioFrame
+```cpp
+virtual int bytertc::IAudioFrameProcessor::onProcessPlayBackAudioFrame(
+    IAudioFrame& audioFrame)
+```
+回调远端音频混音的音频帧地址，供自定义音频处理。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| audioFrame | **IAudioFrame&** | 音频帧地址，参看 [IAudioFrame](Linux-keytype.md#iaudioframe) |
+
+
+**注意**
+调用 `enableAudioProcessor`，并在参数中选择远端音频流的的混音音频时，每 10 ms 收到此回调。
+
+<span id="IAudioFrameProcessor-onprocessremoteuseraudioframe"></span>
+### onProcessRemoteUserAudioFrame
+```cpp
+virtual int bytertc::IAudioFrameProcessor::onProcessRemoteUserAudioFrame(
+    const RemoteStreamKey& stream_info,
+    IAudioFrame& audioFrame)
+```
+回调单个远端用户的音频帧地址，供自定义音频处理。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| stream_info | **const RemoteStreamKey&** | 音频流信息，参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey) |
+| audioFrame | **IAudioFrame&** | 音频帧地址，参看 [IAudioFrame](Linux-keytype.md#iaudioframe) |
+
+
+**注意**
+调用 `enableAudioProcessor`，并在参数中选择各个远端音频流时，每 10 ms 收到此回调。
+
+<span id="IAudioFrameProcessor-onprocessscreenaudioframe"></span>
+### onProcessScreenAudioFrame
+```cpp
+virtual int bytertc::IAudioFrameProcessor::onProcessScreenAudioFrame(
+    IAudioFrame& audioFrame)
+```
+屏幕共享的音频帧地址回调。你可根据此回调自定义处理音频。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| audioFrame | **IAudioFrame&** | 音频帧地址，参看 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
+
+
+**注意**
+调用 `enableAudioProcessor`，把返回给音频处理器的音频类型设置为屏幕共享音频后，每 10 ms 收到此回调。
+
+# IRemoteAudioFrameObserver
 ```cpp
 class bytertc::IRemoteAudioFrameObserver
 ```
@@ -2451,7 +2596,7 @@ virtual void bytertc::IRemoteAudioFrameObserver::onRemoteAudioFrame(
     const IAudioFrame& audio_frame,
     const RemoteStreamKey& stream_info)
 ```
-获得单个流的音频数据，此回调通过调用 [registerRemoteAudioFrameObserver](Linux-api.md#IRTCVideo-registerremoteaudioframeobserver) 触发。
+获得单个流的音频数据，此回调通过调用 [registerAudioFrameObserver](Linux-api.md#IRTCVideo-registeraudioframeobserver) 触发。
 
 **传入参数**
 
@@ -2547,6 +2692,173 @@ virtual unsigned int bytertc::IEncryptHandler::onDecryptData(
 
 + 使用此接口进行解密前，你必须先设定解密方式，参看 `setCustomizeEncryptHandler`。
 + 返回的数据大小应控制在原始数据的 90% ~ 120% 范围以内，不然将被丢弃。
+
+
+# IMediaPlayerAudioFrameObserver
+```cpp
+class bytertc::IMediaPlayerAudioFrameObserver
+```
+
+本地音频文件混音的音频帧观察者。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **virtual void** | [onFrame](#IMediaPlayerAudioFrameObserver-onframe) |
+
+
+## 函数说明
+<span id="IMediaPlayerAudioFrameObserver-onframe"></span>
+### onFrame
+```cpp
+virtual void bytertc::IMediaPlayerAudioFrameObserver::onFrame(
+    int player_id,
+    const IAudioFrame& frame)
+```
+当本地音频文件混音时，回调播放的音频帧。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| player_id | **int** |  |
+| frame | **const IAudioFrame&** | 参看 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
+
+
+# IMediaPlayerCustomSourceProvider
+```cpp
+class bytertc::IMediaPlayerCustomSourceProvider
+```
+
+内存播放数据源回调
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **virtual int** | [onReadData](#IMediaPlayerCustomSourceProvider-onreaddata) |
+| **virtual int64_t** | [onSeek](#IMediaPlayerCustomSourceProvider-onseek) |
+| **virtual** | [~IMediaPlayerCustomSourceProvider](#IMediaPlayerCustomSourceProvider-~imediaplayercustomsourceprovider) |
+
+
+## 函数说明
+<span id="IMediaPlayerCustomSourceProvider-onreaddata"></span>
+### onReadData
+```cpp
+virtual int bytertc::IMediaPlayerCustomSourceProvider::onReadData(
+    uint8_t *buffer,
+    int bufferSize)
+```
+> Available since 3.53
+
+调用 [openWithCustomSource](Linux-api.md#IMediaPlayer-openwithcustomsource) 接口播放用户传入的内存音频数据时，会触发此回调，用户需要写入音频数据。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| *buffer | **uint8_t** | 内存地址。在该地址中写入音频数据，写入音频数据的大小不超过 bufferSize 中填入的数值。 |
+| bufferSize | **int** | 音频数据大小，单位为字节。如果你想停止播放内存音频数据，可在 bufferSize 中填入小于或等于 0 的数，此时 SDK 会停止调用此接口。 |
+
+**返回值**
+返回实际读取的音频数据大小。
+
+
+**注意**
+若 [openWithCustomSource](Linux-api.md#IMediaPlayer-openwithcustomsource) 接口调用失败，请在 buffer 和 bufferSize 两个参数中填入 0。 此时 SDK 会停止调用此接口。
+
+<span id="IMediaPlayerCustomSourceProvider-onseek"></span>
+### onSeek
+```cpp
+virtual int64_t bytertc::IMediaPlayerCustomSourceProvider::onSeek(
+    int64_t offset,
+    MediaPlayerCustomSourceSeekWhence whence)
+```
+> Available since 3.53
+
+根据设置好的内存音频数据的读取位置和读取偏移量对音频数据进行偏移，以便 SDK 读取和分析音频数据。 <br>
+在调用 [openWithCustomSource](Linux-api.md#IMediaPlayer-openwithcustomsource) 接口传入内存音频数据，或者调用 [setPosition](Linux-api.md#IMediaPlayer-setposition) 设置了音频数据的起始播放位置后，SDK 会对音频数据进行读取和分析，此时会触发该回调，你需要根据参数中设置的起始读取位置和偏移量进行操作。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| offset | **int64_t** | 音频数据读取偏移量，单位为字节，取值可正可负。 |
+| whence | **MediaPlayerCustomSourceSeekWhence** | 音频数据的起始读取位置。参看 [MediaPlayerCustomSourceSeekWhence](Linux-keytype.md#mediaplayercustomsourceseekwhence) |
+
+**返回值**
+
+定位成功，返回偏移后的位置信息，或返回音频数据的大小。
+定位失败，返回 -1。
+
+
+<span id="IMediaPlayerCustomSourceProvider-~imediaplayercustomsourceprovider"></span>
+### ~IMediaPlayerCustomSourceProvider
+```cpp
+virtual bytertc::IMediaPlayerCustomSourceProvider::~IMediaPlayerCustomSourceProvider()
+```
+
+# IMediaPlayerEventHandler
+```cpp
+class bytertc::IMediaPlayerEventHandler
+```
+
+[IMediaPlayer](Linux-api.md#imediaplayer) 对应的回调句柄。你必须调用 [setEventHandler](Linux-api.md#IMediaPlayer-seteventhandler) 完成设置后，才能收到对应回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **virtual** | [~IMediaPlayerEventHandler](#IMediaPlayerEventHandler-~imediaplayereventhandler) |
+| **virtual void** | [onMediaPlayerStateChanged](#IMediaPlayerEventHandler-onmediaplayerstatechanged) |
+| **virtual void** | [onMediaPlayerPlayingProgress](#IMediaPlayerEventHandler-onmediaplayerplayingprogress) |
+
+
+## 函数说明
+<span id="IMediaPlayerEventHandler-~imediaplayereventhandler"></span>
+### ~IMediaPlayerEventHandler
+```cpp
+virtual bytertc::IMediaPlayerEventHandler::~IMediaPlayerEventHandler()
+```
+
+<span id="IMediaPlayerEventHandler-onmediaplayerstatechanged"></span>
+### onMediaPlayerStateChanged
+```cpp
+virtual void bytertc::IMediaPlayerEventHandler::onMediaPlayerStateChanged(
+    int playerId,
+    PlayerState state,
+    PlayerError error)
+```
+播放状态改变时回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** | [IMediaPlayer](Linux-api.md#imediaplayer) 的 ID。通过 [getMediaPlayer](Linux-api.md#IRTCVideo-getmediaplayer) 设置。 |
+| state | **PlayerState** | 混音状态。参考 [PlayerState](Linux-keytype.md#playerstate)。 |
+| error | **PlayerError** | 错误码。参考 [PlayerError](Linux-keytype.md#playererror)。 |
+
+
+<span id="IMediaPlayerEventHandler-onmediaplayerplayingprogress"></span>
+### onMediaPlayerPlayingProgress
+```cpp
+virtual void bytertc::IMediaPlayerEventHandler::onMediaPlayerPlayingProgress(
+    int playerId,
+    int64_t progress)
+```
+播放进度周期性回调。回调周期通过 [setProgressInterval](Linux-api.md#IMediaPlayer-setprogressinterval) 设置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** | [IMediaPlayer](Linux-api.md#imediaplayer) 的 ID。通过 [getMediaPlayer](Linux-api.md#IRTCVideo-getmediaplayer) 设置。 |
+| progress | **int64_t** | 进度。单位 ms。 |
 
 
 # IMixedStreamObserver
@@ -2734,40 +3046,81 @@ virtual void bytertc::ITranscoderObserver::onMixingDataFrame(
 | data_frame | **IDataFrame*** | SEI 数据 |
 
 
-# IPushSingleStreamToCDNObserver
+# IChorusCacheSyncObserver
 ```cpp
-class bytertc::IPushSingleStreamToCDNObserver
+class bytertc::IChorusCacheSyncObserver
 ```
 
-单流转推直播观察者。  <br>
-注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
+缓存同步 Observer
 
 
 ## 成员函数
 
 | 返回 | 名称 |
 | --- | --- |
-| **virtual void** | [onStreamPushEvent](#IPushSingleStreamToCDNObserver-onstreampushevent) |
+| **virtual void** | [onSyncedVideoFrames](#IChorusCacheSyncObserver-onsyncedvideoframes) |
+| **virtual void** | [onSyncedUsersChanged](#IChorusCacheSyncObserver-onsynceduserschanged) |
+| **virtual void** | [onSyncEvent](#IChorusCacheSyncObserver-onsyncevent) |
 
 
 ## 函数说明
-<span id="IPushSingleStreamToCDNObserver-onstreampushevent"></span>
-### onStreamPushEvent
+<span id="IChorusCacheSyncObserver-onsyncedvideoframes"></span>
+### onSyncedVideoFrames
 ```cpp
-virtual void bytertc::IPushSingleStreamToCDNObserver::onStreamPushEvent(
-    SingleStreamPushEvent event,
-    const char *task_id,
-    int error)
+virtual void bytertc::IChorusCacheSyncObserver::onSyncedVideoFrames(
+    int count,
+    const char* uids[],
+    bytertc::IVideoFrame* video_frames[])
 ```
-单流转推直播状态回调
+调用 [startChorusCacheSync](#startchoruscachesync)，并设置为 `consumer` 的用户会通过此回调获取经缓存同步后的视频帧。获取频率通过启动同步时的 `fps` 进行设置。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| event | **SingleStreamPushEvent** | 任务状态, 参看 [SingleStreamPushEvent](Linux-errorcode.md#singlestreampushevent) |
-| task_id | **const char*** | 任务 ID |
-| error | **int** | 错误码，参看 [TransCodingError](Linux-keytype.md#transcodingerror) |
+| count | **int** | `uids` 和 `videoFrames` 的数组长度 |
+| uids[] | **const char*** | 参与合唱缓存同步的 `producer` 和 `retransmitter` 的列表，不包括参与但未发送媒体数据的用户。 |
+| video_frames[] | **bytertc::IVideoFrame*** | 对应 `uids` 的视频帧。参看 [IVideoFrame](Linux-keytype.md#ivideoframe)。 |
+
+
+<span id="IChorusCacheSyncObserver-onsynceduserschanged"></span>
+### onSyncedUsersChanged
+```cpp
+virtual void bytertc::IChorusCacheSyncObserver::onSyncedUsersChanged(
+    int count,
+    const char* uids[])
+```
+参与合唱缓存同步的 `producer` 和 `retransmitter` 发生变化时，收到此回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| count | **int** | 当前的 `uids` 的长度 |
+| uids | **const char*** | 当前的参与者列表 |
+
+
+**注意**
+有以下情况可能造成参与者发生变化：+ 用户主动调用 [startChorusCacheSync](#startchoruscachesync) 或 [stopChorusCacheSync](#stopchoruscachesync);
+
++ 原本参与缓存同步的用户发生异常退出。
+
+
+<span id="IChorusCacheSyncObserver-onsyncevent"></span>
+### onSyncEvent
+```cpp
+virtual void bytertc::IChorusCacheSyncObserver::onSyncEvent(
+    ChorusCacheSyncEvent event,
+    ChorusCacheSyncError error)
+```
+缓存同步事件回调
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| event | **ChorusCacheSyncEvent** | 事件，参看 [ChorusCacheSyncEvent](#choruscachesyncevent)。 |
+| error | **ChorusCacheSyncError** | 错误码，参看 [ChorusCacheSyncError](#choruscachesyncerror)。 |
 
 
 # IExternalVideoEncoderEventHandler

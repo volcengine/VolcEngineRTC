@@ -104,20 +104,11 @@ public class com.ss.bytertc.engine.type.ErrorCode
 | **int** | [ERROR_CODE_TOKEN_EXPIRED](#ErrorCode-error_code_token_expired) |
 | **int** | [ERROR_CODE_UPDATE_TOKEN_WITH_INVALID_TOKEN](#ErrorCode-error_code_update_token_with_invalid_token) |
 | **int** | [ERROR_CODE_ROOM_DISMISS](#ErrorCode-error_code_room_dismiss) |
-| **int** | [ERROR_CODE_JOIN_ROOM_WITHOUT_LICENSE_AUTHENTICATE_SDK](#ErrorCode-error_code_join_room_without_license_authenticate_sdk) |
 | **int** | [ERROR_CODE_ROOM_ALREADY_EXIST](#ErrorCode-error_code_room_already_exist) |
 | **int** | [ERROR_CODE_USER_ID_DIFFERENT](#ErrorCode-error_code_user_id_different) |
-| **int** | [ERROR_CODE_SERVER_LICENSE_EXPIRE](#ErrorCode-error_code_server_license_expire) |
 | **int** | [ERROR_CODE_EXCEEDS_THE_UPPER_LIMIT](#ErrorCode-error_code_exceeds_the_upper_limit) |
-| **int** | [ERROR_CODE_LICENSE_PARAMETER_ERROR](#ErrorCode-error_code_license_parameter_error) |
-| **int** | [ERROR_CODE_LICENSE_FILE_PATH_ERROR](#ErrorCode-error_code_license_file_path_error) |
-| **int** | [ERROR_CODE_LICENSE_ILLEGAL](#ErrorCode-error_code_license_illegal) |
-| **int** | [ERROR_CODE_LICENSE_EXPIRED](#ErrorCode-error_code_license_expired) |
-| **int** | [ERROR_CODE_LICENSE_INFORMATION_NOT_MATCH](#ErrorCode-error_code_license_information_not_match) |
-| **int** | [ERROR_CODE_LICENSE_NOT_MATCH_WITH_CACHE](#ErrorCode-error_code_license_not_match_with_cache) |
 | **int** | [ERROR_CODE_JOIN_ROOM_ROOM_FORBIDDEN](#ErrorCode-error_code_join_room_room_forbidden) |
 | **int** | [ERROR_CODE_JOIN_ROOM_USER_FORBIDDEN](#ErrorCode-error_code_join_room_user_forbidden) |
-| **int** | [ERROR_CODE_JOIN_ROOM_LICENSE_FUNCTION_NOT_FOUND](#ErrorCode-error_code_join_room_license_function_not_found) |
 | **int** | [ERROR_CODE_OVER_SUBSCRIBE_LIMIT](#ErrorCode-error_code_over_subscribe_limit) |
 | **int** | [ERROR_CODE_OVER_STREAM_PUBLISH_LIMIT](#ErrorCode-error_code_over_stream_publish_limit) |
 | **int** | [ERROR_CODE_INVALID_AUDIO_SYNC_USERID_REPEATED](#ErrorCode-error_code_invalid_audio_sync_userid_repeated) |
@@ -220,15 +211,6 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_ROOM_DIS
 服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
-<span id="ErrorCode-error_code_join_room_without_license_authenticate_sdk"></span>
-### ERROR_CODE_JOIN_ROOM_WITHOUT_LICENSE_AUTHENTICATE_SDK
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_WITHOUT_LICENSE_AUTHENTICATE_SDK = -1012;
-```
-加入房间错误。  <br>
-调用 `joinRoom` 方法时, LICENSE 计费账号未使用 LICENSE_AUTHENTICATE SDK，加入房间错误。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
 <span id="ErrorCode-error_code_room_already_exist"></span>
 ### ERROR_CODE_ROOM_ALREADY_EXIST
 ```java
@@ -246,70 +228,6 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_USER_ID_
 同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。
 
 
-<span id="ErrorCode-error_code_server_license_expire"></span>
-### ERROR_CODE_SERVER_LICENSE_EXPIRE
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_SERVER_LICENSE_EXPIRE = -1017;
-```
-服务端license过期，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_exceeds_the_upper_limit"></span>
-### ERROR_CODE_EXCEEDS_THE_UPPER_LIMIT
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_EXCEEDS_THE_UPPER_LIMIT = -1018;
-```
-超过服务端license许可的并发量上限，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_license_parameter_error"></span>
-### ERROR_CODE_LICENSE_PARAMETER_ERROR
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_PARAMETER_ERROR = -1019;
-```
-license参数错误，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_license_file_path_error"></span>
-### ERROR_CODE_LICENSE_FILE_PATH_ERROR
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_FILE_PATH_ERROR = -1020;
-```
-license证书路径错误。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_license_illegal"></span>
-### ERROR_CODE_LICENSE_ILLEGAL
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_ILLEGAL = -1021;
-```
-license证书不合法。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_license_expired"></span>
-### ERROR_CODE_LICENSE_EXPIRED
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_EXPIRED = -1022;
-```
-license证书已经过期，拒绝进房。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_license_information_not_match"></span>
-### ERROR_CODE_LICENSE_INFORMATION_NOT_MATCH
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_INFORMATION_NOT_MATCH = -1023;
-```
-license证书内容不匹配。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_license_not_match_with_cache"></span>
-### ERROR_CODE_LICENSE_NOT_MATCH_WITH_CACHE
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_LICENSE_NOT_MATCH_WITH_CACHE=-1024;
-```
-license当前证书与缓存证书不匹配。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
 <span id="ErrorCode-error_code_join_room_room_forbidden"></span>
 ### ERROR_CODE_JOIN_ROOM_ROOM_FORBIDDEN
 ```java
@@ -324,14 +242,6 @@ public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROO
 public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_USER_FORBIDDEN = -1026;
 ```
 用户被封禁。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
-
-
-<span id="ErrorCode-error_code_join_room_license_function_not_found"></span>
-### ERROR_CODE_JOIN_ROOM_LICENSE_FUNCTION_NOT_FOUND
-```java
-public static final int com.ss.bytertc.engine.type.ErrorCode.ERROR_CODE_JOIN_ROOM_LICENSE_FUNCTION_NOT_FOUND = -1027;
-```
-license 计费方法没有加载成功。可能是因为 license 相关插件未正确集成。通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。
 
 
 <span id="ErrorCode-error_code_over_subscribe_limit"></span>
@@ -571,6 +481,29 @@ public static final int com.ss.bytertc.engine.type.RoomMessageSendResult.ROOM_ME
 ```
 发送失败。未知错误
 
+
+
+# SubtitleErrorCode
+```java
+public enum com.ss.bytertc.engine.type.SubtitleErrorCode
+```
+
+字幕任务错误码。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **SUBTITLE_ERROR_CODE_UNKNOW(-1)** | 客户端无法识别云端媒体处理发送的错误码。请联系技术支持。 |
+| **SUBTITLE_ERROR_CODE_SUCCESS(0)** | 字幕已开启。 |
+| **SUBTITLE_ERROR_CODE_POST_PROCESS_ERROR(1)** | 云端媒体处理内部出现错误，请联系技术支持。 |
+| **SUBTITLE_ERROR_CODE_ASR_CONNECTION_ERROR(2)** | 第三方服务连接失败，请联系技术支持。 |
+| **SUBTITLE_ERROR_CODE_ASR_SERVICE_ERROR(3)** | 第三方服务内部出现错误，请联系技术支持。 |
+| **SUBTITLE_ERROR_CODE_BEFORE_JOIN_ROOM(4)** | 未进房导致调用`startSubtitle`失败。请加入房间后再调用此方法。 |
+| **SUBTITLE_ERROR_CODE_ALREADY_ON(5)** | 字幕已开启，无需重复调用 `startSubtitle`。 |
+| **SUBTITLE_ERROR_CODE_UNSUPPORTED_LANGUAGE(6)** | 你选择的目标语言目前暂不支持。 |
+| **SUBTITLE_ERROR_CODE_POST_PROCESS_TIMEOUT(7)** | 云端媒体处理超时未响应，请联系技术支持。 |
 
 
 # TranscodingError
@@ -952,7 +885,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_M
 ```
 麦克风权限异常，当前应用没有获取麦克风权限。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_NOPERMISSION](Android-keytype.md#MediaDeviceError-media_device_error_nopermission) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError](Android-keytype.md#mediadeviceerror).MEDIA_DEVICE_ERROR_NOPERMISSION instead.
 <span id="WarningCode-warning_code_recoding_device_start_failed"></span>
 ### WARNING_CODE_RECODING_DEVICE_START_FAILED
 ```java
@@ -961,7 +894,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECO
 音频采集设备启动失败。  <br>
 启动音频采集设备失败，当前设备可能被其他应用占用。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICEFAILURE](Android-keytype.md#MediaDeviceError-media_device_error_devicefailure) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError](Android-keytype.md#mediadeviceerror).MEDIA_DEVICE_ERROR_DEVICEFAILURE instead.
 <span id="WarningCode-warning_code_playout_device_start_failed"></span>
 ### WARNING_CODE_PLAYOUT_DEVICE_START_FAILED
 ```java
@@ -970,7 +903,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_PLAY
 音频播放设备启动失败警告。   <br>
 可能由于系统资源不足，或参数错误。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICEFAILURE](Android-keytype.md#MediaDeviceError-media_device_error_devicefailure) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError](Android-keytype.md#mediadeviceerror).MEDIA_DEVICE_ERROR_DEVICEFAILURE instead.
 <span id="WarningCode-warning_code_no_recording_device"></span>
 ### WARNING_CODE_NO_RECORDING_DEVICE
 ```java
@@ -979,7 +912,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_R
 无可用音频采集设备。  <br>
 启动音频采集设备失败，请插入可用的音频采集设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICENOTFOUND](Android-keytype.md#MediaDeviceError-media_device_error_devicenotfound) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError](Android-keytype.md#mediadeviceerror).MEDIA_DEVICE_ERROR_DEVICENOTFOUND instead.
 <span id="WarningCode-warning_code_no_playout_device"></span>
 ### WARNING_CODE_NO_PLAYOUT_DEVICE
 ```java
@@ -988,7 +921,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_NO_P
 无可用音频播放设备。  <br>
 启动音频播放设备失败，请插入可用的音频播放设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError.MEDIA_DEVICE_ERROR_DEVICENOTFOUND](Android-keytype.md#MediaDeviceError-media_device_error_devicenotfound) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceError](Android-keytype.md#mediadeviceerror).MEDIA_DEVICE_ERROR_DEVICENOTFOUND instead.
 <span id="WarningCode-warning_code_recording_silence"></span>
 ### WARNING_CODE_RECORDING_SILENCE
 ```java
@@ -996,7 +929,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_RECO
 ```
 当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning.MEDIA_DEVICE_WARNING_CAPTURE_SILENCE](Android-keytype.md#MediaDeviceWarning-media_device_warning_capture_silence) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning).MEDIA_DEVICE_WARNING_CAPTURE_SILENCE instead.
 <span id="WarningCode-warning_code_media_device_operation_denied"></span>
 ### WARNING_CODE_MEDIA_DEVICE_OPERATION_DENIED
 ```java
@@ -1005,7 +938,7 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_MEDI
 媒体设备误操作警告。  <br>
 使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。
 
-> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning.MEDIA_DEVICE_WARNING_OPERATION_DENIED](Android-keytype.md#MediaDeviceWarning-media_device_warning_operation_denied) instead.
+> Deprecated since 3.33 and will be deleted in 3.51, use [MediaDeviceWarning](Android-keytype.md#mediadevicewarning).MEDIA_DEVICE_WARNING_OPERATION_DENIED instead.
 <span id="WarningCode-warning_code_set_screen_audio_source_type_failed"></span>
 ### WARNING_CODE_SET_SCREEN_AUDIO_SOURCE_TYPE_FAILED
 ```java
@@ -1068,3 +1001,38 @@ public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_LOAD
 public static final int com.ss.bytertc.engine.type.WarningCode.WARNING_CODE_INVALID_SAMI_EFFECT_TYPE = -7005;
 ```
 [音频技术](https://www.volcengine.com/docs/6489/71986) 不支持此音效。联系技术支持人员。
+
+
+
+# KTVErrorCode
+```java
+public enum com.ss.bytertc.ktv.data.KTVErrorCode
+```
+
+KTV 错误码。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **OK(0)** | 成功。 |
+| **APPID_INVALID(-3000)** | AppID 异常。 |
+| **PARAS_INVALID(-3001)** | 非法参数，传入的参数不正确。 |
+| **GET_MUSIC_FAILED(-3002)** | 获取歌曲资源失败。 |
+| **GET_LYRIC_FAILED(-3003)** | 获取歌词失败。 |
+| **MUSIC_TAKEDOWN(-3004)** | 歌曲下架。 |
+| **MUSIC_DOWNLOAD(-3005)** | 歌曲文件下载失败。 |
+| **MIDI_DOWNLOAD_FAILED(-3006)** | MIDI 文件下载失败。 |
+| **SYSTEM_BUSY(-3007)** | 系统繁忙。 |
+| **NETWORK(-3008)** | 网络异常。 |
+| **NOT_JOIN_ROOM(-3009)** | KTV 功能未加入房间。 |
+| **PARSE_DATA(-3010)** | 解析数据失败。 |
+| **DOWNLOADING(-3012)** | 已在下载中。 |
+| **INTERNAL_DOMAIN(-3013)** | 内部错误，联系技术支持人员。 |
+| **INSUFFICIENT_DISK_SPACE(-3014)** | 下载失败，磁盘空间不足。清除缓存后重试。 |
+| **MUSIC_DECRYPTION_FAILED(-3015)** | 下载失败，音乐文件解密失败，联系技术支持人员。 |
+| **FILE_RENAME_FAILED(-3016)** | 下载失败，音乐文件重命名失败，请重试。 |
+| **DOWNLOAD_TIMEOUT(-3017)** | 下载失败，下载超时，请重试。 |
+| **CLEAR_CACHE_FAILED(-3018)** | 清除缓存失败，可能原因是文件被占用或者系统异常，请重试。 |
+| **DOWNLOAD_CANCELED(-3019)** | 取消下载。 |

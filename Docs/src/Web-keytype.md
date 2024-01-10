@@ -234,6 +234,7 @@ SDK 与信令服务器连接状态。
   | STREAM_REMOVE_REASON_CLIENT_DISCONNECTED | `3` | 远端用户断网。 |
   | STREAM_REMOVE_REASON_REPUBLISH | `4` | 远端用户重新发布流。 |
   | STREAM_REMOVE_REASON_OTHER | `5` | 其他原因。 |
+  | STREAM_REMOVE_REASON_TOKEN_PRIVILEGE_EXPIRED | `6` | Token 发布权限过期。 |
 
 
 
@@ -867,6 +868,46 @@ inactive：设备已断开连接。
 流属性，包括主流、屏幕流。
 
 
+## onSEIStreamUpdateEvent <span id="onseistreamupdateevent"></span>
+
+类型: `interface`
+
+包含 SEI 信息的流更新事件。
+
+<p style="font-size: 16px;font-weight: bolder;"> userId <span id="onseistreamupdateevent-userid"></span></p> 
+
+类型: <code>string</code>
+
+用户 ID。
+
+<p style="font-size: 16px;font-weight: bolder;"> isScreen <span id="onseistreamupdateevent-isscreen"></span></p> 
+
+类型: <code>boolean</code>
+
+是否为屏幕流。
+
+<p style="font-size: 16px;font-weight: bolder;"> type <span id="onseistreamupdateevent-type"></span></p> 
+
+类型: <code>[SEIStreamEventType](#seistreameventtype)</code>
+
+包含 SEI 信息的流类型。
+
+
+## SEIStreamEventType <span id="seistreameventtype"></span>
+
+类型: `enum`
+
+包含 SEI 信息的流类型。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | BLACK | `0` | 远端用户发布黑帧视频流。<br>语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+  | NORMAL | `1` | 远端黑帧视频流移除。该回调的触发时机包括：<br><ul><li> 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；</li><li> 远端用户调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布；</li><li> 远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 后 1 分钟内未有 SEI 数据发送，黑帧视频流停止发布。</li></ul> |
+
+
+
 ## SubscribeState <span id="subscribestate"></span>
 
 类型: `enum`
@@ -1194,7 +1235,7 @@ SDK 开启云代理后，加入频道的耗时。
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="streammixingevent-error"></span></p> 
 
-类型: <code>[StreamMixingEventErrorCode](#streammixingeventerrorcode)</code>
+类型: <code>[StreamMixingEventErrorCode](Web-errorcode.md#streammixingeventerrorcode)</code>
 
 转推直播事件错误码。
 
@@ -1224,25 +1265,6 @@ SDK 开启云代理后，加入频道的耗时。
   | STOP | `7` | 已发起停止转推请求。 |
   | STOP_SUCCESS | `8` | 成功停止推流至CDN。 |
   | STOP_FAILED | `9` | 停止推流失败。 |
-
-
-
-## StreamMixingEventErrorCode <span id="streammixingeventerrorcode"></span>
-
-类型: `enum`
-
-转推直播错误码
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | ERR_OK | `0` | 推流成功 |
-  | ERR_PARAM_INVALID | `1` | 推流参数错误。 |
-  | ERR_FRAME_TIMEOUT | `2` | 和 RTC 服务端建立连接失败，会自动重连。 |
-  | ERR_POSTPROCESS | `3` | 合流服务中间过程存在错误，建议重试。 |
-  | ERR_PUSH_CDN | `4` | 推流失败，等待服务端重推。 |
-  | ERR_UNKNOWN | `9999` | 其他异常。 |
 
 
 
@@ -1305,6 +1327,11 @@ false: 音频流发布被解禁
 类型: <code>[ErrorCode](Web-errorcode.md#errorcode) | undefined</code>
 
 字幕任务错误码。
+
++ `SUBTITLE_ERR_POSTPROCESS`: 云端媒体处理内部出现错误。
++ `SUBTITLE_ERR_CONNECTION_ERROR`: 第三方服务连接失败。
++ `SUBTITLE_ERR_PROCESS_ERROR`: 云端媒体处理超时未响应。
++ `SUBTITLE_ERR_UNKNOWN`: 客户端无法识别云端媒体处理发送的错误码。
 
 <p style="font-size: 16px;font-weight: bolder;"> errorMessage <span id="subtitleevent-errormessage"></span></p> 
 
@@ -1407,7 +1434,7 @@ false: 音频流发布被解禁
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="forwardstreamstateinfo-error"></span></p> 
 
-类型: <code>[ForwardStreamError](#forwardstreamerror)</code>
+类型: <code>[ForwardStreamError](Web-errorcode.md#forwardstreamerror)</code>
 
 跨房间转发媒体流错误码。
 
@@ -1424,23 +1451,6 @@ false: 音频流发布被解禁
   | :-- | :-- | :-- |
   | FORWARD_STREAM_STATE_SUCCESS | `0` | 成功。 |
   | FORWARD_STREAM_STATE_FAILURE | `1` | 失败。 |
-
-
-
-## ForwardStreamError <span id="forwardstreamerror"></span>
-
-类型: `enum`
-
-跨房间转发媒体流错误码。
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | FORWARD_STREAM_ERROR_OK | `0` | 成功。 |
-  | FORWARD_STREAM_ERROR_INVALID_TOKEN | `1202` | 目标房间 Token 错误。 |
-  | FORWARD_STREAM_ERROR_RESPONSE | `1203` | 服务端未知错误。 |
-  | FORWARD_STREAM_ERROR_REMOTE_KICKED | `1204` | 将源房间设置为目标房间时返回该错误。 |
 
 
 
@@ -1543,6 +1553,13 @@ DOM
 + 10 个数字 0 ~ 9
 + 下划线 "_"，at 符 "@"，减 号 "-"
 
+<p style="font-size: 16px;font-weight: bolder;"> rotation <span id="videoplayeroption-rotation"></span></p> 
+
+类型: <code>number | undefined</code>
+
+视频帧顺时针的旋转角度。可选值为 0，90，180，270。默认值是 0，即不做旋转处理。<br>
+该设置仅对远端视频有效，调用 [setLocalVideoPlayer](Web-api.md#setlocalvideoplayer) 设置本参数不生效。
+
 
 ## VideoRenderMode <span id="videorendermode"></span>
 
@@ -1608,6 +1625,19 @@ DOM
 
 最大编码码率，RTC SDK 内部采集和自定义采集均需设定 > 0 的数值，单位为 Kbps。默认值为 600 Kbps。
 
+<p style="font-size: 16px;font-weight: bolder;"> contentHint <span id="videoencoderconfig-contenthint"></span></p> 
+
+类型: <code>"text" | "motion" | "detail" | undefined</code>
+
+视频内容类型。
+`'text'`：清晰度优先，适用于视频内容只包含大量文本的情况。
+`'motion'`：流畅度优先，适用于视频内容为摄像头采集、电影、视频、游戏的情况。
+`'detail'`：清晰度优先，适用于视频内容包含图片、文本混排的情况。
+
+- **注意**
+
+  Firefox 浏览器不支持设置此参数，参看 [contentHint 浏览器兼容信息](https://caniuse.com/?search=contentHint)。
+
 
 ## ScreenEncoderConfig <span id="screenencoderconfig"></span>
 
@@ -1646,15 +1676,14 @@ DOM
 
 类型: <code>"text" | "motion" | "detail" | undefined</code>
 
-屏幕共享的视频内容类型。
-
-- 'detail'【默认值】：清晰度优先，适用于视频内容包含图片、文本混排的情况。
-- 'text'：清晰度优先，适用于视频内容只包含大量文本的情况。
-- 'motion'：流畅度优先，适用于视频内容为摄像头采集、电影、视频、游戏的情况。
+视频内容类型。
+`'text'`：清晰度优先，适用于视频内容只包含大量文本的情况。
+`'motion'`：流畅度优先，适用于视频内容为摄像头采集、电影、视频、游戏的情况。
+`'detail'`：清晰度优先，适用于视频内容包含图片、文本混排的情况。
 
 - **注意**
 
-  仅支持Chrome浏览器设置此参数。
+  Firefox 浏览器不支持设置此参数，参看 [contentHint 浏览器兼容信息](https://caniuse.com/?search=contentHint)。
 
 
 ## AudioPropertiesConfig <span id="audiopropertiesconfig"></span>
@@ -1681,6 +1710,51 @@ DOM
 
 + true: 保持开启
 + false：关闭
+
+<p style="font-size: 16px;font-weight: bolder;"> localMainReportMode <span id="audiopropertiesconfig-localmainreportmode"></span></p> 
+
+类型: <code>[LocalMainReportMode](#localmainreportmode) | undefined</code>
+
+本地主流音量回调模式。
+
+<p style="font-size: 16px;font-weight: bolder;"> audioReportMode <span id="audiopropertiesconfig-audioreportmode"></span></p> 
+
+类型: <code>[AudioReportMode](#audioreportmode) | undefined</code>
+
+本地主流音量回调的数据范围，控制回调中是否包含混音。
+
+
+## LocalMainReportMode <span id="localmainreportmode"></span>
+
+类型: `enum`
+
+本地主流音量回调模式。
+该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，进入房间但未发布主流音频，[LocalMainReportMode](#localmainreportmode) 为 `RESET`，则该回调永远不会包含本端用户主流音频。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | NORMAL | `0` | （默认值）本地主流存在时，始终开启音量回调。 |
+  | DISCONNECT | `1` | 未发布时，不回调对应音量。发布时回调真实音量。 |
+  | RESET | `2` | 未发布时，始终回调 0。发布时正常回调真实音量。 |
+
+
+
+## AudioReportMode <span id="audioreportmode"></span>
+
+类型: `enum`
+
+本地主流音量回调的数据范围，控制回调中是否包含混音。
+该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，[AudioReportMode](#audioreportmode) 为 `AUDIOMIXING`，即使麦克风音量为 0，该回调中也可能回调本端用户主流音频。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | MICROPHONE | `0` | （默认值）麦克风音量，即混音前的音量。 |
+  | AUDIOMIXING | `1` | 混音后的音量。 |
+
 
 
 ## LiveTranscodeConfig <span id="livetranscodeconfig"></span>
@@ -1915,7 +1989,7 @@ AAC 编码规格。
 
 类型: <code>number | undefined</code>
 
-合流内容控制。默认值为0，可选取值如下：
+合流内容控制。默认值为 0，可选取值如下：
 • 0: 输出的混流包含音视频。
 • 1: 只包含音频。
 • 2: 只包含视频。
@@ -2175,7 +2249,7 @@ RTC 配置下发的代理地址
 
 类型: <code>string | undefined</code>
 
-目标语言语种代号，参看[语言支持信息](https://www.volcengine.com/docs/4640/35107#%F0%9F%93%A2%E5%AE%9E%E6%97%B6%E8%AF%AD%E9%9F%B3%E7%BF%BB%E8%AF%91)。
+目标语言语种代号，参看[语言支持信息](https://www.volcengine.com/docs/4640/35107)。
 
 <p style="font-size: 16px;font-weight: bolder;"> mode <span id="rtcsubtitleconfig-mode"></span></p> 
 
@@ -2204,6 +2278,21 @@ RTC 配置下发的代理地址
 测试时可使用[控制台](https://console.volcengine.com/rtc/listRTC)生成的临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。
 
 
+## AudioSelectionPriority <span id="audioselectionpriority"></span>
+
+类型: `enum`
+
+音频选路优先级设置。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | DEFAULT | `0` | 正常，参加音频选路。 |
+  | HIGH | `1` | 高优先级，跳过音频选路 |
+
+
+
 ## EngineConfig <span id="engineconfig"></span>
 
 类型: `interface`
@@ -2212,7 +2301,7 @@ RTC 配置下发的代理地址
 
 <p style="font-size: 16px;font-weight: bolder;"> autoPlayPolicy <span id="engineconfig-autoplaypolicy"></span></p> 
 
-类型: <code>[RTCAutoPlayPolicy](#rtcautoplaypolicy)</code>
+类型: <code>[RTCAutoPlayPolicy](#rtcautoplaypolicy) | undefined</code>
 
 自动播放策略
 

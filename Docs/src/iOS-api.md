@@ -18,37 +18,37 @@
 | --- | --- |
 | **void** | [destroy](#ByteRTCRoom-destroy) |
 | **NSString*** | [getRoomId](#ByteRTCRoom-getroomid) |
-| **void** | [setRTCRoomDelegate:](#ByteRTCRoom-setrtcroomdelegate) |
+| **int** | [setRTCRoomDelegate:](#ByteRTCRoom-setrtcroomdelegate) |
 | **int** | [joinRoom:userInfo:roomConfig:](#ByteRTCRoom-joinroom-userinfo-roomconfig) |
-| **void** | [setUserVisibility:](#ByteRTCRoom-setuservisibility) |
-| **void** | [setMultiDeviceAVSync:](#ByteRTCRoom-setmultideviceavsync) |
-| **void** | [leaveRoom](#ByteRTCRoom-leaveroom) |
+| **int** | [setUserVisibility:](#ByteRTCRoom-setuservisibility) |
+| **int** | [setMultiDeviceAVSync:](#ByteRTCRoom-setmultideviceavsync) |
+| **int** | [leaveRoom](#ByteRTCRoom-leaveroom) |
 | **int** | [updateToken:](#ByteRTCRoom-updatetoken) |
 | **int** | [setRemoteVideoConfig:remoteVideoConfig:](#ByteRTCRoom-setremotevideoconfig-remotevideoconfig) |
-| **void** | [publishStream:](#ByteRTCRoom-publishstream) |
-| **void** | [unpublishStream:](#ByteRTCRoom-unpublishstream) |
-| **void** | [publishScreen:](#ByteRTCRoom-publishscreen) |
-| **void** | [unpublishScreen:](#ByteRTCRoom-unpublishscreen) |
+| **int** | [publishStream:](#ByteRTCRoom-publishstream) |
+| **int** | [unpublishStream:](#ByteRTCRoom-unpublishstream) |
+| **int** | [publishScreen:](#ByteRTCRoom-publishscreen) |
+| **int** | [unpublishScreen:](#ByteRTCRoom-unpublishscreen) |
 | **int** | [subscribeStream:mediaStreamType:](#ByteRTCRoom-subscribestream-mediastreamtype) |
 | **int** | [subscribeAllStreamsWithMediaStreamType:](#ByteRTCRoom-subscribeallstreamswithmediastreamtype) |
 | **int** | [unsubscribeStream:mediaStreamType:](#ByteRTCRoom-unsubscribestream-mediastreamtype) |
 | **int** | [unsubscribeAllStreamsWithMediaStreamType:](#ByteRTCRoom-unsubscribeallstreamswithmediastreamtype) |
 | **int** | [subscribeScreen:mediaStreamType:](#ByteRTCRoom-subscribescreen-mediastreamtype) |
 | **int** | [unsubscribeScreen:mediaStreamType:](#ByteRTCRoom-unsubscribescreen-mediastreamtype) |
-| **void** | [pauseAllSubscribedStream:](#ByteRTCRoom-pauseallsubscribedstream) |
-| **void** | [resumeAllSubscribedStream:](#ByteRTCRoom-resumeallsubscribedstream) |
+| **int** | [pauseAllSubscribedStream:](#ByteRTCRoom-pauseallsubscribedstream) |
+| **int** | [resumeAllSubscribedStream:](#ByteRTCRoom-resumeallsubscribedstream) |
 | **NSInteger** | [sendUserMessage:message:config:](#ByteRTCRoom-sendusermessage-message-config) |
 | **NSInteger** | [sendUserBinaryMessage:message:config:](#ByteRTCRoom-senduserbinarymessage-message-config) |
 | **NSInteger** | [sendRoomMessage:](#ByteRTCRoom-sendroommessage) |
 | **NSInteger** | [sendRoomBinaryMessage:](#ByteRTCRoom-sendroombinarymessage) |
 | **int** | [startForwardStreamToRooms:](#ByteRTCRoom-startforwardstreamtorooms) |
 | **int** | [updateForwardStreamToRooms:](#ByteRTCRoom-updateforwardstreamtorooms) |
-| **void** | [stopForwardStreamToRooms](#ByteRTCRoom-stopforwardstreamtorooms) |
-| **void** | [pauseForwardStreamToAllRooms](#ByteRTCRoom-pauseforwardstreamtoallrooms) |
-| **void** | [resumeForwardStreamToAllRooms](#ByteRTCRoom-resumeforwardstreamtoallrooms) |
+| **int** | [stopForwardStreamToRooms](#ByteRTCRoom-stopforwardstreamtorooms) |
+| **int** | [pauseForwardStreamToAllRooms](#ByteRTCRoom-pauseforwardstreamtoallrooms) |
+| **int** | [resumeForwardStreamToAllRooms](#ByteRTCRoom-resumeforwardstreamtoallrooms) |
 | **ByteRTCRangeAudio*** | [getRangeAudio](#ByteRTCRoom-getrangeaudio) |
 | **ByteRTCSpatialAudio*** | [getSpatialAudio](#ByteRTCRoom-getspatialaudio) |
-| **void** | [setRemoteRoomAudioPlaybackVolume:](#ByteRTCRoom-setremoteroomaudioplaybackvolume) |
+| **int** | [setRemoteRoomAudioPlaybackVolume:](#ByteRTCRoom-setremoteroomaudioplaybackvolume) |
 | **int** | [setAudioSelectionConfig:](#ByteRTCRoom-setaudioselectionconfig) |
 | **NSInteger** | [setRoomExtraInfo:value:](#ByteRTCRoom-setroomextrainfo-value) |
 | **int** | [startSubtitle:](#ByteRTCRoom-startsubtitle) |
@@ -78,16 +78,21 @@
 ### getRoomId
 ```objectivec
 
-- (NSString *_Nullable)getRoomId;
+- (NSString *_Nonnull)getRoomId;
 ```
-获取房间 ID
+> Available since 3.53
+
+获取房间 ID。
+
+**返回值**
+房间 ID。
 
 
 <span id="ByteRTCRoom-setrtcroomdelegate"></span>
 ### setRTCRoomDelegate:
 ```objectivec
 
-- (void)setRTCRoomDelegate:(id<ByteRTCRoomDelegate> _Nullable)roomDelegate;
+- (int)setRTCRoomDelegate:(id<ByteRTCRoomDelegate> _Nullable)roomDelegate;
 ```
 通过设置 [ByteRTCRoom](#bytertcroom) 对象的事件句柄，监听此对象对应的回调事件。
 
@@ -96,6 +101,11 @@
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | roomDelegate | **id<ByteRTCRoomDelegate>** | 参见 [ByteRTCRoomDelegate](iOS-callback.md#bytertcroomdelegate)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 <span id="ByteRTCRoom-joinroom-userinfo-roomconfig"></span>
@@ -111,7 +121,7 @@
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **NSString*** | 动态密钥，用于对进房用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>使用不同 AppID 的 App 是不能互通的。  <br/>请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。具体失败原因会通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调告知。 |
+| token | **NSString*** | 动态密钥，用于对进房用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>使用不同 AppID 的 App 是不能互通的。  <br/>请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。|
 | userInfo | **ByteRTCUserInfo*** | 用户信息。参看 [ByteRTCUserInfo](iOS-keytype.md#bytertcuserinfo)。 |
 | roomConfig | **ByteRTCRoomConfig*** | 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 [ByteRTCRoomConfig](iOS-keytype.md#bytertcroomconfig)。 |
 
@@ -121,13 +131,14 @@
 +  0: 成功  
 + -1: 参数无效  
 + -2: 已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 [leaveRoom](#ByteRTCRoom-leaveroom) 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  
-+ -3: room 为空 
+具体失败原因会通过 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调告知。 
 
 
 **注意**
 
 + 同一个 AppID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后加入房间的用户会将先加入房间的用户踢出房间，并且先加入房间的用户会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调通知，错误类型为重复登录 ByteRTCErrorCodeDuplicateLogin。  
-+ 本地用户调用此方法加入房间成功后，会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [rtcRoom:onUserJoined:elapsed:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserjoined-elapsed) 回调通知。关于可见性设置参看 [setUserVisibility:](#ByteRTCRoom-setuservisibility)。  
++ 本地用户调用此方法加入房间成功后，会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [rtcRoom:onUserJoined:elapsed:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserjoined-elapsed) 回调通知。
++ 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用 [setUserVisibility:](#ByteRTCRoom-setuservisibility)。 更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [rtcEngine:onConnectionStateChanged:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo)。
 
 
@@ -135,31 +146,42 @@
 ### setUserVisibility:
 ```objectivec
 
-- (void)setUserVisibility:(BOOL)enable;
+- (int)setUserVisibility:(BOOL)enable;
 ```
 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
+默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| enable | **BOOL** | 设置用户是否对房间内其他用户可见：  <br/>• YES: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br/>• NO: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+| enable | **BOOL** | 设置用户是否对房间内其他用户可见：  <br/>• YES: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。<br/>• NO: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0: 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明。
 
 
 **注意**
 
-+ 该方法在加入房间前后均可调用。 
-+ 在房间内调用此方法，房间内其他用户会收到相应的回调通知：
-- 从 NO 切换至 YES 时，房间内其他用户会收到 [rtcRoom:onUserJoined:elapsed:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserjoined-elapsed) 回调通知；  
-- 从 YES 切换至 NO 时，房间内其他用户会收到 [rtcRoom:onUserLeave:reason:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserleave-reason) 回调通知。  
-+ 若调用该方法将可见性设为 NO，此时尝试发布流会收到 `ByteRTCWarningCodeSubscribeStreamForbiden` 警告。
++ 在加入房间前后，用户均可调用此方法设置用户可见性。
++ 设置用户可见性，会收到设置成功/失败回调 [rtcRoom:onUserVisibilityChanged:errorCode:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuservisibilitychanged-errorcode)。（v3.54 新增）
+&#x0020;  • 在加入房间前设置用户可见性，若设置的可见性与默认值不同，将在加入房间时触发本回调。
+&#x0020;  • 在加入房间后设置用户可见性，若可见性前后不同，会触发本回调。
+&#x0020;  • 在断网重连后，若可见性发生改变，会触发本回调。
+
++ 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调。
+&#x0020;  • 从可见换至不可见时，房间内其他用户会收到 [rtcRoom:onUserLeave:reason:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserleave-reason)。
+&#x0020;  • 从不可见切换至可见时，房间内其他用户会收到 [rtcRoom:onUserJoined:elapsed:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserjoined-elapsed)。
+&#x0020;  • 若调用该方法将可见性设为 `false`，此时尝试发布流会收到 `ByteRTCWarningCodeSubscribeStreamForbiden` 警告。
 
 
 <span id="ByteRTCRoom-setmultideviceavsync"></span>
 ### setMultiDeviceAVSync:
 ```objectivec
 
-- (void)setMultiDeviceAVSync:(NSString* _Nullable) audioUserId;
+- (int)setMultiDeviceAVSync:(NSString* _Nullable) audioUserId;
 ```
 设置发流端音画同步。  <br>
 当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
@@ -169,6 +191,11 @@
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audioUserId | **NSString*** | 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -184,10 +211,15 @@
 ### leaveRoom
 ```objectivec
 
-- (void)leaveRoom;
+- (int)leaveRoom;
 ```
 离开房间。  <br>
 用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -203,13 +235,13 @@
 - (int)updateToken:(NSString *_Nullable)token;
 ```
 更新 Token。
-Token 中同时包含进房、发布和订阅权限，各权限有一定的有效期，并且到期前 30 秒会触发回调，提示用户更新 Token 相关权限。此时需要重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
+收到 [onTokenWillExpire:](iOS-callback.md#ByteRTCRoomDelegate-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire:](iOS-callback.md#ByteRTCRoomDelegate-onpublishprivilegetokenwillexpire)，或 [onSubscribePrivilegeTokenWillExpire:](iOS-callback.md#ByteRTCRoomDelegate-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **NSString*** | 重新获取的有效 Token。<br/>如果传入的 Token 无效，回调错误码为 [ByteRTCErrorCode](iOS-errorcode.md#bytertcerrorcode) 中的 `-1010` 提示传入的 Token 无效。 |
+| token | **NSString*** | 重新获取的有效 Token。<br/>如果 Token 无效，你会收到 [rtcRoom:onRoomStateChanged:withUid:state:extraInfo:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onroomstatechanged-withuid-state-extrainfo)，错误码是 `-1010`。 |
 
 **返回值**
 
@@ -255,7 +287,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### publishStream:
 ```objectivec
 
-- (void)publishStream:(ByteRTCMediaStreamType)type;
+- (int)publishStream:(ByteRTCMediaStreamType)type;
 ```
 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
 
@@ -264,6 +296,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ByteRTCMediaStreamType** | 媒体流类型，用于指定发布音频/视频，参看 [ByteRTCMediaStreamType](iOS-keytype.md#bytertcmediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -280,7 +317,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### unpublishStream:
 ```objectivec
 
-- (void)unpublishStream:(ByteRTCMediaStreamType)type;
+- (int)unpublishStream:(ByteRTCMediaStreamType)type;
 ```
 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
 
@@ -289,6 +326,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ByteRTCMediaStreamType** | 媒体流类型，用于指定停止发布音频/视频，参看 [ByteRTCMediaStreamType](iOS-keytype.md#bytertcmediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -301,7 +343,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### publishScreen:
 ```objectivec
 
-- (void)publishScreen:(ByteRTCMediaStreamType)type;
+- (int)publishScreen:(ByteRTCMediaStreamType)type;
 ```
 在当前所在房间内发布本地屏幕共享音视频流
 
@@ -310,6 +352,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ByteRTCMediaStreamType** | 媒体流类型，用于指定发布屏幕音频/视频，参看 [ByteRTCMediaStreamType](iOS-keytype.md#bytertcmediastreamtype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -327,7 +374,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### unpublishScreen:
 ```objectivec
 
-- (void)unpublishScreen:(ByteRTCMediaStreamType)type;
+- (int)unpublishScreen:(ByteRTCMediaStreamType)type;
 ```
 停止将本地屏幕共享音视频流发布到当前所在房间中
 
@@ -336,6 +383,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ByteRTCMediaStreamType** | 媒体流类型，用于指定停止发布屏幕音频/视频，参看 [ByteRTCMediaStreamType](iOS-keytype.md#bytertcmediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -397,7 +449,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 
 **注意**
 
-+ 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
++ 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
 + 你必须先通过 [rtcRoom:onUserPublishStream:type:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserpublishstream-type) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  
 + 调用该方法后，你会收到 [rtcRoom:onStreamSubscribed:userId:subscribeConfig:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onstreamsubscribed-userid-subscribeconfig) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream:mediaStreamType:](#ByteRTCRoom-unsubscribestream-mediastreamtype) 取消订阅或本端用户退房。 
@@ -514,7 +566,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 
 **注意**
 
-+ 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
++ 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
 + 你必须先通过 [rtcRoom:onUserPublishScreen:type:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserpublishscreen-type) 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  
 + 调用该方法后，你会收到 [rtcRoom:onStreamSubscribed:userId:subscribeConfig:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onstreamsubscribed-userid-subscribeconfig) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeScreen:mediaStreamType:](#ByteRTCRoom-unsubscribescreen-mediastreamtype) 取消订阅或本端用户退房。 
@@ -554,7 +606,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### pauseAllSubscribedStream:
 ```objectivec
 
-- (void)pauseAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
+- (int)pauseAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 ```
 暂停接收来自远端的媒体流
 
@@ -563,6 +615,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mediaType | **ByteRTCPauseResumControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [ByteRTCPauseResumControlMediaType](iOS-keytype.md#bytertcpauseresumcontrolmediatype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -577,7 +634,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### resumeAllSubscribedStream:
 ```objectivec
 
-- (void)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
+- (int)resumeAllSubscribedStream:(ByteRTCPauseResumControlMediaType) mediaType;
 ```
 恢复接收来自远端的媒体流
 
@@ -586,6 +643,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mediaType | **ByteRTCPauseResumControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [ByteRTCPauseResumControlMediaType](iOS-keytype.md#bytertcpauseresumcontrolmediatype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -760,10 +822,15 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### stopForwardStreamToRooms
 ```objectivec
 
-- (void)stopForwardStreamToRooms;
+- (int)stopForwardStreamToRooms;
 ```
 停止跨房间媒体流转发。
 通过 [startForwardStreamToRooms:](#ByteRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -778,11 +845,16 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### pauseForwardStreamToAllRooms
 ```objectivec
 
-- (void)pauseForwardStreamToAllRooms;
+- (int)pauseForwardStreamToAllRooms;
 ```
 暂停跨房间媒体流转发。
 通过 [startForwardStreamToRooms:](#ByteRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
 调用本方法暂停向所有目标房间转发后，你可以随时调用 [resumeForwardStreamToAllRooms](#ByteRTCRoom-resumeforwardstreamtoallrooms) 快速恢复转发。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -792,10 +864,15 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### resumeForwardStreamToAllRooms
 ```objectivec
 
-- (void)resumeForwardStreamToAllRooms;
+- (int)resumeForwardStreamToAllRooms;
 ```
 恢复跨房间媒体流转发。
 调用 [pauseForwardStreamToAllRooms](#ByteRTCRoom-pauseforwardstreamtoallrooms) 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -847,7 +924,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 ### setRemoteRoomAudioPlaybackVolume:
 ```objectivec
 
-- (void)setRemoteRoomAudioPlaybackVolume:(NSInteger)volume;
+- (int)setRemoteRoomAudioPlaybackVolume:(NSInteger)volume;
 ```
 调节某个房间内所有远端用户的音频播放音量。
 
@@ -856,6 +933,11 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | volume | **NSInteger** | 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。为保证更好的通话质量，建议将 volume 值设为 [0,100]。 <br/>• 0: 静音  <br/>• 100: 原始音量，默认值  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -924,7 +1006,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 
 - (int)startSubtitle:(ByteRTCSubtitleConfig *_Nonnull)subtitleConfig;
 ```
-> Available since 3.52.
+> Available since 3.52
 
 识别或翻译房间内所有用户的语音，形成字幕。<br>
 语音识别或翻译的结果会通过 [rtcRoom:onSubtitleMessageReceived:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlemessagereceived) 事件回调给你。<br>
@@ -943,9 +1025,14 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 
 
 **注意**
-此方法需要在进房后调用。  
-如果想要指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 `extraInfo` 参数传入 `"source_language": "zh"` JSON 字符串，设置源语言为中文；传入 `"source_language": "en"`JSON 字符串，设置源语言为英文；传入 `"source_language": "ja"` JSON 字符串，设置源语言为日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。  
-使用字幕功能前，你需要[开通机器翻译服务](https://www.volcengine.com/docs/4640/130262)，并前往 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
+
++ 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。
++ 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
++ 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
++ 此方法需要在进房后调用。  
++ 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 extraInfo 参数传入格式为`"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
+    + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
+    + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
 
 
 <span id="ByteRTCRoom-stopsubtitle"></span>
@@ -954,7 +1041,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 
 - (int)stopSubtitle;
 ```
-> Available since 3.52.
+> Available since 3.52
 
 关闭字幕。 <br>
 调用该方法后，用户会收到 [rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlestatechanged-errorcode-errormessage)  回调，通知字幕是否关闭。
@@ -985,6 +1072,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | --- | --- |
 | **void** | [destroyRTCVideo](#ByteRTCVideo-destroyrtcvideo) |
 | **NSString*** | [getSDKVersion](#ByteRTCVideo-getsdkversion) |
+| **int** | [setLogConfig:](#ByteRTCVideo-setlogconfig) |
 | **NSString*** | [getErrorDescription:](#ByteRTCVideo-geterrordescription) |
 
 
@@ -995,43 +1083,45 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | **ByteRTCVideo*** | [createRTCVideo:delegate:parameters:](#ByteRTCVideo-creatertcvideo-delegate-parameters) |
 | **int** | [setAudioSourceType:](#ByteRTCVideo-setaudiosourcetype) |
 | **int** | [setAudioRenderType:](#ByteRTCVideo-setaudiorendertype) |
-| **void** | [startAudioCapture](#ByteRTCVideo-startaudiocapture) |
-| **void** | [stopAudioCapture](#ByteRTCVideo-stopaudiocapture) |
-| **void** | [setAudioScenario:](#ByteRTCVideo-setaudioscenario) |
-| **void** | [setAudioProfile:](#ByteRTCVideo-setaudioprofile) |
-| **void** | [setAnsMode:](#ByteRTCVideo-setansmode) |
+| **int** | [startAudioCapture](#ByteRTCVideo-startaudiocapture) |
+| **int** | [stopAudioCapture](#ByteRTCVideo-stopaudiocapture) |
+| **int** | [setAudioScenario:](#ByteRTCVideo-setaudioscenario) |
+| **int** | [setAudioProfile:](#ByteRTCVideo-setaudioprofile) |
+| **int** | [setAnsMode:](#ByteRTCVideo-setansmode) |
 | **int** | [setVoiceChangerType:](#ByteRTCVideo-setvoicechangertype) |
 | **int** | [setVoiceReverbType:](#ByteRTCVideo-setvoicereverbtype) |
 | **int** | [setLocalVoiceEqualization:](#ByteRTCVideo-setlocalvoiceequalization) |
 | **int** | [setLocalVoiceReverbParam:](#ByteRTCVideo-setlocalvoicereverbparam) |
 | **int** | [enableLocalVoiceReverb:](#ByteRTCVideo-enablelocalvoicereverb) |
-| **void** | [setCaptureVolume:volume:](#ByteRTCVideo-setcapturevolume-volume) |
-| **void** | [setPlaybackVolume:](#ByteRTCVideo-setplaybackvolume) |
-| **void** | [enableAudioPropertiesReport:](#ByteRTCVideo-enableaudiopropertiesreport) |
-| **void** | [setRemoteAudioPlaybackVolume:remoteUid:playVolume:](#ByteRTCVideo-setremoteaudioplaybackvolume-remoteuid-playvolume) |
-| **void** | [setEarMonitorMode:](#ByteRTCVideo-setearmonitormode) |
-| **void** | [setEarMonitorVolume:](#ByteRTCVideo-setearmonitorvolume) |
-| **void** | [setBluetoothMode:](#ByteRTCVideo-setbluetoothmode) |
-| **void** | [setLocalVoicePitch:](#ByteRTCVideo-setlocalvoicepitch) |
-| **void** | [enableVocalInstrumentBalance:](#ByteRTCVideo-enablevocalinstrumentbalance) |
-| **void** | [enablePlaybackDucking:](#ByteRTCVideo-enableplaybackducking) |
-| **void** | [setLocalVideoSink:withSink:withPixelFormat:](#ByteRTCVideo-setlocalvideosink-withsink-withpixelformat) |
-| **void** | [setRemoteVideoSink:withSink:withPixelFormat:](#ByteRTCVideo-setremotevideosink-withsink-withpixelformat) |
-| **void** | [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) |
+| **int** | [setCaptureVolume:volume:](#ByteRTCVideo-setcapturevolume-volume) |
+| **int** | [setPlaybackVolume:](#ByteRTCVideo-setplaybackvolume) |
+| **int** | [enableAudioPropertiesReport:](#ByteRTCVideo-enableaudiopropertiesreport) |
+| **int** | [setRemoteAudioPlaybackVolume:remoteUid:playVolume:](#ByteRTCVideo-setremoteaudioplaybackvolume-remoteuid-playvolume) |
+| **int** | [setEarMonitorMode:](#ByteRTCVideo-setearmonitormode) |
+| **int** | [setEarMonitorVolume:](#ByteRTCVideo-setearmonitorvolume) |
+| **int** | [setBluetoothMode:](#ByteRTCVideo-setbluetoothmode) |
+| **int** | [setLocalVoicePitch:](#ByteRTCVideo-setlocalvoicepitch) |
+| **int** | [enableVocalInstrumentBalance:](#ByteRTCVideo-enablevocalinstrumentbalance) |
+| **int** | [enablePlaybackDucking:](#ByteRTCVideo-enableplaybackducking) |
+| **int** | [setLocalVideoSink:withSink:withPixelFormat:](#ByteRTCVideo-setlocalvideosink-withsink-withpixelformat) |
+| **int** | [setRemoteVideoSink:withSink:withPixelFormat:](#ByteRTCVideo-setremotevideosink-withsink-withpixelformat) |
+| **int** | [setRemoteVideoSuperResolution:withMode:](#ByteRTCVideo-setremotevideosuperresolution-withmode) |
+| **int** | [setVideoDenoiser:](#ByteRTCVideo-setvideodenoiser) |
+| **int** | [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) |
 | **int** | [setMaxVideoEncoderConfig:](#ByteRTCVideo-setmaxvideoencoderconfig) |
 | **int** | [setVideoEncoderConfig:](#ByteRTCVideo-setvideoencoderconfig) |
 | **int** | [setScreenVideoEncoderConfig:](#ByteRTCVideo-setscreenvideoencoderconfig) |
 | **int** | [setVideoCaptureConfig:](#ByteRTCVideo-setvideocaptureconfig) |
 | **int** | [setLocalVideoCanvas:withCanvas:](#ByteRTCVideo-setlocalvideocanvas-withcanvas) |
-| **void** | [updateLocalVideoCanvas:withRenderMode:withBackgroundColor:](#ByteRTCVideo-updatelocalvideocanvas-withrendermode-withbackgroundcolor) |
-| **void** | [setRemoteVideoCanvas:withCanvas:](#ByteRTCVideo-setremotevideocanvas-withcanvas) |
-| **void** | [updateRemoteStreamVideoCanvas:withRenderMode:withBackgroundColor:](#ByteRTCVideo-updateremotestreamvideocanvas-withrendermode-withbackgroundcolor) |
-| **void** | [startVideoCapture](#ByteRTCVideo-startvideocapture) |
-| **void** | [stopVideoCapture](#ByteRTCVideo-stopvideocapture) |
-| **void** | [setLocalVideoMirrorType:](#ByteRTCVideo-setlocalvideomirrortype) |
-| **void** | [setVideoRotationMode:](#ByteRTCVideo-setvideorotationmode) |
-| **void** | [setVideoOrientation:](#ByteRTCVideo-setvideoorientation) |
-| **void** | [switchCamera:](#ByteRTCVideo-switchcamera) |
+| **int** | [updateLocalVideoCanvas:withRenderMode:withBackgroundColor:](#ByteRTCVideo-updatelocalvideocanvas-withrendermode-withbackgroundcolor) |
+| **int** | [setRemoteVideoCanvas:withCanvas:](#ByteRTCVideo-setremotevideocanvas-withcanvas) |
+| **int** | [updateRemoteStreamVideoCanvas:withRenderMode:withBackgroundColor:](#ByteRTCVideo-updateremotestreamvideocanvas-withrendermode-withbackgroundcolor) |
+| **int** | [startVideoCapture](#ByteRTCVideo-startvideocapture) |
+| **int** | [stopVideoCapture](#ByteRTCVideo-stopvideocapture) |
+| **int** | [setLocalVideoMirrorType:](#ByteRTCVideo-setlocalvideomirrortype) |
+| **int** | [setVideoRotationMode:](#ByteRTCVideo-setvideorotationmode) |
+| **int** | [setVideoOrientation:](#ByteRTCVideo-setvideoorientation) |
+| **int** | [switchCamera:](#ByteRTCVideo-switchcamera) |
 | **ByteRTCVideoEffect* _Null_unspecified** | [getVideoEffectInterface](#ByteRTCVideo-getvideoeffectinterface) |
 | **int** | [enableEffectBeauty:](#ByteRTCVideo-enableeffectbeauty) |
 | **int** | [setBeautyIntensity:withIntensity:](#ByteRTCVideo-setbeautyintensity-withintensity) |
@@ -1045,20 +1135,22 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | **bool** | [isCameraExposurePositionSupported](#ByteRTCVideo-iscameraexposurepositionsupported) |
 | **int** | [setCameraExposurePosition:](#ByteRTCVideo-setcameraexposureposition) |
 | **int** | [setCameraExposureCompensation:](#ByteRTCVideo-setcameraexposurecompensation) |
+| **int** | [enableCameraAutoExposureFaceMode:](#ByteRTCVideo-enablecameraautoexposurefacemode) |
+| **int** | [setCameraAdaptiveMinimumFrameRate:](#ByteRTCVideo-setcameraadaptiveminimumframerate) |
 | **int** | [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) |
-| **void** | [setVideoDigitalZoomConfig:size:](#ByteRTCVideo-setvideodigitalzoomconfig-size) |
-| **void** | [setVideoDigitalZoomControl:](#ByteRTCVideo-setvideodigitalzoomcontrol) |
-| **void** | [startVideoDigitalZoomControl:](#ByteRTCVideo-startvideodigitalzoomcontrol) |
-| **void** | [stopVideoDigitalZoomControl](#ByteRTCVideo-stopvideodigitalzoomcontrol) |
+| **int** | [setVideoDigitalZoomConfig:size:](#ByteRTCVideo-setvideodigitalzoomconfig-size) |
+| **int** | [setVideoDigitalZoomControl:](#ByteRTCVideo-setvideodigitalzoomcontrol) |
+| **int** | [startVideoDigitalZoomControl:](#ByteRTCVideo-startvideodigitalzoomcontrol) |
+| **int** | [stopVideoDigitalZoomControl](#ByteRTCVideo-stopvideodigitalzoomcontrol) |
 | **int** | [registerLocalVideoProcessor:withConfig:](#ByteRTCVideo-registerlocalvideoprocessor-withconfig) |
-| **void** | [registerLocalEncodedVideoFrameObserver:](#ByteRTCVideo-registerlocalencodedvideoframeobserver) |
-| **void** | [setAudioRoute:](#ByteRTCVideo-setaudioroute) |
+| **int** | [registerLocalEncodedVideoFrameObserver:](#ByteRTCVideo-registerlocalencodedvideoframeobserver) |
+| **int** | [setAudioRoute:](#ByteRTCVideo-setaudioroute) |
 | **ByteRTCAudioRoute** | [getAudioRoute](#ByteRTCVideo-getaudioroute) |
-| **void** | [enableExternalSoundCard:](#ByteRTCVideo-enableexternalsoundcard) |
+| **int** | [enableExternalSoundCard:](#ByteRTCVideo-enableexternalsoundcard) |
 | **int** | [setDefaultAudioRoute:](#ByteRTCVideo-setdefaultaudioroute) |
 | **int** | [startPushMixedStreamToCDN:mixedConfig:observer:](#ByteRTCVideo-startpushmixedstreamtocdn-mixedconfig-observer) |
 | **int** | [updatePushMixedStreamToCDN:mixedConfig:](#ByteRTCVideo-updatepushmixedstreamtocdn-mixedconfig) |
-| **void** | [startPushSingleStreamToCDN:singleStream:observer:](#ByteRTCVideo-startpushsinglestreamtocdn-singlestream-observer) |
+| **int** | [startPushSingleStreamToCDN:singleStream:observer:](#ByteRTCVideo-startpushsinglestreamtocdn-singlestream-observer) |
 | **int** | [stopPushStreamToCDN:](#ByteRTCVideo-stoppushstreamtocdn) |
 | **int** | [startPushPublicStream:withLayout:](#ByteRTCVideo-startpushpublicstream-withlayout) |
 | **int** | [stopPushPublicStream:](#ByteRTCVideo-stoppushpublicstream) |
@@ -1069,73 +1161,75 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | **int** | [setPublicStreamVideoSink:withSink:withPixelFormat:](#ByteRTCVideo-setpublicstreamvideosink-withsink-withpixelformat) |
 | **int** | [setPublicStreamAudioPlaybackVolume:volume:](#ByteRTCVideo-setpublicstreamaudioplaybackvolume-volume) |
 | **int** | [pushExternalVideoFrame:](#ByteRTCVideo-pushexternalvideoframe) |
-| **void** | [enableAudioFrameCallback:format:](#ByteRTCVideo-enableaudioframecallback-format) |
-| **void** | [disableAudioFrameCallback:](#ByteRTCVideo-disableaudioframecallback) |
-| **void** | [registerAudioFrameObserver:](#ByteRTCVideo-registeraudioframeobserver) |
-| **void** | [registerAudioProcessor:](#ByteRTCVideo-registeraudioprocessor) |
-| **void** | [enableAudioProcessor:audioFormat:](#ByteRTCVideo-enableaudioprocessor-audioformat) |
-| **void** | [disableAudioProcessor:](#ByteRTCVideo-disableaudioprocessor) |
+| **int** | [enableAudioFrameCallback:format:](#ByteRTCVideo-enableaudioframecallback-format) |
+| **int** | [disableAudioFrameCallback:](#ByteRTCVideo-disableaudioframecallback) |
+| **int** | [registerAudioFrameObserver:](#ByteRTCVideo-registeraudioframeobserver) |
+| **int** | [registerAudioProcessor:](#ByteRTCVideo-registeraudioprocessor) |
+| **int** | [enableAudioProcessor:audioFormat:](#ByteRTCVideo-enableaudioprocessor-audioformat) |
+| **int** | [disableAudioProcessor:](#ByteRTCVideo-disableaudioprocessor) |
 | **int** | [pushExternalAudioFrame:](#ByteRTCVideo-pushexternalaudioframe) |
 | **int** | [pullExternalAudioFrame:](#ByteRTCVideo-pullexternalaudioframe) |
 | **int** | [setBusinessId:](#ByteRTCVideo-setbusinessid) |
 | **int** | [feedback:info:](#ByteRTCVideo-feedback-info) |
-| **void** | [setPublishFallbackOption:](#ByteRTCVideo-setpublishfallbackoption) |
-| **void** | [setSubscribeFallbackOption:](#ByteRTCVideo-setsubscribefallbackoption) |
+| **void*** | [getNativeHandle](#ByteRTCVideo-getnativehandle) |
+| **int** | [setPublishFallbackOption:](#ByteRTCVideo-setpublishfallbackoption) |
+| **int** | [setSubscribeFallbackOption:](#ByteRTCVideo-setsubscribefallbackoption) |
 | **int** | [setRemoteUserPriority:InRoomId:uid:](#ByteRTCVideo-setremoteuserpriority-inroomid-uid) |
-| **void** | [setEncryptInfo:key:](#ByteRTCVideo-setencryptinfo-key) |
-| **void** | [setCustomizeEncryptHandler:](#ByteRTCVideo-setcustomizeencrypthandler) |
+| **int** | [setEncryptInfo:key:](#ByteRTCVideo-setencryptinfo-key) |
+| **int** | [setCustomizeEncryptHandler:](#ByteRTCVideo-setcustomizeencrypthandler) |
 | **ByteRTCRoom*** | [createRTCRoom:](#ByteRTCVideo-creatertcroom) |
 | **int** | [pushScreenVideoFrame:time:rotation:](#ByteRTCVideo-pushscreenvideoframe-time-rotation) |
-| **void** | [setExtensionConfig:](#ByteRTCVideo-setextensionconfig) |
-| **void** | [startScreenCapture:bundleId:](#ByteRTCVideo-startscreencapture-bundleid) |
-| **void** | [updateScreenCapture:](#ByteRTCVideo-updatescreencapture) |
-| **void** | [stopScreenCapture](#ByteRTCVideo-stopscreencapture) |
-| **void** | [sendScreenCaptureExtensionMessage:](#ByteRTCVideo-sendscreencaptureextensionmessage) |
-| **void** | [setRuntimeParameters:](#ByteRTCVideo-setruntimeparameters) |
-| **void** | [startASR:handler:](#ByteRTCVideo-startasr-handler) |
-| **void** | [stopASR](#ByteRTCVideo-stopasr) |
+| **int** | [setExtensionConfig:](#ByteRTCVideo-setextensionconfig) |
+| **int** | [startScreenCapture:bundleId:](#ByteRTCVideo-startscreencapture-bundleid) |
+| **int** | [updateScreenCapture:](#ByteRTCVideo-updatescreencapture) |
+| **int** | [stopScreenCapture](#ByteRTCVideo-stopscreencapture) |
+| **int** | [sendScreenCaptureExtensionMessage:](#ByteRTCVideo-sendscreencaptureextensionmessage) |
+| **int** | [setRuntimeParameters:](#ByteRTCVideo-setruntimeparameters) |
+| **int** | [startASR:handler:](#ByteRTCVideo-startasr-handler) |
+| **int** | [stopASR](#ByteRTCVideo-stopasr) |
 | **int** | [startFileRecording:withRecordingConfig:type:](#ByteRTCVideo-startfilerecording-withrecordingconfig-type) |
-| **void** | [stopFileRecording:](#ByteRTCVideo-stopfilerecording) |
+| **int** | [stopFileRecording:](#ByteRTCVideo-stopfilerecording) |
 | **int** | [startAudioRecording:](#ByteRTCVideo-startaudiorecording) |
 | **int** | [stopAudioRecording](#ByteRTCVideo-stopaudiorecording) |
-| **ByteRTCAudioMixingManager*** | [getAudioMixingManager](#ByteRTCVideo-getaudiomixingmanager) |
+| **ByteRTCAudioEffectPlayer*** | [getAudioEffectPlayer](#ByteRTCVideo-getaudioeffectplayer) |
+| **ByteRTCMediaPlayer*** | [getMediaPlayer:](#ByteRTCVideo-getmediaplayer) |
 | **int** | [login:uid:](#ByteRTCVideo-login-uid) |
-| **void** | [logout](#ByteRTCVideo-logout) |
-| **void** | [updateLoginToken:](#ByteRTCVideo-updatelogintoken) |
-| **void** | [setServerParams:url:](#ByteRTCVideo-setserverparams-url) |
-| **void** | [getPeerOnlineStatus:](#ByteRTCVideo-getpeeronlinestatus) |
+| **int** | [logout](#ByteRTCVideo-logout) |
+| **int** | [updateLoginToken:](#ByteRTCVideo-updatelogintoken) |
+| **int** | [setServerParams:url:](#ByteRTCVideo-setserverparams-url) |
+| **int** | [getPeerOnlineStatus:](#ByteRTCVideo-getpeeronlinestatus) |
 | **NSInteger** | [sendUserMessageOutsideRoom:message:config:](#ByteRTCVideo-sendusermessageoutsideroom-message-config) |
 | **NSInteger** | [sendUserBinaryMessageOutsideRoom:message:config:](#ByteRTCVideo-senduserbinarymessageoutsideroom-message-config) |
 | **NSInteger** | [sendServerMessage:](#ByteRTCVideo-sendservermessage) |
 | **NSInteger** | [sendServerBinaryMessage:](#ByteRTCVideo-sendserverbinarymessage) |
-| **ByteRTCNetworkDetectionStartReturn** | [startNetworkDetection:uplinkBandwidth:downlink:downlinkBandwidth:](#ByteRTCVideo-startnetworkdetection-uplinkbandwidth-downlink-downlinkbandwidth) |
-| **void** | [stopNetworkDetection](#ByteRTCVideo-stopnetworkdetection) |
-| **void** | [setScreenAudioSourceType:](#ByteRTCVideo-setscreenaudiosourcetype) |
-| **void** | [setScreenAudioStreamIndex:](#ByteRTCVideo-setscreenaudiostreamindex) |
+| **int** | [startNetworkDetection:uplinkBandwidth:downlink:downlinkBandwidth:](#ByteRTCVideo-startnetworkdetection-uplinkbandwidth-downlink-downlinkbandwidth) |
+| **int** | [stopNetworkDetection](#ByteRTCVideo-stopnetworkdetection) |
+| **int** | [setScreenAudioSourceType:](#ByteRTCVideo-setscreenaudiosourcetype) |
+| **int** | [setScreenAudioStreamIndex:](#ByteRTCVideo-setscreenaudiostreamindex) |
 | **int** | [pushScreenAudioFrame:](#ByteRTCVideo-pushscreenaudioframe) |
-| **void** | [setVideoSourceType:WithStreamIndex:](#ByteRTCVideo-setvideosourcetype-withstreamindex) |
-| **void** | [setExternalVideoEncoderEventHandler:](#ByteRTCVideo-setexternalvideoencodereventhandler) |
+| **int** | [setVideoSourceType:WithStreamIndex:](#ByteRTCVideo-setvideosourcetype-withstreamindex) |
+| **int** | [setExternalVideoEncoderEventHandler:](#ByteRTCVideo-setexternalvideoencodereventhandler) |
 | **int** | [pushExternalEncodedVideoFrame:withVideoIndex:withEncodedVideoFrame:](#ByteRTCVideo-pushexternalencodedvideoframe-withvideoindex-withencodedvideoframe) |
-| **void** | [setVideoDecoderConfig:withVideoDecoderConfig:](#ByteRTCVideo-setvideodecoderconfig-withvideodecoderconfig) |
-| **void** | [requestRemoteVideoKeyFrame:](#ByteRTCVideo-requestremotevideokeyframe) |
-| **void** | [registerRemoteEncodedVideoFrameObserver:](#ByteRTCVideo-registerremoteencodedvideoframeobserver) |
+| **int** | [setVideoDecoderConfig:withVideoDecoderConfig:](#ByteRTCVideo-setvideodecoderconfig-withvideodecoderconfig) |
+| **int** | [requestRemoteVideoKeyFrame:](#ByteRTCVideo-requestremotevideokeyframe) |
+| **int** | [registerRemoteEncodedVideoFrameObserver:](#ByteRTCVideo-registerremoteencodedvideoframeobserver) |
 | **int** | [sendStreamSyncInfo:config:](#ByteRTCVideo-sendstreamsyncinfo-config) |
 | **int** | [startEchoTest:playDelay:](#ByteRTCVideo-startechotest-playdelay) |
 | **int** | [stopEchoTest](#ByteRTCVideo-stopechotest) |
-| **void** | [setVideoWatermark:withImagePath:withRtcWatermarkConfig:](#ByteRTCVideo-setvideowatermark-withimagepath-withrtcwatermarkconfig) |
-| **void** | [clearVideoWatermark:](#ByteRTCVideo-clearvideowatermark) |
+| **int** | [setVideoWatermark:withImagePath:withRtcWatermarkConfig:](#ByteRTCVideo-setvideowatermark-withimagepath-withrtcwatermarkconfig) |
+| **int** | [clearVideoWatermark:](#ByteRTCVideo-clearvideowatermark) |
 | **NSInteger** | [takeLocalSnapshot:callback:](#ByteRTCVideo-takelocalsnapshot-callback) |
 | **NSInteger** | [takeRemoteSnapshot:callback:](#ByteRTCVideo-takeremotesnapshot-callback) |
-| **void** | [startCloudProxy:](#ByteRTCVideo-startcloudproxy) |
-| **void** | [stopCloudProxy](#ByteRTCVideo-stopcloudproxy) |
+| **int** | [startCloudProxy:](#ByteRTCVideo-startcloudproxy) |
+| **int** | [stopCloudProxy](#ByteRTCVideo-stopcloudproxy) |
 | **ByteRTCSingScoringManager*** | [getSingScoringManager](#ByteRTCVideo-getsingscoringmanager) |
 | **int** | [setDummyCaptureImagePath:](#ByteRTCVideo-setdummycaptureimagepath) |
 | **ByteRTCNetworkTimeInfo*** | [getNetworkTimeInfo](#ByteRTCVideo-getnetworktimeinfo) |
-| **void** | [setAudioAlignmentProperty:withMode:](#ByteRTCVideo-setaudioalignmentproperty-withmode) |
+| **int** | [setAudioAlignmentProperty:withMode:](#ByteRTCVideo-setaudioalignmentproperty-withmode) |
 | **ByteRTCKTVManager*** | [getKTVManager](#ByteRTCVideo-getktvmanager) |
 | **int** | [startHardwareEchoDetection:](#ByteRTCVideo-starthardwareechodetection) |
 | **int** | [stopHardwareEchoDetection](#ByteRTCVideo-stophardwareechodetection) |
-| **void** | [setCellularEnhancement:](#ByteRTCVideo-setcellularenhancement) |
+| **int** | [setCellularEnhancement:](#ByteRTCVideo-setcellularenhancement) |
 | **int** | [setLocalProxy:](#ByteRTCVideo-setlocalproxy) |
 | **int** | [[deprecated] setVideoEncoderConfig:config:](#ByteRTCVideo-setvideoencoderconfig-config) |
 | **int** | [[deprecated] checkVideoEffectLicense:](#ByteRTCVideo-checkvideoeffectlicense) |
@@ -1149,11 +1243,12 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 | **int** | [[deprecated] registerFaceDetectionObserver:withInterval:](#ByteRTCVideo-registerfacedetectionobserver-withinterval) |
 | **int** | [[deprecated] sendSEIMessage:andMessage:andRepeatCount:](#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount) |
 | **int** | [[deprecated] setAudioPlaybackDevice:](#ByteRTCVideo-setaudioplaybackdevice) |
-| **void** | [[deprecated] startLiveTranscoding:transcoding:observer:](#ByteRTCVideo-startlivetranscoding-transcoding-observer) |
-| **void** | [[deprecated] stopLiveTranscoding:](#ByteRTCVideo-stoplivetranscoding) |
+| **int** | [[deprecated] startLiveTranscoding:transcoding:observer:](#ByteRTCVideo-startlivetranscoding-transcoding-observer) |
+| **int** | [[deprecated] stopLiveTranscoding:](#ByteRTCVideo-stoplivetranscoding) |
 | **int** | [[deprecated] updateLiveTranscoding:transcoding:](#ByteRTCVideo-updatelivetranscoding-transcoding) |
-| **void** | [[deprecated] registerLocalAudioProcessor:format:](#ByteRTCVideo-registerlocalaudioprocessor-format) |
-| **void** | [[deprecated] muteAudioPlayback:](#ByteRTCVideo-muteaudioplayback) |
+| **int** | [[deprecated] registerLocalAudioProcessor:format:](#ByteRTCVideo-registerlocalaudioprocessor-format) |
+| **ByteRTCAudioMixingManager*** | [[deprecated] __deprecated_msg](#ByteRTCVideo-__deprecated_msg) |
+| **int** | [[deprecated] muteAudioPlayback:](#ByteRTCVideo-muteaudioplayback) |
 
 
 ## 变量说明
@@ -1178,7 +1273,7 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 
 + 请确保和需要销毁的 [ByteRTCVideo](#bytertcvideo) 实例相关的业务场景全部结束后，才调用此方法  
 + 该方法在调用之后，会销毁所有和此 [ByteRTCVideo](#bytertcvideo) 实例相关的内存，并且停止与媒体服务器的任何交互  
-+ 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。  
++ 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，会导致死锁。同时此方法是耗时操作，不建议在主线程调用本方法，避免主线程阻塞。
 + 可以通过 Objective-C 的ARC机制，在 dealloc 时自动触发销毁逻辑
 
 
@@ -1193,6 +1288,30 @@ Token 中同时包含进房、发布和订阅权限，各权限有一定的有�
 **返回值**
 SDK 当前的版本号。
 
+
+<span id="ByteRTCVideo-setlogconfig"></span>
+### setLogConfig:
+```objectivec
+
++ (int) setLogConfig:(ByteRTCLogConfig *_Nonnull) logConfig;
+```
+配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| logConfig | **ByteRTCLogConfig*** | 本地日志参数，参看 [ByteRTCLogConfig](iOS-keytype.md#bytertclogconfig)。 |
+
+**返回值**
+
++ 0：成功。
++ –1：失败，本方法必须在创建引擎前调用。
++ –2：失败，参数填写错误。
+
+
+**注意**
+本方法必须在调用 [createRTCVideo:delegate:parameters:](#ByteRTCVideo-creatertcvideo-delegate-parameters) 之前调用。
 
 <span id="ByteRTCVideo-geterrordescription"></span>
 ### getErrorDescription:
@@ -1293,17 +1412,22 @@ SDK 当前的版本号。
 ### startAudioCapture
 ```objectivec
 
-- (void)startAudioCapture;
+- (int)startAudioCapture;
 ```
 开启内部音频采集。默认为关闭状态。  <br>
-内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
+内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。
 调用该方法开启后，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartAudioCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartaudiocapture-uid) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartAudioCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartaudiocapture-uid) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
 
-+ 若未取得当前设备的麦克风权限，调用该方法后会触发 [rtcEngine:onWarning:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onwarning) 回调。  
++ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onAudioDeviceStateChanged](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 回调，对应的错误码为 `ByteRTCMediaDeviceError.ByteRTCMediaDeviceErrorDeviceNoPermission = 1`。
 + 调用 [stopAudioCapture](#ByteRTCVideo-stopaudiocapture) 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  
 + 由于不同硬件设备初始化响应时间不同，频繁调用 [stopAudioCapture](#ByteRTCVideo-stopaudiocapture) 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 [publishStream:](#ByteRTCRoom-publishstream)/[unpublishStream:](#ByteRTCRoom-unpublishstream) 实现临时闭麦和重新开麦。
 + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  
@@ -1314,12 +1438,17 @@ SDK 当前的版本号。
 ### stopAudioCapture
 ```objectivec
 
-- (void)stopAudioCapture;
+- (int)stopAudioCapture;
 ```
 关闭内部音频采集。默认为关闭状态。  <br>
-内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
+内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。
 调用该方法，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopAudioCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopaudiocapture-uid) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopAudioCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopaudiocapture-uid) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1332,7 +1461,7 @@ SDK 当前的版本号。
 ### setAudioScenario:
 ```objectivec
 
-- (void)setAudioScenario:(ByteRTCAudioScenarioType)audioScenario;
+- (int)setAudioScenario:(ByteRTCAudioScenarioType)audioScenario;
 ```
 设置音频场景类型。
 你可以根据你的应用所在场景，选择合适的音频场景类型。
@@ -1343,6 +1472,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audioScenario | **ByteRTCAudioScenarioType** | 音频场景类型，参看 [ByteRTCAudioScenarioType](iOS-keytype.md#bytertcaudioscenariotype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1356,7 +1490,7 @@ SDK 当前的版本号。
 ### setAudioProfile:
 ```objectivec
 
-- (void)setAudioProfile:(ByteRTCAudioProfileType)audioProfile;
+- (int)setAudioProfile:(ByteRTCAudioProfileType)audioProfile;
 ```
 设置音质档位。<br>
 当所选的 [ByteRTCRoomProfile](iOS-keytype.md#bytertcroomprofile) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。
@@ -1366,6 +1500,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audioProfile | **ByteRTCAudioProfileType** | 音质档位，参看 [ByteRTCAudioProfileType](iOS-keytype.md#bytertcaudioprofiletype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1378,7 +1517,7 @@ SDK 当前的版本号。
 ### setAnsMode:
 ```objectivec
 
-- (void)setAnsMode:(ByteRTCAnsMode)ansMode;
+- (int)setAnsMode:(ByteRTCAnsMode)ansMode;
 ```
 支持根据业务场景，设置通话中的音频降噪模式。
 
@@ -1388,9 +1527,25 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | ansMode | **ByteRTCAnsMode** | 降噪模式。具体参见 [ByteRTCAnsMode](iOS-keytype.md#bytertcansmode)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
-该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
+
++ 该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
++ 降噪算法包含传统降噪和 AI 降噪。传统降噪主要是抑制平稳噪声，比如空调声、风扇声等。而 AI 降噪主要是抑制非平稳噪声，比如键盘敲击声、桌椅碰撞声等。
++ 只有在以下 [ByteRTCRoomProfile](iOS-keytype.md#bytertcroomprofile) 场景下，调用本接口可以开启 AI 降噪。其余场景的 AI 降噪不会生效。
+    -  游戏语音模式： `ByteRTCRoomProfileGame`
+    -  高音质游戏模式： `ByteRTCRoomProfileGameHD`
+    -  云游戏模式： `ByteRTCRoomProfileCloudGame`
+    -  1 vs 1 音视频通话： `ByteRTCRoomProfileChat`
+    -  多端同步播放音视频：`ByteRTCRoomProfileLwTogether`
+    -  云端会议中的个人设备：`ByteRTCRoomProfileMeeting`
+    -  课堂互动模式：`ByteRTCRoomProfileClassroom`
+    -  云端会议中的会议室终端：`ByteRTCRoomProfileMeetingRoom`
 
 <span id="ByteRTCVideo-setvoicechangertype"></span>
 ### setVoiceChangerType:
@@ -1452,7 +1607,6 @@ SDK 当前的版本号。
 + 对 RTC SDK 内部采集的音频和自定义采集的音频都生效。 
 + 只对单声道音频生效。
 + 与 [setVoiceChangerType:](#ByteRTCVideo-setvoicechangertype) 互斥，后设置的特效会覆盖先设置的特效。 
-+ 使用本接口前，请联系 RTC 技术支持了解更多详情。
 
 
 <span id="ByteRTCVideo-setlocalvoiceequalization"></span>
@@ -1525,7 +1679,7 @@ SDK 当前的版本号。
 ### setCaptureVolume:volume:
 ```objectivec
 
-- (void)setCaptureVolume:(ByteRTCStreamIndex)index volume:(int)volume;
+- (int)setCaptureVolume:(ByteRTCStreamIndex)index volume:(int)volume;
 ```
 调节音频采集音量
 
@@ -1536,6 +1690,11 @@ SDK 当前的版本号。
 | index | **ByteRTCStreamIndex** | 流索引，指定调节主流还是调节屏幕流的音量，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
 | volume | **int** | 采集的音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。<br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。<br/>• 0：静音  <br/>• 100：原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 在开启音频采集前后，你都可以使用此接口设定采集音量。
@@ -1544,7 +1703,7 @@ SDK 当前的版本号。
 ### setPlaybackVolume:
 ```objectivec
 
-- (void)setPlaybackVolume:(NSInteger)volume;
+- (int)setPlaybackVolume:(NSInteger)volume;
 ```
 调节本地播放的所有远端用户混音后的音量。<br>
 播放音频前或播放音频时，你都可以使用此接口设定播放音量。
@@ -1555,6 +1714,11 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | volume | **NSInteger** | 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br/>• 0: 静音  <br/>• 100: 原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 假设某远端用户 A 始终在被调节的目标用户范围内，当该方法与 [setRemoteAudioPlaybackVolume:remoteUid:playVolume:](#ByteRTCVideo-setremoteaudioplaybackvolume-remoteuid-playvolume) 或 [setRemoteRoomAudioPlaybackVolume:](#ByteRTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
@@ -1563,7 +1727,7 @@ SDK 当前的版本号。
 ### enableAudioPropertiesReport:
 ```objectivec
 
-- (void)enableAudioPropertiesReport:(ByteRTCAudioPropertiesConfig* _Nonnull)config;
+- (int)enableAudioPropertiesReport:(ByteRTCAudioPropertiesConfig* _Nonnull)config;
 ```
 启用音频信息提示。启用后，你可以收到 [rtcEngine:onLocalAudioPropertiesReport:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport)，[rtcEngine:onRemoteAudioPropertiesReport:totalRemoteVolume:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onremoteaudiopropertiesreport-totalremotevolume)，和 [rtcEngine:onActiveSpeaker:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onactivespeaker-uid)。
 
@@ -1573,12 +1737,17 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | config | **ByteRTCAudioPropertiesConfig*** | 详见 [ByteRTCAudioPropertiesConfig](iOS-keytype.md#bytertcaudiopropertiesconfig) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 <span id="ByteRTCVideo-setremoteaudioplaybackvolume-remoteuid-playvolume"></span>
 ### setRemoteAudioPlaybackVolume:remoteUid:playVolume:
 ```objectivec
 
-- (void)setRemoteAudioPlaybackVolume:(NSString *_Nonnull)room_id remoteUid:(NSString *_Nonnull)uid playVolume:(NSInteger)volume;
+- (int)setRemoteAudioPlaybackVolume:(NSString *_Nonnull)roomID remoteUid:(NSString *_Nonnull)userID playVolume:(NSInteger)volume;
 ```
 调节来自指定远端用户的音频播放音量。
 
@@ -1586,9 +1755,14 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| room_id | **NSString*** | 音频来源用户所在的房间 ID |
-| uid | **NSString*** | 音频来源的远端用户 ID |
+| roomID | **NSString*** | 音频来源用户所在的房间 ID |
+| userID | **NSString*** | 音频来源的远端用户 ID |
 | volume | **NSInteger** | 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。为保证更好的通话质量，建议将 volume 值设为 [0,100]。 <br/>• 0: 静音  <br/>• 100: 原始音量，默认值  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1601,7 +1775,7 @@ SDK 当前的版本号。
 ### setEarMonitorMode:
 ```objectivec
 
-- (void)setEarMonitorMode:(ByteRTCEarMonitorMode)mode;
+- (int)setEarMonitorMode:(ByteRTCEarMonitorMode)mode;
 ```
 开启/关闭耳返功能。
 
@@ -1611,19 +1785,25 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | mode | **ByteRTCEarMonitorMode** | 是否开启耳返功能，参看 [ByteRTCEarMonitorMode](iOS-keytype.md#bytertcearmonitormode)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 耳返功能仅适用于由 RTC SDK 内部采集的音频。  
 + 使用耳返必须佩戴耳机。为保证低延时耳返最佳体验，建议佩戴有线耳机。  
-+ 受 iOS 平台限制，RTC 仅支持软件耳返功能。
++ 对于 iOS，仅支持软件耳返功能。
++ 对于 macOS，耳返功能仅支持设备通过 3.5mm 接口、USB 接口、或蓝牙方式直连耳机时可以使用。对于通过 HDMI 或 USB-C 接口连接显示器，再连接，或通过连接 OTG 外接声卡再连接的耳机，不支持耳返功能。
 
 
 <span id="ByteRTCVideo-setearmonitorvolume"></span>
 ### setEarMonitorVolume:
 ```objectivec
 
-- (void)setEarMonitorVolume:(NSInteger)volume;
+- (int)setEarMonitorVolume:(NSInteger)volume;
 ```
 设置耳返的音量。
 
@@ -1633,6 +1813,11 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | volume | **NSInteger** | 耳返的音量，取值范围：[0,100]，单位：% |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明。
+
 
 **注意**
 设置耳返音量前，你必须先调用 [setEarMonitorMode:](#ByteRTCVideo-setearmonitormode) 打开耳返功能。
@@ -1641,7 +1826,7 @@ SDK 当前的版本号。
 ### setBluetoothMode:
 ```objectivec
 
-- (void)setBluetoothMode:(ByteRTCBluetoothMode) mode;
+- (int)setBluetoothMode:(ByteRTCBluetoothMode) mode;
 ```
 在纯媒体音频场景下,切换 iOS 设备与耳机之间的蓝牙传输协议。
 
@@ -1651,6 +1836,11 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | mode | **ByteRTCBluetoothMode** | 蓝牙传输协议。详见 [ByteRTCBluetoothMode](iOS-keytype.md#bytertcbluetoothmode)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 以下场景你会收到 [rtcEngine:onAudioDeviceWarning:deviceType:deviceWarning:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicewarning-devicetype-devicewarning) 回调：1）当前不支持设置 HFP；2）非纯媒体音频场景，建议在调用此接口前调用 [setAudioScenario:](#ByteRTCVideo-setaudioscenario)设置纯媒体音频场景。
@@ -1659,7 +1849,7 @@ SDK 当前的版本号。
 ### setLocalVoicePitch:
 ```objectivec
 
-- (void)setLocalVoicePitch:(NSInteger)pitch;
+- (int)setLocalVoicePitch:(NSInteger)pitch;
 ```
 开启本地语音变调功能，多用于 K 歌场景。  <br>
 使用该方法，你可以对本地语音的音调进行升调或降调等调整。
@@ -1670,12 +1860,17 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | pitch | **NSInteger** | 相对于语音原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [rtcEngine:onWarning:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onwarning) 回调，提示 [ByteRTCWarningCode](iOS-errorcode.md#bytertcwarningcode) 错误码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 <span id="ByteRTCVideo-enablevocalinstrumentbalance"></span>
 ### enableVocalInstrumentBalance:
 ```objectivec
 
-- (void)enableVocalInstrumentBalance:(BOOL)enable;
+- (int)enableVocalInstrumentBalance:(BOOL)enable;
 ```
 开启/关闭音量均衡功能。  <br>
 开启音量均衡功能后，人声的响度会调整为 -16lufs。如果已调用 [setAudioMixingLoudness:loudness:](#ByteRTCAudioMixingManager-setaudiomixingloudness-loudness) 传入了混音音乐的原始响度，此音乐播放时，响度会调整为 -20lufs。
@@ -1686,6 +1881,11 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | enable | **BOOL** | 是否开启音量均衡功能：  <br/>• YES: 是  <br/>• NO: 否 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 该接口须在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始播放音频文件之前调用。
@@ -1694,7 +1894,7 @@ SDK 当前的版本号。
 ### enablePlaybackDucking:
 ```objectivec
 
-- (void)enablePlaybackDucking:(BOOL)enable;
+- (int)enablePlaybackDucking:(BOOL)enable;
 ```
 打开/关闭音量闪避功能，适用于在 RTC 通话过程中会同时播放短视频或音乐的场景，如“一起看”、“在线 KTV”等。  <br>
 开启该功能后，当检测到远端人声时，本地的媒体播放音量会自动减弱，从而保证远端人声的清晰可辨；当远端人声消失时，本地媒体音量会恢复到闪避前的音量水平。
@@ -1705,12 +1905,17 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | enable | **BOOL** | 是否开启音量闪避：  <br/>• YES: 是  <br/>• NO: 否 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 <span id="ByteRTCVideo-setlocalvideosink-withsink-withpixelformat"></span>
 ### setLocalVideoSink:withSink:withPixelFormat:
 ```objectivec
 
-- (void)setLocalVideoSink:(ByteRTCStreamIndex)index withSink:(id<ByteRTCVideoSinkDelegate> _Nullable)videoSink withPixelFormat:(ByteRTCVideoSinkPixelFormat)requiredFormat;
+- (int)setLocalVideoSink:(ByteRTCStreamIndex)index withSink:(id<ByteRTCVideoSinkDelegate> _Nullable)videoSink withPixelFormat:(ByteRTCVideoSinkPixelFormat)requiredFormat;
 ```
 将本地视频流与自定义渲染器绑定。
 
@@ -1721,6 +1926,11 @@ SDK 当前的版本号。
 | index | **ByteRTCStreamIndex** | 视频流属性。采集的视频流/屏幕视频流，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
 | videoSink | **id<ByteRTCVideoSinkDelegate>** | 自定义视频渲染器，参看 [ByteRTCVideoSinkDelegate](iOS-keytype.md#bytertcvideosinkdelegate) |
 | requiredFormat | **ByteRTCVideoSinkPixelFormat** | videoSink 适用的视频帧编码格式，参看 [ByteRTCVideoSinkPixelFormat](iOS-keytype.md#bytertcvideosinkpixelformat) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1734,7 +1944,7 @@ SDK 当前的版本号。
 ### setRemoteVideoSink:withSink:withPixelFormat:
 ```objectivec
 
-- (void)setRemoteVideoSink:(ByteRTCRemoteStreamKey* _Nonnull)streamKey withSink:(id<ByteRTCVideoSinkDelegate> _Nullable)videoSink withPixelFormat:(ByteRTCVideoSinkPixelFormat)requiredFormat;
+- (int)setRemoteVideoSink:(ByteRTCRemoteStreamKey* _Nonnull)streamKey withSink:(id<ByteRTCVideoSinkDelegate> _Nullable)videoSink withPixelFormat:(ByteRTCVideoSinkPixelFormat)requiredFormat;
 ```
 将远端视频流与自定义渲染器绑定。
 
@@ -1746,6 +1956,11 @@ SDK 当前的版本号。
 | videoSink | **id<ByteRTCVideoSinkDelegate>** | 自定义视频渲染器，参看 [ByteRTCVideoSinkDelegate](iOS-keytype.md#bytertcvideosinkdelegate) |
 | requiredFormat | **ByteRTCVideoSinkPixelFormat** | videoSink 适用的视频帧编码格式，参看 [ByteRTCVideoSinkPixelFormat](iOS-keytype.md#bytertcvideosinkpixelformat) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -1753,6 +1968,64 @@ SDK 当前的版本号。
 + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 [rtcRoom:onUserPublishStream:type:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserpublishstream-type) 回调获取到远端流信息之后，再调用该方法。
 + 如果需要解除绑定，必须将 videoSink 设置为 null。退房时将清除绑定状态。
 
+
+<span id="ByteRTCVideo-setremotevideosuperresolution-withmode"></span>
+### setRemoteVideoSuperResolution:withMode:
+```objectivec
+
+- (int)setRemoteVideoSuperResolution:(ByteRTCRemoteStreamKey* _Nonnull)streamKey withMode:(ByteRTCVideoSuperResolutionMode)mode;
+```
+> Available since 3.54
+
+设置远端视频超分模式。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| streamKey | **ByteRTCRemoteStreamKey*** | 远端流信息，用于指定需要设置超分的视频流来源及属性，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey)。 |
+| mode | **ByteRTCVideoSuperResolutionMode** | 超分模式，参看 [ByteRTCVideoSuperResolutionMode](iOS-keytype.md#bytertcvideosuperresolutionmode)。 |
+
+**返回值**
+
++ 0: ByteRTCReturnStatusSuccess，SDK 调用成功，并不代表超分模式实际状态，需要根据回调 [rtcEngine:onRemoteVideoSuperResolutionModeChanged:withMode:withReason:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onremotevideosuperresolutionmodechanged-withmode-withreason) 判断实际状态。
++ -1: ByteRTCReturnStatusNativeInValid，native library 未加载。
++ -2: ByteRTCReturnStatusParameterErr，参数非法，指针为空或字符串为空。
++ -9: ByteRTCReturnStatusScreenNotSupport，不支持对屏幕流开启超分。
+其他错误码参看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus)。
+
+
+**注意**
+
++ 如需使用该功能，需集成超分插件 ByteRTCVideoSRExtension.xcframework 及依赖库 bmf_mods_shared.xcframework，详情参看[按需集成插件](1108726)文档。
++ 该方法须进房后调用。
++ 远端用户视频流的原始分辨率不能超过 640 × 360 px。
++ 支持对一路远端流开启超分，不支持对多路流开启超分。
+
+
+<span id="ByteRTCVideo-setvideodenoiser"></span>
+### setVideoDenoiser:
+```objectivec
+
+- (int)setVideoDenoiser:(ByteRTCVideoDenoiseMode)mode;
+```
+> Available since 3.54
+
+设置视频降噪模式。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **ByteRTCVideoDenoiseMode** | 视频降噪模式。参看 [ByteRTCVideoDenoiseMode](iOS-keytype.md#bytertcvideodenoisemode)。 |
+
+**返回值**
+
++ 0: API 调用成功。 用户可以根据回调函数 [rtcEngine:onVideoDenoiseModeChanged:withReason:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodenoisemodechanged-withreason) 判断视频降噪是否开启。
++ < 0: API 调用失败。
+
+**注意**
+如需使用该功能，需集成降噪插件 ByteRTCVideoDenoiseExtension.xcframework 及依赖库 bmf_mods_shared.xcframework，详情参看[按需集成插件](1108726)文档。
 
 <span id="ByteRTCVideo-setvideoencoderconfig-config"></span>
 ### setVideoEncoderConfig:config:
@@ -1790,7 +2063,7 @@ SDK 当前的版本号。
 ### enableSimulcastMode:
 ```objectivec
 
-- (void) enableSimulcastMode:(BOOL) enabled;
+- (int) enableSimulcastMode:(BOOL) enabled;
 ```
 该方法设置视频流发布端是否开启发布多路编码参数不同的视频流的模式。
 
@@ -1800,12 +2073,17 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | enabled | **BOOL** | 是否开启推送多路视频流模式： <br/>• YES：开启 <br/>• NO：关闭（默认） |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 你应在进房前或进房后但未发布流时，调用此方法。  
 + 开启推送多路流后，不能动态关闭，也不能更新多路流的路数和编码参数。  
-+ 开启推送多路视频流模式后，你可以调用 [setVideoEncoderConfig:](#ByteRTCVideo-setvideoencoderconfig) 为多路视频流分别设置编码参数。  
++ 开启推送多路视频流模式后，你可以在发布流前调用 [setVideoEncoderConfig:](#ByteRTCVideo-setvideoencoderconfig) 为多路视频流分别设置编码参数。  
 + 该功能关闭时，或该功能开启但未设置多路流参数时，默认只发一路视频流，该流的编码参数为：分辨率 640px × 360px，帧率 15fps。
 
 
@@ -1813,7 +2091,7 @@ SDK 当前的版本号。
 ### setMaxVideoEncoderConfig:
 ```objectivec
 
-- (int)setMaxVideoEncoderConfig:(ByteRTCVideoEncoderConfig * _Nullable) max_solution;
+- (int)setMaxVideoEncoderConfig:(ByteRTCVideoEncoderConfig * _Nullable) encoderConfig;
 ```
 视频发布端设置期望发布的最大分辨率视频流参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。  <br>
 该接口支持设置一路视频流参数，设置多路参数请使用 [setVideoEncoderConfig:](#ByteRTCVideo-setvideoencoderconfig)。
@@ -1822,7 +2100,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| max_solution | **ByteRTCVideoEncoderConfig*** | 期望发布的最大分辨率视频流参数。参看 [ByteRTCVideoEncoderConfig](iOS-keytype.md#bytertcvideoencoderconfig)。 |
+| encoderConfig | **ByteRTCVideoEncoderConfig*** | 期望发布的最大分辨率视频流参数。参看 [ByteRTCVideoEncoderConfig](iOS-keytype.md#bytertcvideoencoderconfig)。 |
 
 **返回值**
 方法调用结果： 
@@ -1833,7 +2111,7 @@ SDK 当前的版本号。
 
 **注意**
 
-+ 你可以同时使用 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 方法来发布多路分辨率不同的流。具体而言，若期望发布多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 方法开启多路流模式，SDK 会根据订阅端的设置智能调整发布的流数（最多发布 4 条）以及各路流的参数。其中，调用本方法设置的分辨率为各路流中的最大分辨率。具体规则参看[推送多路流](70139)文档。
++ 你可以同时使用 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 方法来发布多路分辨率不同的流。具体而言，若期望发布多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 方法开启多路流模式，SDK 会根据订阅端的设置智能调整发布的流数（最多发布 4 条）以及各路流的参数。其中，调用本方法设置的分辨率为各路流中的最大分辨率。具体规则参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。
 + 调用该方法前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
 + 自定义采集的场景下，务必调用该接口设置分辨率，以保证远端收到画面的完整性。
 + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 [setScreenVideoEncoderConfig:](#ByteRTCVideo-setscreenvideoencoderconfig)。
@@ -1842,7 +2120,7 @@ SDK 当前的版本号。
 <span id="ByteRTCVideo-setvideoencoderconfig"></span>
 ### setVideoEncoderConfig:
 ```objectivec
--(int)setVideoEncoderConfig:(NSArray <ByteRTCVideoEncoderConfig *> * _Nullable) channel_solutions;
+-(int)setVideoEncoderConfig:(NSArray <ByteRTCVideoEncoderConfig *> * _Nullable) encoderConfigs;
 ```
 视频发布端设置推送多路流时各路流的参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。
 
@@ -1850,7 +2128,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| channel_solutions | **NSArray <ByteRTCVideoEncoderConfig*>*** | 要推送的多路视频流的参数，最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。  <br/>当设置了多路参数时，分辨率和帧率必须是从大到小排列。需注意，所设置的分辨率是各路流的最大分辨率。参看 [ByteRTCVideoEncoderConfig](iOS-keytype.md#bytertcvideoencoderconfig)。 |
+| encoderConfigs | **NSArray <ByteRTCVideoEncoderConfig*>*** | 要推送的多路视频流的参数，最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。  <br/>当设置了多路参数时，分辨率和帧率必须是从大到小排列。需注意，所设置的分辨率是各路流的最大分辨率。参看 [ByteRTCVideoEncoderConfig](iOS-keytype.md#bytertcvideoencoderconfig)。 |
 
 **返回值**
 方法调用结果： 
@@ -1861,7 +2139,7 @@ SDK 当前的版本号。
 
 **注意**
 
-+ 该方法设置的多路参数是否均生效，取决于是否同时调用了 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 则默认发布设置的第一条流，多个分辨率的设置会在开启推送多路流模式之后生效。
++ 该方法设置的多路参数是否均生效，取决于是否同时调用了 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 则默认发布设置的第一条流，多个分辨率的设置会在开启推送多路流模式之后生效。  
 + 若期望推送多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 方法。
 + 开启推送多路流后，不能动态关闭，也不能更新多路流的路数和编码参数。  
 + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
@@ -1872,7 +2150,7 @@ SDK 当前的版本号。
 <span id="ByteRTCVideo-setscreenvideoencoderconfig"></span>
 ### setScreenVideoEncoderConfig:
 ```objectivec
--(int)setScreenVideoEncoderConfig:(ByteRTCScreenVideoEncoderConfig * _Nullable) screen_solution;
+-(int)setScreenVideoEncoderConfig:(ByteRTCScreenVideoEncoderConfig * _Nullable) encoderConfig;
 ```
 为发布的屏幕共享视频流设置期望的编码参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。
 
@@ -1880,7 +2158,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| screen_solution | **ByteRTCScreenVideoEncoderConfig*** | 屏幕共享视频流参数。参看 [ByteRTCScreenVideoEncoderConfig](iOS-keytype.md#bytertcscreenvideoencoderconfig)。 |
+| encoderConfig | **ByteRTCScreenVideoEncoderConfig*** | 屏幕共享视频流参数。参看 [ByteRTCScreenVideoEncoderConfig](iOS-keytype.md#bytertcscreenvideoencoderconfig)。 |
 
 **返回值**
 
@@ -1953,7 +2231,7 @@ SDK 当前的版本号。
 ### updateLocalVideoCanvas:withRenderMode:withBackgroundColor:
 ```objectivec
 
-- (void)updateLocalVideoCanvas:(ByteRTCStreamIndex)streamIndex withRenderMode:(ByteRTCRenderMode)renderMode withBackgroundColor:(NSUInteger)backgroundColor;
+- (int)updateLocalVideoCanvas:(ByteRTCStreamIndex)streamIndex withRenderMode:(ByteRTCRenderMode)renderMode withBackgroundColor:(NSUInteger)backgroundColor;
 ```
 修改本地视频渲染模式和背景色。
 
@@ -1965,6 +2243,11 @@ SDK 当前的版本号。
 | renderMode | **ByteRTCRenderMode** | 渲染模式。参看 [ByteRTCRenderMode](iOS-keytype.md#bytertcrendermode) |
 | backgroundColor | **NSUInteger** | 背景颜色。参看 [ByteRTCVideoCanvas](iOS-keytype.md#bytertcvideocanvas).backgroundColor |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 你可以在本地视频渲染过程中，调用此接口。调用结果会实时生效。
@@ -1973,7 +2256,7 @@ SDK 当前的版本号。
 ### setRemoteVideoCanvas:withCanvas:
 ```objectivec
 
-- (void)setRemoteVideoCanvas:(ByteRTCRemoteStreamKey * _Nonnull)key withCanvas:(ByteRTCVideoCanvas * _Nullable)canvas;
+- (int)setRemoteVideoCanvas:(ByteRTCRemoteStreamKey * _Nonnull)key withCanvas:(ByteRTCVideoCanvas * _Nullable)canvas;
 ```
 渲染来自指定远端用户 uid 的视频流时，设置使用的视图和渲染模式。  <br>
 如果需要解除视频的绑定视图，把 `canvas.view` 设置为空。(`canvas` 中其他参数不能为空。)
@@ -1985,6 +2268,11 @@ SDK 当前的版本号。
 | key | **ByteRTCRemoteStreamKey*** | 远端流信息, 详见 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey) |
 | canvas | **ByteRTCVideoCanvas*** | 视图信息和渲染模式，参看 [ByteRTCVideoCanvas](iOS-keytype.md#bytertcvideocanvas) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 本地用户离开房间时，会解除调用此 API 建立的绑定关系；远端用户离开房间则不会影响。
@@ -1993,7 +2281,7 @@ SDK 当前的版本号。
 ### updateRemoteStreamVideoCanvas:withRenderMode:withBackgroundColor:
 ```objectivec
 
-- (void)updateRemoteStreamVideoCanvas:(ByteRTCRemoteStreamKey * _Nonnull)key withRenderMode:(ByteRTCRenderMode)renderMode withBackgroundColor:(NSUInteger)backgroundColor;
+- (int)updateRemoteStreamVideoCanvas:(ByteRTCRemoteStreamKey * _Nonnull)key withRenderMode:(ByteRTCRenderMode)renderMode withBackgroundColor:(NSUInteger)backgroundColor;
 ```
 修改远端视频渲染模式和背景色。
 
@@ -2005,6 +2293,11 @@ SDK 当前的版本号。
 | renderMode | **ByteRTCRenderMode** | 渲染模式，参看 [ByteRTCRenderMode](iOS-keytype.md#bytertcrendermode) |
 | backgroundColor | **NSUInteger** | 背景颜色，参看 [ByteRTCVideoCanvas](iOS-keytype.md#bytertcvideocanvas).backgroundColor |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 你可以在远端视频渲染过程中，调用此接口。调用结果会实时生效。
@@ -2013,12 +2306,17 @@ SDK 当前的版本号。
 ### startVideoCapture
 ```objectivec
 
-- (void)startVideoCapture;
+- (int)startVideoCapture;
 ```
 立即开启内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
 调用该方法后，本地用户会收到 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartVideoCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartvideocapture-uid) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartVideoCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartvideocapture-uid) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2034,12 +2332,17 @@ SDK 当前的版本号。
 ### stopVideoCapture
 ```objectivec
 
-- (void)stopVideoCapture;
+- (int)stopVideoCapture;
 ```
 立即关闭内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
 调用该方法后，本地用户会收到 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopVideoCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopVideoCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2052,7 +2355,7 @@ SDK 当前的版本号。
 ### setLocalVideoMirrorType:
 ```objectivec
 
-- (void)setLocalVideoMirrorType:(ByteRTCMirrorType) mirrorType;
+- (int)setLocalVideoMirrorType:(ByteRTCMirrorType) mirrorType;
 ```
 为采集到的视频流开启镜像
 
@@ -2061,6 +2364,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mirrorType | **ByteRTCMirrorType** | 镜像类型，参看 [ByteRTCMirrorType](iOS-keytype.md#bytertcmirrortype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2080,7 +2388,7 @@ SDK 当前的版本号。
 ### setVideoRotationMode:
 ```objectivec
 
-- (void)setVideoRotationMode:(ByteRTCVideoRotationMode) rotationMode;
+- (int)setVideoRotationMode:(ByteRTCVideoRotationMode) rotationMode;
 ```
 设置采集视频的旋转模式。默认以 App 方向为旋转参考系。<br>
 接收端渲染视频时，将按照和发送端相同的方式进行旋转。<br>
@@ -2090,6 +2398,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | rotationMode | **ByteRTCVideoRotationMode** | 视频旋转参考系为 App 方向或重力方向，参看 [ByteRTCVideoRotationMode](iOS-keytype.md#bytertcvideorotationmode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2103,7 +2416,7 @@ SDK 当前的版本号。
 ### setVideoOrientation:
 ```objectivec
 
-- (void)setVideoOrientation:(ByteRTCVideoOrientation) orientation;
+- (int)setVideoOrientation:(ByteRTCVideoOrientation) orientation;
 ```
 在自定义视频前处理及编码前，设置 RTC 链路中的视频帧朝向，默认为 Adaptive 模式。
 移动端开启视频特效贴纸，或使用自定义视频前处理时，建议固定视频帧朝向为 Portrait 模式。单流转推场景下，建议根据业务需要固定视频帧朝向为 Portrait 或 Landscape 模式。不同模式的具体显示效果参看[视频帧朝向](https://www.volcengine.com/docs/6348/128787)。
@@ -2114,10 +2427,15 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | orientation | **ByteRTCVideoOrientation** | 视频帧朝向，参看 [ByteRTCVideoOrientation](iOS-keytype.md#bytertcvideoorientation)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 
-+ 设置视频帧朝向仅对内部视频采集生效，不适用于外部视频源和屏幕源。
++ 视频帧朝向设置仅适用于内部采集视频源。对于自定义采集视频源，设置视频帧朝向可能会导致错误，例如宽高对调。屏幕源不支持设置视频帧朝向。
 + 编码分辨率的更新与视频帧处理是异步操作，进房后切换视频帧朝向可能导致画面出现短暂的裁切异常，因此建议在进房前设置视频帧朝向，且不在进房后进行切换。
 
 
@@ -2125,7 +2443,7 @@ SDK 当前的版本号。
 ### switchCamera:
 ```objectivec
 
-- (void)switchCamera:(ByteRTCCameraID) cameraId;
+- (int)switchCamera:(ByteRTCCameraID) cameraId;
 ```
 切换视频内部采集时使用的前置/后置摄像头 <br>
 调用此接口后，在本地会触发 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 回调。
@@ -2135,6 +2453,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | cameraId | **ByteRTCCameraID** | 摄像头类型，参看 [ByteRTCCameraID](iOS-keytype.md#bytertccameraid)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2407,7 +2730,7 @@ SDK 当前的版本号。
 + 0: 调用成功。
 + –1000: 未集成特效 SDK。
 + –1001: RTC SDK 版本不支持此功能。
-+ –1002: 特效 SDK 当前版本不支持此功能，建议使用特效 SDK V4.3.1 版本。
++ –1002: 特效 SDK 当前版本不支持此功能，建议使用特效 SDK V4.3.2 版本。
 + –1003: 联系技术支持人员。
 + –1004: 正在下载相关资源，下载完成后生效。
 + <0: 调用失败，特效 SDK 内部错误，具体错误码请参考[错误码表](https://www.volcengine.com/docs/6705/102042)。
@@ -2416,7 +2739,7 @@ SDK 当前的版本号。
 **注意**
 
 + 本方法不能与高级视频特效接口共用。如已购买高级视频特效，建议调用 [enableVideoEffect](#ByteRTCVideoEffect-enablevideoeffect) 使用高级特效、贴纸功能等。 
-+ 使用此功能需要[集成](https://www.volcengine.com/docs/6348/114717)特效 SDK，建议使用特效 SDK V4.3.1+ 版本。 
++ 使用此功能需要[集成](https://www.volcengine.com/docs/6348/114717)特效 SDK，建议使用特效 SDK V4.3.2+ 版本。 
 + 调用 [setBeautyIntensity:withIntensity:](#ByteRTCVideo-setbeautyintensity-withintensity) 设置基础美颜强度。若在调用本方法前没有设置美颜强度，则初始美白、磨皮、锐化强度均为 0.5。 
 + 本方法仅适用于视频源，不适用于屏幕源。 
 
@@ -2454,15 +2777,15 @@ SDK 当前的版本号。
 ### setCameraZoomRatio:
 ```objectivec
 
-- (int) setCameraZoomRatio: (float) zoom_val;
+- (int) setCameraZoomRatio: (float) zoomRatio;
 ```
-设置当前使用的摄像头（前置/后置）的光学变焦倍数
+设置当前使用的摄像头（前置/后置）的变焦倍数
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| zoom_val | **float** | 变焦倍数。取值范围是 [1, <最大变焦倍数>]。<br/>最大变焦倍数可以通过调用 [getCameraZoomMaxRatio](#ByteRTCVideo-getcamerazoommaxratio) 获取。 |
+| zoomRatio | **float** | 变焦倍数。取值范围是 [1, <最大变焦倍数>]。<br/>最大变焦倍数可以通过调用 [getCameraZoomMaxRatio](#ByteRTCVideo-getcamerazoommaxratio) 获取。 |
 
 **返回值**
 
@@ -2474,7 +2797,7 @@ SDK 当前的版本号。
 
 + 必须已调用 [startVideoCapture](#ByteRTCVideo-startvideocapture) 使用 SDK 内部采集模块进行视频采集时，才能设置摄像头变焦倍数。
 + 设置结果在调用 [stopVideoCapture](#ByteRTCVideo-stopvideocapture) 关闭内部采集后失效。
-+ 你可以调用 [setVideoDigitalZoomConfig:size:](#ByteRTCVideo-setvideodigitalzoomconfig-size) 设置数码变焦参数，调用 [setVideoDigitalZoomControl](#setvideodigitalzoomcontrol) 进行数码变焦。
++ 你可以调用 [setVideoDigitalZoomConfig:size:](#ByteRTCVideo-setvideodigitalzoomconfig-size) 设置数码变焦参数，调用 [setVideoDigitalZoomControl:](#ByteRTCVideo-setvideodigitalzoomcontrol) 进行数码变焦。
 
 
 <span id="ByteRTCVideo-getcamerazoommaxratio"></span>
@@ -2530,7 +2853,7 @@ SDK 当前的版本号。
 ### setCameraTorch:
 ```objectivec
 
-- (int) setCameraTorch: (ByteRTCTorchState)torch_state;
+- (int) setCameraTorch: (ByteRTCTorchState)torchState;
 ```
 打开/关闭当前使用的摄像头（前置/后置）的闪光灯
 
@@ -2538,7 +2861,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| torch_state | **ByteRTCTorchState** | 打开/关闭。参看 [ByteRTCTorchState](iOS-keytype.md#bytertctorchstate)。 |
+| torchState | **ByteRTCTorchState** | 打开/关闭。参看 [ByteRTCTorchState](iOS-keytype.md#bytertctorchstate)。 |
 
 **返回值**
 
@@ -2666,6 +2989,59 @@ SDK 当前的版本号。
 + 调用 [stopVideoCapture](#ByteRTCVideo-stopvideocapture) 关闭内部采集后，设置的曝光补偿失效。
 
 
+<span id="ByteRTCVideo-enablecameraautoexposurefacemode"></span>
+### enableCameraAutoExposureFaceMode:
+```objectivec
+
+- (int)enableCameraAutoExposureFaceMode:(bool)enable;
+```
+> Available since 353
+
+启用或禁用内部采集时人脸自动曝光模式。此模式会改善强逆光下，脸部过暗的问题；但也会导致 ROI 以外区域过亮/过暗的问题。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| enable | **bool** | 是否启用。默认开启。 |
+
+**返回值**
+
++ 0: 成功. 
++ !0: 失败.
+
+
+**注意**
+在采集前或采集中调用此接口均可生效。
+
+<span id="ByteRTCVideo-setcameraadaptiveminimumframerate"></span>
+### setCameraAdaptiveMinimumFrameRate:
+```objectivec
+
+- (int)setCameraAdaptiveMinimumFrameRate:(int)framerate;
+```
+> Available since 353
+
+设置内部采集适用动态帧率时，帧率的最小值。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| framerate | **int** | 最小值。单位为 fps。默认值是 7。<br/>动态帧率的最大帧率是通过 [setVideoCaptureConfig:](#ByteRTCVideo-setvideocaptureconfig) 设置的帧率值。当传入参数大于最大帧率时，使用固定帧率模式，帧率为最大帧率；当传入参数小于最大帧率时，使用动态帧率。 |
+
+**返回值**
+
++ 0: 成功. 
++ !0: 失败.
+
+
+**注意**
+
++ 你必须在调用 [startVideoCapture](#ByteRTCVideo-startvideocapture) 开启内部采集前，调用此接口方可生效。
++ 如果由于性能降级、静态适配等原因导致采集最大帧率变化时，已设置的最小帧率值会与新的采集最大帧率值重新比较。比较结果变化可能导致固定/动态帧率模式切换。
+
+
 <span id="ByteRTCVideo-sendseimessage-andmessage-andrepeatcount"></span>
 ### sendSEIMessage:andMessage:andRepeatCount:
 ```objectivec
@@ -2737,7 +3113,7 @@ SDK 当前的版本号。
 ### setVideoDigitalZoomConfig:size:
 ```objectivec
 
-- (void)setVideoDigitalZoomConfig:(ByteRTCZoomConfigType)type size:(float)size;
+- (int)setVideoDigitalZoomConfig:(ByteRTCZoomConfigType)type size:(float)size;
 ```
 > Available since 3.51
 
@@ -2750,6 +3126,11 @@ SDK 当前的版本号。
 | type | **ByteRTCZoomConfigType** | 数码变焦参数类型，缩放系数或移动步长。参看 [ByteRTCZoomConfigType](iOS-keytype.md#bytertczoomconfigtype)。必填。 |
 | size | **float** | 缩放系数或移动步长，保留到小数点后三位。默认值为 0。必填。<br/>选择不同 `type` 时有不同的取值范围。当计算后的结果超过缩放和移动边界时，取临界值。<br/>• `ByteRTCZoomFocusOffset`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl:](#ByteRTCVideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。<br/>• `ByteRTCZoomMoveOffset`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl:](#ByteRTCVideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。 |
 
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
+
 
 **注意**
 
@@ -2761,7 +3142,7 @@ SDK 当前的版本号。
 ### setVideoDigitalZoomControl:
 ```objectivec
 
-- (void)setVideoDigitalZoomControl:(ByteRTCZoomDirectionType) direction;
+- (int)setVideoDigitalZoomControl:(ByteRTCZoomDirectionType) direction;
 ```
 > Available since 3.51
 
@@ -2772,6 +3153,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | direction | **ByteRTCZoomDirectionType** | 数码变焦操作类型，参看 [ByteRTCZoomDirectionType](iOS-keytype.md#bytertczoomdirectiontype)。 |
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -2787,7 +3173,7 @@ SDK 当前的版本号。
 ### startVideoDigitalZoomControl:
 ```objectivec
 
-- (void)startVideoDigitalZoomControl:(ByteRTCZoomDirectionType)direction;
+- (int)startVideoDigitalZoomControl:(ByteRTCZoomDirectionType)direction;
 ```
 > Available since 3.51
 
@@ -2798,6 +3184,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | direction | **ByteRTCZoomDirectionType** | 数码变焦操作类型，参看 [ByteRTCZoomDirectionType](iOS-keytype.md#bytertczoomdirectiontype)。 |
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -2814,11 +3205,16 @@ SDK 当前的版本号。
 ### stopVideoDigitalZoomControl
 ```objectivec
 
-- (void)stopVideoDigitalZoomControl;
+- (int)stopVideoDigitalZoomControl;
 ```
 > Available since 3.51
 
 停止本地摄像头持续数码变焦。
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -2838,7 +3234,7 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | processor | **id<ByteRTCVideoProcessorDelegate>** | 自定义视频处理器，详见 [ByteRTCVideoProcessorDelegate](iOS-callback#bytertcvideoprocessordelegate)。如果传入 null，则不对 RTC SDK 采集得到的视频帧进行前处理。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。<br/>在设计 `processor` 时，应从 [ByteRTCVideoFrame](iOS-keytype.md#bytertcvideoframe) 的 `textureBuf` 字段获取视频帧数据；<br/>处理后返回的视频帧数据格式应为 [ByteRTCVideoPixelFormat](iOS-keytype.md#bytertcvideopixelformat) 中的 `ByteRTCVideoPixelFormatCVPixelBuffer`，且必须存放在返回帧数据的 `textureBuf` 字段中。 |
-| config | **ByteRTCVideoPreprocessorConfig*** | 自定义视频前处理器适用的设置，详见 [ByteRTCVideoPreprocessorConfig](iOS-keytype.md#bytertcvideopreprocessorconfig)。<br/>当前，`config` 中的 `required_pixel_format` 仅支持：`ByteRTCVideoPixelFormatI420` 和 `ByteRTCVideoPixelFormatUnknown`：<br/>• 设置为 `UNKNOW` 时，RTC SDK 给出供 processor 处理的视频帧格式即采集的格式。<br/>• 设置为 `ByteRTCVideoPixelFormatI420` 时，RTC SDK 会将采集得到的视频转变为对应的格式，供前处理使用。<br/>• 设置为其他值时，此方法调用失败。 |
+| config | **ByteRTCVideoPreprocessorConfig*** | 自定义视频前处理器适用的设置，详见 [ByteRTCVideoPreprocessorConfig](iOS-keytype.md#bytertcvideopreprocessorconfig)。<br/>当前，`config` 中的 `required_pixel_format` 仅支持：`ByteRTCVideoPixelFormatI420` 和 `ByteRTCVideoPixelFormatUnknown`：<br/>• 设置为 `Unknown` 时，RTC SDK 给出供 processor 处理的视频帧格式即采集的格式。<br/>• 设置为 `ByteRTCVideoPixelFormatI420` 时，RTC SDK 会将采集得到的视频转变为对应的格式，供前处理使用。<br/>• 设置为其他值时，此方法调用失败。 |
 
 **返回值**
 
@@ -2856,7 +3252,7 @@ SDK 当前的版本号。
 ### registerLocalEncodedVideoFrameObserver:
 ```objectivec
 
-- (void)registerLocalEncodedVideoFrameObserver:(_Nullable id<ByteRTCLocalEncodedVideoFrameObserver>) frameObserver;
+- (int)registerLocalEncodedVideoFrameObserver:(_Nullable id<ByteRTCLocalEncodedVideoFrameObserver>) frameObserver;
 ```
 注册本地视频帧监测器。  <br>
 无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 [onLocalEncodedVideoFrame:Frame:](iOS-callback.md#ByteRTCLocalEncodedVideoFrameObserver-onlocalencodedvideoframe-frame) 回调给用户
@@ -2866,6 +3262,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | frameObserver | **id<ByteRTCLocalEncodedVideoFrameObserver>** | 本地视频帧监测器，参看 [ByteRTCLocalEncodedVideoFrameObserver](iOS-callback.md#bytertclocalencodedvideoframeobserver)。将参数设置为 nullptr 则取消注册。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2907,7 +3308,7 @@ SDK 当前的版本号。
 ### setAudioRoute:
 ```objectivec
 
-- (void)setAudioRoute:(ByteRTCAudioRoute)audioRoute;
+- (int)setAudioRoute:(ByteRTCAudioRoute)audioRoute;
 ```
 强制切换当前的音频播放路由。默认使用 [setDefaultAudioRoute:](#ByteRTCVideo-setdefaultaudioroute) 中设置的音频路由。
 音频播放路由发生变化时，会收到 [rtcEngine:onAudioRouteChanged:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudioroutechanged) 回调。
@@ -2917,6 +3318,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audioRoute | **ByteRTCAudioRoute** | 音频播放路由，参见 [ByteRTCAudioRoute](iOS-keytype.md#bytertcaudioroute)。仅支持扬声器和默认路由设备。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2945,7 +3351,7 @@ SDK 当前的版本号。
 ### enableExternalSoundCard:
 ```objectivec
 
-- (void)enableExternalSoundCard:(bool)enable;
+- (int)enableExternalSoundCard:(bool)enable;
 ```
 启用匹配外置声卡的音频处理模式
 
@@ -2954,6 +3360,11 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | enable | **bool** | • true: 开启 <br/>• false: 不开启(默认) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2989,7 +3400,7 @@ SDK 当前的版本号。
 ### startLiveTranscoding:transcoding:observer:
 ```objectivec
 
-- (void)startLiveTranscoding:(NSString * _Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer __deprecated_msg("deprecated since 352, will be deleted in 358, use startPushMixedStreamToCDN instead");
+- (int)startLiveTranscoding:(NSString * _Nonnull)taskID transcoding:(ByteRTCLiveTranscoding *_Nullable)transcoding observer:(id<LiveTranscodingDelegate> _Nullable)observer __deprecated_msg("deprecated since 352, will be deleted in 358, use startPushMixedStreamToCDN instead");
 ```
 > Deprecated  since 3.52, will be deleted in 3.58, use [startPushMixedStreamToCDN:mixedConfig:observer:](#ByteRTCVideo-startpushmixedstreamtocdn-mixedconfig-observer) instead.
 
@@ -3000,14 +3411,18 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 转推直播任务 ID，长度不超过 126 字节。<br/>你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。 |
+| taskID | **NSString*** | 转推直播任务 ID，长度不超过 126 字节。<br/>你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。 |
 | transcoding | **ByteRTCLiveTranscoding*** | 转推直播配置参数，详见 [ByteRTCLiveTranscoding](iOS-keytype.md#bytertclivetranscoding)。 |
 | observer | **id<LiveTranscodingDelegate>** | 端云一体转推直播观察者。详见 [LiveTranscodingDelegate](iOS-callback.md#livetranscodingdelegate)。  <br/>通过注册 observer 接收转推直播相关的回调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，启动结果和推流过程中的错误均会通过回调 [onStreamMixingEvent:taskId:error:mixType:](iOS-callback.md#LiveTranscodingDelegate-onstreammixingevent-taskid-error-mixtype) 通知用户。
 + 调用 [stopLiveTranscoding:](#ByteRTCVideo-stoplivetranscoding) 停止转推直播
 
@@ -3016,7 +3431,7 @@ SDK 当前的版本号。
 ### stopLiveTranscoding:
 ```objectivec
 
-- (void)stopLiveTranscoding:(NSString *_Nonnull)task_id __deprecated_msg("deprecated since 352, will be deleted in 358, use stopPushStreamToCDN instead");
+- (int)stopLiveTranscoding:(NSString *_Nonnull)taskID __deprecated_msg("deprecated since 352, will be deleted in 358, use stopPushStreamToCDN instead");
 ```
 > Deprecated  since 3.52, will be deleted in 3.58, use [stopPushStreamToCDN:](#ByteRTCVideo-stoppushstreamtocdn) instead.
 
@@ -3027,14 +3442,19 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 转推直播任务 ID。可以指定想要停止的转推直播任务。 |
+| taskID | **NSString*** | 转推直播任务 ID。可以指定想要停止的转推直播任务。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 <span id="ByteRTCVideo-updatelivetranscoding-transcoding"></span>
 ### updateLiveTranscoding:transcoding:
 ```objectivec
 
-- (int)updateLiveTranscoding:(NSString *_Nonnull)task_id transcoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding __deprecated_msg("deprecated since 352, will be deleted in 358, use updatePushMixedStreamToCDN instead");
+- (int)updateLiveTranscoding:(NSString *_Nonnull)taskID transcoding:(ByteRTCLiveTranscoding *_Nonnull)transcoding __deprecated_msg("deprecated since 352, will be deleted in 358, use updatePushMixedStreamToCDN instead");
 ```
 > Deprecated  since 3.52, will be deleted in 3.58, use [updatePushMixedStreamToCDN:mixedConfig:](#ByteRTCVideo-updatepushmixedstreamtocdn-mixedconfig) instead.
 
@@ -3045,7 +3465,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 转推直播任务 ID。指定想要更新参数设置的转推直播任务。 |
+| taskID | **NSString*** | 转推直播任务 ID。指定想要更新参数设置的转推直播任务。 |
 | transcoding | **ByteRTCLiveTranscoding*** | 转推直播配置参数，参看 [ByteRTCLiveTranscoding](iOS-keytype.md#bytertclivetranscoding)。除特殊说明外，均支持过程中更新。<br/>调用时，结构体中没有传入值的属性，会被更新为默认值。 |
 
 **返回值**
@@ -3059,7 +3479,7 @@ SDK 当前的版本号。
 ### startPushMixedStreamToCDN:mixedConfig:observer:
 ```objectivec
 
-- (int)startPushMixedStreamToCDN:(NSString * _Nonnull)task_id mixedConfig:(ByteRTCMixedStreamConfig *_Nullable)config observer:(id<ByteRTCMixedStreamObserver> _Nullable)observer;
+- (int)startPushMixedStreamToCDN:(NSString * _Nonnull)taskID mixedConfig:(ByteRTCMixedStreamConfig *_Nullable)config observer:(id<ByteRTCMixedStreamObserver> _Nullable)observer;
 ```
 > Available since 3.52
 
@@ -3070,7 +3490,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 转推直播任务 ID，长度不超过 126 字节。<br/>你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。 |
+| taskID | **NSString*** | 转推直播任务 ID，长度不超过 126 字节。<br/>你可以在同一房间内发起多个转推直播任务，并用不同的任务 ID 加以区分。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。 |
 | config | **ByteRTCMixedStreamConfig*** | 转推直播配置参数，详见 [ByteRTCMixedStreamConfig](iOS-keytype.md#bytertcmixedstreamconfig)。 |
 | observer | **id<ByteRTCMixedStreamObserver>** | 端云一体转推直播观察者。详见 [ByteRTCMixedStreamObserver](iOS-callback.md#bytertcmixedstreamobserver)。  <br/>通过注册 observer 接收转推直播相关的回调。 |
 
@@ -3083,9 +3503,7 @@ SDK 当前的版本号。
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，启动结果和推流过程中的错误均会通过回调 [onMixingEvent:taskId:error:mixType:](iOS-callback.md#ByteRTCMixedStreamObserver-onmixingevent-taskid-error-mixtype) 通知用户。
-+ 如果你在[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=callback)配置了转推直播的服务端回调，调用本接口会收到 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted)。重复调用该接口时，第二次调用会同时触发 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 和 [TranscodeUpdated](https://www.volcengine.com/docs/6348/75125#transcodeupdated)。
 + 调用 [stopPushStreamToCDN:](#ByteRTCVideo-stoppushstreamtocdn) 停止转推直播
 
 
@@ -3093,7 +3511,7 @@ SDK 当前的版本号。
 ### updatePushMixedStreamToCDN:mixedConfig:
 ```objectivec
 
-- (int)updatePushMixedStreamToCDN:(NSString *_Nonnull)task_id mixedConfig:(ByteRTCMixedStreamConfig *_Nonnull)config;
+- (int)updatePushMixedStreamToCDN:(NSString *_Nonnull)taskID mixedConfig:(ByteRTCMixedStreamConfig *_Nonnull)config;
 ```
 > Available since 3.52
 
@@ -3104,8 +3522,8 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 转推直播任务 ID。指定想要更新参数设置的转推直播任务。 |
-| config | **ByteRTCMixedStreamConfig*** | 转推直播配置参数，参看 [ByteRTCMixedStreamConfig](iOS-keytype.md#bytertcmixedstreamconfig)。除特殊说明外，均支持过程中更新。<br/>调用时，结构体中没有传入值的属性，会被更新为默认值。 |
+| taskID | **NSString*** | 转推直播任务 ID。指定想要更新参数设置的转推直播任务。 |
+| config | **ByteRTCMixedStreamConfig*** | 转推直播配置参数，参看 [ByteRTCMixedStreamConfig](iOS-keytype.md#bytertcmixedstreamconfig)。除特殊说明外，均支持过程中更新。 |
 
 **返回值**
 方法调用结果。  
@@ -3118,7 +3536,7 @@ SDK 当前的版本号。
 ### startPushSingleStreamToCDN:singleStream:observer:
 ```objectivec
 
-- (void)startPushSingleStreamToCDN:(NSString *_Nonnull)task_id singleStream:(ByteRTCPushSingleStreamParam *_Nonnull)singleStream observer:(id<ByteRTCPushSingleStreamToCDNObserver>_Nullable)observer;
+- (int)startPushSingleStreamToCDN:(NSString *_Nonnull)taskID singleStream:(ByteRTCPushSingleStreamParam *_Nonnull)singleStream observer:(id<ByteRTCPushSingleStreamToCDNObserver>_Nullable)observer;
 ```
 新增单流转推直播任务。
 
@@ -3126,14 +3544,18 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 任务 ID。<br/>你可以发起多个转推直播任务，并用不同的任务 ID 加以区分。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。 |
+| taskID | **NSString*** | 任务 ID。<br/>你可以发起多个转推直播任务，并用不同的任务 ID 加以区分。当你需要发起多个转推直播任务时，应使用多个 ID；当你仅需发起一个转推直播任务时，建议使用空字符串。 |
 | singleStream | **ByteRTCPushSingleStreamParam*** | 转推直播配置参数。详见 [ByteRTCPushSingleStreamParam](iOS-keytype.md#bytertcpushsinglestreamparam)。 |
 | observer | **id<ByteRTCPushSingleStreamToCDNObserver>** | 单流转推直播观察者。详见 [ByteRTCPushSingleStreamToCDNObserver](iOS-callback.md#bytertcpushsinglestreamtocdnobserver)。  <br/>通过注册 observer 接收单流转推直播相关的回调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamPushEvent:taskId:error:](iOS-callback.md#ByteRTCPushSingleStreamToCDNObserver-onstreampushevent-taskid-error) 回调。
 + 调用 [stopPushStreamToCDN:](#ByteRTCVideo-stoppushstreamtocdn) 停止任务。
 + 由于本功能不进行编解码，所以推到 RTMP 的视频流会根据推流端的分辨率、编码方式、关闭摄像头等变化而变化。
@@ -3143,7 +3565,7 @@ SDK 当前的版本号。
 ### stopPushStreamToCDN:
 ```objectivec
 
-- (int)stopPushStreamToCDN:(NSString *_Nonnull)task_id;
+- (int)stopPushStreamToCDN:(NSString *_Nonnull)taskID;
 ```
 停止转推直播。<br>
 该方法可用于停止单流转推直播或停止合流转推直播，通过 taskId 区分需要停止的任务。
@@ -3152,7 +3574,12 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| task_id | **NSString*** | 任务 ID。可以指定想要停止的单流转推直播或合流转推直播任务。 |
+| taskID | **NSString*** | 任务 ID。可以指定想要停止的单流转推直播或合流转推直播任务。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3236,9 +3663,6 @@ SDK 当前的版本号。
 + !0: 失败
 
 
-**注意**
-调用本接口前需要通过 [rtcEngine:onPushPublicStreamResult:publicStreamId:errorCode:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onpushpublicstreamresult-publicstreamid-errorcode) 确认公共流是否已经成功启动。
-
 <span id="ByteRTCVideo-startplaypublicstream"></span>
 ### startPlayPublicStream:
 ```objectivec
@@ -3262,12 +3686,12 @@ SDK 当前的版本号。
 
 **注意**
 
++ 一个客户端最多同时播放 5 路公共流，请及时调用 [stopPlayPublicStream:](#ByteRTCVideo-stopplaypublicstream) 取消订阅公共流，避免订阅的公共流数量超限。
 + 在调用本接口之前，建议先绑定渲染视图。
 - 调用 [setPublicStreamVideoCanvas:withCanvas:](#ByteRTCVideo-setpublicstreamvideocanvas-withcanvas) 绑定内部渲染视图。
 - 调用 [setPublicStreamVideoSink:withSink:withPixelFormat:](#ByteRTCVideo-setpublicstreamvideosink-withsink-withpixelformat) 绑定自定义渲染视图：
 + 调用本接口后，可以通过 [rtcEngine:onFirstPublicStreamVideoFrameDecoded:withFrameInfo:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onfirstpublicstreamvideoframedecoded-withframeinfo) 和 [rtcEngine:onFirstPublicStreamAudioFrame:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
 + 调用本接口后，可以通过 [rtcEngine:onPublicStreamSEIMessageReceived:andMessage:andSourceType:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onpublicstreamseimessagereceived-andmessage-andsourcetype) 回调公共流中包含的 SEI 信息。
-+ 订阅公共流之后，可以通过调用 [stopPlayPublicStream:](#ByteRTCVideo-stopplaypublicstream) 接口取消订阅公共流。
 
 
 <span id="ByteRTCVideo-stopplaypublicstream"></span>
@@ -3349,7 +3773,7 @@ SDK 当前的版本号。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | publicStreamId | **NSString*** | 公共流 ID |
-| volume | **NSInteger** | 音频播放音量值和原始音量值的比值，该比值的范围是 `[0, 400]`，单位为 %，且自带溢出保护。为保证更好的音频质量，建议设定在 `[0, 100]` 之间，其中 100 为系统默认值。|
+| volume | **NSInteger** | 音频播放音量值和原始音量值的比值，该比值的范围是 `[0, 400]`，单位为 %，且自带溢出保护。为保证更好的音频质量，建议设定在 `[0, 100]` 之间，其中 100 为系统默认值。 |
 
 **返回值**
 
@@ -3369,7 +3793,7 @@ SDK 当前的版本号。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| frame | **ByteRTCVideoFrame*** | 该视频帧包含待 SDK 编码的视频数据，参考 [ByteRTCVideoFrame](iOS-keytype.md#bytertcvideoframe)。。 |
+| frame | **ByteRTCVideoFrame*** | 该视频帧包含待 SDK 编码的视频数据，参考 [ByteRTCVideoFrame](iOS-keytype.md#bytertcvideoframe)。 |
 
 **返回值**
 方法调用结果：
@@ -3385,7 +3809,7 @@ SDK 当前的版本号。
 ### enableAudioFrameCallback:format:
 ```objectivec
 
-- (void)enableAudioFrameCallback:(ByteRTCAudioFrameCallbackMethod) method format:(ByteRTCAudioFormat* _Nullable)format;
+- (int)enableAudioFrameCallback:(ByteRTCAudioFrameCallbackMethod) method format:(ByteRTCAudioFormat* _Nullable)format;
 ```
 设置并开启指定的音频数据帧回调
 
@@ -3396,6 +3820,11 @@ SDK 当前的版本号。
 | method | **ByteRTCAudioFrameCallbackMethod** | 音频回调方法，参看 [ByteRTCAudioFrameCallbackMethod](iOS-keytype.md#bytertcaudioframecallbackmethod)。  <br/>当音频回调方法设置为 `0`、`1`、`2`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `3`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。 |
 | format | **ByteRTCAudioFormat*** | 音频参数格式，参看 [ByteRTCAudioFormat](iOS-keytype.md#bytertcaudioformat)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 开启音频回调并调用 [registerAudioFrameObserver:](#ByteRTCVideo-registeraudioframeobserver) 后，[ByteRTCAudioFrameObserver](iOS-callback.md#bytertcaudioframeobserver) 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  
@@ -3404,7 +3833,7 @@ SDK 当前的版本号。
 ### disableAudioFrameCallback:
 ```objectivec
 
-- (void)disableAudioFrameCallback:(ByteRTCAudioFrameCallbackMethod) method;
+- (int)disableAudioFrameCallback:(ByteRTCAudioFrameCallbackMethod) method;
 ```
 关闭音频回调
 
@@ -3414,6 +3843,11 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | method | **ByteRTCAudioFrameCallbackMethod** | 音频回调方法，参看 [ByteRTCAudioFrameCallbackMethod](iOS-keytype.md#bytertcaudioframecallbackmethod)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 该方法需要在调用 [enableAudioFrameCallback:format:](#ByteRTCVideo-enableaudioframecallback-format) 之后调用。
@@ -3422,7 +3856,7 @@ SDK 当前的版本号。
 ### registerAudioFrameObserver:
 ```objectivec
 
-- (void)registerAudioFrameObserver:(_Nullable id<ByteRTCAudioFrameObserver>) audioFrameObserver;
+- (int)registerAudioFrameObserver:(_Nullable id<ByteRTCAudioFrameObserver>) audioFrameObserver;
 ```
 注册音频数据回调观察者。  <br>
 
@@ -3432,21 +3866,26 @@ SDK 当前的版本号。
 | --- | --- | --- |
 | audioFrameObserver | **id<ByteRTCAudioFrameObserver>** | 音频数据观察者，参看 [ByteRTCAudioFrameObserver](iOS-callback.md#bytertcaudioframeobserver)。如果传入 null，则取消注册。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
-注册音频数据回调观察者并调用 [enableAudioFrameCallback:format:](#ByteRTCVideo-enableaudioframecallback-format) 后，[ByteRTCAudioFrameObserver](iOS-callback.md#bytertcaudioframeobserver) 会收到对应的音频回调。对回调中收到的音频数据进行处理，不会影响 RTC 的编码发送或渲染。
+注册音频数据回调观察者并调用 [enableAudioFrameCallback:format:](#ByteRTCVideo-enableaudioframecallback-format) 后，[ByteRTCAudioFrameObserver](iOS-callback.md#bytertcaudioframeobserver) 会收到对应的音频回调。
 
 <span id="ByteRTCVideo-registerlocalaudioprocessor-format"></span>
 ### registerLocalAudioProcessor:format:
 ```objectivec
 
-- (void)registerLocalAudioProcessor:(_Nullable id<ByteRTCAudioProcessor>) audioProcessor format:(ByteRTCAudioFormat* _Nullable)format __deprecated_msg("Will be removed in new version");
+- (int)registerLocalAudioProcessor:(_Nullable id<ByteRTCAudioProcessor>) audioProcessor format:(ByteRTCAudioFormat* _Nullable)format __deprecated_msg("Will be removed in new version");
 ```
 > Deprecated  since 3.42 and will be deleted in 3.51, use [registerAudioProcessor:](#ByteRTCVideo-registeraudioprocessor) instead.
 
 设置自定义音频处理器。  <br>
 使用该处理器，你可以调用 [processAudioFrame:](iOS-callback.md#ByteRTCAudioProcessor-processaudioframe) 对 RTC SDK 采集得到的音频帧进行自定义处理，并将处理后的音频帧用于 RTC 音视频通信。  <br>
-SDK 只持有 processor 的弱引用，你应保证其生命周期。
+SDK 只持有 processor 的弱引用，你应保证其生命周期。需要取消注册时，设置此参数为 nullptr。
 
 **传入参数**
 
@@ -3456,10 +3895,9 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | format | **ByteRTCAudioFormat*** | 自定义音频参数格式，参看 [ByteRTCAudioFormat](iOS-keytype.md#bytertcaudioformat)，SDK 将按指定设置给出音频帧。 |
 
 **返回值**
-方法调用结果  
 
-+ YES: 方法调用成功  
-+ NO: 方法调用失败
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3469,10 +3907,10 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### registerAudioProcessor:
 ```objectivec
 
-- (void)registerAudioProcessor:(_Nullable id<ByteRTCAudioFrameProcessor>)processor;
+- (int)registerAudioProcessor:(_Nullable id<ByteRTCAudioFrameProcessor>)processor;
 ```
 注册自定义音频处理器。<br>
-注册完成后，你可以调用 [enableAudioProcessor:audioFormat:](#ByteRTCVideo-enableaudioprocessor-audioformat)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。
+注册完成后，你可以调用 [enableAudioProcessor:audioFormat:](#ByteRTCVideo-enableaudioprocessor-audioformat)，对本地采集或接收到的远端音频进行处理。
 
 **传入参数**
 
@@ -3480,17 +3918,20 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | processor | **id<ByteRTCAudioFrameProcessor>** | 自定义音频处理器，详见 [ByteRTCAudioFrameProcessor](iOS-callback.md#bytertcaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
-
-- 重复调用此接口时，仅最后一次调用生效。
-- 更多相关信息，详见[音频自定义处理](https://www.volcengine.com/docs/6348/80635)。
+重复调用此接口时，仅最后一次调用生效。
 
 <span id="ByteRTCVideo-enableaudioprocessor-audioformat"></span>
 ### enableAudioProcessor:audioFormat:
 ```objectivec
 
-- (void)enableAudioProcessor:(ByteRTCAudioFrameMethod)method audioFormat:(ByteRTCAudioFormat *_Nullable)format;
+- (int)enableAudioProcessor:(ByteRTCAudioFrameMethod)method audioFormat:(ByteRTCAudioFormat *_Nullable)format;
 ```
 设置并开启指定的音频帧回调，进行自定义处理。
 
@@ -3500,6 +3941,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | method | **ByteRTCAudioFrameMethod** | 音频帧类型，参看 [ByteRTCAudioFrameMethod](iOS-keytype#bytertcaudioframemethod)。可多次调用此接口，处理不同类型的音频帧。  <br/>选择不同类型的音频帧将收到对应的回调：  <br/>• 选择本地采集的音频时，会收到 [onProcessRecordAudioFrame:](iOS-callback.md#ByteRTCAudioFrameProcessor-onprocessrecordaudioframe)。<br/>• 选择远端音频流的混音音频时，会收到 [onProcessPlayBackAudioFrame:](iOS-callback.md#ByteRTCAudioFrameProcessor-onprocessplaybackaudioframe)。 <br/>• 选择远端音频流时，会收到 [onProcessRemoteUserAudioFrame:audioFrame:](iOS-callback.md#ByteRTCAudioFrameProcessor-onprocessremoteuseraudioframe-audioframe)。 <br/>• 选择软件耳返音频时，会收到 [onProcessEarMonitorAudioFrame:](iOS-callback.md#ByteRTCAudioFrameProcessor-onprocessearmonitoraudioframe)。(仅适用于 iOS 平台)<br/>• 选择屏幕共享音频流时，会收到 [onProcessScreenAudioFrame:](iOS-callback.md#ByteRTCAudioFrameProcessor-onprocessscreenaudioframe)。 |
 | format | **ByteRTCAudioFormat*** | 设定自定义处理时获取的音频帧格式，参看 [ByteRTCAudioFormat](iOS-keytype.md#bytertcaudioformat)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3512,7 +3958,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### disableAudioProcessor:
 ```objectivec
 
-- (void)disableAudioProcessor:(ByteRTCAudioFrameMethod)method;
+- (int)disableAudioProcessor:(ByteRTCAudioFrameMethod)method;
 ```
 关闭自定义音频处理。
 
@@ -3521,6 +3967,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | method | **ByteRTCAudioFrameMethod** | 音频帧类型，参看 [ByteRTCAudioFrameMethod](iOS-keytype.md#bytertcaudioframemethod)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 <span id="ByteRTCVideo-pushexternalaudioframe"></span>
@@ -3535,7 +3986,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **ByteRTCAudioFrame*** | 音频数据帧，详见 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe) |
+| audioFrame | **ByteRTCAudioFrame*** | 音频数据帧，详见 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
 
 **返回值**
 方法调用结果  
@@ -3547,8 +3998,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 **注意**
 
 + 推送外部音频数据前，必须先调用 [setAudioSourceType:](#ByteRTCVideo-setaudiosourcetype) 开启自定义采集。
-+ 你必须每隔 10 毫秒推送一次外部采集的音频数据。单次推送的 samples (音频采样点个数）应该为 audioFrame.sampleRate / 100。比如设置采样率为 48000 时， 每次应该推送 480 个采样点。  
-+ 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。
++ 你必须每隔 10 毫秒推送一次外部采集的音频数据。单次推送的 samples (音频采样点个数) 应该为 audioFrame.sampleRate / 100。比如设置采样率为 48000 时， 每次应该推送 480 个采样点。  
 
 
 <span id="ByteRTCVideo-pullexternalaudioframe"></span>
@@ -3557,8 +4007,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 
 - (int)pullExternalAudioFrame:(ByteRTCAudioFrame * _Nonnull) audioFrame;
 ```
-拉取远端音频数据。<br>
-可用于自定义音频渲染。
+拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。
 
 **传入参数**
 
@@ -3632,14 +4081,35 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 
 
 **注意**
-如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
 
++ 你可以在 [RTC 控制台](https://console.volcengine.com/rtc/callQualityRTC/feedback)上查看用户通过此接口提交的反馈详情和整体趋势。 
++ 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
+
+
+<span id="ByteRTCVideo-getnativehandle"></span>
+### getNativeHandle
+```objectivec
+
+- (void * _Nullable) getNativeHandle;
+```
+> Available since 353
+
+获取 C++ 层 [IRTCVideo 句柄](https://www.volcengine.com/docs/6348/Windows-api#irtcvideo)。
+
+**返回值**
+
++ \>0：方法调用成功, 返回 C++ 层 `IRTCVideo` 的地址。
++ NULL：方法调用失败
+
+
+**注意**
+在一些场景下，获取 C++ 层 `IRTCVideo`，并通过其完成操作，相较于通过 OC 封装层完成有显著更高的执行效率。典型的场景有：视频/音频帧自定义处理，音视频通话加密等。
 
 <span id="ByteRTCVideo-setpublishfallbackoption"></span>
 ### setPublishFallbackOption:
 ```objectivec
 
-- (void)setPublishFallbackOption:(ByteRTCPublishFallbackOption)option;
+- (int)setPublishFallbackOption:(ByteRTCPublishFallbackOption)option;
 ```
 设置发布的音视频流的回退选项。  <br>
 你可以调用该接口设置网络不佳或设备性能不足时从大流起进行降级处理，以保证通话质量。
@@ -3650,12 +4120,18 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | option | **ByteRTCPublishFallbackOption** | 本地发布的音视频流回退选项，参看 [ByteRTCPublishFallbackOption](iOS-keytype.md#bytertcpublishfallbackoption)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 该方法仅在调用 [enableSimulcastMode:](#ByteRTCVideo-enablesimulcastmode) 开启了发送多路视频流的情况下生效。  
-+ 该方法必须在进房前设置，进房后设置或更改设置无效。  
-+ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [rtcEngine:onSimulcastSubscribeFallback:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onsimulcastsubscribefallback) 回调通知。  
++ 该方法必须在进房前设置，进房后设置或更改设置无效。
++ 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [rtcEngine:onPerformanceAlarms:roomId:reason:sourceWantedData:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onperformancealarms-roomid-reason-sourcewanteddata) 回调发出的告警，以便采集设备配合调整。  
++ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [rtcEngine:onSimulcastSubscribeFallback:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onsimulcastsubscribefallback) 回调，通知该情况。  
 + 你可以调用客户端 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
@@ -3663,7 +4139,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### setSubscribeFallbackOption:
 ```objectivec
 
-- (void)setSubscribeFallbackOption:(ByteRTCSubscribeFallbackOption)option;
+- (int)setSubscribeFallbackOption:(ByteRTCSubscribeFallbackOption)option;
 ```
 设置订阅的音视频流的回退选项。 <br>
 你可调用该接口设置网络不佳或设备性能不足时允许订阅流进行降级或只订阅音频流，以保证通话流畅。
@@ -3673,6 +4149,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | option | **ByteRTCSubscribeFallbackOption** | 订阅的音视频流回退选项，参看 [ByteRTCSubscribeFallbackOption](iOS-keytype.md#bytertcsubscribefallbackoption)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3715,7 +4196,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### setEncryptInfo:key:
 ```objectivec
 
-- (void)setEncryptInfo:(ByteRTCEncryptType)encrypt_type key:(NSString * _Nonnull)key;
+- (int)setEncryptInfo:(ByteRTCEncryptType)encrypt_type key:(NSString * _Nonnull)key;
 ```
 设置传输时使用内置加密的方式。
 
@@ -3725,6 +4206,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | encrypt_type | **ByteRTCEncryptType** | 内置加密算法，详见 [ByteRTCEncryptType](iOS-keytype.md#bytertcencrypttype) |
 | key | **NSString*** | 加密密钥，长度限制为 36 位，超出部分将会被截断 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3739,7 +4225,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### setCustomizeEncryptHandler:
 ```objectivec
 
-- (void)setCustomizeEncryptHandler:(id<ByteRTCEncryptHandler> _Nullable)handler;
+- (int)setCustomizeEncryptHandler:(id<ByteRTCEncryptHandler> _Nullable)handler;
 ```
 设置自定义加密和解密方式。
 
@@ -3749,12 +4235,17 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | handler | **id<ByteRTCEncryptHandler>** | 自定义加密 handler，需要实现里面的加密和解密方法。参看 [ByteRTCEncryptHandler](iOS-callback.md#bytertcencrypthandler)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 该方法与 [setEncryptInfo:key:](#ByteRTCVideo-setencryptinfo-key) 为互斥关系，即按照调用顺序，最后一个调用的方法为最终生效的版本。  
 + 该方法必须在调用 [joinRoom:userInfo:roomConfig:](#ByteRTCRoom-joinroom-userinfo-roomconfig) 之前调用，可重复调用，以最后调用的参数作为生效参数。  
-+ 无论加密或者解密，其对原始数据的长度修改，需要控制在90%-120%之间，即如果输入数据为100字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频桢会被丢弃。  
++ 无论加密或者解密，其对原始数据的长度修改，需要控制在 180% 以内，即如果输入数据为 100 字节，则处理完成后的数据必须在 180 字节以内，如果加密或解密结果超出该长度限制，则该音视频帧可能会被丢弃。  
 + 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率，是否使用该方法，需要由使用方谨慎评估。  
 
 
@@ -3816,7 +4307,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### setExtensionConfig:
 ```objectivec
 
-- (void)setExtensionConfig:(NSString *_Nullable)groupId;
+- (int)setExtensionConfig:(NSString *_Nullable)groupId;
 ```
 设置 Extension 配置项。你必须在使用屏幕内部采集功能前，设置使用的 Extension。
 
@@ -3826,6 +4317,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | groupId | **NSString*** | 你的应用和 Extension 应该归属于同一个 App Group，此处需要传入 Group Id。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 必须在调用 [createRTCVideo:delegate:parameters:](#ByteRTCVideo-creatertcvideo-delegate-parameters) 之后立即调用此方法。在引擎实例的生命周期中，此方法只需要调用一次。  
@@ -3834,7 +4330,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### startScreenCapture:bundleId:
 ```objectivec
 
-- (void)startScreenCapture:(ByteRTCScreenMediaType) type bundleId:(NSString *_Nullable)bundleId;
+- (int)startScreenCapture:(ByteRTCScreenMediaType) type bundleId:(NSString *_Nullable)bundleId;
 ```
 使用 RTC SDK 内部采集模块开始采集屏幕音频流和（或）视频流。
 
@@ -3844,6 +4340,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | type | **ByteRTCScreenMediaType** | 媒体类型，参看 [ByteRTCScreenMediaType](iOS-keytype.md#bytertcscreenmediatype)。 |
 | bundleId | **NSString*** | 绑定 Extension 的 Bundle ID，绑定后应用中共享屏幕的选择列表中只展示你的 Extension 可供选择。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3858,7 +4359,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### updateScreenCapture:
 ```objectivec
 
-- (void)updateScreenCapture:(ByteRTCScreenMediaType) type;
+- (int)updateScreenCapture:(ByteRTCScreenMediaType) type;
 ```
 更新内部屏幕采集时采集的媒体类型。
 
@@ -3867,6 +4368,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ByteRTCScreenMediaType** | 媒体类型，参看 [ByteRTCScreenMediaType](iOS-keytype.md#bytertcscreenmediatype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3879,9 +4385,14 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### stopScreenCapture
 ```objectivec
 
-- (void)stopScreenCapture;
+- (int)stopScreenCapture;
 ```
 在屏幕共享时，停止使用 RTC SDK 内部采集方式采集屏幕音视频。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3896,7 +4407,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### sendScreenCaptureExtensionMessage:
 ```objectivec
 
-- (void)sendScreenCaptureExtensionMessage:(NSData *_Nonnull) messsage;
+- (int)sendScreenCaptureExtensionMessage:(NSData *_Nonnull) messsage;
 ```
 向屏幕共享 Extension 发送自定义消息
 
@@ -3905,6 +4416,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | messsage | **NSData*** | 发送给 Extension 的消息内容 |
+
+**返回值**
+
++ 0: Success.
++ < 0 : Fail. See [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) for more details
 
 
 **注意**
@@ -3917,7 +4433,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### setRuntimeParameters:
 ```objectivec
 
-- (void)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
+- (int)setRuntimeParameters:(NSDictionary * _Nullable)parameters;
 ```
 设置运行时的参数
 
@@ -3927,6 +4443,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | parameters | **NSDictionary*** | 保留参数 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 **注意**
 该接口需在 [joinRoom:userInfo:roomConfig:](#ByteRTCRoom-joinroom-userinfo-roomconfig) 和 [startAudioCapture](#ByteRTCVideo-startaudiocapture) 之前调用。
@@ -3935,7 +4456,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### startASR:handler:
 ```objectivec
 
-- (void)startASR:(ByteRTCASRConfig *_Nonnull)asrConfig handler:(id<ByteRTCASREngineEventHandler> _Nonnull)handler ;
+- (int)startASR:(ByteRTCASRConfig *_Nonnull)asrConfig handler:(id<ByteRTCASREngineEventHandler> _Nonnull)handler ;
 ```
 开启自动语音识别服务。<br>
 该方法将识别后的用户语音转化成文字，并通过 [onMessage:](iOS-callback.md#ByteRTCASREngineEventHandler-onmessage) 事件回调给用户。
@@ -3947,14 +4468,24 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | handler | **id<ByteRTCASREngineEventHandler>** | 语音识别服务使用状态回调，参看 [ByteRTCASREngineEventHandler](iOS-callback.md#bytertcasrengineeventhandler) |
 | asrConfig | **ByteRTCASRConfig*** | 校验信息，参看 [ByteRTCASRConfig](iOS-keytype.md#bytertcasrconfig) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
 
 <span id="ByteRTCVideo-stopasr"></span>
 ### stopASR
 ```objectivec
 
-- (void)stopASR;
+- (int)stopASR;
 ```
 关闭语音识别服务
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 <span id="ByteRTCVideo-startfilerecording-withrecordingconfig-type"></span>
@@ -3971,7 +4502,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | --- | --- | --- |
 | streamIndex | **ByteRTCStreamIndex** | 流属性，指定录制主流还是屏幕流，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
 | recordingConfig | **ByteRTCRecordingConfig*** | 本地录制参数配置，参看 [ByteRTCRecordingConfig](iOS-keytype.md#bytertcrecordingconfig) |
-| recordingType | **ByteRTCRecordingType*** | 本地录制的媒体类型，参看 [ByteRTCRecordingType](iOS-keytype.md#bytertcrecordingtype) |
+| recordingType | **ByteRTCRecordingType** | 本地录制的媒体类型，参看 [ByteRTCRecordingType](iOS-keytype.md#bytertcrecordingtype) |
 
 **返回值**
 
@@ -3990,7 +4521,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### stopFileRecording:
 ```objectivec
 
-- (void)stopFileRecording:(ByteRTCStreamIndex)streamIndex;
+- (int)stopFileRecording:(ByteRTCStreamIndex)streamIndex;
 ```
 停止本地录制
 
@@ -3999,6 +4530,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | streamIndex | **ByteRTCStreamIndex** | 流属性，指定停止主流或者屏幕流录制，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4013,7 +4549,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 
 - (int)startAudioRecording:(ByteRTCAudioRecordingConfig* _Nonnull) recordingConfig;
 ```
-开启录制语音通话，生成本地文件。 <br>
+开启录制语音通话，生成本地文件。<br>
 在进房前后开启录制，如果未打开麦克风采集，录制任务正常进行，只是不会将数据写入生成的本地文件；只有调用 [startAudioCapture](#ByteRTCVideo-startaudiocapture) 接口打开麦克风采集后，才会将录制数据写入本地文件。
 
 **传入参数**
@@ -4032,6 +4568,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 **注意**
 
 + 录制包含各种音频效果。但不包含背景音乐。
++ 调用 [stopAudioRecording](#ByteRTCVideo-stopaudiorecording) 关闭录制。
 + 加入房间前后均可调用。在进房前调用该方法，退房之后，录制任务不会自动停止，需调用[stopAudioRecording](#ByteRTCVideo-stopaudiorecording) 关闭录制。在进房后调用该方法，退房之后，录制任务会自动被停止。如果加入了多个房间，录制的文件中会包含各个房间的音频。
 + 调用该方法后，你会收到 [rtcEngine:onAudioRecordingStateUpdate:error_code:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiorecordingstateupdate-error_code) 回调。  
 
@@ -4053,16 +4590,52 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 **注意**
 调用 [startAudioRecording:](#ByteRTCVideo-startaudiorecording) 开启本地录制。
 
-<span id="ByteRTCVideo-getaudiomixingmanager"></span>
-### getAudioMixingManager
+<span id="ByteRTCVideo-__deprecated_msg"></span>
+### __deprecated_msg
 ```objectivec
 
-- (ByteRTCAudioMixingManager *_Nullable)getAudioMixingManager;
+- (ByteRTCAudioMixingManager *_Nullable)getAudioMixingManager __deprecated_msg("deprecated since 353.1, will be deleted in 359, use getAudioEffectPlayer and getMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use getAudioEffectPlayer and getMediaPlayer instead
+
 混音管理接口创建
 
 **返回值**
 混音管理实例，详见[ByteRTCAudioMixingManager](#bytertcaudiomixingmanager)
+
+
+<span id="ByteRTCVideo-getaudioeffectplayer"></span>
+### getAudioEffectPlayer
+```objectivec
+
+- (ByteRTCAudioEffectPlayer *_Nullable)getAudioEffectPlayer;
+```
+> Available since 3.53
+
+创建音效播放器实例。
+
+**返回值**
+音效播放器。详见 [ByteRTCAudioEffectPlayer](#bytertcaudioeffectplayer)。
+
+
+<span id="ByteRTCVideo-getmediaplayer"></span>
+### getMediaPlayer:
+```objectivec
+
+- (ByteRTCMediaPlayer *_Nullable)getMediaPlayer:(int)playerId;
+```
+> Available since 3.53
+
+创建音乐播放器实例。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** | 音乐播放器实例 id。取值范围为 `[0, 3]`。最多同时存在4个实例，超出取值范围时返回 nullptr。 |
+
+**返回值**
+音乐播放器实例，详见 [ByteRTCMediaPlayer](#bytertcmediaplayer)
 
 
 <span id="ByteRTCVideo-login-uid"></span>
@@ -4094,9 +4667,14 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### logout
 ```objectivec
 
-- (void)logout;
+- (int)logout;
 ```
 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4109,7 +4687,7 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 ### updateLoginToken:
 ```objectivec
 
-- (void)updateLoginToken:(NSString * _Nonnull)token;
+- (int)updateLoginToken:(NSString * _Nonnull)token;
 ```
 更新用户用于登录的 Token  <br>
 Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br>
@@ -4120,6 +4698,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | token | **NSString*** | 更新的动态密钥 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4132,7 +4715,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setServerParams:url:
 ```objectivec
 
-- (void)setServerParams:(NSString * _Nonnull)signature url:(NSString * _Nonnull)url;
+- (int)setServerParams:(NSString * _Nonnull)signature url:(NSString * _Nonnull)url;
 ```
 设置应用服务器参数  <br>
 客户端调用 [sendServerMessage:](#ByteRTCVideo-sendservermessage) 或 [sendServerBinaryMessage:](#ByteRTCVideo-sendserverbinarymessage) 发送消息给应用服务器之前，必须需要设置有效签名和应用服务器地址。
@@ -4141,8 +4724,13 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| signature | **NSString*** | 动态签名  <br/>应用服务器会使用该签名对请求进行鉴权验证。 |
+| signature | **NSString*** | 动态签名，应用服务器可使用该签名验证消息来源。<br>签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br>设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。 |
 | url | **NSString*** | 应用服务器的地址 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4155,7 +4743,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### getPeerOnlineStatus:
 ```objectivec
 
-- (void)getPeerOnlineStatus:(NSString * _Nonnull)peerUserId;
+- (int)getPeerOnlineStatus:(NSString * _Nonnull)peerUserId;
 ```
 查询对端用户或本端用户的登录状态
 
@@ -4164,6 +4752,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | peerUserId | **NSString*** | 需要查询的用户 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4291,7 +4884,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### startNetworkDetection:uplinkBandwidth:downlink:downlinkBandwidth:
 ```objectivec
 
-- (ByteRTCNetworkDetectionStartReturn)startNetworkDetection:(bool)is_test_uplink uplinkBandwidth:(int)expected_uplink_bitrate downlink:(bool)is_test_downlink downlinkBandwidth:(int)expected_downlink_bitrate;
+- (int)startNetworkDetection:(bool)isTestUplink uplinkBandwidth:(int)expectedUplinkBitrate downlink:(bool)isTestDownlink downlinkBandwidth:(int)expectedDownlinkBitrate;
 ```
 开始通话前网络探测
 
@@ -4299,13 +4892,15 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| is_test_uplink | **bool** | 是否探测上行带宽 |
-| expected_uplink_bitrate | **int** | 期望上行带宽，单位：kbps范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。 |
-| is_test_downlink | **bool** | 是否探测下行带宽 |
-| expected_downlink_bitrate | **int** | 期望下行带宽，单位：kbps范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。 |
+| isTestUplink | **bool** | 是否探测上行带宽 |
+| expectedUplinkBitrate | **int** | 期望上行带宽，单位：kbps范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。 |
+| isTestDownlink | **bool** | 是否探测下行带宽 |
+| expectedDownlinkBitrate | **int** | 期望下行带宽，单位：kbps范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。 |
 
 **返回值**
-开启通话前网络探测结果，详见 [ByteRTCNetworkDetectionStartReturn](iOS-errorcode.md#bytertcnetworkdetectionstartreturn)
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4318,9 +4913,14 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### stopNetworkDetection
 ```objectivec
 
-- (void)stopNetworkDetection;
+- (int)stopNetworkDetection;
 ```
 停止通话前网络探测
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4331,7 +4931,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setScreenAudioSourceType:
 ```objectivec
 
-- (void)setScreenAudioSourceType:(ByteRTCAudioSourceType)sourceType;
+- (int)setScreenAudioSourceType:(ByteRTCAudioSourceType)sourceType;
 ```
 在屏幕共享时，设置屏幕音频的采集方式（内部采集/自定义采集）
 
@@ -4340,6 +4940,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | sourceType | **ByteRTCAudioSourceType** | 屏幕音频输入源类型, 参看 [ByteRTCAudioSourceType](iOS-keytype.md#bytertcaudiosourcetype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4355,7 +4960,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setScreenAudioStreamIndex:
 ```objectivec
 
-- (void)setScreenAudioStreamIndex:(ByteRTCStreamIndex) index;
+- (int)setScreenAudioStreamIndex:(ByteRTCStreamIndex) index;
 ```
 在屏幕共享时，设置屏幕音频流和麦克风采集到的音频流的混流方式
 
@@ -4364,6 +4969,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | index | **ByteRTCStreamIndex** | 混流方式，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) <br/>• `ByteRTCStreamIndexMain`: 将屏幕音频流和麦克风采集到的音频流混流 <br/>• `ByteRTCStreamIndexScreen`: 默认值，将屏幕音频流和麦克风采集到的音频流分为两路音频流 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4381,7 +4991,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **ByteRTCAudioFrame*** | 音频数据帧，参见 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe) |
+| audioFrame | **ByteRTCAudioFrame*** | 音频数据帧，参见 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
 
 **返回值**
 方法调用结果  
@@ -4393,8 +5003,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 **注意**
 
 + 调用此接口推送屏幕共享时的自定义采集的音频数据前，必须调用 [setScreenAudioSourceType:](#ByteRTCVideo-setscreenaudiosourcetype) 开启屏幕音频自定义采集。  
-+ 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。  
-+ 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 samples × frame.channel × 2。  
++ 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。
 + 调用此接口将自定义采集的音频帧推送到 RTC SDK 后，你必须调用 [publishScreen:](#ByteRTCRoom-publishscreen) 将采集到的屏幕音频推送到远端。在调用 [publishScreen:](#ByteRTCRoom-publishscreen) 前，推送到 RTC SDK 的音频帧信息会丢失。
 
 
@@ -4402,7 +5011,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setVideoSourceType:WithStreamIndex:
 ```objectivec
 
-- (void)setVideoSourceType:(ByteRTCVideoSourceType)type WithStreamIndex:(ByteRTCStreamIndex)streamIndex;
+- (int)setVideoSourceType:(ByteRTCVideoSourceType)type WithStreamIndex:(ByteRTCStreamIndex)streamIndex;
 ```
 设置向 SDK 输入的视频源，包括屏幕流
 默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br>
@@ -4413,6 +5022,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | --- | --- | --- |
 | type | **ByteRTCVideoSourceType** | 视频输入源类型，参看 [ByteRTCVideoSourceType](iOS-keytype.md#bytertcvideosourcetype) |
 | streamIndex | **ByteRTCStreamIndex** | 视频流的属性，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4427,7 +5041,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setExternalVideoEncoderEventHandler:
 ```objectivec
 
-- (void)setExternalVideoEncoderEventHandler:(id<ByteRTCExternalVideoEncoderEventHandler> _Nullable)handler;
+- (int)setExternalVideoEncoderEventHandler:(id<ByteRTCExternalVideoEncoderEventHandler> _Nullable)handler;
 ```
 注册自定义编码帧推送事件回调
 
@@ -4436,6 +5050,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | handler | **id<ByteRTCExternalVideoEncoderEventHandler>** | 自定义编码帧回调类，参看 [ByteRTCExternalVideoEncoderEventHandler](iOS-callback.md#bytertcexternalvideoencodereventhandler) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4478,7 +5097,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setVideoDecoderConfig:withVideoDecoderConfig:
 ```objectivec
 
-- (void)setVideoDecoderConfig:(ByteRTCRemoteStreamKey * _Nonnull)key withVideoDecoderConfig:(ByteRTCVideoDecoderConfig)config;
+- (int)setVideoDecoderConfig:(ByteRTCRemoteStreamKey * _Nonnull)key withVideoDecoderConfig:(ByteRTCVideoDecoderConfig)config;
 ```
 在订阅远端视频流之前，设置远端视频数据解码方式
 
@@ -4488,6 +5107,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | --- | --- | --- |
 | key | **ByteRTCRemoteStreamKey*** | 远端流信息，指定对哪一路视频流进行解码方式设置，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey)。 |
 | config | **ByteRTCVideoDecoderConfig** | 视频解码方式，参看 [ByteRTCVideoDecoderConfig](iOS-keytype.md#bytertcvideodecoderconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4500,7 +5124,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### requestRemoteVideoKeyFrame:
 ```objectivec
 
-- (void)requestRemoteVideoKeyFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
+- (int)requestRemoteVideoKeyFrame:(ByteRTCRemoteStreamKey * _Nonnull)key;
 ```
 在订阅远端视频流之后，向远端请求关键帧
 
@@ -4509,6 +5133,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | key | **ByteRTCRemoteStreamKey*** | 远端流信息，参看 [ByteRTCRemoteStreamKey](iOS-keytype.md#bytertcremotestreamkey)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4521,7 +5150,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### registerRemoteEncodedVideoFrameObserver:
 ```objectivec
 
-- (void)registerRemoteEncodedVideoFrameObserver:(id<ByteRTCRemoteEncodedVideoFrameObserver> _Nullable)observer;
+- (int)registerRemoteEncodedVideoFrameObserver:(id<ByteRTCRemoteEncodedVideoFrameObserver> _Nullable)observer;
 ```
 注册远端编码后视频数据回調。  <br>
 完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](iOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe) 回调
@@ -4531,6 +5160,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **id<ByteRTCRemoteEncodedVideoFrameObserver>** | 远端编码后视频数据监测器，参看 [ByteRTCRemoteEncodedVideoFrameObserver](iOS-callback.md#bytertcremoteencodedvideoframeobserver) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4574,7 +5208,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### muteAudioPlayback:
 ```objectivec
 
-- (void)muteAudioPlayback:(ByteRTCMuteState)muteState __deprecated_msg("Will be removed in new version");
+- (int)muteAudioPlayback:(ByteRTCMuteState)muteState __deprecated_msg("Will be removed in new version");
 ```
 > Deprecated  since 3.45 and will be deleted in 3.51, use [setPlaybackVolume:](#ByteRTCVideo-setplaybackvolume) instead.
 
@@ -4585,6 +5219,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | muteState | **ByteRTCMuteState** | 播放状态，标识是否播放本地音频流，详见：[ByteRTCMuteState](iOS-keytype.md#bytertcmutestate) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4649,7 +5288,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### setVideoWatermark:withImagePath:withRtcWatermarkConfig:
 ```objectivec
 
-- (void)setVideoWatermark:(ByteRTCStreamIndex)streamIndex withImagePath:(NSString * _Nullable)imagePath withRtcWatermarkConfig:(ByteRTCVideoWatermarkConfig* _Nonnull)rtcWatermarkConfig;
+- (int)setVideoWatermark:(ByteRTCStreamIndex)streamIndex withImagePath:(NSString * _Nullable)imagePath withRtcWatermarkConfig:(ByteRTCVideoWatermarkConfig* _Nonnull)rtcWatermarkConfig;
 ```
 在指定视频流上添加水印。
 
@@ -4660,6 +5299,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | streamIndex | **ByteRTCStreamIndex** | 需要添加水印的视频流属性，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex)。 |
 | imagePath | **NSString*** | 水印图片路径，仅支持本地文件绝对路径，长度限制为 512 字节。   <br/>水印图片为 PNG 或 JPG 格式。 |
 | rtcWatermarkConfig | **ByteRTCVideoWatermarkConfig*** | 水印参数，参看 [ByteRTCVideoWatermarkConfig](iOS-keytype.md#bytertcvideowatermarkconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4675,7 +5319,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### clearVideoWatermark:
 ```objectivec
 
-- (void)clearVideoWatermark:(ByteRTCStreamIndex)streamIndex;
+- (int)clearVideoWatermark:(ByteRTCStreamIndex)streamIndex;
 ```
 移除指定视频流的水印。
 
@@ -4684,6 +5328,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | streamIndex | **ByteRTCStreamIndex** | 需要移除水印的视频流属性，参看 [ByteRTCStreamIndex](iOS-keytype.md#bytertcstreamindex) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 <span id="ByteRTCVideo-takelocalsnapshot-callback"></span>
@@ -4734,7 +5383,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### startCloudProxy:
 ```objectivec
 
-- (void)startCloudProxy:(NSArray <ByteRTCCloudProxyInfo *> * _Nullable)cloudProxiesInfo;
+- (int)startCloudProxy:(NSArray <ByteRTCCloudProxyInfo *> * _Nullable)cloudProxiesInfo;
 ```
 开启云代理
 
@@ -4743,6 +5392,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | cloudProxiesInfo | **NSArray <ByteRTCCloudProxyInfo*>*** | 云代理服务器信息列表。参看 [ByteRTCCloudProxyInfo](iOS-keytype.md#bytertccloudproxyinfo)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4757,9 +5411,14 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 ### stopCloudProxy
 ```objectivec
 
-- (void)stopCloudProxy;
+- (int)stopCloudProxy;
 ```
 关闭云代理
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4831,7 +5490,7 @@ K 歌评分管理接口,详见 [ByteRTCSingScoringManager](#bytertcsingscoringma
 ### setAudioAlignmentProperty:withMode:
 ```objectivec
 
-- (void)setAudioAlignmentProperty:(ByteRTCRemoteStreamKey * _Nonnull)streamKey withMode:(ByteRTCAudioAlignmentMode)mode;
+- (int)setAudioAlignmentProperty:(ByteRTCRemoteStreamKey * _Nonnull)streamKey withMode:(ByteRTCAudioAlignmentMode)mode;
 ```
 在听众端，设置订阅的所有远端音频流精准对齐后播放。
 
@@ -4841,6 +5500,11 @@ K 歌评分管理接口,详见 [ByteRTCSingScoringManager](#bytertcsingscoringma
 | --- | --- | --- |
 | streamKey | **ByteRTCRemoteStreamKey*** | 作为对齐基准的远端音频流。参看 [ByteRTCRemoteStreamKey](iOS-keytype#bytertcremotestreamkey)。<br/>一般选择主唱的音频流。<br/>你必须在收到 [rtcRoom:onUserPublishStream:type:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onuserpublishstream-type)，确认此音频流已发布后，调用此 API。 |
 | mode | **ByteRTCAudioAlignmentMode** | 是否对齐，默认不对齐。参看 [ByteRTCAudioAlignmentMode](iOS-keytype.md#bytertcaudioalignmentmode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4896,7 +5560,7 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 ### setCellularEnhancement:
 ```objectivec
 
-- (void)setCellularEnhancement:(ByteRTCMediaTypeEnhancementConfig * _Nonnull)config;
+- (int)setCellularEnhancement:(ByteRTCMediaTypeEnhancementConfig * _Nonnull)config;
 ```
 启用蜂窝网络辅助增强，改善通话质量。
 
@@ -4905,6 +5569,13 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | config | **ByteRTCMediaTypeEnhancementConfig*** | 参看 [ByteRTCMediaTypeEnhancementConfig](iOS-keytype.md#bytertcmediatypeenhancementconfig)。 |
+
+**返回值**
+方法调用结果：  
+
++ 0: 成功。
++ -1：失败，内部错误。 
++ -2: 失败，输入参数错误。 
 
 
 **注意**
@@ -4931,6 +5602,419 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 + 调用该方法设置本地代理后，SDK 会触发 [rtcEngine:onLocalProxyStateChanged:withProxyState:withProxyError:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalproxystatechanged-withproxystate-withproxyerror) ，返回代理连接的状态。
 
 
+# ByteRTCAudioEffectPlayer
+```objectivec
+@interface ByteRTCAudioEffectPlayer :NSObject
+```
+
+音效播放器。 <br>
+注意：<br>
+
++ 调用 [setEventHandler:](#ByteRTCAudioEffectPlayer-seteventhandler) 设置回调句柄以获取相关回调。
++ 使用混音功能时，你必须通过 [setActive:withOptions:error:](https://developer.apple.com/documentation/avfaudio/avaudiosession/1616627-setactive?language=objc) 激活应用的 audio session。直到彻底退出混音功能后，才可以关闭 audio session。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **int** | [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) |
+| **int** | [stop:](#ByteRTCAudioEffectPlayer-stop) |
+| **int** | [stopAll](#ByteRTCAudioEffectPlayer-stopall) |
+| **int** | [preload:filePath:](#ByteRTCAudioEffectPlayer-preload-filepath) |
+| **int** | [unload:](#ByteRTCAudioEffectPlayer-unload) |
+| **int** | [unloadAll](#ByteRTCAudioEffectPlayer-unloadall) |
+| **int** | [pause:](#ByteRTCAudioEffectPlayer-pause) |
+| **int** | [pauseAll](#ByteRTCAudioEffectPlayer-pauseall) |
+| **int** | [resume:](#ByteRTCAudioEffectPlayer-resume) |
+| **int** | [resumeAll](#ByteRTCAudioEffectPlayer-resumeall) |
+| **int** | [setPosition:position:](#ByteRTCAudioEffectPlayer-setposition-position) |
+| **int** | [getPosition:](#ByteRTCAudioEffectPlayer-getposition) |
+| **int** | [setVolume:volume:](#ByteRTCAudioEffectPlayer-setvolume-volume) |
+| **int** | [setVolumeAll:](#ByteRTCAudioEffectPlayer-setvolumeall) |
+| **int** | [getVolume:](#ByteRTCAudioEffectPlayer-getvolume) |
+| **int** | [getDuration:](#ByteRTCAudioEffectPlayer-getduration) |
+| **int** | [setEventHandler:](#ByteRTCAudioEffectPlayer-seteventhandler) |
+
+
+## 函数说明
+<span id="ByteRTCAudioEffectPlayer-start-filepath-config"></span>
+### start:filePath:config:
+```objectivec
+-(int)start:(int)effectId filePath:(NSString * _Nullable)filePath config:(ByteRTCAudioEffectPlayerConfig * _Nullable)config;
+```
+开始播放音效文件。<br>
+可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个音效文件，实现音效叠加。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID。用于标识音效，请保证音效 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，上一个音效会停止，下一个音效开始，并收到 [onAudioEffectPlayerStateChanged:state:error:](iOS-callback.md#ByteRTCAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged-state-error)。 |
+| filePath | **NSString*** | 音效文件路径。<br/>支持在线文件的 URL、本地文件的 URI、或本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音效文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地音效文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线音效文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
+| config | **ByteRTCAudioEffectPlayerConfig*** | 音效配置，详见 [ByteRTCAudioEffectPlayerConfig](iOS-keytype.md#bytertcaudioeffectplayerconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 如果已经通过 [preload:filePath:](#ByteRTCAudioEffectPlayer-preload-filepath) 将文件加载至内存，确保此处的 ID 与 `preload` 设置的 ID 相同。
++ 开始播放音效文件后，可以调用 [stop:](#ByteRTCAudioEffectPlayer-stop) 方法停止播放音效文件。
+
+
+<span id="ByteRTCAudioEffectPlayer-stop"></span>
+### stop:
+```objectivec
+-(int)stop:(int)effectId;
+```
+停止播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 方法开始播放音效文件后，可以调用本方法停止播放音效文件。
++ 调用本方法停止播放音效文件后，该音效文件会被自动卸载。
+
+
+<span id="ByteRTCAudioEffectPlayer-stopall"></span>
+### stopAll
+```objectivec
+-(int)stopAll;
+```
+停止播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 方法开始播放音效文件后，可以调用本方法停止播放所有音效文件。
++ 调用本方法停止播放所有音效文件后，该音效文件会被自动卸载。
+
+
+<span id="ByteRTCAudioEffectPlayer-preload-filepath"></span>
+### preload:filePath:
+```objectivec
+-(int)preload:(int)effectId filePath:(NSString * _Nullable)filePath;
+```
+预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID。用于标识音效，请保证音效 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config)，再使用相同的 ID 调用本方法 ，会收到回调 [onAudioEffectPlayerStateChanged:state:error:](iOS-callback.md#ByteRTCAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged-state-error)，通知前一个音效停止，然后加载下一个音效。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 播放 B.mp3，请先调用 [unload:](#ByteRTCAudioEffectPlayer-unload) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。 |
+| filePath | **NSString*** | 音效文件路径。支持本地文件的 URI、或本地文件的绝对路径。<br/>预加载的文件长度不得超过 20s。<br/>不同平台支持的音效文件格式和 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 一致。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 本方法只是预加载指定音效文件，只有调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 方法才开始播放指定音效文件。
++ 调用本方法预加载的指定音效文件可以通过 [unload:](#ByteRTCAudioEffectPlayer-unload) 卸载。
+
+
+<span id="ByteRTCAudioEffectPlayer-unload"></span>
+### unload:
+```objectivec
+-(int)unload:(int)effectId;
+```
+卸载指定音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+调用本方法卸载该文件后，关于当前的混音状态，如果设置了 [setEventHandler:](#ByteRTCAudioEffectPlayer-seteventhandler)，会收到回调 `onAudioEffectPlayerStateChanged`。
+
+<span id="ByteRTCAudioEffectPlayer-unloadall"></span>
+### unloadAll
+```objectivec
+-(int)unloadAll;
+```
+卸载所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+调用本方法卸载该文件后，关于当前的混音状态，如果设置了 [setEventHandler:](#ByteRTCAudioEffectPlayer-seteventhandler)，会收到回调 `onAudioEffectPlayerStateChanged`。
+
+<span id="ByteRTCAudioEffectPlayer-pause"></span>
+### pause:
+```objectivec
+-(int)pause:(int)effectId;
+```
+暂停播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 方法开始播放音效文件后，可以通过调用本方法暂停播放音效文件。
++ 调用本方法暂停播放音效文件后，可调用 [resume:](#ByteRTCAudioEffectPlayer-resume) 方法恢复播放。
+
+
+<span id="ByteRTCAudioEffectPlayer-pauseall"></span>
+### pauseAll
+```objectivec
+-(int)pauseAll;
+```
+暂停播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 方法开始播放音效文件后，可以通过调用本方法暂停播放所有音效文件。
++ 调用本方法暂停播放所有音效文件后，可调用 [resumeAll](#ByteRTCAudioEffectPlayer-resumeall) 方法恢复所有播放。
+
+
+<span id="ByteRTCAudioEffectPlayer-resume"></span>
+### resume:
+```objectivec
+-(int)resume:(int)effectId;
+```
+恢复播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+调用 [pause:](#ByteRTCAudioEffectPlayer-pause) 方法暂停播放音效文件后，可以通过调用本方法恢复播放。
+
+<span id="ByteRTCAudioEffectPlayer-resumeall"></span>
+### resumeAll
+```objectivec
+-(int)resumeAll;
+```
+恢复播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+调用 [pauseAll](#ByteRTCAudioEffectPlayer-pauseall) 方法暂停所有正在播放音效文件后，可以通过调用本方法恢复播放。
+
+<span id="ByteRTCAudioEffectPlayer-setposition-position"></span>
+### setPosition:position:
+```objectivec
+-(int)setPosition:(int)effectId position:(int)position;
+```
+设置音效文件的起始播放位置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+| position | **int** | 音效文件起始播放位置，单位为毫秒。<br/>你可以通过 [getDuration:](#ByteRTCAudioEffectPlayer-getduration) 获取音效文件总时长，position 的值应小于音效文件总时长。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
++ 仅在调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 后调用此接口。
+
+
+<span id="ByteRTCAudioEffectPlayer-getposition"></span>
+### getPosition:
+```objectivec
+-(int)getPosition:(int)effectId;
+```
+获取音效文件播放进度。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 音效文件播放进度，单位为毫秒。
++ < 0: 失败
+
+
+**注意**
+
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
++ 仅在调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 后调用此接口。
+
+
+<span id="ByteRTCAudioEffectPlayer-setvolume-volume"></span>
+### setVolume:volume:
+```objectivec
+-(int)setVolume:(int)effectId volume:(int)volume;
+```
+调节指定音效的音量大小，包括音效文件和 PCM 音频。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+仅在调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 后调用此接口。
+
+<span id="ByteRTCAudioEffectPlayer-setvolumeall"></span>
+### setVolumeAll:
+```objectivec
+-(int)setVolumeAll:(int)volume;
+```
+设置所有音效的音量大小，包括音效文件和 PCM 音效。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+该接口的优先级低于 [setVolume:volume:](#ByteRTCAudioEffectPlayer-setvolume-volume)，即通过 `setVolume` 单独设置了音量的音效 ID，不受该接口设置的影响。
+
+<span id="ByteRTCAudioEffectPlayer-getvolume"></span>
+### getVolume:
+```objectivec
+-(int)getVolume:(int)effectId;
+```
+获取当前音量。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 当前音量值。  
++ < 0: 失败
+
+
+**注意**
+仅在调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 后调用此接口。
+
+<span id="ByteRTCAudioEffectPlayer-getduration"></span>
+### getDuration:
+```objectivec
+-(int)getDuration:(int)effectId;
+```
+获取音效文件时长。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 音效文件时长，单位为毫秒。  
++ < 0: 失败
+
+
+**注意**
+仅在调用 [start:filePath:config:](#ByteRTCAudioEffectPlayer-start-filepath-config) 后调用此接口。
+
+<span id="ByteRTCAudioEffectPlayer-seteventhandler"></span>
+### setEventHandler:
+```objectivec
+-(int)setEventHandler:(_Nullable id<ByteRTCAudioEffectPlayerEventHandler>)handler;
+```
+设置回调句柄。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| handler | **id<ByteRTCAudioEffectPlayerEventHandler>** | 参看 [ByteRTCAudioEffectPlayerEventHandler](iOS-callback.md#bytertcaudioeffectplayereventhandler)。 |
+
+**返回值**
+
++ 0: 成功。  
++ < 0: 失败。
+
+
 # ByteRTCAudioMixingManager
 ```objectivec
 @interface ByteRTCAudioMixingManager :NSObject
@@ -4942,32 +6026,32 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 
 | 返回 | 名称 |
 | --- | --- |
-| **void** | [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) |
-| **void** | [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) |
-| **void** | [stopAllAudioMixing](#ByteRTCAudioMixingManager-stopallaudiomixing) |
-| **void** | [pauseAudioMixing:](#ByteRTCAudioMixingManager-pauseaudiomixing) |
-| **void** | [pauseAllAudioMixing](#ByteRTCAudioMixingManager-pauseallaudiomixing) |
-| **void** | [resumeAudioMixing:](#ByteRTCAudioMixingManager-resumeaudiomixing) |
-| **void** | [resumeAllAudioMixing](#ByteRTCAudioMixingManager-resumeallaudiomixing) |
-| **void** | [preloadAudioMixing:filePath:](#ByteRTCAudioMixingManager-preloadaudiomixing-filepath) |
-| **void** | [unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) |
-| **void** | [setAllAudioMixingVolume:type:](#ByteRTCAudioMixingManager-setallaudiomixingvolume-type) |
-| **void** | [setAudioMixingVolume:volume:type:](#ByteRTCAudioMixingManager-setaudiomixingvolume-volume-type) |
-| **int** | [getAudioMixingDuration:](#ByteRTCAudioMixingManager-getaudiomixingduration) |
-| **int** | [getAudioMixingCurrentPosition:](#ByteRTCAudioMixingManager-getaudiomixingcurrentposition) |
-| **void** | [setAudioMixingPosition:position:](#ByteRTCAudioMixingManager-setaudiomixingposition-position) |
-| **void** | [setAudioMixingDualMonoMode:mode:](#ByteRTCAudioMixingManager-setaudiomixingdualmonomode-mode) |
-| **void** | [setAudioMixingPitch:pitch:](#ByteRTCAudioMixingManager-setaudiomixingpitch-pitch) |
-| **int** | [setAudioMixingPlaybackSpeed:speed:](#ByteRTCAudioMixingManager-setaudiomixingplaybackspeed-speed) |
-| **void** | [setAudioMixingLoudness:loudness:](#ByteRTCAudioMixingManager-setaudiomixingloudness-loudness) |
-| **void** | [setAudioMixingProgressInterval:interval:](#ByteRTCAudioMixingManager-setaudiomixingprogressinterval-interval) |
-| **void** | [enableAudioMixingFrame:type:](#ByteRTCAudioMixingManager-enableaudiomixingframe-type) |
-| **void** | [disableAudioMixingFrame:](#ByteRTCAudioMixingManager-disableaudiomixingframe) |
-| **int** | [pushAudioMixingFrame:audioFrame:](#ByteRTCAudioMixingManager-pushaudiomixingframe-audioframe) |
-| **int** | [getAudioTrackCount:](#ByteRTCAudioMixingManager-getaudiotrackcount) |
-| **void** | [selectAudioTrack:audioTrackIndex:](#ByteRTCAudioMixingManager-selectaudiotrack-audiotrackindex) |
-| **void** | [registerAudioFileFrameObserver:](#ByteRTCAudioMixingManager-registeraudiofileframeobserver) |
-| **int** | [getAudioMixingPlaybackDuration:](#ByteRTCAudioMixingManager-getaudiomixingplaybackduration) |
+| **void** | [[deprecated] startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) |
+| **void** | [[deprecated] stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) |
+| **void** | [[deprecated] __deprecated_msg](#ByteRTCAudioMixingManager-__deprecated_msg) |
+| **void** | [[deprecated] pauseAudioMixing:](#ByteRTCAudioMixingManager-pauseaudiomixing) |
+| **void** | [[deprecated] __deprecated_msg](#ByteRTCAudioMixingManager-__deprecated_msg) |
+| **void** | [[deprecated] resumeAudioMixing:](#ByteRTCAudioMixingManager-resumeaudiomixing) |
+| **void** | [[deprecated] __deprecated_msg](#ByteRTCAudioMixingManager-__deprecated_msg) |
+| **void** | [[deprecated] preloadAudioMixing:filePath:](#ByteRTCAudioMixingManager-preloadaudiomixing-filepath) |
+| **void** | [[deprecated] unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) |
+| **void** | [[deprecated] setAllAudioMixingVolume:type:](#ByteRTCAudioMixingManager-setallaudiomixingvolume-type) |
+| **void** | [[deprecated] setAudioMixingVolume:volume:type:](#ByteRTCAudioMixingManager-setaudiomixingvolume-volume-type) |
+| **int** | [[deprecated] getAudioMixingDuration:](#ByteRTCAudioMixingManager-getaudiomixingduration) |
+| **int** | [[deprecated] getAudioMixingCurrentPosition:](#ByteRTCAudioMixingManager-getaudiomixingcurrentposition) |
+| **void** | [[deprecated] setAudioMixingPosition:position:](#ByteRTCAudioMixingManager-setaudiomixingposition-position) |
+| **void** | [[deprecated] setAudioMixingDualMonoMode:mode:](#ByteRTCAudioMixingManager-setaudiomixingdualmonomode-mode) |
+| **void** | [[deprecated] setAudioMixingPitch:pitch:](#ByteRTCAudioMixingManager-setaudiomixingpitch-pitch) |
+| **int** | [[deprecated] setAudioMixingPlaybackSpeed:speed:](#ByteRTCAudioMixingManager-setaudiomixingplaybackspeed-speed) |
+| **void** | [[deprecated] setAudioMixingLoudness:loudness:](#ByteRTCAudioMixingManager-setaudiomixingloudness-loudness) |
+| **void** | [[deprecated] setAudioMixingProgressInterval:interval:](#ByteRTCAudioMixingManager-setaudiomixingprogressinterval-interval) |
+| **void** | [[deprecated] enableAudioMixingFrame:type:](#ByteRTCAudioMixingManager-enableaudiomixingframe-type) |
+| **void** | [[deprecated] disableAudioMixingFrame:](#ByteRTCAudioMixingManager-disableaudiomixingframe) |
+| **int** | [[deprecated] pushAudioMixingFrame:audioFrame:](#ByteRTCAudioMixingManager-pushaudiomixingframe-audioframe) |
+| **int** | [[deprecated] getAudioTrackCount:](#ByteRTCAudioMixingManager-getaudiotrackcount) |
+| **void** | [[deprecated] selectAudioTrack:audioTrackIndex:](#ByteRTCAudioMixingManager-selectaudiotrack-audiotrackindex) |
+| **void** | [[deprecated] registerAudioFileFrameObserver:](#ByteRTCAudioMixingManager-registeraudiofileframeobserver) |
+| **int** | [[deprecated] getAudioMixingPlaybackDuration:](#ByteRTCAudioMixingManager-getaudiomixingplaybackduration) |
 
 
 ## 函数说明
@@ -4976,6 +6060,8 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 ```objectivec
 -(void)startAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath config:(ByteRTCAudioMixingConfig * _Nullable)config;
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 开始播放音频文件。
 可以通过传入不同的 mixId 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
 
@@ -4983,7 +6069,7 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。 |
+| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调通知前一次混音已停止。 |
 | filePath | **NSString*** | 用于混音文件路径。<br/>支持在线文件的 URL 和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/><tr><td>Linux</td><td></td><td></td><td></td><td></td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/></table><br/>不同平台支持的在线音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
 | config | **ByteRTCAudioMixingConfig*** | 混音配置  <br/>可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 [ByteRTCAudioMixingConfig](iOS-keytype.md#bytertcaudiomixingconfig) |
 
@@ -4991,7 +6077,7 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 **注意**
 
 + 如果已经通过 [preloadAudioMixing:filePath:](#ByteRTCAudioMixingManager-preloadaudiomixing-filepath) 将文件加载至内存，确保此处的 ID 与预加载时设置的 ID 相同。  
-+ 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error)。  
 + 开始播放音频文件后，可以调用 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 方法停止播放音频文件。  
 + 本方法的混音数据来源于外部文件，而 [enableAudioMixingFrame:type:](#ByteRTCAudioMixingManager-enableaudiomixingframe-type) 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
 
@@ -4999,8 +6085,11 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-stopaudiomixing"></span>
 ### stopAudioMixing:
 ```objectivec
--(void)stopAudioMixing:(int)mixId;
+
+- (void)stopAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 停止播放音频文件及混音。
 
 **传入参数**
@@ -5013,30 +6102,34 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 **注意**
 
 + 调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 方法开始播放音频文件及混音后，可以调用本方法停止播放音频文件及混音。  
-+ 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 `onAudioMixingStateChanged`。  
++ 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error)。  
 + 调用本方法停止播放音频文件后，该音频文件会被自动卸载。
 
 
-<span id="ByteRTCAudioMixingManager-stopallaudiomixing"></span>
-### stopAllAudioMixing
+<span id="ByteRTCAudioMixingManager-__deprecated_msg"></span>
+### __deprecated_msg
 ```objectivec
--(void)stopAllAudioMixing;
+-(void)stopAllAudioMixing __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");;
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 停止播放所有音频文件及混音。
 
 
 **注意**
 
 + 调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 方法开始播放音频文件及混音后，可以调用本方法停止播放所有音频文件及混音。  
-+ 调用本方法停止播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放和混音。  
++ 调用本方法停止播放所有音频文件及混音后，会收到 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调，通知已停止播放和混音。  
 + 调用本方法停止播放所有音频文件及混音后，该音频文件会被自动卸载。
 
 
 <span id="ByteRTCAudioMixingManager-pauseaudiomixing"></span>
 ### pauseAudioMixing:
 ```objectivec
--(void)pauseAudioMixing:(int)mixId;
+-(void)pauseAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 暂停播放音频文件及混音。
 
 **传入参数**
@@ -5050,29 +6143,33 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 
 + 调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 方法开始播放音频文件及混音后，可以通过调用该方法暂停播放音频文件。  
 + 调用本方法暂停播放音频文件后，可调用 [resumeAudioMixing:](#ByteRTCAudioMixingManager-resumeaudiomixing) 方法恢复播放及混音。  
-+ 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 `onAudioMixingStateChanged`。
++ 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error)。
 
 
-<span id="ByteRTCAudioMixingManager-pauseallaudiomixing"></span>
-### pauseAllAudioMixing
+<span id="ByteRTCAudioMixingManager-__deprecated_msg"></span>
+### __deprecated_msg
 ```objectivec
--(void)pauseAllAudioMixing;
+-(void)pauseAllAudioMixing __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 暂停播放所有音频文件及混音。
 
 
 **注意**
 
 + 调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config)方法开始播放音频文件及混音后，可以通过调用本方法暂停播放所有音频文件及混音。  
-+ 调用本方法暂停播放所有音频文件及混音后，可调用 [resumeAllAudioMixing](#ByteRTCAudioMixingManager-resumeallaudiomixing) 方法恢复所有播放及混音。  
-+ 调用本方法暂停播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放和混音。
++ 调用本方法暂停播放所有音频文件及混音后，可调用 [resumeAllAudioMixing](#resumeallaudiomixing) 方法恢复所有播放及混音。  
++ 调用本方法暂停播放所有音频文件及混音后，会收到 [`rtcEngine:onAudioMixingStateChanged:state:error:`](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调，通知已暂停播放和混音。
 
 
 <span id="ByteRTCAudioMixingManager-resumeaudiomixing"></span>
 ### resumeAudioMixing:
 ```objectivec
--(void)resumeAudioMixing:(int)mixId;
+-(void)resumeAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 恢复播放音频文件及混音。
 
 **传入参数**
@@ -5085,50 +6182,57 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 **注意**
 
 + 调用 [pauseAudioMixing:](#ByteRTCAudioMixingManager-pauseaudiomixing) 方法暂停播放音频文件后，可以通过调用本方法恢复播放及混音。  
-+ 调用本方法恢复播放音频文件后，SDK 会向本地回调通知音频文件正在播放中，见 `onAudioMixingStateChanged`。
++ 调用本方法恢复播放音频文件后，SDK 会向本地回调通知音频文件正在播放中，见 [`rtcEngine:onAudioMixingStateChanged:state:error:`](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 。
 
 
-<span id="ByteRTCAudioMixingManager-resumeallaudiomixing"></span>
-### resumeAllAudioMixing
+<span id="ByteRTCAudioMixingManager-__deprecated_msg"></span>
+### __deprecated_msg
 ```objectivec
--(void)resumeAllAudioMixing;
+-(void)resumeAllAudioMixing __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 恢复播放所有音频文件及混音。
 
 
 **注意**
 
-+ 调用 [pauseAllAudioMixing](#ByteRTCAudioMixingManager-pauseallaudiomixing) 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  
-+ 调用本方法恢复播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放和混音。
++ 调用 [pauseAllAudioMixing](#pauseallaudiomixing) 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  
++ 调用本方法恢复播放所有音频文件及混音后，会收到 [`rtcEngine:onAudioMixingStateChanged:state:error:`](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error)  回调，通知已恢复播放和混音。
 
 
 <span id="ByteRTCAudioMixingManager-preloadaudiomixing-filepath"></span>
 ### preloadAudioMixing:filePath:
 ```objectivec
--(void)preloadAudioMixing:(int)mixId filePath:(NSString * _Nullable)filePath;
+
+- (void)preloadAudioMixing:(int)mixId filePath:(NSString *_Nullable)filePath __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config)，再使用相同的 ID 调用本方法 ，会先回调 `onAudioMixingStateChanged` 通知上一个混音停止，然后加载后一个混音。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 播放 B.mp3，请先调用 [unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载 A.mp3。 |
+| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config)，再使用相同的 ID 调用本方法 ，会先回调 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 通知上一个混音停止，然后加载后一个混音。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 播放 B.mp3，请先调用 [unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载 A.mp3。 |
 | filePath | **NSString*** | 混音文件路径。仅支持本地文件的绝对路径。预加载的文件长度不得超过 20s。<br/>不同平台支持的音频文件格式：<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
 
 
 **注意**
 
 + 本方法只是预加载指定音频文件，只有调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 方法才开始播放指定音频文件。 
-+ 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 `[rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error)。  
 + 调用本方法预加载的指定音频文件可以通过 [unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载。
 
 
 <span id="ByteRTCAudioMixingManager-unloadaudiomixing"></span>
 ### unloadAudioMixing:
 ```objectivec
--(void)unloadAudioMixing:(int)mixId;
+-(void)unloadAudioMixing:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 卸载指定音乐文件。
 
 **传入参数**
@@ -5139,13 +6243,16 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 
 
 **注意**
-不论音频文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 `onAudioMixingStateChanged`。
+不论音频文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error)。
 
 <span id="ByteRTCAudioMixingManager-setallaudiomixingvolume-type"></span>
 ### setAllAudioMixingVolume:type:
 ```objectivec
--(void)setAllAudioMixingVolume:(int)volume type:(ByteRTCAudioMixingType)type;
+
+- (void)setAllAudioMixingVolume:(int)volume type:(ByteRTCAudioMixingType)type __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
 
 **传入参数**
@@ -5162,8 +6269,11 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-setaudiomixingvolume-volume-type"></span>
 ### setAudioMixingVolume:volume:type:
 ```objectivec
--(void)setAudioMixingVolume:(int)mixId volume:(int)volume type:(ByteRTCAudioMixingType)type;
+
+- (void)setAudioMixingVolume:(int)mixId volume:(int)volume type:(ByteRTCAudioMixingType)type;
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
 
 **传入参数**
@@ -5181,8 +6291,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-getaudiomixingduration"></span>
 ### getAudioMixingDuration:
 ```objectivec
--(int)getAudioMixingDuration:(int)mixId;
+-(int)getAudioMixingDuration:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 获取音频文件时长。
 
 **传入参数**
@@ -5203,8 +6315,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-getaudiomixingcurrentposition"></span>
 ### getAudioMixingCurrentPosition:
 ```objectivec
--(int)getAudioMixingCurrentPosition:(int)mixId;
+-(int)getAudioMixingCurrentPosition:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 获取音频文件播放进度。
 
 **传入参数**
@@ -5225,8 +6339,11 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-setaudiomixingposition-position"></span>
 ### setAudioMixingPosition:position:
 ```objectivec
--(void)setAudioMixingPosition:(int)mixId position:(int)position;
+
+- (void)setAudioMixingPosition:(int)mixId position:(int)position __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 设置音频文件的起始播放位置
 
 **传入参数**
@@ -5243,8 +6360,11 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-setaudiomixingdualmonomode-mode"></span>
 ### setAudioMixingDualMonoMode:mode:
 ```objectivec
--(void) setAudioMixingDualMonoMode:(int)mixId mode:(ByteRTCAudioMixingDualMonoMode)mode;
+
+- (void)setAudioMixingDualMonoMode:(int)mixId mode:(ByteRTCAudioMixingDualMonoMode)mode;
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 设置当前音频文件的声道模式
 
 **传入参数**
@@ -5264,8 +6384,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-setaudiomixingpitch-pitch"></span>
 ### setAudioMixingPitch:pitch:
 ```objectivec
--(void)setAudioMixingPitch:(int)mixId pitch:(int)pitch;
+-(void)setAudioMixingPitch:(int)mixId pitch:(int)pitch __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
 使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
 
@@ -5274,18 +6396,20 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mixId | **int** | 混音 ID |
-| pitch | **int** | 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 `onAudioMixingStateChanged` 回调，提示 [ByteRTCAudioMixingState](iOS-keytype.md#bytertcaudiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[ByteRTCAudioMixingError](iOS-keytype.md#bytertcaudiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。 |
+| pitch | **int** | 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调，提示 [ByteRTCAudioMixingState](iOS-keytype.md#bytertcaudiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[ByteRTCAudioMixingError](iOS-keytype.md#bytertcaudiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。 |
 
 
 **注意**
-本方法需要在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始播放音频文件后、调用 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错
+本方法需要在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始播放音频文件后、调用 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调报错
 
 <span id="ByteRTCAudioMixingManager-setaudiomixingplaybackspeed-speed"></span>
 ### setAudioMixingPlaybackSpeed:speed:
 ```objectivec
 
-- (int)setAudioMixingPlaybackSpeed:(int)mixId speed:(int)speed;
+- (int)setAudioMixingPlaybackSpeed:(int)mixId speed:(int)speed __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 设置混音时音频文件的播放速度
 
 **传入参数**
@@ -5293,21 +6417,23 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mixId | **int** | 混音 ID |
-| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 [ByteRTCAudioMixingState](iOS-keytype.md#bytertcaudiomixingstate) 状态为 `ByteRTCAudioMixingStateFailed` 混音播放失败，[ByteRTCAudioMixingError](iOS-keytype.md#bytertcaudiomixingerror) 错误码为 `ByteRTCAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。 |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调，提示 [ByteRTCAudioMixingState](iOS-keytype.md#bytertcaudiomixingstate) 状态为 `ByteRTCAudioMixingStateFailed` 混音播放失败，[ByteRTCAudioMixingError](iOS-keytype.md#bytertcaudiomixingerror) 错误码为 `ByteRTCAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。 |
 
 
 **注意**
 
 + 暂不支持对 PCM 音频数据进行变速调整。  
-+ 你需要在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 [ByteRTCAudioMixingState](iOS-keytype.md#bytertcaudiomixingstate) 状态为 `ByteRTCAudioMixingStatePlaying`，[ByteRTCAudioMixingError](iOS-keytype.md#bytertcaudiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_OK` 之后调用该方法。  
-+ 在 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `ByteRTCAudioMixingStateFailed` 错误码为 `ByteRTCAudioMixingErrorIdNotFound` 的 `onAudioMixingStateChanged` 回调。
++ 你需要在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始混音，并且收到[rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调提示 [ByteRTCAudioMixingState](iOS-keytype.md#bytertcaudiomixingstate) 状态为 `ByteRTCAudioMixingStatePlaying`，[ByteRTCAudioMixingError](iOS-keytype.md#bytertcaudiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_OK` 之后调用该方法。  
++ 在 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing:](#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `ByteRTCAudioMixingStateFailed` 错误码为 `ByteRTCAudioMixingErrorIdNotFound` 的 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调。
 
 
 <span id="ByteRTCAudioMixingManager-setaudiomixingloudness-loudness"></span>
 ### setAudioMixingLoudness:loudness:
 ```objectivec
--(void)setAudioMixingLoudness:(int)mixId loudness:(float)loudness;
+-(void)setAudioMixingLoudness:(int)mixId loudness:(float)loudness __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 如果你需要使用 `enableVocalInstrumentBalance:` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
 
 **传入参数**
@@ -5324,8 +6450,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-setaudiomixingprogressinterval-interval"></span>
 ### setAudioMixingProgressInterval:interval:
 ```objectivec
--(void) setAudioMixingProgressInterval:(int)mixId interval:(int64_t) interval;
+-(void) setAudioMixingProgressInterval:(int)mixId interval:(int64_t) interval __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 设置混音时音频文件播放进度回调的间隔
 
 **传入参数**
@@ -5337,14 +6465,16 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 
 
 **注意**
-本方法需要在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始播放音频文件后、调用 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错。  若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 在 [ByteRTCAudioMixingConfig](iOS-keytype.md#bytertcaudiomixingconfig) 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
+本方法需要在调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 开始播放音频文件后、调用 [stopAudioMixing:](#ByteRTCAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 回调报错。  若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 [startAudioMixing:filePath:config:](#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 在 [ByteRTCAudioMixingConfig](iOS-keytype.md#bytertcaudiomixingconfig) 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
 
 
 <span id="ByteRTCAudioMixingManager-enableaudiomixingframe-type"></span>
 ### enableAudioMixingFrame:type:
 ```objectivec
--(void)enableAudioMixingFrame:(int)mixId type:(ByteRTCAudioMixingType)type;
+-(void)enableAudioMixingFrame:(int)mixId type:(ByteRTCAudioMixingType)type __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 启动 PCM 音频数据混音。<br>
 要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
 
@@ -5352,7 +6482,7 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID。用于标识混音，保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 `onAudioMixingStateChanged` 通知前一次混音已停止。 |
+| mixId | **int** | 混音 ID。用于标识混音，保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 [rtcEngine:onAudioMixingStateChanged:state:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiomixingstatechanged-state-error) 通知前一次混音已停止。 |
 | type | **ByteRTCAudioMixingType** | 混音类型。是否本地播放、以及是否发送到远端，详见 [ByteRTCAudioMixingType](iOS-keytype.md#bytertcaudiomixingtype)。 |
 
 
@@ -5365,8 +6495,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-disableaudiomixingframe"></span>
 ### disableAudioMixingFrame:
 ```objectivec
--(void)disableAudioMixingFrame:(int)mixId;
+-(void)disableAudioMixingFrame:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 关闭 PCM 混音
 
 **传入参数**
@@ -5380,8 +6512,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 ### pushAudioMixingFrame:audioFrame:
 ```objectivec
 
-- (int)pushAudioMixingFrame:(int)mixId audioFrame:(ByteRTCAudioFrame* _Nullable)audioFrame;
+- (int)pushAudioMixingFrame:(int)mixId audioFrame:(ByteRTCAudioFrame *_Nullable)audioFrame __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 推送 PCM 音频帧数据用于混音
 
 **传入参数**
@@ -5406,8 +6540,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-getaudiotrackcount"></span>
 ### getAudioTrackCount:
 ```objectivec
--(int)getAudioTrackCount:(int)mixId;
+-(int)getAudioTrackCount:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 获取当前音频文件的音轨索引。
 
 **传入参数**
@@ -5432,8 +6568,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-selectaudiotrack-audiotrackindex"></span>
 ### selectAudioTrack:audioTrackIndex:
 ```objectivec
--(void)selectAudioTrack:(int)mixId audioTrackIndex:(int)audioTrackIndex;
+-(void)selectAudioTrack:(int)mixId audioTrackIndex:(int)audioTrackIndex __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 指定当前音频文件的播放音轨。
 
 **传入参数**
@@ -5454,8 +6592,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 ### registerAudioFileFrameObserver:
 ```objectivec
 
-- (void)registerAudioFileFrameObserver:(_Nullable id<ByteRTCAudioFileFrameObserver>) observer;
+- (void)registerAudioFileFrameObserver:(_Nullable id<ByteRTCAudioFileFrameObserver>) observer __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 注册本地音频文件混音的音频帧观察者。
 当本地音频文件混音时，会收到相关回调。
 
@@ -5469,8 +6609,10 @@ KTV 管理接口，参看 [ByteRTCKTVManager](#bytertcktvmanager)。
 <span id="ByteRTCAudioMixingManager-getaudiomixingplaybackduration"></span>
 ### getAudioMixingPlaybackDuration:
 ```objectivec
--(int)getAudioMixingPlaybackDuration:(int)mixId;
+-(int)getAudioMixingPlaybackDuration:(int)mixId __deprecated_msg("deprecated since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead");
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 获取混音音频文件的实际播放时长（单位：毫秒）。
 
 **传入参数**
@@ -5536,7 +6678,7 @@ KTV 管理接口。
 ### getMusicList:pageSize:filterType:
 ```objectivec
 
-- (void)getMusicList:(int)pageNumber pageSize:(int)pageSize filterType:(ByteRTCKTVMusicFilterType)filterType;
+- (void)getMusicList:(int)pageNumber pageSize:(int)pageSize filterType:(ByteRTCMusicFilterType)filterType;
 ```
 获取歌曲列表。
 
@@ -5546,7 +6688,7 @@ KTV 管理接口。
 | --- | --- | --- |
 | pageNumber | **int** | 页码，默认从 1 开始。 |
 | pageSize | **int** | 每页显示歌曲的最大数量，取值范围 [1,99]。 |
-| filterType | **ByteRTCKTVMusicFilterType** | 歌曲过滤方式，参看 [ByteRTCKTVMusicFilterType](iOS-keytype.md#bytertcktvmusicfiltertype)。多个过滤方式可以按位或组合。 |
+| filterType | **ByteRTCMusicFilterType** | 歌曲过滤方式，参看 [ByteRTCMusicFilterType](iOS-keytype.md#bytertcmusicfiltertype)。多个过滤方式可以按位或组合。 |
 
 
 **注意**
@@ -5556,7 +6698,7 @@ KTV 管理接口。
 ### searchMusic:pageNumber:pageSize:filterType:
 ```objectivec
 
-- (void)searchMusic:(NSString * _Nonnull)keyWord pageNumber:(int)pageNumber pageSize:(int)pageSize filterType:(ByteRTCKTVMusicFilterType)filterType;
+- (void)searchMusic:(NSString * _Nonnull)keyWord pageNumber:(int)pageNumber pageSize:(int)pageSize filterType:(ByteRTCMusicFilterType)filterType;
 ```
 根据关键词搜索歌曲。
 
@@ -5567,7 +6709,7 @@ KTV 管理接口。
 | keyWord | **NSString*** | 关键词，字符串长度最大为 20 个字符。 |
 | pageNumber | **int** | 页码，默认从 1 开始。 |
 | pageSize | **int** | 每页显示歌曲的最大数量，取值范围 [1,99]。 |
-| filterType | **ByteRTCKTVMusicFilterType** | 歌曲过滤方式，参看 [ByteRTCKTVMusicFilterType](iOS-keytype.md#bytertcktvmusicfiltertype)。多个过滤方式可以按位或组合。 |
+| filterType | **ByteRTCMusicFilterType** | 歌曲过滤方式，参看 [ByteRTCMusicFilterType](iOS-keytype.md#bytertcmusicfiltertype)。多个过滤方式可以按位或组合。 |
 
 
 **注意**
@@ -5577,7 +6719,7 @@ KTV 管理接口。
 ### getHotMusic:filterType:
 ```objectivec
 
-- (void)getHotMusic:(ByteRTCKTVMusicHotType)hotType filterType:(ByteRTCKTVMusicFilterType)filterType;
+- (void)getHotMusic:(ByteRTCMusicHotType)hotType filterType:(ByteRTCMusicFilterType)filterType;
 ```
 根据热榜获取每个榜单的歌曲列表。
 
@@ -5585,8 +6727,8 @@ KTV 管理接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| hotType | **ByteRTCKTVMusicHotType** | 热榜类别，参看 [ByteRTCKTVMusicHotType](iOS-keytype.md#bytertcktvmusichottype)。多个热榜类别可以按位或组合。 |
-| filterType | **ByteRTCKTVMusicFilterType** | 歌曲过滤方式，参看 [ByteRTCKTVMusicFilterType](iOS-keytype.md#bytertcktvmusicfiltertype)。多个过滤方式可以按位或组合。 |
+| hotType | **ByteRTCMusicHotType** | 热榜类别，参看 [ByteRTCMusicHotType](iOS-keytype.md#bytertcmusichottype)。多个热榜类别可以按位或组合。 |
+| filterType | **ByteRTCMusicFilterType** | 歌曲过滤方式，参看 [ByteRTCMusicFilterType](iOS-keytype.md#bytertcmusicfiltertype)。多个过滤方式可以按位或组合。 |
 
 
 **注意**
@@ -5639,7 +6781,7 @@ KTV 管理接口。
 ### downloadLyric:lyricType:
 ```objectivec
 
-- (int)downloadLyric:(NSString * _Nonnull)musicId lyricType:(ByteRTCKTVDownloadLyricType)lyricType;
+- (int)downloadLyric:(NSString * _Nonnull)musicId lyricType:(ByteRTCDownloadLyricType)lyricType;
 ```
 下载歌词。
 
@@ -5648,7 +6790,7 @@ KTV 管理接口。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | musicId | **NSString*** | 音乐 ID。 |
-| lyricType | **ByteRTCKTVDownloadLyricType** | 歌词文件类型，参看 [ByteRTCKTVDownloadLyricType](iOS-keytype.md#bytertcktvdownloadlyrictype)。 |
+| lyricType | **ByteRTCDownloadLyricType** | 歌词文件类型，参看 [ByteRTCDownloadLyricType](iOS-keytype.md#bytertcdownloadlyrictype)。 |
 
 **返回值**
 下载任务 ID。
@@ -5777,7 +6919,7 @@ KTV 播放器接口。
 ### playMusic:audioTrackType:audioPlayType:
 ```objectivec
 
-- (void)playMusic:(NSString * _Nonnull)musicId audioTrackType:(ByteRTCKTVAudioTrackType)trackType audioPlayType:(ByteRTCKTVAudioPlayType)playType;
+- (void)playMusic:(NSString * _Nonnull)musicId audioTrackType:(ByteRTCAudioTrackType)trackType audioPlayType:(ByteRTCAudioPlayType)playType;
 ```
 播放歌曲。
 
@@ -5786,8 +6928,8 @@ KTV 播放器接口。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | musicId | **NSString*** | 音乐 ID。<br/>若同一 musicId 的歌曲正在播放，再次调用接口会从开始位置重新播放。若 musicId 对应的音频文件不存在会触发报错。 |
-| trackType | **ByteRTCKTVAudioTrackType** | 原唱伴唱类型，参看 [ByteRTCKTVAudioTrackType](iOS-keytype.md#bytertcktvaudiotracktype)。 |
-| playType | **ByteRTCKTVAudioPlayType** | 音乐播放类型。参看 [ByteRTCKTVAudioPlayType](iOS-keytype.md#bytertcktvaudioplaytype)。 |
+| trackType | **ByteRTCAudioTrackType** | 原唱伴唱类型，参看 [ByteRTCAudioTrackType](iOS-keytype.md#bytertcaudiotracktype)。 |
+| playType | **ByteRTCAudioPlayType** | 音乐播放类型。参看 [ByteRTCAudioPlayType](iOS-keytype.md#bytertcaudioplaytype)。 |
 
 
 **注意**
@@ -5952,6 +7094,548 @@ KTV 播放器接口。
 + 若设置的 pitch 大于 12，则按最大值 12 进行调整；若设置的 pitch 小于 –12，，则按最小值 –12 进行调整。
 + 若音乐 ID 错误，会触发 [ktvPlayer:onPlayStateChanged:state:error:](iOS-callback.md#ByteRTCKTVPlayerDelegate-ktvplayer-onplaystatechanged-state-error) 回调，errorCode 为 –3023，playState 为 4。
 + 若未进房，会触发 [ktvPlayer:onPlayStateChanged:state:error:](iOS-callback.md#ByteRTCKTVPlayerDelegate-ktvplayer-onplaystatechanged-state-error) 回调，errorCode 为 –3022，playState 为 4。
+
+
+# ByteRTCMediaPlayer
+```objectivec
+@interface ByteRTCMediaPlayer :NSObject
+```
+
+音乐播放器<br>
+调用 [setEventHandler:](#ByteRTCMediaPlayer-seteventhandler) 设置回调句柄以获取相关回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **int** | [open:config:](#ByteRTCMediaPlayer-open-config) |
+| **int** | [start](#ByteRTCMediaPlayer-start) |
+| **int** | [openWithCustomSource:config:](#ByteRTCMediaPlayer-openwithcustomsource-config) |
+| **int** | [stop](#ByteRTCMediaPlayer-stop) |
+| **int** | [pause](#ByteRTCMediaPlayer-pause) |
+| **int** | [resume](#ByteRTCMediaPlayer-resume) |
+| **int** | [setVolume:type:](#ByteRTCMediaPlayer-setvolume-type) |
+| **int** | [getVolume:](#ByteRTCMediaPlayer-getvolume) |
+| **int** | [getTotalDuration](#ByteRTCMediaPlayer-gettotalduration) |
+| **int** | [getPlaybackDuration](#ByteRTCMediaPlayer-getplaybackduration) |
+| **int** | [getPosition](#ByteRTCMediaPlayer-getposition) |
+| **int** | [setAudioPitch:](#ByteRTCMediaPlayer-setaudiopitch) |
+| **int** | [setPosition:](#ByteRTCMediaPlayer-setposition) |
+| **int** | [setAudioDualMonoMode:](#ByteRTCMediaPlayer-setaudiodualmonomode) |
+| **int** | [getAudioTrackCount](#ByteRTCMediaPlayer-getaudiotrackcount) |
+| **int** | [selectAudioTrack:](#ByteRTCMediaPlayer-selectaudiotrack) |
+| **int** | [setPlaybackSpeed:](#ByteRTCMediaPlayer-setplaybackspeed) |
+| **int** | [setProgressInterval:](#ByteRTCMediaPlayer-setprogressinterval) |
+| **int** | [setLoudness:](#ByteRTCMediaPlayer-setloudness) |
+| **int** | [registerAudioFrameObserver:](#ByteRTCMediaPlayer-registeraudioframeobserver) |
+| **int** | [pushExternalAudioFrame:](#ByteRTCMediaPlayer-pushexternalaudioframe) |
+| **int** | [setEventHandler:](#ByteRTCMediaPlayer-seteventhandler) |
+
+
+## 函数说明
+<span id="ByteRTCMediaPlayer-open-config"></span>
+### open:config:
+```objectivec
+
+- (int)open:(NSString *_Nullable)filePath config:(ByteRTCMediaPlayerConfig *_Nullable)config;
+```
+打开音乐文件。
+一个播放器实例仅能够同时打开一个音乐文件。如果需要同时打开多个音乐文件，请创建多个音乐播放器实例。
+要播放 PCM 格式的音频数据，参看 [openWithCustomSource:config:](#ByteRTCMediaPlayer-openwithcustomsource-config)。`openWithCustomSource` 和此 API 互斥。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| filePath | **NSString*** | 音乐文件路径。<br/>支持在线文件的 URL、本地文件的 URI、或本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
+| config | **ByteRTCMediaPlayerConfig*** | 详见 [ByteRTCMediaPlayerConfig](iOS-keytype.md#bytertcmediaplayerconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+<span id="ByteRTCMediaPlayer-start"></span>
+### start
+```objectivec
+
+- (int)start;
+```
+播放音乐。你仅需要在调用 [open:config:](#ByteRTCMediaPlayer-open-config)，且未开启自动播放时，调用此方法。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 要播放 PCM 格式的音频数据，参看 [openWithCustomSource:config:](#ByteRTCMediaPlayer-openwithcustomsource-config)。`openWithCustomSource` 和此 API 互斥。
++ 调用本方法播放音频文件后，可调用 [stop](#ByteRTCMediaPlayer-stop) 方法暂停播放。
+
+
+<span id="ByteRTCMediaPlayer-openwithcustomsource-config"></span>
+### openWithCustomSource:config:
+```objectivec
+
+- (int)openWithCustomSource:(ByteRTCMediaPlayerCustomSource *_Nullable)source config:(ByteRTCMediaPlayerConfig *_Nullable)config;
+```
+启动音频裸数据混音。
+要播放音乐文件，参看 [open:config:](#ByteRTCMediaPlayer-open-config)。`open` 与此 API 互斥。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| source | **ByteRTCMediaPlayerCustomSource*** | 数据源，详见 [ByteRTCMediaPlayerCustomSource](iOS-keytype.md#bytertcmediaplayercustomsource) |
+| config | **ByteRTCMediaPlayerConfig*** | 详见 [ByteRTCMediaPlayerConfig](iOS-keytype.md#bytertcmediaplayerconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用本方法启动后，再调用 [pushExternalAudioFrame:](#ByteRTCMediaPlayer-pushexternalaudioframe) 推送音频数据，才会开始混音。
++ 如要结束 PCM 音频数据混音，调用 [stop](#ByteRTCMediaPlayer-stop)。
+
+
+<span id="ByteRTCMediaPlayer-stop"></span>
+### stop
+```objectivec
+
+- (int)stop;
+```
+调用 [open:config:](#ByteRTCMediaPlayer-open-config), [start](#ByteRTCMediaPlayer-start), 或 [openWithCustomSource:config:](#ByteRTCMediaPlayer-openwithcustomsource-config) 开始播放后，可以调用本方法停止。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+<span id="ByteRTCMediaPlayer-pause"></span>
+### pause
+```objectivec
+
+- (int)pause;
+```
+调用 [open:config:](#ByteRTCMediaPlayer-open-config)，或 [start](#ByteRTCMediaPlayer-start) 开始播放音频文件后，调用本方法暂停播放。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用本方法暂停播放后，可调用 [resume](#ByteRTCMediaPlayer-resume) 恢复播放。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-resume"></span>
+### resume
+```objectivec
+
+- (int)resume;
+```
+调用 [pause](#ByteRTCMediaPlayer-pause) 暂停音频播放后，调用本方法恢复播放。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-setvolume-type"></span>
+### setVolume:type:
+```objectivec
+
+- (int)setVolume:(int)volume type:(ByteRTCAudioMixingType)type;
+```
+调节指定混音的音量大小，包括音乐文件混音和 PCM 混音。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+| type | **ByteRTCAudioMixingType** | 详见 [ByteRTCAudioMixingType](iOS-keytype.md#bytertcaudiomixingtype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+仅在音频播放进行状态时，调用此方法。
+
+<span id="ByteRTCMediaPlayer-getvolume"></span>
+### getVolume:
+```objectivec
+
+- (int)getVolume:(ByteRTCAudioMixingType)type;
+```
+获取当前音量
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| type | **ByteRTCAudioMixingType** | 详见 [ByteRTCAudioMixingType](iOS-keytype.md#bytertcaudiomixingtype)。 |
+
+**返回值**
+
++ \>0: 成功, 当前音量值。  
++ < 0: 失败
+
+
+**注意**
+仅在音频播放进行状态时，调用此方法。包括音乐文件混音和 PCM 混音。
+
+<span id="ByteRTCMediaPlayer-gettotalduration"></span>
+### getTotalDuration
+```objectivec
+
+- (int)getTotalDuration;
+```
+获取音乐文件时长。
+
+**返回值**
+
++ \>0: 成功, 音乐文件时长，单位为毫秒。  
++ < 0: 失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-getplaybackduration"></span>
+### getPlaybackDuration
+```objectivec
+
+- (int)getPlaybackDuration;
+```
+获取混音音乐文件的实际播放时长，单位为毫秒。
+
+**返回值**
+
++ \>0: 实际播放时长。
++ < 0: 失败。
+
+
+**注意**
+
++ 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。
++ 仅在音频播放进行状态，且 [setProgressInterval:](#ByteRTCMediaPlayer-setprogressinterval) 设置间隔大于 `0` 时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-getposition"></span>
+### getPosition
+```objectivec
+
+- (int)getPosition;
+```
+获取音乐文件播放进度。
+
+**返回值**
+
++ \>0: 成功, 音乐文件播放进度，单位为毫秒。
++ < 0: 失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-setaudiopitch"></span>
+### setAudioPitch:
+```objectivec
+
+- (int)setAudioPitch:(int)pitch;
+```
+开启变调功能，多用于 K 歌场景。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| pitch | **int** | 与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 仅支持音乐文件混音，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-setposition"></span>
+### setPosition:
+```objectivec
+
+- (int)setPosition:(int)position;
+```
+设置音乐文件的起始播放位置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| position | **int** | 音乐文件起始播放位置，单位为毫秒。  <br/>你可以通过 [getTotalDuration](#ByteRTCMediaPlayer-gettotalduration) 获取音乐文件总时长，position 的值应小于音乐文件总时长。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 此接口仅支持音频文件，不支持 PCM 数据。
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
+
+
+<span id="ByteRTCMediaPlayer-setaudiodualmonomode"></span>
+### setAudioDualMonoMode:
+```objectivec
+
+- (int)setAudioDualMonoMode:(ByteRTCAudioMixingDualMonoMode)mode;
+```
+设置当前音乐文件的声道模式
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **ByteRTCAudioMixingDualMonoMode** | 声道模式。默认的声道模式和源文件一致，详见 [ByteRTCAudioMixingDualMonoMode](iOS-keytype.md#bytertcaudiomixingdualmonomode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-getaudiotrackcount"></span>
+### getAudioTrackCount
+```objectivec
+
+- (int)getAudioTrackCount;
+```
+获取当前音乐文件的音轨数
+
+**返回值**
+
++ \>= 0：成功，返回当前音乐文件的音轨数
++ < 0：方法调用失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音乐文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-selectaudiotrack"></span>
+### selectAudioTrack:
+```objectivec
+
+- (int)selectAudioTrack:(int)index;
+```
+指定当前音乐文件的播放音轨
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| index | **int** | 指定的播放音轨，从 0 开始，取值范围为 `[0, getAudioTrackCount()-1]`。<br/>设置的参数值需要小于 [getAudioTrackCount](#ByteRTCMediaPlayer-getaudiotrackcount) 的返回值 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音乐文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-setplaybackspeed"></span>
+### setPlaybackSpeed:
+```objectivec
+
+- (int)setPlaybackSpeed:(int)speed;
+```
+设置播放速度
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 `[50,200]`，默认值为 100。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法对音频文件可用，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-setprogressinterval"></span>
+### setProgressInterval:
+```objectivec
+
+- (int)setProgressInterval:(int64_t)interval;
+```
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress:progress:](iOS-callback.md#ByteRTCMediaPlayerEventHandler-onmediaplayerplayingprogress-progress) 的间隔。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| interval | **int64_t** | 时间间隔，单位毫秒。<br/>• interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。 <br/>• interval <= 0 时，不会触发回调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-setloudness"></span>
+### setLoudness:
+```objectivec
+
+- (int)setLoudness:(float)loudness;
+```
+如果你需要使用 [enableVocalInstrumentBalance:](#ByteRTCVideo-enablevocalinstrumentbalance) 对音频文件/PCM 音频数据设置音量均衡，你必须通过此接口传入其原始响度。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| loudness | **float** | 原始响度，单位：lufs，取值范围为 `[-70.0, 0.0]`。<br/>当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音量均衡处理。默认值为 1.0lufs，即不做处理。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法对音频文件和音频裸数据播放都可用。
+
+
+<span id="ByteRTCMediaPlayer-registeraudioframeobserver"></span>
+### registerAudioFrameObserver:
+```objectivec
+
+- (int)registerAudioFrameObserver:(_Nullable id<ByteRTCMediaPlayerAudioFrameObserver>)observer;
+```
+注册回调句柄以在本地音乐文件混音时，收到相关回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| observer | **id<ByteRTCMediaPlayerAudioFrameObserver>** | 参看 [ByteRTCMediaPlayerAudioFrameObserver](iOS-callback.md#bytertcmediaplayeraudioframeobserver)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ByteRTCReturnStatus](iOS-keytype.md#bytertcreturnstatus) 获得更多错误说明
+
+
+**注意**
+此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="ByteRTCMediaPlayer-pushexternalaudioframe"></span>
+### pushExternalAudioFrame:
+```objectivec
+
+- (int)pushExternalAudioFrame:(ByteRTCAudioFrame *_Nullable)audioFrame;
+```
+推送用于混音的 PCM 音频帧数据
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| audioFrame | **ByteRTCAudioFrame*** | 音频帧，详见 [ByteRTCAudioFrame](iOS-keytype.md#bytertcaudioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
+
+**返回值**
+
++ 0: 成功  
++ < 0: 失败
+
+
+**注意**
+
++ 调用该方法前，须通过 [openWithCustomSource:config:](#ByteRTCMediaPlayer-openwithcustomsource-config) 启动外部音频流混音。
++ 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 200 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。
++ 如果要暂停播放，暂停推送即可。
+
+
+<span id="ByteRTCMediaPlayer-seteventhandler"></span>
+### setEventHandler:
+```objectivec
+
+- (int)setEventHandler:(_Nullable id<ByteRTCMediaPlayerEventHandler>)handler;
+```
+设置回调句柄。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| handler | **id<ByteRTCMediaPlayerEventHandler>** | 参看 [ByteRTCMediaPlayerEventHandler](iOS-callback.md#bytertcmediaplayereventhandler)。 |
+
+**返回值**
+
++ 0: 成功。  
++ < 0: 失败。
 
 
 # ByteRTCRangeAudio
@@ -6442,8 +8126,10 @@ K 歌评分管理接口。
 
 
 **注意**
-该方法需在进房后调用。调用该接口更新坐标前，你需调用 [enableSpatialAudio:](#ByteRTCSpatialAudio-enablespatialaudio) 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
-调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+
++ 该方法需在进房后调用。 
++ 调用该接口更新坐标前，你需调用 [enableSpatialAudio:](#ByteRTCSpatialAudio-enablespatialaudio) 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
++ 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
 
 
 <span id="ByteRTCSpatialAudio-updateremoteposition-positioninfo"></span>
@@ -6541,7 +8227,7 @@ K 歌评分管理接口。
 ### initCVResource:withAlgoModelDir:
 ```objectivec
 
-- (int) initCVResource:(NSString* _Nonnull)license_file withAlgoModelDir: (NSString* _Nonnull)algo_model_dir;
+- (int) initCVResource:(NSString* _Nonnull)licenseFile withAlgoModelDir: (NSString* _Nonnull)algoModelDir;
 ```
 检查视频特效证书，设置算法模型路径，并初始化特效模块。
 
@@ -6549,8 +8235,8 @@ K 歌评分管理接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| license_file | **NSString*** | 证书文件的绝对路径，用于鉴权。 |
-| algo_model_dir | **NSString*** | 算法模型绝对路径，即存放特效 SDK 所有算法模型的目录。 |
+| licenseFile | **NSString*** | 证书文件的绝对路径，用于鉴权。 |
+| algoModelDir | **NSString*** | 算法模型绝对路径，即存放特效 SDK 所有算法模型的目录。 |
 
 **返回值**
 
@@ -6608,7 +8294,7 @@ K 歌评分管理接口。
 ### setEffectNodes:
 ```objectivec
 
-- (int) setEffectNodes:(NSArray<NSString*>*_Nonnull)effect_nodes;
+- (int) setEffectNodes:(NSArray<NSString*>*_Nonnull)effectNodes;
 ```
 设置视频特效素材包。
 
@@ -6616,7 +8302,7 @@ K 歌评分管理接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| effect_nodes | **NSArray<NSString*>*** | 特效素材包绝对路径数组。<br/>要取消当前视频特效，将此参数设置为 null。 |
+| effectNodes | **NSArray<NSString*>*** | 特效素材包绝对路径数组。<br/>要取消当前视频特效，将此参数设置为 null。 |
 
 **返回值**
 
@@ -6659,7 +8345,7 @@ K 歌评分管理接口。
 ### setColorFilter:
 ```objectivec
 
-- (int) setColorFilter:(NSString* _Nonnull)filter_res;
+- (int) setColorFilter:(NSString* _Nonnull)filterRes;
 ```
 设置颜色滤镜。
 
@@ -6667,7 +8353,7 @@ K 歌评分管理接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| filter_res | **NSString*** | 滤镜资源包绝对路径。 |
+| filterRes | **NSString*** | 滤镜资源包绝对路径。 |
 
 **返回值**
 
@@ -6708,7 +8394,7 @@ K 歌评分管理接口。
 ### enableVirtualBackground:withSource:
 ```objectivec
 
-- (int) enableVirtualBackground:(NSString* _Nonnull)bg_sticker_path withSource:(ByteRTCVirtualBackgroundSource* _Nonnull)source;
+- (int) enableVirtualBackground:(NSString* _Nonnull)backgroundStickerPath withSource:(ByteRTCVirtualBackgroundSource* _Nonnull)source;
 ```
 将摄像头采集画面中的人像背景替换为指定图片或纯色背景。
 
@@ -6716,7 +8402,7 @@ K 歌评分管理接口。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| bg_sticker_path | **NSString*** | 背景贴纸特效素材绝对路径。 |
+| backgroundStickerPath | **NSString*** | 背景贴纸特效素材绝对路径。 |
 | source | **ByteRTCVirtualBackgroundSource*** | 背景贴纸对象，参看 [ByteRTCVirtualBackgroundSource](iOS-keytype.md#bytertcvirtualbackgroundsource)。 |
 
 **返回值**

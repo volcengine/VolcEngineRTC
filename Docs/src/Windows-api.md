@@ -7,6 +7,7 @@
 | **BYTERTC_API void** | [destroyRTCVideo](#destroyrtcvideo) |
 | **BYTERTC_API const char*** | [getErrorDescription](#geterrordescription) |
 | **BYTERTC_API const char*** | [getSDKVersion](#getsdkversion) |
+| **BYTERTC_API int** | [setLogConfig](#setlogconfig) |
 | **BYTERTC_API IAudioFrame*** | [buildAudioFrame](#buildaudioframe) |
 | **BYTERTC_API IPublicStreamParam*** | [createPublicStreamParam](#createpublicstreamparam) |
 | **BYTERTC_API ITranscoderParam*** | [createTranscoderParam](#createtranscoderparam) |
@@ -53,7 +54,7 @@ BYTERTC_API void bytertc::destroyRTCVideo();
 **注意**
 
 + 请确保和需要销毁的 [IRTCVideo](#irtcvideo) 实例相关的业务场景全部结束后，才调用此方法。如果在多线程场景下，调用此接口后，又调用了其他 [IRTCVideo](#irtcvideo) 相关接口，可能导致 SDK 崩溃。该方法在调用之后，会销毁所有和此 [IRTCVideo](#irtcvideo) 实例相关的内存，并且停止与媒体服务器的任何交互。  
-+ 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。
++ 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，会导致死锁。同时此方法是耗时操作，不建议在主线程调用本方法，避免主线程阻塞。
 
 
 ### getErrorDescription
@@ -84,6 +85,28 @@ BYTERTC_API const char* bytertc::getSDKVersion();
 **返回值**
 当前 SDK 版本信息。
 
+
+### setLogConfig
+```cpp
+BYTERTC_API int bytertc::setLogConfig(
+    const LogConfig& log_config)
+```
+配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| log_config | **const LogConfig&** | 本地日志参数，参看 [LogConfig](Windows-keytype.md#logconfig)。 |
+
+**返回值**
+
++ 0：成功。
++ –1：失败，本方法必须在创建引擎前调用。
++ –2：失败，参数填写错误。
+
+**注意**
+本方法必须在调用 [createRTCVideo](#creatertcvideo) 之前调用。
 
 ### buildAudioFrame
 ```cpp
@@ -239,19 +262,19 @@ class bytertc::IRTCRoom
 | 返回 | 名称 |
 | --- | --- |
 | **virtual void** | [destroy](#IRTCRoom-destroy) |
-| **virtual void** | [setUserVisibility](#IRTCRoom-setuservisibility) |
-| **virtual void** | [setRTCRoomEventHandler](#IRTCRoom-setrtcroomeventhandler) |
+| **virtual int** | [setUserVisibility](#IRTCRoom-setuservisibility) |
+| **virtual int** | [setRTCRoomEventHandler](#IRTCRoom-setrtcroomeventhandler) |
 | **virtual int** | [joinRoom](#IRTCRoom-joinroom) |
-| **virtual void** | [leaveRoom](#IRTCRoom-leaveroom) |
+| **virtual int** | [leaveRoom](#IRTCRoom-leaveroom) |
 | **virtual int** | [updateToken](#IRTCRoom-updatetoken) |
 | **virtual int64_t** | [sendUserMessage](#IRTCRoom-sendusermessage) |
 | **virtual int64_t** | [sendUserBinaryMessage](#IRTCRoom-senduserbinarymessage) |
 | **virtual int64_t** | [sendRoomMessage](#IRTCRoom-sendroommessage) |
 | **virtual int64_t** | [sendRoomBinaryMessage](#IRTCRoom-sendroombinarymessage) |
-| **virtual void** | [publishStream](#IRTCRoom-publishstream) |
-| **virtual void** | [unpublishStream](#IRTCRoom-unpublishstream) |
-| **virtual void** | [publishScreen](#IRTCRoom-publishscreen) |
-| **virtual void** | [unpublishScreen](#IRTCRoom-unpublishscreen) |
+| **virtual int** | [publishStream](#IRTCRoom-publishstream) |
+| **virtual int** | [unpublishStream](#IRTCRoom-unpublishstream) |
+| **virtual int** | [publishScreen](#IRTCRoom-publishscreen) |
+| **virtual int** | [unpublishScreen](#IRTCRoom-unpublishscreen) |
 | **virtual int** | [setRemoteVideoConfig](#IRTCRoom-setremotevideoconfig) |
 | **virtual int** | [subscribeStream](#IRTCRoom-subscribestream) |
 | **virtual int** | [subscribeAllStreams](#IRTCRoom-subscribeallstreams) |
@@ -259,21 +282,22 @@ class bytertc::IRTCRoom
 | **virtual int** | [unsubscribeAllStreams](#IRTCRoom-unsubscribeallstreams) |
 | **virtual int** | [subscribeScreen](#IRTCRoom-subscribescreen) |
 | **virtual int** | [unsubscribeScreen](#IRTCRoom-unsubscribescreen) |
-| **virtual void** | [pauseAllSubscribedStream](#IRTCRoom-pauseallsubscribedstream) |
-| **virtual void** | [resumeAllSubscribedStream](#IRTCRoom-resumeallsubscribedstream) |
-| **virtual void** | [setMultiDeviceAVSync](#IRTCRoom-setmultideviceavsync) |
+| **virtual int** | [pauseAllSubscribedStream](#IRTCRoom-pauseallsubscribedstream) |
+| **virtual int** | [resumeAllSubscribedStream](#IRTCRoom-resumeallsubscribedstream) |
+| **virtual int** | [setMultiDeviceAVSync](#IRTCRoom-setmultideviceavsync) |
 | **virtual int** | [startForwardStreamToRooms](#IRTCRoom-startforwardstreamtorooms) |
 | **virtual int** | [updateForwardStreamToRooms](#IRTCRoom-updateforwardstreamtorooms) |
-| **virtual void** | [stopForwardStreamToRooms](#IRTCRoom-stopforwardstreamtorooms) |
-| **virtual void** | [pauseForwardStreamToAllRooms](#IRTCRoom-pauseforwardstreamtoallrooms) |
-| **virtual void** | [resumeForwardStreamToAllRooms](#IRTCRoom-resumeforwardstreamtoallrooms) |
+| **virtual int** | [stopForwardStreamToRooms](#IRTCRoom-stopforwardstreamtorooms) |
+| **virtual int** | [pauseForwardStreamToAllRooms](#IRTCRoom-pauseforwardstreamtoallrooms) |
+| **virtual int** | [resumeForwardStreamToAllRooms](#IRTCRoom-resumeforwardstreamtoallrooms) |
 | **virtual IRangeAudio*** | [getRangeAudio](#IRTCRoom-getrangeaudio) |
 | **virtual ISpatialAudio*** | [getSpatialAudio](#IRTCRoom-getspatialaudio) |
-| **virtual void** | [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) |
+| **virtual int** | [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) |
 | **virtual int** | [setAudioSelectionConfig](#IRTCRoom-setaudioselectionconfig) |
 | **virtual int64_t** | [setRoomExtraInfo](#IRTCRoom-setroomextrainfo) |
 | **virtual int** | [startSubtitle](#IRTCRoom-startsubtitle) |
 | **virtual int** | [stopSubtitle](#IRTCRoom-stopsubtitle) |
+| **virtual const char*** | [getRoomId](#IRTCRoom-getroomid) |
 | **BYTERTC_DEPRECATED virtual int** | [[deprecated] subscribeUserStream](#IRTCRoom-subscribeuserstream) |
 
 
@@ -289,31 +313,42 @@ virtual void bytertc::IRTCRoom::destroy()
 <span id="IRTCRoom-setuservisibility"></span>
 ### setUserVisibility
 ```cpp
-virtual void bytertc::IRTCRoom::setUserVisibility(
+virtual int bytertc::IRTCRoom::setUserVisibility(
     bool enable)
 ```
-设置用户可见性。未调用该接口前，本地用户默认对他人可见。 <br>
+设置用户可见性。未调用该接口前，本地用户默认对他人可见。
+默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| enable | **bool** | 设置用户是否对房间内其他用户可见：  <br/>• true: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br/>• false: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+| enable | **bool** | 设置用户是否对房间内其他用户可见：  <br/>• true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。<br/>• false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0: 调用失败。参看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明。
 
 
 **注意**
 
-+ 该方法在加入房间前后均可调用。 
-+ 在房间内调用此方法，房间内其他用户会收到相应的回调通知：
-- 从 false 切换至 true 时，房间内其他用户会收到 [onUserJoined](Windows-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知；  
-- 从 true 切换至 false 时，房间内其他用户会收到 [onUserLeave](Windows-callback.md#IRTCRoomEventHandler-onuserleave) 回调通知。  
-+ 若调用该方法将可见性设为 false，此时尝试发布流会收到 `kWarningCodePublishStreamForbiden` 警告。
++ 在加入房间前后，用户均可调用此方法设置用户可见性。
++ 设置用户可见性，会收到设置成功/失败回调 [onUserVisibilityChanged](Windows-callback.md#IRTCRoomEventHandler-onuservisibilitychanged)。（v3.54 新增）
+&#x0020;  • 在加入房间前设置用户可见性，若设置的可见性与默认值不同，将在加入房间时触发本回调。
+&#x0020;  • 在加入房间后设置用户可见性，若可见性前后不同，会触发本回调。
+&#x0020;  • 在断网重连后，若可见性发生改变，会触发本回调。
+
++ 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调。
+&#x0020;  • 从可见换至不可见时，房间内其他用户会收到 [onUserLeave](Windows-callback.md#IRTCRoomEventHandler-onuserleave)。
+&#x0020;  • 从不可见切换至可见时，房间内其他用户会收到 [onUserJoined](Windows-callback.md#IRTCRoomEventHandler-onuserjoined)。
+&#x0020;  • 若调用该方法将可见性设为 `false`，此时尝试发布流会收到 `kWarningCodePublishStreamForbiden` 警告。
 
 
 <span id="IRTCRoom-setrtcroomeventhandler"></span>
 ### setRTCRoomEventHandler
 ```cpp
-virtual void bytertc::IRTCRoom::setRTCRoomEventHandler(
+virtual int bytertc::IRTCRoom::setRTCRoomEventHandler(
     IRTCRoomEventHandler* room_event_handler)
 ```
 通过设置 [IRTCRoom](#irtcroom) 对象的事件句柄，监听此对象对应的回调事件。
@@ -324,6 +359,11 @@ virtual void bytertc::IRTCRoom::setRTCRoomEventHandler(
 | --- | --- | --- |
 | room_event_handler | **IRTCRoomEventHandler*** | 参见 [IRTCRoomEventHandler](Windows-callback.md#irtcroomeventhandler) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="IRTCRoom-joinroom"></span>
 ### joinRoom
@@ -333,14 +373,14 @@ virtual int bytertc::IRTCRoom::joinRoom(
     const UserInfo& user_info,
     const RTCRoomConfig& config)
 ```
-创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
-同一房间内的用户间可以相互通话。  <br>
+加入房间<br>
+调用 [createRTCRoom](#IRTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。 <br>
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **const char*** | 动态密钥，用于对登录用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>• 使用不同 App ID 的 App 是不能互通的。  <br/>• 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。具体失败原因会通过 [onRoomStateChanged](Windows-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。 |
+| token | **const char*** | 动态密钥，用于对登录用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>• 使用不同 App ID 的 App 是不能互通的。  <br/>• 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。 |
 | user_info | **const UserInfo&** | 用户信息，参看 [UserInfo](Windows-keytype.md#userinfo)。 |
 | config | **const RTCRoomConfig&** | 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 [RTCRoomConfig](Windows-keytype.md#rtcroomconfig)。 |
 
@@ -349,24 +389,31 @@ virtual int bytertc::IRTCRoom::joinRoom(
 +  0: 成功  
 + -1：room_id / user_info.uid 包含了无效的参数。  
 + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:[leaveRoom](#leaveroom) 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  
+具体失败原因会通过 [onRoomStateChanged](Windows-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。
 
 
 **注意**
 
 + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onRoomStateChanged](Windows-callback#IRTCRoomEventHandler-onroomstatechanged) 回调通知，错误类型详见 [ErrorCode](Windows-errorcode.md#errorcode) 中的 kErrorCodeDuplicateLogin。  
-+ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Windows-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Windows-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。关于可见性设置参看 [setUserVisibility](#IRTCRoom-setuservisibility)。  
++ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Windows-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Windows-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。
++ 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用 [setUserVisibility](#IRTCRoom-setuservisibility)。 更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Windows-callback.md#IRTCVideoEventHandler-onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](Windows-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。
 
 
 <span id="IRTCRoom-leaveroom"></span>
 ### leaveRoom
 ```cpp
-virtual void bytertc::IRTCRoom::leaveRoom()
+virtual int bytertc::IRTCRoom::leaveRoom()
 ```
 离开房间。  <br>
 用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
 加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br>
 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Windows-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br>
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -382,13 +429,13 @@ virtual int bytertc::IRTCRoom::updateToken(
     const char* token)
 ```
 更新 Token。
-Token 中同时包含进房、发布和订阅权限，各权限有一定的有效期，并且到期前 30 秒会触发回调，提示用户更新 Token 相关权限。此时需要重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
+收到 [onTokenWillExpire](Windows-callback.md#IRTCRoomEventHandler-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire](Windows-callback.md#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire)， 或 [onSubscribePrivilegeTokenWillExpire](Windows-callback.md#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **const char*** | 重新获取的有效 Token。<br/>如果传入的 Token 无效，回调错误码为 [ErrorCode](Windows-errorcode.md#errorcode) 中的 `-1010`。 |
+| token | **const char*** | 重新获取的有效 Token。<br/>如果 Token 无效，你会收到 [onRoomStateChanged](Windows-callback.md#IRTCRoomEventHandler-onroomstatechanged)，错误码是 `-1010`。 |
 
 **返回值**
 方法调用结果：
@@ -515,7 +562,7 @@ virtual int64_t bytertc::IRTCRoom::sendRoomBinaryMessage(
 <span id="IRTCRoom-publishstream"></span>
 ### publishStream
 ```cpp
-virtual void bytertc::IRTCRoom::publishStream(
+virtual int bytertc::IRTCRoom::publishStream(
     MediaStreamType type)
 ```
 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
@@ -525,6 +572,11 @@ virtual void bytertc::IRTCRoom::publishStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定发布音频/视频，参看 [MediaStreamType](Windows-keytype.md#mediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -540,7 +592,7 @@ virtual void bytertc::IRTCRoom::publishStream(
 <span id="IRTCRoom-unpublishstream"></span>
 ### unpublishStream
 ```cpp
-virtual void bytertc::IRTCRoom::unpublishStream(
+virtual int bytertc::IRTCRoom::unpublishStream(
     MediaStreamType type)
 ```
 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
@@ -550,6 +602,11 @@ virtual void bytertc::IRTCRoom::unpublishStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定停止发布音频/视频，参看 [MediaStreamType](Windows-keytype.md#mediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -561,7 +618,7 @@ virtual void bytertc::IRTCRoom::unpublishStream(
 <span id="IRTCRoom-publishscreen"></span>
 ### publishScreen
 ```cpp
-virtual void bytertc::IRTCRoom::publishScreen(
+virtual int bytertc::IRTCRoom::publishScreen(
     MediaStreamType type)
 ```
 在当前所在房间内手动发布本地屏幕共享音视频流。<br>
@@ -572,6 +629,11 @@ virtual void bytertc::IRTCRoom::publishScreen(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定发布屏幕音频/视频，参看 [MediaStreamType](Windows-keytype.md#mediastreamtype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -588,7 +650,7 @@ virtual void bytertc::IRTCRoom::publishScreen(
 <span id="IRTCRoom-unpublishscreen"></span>
 ### unpublishScreen
 ```cpp
-virtual void bytertc::IRTCRoom::unpublishScreen(
+virtual int bytertc::IRTCRoom::unpublishScreen(
     MediaStreamType type)
 ```
 停止将本地屏幕共享音视频流发布到当前所在房间中
@@ -598,6 +660,11 @@ virtual void bytertc::IRTCRoom::unpublishScreen(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定停止发布屏幕音频/视频，参看 [MediaStreamType](Windows-keytype.md#mediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -694,8 +761,8 @@ virtual int bytertc::IRTCRoom::subscribeStream(
 
 **注意**
 
-+ 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
-+ 你必须先通过 [onUserPublishStream](Windows-callback.md#IRTCRoomEventHandler-onuserpublishstream)} 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  
++ 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
++ 你必须先通过 [onUserPublishStream](Windows-callback.md#IRTCRoomEventHandler-onuserpublishstream) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  
 + 调用该方法后，你会收到 [onStreamSubscribed](Windows-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream](#IRTCRoom-unsubscribestream) 取消订阅或本端用户退房。 
 + 关于其他调用异常，你会收到 [onStreamStateChanged](Windows-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Windows-errorcode.md#errorcode)。
@@ -813,7 +880,7 @@ virtual int bytertc::IRTCRoom::subscribeScreen(
 
 **注意**
 
-+ 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
++ 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
 + 你必须先通过 [onUserPublishScreen](Windows-callback.md#IRTCRoomEventHandler-onuserpublishscreen)} 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  
 + 调用该方法后，你会收到 [onStreamSubscribed](Windows-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeScreen](#IRTCRoom-unsubscribescreen) 取消订阅或本端用户退房。 
@@ -853,7 +920,7 @@ virtual int bytertc::IRTCRoom::unsubscribeScreen(
 <span id="IRTCRoom-pauseallsubscribedstream"></span>
 ### pauseAllSubscribedStream
 ```cpp
-virtual void bytertc::IRTCRoom::pauseAllSubscribedStream(
+virtual int bytertc::IRTCRoom::pauseAllSubscribedStream(
     PauseResumeControlMediaType media_type)
 ```
 暂停接收来自远端的媒体流。
@@ -863,6 +930,11 @@ virtual void bytertc::IRTCRoom::pauseAllSubscribedStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Windows-keytype.md#pauseresumecontrolmediatype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -876,7 +948,7 @@ virtual void bytertc::IRTCRoom::pauseAllSubscribedStream(
 <span id="IRTCRoom-resumeallsubscribedstream"></span>
 ### resumeAllSubscribedStream
 ```cpp
-virtual void bytertc::IRTCRoom::resumeAllSubscribedStream(
+virtual int bytertc::IRTCRoom::resumeAllSubscribedStream(
     PauseResumeControlMediaType media_type)
 ```
 恢复接收来自远端的媒体流
@@ -886,6 +958,11 @@ virtual void bytertc::IRTCRoom::resumeAllSubscribedStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Windows-keytype.md#pauseresumecontrolmediatype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -897,7 +974,7 @@ virtual void bytertc::IRTCRoom::resumeAllSubscribedStream(
 <span id="IRTCRoom-setmultideviceavsync"></span>
 ### setMultiDeviceAVSync
 ```cpp
-virtual void bytertc::IRTCRoom::setMultiDeviceAVSync(
+virtual int bytertc::IRTCRoom::setMultiDeviceAVSync(
     const char* audio_user_id)
 ```
 设置发流端音画同步。  <br>
@@ -908,6 +985,11 @@ virtual void bytertc::IRTCRoom::setMultiDeviceAVSync(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audio_user_id | **const char*** | 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -981,10 +1063,15 @@ virtual int bytertc::IRTCRoom::updateForwardStreamToRooms(
 <span id="IRTCRoom-stopforwardstreamtorooms"></span>
 ### stopForwardStreamToRooms
 ```cpp
-virtual void bytertc::IRTCRoom::stopForwardStreamToRooms()
+virtual int bytertc::IRTCRoom::stopForwardStreamToRooms()
 ```
 停止跨房间媒体流转发。
 通过 [startForwardStreamToRooms](#IRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -998,11 +1085,16 @@ virtual void bytertc::IRTCRoom::stopForwardStreamToRooms()
 <span id="IRTCRoom-pauseforwardstreamtoallrooms"></span>
 ### pauseForwardStreamToAllRooms
 ```cpp
-virtual void bytertc::IRTCRoom::pauseForwardStreamToAllRooms()
+virtual int bytertc::IRTCRoom::pauseForwardStreamToAllRooms()
 ```
 暂停跨房间媒体流转发。
 通过 [startForwardStreamToRooms](#IRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
 调用本方法暂停向所有目标房间转发后，你可以随时调用 [resumeForwardStreamToAllRooms](#IRTCRoom-resumeforwardstreamtoallrooms) 快速恢复转发。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1011,10 +1103,15 @@ virtual void bytertc::IRTCRoom::pauseForwardStreamToAllRooms()
 <span id="IRTCRoom-resumeforwardstreamtoallrooms"></span>
 ### resumeForwardStreamToAllRooms
 ```cpp
-virtual void bytertc::IRTCRoom::resumeForwardStreamToAllRooms()
+virtual int bytertc::IRTCRoom::resumeForwardStreamToAllRooms()
 ```
 恢复跨房间媒体流转发。
 调用 [pauseForwardStreamToAllRooms](#IRTCRoom-pauseforwardstreamtoallrooms) 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1063,7 +1160,7 @@ virtual ISpatialAudio* bytertc::IRTCRoom::getSpatialAudio()
 <span id="IRTCRoom-setremoteroomaudioplaybackvolume"></span>
 ### setRemoteRoomAudioPlaybackVolume
 ```cpp
-virtual void bytertc::IRTCRoom::setRemoteRoomAudioPlaybackVolume(
+virtual int bytertc::IRTCRoom::setRemoteRoomAudioPlaybackVolume(
     int volume)
 ```
 调节某个房间内所有远端用户的音频播放音量。
@@ -1073,6 +1170,11 @@ virtual void bytertc::IRTCRoom::setRemoteRoomAudioPlaybackVolume(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | volume | **int** | 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。为保证更好的通话质量，建议将 volume 值设为 [0,100]。 <br/>• 0: 静音  <br/>• 100: 原始音量，默认值  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1143,7 +1245,7 @@ virtual int64_t bytertc::IRTCRoom::setRoomExtraInfo(
 virtual int bytertc::IRTCRoom::startSubtitle(
     const SubtitleConfig& subtitle_config)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 识别或翻译房间内所有用户的语音，形成字幕。<br>
 语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Windows-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br>
@@ -1162,9 +1264,14 @@ virtual int bytertc::IRTCRoom::startSubtitle(
 
 
 **注意**
-此方法需要在进房后调用。  
-如果想要指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 `extraInfo` 参数传入 `"source_language": "zh"` JSON 字符串，设置源语言为中文；传入 `"source_language": "en"`JSON 字符串，设置源语言为英文；传入 `"source_language": "ja"` JSON 字符串，设置源语言为日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。  
-使用字幕功能前，你需要[开通机器翻译服务](https://www.volcengine.com/docs/4640/130262)，并前往 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
+
++ 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。
++ 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
++ 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
++ 此方法需要在进房后调用。  
++ 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 extraInfo 参数传入格式为`"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
+    + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
+    + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
 
 
 <span id="IRTCRoom-stopsubtitle"></span>
@@ -1172,7 +1279,7 @@ virtual int bytertc::IRTCRoom::startSubtitle(
 ```cpp
 virtual int bytertc::IRTCRoom::stopSubtitle()
 ```
-> Available since 3.52.
+> Available since 3.52
 
 关闭字幕。 <br>
 调用该方法后，用户会收到 [onSubtitleStateChanged](Windows-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否关闭。
@@ -1181,6 +1288,19 @@ virtual int bytertc::IRTCRoom::stopSubtitle()
 
 +  0: 调用成功。  
 + !0: 调用失败。
+
+
+<span id="IRTCRoom-getroomid"></span>
+### getRoomId
+```cpp
+virtual const char* bytertc::IRTCRoom::getRoomId()
+```
+> Available since 3.53
+
+获取房间 ID。
+
+**返回值**
+房间 ID。
 
 
 # IRTCVideo
@@ -1197,131 +1317,134 @@ class bytertc::IRTCVideo
 
 | 返回 | 名称 |
 | --- | --- |
-| **virtual void** | [setCaptureVolume](#IRTCVideo-setcapturevolume) |
-| **virtual void** | [setPlaybackVolume](#IRTCVideo-setplaybackvolume) |
-| **virtual void** | [startAudioCapture](#IRTCVideo-startaudiocapture) |
-| **virtual void** | [stopAudioCapture](#IRTCVideo-stopaudiocapture) |
+| **virtual int** | [setCaptureVolume](#IRTCVideo-setcapturevolume) |
+| **virtual int** | [setPlaybackVolume](#IRTCVideo-setplaybackvolume) |
+| **virtual int** | [setEarMonitorMode](#IRTCVideo-setearmonitormode) |
+| **virtual int** | [setEarMonitorVolume](#IRTCVideo-setearmonitorvolume) |
+| **virtual int** | [startAudioCapture](#IRTCVideo-startaudiocapture) |
+| **virtual int** | [stopAudioCapture](#IRTCVideo-stopaudiocapture) |
 | **virtual int** | [setVoiceChangerType](#IRTCVideo-setvoicechangertype) |
 | **virtual int** | [setVoiceReverbType](#IRTCVideo-setvoicereverbtype) |
 | **virtual int** | [setLocalVoiceEqualization](#IRTCVideo-setlocalvoiceequalization) |
 | **virtual int** | [setLocalVoiceReverbParam](#IRTCVideo-setlocalvoicereverbparam) |
 | **virtual int** | [enableLocalVoiceReverb](#IRTCVideo-enablelocalvoicereverb) |
-| **virtual void** | [setAudioProfile](#IRTCVideo-setaudioprofile) |
-| **virtual void** | [setAnsMode](#IRTCVideo-setansmode) |
+| **virtual int** | [setAudioProfile](#IRTCVideo-setaudioprofile) |
+| **virtual int** | [setAnsMode](#IRTCVideo-setansmode) |
 | **virtual int** | [enableAGC](#IRTCVideo-enableagc) |
 | **virtual int** | [setAudioSourceType](#IRTCVideo-setaudiosourcetype) |
 | **virtual int** | [setAudioRenderType](#IRTCVideo-setaudiorendertype) |
 | **virtual int** | [pushExternalAudioFrame](#IRTCVideo-pushexternalaudioframe) |
 | **virtual int** | [pullExternalAudioFrame](#IRTCVideo-pullexternalaudioframe) |
-| **virtual void** | [startVideoCapture](#IRTCVideo-startvideocapture) |
-| **virtual void** | [stopVideoCapture](#IRTCVideo-stopvideocapture) |
+| **virtual int** | [startVideoCapture](#IRTCVideo-startvideocapture) |
+| **virtual int** | [stopVideoCapture](#IRTCVideo-stopvideocapture) |
 | **virtual int** | [setVideoCaptureConfig](#IRTCVideo-setvideocaptureconfig) |
-| **virtual void** | [setVideoCaptureRotation](#IRTCVideo-setvideocapturerotation) |
-| **virtual void** | [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) |
+| **virtual int** | [setVideoCaptureRotation](#IRTCVideo-setvideocapturerotation) |
+| **virtual int** | [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) |
 | **virtual int** | [setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig) |
 | **virtual int** | [setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig) |
 | **virtual int** | [setScreenVideoEncoderConfig](#IRTCVideo-setscreenvideoencoderconfig) |
 | **virtual int** | [setLocalVideoCanvas](#IRTCVideo-setlocalvideocanvas) |
-| **virtual void** | [updateLocalVideoCanvas](#IRTCVideo-updatelocalvideocanvas) |
-| **virtual void** | [setRemoteVideoCanvas](#IRTCVideo-setremotevideocanvas) |
-| **virtual void** | [updateRemoteStreamVideoCanvas](#IRTCVideo-updateremotestreamvideocanvas) |
-| **virtual void** | [setLocalVideoSink](#IRTCVideo-setlocalvideosink) |
-| **virtual void** | [setRemoteVideoSink](#IRTCVideo-setremotevideosink) |
+| **virtual int** | [updateLocalVideoCanvas](#IRTCVideo-updatelocalvideocanvas) |
+| **virtual int** | [setRemoteVideoCanvas](#IRTCVideo-setremotevideocanvas) |
+| **virtual int** | [updateRemoteStreamVideoCanvas](#IRTCVideo-updateremotestreamvideocanvas) |
+| **virtual int** | [setLocalVideoSink](#IRTCVideo-setlocalvideosink) |
+| **virtual int** | [setRemoteVideoSink](#IRTCVideo-setremotevideosink) |
 | **virtual int** | [pushScreenVideoFrame](#IRTCVideo-pushscreenvideoframe) |
-| **virtual void** | [setOriginalScreenVideoInfo](#IRTCVideo-setoriginalscreenvideoinfo) |
-| **virtual void** | [updateScreenCaptureRegion](#IRTCVideo-updatescreencaptureregion) |
+| **virtual int** | [setOriginalScreenVideoInfo](#IRTCVideo-setoriginalscreenvideoinfo) |
+| **virtual int** | [updateScreenCaptureRegion](#IRTCVideo-updatescreencaptureregion) |
 | **virtual int** | [startScreenVideoCapture](#IRTCVideo-startscreenvideocapture) |
-| **virtual void** | [stopScreenVideoCapture](#IRTCVideo-stopscreenvideocapture) |
-| **virtual void** | [updateScreenCaptureHighlightConfig](#IRTCVideo-updatescreencapturehighlightconfig) |
-| **virtual void** | [updateScreenCaptureMouseCursor](#IRTCVideo-updatescreencapturemousecursor) |
-| **virtual void** | [updateScreenCaptureFilterConfig](#IRTCVideo-updatescreencapturefilterconfig) |
+| **virtual int** | [stopScreenVideoCapture](#IRTCVideo-stopscreenvideocapture) |
+| **virtual int** | [updateScreenCaptureHighlightConfig](#IRTCVideo-updatescreencapturehighlightconfig) |
+| **virtual int** | [updateScreenCaptureMouseCursor](#IRTCVideo-updatescreencapturemousecursor) |
+| **virtual int** | [updateScreenCaptureFilterConfig](#IRTCVideo-updatescreencapturefilterconfig) |
 | **virtual IScreenCaptureSourceList*** | [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) |
 | **virtual IVideoFrame*** | [getThumbnail](#IRTCVideo-getthumbnail) |
 | **virtual IVideoFrame*** | [getWindowAppIcon](#IRTCVideo-getwindowappicon) |
-| **virtual void** | [setVideoSourceType](#IRTCVideo-setvideosourcetype) |
+| **virtual int** | [setVideoSourceType](#IRTCVideo-setvideosourcetype) |
 | **virtual int** | [pushExternalVideoFrame](#IRTCVideo-pushexternalvideoframe) |
 | **virtual IRTCRoom*** | [createRTCRoom](#IRTCVideo-creatertcroom) |
-| **virtual void** | [setPublishFallbackOption](#IRTCVideo-setpublishfallbackoption) |
-| **virtual void** | [setSubscribeFallbackOption](#IRTCVideo-setsubscribefallbackoption) |
+| **virtual int** | [setPublishFallbackOption](#IRTCVideo-setpublishfallbackoption) |
+| **virtual int** | [setSubscribeFallbackOption](#IRTCVideo-setsubscribefallbackoption) |
 | **virtual int** | [setRemoteUserPriority](#IRTCVideo-setremoteuserpriority) |
 | **virtual int** | [setBusinessId](#IRTCVideo-setbusinessid) |
-| **virtual void** | [setLocalVideoMirrorType](#IRTCVideo-setlocalvideomirrortype) |
+| **virtual int** | [setLocalVideoMirrorType](#IRTCVideo-setlocalvideomirrortype) |
 | **virtual IVideoEffect*** | [getVideoEffectInterface](#IRTCVideo-getvideoeffectinterface) |
 | **virtual int** | [enableEffectBeauty](#IRTCVideo-enableeffectbeauty) |
 | **virtual int** | [setBeautyIntensity](#IRTCVideo-setbeautyintensity) |
-| **virtual void** | [setEncryptInfo](#IRTCVideo-setencryptinfo) |
-| **virtual void** | [setCustomizeEncryptHandler](#IRTCVideo-setcustomizeencrypthandler) |
-| **virtual void** | [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) |
-| **virtual void** | [disableAudioFrameCallback](#IRTCVideo-disableaudioframecallback) |
-| **virtual void** | [registerAudioFrameObserver](#IRTCVideo-registeraudioframeobserver) |
-| **virtual void** | [registerAudioProcessor](#IRTCVideo-registeraudioprocessor) |
-| **virtual void** | [enableAudioProcessor](#IRTCVideo-enableaudioprocessor) |
-| **virtual void** | [disableAudioProcessor](#IRTCVideo-disableaudioprocessor) |
+| **virtual int** | [setEncryptInfo](#IRTCVideo-setencryptinfo) |
+| **virtual int** | [setCustomizeEncryptHandler](#IRTCVideo-setcustomizeencrypthandler) |
+| **virtual int** | [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) |
+| **virtual int** | [disableAudioFrameCallback](#IRTCVideo-disableaudioframecallback) |
+| **virtual int** | [registerAudioFrameObserver](#IRTCVideo-registeraudioframeobserver) |
+| **virtual int** | [registerAudioProcessor](#IRTCVideo-registeraudioprocessor) |
+| **virtual int** | [enableAudioProcessor](#IRTCVideo-enableaudioprocessor) |
+| **virtual int** | [disableAudioProcessor](#IRTCVideo-disableaudioprocessor) |
 | **virtual int** | [registerLocalVideoProcessor](#IRTCVideo-registerlocalvideoprocessor) |
-| **virtual void** | [setVideoDigitalZoomConfig](#IRTCVideo-setvideodigitalzoomconfig) |
-| **virtual void** | [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) |
-| **virtual void** | [startVideoDigitalZoomControl](#IRTCVideo-startvideodigitalzoomcontrol) |
-| **virtual void** | [stopVideoDigitalZoomControl](#IRTCVideo-stopvideodigitalzoomcontrol) |
+| **virtual int** | [setVideoDigitalZoomConfig](#IRTCVideo-setvideodigitalzoomconfig) |
+| **virtual int** | [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) |
+| **virtual int** | [startVideoDigitalZoomControl](#IRTCVideo-startvideodigitalzoomcontrol) |
+| **virtual int** | [stopVideoDigitalZoomControl](#IRTCVideo-stopvideodigitalzoomcontrol) |
 | **virtual int** | [sendSEIMessage](#IRTCVideo-sendseimessage) |
 | **virtual IVideoDeviceManager*** | [getVideoDeviceManager](#IRTCVideo-getvideodevicemanager) |
 | **virtual IAudioDeviceManager*** | [getAudioDeviceManager](#IRTCVideo-getaudiodevicemanager) |
 | **virtual int** | [startFileRecording](#IRTCVideo-startfilerecording) |
-| **virtual void** | [stopFileRecording](#IRTCVideo-stopfilerecording) |
+| **virtual int** | [stopFileRecording](#IRTCVideo-stopfilerecording) |
 | **virtual int** | [startAudioRecording](#IRTCVideo-startaudiorecording) |
 | **virtual int** | [stopAudioRecording](#IRTCVideo-stopaudiorecording) |
-| **virtual void** | [enableExternalSoundCard](#IRTCVideo-enableexternalsoundcard) |
-| **virtual void** | [setRuntimeParameters](#IRTCVideo-setruntimeparameters) |
+| **virtual int** | [enableExternalSoundCard](#IRTCVideo-enableexternalsoundcard) |
+| **virtual int** | [setRuntimeParameters](#IRTCVideo-setruntimeparameters) |
 | **virtual int** | [feedback](#IRTCVideo-feedback) |
-| **virtual IAudioMixingManager*** | [getAudioMixingManager](#IRTCVideo-getaudiomixingmanager) |
+| **virtual IAudioEffectPlayer*** | [getAudioEffectPlayer](#IRTCVideo-getaudioeffectplayer) |
+| **virtual IMediaPlayer*** | [getMediaPlayer](#IRTCVideo-getmediaplayer) |
 | **virtual int** | [login](#IRTCVideo-login) |
-| **virtual void** | [logout](#IRTCVideo-logout) |
-| **virtual void** | [updateLoginToken](#IRTCVideo-updatelogintoken) |
-| **virtual void** | [setServerParams](#IRTCVideo-setserverparams) |
-| **virtual void** | [getPeerOnlineStatus](#IRTCVideo-getpeeronlinestatus) |
+| **virtual int** | [logout](#IRTCVideo-logout) |
+| **virtual int** | [updateLoginToken](#IRTCVideo-updatelogintoken) |
+| **virtual int** | [setServerParams](#IRTCVideo-setserverparams) |
+| **virtual int** | [getPeerOnlineStatus](#IRTCVideo-getpeeronlinestatus) |
 | **virtual int64_t** | [sendUserMessageOutsideRoom](#IRTCVideo-sendusermessageoutsideroom) |
 | **virtual int64_t** | [sendUserBinaryMessageOutsideRoom](#IRTCVideo-senduserbinarymessageoutsideroom) |
 | **virtual int64_t** | [sendServerMessage](#IRTCVideo-sendservermessage) |
 | **virtual int64_t** | [sendServerBinaryMessage](#IRTCVideo-sendserverbinarymessage) |
-| **virtual NetworkDetectionStartReturn** | [startNetworkDetection](#IRTCVideo-startnetworkdetection) |
-| **virtual void** | [stopNetworkDetection](#IRTCVideo-stopnetworkdetection) |
-| **virtual void** | [setScreenAudioSourceType](#IRTCVideo-setscreenaudiosourcetype) |
-| **virtual void** | [setScreenAudioStreamIndex](#IRTCVideo-setscreenaudiostreamindex) |
-| **virtual void** | [setScreenAudioChannel](#IRTCVideo-setscreenaudiochannel) |
-| **virtual void** | [startScreenAudioCapture](#IRTCVideo-startscreenaudiocapture) |
-| **virtual void** | [stopScreenAudioCapture](#IRTCVideo-stopscreenaudiocapture) |
+| **virtual int** | [startNetworkDetection](#IRTCVideo-startnetworkdetection) |
+| **virtual int** | [stopNetworkDetection](#IRTCVideo-stopnetworkdetection) |
+| **virtual int** | [setScreenAudioSourceType](#IRTCVideo-setscreenaudiosourcetype) |
+| **virtual int** | [setScreenAudioStreamIndex](#IRTCVideo-setscreenaudiostreamindex) |
+| **virtual int** | [setScreenAudioChannel](#IRTCVideo-setscreenaudiochannel) |
+| **virtual int** | [startScreenAudioCapture](#IRTCVideo-startscreenaudiocapture) |
+| **virtual int** | [stopScreenAudioCapture](#IRTCVideo-stopscreenaudiocapture) |
 | **virtual int** | [pushScreenAudioFrame](#IRTCVideo-pushscreenaudioframe) |
-| **virtual void** | [setAudioAlignmentProperty](#IRTCVideo-setaudioalignmentproperty) |
+| **virtual int** | [setAudioAlignmentProperty](#IRTCVideo-setaudioalignmentproperty) |
 | **virtual int** | [startPushMixedStreamToCDN](#IRTCVideo-startpushmixedstreamtocdn) |
 | **virtual int** | [updatePushMixedStreamToCDN](#IRTCVideo-updatepushmixedstreamtocdn) |
-| **virtual void** | [startPushSingleStreamToCDN](#IRTCVideo-startpushsinglestreamtocdn) |
-| **virtual void** | [stopPushStreamToCDN](#IRTCVideo-stoppushstreamtocdn) |
+| **virtual int** | [startPushSingleStreamToCDN](#IRTCVideo-startpushsinglestreamtocdn) |
+| **virtual int** | [stopPushStreamToCDN](#IRTCVideo-stoppushstreamtocdn) |
 | **virtual int** | [startPushPublicStream](#IRTCVideo-startpushpublicstream) |
 | **virtual int** | [stopPushPublicStream](#IRTCVideo-stoppushpublicstream) |
 | **virtual int** | [updatePublicStreamParam](#IRTCVideo-updatepublicstreamparam) |
-| **virtual void** | [enableAudioPropertiesReport](#IRTCVideo-enableaudiopropertiesreport) |
+| **virtual int** | [enableAudioPropertiesReport](#IRTCVideo-enableaudiopropertiesreport) |
 | **virtual int** | [setRemoteAudioPlaybackVolume](#IRTCVideo-setremoteaudioplaybackvolume) |
-| **virtual void** | [enableVocalInstrumentBalance](#IRTCVideo-enablevocalinstrumentbalance) |
-| **virtual void** | [enablePlaybackDucking](#IRTCVideo-enableplaybackducking) |
-| **virtual void** | [registerLocalEncodedVideoFrameObserver](#IRTCVideo-registerlocalencodedvideoframeobserver) |
-| **virtual void** | [registerRemoteEncodedVideoFrameObserver](#IRTCVideo-registerremoteencodedvideoframeobserver) |
-| **virtual void** | [setExternalVideoEncoderEventHandler](#IRTCVideo-setexternalvideoencodereventhandler) |
+| **virtual int** | [enableVocalInstrumentBalance](#IRTCVideo-enablevocalinstrumentbalance) |
+| **virtual int** | [enablePlaybackDucking](#IRTCVideo-enableplaybackducking) |
+| **virtual int** | [registerLocalEncodedVideoFrameObserver](#IRTCVideo-registerlocalencodedvideoframeobserver) |
+| **virtual int** | [registerRemoteEncodedVideoFrameObserver](#IRTCVideo-registerremoteencodedvideoframeobserver) |
+| **virtual int** | [setExternalVideoEncoderEventHandler](#IRTCVideo-setexternalvideoencodereventhandler) |
 | **virtual int** | [pushExternalEncodedVideoFrame](#IRTCVideo-pushexternalencodedvideoframe) |
-| **virtual void** | [setVideoDecoderConfig](#IRTCVideo-setvideodecoderconfig) |
-| **virtual void** | [requestRemoteVideoKeyFrame](#IRTCVideo-requestremotevideokeyframe) |
+| **virtual int** | [setVideoDecoderConfig](#IRTCVideo-setvideodecoderconfig) |
+| **virtual int** | [requestRemoteVideoKeyFrame](#IRTCVideo-requestremotevideokeyframe) |
 | **virtual int** | [sendStreamSyncInfo](#IRTCVideo-sendstreamsyncinfo) |
-| **virtual void** | [setLocalVoicePitch](#IRTCVideo-setlocalvoicepitch) |
+| **virtual int** | [setLocalVoicePitch](#IRTCVideo-setlocalvoicepitch) |
 | **virtual int** | [startPlayPublicStream](#IRTCVideo-startplaypublicstream) |
 | **virtual int** | [stopPlayPublicStream](#IRTCVideo-stopplaypublicstream) |
 | **virtual int** | [setPublicStreamVideoCanvas](#IRTCVideo-setpublicstreamvideocanvas) |
 | **virtual int** | [setPublicStreamVideoSink](#IRTCVideo-setpublicstreamvideosink) |
 | **virtual int** | [setPublicStreamAudioPlaybackVolume](#IRTCVideo-setpublicstreamaudioplaybackvolume) |
-| **virtual void** | [setVideoWatermark](#IRTCVideo-setvideowatermark) |
-| **virtual void** | [clearVideoWatermark](#IRTCVideo-clearvideowatermark) |
+| **virtual int** | [setVideoWatermark](#IRTCVideo-setvideowatermark) |
+| **virtual int** | [clearVideoWatermark](#IRTCVideo-clearvideowatermark) |
 | **virtual long** | [takeLocalSnapshot](#IRTCVideo-takelocalsnapshot) |
 | **virtual long** | [takeRemoteSnapshot](#IRTCVideo-takeremotesnapshot) |
 | **virtual int** | [setDummyCaptureImagePath](#IRTCVideo-setdummycaptureimagepath) |
-| **virtual void** | [startCloudProxy](#IRTCVideo-startcloudproxy) |
-| **virtual void** | [stopCloudProxy](#IRTCVideo-stopcloudproxy) |
+| **virtual int** | [startCloudProxy](#IRTCVideo-startcloudproxy) |
+| **virtual int** | [stopCloudProxy](#IRTCVideo-stopcloudproxy) |
 | **virtual int** | [startEchoTest](#IRTCVideo-startechotest) |
 | **virtual int** | [stopEchoTest](#IRTCVideo-stopechotest) |
 | **virtual ISingScoringManager*** | [getSingScoringManager](#IRTCVideo-getsingscoringmanager) |
@@ -1331,19 +1454,20 @@ class bytertc::IRTCVideo
 | **virtual int** | [stopHardwareEchoDetection](#IRTCVideo-stophardwareechodetection) |
 | **virtual int** | [setLocalProxy](#IRTCVideo-setlocalproxy) |
 | **BYTERTC_DEPRECATED virtual int** | [[deprecated] setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig) |
-| **BYTERTC_DEPRECATED virtual void** | [[deprecated] registerLocalAudioProcessor](#IRTCVideo-registerlocalaudioprocessor) |
+| **BYTERTC_DEPRECATED virtual int** | [[deprecated] registerLocalAudioProcessor](#IRTCVideo-registerlocalaudioprocessor) |
 | **BYTERTC_DEPRECATED virtual int** | [[deprecated] sendSEIMessage](#IRTCVideo-sendseimessage) |
-| **virtual void** | [[deprecated] startLiveTranscoding](#IRTCVideo-startlivetranscoding) |
-| **virtual void** | [[deprecated] stopLiveTranscoding](#IRTCVideo-stoplivetranscoding) |
-| **virtual void** | [[deprecated] updateLiveTranscoding](#IRTCVideo-updatelivetranscoding) |
-| **BYTERTC_DEPRECATED virtual void** | [[deprecated] muteAudioPlayback](#IRTCVideo-muteaudioplayback) |
+| **virtual IAudioMixingManager*** | [[deprecated] getAudioMixingManager](#IRTCVideo-getaudiomixingmanager) |
+| **BYTERTC_DEPRECATED virtual int** | [[deprecated] startLiveTranscoding](#IRTCVideo-startlivetranscoding) |
+| **BYTERTC_DEPRECATED virtual int** | [[deprecated] stopLiveTranscoding](#IRTCVideo-stoplivetranscoding) |
+| **BYTERTC_DEPRECATED virtual int** | [[deprecated] updateLiveTranscoding](#IRTCVideo-updatelivetranscoding) |
+| **BYTERTC_DEPRECATED virtual int** | [[deprecated] muteAudioPlayback](#IRTCVideo-muteaudioplayback) |
 
 
 ## 函数说明
 <span id="IRTCVideo-setcapturevolume"></span>
 ### setCaptureVolume
 ```cpp
-virtual void bytertc::IRTCVideo::setCaptureVolume(
+virtual int bytertc::IRTCVideo::setCaptureVolume(
     StreamIndex index,
     int volume)
 ```
@@ -1356,6 +1480,11 @@ virtual void bytertc::IRTCVideo::setCaptureVolume(
 | index | **StreamIndex** | 流索引，指定调节主流还是调节屏幕流的音量，参看 [StreamIndex](Windows-keytype.md#streamindex) |
 | volume | **int** | 采集的音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。<br/>只改变音频数据的音量信息，不涉及本端硬件的音量调节。<br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。<br/>• 0：静音  <br/>• 100：原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 在开启音频采集前后，你都可以使用此接口设定采集音量。
@@ -1363,7 +1492,7 @@ virtual void bytertc::IRTCVideo::setCaptureVolume(
 <span id="IRTCVideo-setplaybackvolume"></span>
 ### setPlaybackVolume
 ```cpp
-virtual void bytertc::IRTCVideo::setPlaybackVolume(
+virtual int bytertc::IRTCVideo::setPlaybackVolume(
     const int volume)
 ```
 调节本地播放的所有远端用户混音后的音量。<br>
@@ -1375,24 +1504,80 @@ virtual void bytertc::IRTCVideo::setPlaybackVolume(
 | --- | --- | --- |
 | volume | **const int** | 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br/>只改变音频数据的音量信息，不涉及本端硬件的音量调节。<br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br/>• 0: 静音  <br/>• 100: 原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 假设某远端用户 A 始终在被调节的目标用户范围内，当该方法与 [setRemoteAudioPlaybackVolume](#IRTCVideo-setremoteaudioplaybackvolume) 或 [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
 
-<span id="IRTCVideo-startaudiocapture"></span>
-### startAudioCapture
+<span id="IRTCVideo-setearmonitormode"></span>
+### setEarMonitorMode
 ```cpp
-virtual void bytertc::IRTCVideo::startAudioCapture()
+virtual int bytertc::IRTCVideo::setEarMonitorMode(
+    EarMonitorMode mode)
 ```
-开启内部音频采集。默认为关闭状态。  <br>
-内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
-调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。 <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。
+开启/关闭耳返功能
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **EarMonitorMode** | 是否开启耳返功能，参看 [EarMonitorMode](Windows-keytype.md#earmonitormode) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
+耳返功能仅支持设备通过 3.5mm 接口、USB 接口、或蓝牙方式直连耳机时可以使用。对于通过 HDMI 或 USB-C 接口连接显示器，再连接，或通过连接 OTG 外接声卡再连接的耳机，不支持耳返功能。
 
-+ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onWarning](Windows-callback.md#IRTCVideoEventHandler-onwarning) 回调。  
+<span id="IRTCVideo-setearmonitorvolume"></span>
+### setEarMonitorVolume
+```cpp
+virtual int bytertc::IRTCVideo::setEarMonitorVolume(
+    const int volume)
+```
+设置耳返的音量
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **const int** | 耳返的音量相对原始音量的比值，取值范围：[0,100]，单位：% |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+设置耳返音量前，你必须先调用 [setEarMonitorMode](#IRTCVideo-setearmonitormode) 打开耳返功能。
+
+<span id="IRTCVideo-startaudiocapture"></span>
+### startAudioCapture
+```cpp
+virtual int bytertc::IRTCVideo::startAudioCapture()
+```
+开启内部音频采集。默认为关闭状态。  <br>
+内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。
+调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。 <br>
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意** 
+
++ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onAudioDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 回调，对应的错误码为 `MediaDeviceError.kMediaDeviceErrorDeviceNoPermission = 1`。
 + 调用 [stopAudioCapture](#IRTCVideo-stopaudiocapture) 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  
 + 由于不同硬件设备初始化响应时间不同，频繁调用 [stopAudioCapture](#IRTCVideo-stopaudiocapture) 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 [publishStream](#IRTCRoom-publishstream)/[unpublishStream](#IRTCRoom-unpublishstream) 实现临时闭麦和重新开麦。
 + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  
@@ -1402,12 +1587,17 @@ virtual void bytertc::IRTCVideo::startAudioCapture()
 <span id="IRTCVideo-stopaudiocapture"></span>
 ### stopAudioCapture
 ```cpp
-virtual void bytertc::IRTCVideo::stopAudioCapture()
+virtual int bytertc::IRTCVideo::stopAudioCapture()
 ```
 立即关闭内部音频采集。默认为关闭状态。  <br>
-内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。
+内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。
 调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法后，房间中的其他用户会收到 [onUserStopAudioCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。
+可见用户进房后调用该方法后，房间中的其他用户会收到 [onUserStopAudioCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1474,7 +1664,6 @@ virtual int bytertc::IRTCVideo::setVoiceReverbType(
 + 只对单声道音频生效。
 + 只在包含美声特效能力的 SDK 中有效。
 + 与 [setVoiceChangerType](#IRTCVideo-setvoicechangertype) 互斥，后设置的特效会覆盖先设置的特效。 
-+ 使用本接口前，请联系 RTC 技术支持了解更多详情。
 
 
 <span id="IRTCVideo-setlocalvoiceequalization"></span>
@@ -1549,7 +1738,7 @@ virtual int bytertc::IRTCVideo::enableLocalVoiceReverb(
 <span id="IRTCVideo-setaudioprofile"></span>
 ### setAudioProfile
 ```cpp
-virtual void bytertc::IRTCVideo::setAudioProfile(
+virtual int bytertc::IRTCVideo::setAudioProfile(
     AudioProfileType audio_profile)
 ```
 设置音质档位。<br>
@@ -1561,6 +1750,11 @@ virtual void bytertc::IRTCVideo::setAudioProfile(
 | --- | --- | --- |
 | audio_profile | **AudioProfileType** | 音质档位，参看 [AudioProfileType](Windows-keytype.md#audioprofiletype) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -1571,7 +1765,7 @@ virtual void bytertc::IRTCVideo::setAudioProfile(
 <span id="IRTCVideo-setansmode"></span>
 ### setAnsMode
 ```cpp
-virtual void bytertc::IRTCVideo::setAnsMode(
+virtual int bytertc::IRTCVideo::setAnsMode(
     AnsMode ans_mode)
 ```
 支持根据业务场景，设置通话中的音频降噪模式。
@@ -1582,9 +1776,25 @@ virtual void bytertc::IRTCVideo::setAnsMode(
 | --- | --- | --- |
 | ans_mode | **AnsMode** | 降噪模式。具体参见 [AnsMode](Windows-keytype.md#ansmode)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
-该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
+
++ 该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
++ 降噪算法包含传统降噪和 AI 降噪。传统降噪主要是抑制平稳噪声，比如空调声、风扇声等。而 AI 降噪主要是抑制非平稳噪声，比如键盘敲击声、桌椅碰撞声等。
++ 只有在以下 [RoomProfileType](Windows-keytype.md#roomprofiletype) 场景下，调用本接口可以开启 AI 降噪。其余场景的 AI 降噪不会生效。
+    + 游戏语音模式：kRoomProfileTypeGame
+    + 高音质游戏模式：kRoomProfileTypeGameHD
+    + 云游戏模式：kRoomProfileTypeCloudGame
+    + 1 vs 1 音视频通话：kRoomProfileTypeChat
+    + 多端同步播放音视频：kRoomProfileTypeLwTogether
+    + 云端会议中的个人设备：kRoomProfileTypeMeeting
+    + 课堂互动模式：kRoomProfileTypeClassroom
+    + 云端会议中的会议室终端：kRoomProfileTypeMeetingRoom
 
 <span id="IRTCVideo-enableagc"></span>
 ### enableAGC
@@ -1674,7 +1884,7 @@ virtual int bytertc::IRTCVideo::setAudioRenderType (
 ### pushExternalAudioFrame
 ```cpp
 virtual int bytertc::IRTCVideo::pushExternalAudioFrame(
-    IAudioFrame* audioFrame)
+    IAudioFrame* audio_frame)
 ```
 推送自定义采集的音频数据到 RTC SDK。
 
@@ -1682,7 +1892,7 @@ virtual int bytertc::IRTCVideo::pushExternalAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame*** | 10 ms 对应的音频数据。详见 [IAudioFrame](Windows-keytype.md#iaudioframe)。 |
+| audio_frame | **IAudioFrame*** | 10 ms 对应的音频数据。详见 [IAudioFrame](Windows-keytype.md#iaudioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
 
 **返回值**
 方法调用结果  
@@ -1701,16 +1911,15 @@ virtual int bytertc::IRTCVideo::pushExternalAudioFrame(
 ### pullExternalAudioFrame
 ```cpp
 virtual int bytertc::IRTCVideo::pullExternalAudioFrame(
-    IAudioFrame* audioFrame)
+    IAudioFrame* audio_frame)
 ```
-拉取远端音频数据。<br>
-可用于自定义音频渲染。
+拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **IAudioFrame*** | 获取的 10 ms 内的音频数据。详见 [IAudioFrame](Windows-keytype.md#iaudioframe)。 |
+| audio_frame | **IAudioFrame*** | 获取的 10 ms 内的音频数据。详见 [IAudioFrame](Windows-keytype.md#iaudioframe)。 |
 
 **返回值**
 方法调用结果：
@@ -1722,19 +1931,24 @@ virtual int bytertc::IRTCVideo::pullExternalAudioFrame(
 **注意**
 
 + 获取音频数据用于自定义渲染前，必须先调用 [setAudioRenderType](#IRTCVideo-setaudiorendertype) 开启自定义渲染。
-+ 由于 RTC SDK 的帧长为 10 毫秒，你应当每隔 10 毫秒拉取一次音频数据。确保音频采样点数（sample）x 拉取频率等于 audioFrame 的采样率 （sampleRate）。如设置采样率为 48000 时，每 10 毫秒调用本接口拉取数据，每次应拉取 480 个采样点。  
++ 由于 RTC SDK 的帧长为 10 毫秒，你应当每隔 10 毫秒拉取一次音频数据。确保音频采样点数（sample）x 拉取频率等于 audio_frame 的采样率 （sampleRate）。如设置采样率为 48000 时，每 10 毫秒调用本接口拉取数据，每次应拉取 480 个采样点。  
 + 该函数运行在用户调用线程内，是一个同步函数。  
 
 
 <span id="IRTCVideo-startvideocapture"></span>
 ### startVideoCapture
 ```cpp
-virtual void bytertc::IRTCVideo::startVideoCapture()
+virtual int bytertc::IRTCVideo::startVideoCapture()
 ```
 立即开启内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
 调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
 本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstartvideocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1747,12 +1961,17 @@ virtual void bytertc::IRTCVideo::startVideoCapture()
 <span id="IRTCVideo-stopvideocapture"></span>
 ### stopVideoCapture
 ```cpp
-virtual void bytertc::IRTCVideo::stopVideoCapture()
+virtual int bytertc::IRTCVideo::stopVideoCapture()
 ```
 立即关闭内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
 调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Windows-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1765,7 +1984,7 @@ virtual void bytertc::IRTCVideo::stopVideoCapture()
 ### setVideoCaptureConfig
 ```cpp
 virtual int bytertc::IRTCVideo::setVideoCaptureConfig(
-    const VideoCaptureConfig& videoCaptureConfig)
+    const VideoCaptureConfig& video_capture_config)
 ```
 设置 RTC SDK 内部采集时的视频采集参数。<br>
 如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数，包括模式、分辨率、帧率。
@@ -1774,7 +1993,7 @@ virtual int bytertc::IRTCVideo::setVideoCaptureConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| videoCaptureConfig | **const VideoCaptureConfig&** | 视频采集参数。参看: [VideoCaptureConfig](Windows-keytype.md#videocaptureconfig)。 |
+| video_capture_config | **const VideoCaptureConfig&** | 视频采集参数。参看: [VideoCaptureConfig](Windows-keytype.md#videocaptureconfig)。 |
 
 **返回值**
 
@@ -1792,7 +2011,7 @@ virtual int bytertc::IRTCVideo::setVideoCaptureConfig(
 <span id="IRTCVideo-setvideocapturerotation"></span>
 ### setVideoCaptureRotation
 ```cpp
-virtual void bytertc::IRTCVideo::setVideoCaptureRotation(
+virtual int bytertc::IRTCVideo::setVideoCaptureRotation(
     VideoRotation rotation)
 ```
 设置本端采集的视频帧的旋转角度。
@@ -1804,18 +2023,23 @@ virtual void bytertc::IRTCVideo::setVideoCaptureRotation(
 | --- | --- | --- |
 | rotation | **VideoRotation** | 相机朝向角度，默认为 `VIDEO_ROTATION_0(0)`，无旋转角度。详见 [VideoRotation](Windows-keytype.md#videorotation)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 调用本接口也将对自定义采集视频画面生效，在原有的旋转角度基础上叠加本次设置。
-+ 通过 [enableVirtualBackground](#IVideoEffect-enablevirtualbackground) 增加的虚拟背景，不会跟随本接口的设置进行旋转。
++ 通过 [enableVirtualBackground](#IVideoEffect-enablevirtualbackground) 增加的虚拟背景，不会跟随本接口的设置进行旋转。Linux 不适用。
 + 通过本接口设置的旋转角度不会应用到转推直播中。
 
 
 <span id="IRTCVideo-enablesimulcastmode"></span>
 ### enableSimulcastMode
 ```cpp
-virtual void bytertc::IRTCVideo::enableSimulcastMode(
+virtual int bytertc::IRTCVideo::enableSimulcastMode(
     bool enabled)
 ```
 该方法设置视频流发布端是否开启发布多路编码参数不同的视频流的模式。
@@ -1826,12 +2050,17 @@ virtual void bytertc::IRTCVideo::enableSimulcastMode(
 | --- | --- | --- |
 | enabled | **bool** | 是否开启推送多路视频流模式： <br/>• true：开启 <br/>• false：关闭（默认） |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 你应在进房前或进房后但未发布流时，调用此方法。  
 + 开启推送多路流后，不能动态关闭，也不能更新多路流的路数和编码参数。  
-+ 开启推送多路视频流模式后，你可以调用 [setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig-1) 为多路视频流分别设置编码参数。  
++ 开启推送多路视频流模式后，你可以在发布流前调用 [setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig-1) 为多路视频流分别设置编码参数。  
 + 该功能关闭时，或该功能开启但未设置多路流参数时，默认只发一路视频流，该流的编码参数为：分辨率 640px × 360px，帧率 15fps。
 
 
@@ -1859,7 +2088,7 @@ virtual int bytertc::IRTCVideo::setVideoEncoderConfig(
 
 **注意**
 
-+ 你可以同时使用 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 方法来发布多路分辨率不同的流。具体而言，若期望发布多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 方法开启多路流模式，SDK 会根据订阅端的设置智能调整发布的流数（最多发布 4 条）以及各路流的参数。其中，调用本方法设置的分辨率为各路流中的最大分辨率。具体规则参看[推送多路流](70139)文档。
++ 你可以同时使用 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 方法来发布多路分辨率不同的流。具体而言，若期望发布多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 方法开启多路流模式，SDK 会根据订阅端的设置智能调整发布的流数（最多发布 4 条）以及各路流的参数。其中，调用本方法设置的分辨率为各路流中的最大分辨率。具体规则参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。
 + 调用该方法前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
 + 使用自定义采集时，必须调用该方法设置编码参数，以保证远端收到画面的完整性。
 + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 [setScreenVideoEncoderConfig](#IRTCVideo-setscreenvideoencoderconfig)（Linux 不适用）。
@@ -1890,7 +2119,7 @@ virtual int bytertc::IRTCVideo::setVideoEncoderConfig(
 
 **注意**
 
-+ 该方法设置的多路参数是否均生效，取决于是否同时调用了 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 则默认发布设置的第一条流，多个分辨率的设置会在开启推送多路流模式之后生效。
++ 该方法设置的多路参数是否均生效，取决于是否同时调用了 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 则默认发布设置的第一条流，多个分辨率的设置会在开启推送多路流模式之后生效。  
 + 若期望推送多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 方法。
 + 开启推送多路流后，不能动态关闭，也不能更新多路流的路数和编码参数。  
 + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
@@ -1987,7 +2216,7 @@ virtual int bytertc::IRTCVideo::setLocalVideoCanvas(
 <span id="IRTCVideo-updatelocalvideocanvas"></span>
 ### updateLocalVideoCanvas
 ```cpp
-virtual void bytertc::IRTCVideo::updateLocalVideoCanvas(
+virtual int bytertc::IRTCVideo::updateLocalVideoCanvas(
     StreamIndex index,
     const enum RenderMode renderMode,
     const uint32_t backgroundColor)
@@ -2002,6 +2231,11 @@ virtual void bytertc::IRTCVideo::updateLocalVideoCanvas(
 | renderMode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Windows-keytype.md#rendermode) |
 | backgroundColor | **const uint32_t** | 背景颜色，参看 [VideoCanvas](Windows-keytype.md#videocanvas).background_color |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 你可以在本地视频渲染过程中，调用此接口。调用结果会实时生效。
@@ -2009,7 +2243,7 @@ virtual void bytertc::IRTCVideo::updateLocalVideoCanvas(
 <span id="IRTCVideo-setremotevideocanvas"></span>
 ### setRemoteVideoCanvas
 ```cpp
-virtual void bytertc::IRTCVideo::setRemoteVideoCanvas(
+virtual int bytertc::IRTCVideo::setRemoteVideoCanvas(
     RemoteStreamKey stream_key,
     const VideoCanvas& canvas)
 ```
@@ -2023,6 +2257,11 @@ virtual void bytertc::IRTCVideo::setRemoteVideoCanvas(
 | stream_key | **RemoteStreamKey** | 参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey) |
 | canvas | **const VideoCanvas&** | 视图信息和渲染模式，参看：[VideoCanvas](Windows-keytype.md#videocanvas) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 本地用户离开房间时，会解除调用此 API 建立的绑定关系；远端用户离开房间则不会影响。
@@ -2030,10 +2269,10 @@ virtual void bytertc::IRTCVideo::setRemoteVideoCanvas(
 <span id="IRTCVideo-updateremotestreamvideocanvas"></span>
 ### updateRemoteStreamVideoCanvas
 ```cpp
-virtual void bytertc::IRTCVideo::updateRemoteStreamVideoCanvas(
+virtual int bytertc::IRTCVideo::updateRemoteStreamVideoCanvas(
     RemoteStreamKey stream_key,
-    const enum RenderMode renderMode,
-    const uint32_t backgroundColor)
+    const enum RenderMode render_mode,
+    const uint32_t background_color)
 ```
 修改远端视频渲染模式和背景色。
 
@@ -2042,8 +2281,13 @@ virtual void bytertc::IRTCVideo::updateRemoteStreamVideoCanvas(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey) |
-| renderMode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Windows-keytype.md#rendermode) |
-| backgroundColor | **const uint32_t** | 背景颜色，参看 [VideoCanvas](Windows-keytype.md#videocanvas).background_color |
+| render_mode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Windows-keytype.md#rendermode) |
+| background_color | **const uint32_t** | 背景颜色，参看 [VideoCanvas](Windows-keytype.md#videocanvas).background_color |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2052,7 +2296,7 @@ virtual void bytertc::IRTCVideo::updateRemoteStreamVideoCanvas(
 <span id="IRTCVideo-setlocalvideosink"></span>
 ### setLocalVideoSink
 ```cpp
-virtual void bytertc::IRTCVideo::setLocalVideoSink(
+virtual int bytertc::IRTCVideo::setLocalVideoSink(
     StreamIndex index,
     IVideoSink* video_sink,
     IVideoSink::PixelFormat required_format)
@@ -2067,6 +2311,11 @@ virtual void bytertc::IRTCVideo::setLocalVideoSink(
 | video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](Windows-keytype.md#ivideosink)。 |
 | required_format | **IVideoSink::PixelFormat** | video_sink 适用的视频帧编码格式，参看 [PixelFormat](Windows-keytype.md#pixelformat) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -2078,7 +2327,7 @@ virtual void bytertc::IRTCVideo::setLocalVideoSink(
 <span id="IRTCVideo-setremotevideosink"></span>
 ### setRemoteVideoSink
 ```cpp
-virtual void bytertc::IRTCVideo::setRemoteVideoSink(
+virtual int bytertc::IRTCVideo::setRemoteVideoSink(
     RemoteStreamKey stream_key,
     IVideoSink* video_sink,
     IVideoSink::PixelFormat required_format)
@@ -2092,6 +2341,11 @@ virtual void bytertc::IRTCVideo::setRemoteVideoSink(
 | stream_key | **RemoteStreamKey** | 远端流信息，用于指定需要渲染的视频流来源及属性，参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey)。 |
 | video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](Windows-keytype.md#ivideosink)。 |
 | required_format | **IVideoSink::PixelFormat** | video_sink 适用的视频帧编码格式，参看 [PixelFormat](Windows-keytype.md#pixelformat)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2131,9 +2385,9 @@ virtual int bytertc::IRTCVideo::pushScreenVideoFrame(
 <span id="IRTCVideo-setoriginalscreenvideoinfo"></span>
 ### setOriginalScreenVideoInfo
 ```cpp
-virtual void bytertc::IRTCVideo::setOriginalScreenVideoInfo(
-    int originalCaptureWidth,
-    int originalCaptureHeight)
+virtual int bytertc::IRTCVideo::setOriginalScreenVideoInfo(
+    int original_capture_width,
+    int original_capture_height)
 ```
 外部采集时，当屏幕或待采集窗口大小发生改变，为了使 RTC 更好地决策合适的帧率和分辨率积，调用此接口设置改变前的分辨率。
 
@@ -2141,8 +2395,13 @@ virtual void bytertc::IRTCVideo::setOriginalScreenVideoInfo(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| originalCaptureWidth | **int** | 首次采集屏幕流的宽度。 |
-| originalCaptureHeight | **int** | 首次采集屏幕流的高度。 |
+| original_capture_width | **int** | 首次采集屏幕流的宽度。 |
+| original_capture_height | **int** | 首次采集屏幕流的高度。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2154,7 +2413,7 @@ virtual void bytertc::IRTCVideo::setOriginalScreenVideoInfo(
 <span id="IRTCVideo-updatescreencaptureregion"></span>
 ### updateScreenCaptureRegion
 ```cpp
-virtual void bytertc::IRTCVideo::updateScreenCaptureRegion(
+virtual int bytertc::IRTCVideo::updateScreenCaptureRegion(
     const Rectangle& region_rect)
 ```
 通过 RTC SDK 提供的采集模块采集屏幕视频流时，更新采集区域。仅用于采集源为显示器屏幕时。
@@ -2164,6 +2423,11 @@ virtual void bytertc::IRTCVideo::updateScreenCaptureRegion(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | region_rect | **const Rectangle&** | 采集区域。参见 [Rectangle](Windows-keytype.md#rectangle)  <br/>此参数描述了调用此接口后的采集区域，和 [startScreenVideoCapture](#IRTCVideo-startscreenvideocapture) 中 `source_info` 设定区域的相对关系。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2202,15 +2466,20 @@ virtual int bytertc::IRTCVideo::startScreenVideoCapture(
 + 调用此接口前，你可以调用 [setScreenVideoEncoderConfig](#IRTCVideo-setscreenvideoencoderconfig) 设置屏幕视频流的采集帧率和编码分辨率。  
 + 在收到 [onFirstLocalVideoFrameCaptured](Windows-callback.md#IRTCVideoEventHandler-onfirstlocalvideoframecaptured) 回调后通过调用 [setLocalVideoCanvas](#IRTCVideo-setlocalvideocanvas) 或 [setLocalVideoSink](#IRTCVideo-setlocalvideosink) 函数设置本地屏幕共享视图。  
 + 可以调用 [setLocalVideoSink](#IRTCVideo-setlocalvideosink) 将本地视频流与自定义渲染器绑定，通过回调 [onFrame](Windows-keytype.md#IVideoSink-onframe) 获取采集成功的本地视频帧。 
-+ 再开启采集屏幕视频流后，你可以调用 updateScreenCaptureHighlightConfig[updatescreencapturehighlightconfig](#updatescreencapturehighlightconfig)更新边框高亮设置，调用 updateScreenCaptureMouseCursor[updatescreencapturemousecursor](#updatescreencapturemousecursor)更新对鼠标的处理设置，调用 updateScreenCaptureFilterConfig[updatescreencapturefilterconfig](#updatescreencapturefilterconfig)设置需要过滤的窗口。  
++ 再开启采集屏幕视频流后，你可以调用 [updateScreenCaptureHighlightConfig](#IRTCVideo-updatescreencapturehighlightconfig) 更新边框高亮设置，调用 [updateScreenCaptureMouseCursor](#IRTCVideo-updatescreencapturemousecursor) 更新对鼠标的处理设置，调用 [updateScreenCaptureFilterConfig](#IRTCVideo-updatescreencapturefilterconfig) 设置需要过滤的窗口。  
 
 
 <span id="IRTCVideo-stopscreenvideocapture"></span>
 ### stopScreenVideoCapture
 ```cpp
-virtual void bytertc::IRTCVideo::stopScreenVideoCapture()
+virtual int bytertc::IRTCVideo::stopScreenVideoCapture()
 ```
 停止屏幕视频流采集。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2224,7 +2493,7 @@ virtual void bytertc::IRTCVideo::stopScreenVideoCapture()
 <span id="IRTCVideo-updatescreencapturehighlightconfig"></span>
 ### updateScreenCaptureHighlightConfig
 ```cpp
-virtual void bytertc::IRTCVideo::updateScreenCaptureHighlightConfig(
+virtual int bytertc::IRTCVideo::updateScreenCaptureHighlightConfig(
     const HighlightConfig& highlight_config)
 ```
 通过 RTC SDK 提供的采集模块采集屏幕视频流时，更新边框高亮设置。默认展示表框。
@@ -2234,6 +2503,11 @@ virtual void bytertc::IRTCVideo::updateScreenCaptureHighlightConfig(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | highlight_config | **const HighlightConfig&** | 边框高亮设置。参见 [HighlightConfig](Windows-keytype.md#highlightconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2245,7 +2519,7 @@ virtual void bytertc::IRTCVideo::updateScreenCaptureHighlightConfig(
 <span id="IRTCVideo-updatescreencapturemousecursor"></span>
 ### updateScreenCaptureMouseCursor
 ```cpp
-virtual void bytertc::IRTCVideo::updateScreenCaptureMouseCursor(
+virtual int bytertc::IRTCVideo::updateScreenCaptureMouseCursor(
     MouseCursorCaptureState capture_mouse_cursor)
 ```
 通过 RTC SDK 提供的采集模块采集屏幕视频流时，更新对鼠标的处理设置。默认采集鼠标。
@@ -2256,6 +2530,11 @@ virtual void bytertc::IRTCVideo::updateScreenCaptureMouseCursor(
 | --- | --- | --- |
 | capture_mouse_cursor | **MouseCursorCaptureState** | 参看 [MouseCursorCaptureState](Windows-keytype.md#mousecursorcapturestate) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 调用此接口前，必须已通过调用 [startScreenVideoCapture](#IRTCVideo-startscreenvideocapture) 开启了内部屏幕流采集。
@@ -2263,7 +2542,7 @@ virtual void bytertc::IRTCVideo::updateScreenCaptureMouseCursor(
 <span id="IRTCVideo-updatescreencapturefilterconfig"></span>
 ### updateScreenCaptureFilterConfig
 ```cpp
-virtual void bytertc::IRTCVideo::updateScreenCaptureFilterConfig(
+virtual int bytertc::IRTCVideo::updateScreenCaptureFilterConfig(
     const ScreenFilterConfig& filter_config)
 ```
 通过 RTC SDK 提供的采集模块采集屏幕视频流时，设置需要过滤的窗口。
@@ -2273,6 +2552,11 @@ virtual void bytertc::IRTCVideo::updateScreenCaptureFilterConfig(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | filter_config | **const ScreenFilterConfig&** | 窗口过滤设置，参看 [ScreenFilterConfig](Windows-keytype.md#screenfilterconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2314,7 +2598,7 @@ virtual IVideoFrame* bytertc::IRTCVideo::getThumbnail(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ScreenCaptureSourceType** | 屏幕采集对象的类型。详见 [ScreenCaptureSourceType](Windows-keytype.md#screencapturesourcetype)。 |
-| source_id | **view_t** | 屏幕共享对象的 ID，可通过 [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) 枚举共享对象列表中获取。详见 [view_t](Windows-keytype.md#view-t) |
+| source_id | **view_t** | 屏幕共享对象的 ID，可通过 [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) 枚举共享对象列表中获取。详见 [view_t](Windows-keytype.md#view-t)。 |
 | max_width | **int** | 最大宽度。保持采集对象本身的宽高比不变，将缩略图缩放到指定范围内的最大宽高。如果给出的尺寸与共享对象比例不同，得到的缩略图会有黑边。 |
 | max_height | **int** | 最大高度。参见 max_width 的说明。 |
 
@@ -2338,7 +2622,7 @@ virtual IVideoFrame* bytertc::IRTCVideo::getWindowAppIcon(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| source_id | **view_t** | 屏幕共享对象的 ID，可通过 [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) 枚举共享对象列表中获取。详见 [view_t](Windows-keytype.md#view-t) |
+| source_id | **view_t** | 屏幕共享对象的 ID，可通过 [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) 枚举共享对象列表中获取。详见 [view_t](Windows-keytype.md#view-t)。 |
 | max_width | **int** | 最大宽度。返回的图标将是宽高相等的，输入宽高不等时，取二者较小值。宽高范围为 [32,256]，超出该范围将返回 nullptr，默认输出 100 x 100 的图像。 |
 | max_height | **int** | 最大高度。参见 max_width 的说明。 |
 
@@ -2352,7 +2636,7 @@ virtual IVideoFrame* bytertc::IRTCVideo::getWindowAppIcon(
 <span id="IRTCVideo-setvideosourcetype"></span>
 ### setVideoSourceType
 ```cpp
-virtual void bytertc::IRTCVideo::setVideoSourceType(
+virtual int bytertc::IRTCVideo::setVideoSourceType(
     StreamIndex stream_index,
     VideoSourceType type)
 ```
@@ -2365,6 +2649,11 @@ virtual void bytertc::IRTCVideo::setVideoSourceType(
 | --- | --- | --- |
 | stream_index | **StreamIndex** | 视频流的属性，参看 [StreamIndex](Windows-keytype.md#streamindex) |
 | type | **VideoSourceType** | 视频输入源类型，参看 [VideoSourceType](Windows-keytype.md#videosourcetype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2434,7 +2723,7 @@ virtual IRTCRoom* bytertc::IRTCVideo::createRTCRoom(
 <span id="IRTCVideo-setpublishfallbackoption"></span>
 ### setPublishFallbackOption
 ```cpp
-virtual void bytertc::IRTCVideo::setPublishFallbackOption(
+virtual int bytertc::IRTCVideo::setPublishFallbackOption(
     PublishFallbackOption option)
 ```
 设置发布的音视频流的回退选项。  <br>
@@ -2446,19 +2735,25 @@ virtual void bytertc::IRTCVideo::setPublishFallbackOption(
 | --- | --- | --- |
 | option | **PublishFallbackOption** | 本地发布的音视频流回退选项，参看 [PublishFallbackOption](Windows-keytype.md#publishfallbackoption)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 该方法仅在调用 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 开启了发送多路视频流的情况下生效。  
 + 该方法必须在进房前设置，进房后设置或更改设置无效。  
-+ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](Windows-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调通知。  
++ 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [onPerformanceAlarms](Windows-callback.md#IRTCVideoEventHandler-onperformancealarms) 回调发出的告警，以便采集设备配合调整。 
++ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](Windows-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调，通知该情况。  
 + 你可以调用客户端 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
 <span id="IRTCVideo-setsubscribefallbackoption"></span>
 ### setSubscribeFallbackOption
 ```cpp
-virtual void bytertc::IRTCVideo::setSubscribeFallbackOption(
+virtual int bytertc::IRTCVideo::setSubscribeFallbackOption(
     SubscribeFallbackOption option)
 ```
 设置订阅的音视频流的回退选项。 <br>
@@ -2469,6 +2764,11 @@ virtual void bytertc::IRTCVideo::setSubscribeFallbackOption(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | option | **SubscribeFallbackOption** | 订阅的音视频流回退选项，参看 [SubscribeFallbackOption](Windows-keytype.md#subscribefallbackoption)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2540,8 +2840,8 @@ virtual int bytertc::IRTCVideo::setBusinessId(
 <span id="IRTCVideo-setlocalvideomirrortype"></span>
 ### setLocalVideoMirrorType
 ```cpp
-virtual void bytertc::IRTCVideo::setLocalVideoMirrorType(
-    MirrorType mirrorType)
+virtual int bytertc::IRTCVideo::setLocalVideoMirrorType(
+    MirrorType mirror_type)
 ```
 为采集到的视频流开启镜像
 
@@ -2549,7 +2849,12 @@ virtual void bytertc::IRTCVideo::setLocalVideoMirrorType(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mirrorType | **MirrorType** | 镜像类型，参看 [MirrorType](Windows-keytype.md#mirrortype) |
+| mirror_type | **MirrorType** | 镜像类型，参看 [MirrorType](Windows-keytype.md#mirrortype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2595,7 +2900,7 @@ virtual int bytertc::IRTCVideo::enableEffectBeauty(
 + 0: 调用成功。
 + –1000: 未集成特效 SDK。
 + –1001: RTC SDK 版本不支持此功能。
-+ –1002: 特效 SDK 当前版本不支持此功能，建议使用特效 SDK V4.3.1 版本。
++ –1002: 特效 SDK 当前版本不支持此功能，建议使用特效 SDK V4.3.2 版本。
 + –1003: 联系技术支持人员。
 + –1004: 正在下载相关资源，下载完成后生效。
 + <0: 调用失败，特效 SDK 内部错误，具体错误码请参考[错误码表](https://www.volcengine.com/docs/6705/102042)。
@@ -2604,7 +2909,7 @@ virtual int bytertc::IRTCVideo::enableEffectBeauty(
 **注意**
 
 + 本方法不能与高级视频特效接口共用。如已购买高级视频特效，建议调用 [enableVideoEffect](#IVideoEffect-enablevideoeffect) 使用高级特效、贴纸功能等。 
-+ 使用此功能需要[集成](https://www.volcengine.com/docs/6348/114717)特效 SDK，建议使用特效 SDK V4.3.1+ 版本。 
++ 使用此功能需要[集成](https://www.volcengine.com/docs/6348/114717)特效 SDK，建议使用特效 SDK V4.3.2+ 版本。 
 + 调用 [setBeautyIntensity](#IRTCVideo-setbeautyintensity) 设置基础美颜强度。若在调用本方法前没有设置美颜强度，则初始美白、磨皮、锐化强度均为 0.5。 
 + 本方法仅适用于视频源，不适用于屏幕源。 
 
@@ -2642,7 +2947,7 @@ virtual int bytertc::IRTCVideo::setBeautyIntensity(
 <span id="IRTCVideo-setencryptinfo"></span>
 ### setEncryptInfo
 ```cpp
-virtual void bytertc::IRTCVideo::setEncryptInfo(
+virtual int bytertc::IRTCVideo::setEncryptInfo(
     EncryptType encrypt_type,
     const char* key,
     int key_size)
@@ -2657,6 +2962,11 @@ virtual void bytertc::IRTCVideo::setEncryptInfo(
 | key | **const char*** | 加密密钥，长度限制为 36 位，超出部分将会被截断 |
 | key_size | **int** | 参数 key 的长度 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -2667,7 +2977,7 @@ virtual void bytertc::IRTCVideo::setEncryptInfo(
 <span id="IRTCVideo-setcustomizeencrypthandler"></span>
 ### setCustomizeEncryptHandler
 ```cpp
-virtual void bytertc::IRTCVideo::setCustomizeEncryptHandler(
+virtual int bytertc::IRTCVideo::setCustomizeEncryptHandler(
     IEncryptHandler* handler)
 ```
 设置自定义加密和解密方式。
@@ -2678,12 +2988,17 @@ virtual void bytertc::IRTCVideo::setCustomizeEncryptHandler(
 | --- | --- | --- |
 | handler | **IEncryptHandler*** | 自定义加密 handler，需要实现 handler 的加密和解密方法。参看 [IEncryptHandler](Windows-callback.md#iencrypthandler)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 该方法与 [setEncryptInfo](#IRTCVideo-setencryptinfo) 为互斥关系，只能选择自定义加密方式或者默认加密方式。最终生效的加密方式取决于最后一个调用的方法。  
 + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  
-+ 无论加密或者解密，其对原始数据的长度修改，需要控制在 90% ~ 120% 之间，即如果输入数据为 100 字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃。  
++ 无论加密或者解密，其对原始数据的长度修改，需要控制在 180% 以内，即如果输入数据为 100 字节，则处理完成后的数据必须在 180 字节以内，如果加密或解密结果超出该长度限制，则该音视频帧可能会被丢弃。
 + 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率。是否使用该方法，需要由使用方谨慎评估。
 
 
@@ -2691,7 +3006,7 @@ virtual void bytertc::IRTCVideo::setCustomizeEncryptHandler(
 <span id="IRTCVideo-enableaudioframecallback"></span>
 ### enableAudioFrameCallback
 ```cpp
-virtual void bytertc::IRTCVideo::enableAudioFrameCallback(
+virtual int bytertc::IRTCVideo::enableAudioFrameCallback(
     AudioFrameCallbackMethod method,
     AudioFormat format)
 ```
@@ -2704,6 +3019,11 @@ virtual void bytertc::IRTCVideo::enableAudioFrameCallback(
 | method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Windows-keytype.md#audioframecallbackmethod)。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRecord`、`kAudioFrameCallbackPlayback`、`kAudioFrameCallbackMixed`、`kAudioFrameCallbackRecordScreen`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRemoteUser`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。 |
 | format | **AudioFormat** | 音频参数格式，参看 [AudioFormat](Windows-keytype.md#audioformat)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 开启音频回调并调用 [registerAudioFrameObserver](#IRTCVideo-registeraudioframeobserver) 后，[IAudioFrameObserver](Windows-callback.md#iaudioframeobserver) 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  
@@ -2711,7 +3031,7 @@ virtual void bytertc::IRTCVideo::enableAudioFrameCallback(
 <span id="IRTCVideo-disableaudioframecallback"></span>
 ### disableAudioFrameCallback
 ```cpp
-virtual void bytertc::IRTCVideo::disableAudioFrameCallback(
+virtual int bytertc::IRTCVideo::disableAudioFrameCallback(
     AudioFrameCallbackMethod method)
 ```
 关闭音频回调
@@ -2722,6 +3042,11 @@ virtual void bytertc::IRTCVideo::disableAudioFrameCallback(
 | --- | --- | --- |
 | method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Windows-keytype.md#audioframecallbackmethod)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 该方法需要在调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 之后调用。
@@ -2729,7 +3054,7 @@ virtual void bytertc::IRTCVideo::disableAudioFrameCallback(
 <span id="IRTCVideo-registeraudioframeobserver"></span>
 ### registerAudioFrameObserver
 ```cpp
-virtual void bytertc::IRTCVideo::registerAudioFrameObserver(
+virtual int bytertc::IRTCVideo::registerAudioFrameObserver(
     IAudioFrameObserver* observer)
 ```
 注册音频数据回调观察者。  <br>
@@ -2740,14 +3065,19 @@ virtual void bytertc::IRTCVideo::registerAudioFrameObserver(
 | --- | --- | --- |
 | observer | **IAudioFrameObserver*** | 音频数据观察者，参看 [IAudioFrameObserver](Windows-callback.md#iaudioframeobserver)。如果传入 null，则取消注册。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
-注册音频数据回调观察者并调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Windows-callback.md#iaudioframeobserver) 会收到对应的音频回调。对回调中收到的音频数据进行处理，不会影响 RTC 的编码发送或渲染。
+注册音频数据回调观察者并调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Windows-callback.md#iaudioframeobserver) 会收到对应的音频回调。
 
 <span id="IRTCVideo-registerlocalaudioprocessor"></span>
 ### registerLocalAudioProcessor
 ```cpp
-BYTERTC_DEPRECATED virtual void bytertc::IRTCVideo::registerLocalAudioProcessor(
+BYTERTC_DEPRECATED virtual int bytertc::IRTCVideo::registerLocalAudioProcessor(
     IAudioProcessor* processor,
     AudioFormat audioFormat)
 ```
@@ -2764,6 +3094,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | processor | **IAudioProcessor*** | 自定义音频处理器，参看 [IAudioProcessor](Windows-callback.md#iaudioprocessor)。如果传入 null，则不对 RTC SDK 采集得到的音频帧进行自定义处理。 |
 | audioFormat | **AudioFormat** | 自定义音频参数格式，参看 [AudioFormat](Windows-keytype.md#audioformat)，SDK 将按指定设置给出音频帧。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 重复调用此接口时，仅最后一次调用生效。效果不会叠加。
@@ -2771,28 +3106,31 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 <span id="IRTCVideo-registeraudioprocessor"></span>
 ### registerAudioProcessor
 ```cpp
-virtual void bytertc::IRTCVideo::registerAudioProcessor(
+virtual int bytertc::IRTCVideo::registerAudioProcessor(
     IAudioFrameProcessor* processor)
 ```
 注册自定义音频处理器。<br>
-注册完成后，你可以调用 [enableAudioProcessor](#IRTCVideo-enableaudioprocessor)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。
+注册完成后，你可以调用 [enableAudioProcessor](#IRTCVideo-enableaudioprocessor)，对本地采集或接收到的远端音频进行处理。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| processor | **IAudioFrameProcessor*** | 自定义音频处理器，详见 [IAudioFrameProcessor](Windows-callback.md#iaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
+| processor | **IAudioFrameProcessor*** | 自定义音频处理器，详见 [IAudioFrameProcessor](Windows-callback.md#iaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。需要取消注册时，设置此参数为 nullptr。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
-
-- 重复调用此接口时，仅最后一次调用生效。
-- 更多相关信息，详见[音频自定义处理](https://www.volcengine.com/docs/6348/80635)。
+重复调用此接口时，仅最后一次调用生效。
 
 <span id="IRTCVideo-enableaudioprocessor"></span>
 ### enableAudioProcessor
 ```cpp
-virtual void bytertc::IRTCVideo::enableAudioProcessor(
+virtual int bytertc::IRTCVideo::enableAudioProcessor(
     AudioProcessorMethod method,
     AudioFormat format)
 ```
@@ -2805,6 +3143,11 @@ virtual void bytertc::IRTCVideo::enableAudioProcessor(
 | method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](Windows-keytype#audioprocessormethod)。可多次调用此接口，处理不同类型的音频帧。<br/>选择不同类型的音频帧将收到对应的回调：  <br/>• 选择本地采集的音频时，会收到 [onProcessRecordAudioFrame](Windows-callback.md#IAudioFrameProcessor-onprocessrecordaudioframe)。  <br/>• 选择远端音频流的混音音频时，会收到 [onProcessPlayBackAudioFrame](Windows-callback.md#IAudioFrameProcessor-onprocessplaybackaudioframe)。  <br/>• 选择远端音频流时，会收到 [onProcessRemoteUserAudioFrame](Windows-callback.md#IAudioFrameProcessor-onprocessremoteuseraudioframe)。  <br/>• 选择屏幕共享音频流时，会收到 [onProcessScreenAudioFrame](Windows-callback.md#IAudioFrameProcessor-onprocessscreenaudioframe)。（Linux 不适用） |
 | format | **AudioFormat** | 设定自定义处理时获取的音频帧格式，参看 [AudioFormat](Windows-keytype.md#audioformat)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -2815,7 +3158,7 @@ virtual void bytertc::IRTCVideo::enableAudioProcessor(
 <span id="IRTCVideo-disableaudioprocessor"></span>
 ### disableAudioProcessor
 ```cpp
-virtual void bytertc::IRTCVideo::disableAudioProcessor(
+virtual int bytertc::IRTCVideo::disableAudioProcessor(
     AudioProcessorMethod method)
 ```
 关闭自定义音频处理。
@@ -2825,6 +3168,11 @@ virtual void bytertc::IRTCVideo::disableAudioProcessor(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](Windows-keytype.md#audioprocessormethod)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="IRTCVideo-registerlocalvideoprocessor"></span>
@@ -2860,7 +3208,7 @@ virtual int bytertc::IRTCVideo::registerLocalVideoProcessor(
 <span id="IRTCVideo-setvideodigitalzoomconfig"></span>
 ### setVideoDigitalZoomConfig
 ```cpp
-virtual void bytertc::IRTCVideo::setVideoDigitalZoomConfig(
+virtual int bytertc::IRTCVideo::setVideoDigitalZoomConfig(
     ZoomConfigType type,
     float size)
 ```
@@ -2875,6 +3223,11 @@ virtual void bytertc::IRTCVideo::setVideoDigitalZoomConfig(
 | type | **ZoomConfigType** | 数码变焦参数类型，缩放系数或移动步长。参看 [ZoomConfigType](Windows-keytype.md#zoomconfigtype)。必填。 |
 | size | **float** | 缩放系数或移动步长，保留到小数点后三位。默认值为 0。必填。<br/>选择不同 `type` 时有不同的取值范围。当计算后的结果超过缩放和移动边界时，取临界值。<br/>• `kZoomFocusOffset`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。<br/>• `kZoomMoveOffset`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。 |
 
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
+
 
 **注意**
 
@@ -2885,7 +3238,7 @@ virtual void bytertc::IRTCVideo::setVideoDigitalZoomConfig(
 <span id="IRTCVideo-setvideodigitalzoomcontrol"></span>
 ### setVideoDigitalZoomControl
 ```cpp
-virtual void bytertc::IRTCVideo::setVideoDigitalZoomControl(
+virtual int bytertc::IRTCVideo::setVideoDigitalZoomControl(
     ZoomDirectionType direction)
 ```
 > Available since 3.51
@@ -2898,6 +3251,11 @@ virtual void bytertc::IRTCVideo::setVideoDigitalZoomControl(
 | --- | --- | --- |
 | direction | **ZoomDirectionType** | 数码变焦操作类型，参看 [ZoomDirectionType](Windows-keytype.md#zoomdirectiontype)。 |
 
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
+
 
 **注意**
 
@@ -2905,12 +3263,13 @@ virtual void bytertc::IRTCVideo::setVideoDigitalZoomControl(
 + 调用该方法进行移动前，应先使用本方法或 [startVideoDigitalZoomControl](#IRTCVideo-startvideodigitalzoomcontrol) 进行放大，否则无法移动。
 + 当数码变焦操作超出范围时，将置为临界值。例如，移动到了图片边界、放大到了 8 倍、缩小到原图大小。
 + 如果你希望实现持续数码变焦操作，调用 [startVideoDigitalZoomControl](#IRTCVideo-startvideodigitalzoomcontrol)。
++ 移动端可对摄像头进行光学变焦控制，参看 `setCameraZoomRatio`。
 
 
 <span id="IRTCVideo-startvideodigitalzoomcontrol"></span>
 ### startVideoDigitalZoomControl
 ```cpp
-virtual void bytertc::IRTCVideo::startVideoDigitalZoomControl(
+virtual int bytertc::IRTCVideo::startVideoDigitalZoomControl(
     ZoomDirectionType direction)
 ```
 > Available since 3.51
@@ -2923,6 +3282,11 @@ virtual void bytertc::IRTCVideo::startVideoDigitalZoomControl(
 | --- | --- | --- |
 | direction | **ZoomDirectionType** | 数码变焦操作类型，参看 [ZoomDirectionType](Windows-keytype.md#zoomdirectiontype)。 |
 
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
+
 
 **注意**
 
@@ -2931,16 +3295,22 @@ virtual void bytertc::IRTCVideo::startVideoDigitalZoomControl(
 + 当数码变焦操作超出范围时，将置为临界值并停止操作。例如，移动到了图片边界、放大到了 8 倍、缩小到原图大小。
 + 你也可以调用 [stopVideoDigitalZoomControl](#IRTCVideo-stopvideodigitalzoomcontrol) 手动停止控制。
 + 如果你希望实现单次数码变焦操作，调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol)。
++ 移动端可对摄像头进行光学变焦控制，参看 `setCameraZoomRatio`。
 
 
 <span id="IRTCVideo-stopvideodigitalzoomcontrol"></span>
 ### stopVideoDigitalZoomControl
 ```cpp
-virtual void bytertc::IRTCVideo::stopVideoDigitalZoomControl()
+virtual int bytertc::IRTCVideo::stopVideoDigitalZoomControl()
 ```
 > Available since 3.51
 
 停止本地摄像头持续数码变焦。
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -3003,7 +3373,7 @@ virtual int bytertc::IRTCVideo::sendSEIMessage(
 | stream_index | **StreamIndex** | 指定携带 SEI 数据的媒体流类型，参看 [StreamIndex](Windows-keytype.md#streamindex)。<br/>语音通话场景下，该值需设为 `kStreamIndexMain`，否则 SEI 数据会被丢弃从而无法送达远端。 |
 | message | **const uint8_t*** | SEI 消息。 |
 | length | **int** | SEI 消息长度，建议每帧 SEI 数据总长度长度不超过 4 KB。 |
-| repeat_count | **int** | 消息发送重复次数。取值范围是 [0, max{29, %{视频帧率}-1}]。推荐范围 [2,4]。<br/>调用此接口后，SEI 数据会添加到从当前视频帧开始的连续 `repeatCount+1` 个视频帧中。 |
+| repeat_count | **int** | 消息发送重复次数。取值范围是 [0, max{29, %{视频帧率}-1}]。推荐范围 [2,4]。<br/>调用此接口后，SEI 数据会添加到从当前视频帧开始的连续 `repeat_count+1` 个视频帧中。 |
 | mode | **SEICountPerFrame** | SEI 发送模式，参看 [SEICountPerFrame](Windows-keytype.md#seicountperframe)。 |
 
 **返回值**
@@ -3041,7 +3411,7 @@ virtual IAudioDeviceManager* bytertc::IRTCVideo::getAudioDeviceManager()
 设备音频管理接口创建
 
 **返回值**
-音频设备管理接口
+音频设备管理接口 [IAudioDeviceManager](Windows-api.md#iaudiodevicemanager)
 
 
 <span id="IRTCVideo-startfilerecording"></span>
@@ -3078,7 +3448,7 @@ virtual int bytertc::IRTCVideo::startFileRecording(
 <span id="IRTCVideo-stopfilerecording"></span>
 ### stopFileRecording
 ```cpp
-virtual void bytertc::IRTCVideo::stopFileRecording(
+virtual int bytertc::IRTCVideo::stopFileRecording(
     StreamIndex type)
 ```
 停止本地录制
@@ -3088,6 +3458,11 @@ virtual void bytertc::IRTCVideo::stopFileRecording(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **StreamIndex** | 流属性，指定停止主流或者屏幕流录制，参看 [StreamIndex](Windows-keytype.md#streamindex) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3102,7 +3477,7 @@ virtual void bytertc::IRTCVideo::stopFileRecording(
 virtual int bytertc::IRTCVideo::startAudioRecording(
     AudioRecordingConfig& config)
 ```
-开启录制语音通话，生成本地文件。 <br>
+开启录制语音通话，生成本地文件。<br>
 在进房前后开启录制，如果未打开麦克风采集，录制任务正常进行，只是不会将数据写入生成的本地文件；只有调用 [startAudioCapture](#IRTCVideo-startaudiocapture) 接口打开麦克风采集后，才会将录制数据写入本地文件。
 
 **传入参数**
@@ -3121,6 +3496,7 @@ virtual int bytertc::IRTCVideo::startAudioRecording(
 **注意**
 
 + 录制包含各种音频效果。但不包含背景音乐。
++ 调用 [stopAudioRecording](#IRTCVideo-stopaudiorecording) 关闭录制。
 + 加入房间前后均可调用。在进房前调用该方法，退房之后，录制任务不会自动停止，需调用[stopAudioRecording](#IRTCVideo-stopaudiorecording) 关闭录制。在进房后调用该方法，退房之后，录制任务会自动被停止。如果加入了多个房间，录制的文件中会包含各个房间的音频。
 + 调用该方法后，你会收到 [onAudioRecordingStateUpdate](Windows-callback.md#IRTCVideoEventHandler-onaudiorecordingstateupdate) 回调。  
 
@@ -3144,7 +3520,7 @@ virtual int bytertc::IRTCVideo::stopAudioRecording()
 <span id="IRTCVideo-enableexternalsoundcard"></span>
 ### enableExternalSoundCard
 ```cpp
-virtual void bytertc::IRTCVideo::enableExternalSoundCard(
+virtual int bytertc::IRTCVideo::enableExternalSoundCard(
     bool enable)
 ```
 启用匹配外置声卡的音频处理模式
@@ -3154,6 +3530,11 @@ virtual void bytertc::IRTCVideo::enableExternalSoundCard(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | enable | **bool** | • true: 开启 <br/>• false: 不开启(默认) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3165,7 +3546,7 @@ virtual void bytertc::IRTCVideo::enableExternalSoundCard(
 <span id="IRTCVideo-setruntimeparameters"></span>
 ### setRuntimeParameters
 ```cpp
-virtual void bytertc::IRTCVideo::setRuntimeParameters(
+virtual int bytertc::IRTCVideo::setRuntimeParameters(
     const char * json_string)
 ```
 设置运行时的参数
@@ -3175,6 +3556,11 @@ virtual void bytertc::IRTCVideo::setRuntimeParameters(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | json_string | **const char*** | json 序列化之后的字符串 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3205,7 +3591,9 @@ virtual int bytertc::IRTCVideo::feedback(
 
 
 **注意**
-如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
+
++ 你可以在 [RTC 控制台](https://console.volcengine.com/rtc/callQualityRTC/feedback)上查看用户通过此接口提交的反馈详情和整体趋势。 
++ 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
 
 
 <span id="IRTCVideo-getaudiomixingmanager"></span>
@@ -3213,10 +3601,45 @@ virtual int bytertc::IRTCVideo::feedback(
 ```cpp
 virtual IAudioMixingManager* bytertc::IRTCVideo::getAudioMixingManager()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use getAudioEffectPlayer and getMediaPlayer instead
+
 混音管理接口创建
 
 **返回值**
 混音管理实例，详见[IAudioMixingManager](#iaudiomixingmanager)
+
+
+<span id="IRTCVideo-getaudioeffectplayer"></span>
+### getAudioEffectPlayer
+```cpp
+virtual IAudioEffectPlayer* bytertc::IRTCVideo::getAudioEffectPlayer()
+```
+> Available since 3.53
+
+创建音效播放器实例。
+
+**返回值**
+音效播放器。详见 [IAudioEffectPlayer](#iaudioeffectplayer)。
+
+
+<span id="IRTCVideo-getmediaplayer"></span>
+### getMediaPlayer
+```cpp
+virtual IMediaPlayer* bytertc::IRTCVideo::getMediaPlayer(
+    int player_id)
+```
+> Available since 3.53
+
+创建音乐播放器实例。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| player_id | **int** | 音乐播放器实例 id。取值范围为 `[0, 3]`。最多同时存在4个实例，超出取值范围时返回 nullptr。 |
+
+**返回值**
+音乐播放器实例，详见 [IMediaPlayer](#imediaplayer)
 
 
 <span id="IRTCVideo-login"></span>
@@ -3248,9 +3671,14 @@ virtual int bytertc::IRTCVideo::login(
 <span id="IRTCVideo-logout"></span>
 ### logout
 ```cpp
-virtual void bytertc::IRTCVideo::logout()
+virtual int bytertc::IRTCVideo::logout()
 ```
 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3262,7 +3690,7 @@ virtual void bytertc::IRTCVideo::logout()
 <span id="IRTCVideo-updatelogintoken"></span>
 ### updateLoginToken
 ```cpp
-virtual void bytertc::IRTCVideo::updateLoginToken(
+virtual int bytertc::IRTCVideo::updateLoginToken(
     const char* token)
 ```
 更新用户用于登录的 Token  <br>
@@ -3275,6 +3703,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | --- | --- | --- |
 | token | **const char*** | 更新的动态密钥 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -3285,7 +3718,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 <span id="IRTCVideo-setserverparams"></span>
 ### setServerParams
 ```cpp
-virtual void bytertc::IRTCVideo::setServerParams(
+virtual int bytertc::IRTCVideo::setServerParams(
     const char* signature,
     const char* url)
 ```
@@ -3296,8 +3729,13 @@ virtual void bytertc::IRTCVideo::setServerParams(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| signature | **const char*** | 动态签名  <br/>应用服务器会使用该签名对请求进行鉴权验证。 |
+| signature | **const char*** | 动态签名，应用服务器可使用该签名验证消息来源。<br>签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br>设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。 |
 | url | **const char*** | 应用服务器的地址 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3309,7 +3747,7 @@ virtual void bytertc::IRTCVideo::setServerParams(
 <span id="IRTCVideo-getpeeronlinestatus"></span>
 ### getPeerOnlineStatus
 ```cpp
-virtual void bytertc::IRTCVideo::getPeerOnlineStatus(
+virtual int bytertc::IRTCVideo::getPeerOnlineStatus(
     const char* peer_user_id)
 ```
 查询对端用户或本端用户的登录状态
@@ -3319,6 +3757,11 @@ virtual void bytertc::IRTCVideo::getPeerOnlineStatus(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | peer_user_id | **const char*** | 需要查询的用户 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3453,7 +3896,7 @@ virtual int64_t bytertc::IRTCVideo::sendServerBinaryMessage(
 <span id="IRTCVideo-startnetworkdetection"></span>
 ### startNetworkDetection
 ```cpp
-virtual NetworkDetectionStartReturn bytertc::IRTCVideo::startNetworkDetection(
+virtual int bytertc::IRTCVideo::startNetworkDetection(
     bool is_test_uplink,
     int expected_uplink_bitrate,
     bool is_test_downlink,
@@ -3471,7 +3914,9 @@ virtual NetworkDetectionStartReturn bytertc::IRTCVideo::startNetworkDetection(
 | expected_downlink_biterate | **int** | 期望下行带宽，单位：kbps范围为 {0, [100-10000]}，其中， `0` 表示由 SDK 指定最高码率。 |
 
 **返回值**
-开启通话前网络探测结果，详见 [NetworkDetectionStartReturn](Windows-errorcode.md#networkdetectionstartreturn)
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3483,9 +3928,14 @@ virtual NetworkDetectionStartReturn bytertc::IRTCVideo::startNetworkDetection(
 <span id="IRTCVideo-stopnetworkdetection"></span>
 ### stopNetworkDetection
 ```cpp
-virtual void bytertc::IRTCVideo::stopNetworkDetection()
+virtual int bytertc::IRTCVideo::stopNetworkDetection()
 ```
 停止通话前网络探测
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3496,7 +3946,7 @@ virtual void bytertc::IRTCVideo::stopNetworkDetection()
 <span id="IRTCVideo-setscreenaudiosourcetype"></span>
 ### setScreenAudioSourceType
 ```cpp
-virtual void bytertc::IRTCVideo::setScreenAudioSourceType(
+virtual int bytertc::IRTCVideo::setScreenAudioSourceType(
     AudioSourceType source_type)
 ```
 在屏幕共享时，设置屏幕音频的采集方式（内部采集/自定义采集）
@@ -3506,6 +3956,11 @@ virtual void bytertc::IRTCVideo::setScreenAudioSourceType(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | source_type | **AudioSourceType** | 屏幕音频输入源类型, 参看 [AudioSourceType](Windows-keytype.md#audiosourcetype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3520,7 +3975,7 @@ virtual void bytertc::IRTCVideo::setScreenAudioSourceType(
 <span id="IRTCVideo-setscreenaudiostreamindex"></span>
 ### setScreenAudioStreamIndex
 ```cpp
-virtual void bytertc::IRTCVideo::setScreenAudioStreamIndex(
+virtual int bytertc::IRTCVideo::setScreenAudioStreamIndex(
     StreamIndex index)
 ```
 在屏幕共享时，设置屏幕音频流和麦克风采集到的音频流的混流方式
@@ -3531,6 +3986,11 @@ virtual void bytertc::IRTCVideo::setScreenAudioStreamIndex(
 | --- | --- | --- |
 | index | **StreamIndex** | 混流方式，参看 [StreamIndex](Windows-keytype.md#streamindex) <br/>• `kStreamIndexMain`: 将屏幕音频流和麦克风采集到的音频流混流 <br/>• `kStreamIndexScreen`: 默认值， 将屏幕音频流和麦克风采集到的音频流分为两路音频流 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 你应该在 [publishScreen](#IRTCRoom-publishscreen) 之前，调用此方法。否则，你将收到 [onWarning](Windows-callback.md#IRTCVideoEventHandler-onwarning) `的报错：kWarningCodeSetScreenAudioStreamIndexFailed`
@@ -3538,7 +3998,7 @@ virtual void bytertc::IRTCVideo::setScreenAudioStreamIndex(
 <span id="IRTCVideo-setscreenaudiochannel"></span>
 ### setScreenAudioChannel
 ```cpp
-virtual void bytertc::IRTCVideo::setScreenAudioChannel(
+virtual int bytertc::IRTCVideo::setScreenAudioChannel(
     AudioChannel channel)
 ```
 在屏幕共享时，设置屏幕音频流的声道数
@@ -3549,6 +4009,11 @@ virtual void bytertc::IRTCVideo::setScreenAudioChannel(
 | --- | --- | --- |
 | channel | **AudioChannel** | 声道数，参看 [AudioChannel](Windows-keytype.md#audiochannel) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 当你调用 [setScreenAudioStreamIndex](#IRTCVideo-setscreenaudiostreamindex) 并设置屏幕音频流和麦克风音频流混流时，此接口不生效，音频通道数由 [setAudioProfile](#IRTCVideo-setaudioprofile) 控制。
@@ -3556,9 +4021,14 @@ virtual void bytertc::IRTCVideo::setScreenAudioChannel(
 <span id="IRTCVideo-startscreenaudiocapture"></span>
 ### startScreenAudioCapture
 ```cpp
-virtual void bytertc::IRTCVideo::startScreenAudioCapture()
+virtual int bytertc::IRTCVideo::startScreenAudioCapture()
 ```
 在屏幕共享时，开始使用 RTC SDK 内部采集方式，采集屏幕音频
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3571,9 +4041,14 @@ virtual void bytertc::IRTCVideo::startScreenAudioCapture()
 <span id="IRTCVideo-stopscreenaudiocapture"></span>
 ### stopScreenAudioCapture
 ```cpp
-virtual void bytertc::IRTCVideo::stopScreenAudioCapture()
+virtual int bytertc::IRTCVideo::stopScreenAudioCapture()
 ```
 在屏幕共享时，停止使用 RTC SDK 内部采集方式，采集屏幕音频。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3595,7 +4070,7 @@ virtual int bytertc::IRTCVideo::pushScreenAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| frame | **IAudioFrame*** | 音频数据帧，参见 [IAudioFrame](Windows-keytype.md#iaudioframe) |
+| frame | **IAudioFrame*** | 音频数据帧，参见 [IAudioFrame](Windows-keytype.md#iaudioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
 
 **返回值**
 方法调用结果  
@@ -3607,16 +4082,15 @@ virtual int bytertc::IRTCVideo::pushScreenAudioFrame(
 **注意**
 
 + 调用此接口推送屏幕共享时的自定义采集的音频数据前，必须调用 [setScreenAudioSourceType](#IRTCVideo-setscreenaudiosourcetype) 开启屏幕音频自定义采集。  
-+ 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。  
-+ 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 samples × frame.channel × 2。  
++ 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。
 + 调用此接口将自定义采集的音频帧推送到 RTC SDK 后，你必须调用 [publishScreen](#IRTCRoom-publishscreen) 将采集到的屏幕音频推送到远端。在调用 [publishScreen](#IRTCRoom-publishscreen) 前，推送到 RTC SDK 的音频帧信息会丢失。
 
 
 <span id="IRTCVideo-setaudioalignmentproperty"></span>
 ### setAudioAlignmentProperty
 ```cpp
-virtual void bytertc::IRTCVideo::setAudioAlignmentProperty(
-    const RemoteStreamKey& streamKey,
+virtual int bytertc::IRTCVideo::setAudioAlignmentProperty(
+    const RemoteStreamKey& stream_key,
     AudioAlignmentMode mode)
 ```
 在听众端，设置订阅的所有远端音频流精准对齐后播放。
@@ -3625,8 +4099,13 @@ virtual void bytertc::IRTCVideo::setAudioAlignmentProperty(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamKey | **const RemoteStreamKey&** | 作为对齐基准的远端音频流。参看 [RemoteStreamKey](Windows-keytype#remotestreamkey)。<br/>一般选择主唱的音频流。<br/>你必须在收到 [onUserPublishStream](Windows-callback.md#IRTCRoomEventHandler-onuserpublishstream)，确认此音频流已发布后，调用此 API。 |
+| stream_key | **const RemoteStreamKey&** | 作为对齐基准的远端音频流。参看 [RemoteStreamKey](Windows-keytype#remotestreamkey)。<br/>一般选择主唱的音频流。<br/>你必须在收到 [onUserPublishStream](Windows-callback.md#IRTCRoomEventHandler-onuserpublishstream)，确认此音频流已发布后，调用此 API。 |
 | mode | **AudioAlignmentMode** | 是否对齐，默认不对齐。参看 [AudioAlignmentMode](Windows-keytype.md#audioalignmentmode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3640,7 +4119,7 @@ virtual void bytertc::IRTCVideo::setAudioAlignmentProperty(
 <span id="IRTCVideo-startlivetranscoding"></span>
 ### startLiveTranscoding
 ```cpp
-virtual void bytertc::IRTCVideo::startLiveTranscoding(
+BYTERTC_DEPRECATED virtual int bytertc::IRTCVideo::startLiveTranscoding(
     const char* task_id,
     ITranscoderParam* param,
     ITranscoderObserver* observer)
@@ -3658,10 +4137,14 @@ virtual void bytertc::IRTCVideo::startLiveTranscoding(
 | param | **ITranscoderParam*** | 转推直播配置参数。参看 [ITranscoderParam](Windows-keytype.md#itranscoderparam)。 |
 | observer | **ITranscoderObserver*** | 端云一体转推直播观察者。参看 [ITranscoderObserver](Windows-callback.md#itranscoderobserver)。  <br/>通过注册 observer 接收转推直播相关的回调。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamMixingEvent](Windows-callback.md#ITranscoderObserver-onstreammixingevent) 回调。
 + 调用 [stopLiveTranscoding](#IRTCVideo-stoplivetranscoding) 停止转推直播。
 
@@ -3669,7 +4152,7 @@ virtual void bytertc::IRTCVideo::startLiveTranscoding(
 <span id="IRTCVideo-stoplivetranscoding"></span>
 ### stopLiveTranscoding
 ```cpp
-virtual void bytertc::IRTCVideo::stopLiveTranscoding(
+BYTERTC_DEPRECATED virtual int bytertc::IRTCVideo::stopLiveTranscoding(
     const char* task_id)
 ```
 > Deprecated  since 3.52, will be deleted in 3.58, using [stopPushStreamToCDN](#IRTCVideo-stoppushstreamtocdn) instead.
@@ -3683,11 +4166,16 @@ virtual void bytertc::IRTCVideo::stopLiveTranscoding(
 | --- | --- | --- |
 | task_id | **const char*** | 转推直播任务 ID。可以指定想要停止的转推直播任务。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="IRTCVideo-updatelivetranscoding"></span>
 ### updateLiveTranscoding
 ```cpp
-virtual void bytertc::IRTCVideo::updateLiveTranscoding(
+BYTERTC_DEPRECATED virtual int bytertc::IRTCVideo::updateLiveTranscoding(
     const char* task_id,
     ITranscoderParam* param)
 ```
@@ -3702,6 +4190,11 @@ virtual void bytertc::IRTCVideo::updateLiveTranscoding(
 | --- | --- | --- |
 | task_id | **const char*** | 转推直播任务 ID。指定想要更新参数设置的转推直播任务。 |
 | param | **ITranscoderParam*** | 转推直播配置参数，参看 [ITranscoderParam](Windows-keytype.md#itranscoderparam)。除特殊说明外，均支持过程中更新。<br/>调用时，结构体中没有传入值的属性，会被更新为默认值。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="IRTCVideo-startpushmixedstreamtocdn"></span>
@@ -3733,9 +4226,7 @@ virtual int bytertc::IRTCVideo::startPushMixedStreamToCDN(
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onMixingEvent](Windows-callback.md#IMixedStreamObserver-onmixingevent) 回调。
-+ 如果你在[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=callback)配置了转推直播的服务端回调，调用本接口会收到 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted)。重复调用该接口时，第二次调用会同时触发 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 和 [TranscodeUpdated](https://www.volcengine.com/docs/6348/75125#transcodeupdated)。
 + 调用 [stopPushStreamToCDN](#IRTCVideo-stoppushstreamtocdn) 停止转推直播。
 
 
@@ -3767,7 +4258,7 @@ virtual int bytertc::IRTCVideo::updatePushMixedStreamToCDN(
 <span id="IRTCVideo-startpushsinglestreamtocdn"></span>
 ### startPushSingleStreamToCDN
 ```cpp
-virtual void bytertc::IRTCVideo::startPushSingleStreamToCDN(
+virtual int bytertc::IRTCVideo::startPushSingleStreamToCDN(
     const char* task_id,
     PushSingleStreamParam& param,
     IPushSingleStreamToCDNObserver* observer)
@@ -3782,10 +4273,14 @@ virtual void bytertc::IRTCVideo::startPushSingleStreamToCDN(
 | param | **PushSingleStreamParam&** | 转推直播配置参数。详见 [PushSingleStreamParam](Windows-keytype.md#pushsinglestreamparam)。 |
 | observer | **IPushSingleStreamToCDNObserver*** | 单流转推直播观察者。详见 [IPushSingleStreamToCDNObserver](Windows-callback.md#ipushsinglestreamtocdnobserver)。  <br/>通过注册 observer 接收单流转推直播相关的回调。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamPushEvent](Windows-callback.md#IPushSingleStreamToCDNObserver-onstreampushevent) 回调。
 + 调用 [stopPushStreamToCDN](#IRTCVideo-stoppushstreamtocdn) 停止任务。
 + 由于本功能不进行编解码，所以推到 RTMP 的视频流会根据推流端的分辨率、编码方式、关闭摄像头等变化而变化。
@@ -3794,7 +4289,7 @@ virtual void bytertc::IRTCVideo::startPushSingleStreamToCDN(
 <span id="IRTCVideo-stoppushstreamtocdn"></span>
 ### stopPushStreamToCDN
 ```cpp
-virtual void bytertc::IRTCVideo::stopPushStreamToCDN(
+virtual int bytertc::IRTCVideo::stopPushStreamToCDN(
     const char* task_id)
 ```
 停止转推直播。<br>
@@ -3805,6 +4300,11 @@ virtual void bytertc::IRTCVideo::stopPushStreamToCDN(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | task_id | **const char*** | 任务 ID。可以指定想要停止的单流转推直播或合流转推直播任务。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3895,7 +4395,7 @@ virtual int bytertc::IRTCVideo::updatePublicStreamParam(
 <span id="IRTCVideo-enableaudiopropertiesreport"></span>
 ### enableAudioPropertiesReport
 ```cpp
-virtual void bytertc::IRTCVideo::enableAudioPropertiesReport(
+virtual int bytertc::IRTCVideo::enableAudioPropertiesReport(
     const AudioPropertiesConfig& config)
 ```
 启用音频信息提示。开启提示后，你会收到 [onLocalAudioPropertiesReport](Windows-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport)，[onRemoteAudioPropertiesReport](Windows-callback.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 和 [onActiveSpeaker](Windows-callback.md#IRTCVideoEventHandler-onactivespeaker)。
@@ -3905,6 +4405,11 @@ virtual void bytertc::IRTCVideo::enableAudioPropertiesReport(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | config | **const AudioPropertiesConfig&** | 详见 [AudioPropertiesConfig](Windows-keytype.md#audiopropertiesconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="IRTCVideo-setremoteaudioplaybackvolume"></span>
@@ -3941,7 +4446,7 @@ virtual int bytertc::IRTCVideo::setRemoteAudioPlaybackVolume(
 <span id="IRTCVideo-enablevocalinstrumentbalance"></span>
 ### enableVocalInstrumentBalance
 ```cpp
-virtual void bytertc::IRTCVideo::enableVocalInstrumentBalance(
+virtual int bytertc::IRTCVideo::enableVocalInstrumentBalance(
     bool enable)
 ```
 开启/关闭音量均衡功能。  <br>
@@ -3953,6 +4458,11 @@ virtual void bytertc::IRTCVideo::enableVocalInstrumentBalance(
 | --- | --- | --- |
 | enable | **bool** | 是否开启音量均衡功能：  <br/>• true: 是  <br/>• false: 否 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 该接口须在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件之前调用。
@@ -3960,7 +4470,7 @@ virtual void bytertc::IRTCVideo::enableVocalInstrumentBalance(
 <span id="IRTCVideo-enableplaybackducking"></span>
 ### enablePlaybackDucking
 ```cpp
-virtual void bytertc::IRTCVideo::enablePlaybackDucking(
+virtual int bytertc::IRTCVideo::enablePlaybackDucking(
     bool enable)
 ```
 打开/关闭音量闪避功能，适用于在 RTC 通话过程中会同时播放短视频或音乐的场景，如“一起看”、“在线 KTV”等。  <br>
@@ -3972,11 +4482,16 @@ virtual void bytertc::IRTCVideo::enablePlaybackDucking(
 | --- | --- | --- |
 | enable | **bool** | 是否开启音量闪避：  <br/>• true: 是  <br/>• false: 否 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="IRTCVideo-registerlocalencodedvideoframeobserver"></span>
 ### registerLocalEncodedVideoFrameObserver
 ```cpp
-virtual void bytertc::IRTCVideo::registerLocalEncodedVideoFrameObserver(
+virtual int bytertc::IRTCVideo::registerLocalEncodedVideoFrameObserver(
     ILocalEncodedVideoFrameObserver* observer)
 ```
 注册本地视频帧监测器。  <br>
@@ -3988,6 +4503,11 @@ virtual void bytertc::IRTCVideo::registerLocalEncodedVideoFrameObserver(
 | --- | --- | --- |
 | observer | **ILocalEncodedVideoFrameObserver*** | 本地视频帧监测器，参看 [ILocalEncodedVideoFrameObserver](Windows-callback.md#ilocalencodedvideoframeobserver)。将参数设置为 nullptr 则取消注册。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 该方法可在进房前后的任意时间调用，在进房前调用可保证尽可能早地监测视频帧并触发回调
@@ -3995,7 +4515,7 @@ virtual void bytertc::IRTCVideo::registerLocalEncodedVideoFrameObserver(
 <span id="IRTCVideo-registerremoteencodedvideoframeobserver"></span>
 ### registerRemoteEncodedVideoFrameObserver
 ```cpp
-virtual void bytertc::IRTCVideo::registerRemoteEncodedVideoFrameObserver(
+virtual int bytertc::IRTCVideo::registerRemoteEncodedVideoFrameObserver(
     IRemoteEncodedVideoFrameObserver* observer)
 ```
 注册远端编码后视频数据回調。  <br>
@@ -4006,6 +4526,11 @@ virtual void bytertc::IRTCVideo::registerRemoteEncodedVideoFrameObserver(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **IRemoteEncodedVideoFrameObserver*** | 远端编码后视频数据监测器，参看 [IRemoteEncodedVideoFrameObserver](Windows-callback.md#iremoteencodedvideoframeobserver) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4018,7 +4543,7 @@ virtual void bytertc::IRTCVideo::registerRemoteEncodedVideoFrameObserver(
 <span id="IRTCVideo-setexternalvideoencodereventhandler"></span>
 ### setExternalVideoEncoderEventHandler
 ```cpp
-virtual void bytertc::IRTCVideo::setExternalVideoEncoderEventHandler(
+virtual int bytertc::IRTCVideo::setExternalVideoEncoderEventHandler(
     IExternalVideoEncoderEventHandler* encoder_handler)
 ```
 注册自定义编码帧推送事件回调
@@ -4028,6 +4553,11 @@ virtual void bytertc::IRTCVideo::setExternalVideoEncoderEventHandler(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | encoder_handler | **IExternalVideoEncoderEventHandler*** | 自定义编码帧回调类，参看 [IExternalVideoEncoderEventHandler](Windows-callback.md#iexternalvideoencodereventhandler) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4071,7 +4601,7 @@ virtual int bytertc::IRTCVideo::pushExternalEncodedVideoFrame(
 <span id="IRTCVideo-setvideodecoderconfig"></span>
 ### setVideoDecoderConfig
 ```cpp
-virtual void bytertc::IRTCVideo::setVideoDecoderConfig(
+virtual int bytertc::IRTCVideo::setVideoDecoderConfig(
     RemoteStreamKey key,
     VideoDecoderConfig config)
 ```
@@ -4084,6 +4614,11 @@ virtual void bytertc::IRTCVideo::setVideoDecoderConfig(
 | key | **RemoteStreamKey** | 远端流信息，即对哪一路视频流进行解码方式设置，参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey)。 |
 | config | **VideoDecoderConfig** | 视频解码方式，参看 [VideoDecoderConfig](Windows-keytype.md#videodecoderconfig)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -4094,7 +4629,7 @@ virtual void bytertc::IRTCVideo::setVideoDecoderConfig(
 <span id="IRTCVideo-requestremotevideokeyframe"></span>
 ### requestRemoteVideoKeyFrame
 ```cpp
-virtual void bytertc::IRTCVideo::requestRemoteVideoKeyFrame(
+virtual int bytertc::IRTCVideo::requestRemoteVideoKeyFrame(
     const RemoteStreamKey& stream_info)
 ```
 在订阅远端视频流之后，向远端请求关键帧
@@ -4104,6 +4639,11 @@ virtual void bytertc::IRTCVideo::requestRemoteVideoKeyFrame(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | stream_info | **const RemoteStreamKey&** | 远端流信息，参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4148,7 +4688,7 @@ virtual int bytertc::IRTCVideo::sendStreamSyncInfo(
 <span id="IRTCVideo-setlocalvoicepitch"></span>
 ### setLocalVoicePitch
 ```cpp
-virtual void bytertc::IRTCVideo::setLocalVoicePitch(
+virtual int bytertc::IRTCVideo::setLocalVoicePitch(
     int pitch)
 ```
 开启本地语音变调功能，多用于 K 歌场景。  <br>
@@ -4160,11 +4700,16 @@ virtual void bytertc::IRTCVideo::setLocalVoicePitch(
 | --- | --- | --- |
 | pitch | **int** | 相对于语音原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [onWarning](Windows-callback#IRTCVideoEventHandler-onwarning) 回调，提示 [WarningCode](Windows-errorcode.md#warningcode) 错误码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="IRTCVideo-muteaudioplayback"></span>
 ### muteAudioPlayback
 ```cpp
-BYTERTC_DEPRECATED virtual void bytertc::IRTCVideo::muteAudioPlayback(
+BYTERTC_DEPRECATED virtual int bytertc::IRTCVideo::muteAudioPlayback(
     MuteState mute_state)
 ```
 > Deprecated  since 3.45 and will be deleted in 3.51, use [setPlaybackVolume](#IRTCVideo-setplaybackvolume) instead.
@@ -4176,6 +4721,11 @@ BYTERTC_DEPRECATED virtual void bytertc::IRTCVideo::muteAudioPlayback(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mute_state | **MuteState** | 播放状态，标识是否播放本地音频流，详见：[MuteState](Windows-keytype.md#mutestate) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4204,12 +4754,12 @@ virtual int bytertc::IRTCVideo::startPlayPublicStream(
 
 **注意**
 
++ 一个客户端最多同时播放 5 路公共流，请及时调用 [stopPlayPublicStream](#IRTCVideo-stopplaypublicstream) 取消订阅公共流，避免订阅的公共流数量超限。
 + 在调用本接口之前，建议先绑定渲染视图。
 - 调用 [setPublicStreamVideoCanvas](#IRTCVideo-setpublicstreamvideocanvas) 绑定内部渲染视图：
 - 调用 [setPublicStreamVideoSink](#IRTCVideo-setpublicstreamvideosink) 绑定自定义渲染视图：
 + 调用本接口后，可以通过 [onFirstPublicStreamVideoFrameDecoded](Windows-callback.md#IRTCVideoEventHandler-onfirstpublicstreamvideoframedecoded) 和 [onFirstPublicStreamAudioFrame](Windows-callback.md#IRTCVideoEventHandler-onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
 + 调用本接口后，可以通过 [onPublicStreamSEIMessageReceived](Windows-callback.md#IRTCVideoEventHandler-onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
-+ 订阅公共流之后，可以通过调用 [stopPlayPublicStream](#IRTCVideo-stopplaypublicstream) 接口取消订阅公共流。
 
 
 <span id="IRTCVideo-stopplaypublicstream"></span>
@@ -4307,8 +4857,8 @@ virtual int bytertc::IRTCVideo::setPublicStreamAudioPlaybackVolume(
 <span id="IRTCVideo-setvideowatermark"></span>
 ### setVideoWatermark
 ```cpp
-virtual void bytertc::IRTCVideo::setVideoWatermark(
-    StreamIndex streamIndex,
+virtual int bytertc::IRTCVideo::setVideoWatermark(
+    StreamIndex stream_index,
     const char* image_path,
     RTCWatermarkConfig config)
 ```
@@ -4318,9 +4868,14 @@ virtual void bytertc::IRTCVideo::setVideoWatermark(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 需要添加水印的视频流属性，参看 [StreamIndex](Windows-keytype.md#streamindex)。 |
+| stream_index | **StreamIndex** | 需要添加水印的视频流属性，参看 [StreamIndex](Windows-keytype.md#streamindex)。 |
 | image_path | **const char*** | 水印图片路径，仅支持本地文件绝对路径，长度限制为 512 字节。  <br/>水印图片为 PNG 或 JPG 格式。 |
 | config | **RTCWatermarkConfig** | 水印参数，参看 [RTCWatermarkConfig](Windows-keytype.md#rtcwatermarkconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4334,8 +4889,8 @@ virtual void bytertc::IRTCVideo::setVideoWatermark(
 <span id="IRTCVideo-clearvideowatermark"></span>
 ### clearVideoWatermark
 ```cpp
-virtual void bytertc::IRTCVideo::clearVideoWatermark(
-    StreamIndex streamIndex)
+virtual int bytertc::IRTCVideo::clearVideoWatermark(
+    StreamIndex stream_index)
 ```
 移除指定视频流的水印。
 
@@ -4343,14 +4898,19 @@ virtual void bytertc::IRTCVideo::clearVideoWatermark(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **StreamIndex** | 需要移除水印的视频流属性，参看 [StreamIndex](Windows-keytype.md#streamindex)。 |
+| stream_index | **StreamIndex** | 需要移除水印的视频流属性，参看 [StreamIndex](Windows-keytype.md#streamindex)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="IRTCVideo-takelocalsnapshot"></span>
 ### takeLocalSnapshot
 ```cpp
 virtual long bytertc::IRTCVideo::takeLocalSnapshot(
-    const StreamIndex streamIndex,
+    const StreamIndex stream_index,
     ISnapshotResultCallback* callback)
 ```
 截取本地视频画面
@@ -4359,7 +4919,7 @@ virtual long bytertc::IRTCVideo::takeLocalSnapshot(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamIndex | **const StreamIndex** | 截图的视频流的属性，参看 [StreamIndex](Windows-keytype.md#streamindex)。 |
+| stream_index | **const StreamIndex** | 截图的视频流的属性，参看 [StreamIndex](Windows-keytype.md#streamindex)。 |
 | callback | **ISnapshotResultCallback*** | 本地截图的回调。参看 [ISnapshotResultCallback](Windows-callback.md#isnapshotresultcallback)。 |
 
 **返回值**
@@ -4376,7 +4936,7 @@ virtual long bytertc::IRTCVideo::takeLocalSnapshot(
 ### takeRemoteSnapshot
 ```cpp
 virtual long bytertc::IRTCVideo::takeRemoteSnapshot(
-    const RemoteStreamKey streamKey,
+    const RemoteStreamKey stream_key,
     ISnapshotResultCallback* callback)
 ```
 截取远端视频画面
@@ -4385,7 +4945,7 @@ virtual long bytertc::IRTCVideo::takeRemoteSnapshot(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| streamKey | **const RemoteStreamKey** | 截图的视频流，参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey)。 |
+| stream_key | **const RemoteStreamKey** | 截图的视频流，参看 [RemoteStreamKey](Windows-keytype.md#remotestreamkey)。 |
 | callback | **ISnapshotResultCallback*** | 参看 [ISnapshotResultCallback](Windows-callback.md#isnapshotresultcallback)。 |
 
 **返回值**
@@ -4427,7 +4987,7 @@ virtual int bytertc::IRTCVideo::setDummyCaptureImagePath(
 <span id="IRTCVideo-startcloudproxy"></span>
 ### startCloudProxy
 ```cpp
-virtual void bytertc::IRTCVideo::startCloudProxy(
+virtual int bytertc::IRTCVideo::startCloudProxy(
     const CloudProxyConfiguration& configuration)
 ```
 开启云代理
@@ -4437,6 +4997,11 @@ virtual void bytertc::IRTCVideo::startCloudProxy(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | configuration | **const CloudProxyConfiguration&** | 云代理服务器信息列表。参看 [CloudProxyConfiguration](Windows-keytype.md#cloudproxyconfiguration)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4450,9 +5015,14 @@ virtual void bytertc::IRTCVideo::startCloudProxy(
 <span id="IRTCVideo-stopcloudproxy"></span>
 ### stopCloudProxy
 ```cpp
-virtual void bytertc::IRTCVideo::stopCloudProxy()
+virtual int bytertc::IRTCVideo::stopCloudProxy()
 ```
 关闭云代理
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4628,6 +5198,447 @@ virtual int bytertc::IRTCVideo::setLocalProxy(
 + 调用该方法设置本地代理后，SDK 会触发 [onLocalProxyStateChanged](Windows-callback.md#IRTCVideoEventHandler-onlocalproxystatechanged) ，返回代理连接的状态。
 
 
+# IAudioEffectPlayer
+```cpp
+class bytertc::IAudioEffectPlayer
+```
+
+音效播放器<br>
+调用 [setEventHandler](#IAudioEffectPlayer-seteventhandler) 设置回调句柄以获取相关回调。
+
+
+`Defined in : bytertc_audio_effect_player.h`
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **** | [IAudioEffectPlayer](#IAudioEffectPlayer-iaudioeffectplayer) |
+| **virtual** | [~IAudioEffectPlayer](#IAudioEffectPlayer-~iaudioeffectplayer) |
+| **virtual int** | [start](#IAudioEffectPlayer-start) |
+| **virtual int** | [stop](#IAudioEffectPlayer-stop) |
+| **virtual int** | [stopAll](#IAudioEffectPlayer-stopall) |
+| **virtual int** | [preload](#IAudioEffectPlayer-preload) |
+| **virtual int** | [unload](#IAudioEffectPlayer-unload) |
+| **virtual int** | [unloadAll](#IAudioEffectPlayer-unloadall) |
+| **virtual int** | [pause](#IAudioEffectPlayer-pause) |
+| **virtual int** | [pauseAll](#IAudioEffectPlayer-pauseall) |
+| **virtual int** | [resume](#IAudioEffectPlayer-resume) |
+| **virtual int** | [resumeAll](#IAudioEffectPlayer-resumeall) |
+| **virtual int** | [setPosition](#IAudioEffectPlayer-setposition) |
+| **virtual int** | [getPosition](#IAudioEffectPlayer-getposition) |
+| **virtual int** | [setVolume](#IAudioEffectPlayer-setvolume) |
+| **virtual int** | [setVolumeAll](#IAudioEffectPlayer-setvolumeall) |
+| **virtual int** | [getVolume](#IAudioEffectPlayer-getvolume) |
+| **virtual int** | [getDuration](#IAudioEffectPlayer-getduration) |
+| **virtual int** | [setEventHandler](#IAudioEffectPlayer-seteventhandler) |
+
+
+## 函数说明
+<span id="IAudioEffectPlayer-iaudioeffectplayer"></span>
+### IAudioEffectPlayer
+```cpp
+bytertc::IAudioEffectPlayer::IAudioEffectPlayer()
+```
+
+<span id="IAudioEffectPlayer-~iaudioeffectplayer"></span>
+### ~IAudioEffectPlayer
+```cpp
+virtual bytertc::IAudioEffectPlayer::~IAudioEffectPlayer()
+```
+
+<span id="IAudioEffectPlayer-start"></span>
+### start
+```cpp
+virtual int bytertc::IAudioEffectPlayer::start(
+    int effect_id,
+    const char* file_path,
+    const AudioEffectPlayerConfig& config)
+```
+开始播放音效文件。<br>
+可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个音效文件，实现音效叠加。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID。用于标识音效，请保证音效 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，上一个音效会停止，下一个音效开始，并收到 [onAudioEffectPlayerStateChanged](Windows-callback.md#IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged)。 |
+| file_path | **const char*** | 音效文件路径。<br/>支持在线文件的 URL、本地文件的 URI、或本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音效文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地音效文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线音效文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
+| config | **const AudioEffectPlayerConfig&** | 音效配置，详见 [AudioEffectPlayerConfig](Windows-keytype.md#audioeffectplayerconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 如果已经通过 [preload](#IAudioEffectPlayer-preload) 将文件加载至内存，确保此处的 ID 与 [preload](#IAudioEffectPlayer-preload) 设置的 ID 相同。
++ 开始播放音效文件后，可以调用 [stop](#IAudioEffectPlayer-stop) 方法停止播放音效文件。
+
+
+<span id="IAudioEffectPlayer-stop"></span>
+### stop
+```cpp
+virtual int bytertc::IAudioEffectPlayer::stop(
+    int effect_id)
+```
+停止播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以调用本方法停止播放音效文件。
++ 调用本方法停止播放音效文件后，该音效文件会被自动卸载。
+
+
+<span id="IAudioEffectPlayer-stopall"></span>
+### stopAll
+```cpp
+virtual int bytertc::IAudioEffectPlayer::stopAll()
+```
+停止播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以调用本方法停止播放所有音效文件。
++ 调用本方法停止播放所有音效文件后，该音效文件会被自动卸载。
+
+
+<span id="IAudioEffectPlayer-preload"></span>
+### preload
+```cpp
+virtual int bytertc::IAudioEffectPlayer::preload(
+    int effect_id,
+    const char* file_path)
+```
+预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID。用于标识音效，请保证音效 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [start](#IAudioEffectPlayer-start)，再使用相同的 ID 调用本方法 ，会收到回调 [onAudioEffectPlayerStateChanged](Windows-callback.md#IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged) ，通知前一个音效停止，然后加载下一个音效。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [start](#IAudioEffectPlayer-start) 播放 B.mp3，请先调用 [unload](#IAudioEffectPlayer-unload) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。 |
+| file_path | **const char*** | 音效文件路径。支持本地文件的 URI。<br/>预加载的文件长度不得超过 20s。<br/>不同平台支持的音效文件格式和 [start](#IAudioEffectPlayer-start) 一致。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 本方法只是预加载指定音效文件，只有调用 [start](#IAudioEffectPlayer-start) 方法才开始播放指定音效文件。
++ 调用本方法预加载的指定音效文件可以通过 [unload](#IAudioEffectPlayer-unload) 卸载。
+
+
+<span id="IAudioEffectPlayer-unload"></span>
+### unload
+```cpp
+virtual int bytertc::IAudioEffectPlayer::unload(
+    int effect_id)
+```
+卸载指定音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 或 [preload](#IAudioEffectPlayer-preload) 后调用此接口。
+
+<span id="IAudioEffectPlayer-unloadall"></span>
+### unloadAll
+```cpp
+virtual int bytertc::IAudioEffectPlayer::unloadAll()
+```
+卸载所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+<span id="IAudioEffectPlayer-pause"></span>
+### pause
+```cpp
+virtual int bytertc::IAudioEffectPlayer::pause(
+    int effect_id)
+```
+暂停播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放音效文件。
++ 调用本方法暂停播放音效文件后，可调用 [resume](#IAudioEffectPlayer-resume) 方法恢复播放。
+
+
+<span id="IAudioEffectPlayer-pauseall"></span>
+### pauseAll
+```cpp
+virtual int bytertc::IAudioEffectPlayer::pauseAll()
+```
+暂停播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放所有音效文件。
++ 调用本方法暂停播放所有音效文件后，可调用 [resumeAll](#IAudioEffectPlayer-resumeall) 方法恢复所有播放。
+
+
+<span id="IAudioEffectPlayer-resume"></span>
+### resume
+```cpp
+virtual int bytertc::IAudioEffectPlayer::resume(
+    int effect_id)
+```
+恢复播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+调用 [pause](#IAudioEffectPlayer-pause) 方法暂停播放音效文件后，可以通过调用本方法恢复播放。
+
+<span id="IAudioEffectPlayer-resumeall"></span>
+### resumeAll
+```cpp
+virtual int bytertc::IAudioEffectPlayer::resumeAll()
+```
+恢复播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+调用 [pauseAll](#IAudioEffectPlayer-pauseall) 方法暂停所有正在播放音效文件后，可以通过调用本方法恢复播放。
+
+<span id="IAudioEffectPlayer-setposition"></span>
+### setPosition
+```cpp
+virtual int bytertc::IAudioEffectPlayer::setPosition(
+    int effect_id,
+    int pos)
+```
+设置音效文件的起始播放位置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+| pos | **int** | 音效文件起始播放位置，单位为毫秒。<br/>你可以通过 [getDuration](#IAudioEffectPlayer-getduration) 获取音效文件总时长，pos 的值应小于音效文件总时长。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
++ 仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+
+<span id="IAudioEffectPlayer-getposition"></span>
+### getPosition
+```cpp
+virtual int bytertc::IAudioEffectPlayer::getPosition(
+    int effect_id)
+```
+获取音效文件播放进度。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 音效文件播放进度，单位为毫秒。
++ < 0: 失败
+
+
+**注意**
+
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
++ 仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+
+<span id="IAudioEffectPlayer-setvolume"></span>
+### setVolume
+```cpp
+virtual int bytertc::IAudioEffectPlayer::setVolume(
+    int effect_id,
+    int volume)
+```
+调节指定音效的音量大小，包括音效文件和 PCM 音频。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+<span id="IAudioEffectPlayer-setvolumeall"></span>
+### setVolumeAll
+```cpp
+virtual int bytertc::IAudioEffectPlayer::setVolumeAll(
+    int volume)
+```
+设置所有音效的音量大小，包括音效文件和 PCM 音效。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+该接口的优先级低于 [setVolume](#IAudioEffectPlayer-setvolume)，即通过 [setVolume](#IAudioEffectPlayer-setvolume) 单独设置了音量的音效 ID，不受该接口设置的影响。
+
+<span id="IAudioEffectPlayer-getvolume"></span>
+### getVolume
+```cpp
+virtual int bytertc::IAudioEffectPlayer::getVolume(
+    int effect_id)
+```
+获取当前音量。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 当前音量值。  
++ < 0: 失败
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+<span id="IAudioEffectPlayer-getduration"></span>
+### getDuration
+```cpp
+virtual int bytertc::IAudioEffectPlayer::getDuration(
+    int effect_id)
+```
+获取音效文件时长。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effect_id | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 音效文件时长，单位为毫秒。  
++ < 0: 失败
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+<span id="IAudioEffectPlayer-seteventhandler"></span>
+### setEventHandler
+```cpp
+virtual int bytertc::IAudioEffectPlayer::setEventHandler(
+    IAudioEffectPlayerEventHandler* handler)
+```
+设置回调句柄。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| handler | **IAudioEffectPlayerEventHandler*** | 参看 [IAudioEffectPlayerEventHandler](Windows-callback.md#iaudioeffectplayereventhandler)。 |
+
+**返回值**
+
++ 0: 成功。  
++ < 0: 失败。
+
+
 # IDeviceCollection
 ```cpp
 class bytertc::IDeviceCollection
@@ -4711,7 +5722,7 @@ class bytertc::IAudioDeviceCollection
 | **virtual int** | [getCount](#IAudioDeviceCollection-getcount) |
 | **virtual int** | [getDevice](#IAudioDeviceCollection-getdevice) |
 | **virtual void** | [release](#IAudioDeviceCollection-release) |
-| **virtual int** | [getDevice](#getdevice-3) |
+| **virtual int** | [getDevice](#IAudioDeviceCollection-getdevice) |
 
 
 ## 函数说明
@@ -4820,6 +5831,7 @@ class bytertc::IAudioDeviceManager
 | **virtual int** | [startAudioDeviceRecordTest](#IAudioDeviceManager-startaudiodevicerecordtest) |
 | **virtual int** | [stopAudioDeviceRecordAndPlayTest](#IAudioDeviceManager-stopaudiodevicerecordandplaytest) |
 | **virtual int** | [stopAudioDevicePlayTest](#IAudioDeviceManager-stopaudiodeviceplaytest) |
+| **virtual int** | [enableFilterSilentDevice](#IAudioDeviceManager-enablefiltersilentdevice) |
 
 
 ## 函数说明
@@ -5299,6 +6311,25 @@ virtual int bytertc::IAudioDeviceManager::stopAudioDevicePlayTest()
 + < 0：方法调用失败
 
 
+<span id="IAudioDeviceManager-enablefiltersilentdevice"></span>
+### enableFilterSilentDevice
+```cpp
+virtual int bytertc::IAudioDeviceManager::enableFilterSilentDevice(
+    bool enable)
+```
+开启/关闭过滤无声设备功能。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| enable | **bool** | 是否开启过滤无声设备功能:<br/>• 1: 是。<br/>• 0: 否。 |
+
+**返回值**
+
++ 0：方法调用成功。
+
+
 # IAudioMixingManager
 ```cpp
 class bytertc::IAudioMixingManager
@@ -5313,31 +6344,31 @@ class bytertc::IAudioMixingManager
 
 | 返回 | 名称 |
 | --- | --- |
-| **virtual void** | [startAudioMixing](#IAudioMixingManager-startaudiomixing) |
-| **virtual void** | [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) |
 | **virtual void** | [stopAllAudioMixing](#IAudioMixingManager-stopallaudiomixing) |
-| **virtual void** | [pauseAudioMixing](#IAudioMixingManager-pauseaudiomixing) |
-| **virtual void** | [pauseAllAudioMixing](#IAudioMixingManager-pauseallaudiomixing) |
-| **virtual void** | [resumeAudioMixing](#IAudioMixingManager-resumeaudiomixing) |
-| **virtual void** | [resumeAllAudioMixing](#IAudioMixingManager-resumeallaudiomixing) |
-| **virtual void** | [preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) |
-| **virtual void** | [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) |
-| **virtual void** | [setAudioMixingVolume](#IAudioMixingManager-setaudiomixingvolume) |
-| **virtual int** | [getAudioMixingDuration](#IAudioMixingManager-getaudiomixingduration) |
-| **virtual int** | [getAudioMixingCurrentPosition](#IAudioMixingManager-getaudiomixingcurrentposition) |
-| **virtual int** | [getAudioMixingPlaybackDuration](#IAudioMixingManager-getaudiomixingplaybackduration) |
-| **virtual void** | [setAudioMixingPosition](#IAudioMixingManager-setaudiomixingposition) |
-| **virtual void** | [setAudioMixingDualMonoMode](#IAudioMixingManager-setaudiomixingdualmonomode) |
-| **virtual void** | [setAudioMixingPitch](#IAudioMixingManager-setaudiomixingpitch) |
-| **virtual int** | [setAudioMixingPlaybackSpeed](#IAudioMixingManager-setaudiomixingplaybackspeed) |
-| **virtual void** | [setAudioMixingProgressInterval](#IAudioMixingManager-setaudiomixingprogressinterval) |
-| **virtual void** | [setAudioMixingLoudness](#IAudioMixingManager-setaudiomixingloudness) |
-| **virtual void** | [enableAudioMixingFrame](#IAudioMixingManager-enableaudiomixingframe) |
-| **virtual void** | [disableAudioMixingFrame](#IAudioMixingManager-disableaudiomixingframe) |
-| **virtual int** | [pushAudioMixingFrame](#IAudioMixingManager-pushaudiomixingframe) |
-| **virtual int** | [getAudioTrackCount](#IAudioMixingManager-getaudiotrackcount) |
-| **virtual void** | [selectAudioTrack](#IAudioMixingManager-selectaudiotrack) |
-| **virtual void** | [registerAudioFileFrameObserver](#IAudioMixingManager-registeraudiofileframeobserver) |
+| **virtual void** | [[deprecated] startAudioMixing](#IAudioMixingManager-startaudiomixing) |
+| **virtual void** | [[deprecated] stopAudioMixing](#IAudioMixingManager-stopaudiomixing) |
+| **virtual void** | [[deprecated] pauseAudioMixing](#IAudioMixingManager-pauseaudiomixing) |
+| **virtual void** | [[deprecated] pauseAllAudioMixing](#IAudioMixingManager-pauseallaudiomixing) |
+| **virtual void** | [[deprecated] resumeAudioMixing](#IAudioMixingManager-resumeaudiomixing) |
+| **virtual void** | [[deprecated] resumeAllAudioMixing](#IAudioMixingManager-resumeallaudiomixing) |
+| **virtual void** | [[deprecated] preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) |
+| **virtual void** | [[deprecated] unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) |
+| **virtual void** | [[deprecated] setAudioMixingVolume](#IAudioMixingManager-setaudiomixingvolume) |
+| **virtual int** | [[deprecated] getAudioMixingDuration](#IAudioMixingManager-getaudiomixingduration) |
+| **virtual int** | [[deprecated] getAudioMixingCurrentPosition](#IAudioMixingManager-getaudiomixingcurrentposition) |
+| **virtual int** | [[deprecated] getAudioMixingPlaybackDuration](#IAudioMixingManager-getaudiomixingplaybackduration) |
+| **virtual void** | [[deprecated] setAudioMixingPosition](#IAudioMixingManager-setaudiomixingposition) |
+| **virtual void** | [[deprecated] setAudioMixingDualMonoMode](#IAudioMixingManager-setaudiomixingdualmonomode) |
+| **virtual void** | [[deprecated] setAudioMixingPitch](#IAudioMixingManager-setaudiomixingpitch) |
+| **virtual int** | [[deprecated] setAudioMixingPlaybackSpeed](#IAudioMixingManager-setaudiomixingplaybackspeed) |
+| **virtual void** | [[deprecated] setAudioMixingProgressInterval](#IAudioMixingManager-setaudiomixingprogressinterval) |
+| **virtual void** | [[deprecated] setAudioMixingLoudness](#IAudioMixingManager-setaudiomixingloudness) |
+| **virtual void** | [[deprecated] enableAudioMixingFrame](#IAudioMixingManager-enableaudiomixingframe) |
+| **virtual void** | [[deprecated] disableAudioMixingFrame](#IAudioMixingManager-disableaudiomixingframe) |
+| **virtual int** | [[deprecated] pushAudioMixingFrame](#IAudioMixingManager-pushaudiomixingframe) |
+| **virtual int** | [[deprecated] getAudioTrackCount](#IAudioMixingManager-getaudiotrackcount) |
+| **virtual void** | [[deprecated] selectAudioTrack](#IAudioMixingManager-selectaudiotrack) |
+| **virtual void** | [[deprecated] registerAudioFileFrameObserver](#IAudioMixingManager-registeraudiofileframeobserver) |
 
 
 ## 函数说明
@@ -5349,6 +6380,8 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
     const char * file_path,
     const AudioMixingConfig& config)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 开始播放音频文件。
 可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
 
@@ -5356,7 +6389,7 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mix_id | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。 |
+| mix_id | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调通知前一次混音已停止。 |
 | file_path | **const char*** | 用于混音文件路径。<br/>支持在线文件的 URL 和本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
 | config | **const AudioMixingConfig&** | 混音配置  <br/>可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 [AudioMixingConfig](Windows-keytype.md#audiomixingconfig)。 |
 
@@ -5364,7 +6397,7 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
 **注意**
 
 + 如果已经通过 [preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) 将文件加载至内存，确保此处的 ID 与预加载时设置的 ID 相同。  
-+ 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。  
 + 开始播放音频文件后，可以调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 方法停止播放音频文件。  
 + 本方法的混音数据来源于外部文件，而 [enableAudioMixingFrame](#IAudioMixingManager-enableaudiomixingframe) 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
 
@@ -5375,6 +6408,8 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
 virtual void bytertc::IAudioMixingManager::stopAudioMixing(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 停止播放音频文件及混音。
 
 **传入参数**
@@ -5387,7 +6422,7 @@ virtual void bytertc::IAudioMixingManager::stopAudioMixing(
 **注意**
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件及混音后，可以调用本方法停止播放音频文件及混音。  
-+ 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 `onAudioMixingStateChanged`。  
++ 调用本方法停止播放音频文件后，SDK 会向本地回调通知已停止混音，见 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。  
 + 调用本方法停止播放音频文件后，该音乐文件会被自动卸载。
 
 
@@ -5402,7 +6437,7 @@ virtual void bytertc::IAudioMixingManager::stopAllAudioMixing()
 **注意**
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件及混音后，可以调用本方法停止播放所有音频文件及混音。  
-+ 调用本方法停止播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已停止播放和混音。  
++ 调用本方法停止播放所有音频文件及混音后，会收到 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，通知已停止播放和混音。  
 + 调用本方法停止播放所有音频文件及混音后，该音频文件会被自动卸载。
 
 
@@ -5412,6 +6447,8 @@ virtual void bytertc::IAudioMixingManager::stopAllAudioMixing()
 virtual void bytertc::IAudioMixingManager::pauseAudioMixing(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 暂停播放音频文件及混音。
 
 **传入参数**
@@ -5425,7 +6462,7 @@ virtual void bytertc::IAudioMixingManager::pauseAudioMixing(
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放音频文件及混音。  
 + 调用本方法暂停播放音频文件及混音后，可调用 [resumeAudioMixing](#IAudioMixingManager-resumeaudiomixing) 方法恢复播放及混音。  
-+ 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 `onAudioMixingStateChanged`。
++ 调用本方法暂停播放音频文件后，SDK 会向本地回调通知已暂停混音，见 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。
 
 
 <span id="IAudioMixingManager-pauseallaudiomixing"></span>
@@ -5433,6 +6470,8 @@ virtual void bytertc::IAudioMixingManager::pauseAudioMixing(
 ```cpp
 virtual void bytertc::IAudioMixingManager::pauseAllAudioMixing()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IAudioEffectPlayer instead
+
 暂停播放所有音频文件及混音。
 
 
@@ -5440,7 +6479,7 @@ virtual void bytertc::IAudioMixingManager::pauseAllAudioMixing()
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放所有音频文件及混音。  
 + 调用本方法暂停播放所有音频文件及混音后，可调用 [resumeAllAudioMixing](#IAudioMixingManager-resumeallaudiomixing) 方法恢复所有播放及混音。  
-+ 调用本方法暂停播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放和混音。
++ 调用本方法暂停播放所有音频文件及混音后，会收到 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，通知已暂停播放和混音。
 
 
 <span id="IAudioMixingManager-resumeaudiomixing"></span>
@@ -5449,6 +6488,8 @@ virtual void bytertc::IAudioMixingManager::pauseAllAudioMixing()
 virtual void bytertc::IAudioMixingManager::resumeAudioMixing(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 恢复播放音频文件及混音。
 
 **传入参数**
@@ -5461,7 +6502,7 @@ virtual void bytertc::IAudioMixingManager::resumeAudioMixing(
 **注意**
 
 + 调用 [pauseAudioMixing](#IAudioMixingManager-pauseaudiomixing) 方法暂停播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  
-+ 调用本方法恢复播放音频文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 `onAudioMixingStateChanged`。
++ 调用本方法恢复播放音频文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。
 
 
 <span id="IAudioMixingManager-resumeallaudiomixing"></span>
@@ -5469,13 +6510,15 @@ virtual void bytertc::IAudioMixingManager::resumeAudioMixing(
 ```cpp
 virtual void bytertc::IAudioMixingManager::resumeAllAudioMixing()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IAudioEffectPlayer instead
+
 恢复播放所有音频文件及混音。
 
 
 **注意**
 
 + 调用 [pauseAllAudioMixing](#IAudioMixingManager-pauseallaudiomixing) 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  
-+ 调用本方法恢复播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放和混音。
++ 调用本方法恢复播放所有音频文件及混音后，会收到 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，通知已恢复播放和混音。
 
 
 <span id="IAudioMixingManager-preloadaudiomixing"></span>
@@ -5485,20 +6528,22 @@ virtual void bytertc::IAudioMixingManager::preloadAudioMixing(
     int mix_id,
     const char* file_path)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mix_id | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing)，再使用相同的 ID 调用本方法 ，会先回调 `onAudioMixingStateChanged` 通知上一个混音停止，然后加载后一个混音。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 播放 B.mp3，请先调用 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载 A.mp3。 |
+| mix_id | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing)，再使用相同的 ID 调用本方法 ，会先回调 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 通知上一个混音停止，然后加载后一个混音。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 播放 B.mp3，请先调用 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载 A.mp3。 |
 | file_path | **const char*** | 混音文件路径。仅支持本地文件的绝对路径。预加载的文件长度不得超过 20s。<br/>不同平台支持的音频文件格式：<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
 
 
 **注意**
 
 + 本方法只是预加载指定音频文件，只有调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法才开始播放指定音频文件。 
-+ 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。  
 + 调用本方法预加载的指定音频文件可以通过 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载。
 
 
@@ -5508,6 +6553,8 @@ virtual void bytertc::IAudioMixingManager::preloadAudioMixing(
 virtual void bytertc::IAudioMixingManager::unloadAudioMixing(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 卸载指定音乐文件。
 
 **传入参数**
@@ -5518,7 +6565,7 @@ virtual void bytertc::IAudioMixingManager::unloadAudioMixing(
 
 
 **注意**
-不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 `onAudioMixingStateChanged`。
+不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。
 
 <span id="IAudioMixingManager-setaudiomixingvolume"></span>
 ### setAudioMixingVolume
@@ -5528,6 +6575,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingVolume(
     int volume,
     AudioMixingType type)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
 
 **传入参数**
@@ -5548,6 +6597,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingVolume(
 virtual int bytertc::IAudioMixingManager::getAudioMixingDuration(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 获取音频文件时长。
 
 **传入参数**
@@ -5571,6 +6622,8 @@ virtual int bytertc::IAudioMixingManager::getAudioMixingDuration(
 virtual int bytertc::IAudioMixingManager::getAudioMixingCurrentPosition(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 获取音频文件播放进度。
 
 **传入参数**
@@ -5594,6 +6647,8 @@ virtual int bytertc::IAudioMixingManager::getAudioMixingCurrentPosition(
 virtual int bytertc::IAudioMixingManager::getAudioMixingPlaybackDuration(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 获取混音音频文件的实际播放时长（单位：毫秒）。
 
 **传入参数**
@@ -5621,6 +6676,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingPosition(
     int mix_id,
     int position)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 设置音频文件的起始播放位置
 
 **传入参数**
@@ -5641,6 +6698,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingDualMonoMode(
     int mix_id,
     AudioMixingDualMonoMode mode)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 设置当前音频文件的声道模式
 
 **传入参数**
@@ -5664,6 +6723,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingPitch(
     int mix_id,
     int pitch)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
+
 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
 使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
 
@@ -5672,11 +6733,11 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingPitch(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mix_id | **int** | 混音 ID |
-| pitch | **int** | 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 `onAudioMixingStateChanged` 回调，提示 [AudioMixingState](Windows-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[AudioMixingError](Windows-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。 |
+| pitch | **int** | 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [onAudioMixingStateChanged](Windows-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，提示 [AudioMixingState](Windows-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[AudioMixingError](Windows-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。 |
 
 
 **注意**
-本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错
+本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调报错
 
 <span id="IAudioMixingManager-setaudiomixingplaybackspeed"></span>
 ### setAudioMixingPlaybackSpeed
@@ -5685,6 +6746,8 @@ virtual int bytertc::IAudioMixingManager::setAudioMixingPlaybackSpeed(
     int mix_id,
     int speed)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 设置混音时音频文件的播放速度
 
 **传入参数**
@@ -5692,14 +6755,14 @@ virtual int bytertc::IAudioMixingManager::setAudioMixingPlaybackSpeed(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mix_id | **int** | 混音 ID |
-| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 [AudioMixingState](Windows-keytype.md#audiomixingstate) 状态为 `kAudioMixingStateFailed` 混音播放失败，[AudioMixingError](Windows-keytype.md#audiomixingerror) 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。 |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 [onAudioMixingStateChanged](Windows-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，提示 [AudioMixingState](Windows-keytype.md#audiomixingstate) 状态为 `kAudioMixingStateFailed` 混音播放失败，[AudioMixingError](Windows-keytype.md#audiomixingerror) 错误码为 `kAudioMixingErrorInValidPlaybackSpeed` 设置混音文件的播放速度不合法。 |
 
 
 **注意**
 
 + 暂不支持对 PCM 音频数据进行变速调整。  
-+ 你需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 [AudioMixingState](Windows-keytype.md#audiomixingstate) 状态为 `kAudioMixingStatePlaying`，[AudioMixingError](Windows-keytype.md#audiomixingerror) 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  
-+ 在 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `kAudioMixingStateFailed` 错误码为 `kAudioMixingErrorIdNotFound` 的 `onAudioMixingStateChanged` 回调。
++ 你需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始混音，并且收到[onAudioMixingStateChanged](Windows-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调提示 [AudioMixingState](Windows-keytype.md#audiomixingstate) 状态为 `kAudioMixingStatePlaying`，[AudioMixingError](Windows-keytype.md#audiomixingerror) 错误码为 `kAudioMixingErrorOk` 之后调用该方法。  
++ 在 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `kAudioMixingStateFailed` 错误码为 `kAudioMixingErrorIdNotFound` 的 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调。
 
 
 <span id="IAudioMixingManager-setaudiomixingprogressinterval"></span>
@@ -5709,6 +6772,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingProgressInterval(
     int mix_id,
     int64_t interval)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer  instead
+
 设置混音时音频文件播放进度回调的间隔
 
 **传入参数**
@@ -5720,7 +6785,7 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingProgressInterval(
 
 
 **注意**
-本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错。  若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 在 [AudioMixingConfig](Windows-keytype.md#audiomixingconfig) 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
+本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 [onAudioMixingStateChanged](Windows-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调报错。  若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 在 [AudioMixingConfig](Windows-keytype.md#audiomixingconfig) 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
 
 
 <span id="IAudioMixingManager-setaudiomixingloudness"></span>
@@ -5730,6 +6795,8 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingLoudness(
     int mix_id,
     float loudness)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
 
 **传入参数**
@@ -5750,8 +6817,8 @@ virtual void bytertc::IAudioMixingManager::enableAudioMixingFrame(
     int mix_id,
     AudioMixingType type)
 ```
-启动 PCM 音频数据混音。<br>
-要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 启动 PCM 音频数据混音。<br>
 要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 mix_id。
 
@@ -5759,7 +6826,7 @@ virtual void bytertc::IAudioMixingManager::enableAudioMixingFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mix_id | **int** | 混音 ID，用于标识混音，保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 `onAudioMixingStateChanged` 通知前一次混音已停止。 |
+| mix_id | **int** | 混音 ID，用于标识混音，保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 [onAudioMixingStateChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 通知前一次混音已停止。 |
 | type | **AudioMixingType** | 混音播放类型  <br/>是否本地播放、以及是否发送到远端，详见 [AudioMixingType](Windows-keytype.md#audiomixingtype)。 |
 
 
@@ -5775,6 +6842,8 @@ virtual void bytertc::IAudioMixingManager::enableAudioMixingFrame(
 virtual void bytertc::IAudioMixingManager::disableAudioMixingFrame(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 关闭 PCM 混音
 
 **传入参数**
@@ -5791,6 +6860,8 @@ virtual int bytertc::IAudioMixingManager::pushAudioMixingFrame(
     int mix_id,
     IAudioFrame* audio_frame)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 推送 PCM 音频帧数据用于混音
 
 **传入参数**
@@ -5818,6 +6889,8 @@ virtual int bytertc::IAudioMixingManager::pushAudioMixingFrame(
 virtual int bytertc::IAudioMixingManager::getAudioTrackCount(
     int mix_id)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 获取当前音频文件的音轨索引
 
 **传入参数**
@@ -5846,6 +6919,8 @@ virtual void bytertc::IAudioMixingManager::selectAudioTrack(
     int mix_id,
     int audio_track_index)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 指定当前音频文件的播放音轨
 
 **传入参数**
@@ -5868,6 +6943,8 @@ virtual void bytertc::IAudioMixingManager::selectAudioTrack(
 virtual void bytertc::IAudioMixingManager::registerAudioFileFrameObserver(
     IAudioFileFrameObserver* observer)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
+
 注册本地音频文件混音的音频帧观察者。
 当本地音频文件混音时，会收到相关回调。
 
@@ -5876,6 +6953,559 @@ virtual void bytertc::IAudioMixingManager::registerAudioFileFrameObserver(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **IAudioFileFrameObserver*** | 参看 [IAudioFileFrameObserver](Windows-callback.md#iaudiofileframeobserver)。 |
+
+
+# IMediaPlayer
+```cpp
+class bytertc::IMediaPlayer
+```
+
+音乐播放器<br>
+调用 [setEventHandler](#IMediaPlayer-seteventhandler) 设置回调句柄以获取相关回调。
+
+
+`Defined in : bytertc_media_player.h`
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **** | [IMediaPlayer](#IMediaPlayer-imediaplayer) |
+| **virtual** | [~IMediaPlayer](#IMediaPlayer-~imediaplayer) |
+| **virtual int** | [open](#IMediaPlayer-open) |
+| **virtual int** | [start](#IMediaPlayer-start) |
+| **virtual int** | [openWithCustomSource](#IMediaPlayer-openwithcustomsource) |
+| **virtual int** | [stop](#IMediaPlayer-stop) |
+| **virtual int** | [pause](#IMediaPlayer-pause) |
+| **virtual int** | [resume](#IMediaPlayer-resume) |
+| **virtual int** | [setVolume](#IMediaPlayer-setvolume) |
+| **virtual int** | [getVolume](#IMediaPlayer-getvolume) |
+| **virtual int** | [getTotalDuration](#IMediaPlayer-gettotalduration) |
+| **virtual int** | [getPlaybackDuration](#IMediaPlayer-getplaybackduration) |
+| **virtual int** | [getPosition](#IMediaPlayer-getposition) |
+| **virtual int** | [setAudioPitch](#IMediaPlayer-setaudiopitch) |
+| **virtual int** | [setPosition](#IMediaPlayer-setposition) |
+| **virtual int** | [setAudioDualMonoMode](#IMediaPlayer-setaudiodualmonomode) |
+| **virtual int** | [getAudioTrackCount](#IMediaPlayer-getaudiotrackcount) |
+| **virtual int** | [selectAudioTrack](#IMediaPlayer-selectaudiotrack) |
+| **virtual int** | [setPlaybackSpeed](#IMediaPlayer-setplaybackspeed) |
+| **virtual int** | [setProgressInterval](#IMediaPlayer-setprogressinterval) |
+| **virtual int** | [setLoudness](#IMediaPlayer-setloudness) |
+| **virtual int** | [registerAudioFrameObserver](#IMediaPlayer-registeraudioframeobserver) |
+| **virtual int** | [pushExternalAudioFrame](#IMediaPlayer-pushexternalaudioframe) |
+| **virtual int** | [setEventHandler](#IMediaPlayer-seteventhandler) |
+
+
+## 函数说明
+<span id="IMediaPlayer-imediaplayer"></span>
+### IMediaPlayer
+```cpp
+bytertc::IMediaPlayer::IMediaPlayer()
+```
+
+<span id="IMediaPlayer-~imediaplayer"></span>
+### ~IMediaPlayer
+```cpp
+virtual bytertc::IMediaPlayer::~IMediaPlayer()
+```
+
+<span id="IMediaPlayer-open"></span>
+### open
+```cpp
+virtual int bytertc::IMediaPlayer::open(
+    const char* file_path,
+    const MediaPlayerConfig& config)
+```
+打开音乐文件。
+一个播放器实例仅能够同时打开一个音乐文件。如果需要同时打开多个音乐文件，请创建多个音乐播放器实例。
+要播放 PCM 格式的音频数据，参看 [openWithCustomSource](#IMediaPlayer-openwithcustomsource)。`openWithCustomSource` 和此 API 互斥。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| file_path | **const char*** | 音乐文件路径。<br/>支持在线文件的 URL、本地文件的 URI、或本地文件的绝对路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
+| config | **const MediaPlayerConfig&** | 详见 [MediaPlayerConfig](Windows-keytype.md#mediaplayerconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+<span id="IMediaPlayer-start"></span>
+### start
+```cpp
+virtual int bytertc::IMediaPlayer::start()
+```
+播放音乐。你仅需要在调用 [open](#IMediaPlayer-open)，且未开启自动播放时，调用此方法。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 要播放 PCM 格式的音频数据，参看 [openWithCustomSource](#IMediaPlayer-openwithcustomsource)。`openWithCustomSource` 和此 API 互斥。
++ 调用本方法播放音频文件后，可调用 [stop](#IMediaPlayer-stop) 方法暂停播放。
+
+
+<span id="IMediaPlayer-openwithcustomsource"></span>
+### openWithCustomSource
+```cpp
+virtual int bytertc::IMediaPlayer::openWithCustomSource(
+    const MediaPlayerCustomSource& source,
+    const MediaPlayerConfig& config)
+```
+启动音频裸数据混音。
+要播放音乐文件，参看 [open](#IMediaPlayer-open)。`open` 与此 API 互斥。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| source | **const MediaPlayerCustomSource&** | 数据源，详见 [MediaPlayerCustomSource](Windows-keytype.md#mediaplayercustomsource) |
+| config | **const MediaPlayerConfig&** | 详见 [MediaPlayerConfig](Windows-keytype.md#mediaplayerconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用本方法启动后，再调用 [pushExternalAudioFrame](#IMediaPlayer-pushexternalaudioframe) 推送音频数据，才会开始混音。
++ 如要结束 PCM 音频数据混音，调用 [stop](#IMediaPlayer-stop)。
+
+
+<span id="IMediaPlayer-stop"></span>
+### stop
+```cpp
+virtual int bytertc::IMediaPlayer::stop()
+```
+调用 [open](#IMediaPlayer-open), [start](#IMediaPlayer-start), 或 [openWithCustomSource](#IMediaPlayer-openwithcustomsource) 开始播放后，可以调用本方法停止。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+<span id="IMediaPlayer-pause"></span>
+### pause
+```cpp
+virtual int bytertc::IMediaPlayer::pause()
+```
+调用 [open](#IMediaPlayer-open)，或 [start](#IMediaPlayer-start) 开始播放音频文件后，调用本方法暂停播放。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用本方法暂停播放后，可调用 [resume](#IMediaPlayer-resume) 恢复播放。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-resume"></span>
+### resume
+```cpp
+virtual int bytertc::IMediaPlayer::resume()
+```
+调用 [pause](#IMediaPlayer-pause) 暂停音频播放后，调用本方法恢复播放。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setvolume"></span>
+### setVolume
+```cpp
+virtual int bytertc::IMediaPlayer::setVolume(
+    int volume,
+    AudioMixingType type)
+```
+调节指定混音的音量大小，包括音乐文件混音和 PCM 混音。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+| type | **AudioMixingType** | 详见 [AudioMixingType](Windows-keytype.md#audiomixingtype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+仅在音频播放进行状态时，调用此方法。
+
+<span id="IMediaPlayer-getvolume"></span>
+### getVolume
+```cpp
+virtual int bytertc::IMediaPlayer::getVolume(
+    AudioMixingType type)
+```
+获取当前音量
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| type | **AudioMixingType** | 详见 [AudioMixingType](Windows-keytype.md#audiomixingtype)。 |
+
+**返回值**
+
++ \>0: 成功, 当前音量值。  
++ < 0: 失败
+
+
+**注意**
+仅在音频播放进行状态时，调用此方法。包括音乐文件混音和 PCM 混音。
+
+<span id="IMediaPlayer-gettotalduration"></span>
+### getTotalDuration
+```cpp
+virtual int bytertc::IMediaPlayer::getTotalDuration()
+```
+获取音乐文件时长。
+
+**返回值**
+
++ \>0: 成功, 音乐文件时长，单位为毫秒。  
++ < 0: 失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-getplaybackduration"></span>
+### getPlaybackDuration
+```cpp
+virtual int bytertc::IMediaPlayer::getPlaybackDuration()
+```
+获取混音音乐文件的实际播放时长，单位为毫秒。
+
+**返回值**
+
++ \>0: 实际播放时长。
++ < 0: 失败。
+
+
+**注意**
+
++ 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。
++ 仅在音频播放进行状态，且 [setProgressInterval](#IMediaPlayer-setprogressinterval) 设置间隔大于 `0` 时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-getposition"></span>
+### getPosition
+```cpp
+virtual int bytertc::IMediaPlayer::getPosition()
+```
+获取音乐文件播放进度。
+
+**返回值**
+
++ \>0: 成功, 音乐文件播放进度，单位为毫秒。
++ < 0: 失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setaudiopitch"></span>
+### setAudioPitch
+```cpp
+virtual int bytertc::IMediaPlayer::setAudioPitch(
+    int pitch)
+```
+开启变调功能，多用于 K 歌场景。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| pitch | **int** | 与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 仅支持音乐文件混音，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setposition"></span>
+### setPosition
+```cpp
+virtual int bytertc::IMediaPlayer::setPosition(
+    int position)
+```
+设置音乐文件的起始播放位置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| position | **int** | 音乐文件起始播放位置，单位为毫秒。  <br/>你可以通过 [getTotalDuration](#IMediaPlayer-gettotalduration) 获取音乐文件总时长，position 的值应小于音乐文件总时长。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 此接口仅支持音频文件，不支持 PCM 数据。
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
+
+
+<span id="IMediaPlayer-setaudiodualmonomode"></span>
+### setAudioDualMonoMode
+```cpp
+virtual int bytertc::IMediaPlayer::setAudioDualMonoMode(
+    AudioMixingDualMonoMode mode)
+```
+设置当前音乐文件的声道模式
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **AudioMixingDualMonoMode** | 声道模式。默认的声道模式和源文件一致，详见 [AudioMixingDualMonoMode](Windows-keytype.md#audiomixingdualmonomode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-getaudiotrackcount"></span>
+### getAudioTrackCount
+```cpp
+virtual int bytertc::IMediaPlayer::getAudioTrackCount()
+```
+获取当前音乐文件的音轨数
+
+**返回值**
+
++ \>= 0：成功，返回当前音乐文件的音轨数
++ < 0：方法调用失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音乐文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-selectaudiotrack"></span>
+### selectAudioTrack
+```cpp
+virtual int bytertc::IMediaPlayer::selectAudioTrack(
+    int index)
+```
+指定当前音乐文件的播放音轨
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| index | **int** | 指定的播放音轨，从 0 开始，取值范围为 `[0, getAudioTrackCount()-1]`。<br/>设置的参数值需要小于 [getAudioTrackCount](#IMediaPlayer-getaudiotrackcount) 的返回值 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
++ 此方法仅支持音乐文件，不支持 PCM 数据。
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
+
+
+<span id="IMediaPlayer-setplaybackspeed"></span>
+### setPlaybackSpeed
+```cpp
+virtual int bytertc::IMediaPlayer::setPlaybackSpeed(
+    int speed)
+```
+设置播放速度
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 `[50,200]`，默认值为 100。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法对音频文件可用，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setprogressinterval"></span>
+### setProgressInterval
+```cpp
+virtual int bytertc::IMediaPlayer::setProgressInterval(
+    int64_t interval)
+```
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Windows-callback.md#IMediaPlayerEventHandler-onmediaplayerplayingprogress) 的间隔。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| interval | **int64_t** | 时间间隔，单位毫秒。<br/>• interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。 <br/>• interval <= 0 时，不会触发回调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setloudness"></span>
+### setLoudness
+```cpp
+virtual int bytertc::IMediaPlayer::setLoudness(
+    float loudness)
+```
+如果你需要使用 [enableVocalInstrumentBalance](#IRTCVideo-enablevocalinstrumentbalance) 对音频文件/PCM 音频数据设置音量均衡，你必须通过此接口传入其原始响度。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| loudness | **float** | 原始响度，单位：lufs，取值范围为 `[-70.0, 0.0]`。<br/>当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音量均衡处理。默认值为 1.0lufs，即不做处理。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法对音频文件和音频裸数据播放都可用。
+
+
+<span id="IMediaPlayer-registeraudioframeobserver"></span>
+### registerAudioFrameObserver
+```cpp
+virtual int bytertc::IMediaPlayer::registerAudioFrameObserver(
+    IMediaPlayerAudioFrameObserver* observer)
+```
+注册回调句柄以在本地音乐文件混音时，收到相关回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| observer | **IMediaPlayerAudioFrameObserver*** | 参看 [IMediaPlayerAudioFrameObserver](Windows-callback.md#imediaplayeraudioframeobserver)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Windows-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-pushexternalaudioframe"></span>
+### pushExternalAudioFrame
+```cpp
+virtual int bytertc::IMediaPlayer::pushExternalAudioFrame(
+    IAudioFrame* audio_frame)
+```
+推送用于混音的 PCM 音频帧数据
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| audio_frame | **IAudioFrame*** | 音频帧，详见 [IAudioFrame](Windows-keytype.md#iaudioframe)。必须指定具体的采样率和声道数，不支持设置为自动。 |
+
+**返回值**
+
++ 0: 成功  
++ < 0: 失败
+
+
+**注意**
+
++ 调用该方法前，须通过 [openWithCustomSource](#IMediaPlayer-openwithcustomsource) 启动外部音频流混音。
++ 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 200 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。
++ 如果要暂停播放，暂停推送即可。
+
+
+<span id="IMediaPlayer-seteventhandler"></span>
+### setEventHandler
+```cpp
+virtual int bytertc::IMediaPlayer::setEventHandler(
+    IMediaPlayerEventHandler* handler)
+```
+设置回调句柄。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| handler | **IMediaPlayerEventHandler*** | 参看 [IMediaPlayerEventHandler](Windows-callback.md#imediaplayereventhandler)。 |
+
+**返回值**
+
++ 0: 成功。  
++ < 0: 失败。
 
 
 # IKTVPlayer
@@ -6919,8 +8549,10 @@ virtual int bytertc::ISpatialAudio::updateSelfPosition(
 
 
 **注意**
-该方法需在进房后调用。调用该接口更新坐标前，你需调用 [enableSpatialAudio](#ISpatialAudio-enablespatialaudio) 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
-调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+
++ 该方法需在进房后调用。 
++ 调用该接口更新坐标前，你需调用 [enableSpatialAudio](#ISpatialAudio-enablespatialaudio) 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
++ 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
 
 
 <span id="ISpatialAudio-updateremoteposition"></span>
@@ -6930,7 +8562,7 @@ virtual int bytertc::ISpatialAudio::updateRemotePosition(
     const char* uid,
     const PositionInfo& position_info)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 设置房间内某一远端用户在本地用户自建的空间音频坐标系中的发声位置和发声朝向，以实现本地用户预期的空间音频收听效果。
 
@@ -6949,8 +8581,9 @@ virtual int bytertc::ISpatialAudio::updateRemotePosition(
 
 
 **注意**
-该方法需在创建房间后调用。 
-调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+
++ 该方法需在创建房间后调用。 
++ 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
 
 
 <span id="ISpatialAudio-removeremoteposition"></span>
@@ -6959,7 +8592,7 @@ virtual int bytertc::ISpatialAudio::updateRemotePosition(
 virtual int bytertc::ISpatialAudio::removeRemotePosition(
     const char* uid)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 移除调用 [updateRemotePosition](#ISpatialAudio-updateremoteposition) 为某一远端用户设置的空间音频效果。
 
@@ -6980,7 +8613,7 @@ virtual int bytertc::ISpatialAudio::removeRemotePosition(
 ```cpp
 virtual int bytertc::ISpatialAudio::removeAllRemotePosition()
 ```
-> Available since 3.52.
+> Available since 3.52
 
 移除调用 [updateRemotePosition](#ISpatialAudio-updateremoteposition) 为所有远端用户设置的空间音频效果。
 
@@ -7065,7 +8698,7 @@ class bytertc::IVideoDeviceCollection
 | **virtual int** | [getCount](#IVideoDeviceCollection-getcount) |
 | **virtual int** | [getDevice](#IVideoDeviceCollection-getdevice) |
 | **virtual void** | [release](#IVideoDeviceCollection-release) |
-| **virtual int** | [getDevice](#getdevice-5) |
+| **virtual int** | [getDevice](#IVideoDeviceCollection-getdevice) |
 
 
 ## 函数说明
@@ -7272,7 +8905,7 @@ virtual int bytertc::IVideoEffect::initCVResource(
 ### setAlgoModelPath
 ```cpp
 virtual void bytertc::IVideoEffect::setAlgoModelPath(
-    const char* modelPath)
+    const char* model_path)
 ```
 > Deprecated  since 3.50 and will be deleted in 3.55, use [initCVResource](#IVideoEffect-initcvresource) instead.
 
@@ -7282,16 +8915,16 @@ virtual void bytertc::IVideoEffect::setAlgoModelPath(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| modelPath | **const char*** | 模型路径 |
+| model_path | **const char*** | 模型路径 |
 
 
 <span id="IVideoEffect-checklicense"></span>
 ### checkLicense
 ```cpp
 virtual int bytertc::IVideoEffect::checkLicense(
-    void* androidContext,
+    void* android_context,
     void* jnienv,
-    const char* licensePath)
+    const char* license_path)
 ```
 > Deprecated  since 3.50 and will be deleted in 3.55, use [initCVResource](#IVideoEffect-initcvresource) instead.
 
@@ -7301,9 +8934,9 @@ virtual int bytertc::IVideoEffect::checkLicense(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| androidContext | **void*** | Android Context 对象指针(jobject 类型)。Android 以外平台传入 nullptr |
+| android_context | **void*** | Android Context 对象指针(jobject 类型)。Android 以外平台传入 nullptr |
 | jnienv | **void*** | Android  <br/>JNIEnv 指针。Android 以外平台传入 nullptr |
-| licensePath | **const char*** | 许可证文件绝对路径 |
+| license_path | **const char*** | 许可证文件绝对路径 |
 
 **返回值**
 
@@ -7444,8 +9077,8 @@ virtual int bytertc::IVideoEffect::disableVideoEffect()
 ### setEffectNodes
 ```cpp
 virtual int bytertc::IVideoEffect::setEffectNodes(
-    const char** effectNodePaths,
-    int nodeNum)
+    const char** effect_node_paths,
+    int node_num)
 ```
 设置视频特效素材包。
 
@@ -7453,8 +9086,8 @@ virtual int bytertc::IVideoEffect::setEffectNodes(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| effectNodePaths | **const char**** | 特效素材包绝对路径数组。<br/>要取消当前视频特效，将此参数设置为 null。 |
-| nodeNum | **int** | 特效素材包个数。 |
+| effect_node_paths | **const char**** | 特效素材包绝对路径数组。<br/>要取消当前视频特效，将此参数设置为 null。 |
+| node_num | **int** | 特效素材包个数。 |
 
 **返回值**
 
@@ -7472,9 +9105,9 @@ virtual int bytertc::IVideoEffect::setEffectNodes(
 ### updateNode
 ```cpp
 virtual int bytertc::IVideoEffect::updateNode(
-    const char* nodePath,
-    const char* nodeKey,
-    float nodeValue)
+    const char* node_path,
+    const char* node_key,
+    float node_value)
 ```
 > Deprecated  since 3.50 and will be deleted in 3.55, use [updateEffectNode](#IVideoEffect-updateeffectnode) instead.
 
@@ -7484,9 +9117,9 @@ virtual int bytertc::IVideoEffect::updateNode(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| nodePath | **const char*** | 特效素材包路径 |
-| nodeKey | **const char*** | 需要设置的素材 key 名称，取值请参考 [素材 key 对应说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99769/)。 |
-| nodeValue | **float** | 需要设置的强度值 取值范围 [0,1]，超出范围时设置无效。 |
+| node_path | **const char*** | 特效素材包路径 |
+| node_key | **const char*** | 需要设置的素材 key 名称，取值请参考 [素材 key 对应说明](http://ailab-cv-sdk.bytedance.com/docs/2036/99769/)。 |
+| node_value | **float** | 需要设置的强度值 取值范围 [0,1]，超出范围时设置无效。 |
 
 **返回值**
 
@@ -7500,9 +9133,9 @@ virtual int bytertc::IVideoEffect::updateNode(
 ### updateEffectNode
 ```cpp
 virtual int bytertc::IVideoEffect::updateEffectNode(
-    const char* effectNodePath,
-    const char* nodeKey,
-    float nodeValue)
+    const char* effect_node_path,
+    const char* node_key,
+    float node_value)
 ```
 设置特效强度。
 
@@ -7510,9 +9143,9 @@ virtual int bytertc::IVideoEffect::updateEffectNode(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| effectNodePath | **const char*** | 特效素材包绝对路径，参考[素材包结构说明](https://www.volcengine.com/docs/6705/102039)。 |
-| nodeKey | **const char*** | 需要设置的素材 key 名称，参考[素材 key 对应说明](https://www.volcengine.com/docs/6705/102041)。 |
-| nodeValue | **float** | 特效强度值，取值范围 [0,1]，超出范围时设置无效。 |
+| effect_node_path | **const char*** | 特效素材包绝对路径，参考[素材包结构说明](https://www.volcengine.com/docs/6705/102039)。 |
+| node_key | **const char*** | 需要设置的素材 key 名称，参考[素材 key 对应说明](https://www.volcengine.com/docs/6705/102041)。 |
+| node_value | **float** | 特效强度值，取值范围 [0,1]，超出范围时设置无效。 |
 
 **返回值**
 
@@ -7527,7 +9160,7 @@ virtual int bytertc::IVideoEffect::updateEffectNode(
 ### setColorFilter
 ```cpp
 virtual int bytertc::IVideoEffect::setColorFilter(
-    const char* resPath)
+    const char* res_path)
 ```
 设置颜色滤镜。
 
@@ -7535,7 +9168,7 @@ virtual int bytertc::IVideoEffect::setColorFilter(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| resPath | **const char*** | 滤镜资源包绝对路径。 |
+| res_path | **const char*** | 滤镜资源包绝对路径。 |
 
 **返回值**
 
@@ -7576,7 +9209,7 @@ virtual int bytertc::IVideoEffect::setColorFilterIntensity(
 ### enableVirtualBackground
 ```cpp
 virtual int bytertc::IVideoEffect::enableVirtualBackground(
-    const char* bg_sticker_path,
+    const char* background_sticker_path,
     const VirtualBackgroundSource& source)
 ```
 将摄像头采集画面中的人像背景替换为指定图片或纯色背景。
@@ -7585,7 +9218,7 @@ virtual int bytertc::IVideoEffect::enableVirtualBackground(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| bg_sticker_path | **const char*** | 背景贴纸特效素材绝对路径。 |
+| background_sticker_path | **const char*** | 背景贴纸特效素材绝对路径。 |
 | source | **const VirtualBackgroundSource&** | 背景贴纸对象，参看 [VirtualBackgroundSource](Windows-keytype.md#virtualbackgroundsource)。 |
 
 **返回值**
@@ -7656,7 +9289,7 @@ virtual int bytertc::IVideoEffect::registerFaceDetectionObserver(
 virtual int bytertc::IVideoEffect::enableFaceDetection(
     IFaceDetectionObserver* observer,
     unsigned int interval_ms,
-    const char* faceModelPath)
+    const char* face_model_path)
 ```
 开启人脸识别功能，并设置人脸检测结果回调观察者。
 此观察者后，你会周期性收到 [onFaceDetectResult](Windows-callback.md#IFaceDetectionObserver-onfacedetectresult) 回调。
@@ -7667,7 +9300,7 @@ virtual int bytertc::IVideoEffect::enableFaceDetection(
 | --- | --- | --- |
 | observer | **IFaceDetectionObserver*** | 人脸检测结果回调观察者，参看 [IFaceDetectionObserver](Windows-callback.md#ifacedetectionobserver)。 |
 | interval_ms | **unsigned int** | 两次回调之间的最小时间间隔，必须大于 0，单位为毫秒。实际收到回调的时间间隔大于 interval_ms，小于 interval_ms+视频采集帧间隔。 |
-| faceModelPath | **const char*** | 人脸检测算法模型文件路径，一般为 ttfacemodel 文件夹中 tt_face_vXXX.model 文件的绝对路径。 |
+| face_model_path | **const char*** | 人脸检测算法模型文件路径，一般为 ttfacemodel 文件夹中 tt_face_vXXX.model 文件的绝对路径。 |
 
 **返回值**
 
@@ -7699,7 +9332,7 @@ virtual int bytertc::IVideoEffect::disableFaceDetection()
 ### setBackgroundSticker
 ```cpp
 virtual int bytertc::IVideoEffect::setBackgroundSticker(
-    const char* modelPath,
+    const char* model_path,
     const VirtualBackgroundSource& source)
 ```
 > Deprecated  since 3.50 and will be deleted in 3.55, use [enableVirtualBackground](#IVideoEffect-enablevirtualbackground) instead.
@@ -7711,7 +9344,7 @@ virtual int bytertc::IVideoEffect::setBackgroundSticker(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| modelPath | **const char*** | 传入背景贴纸特效素材路径。 |
+| model_path | **const char*** | 传入背景贴纸特效素材路径。 |
 | source | **const VirtualBackgroundSource&** | 设置背景特效图片的本地路径。参看 [VirtualBackgroundSource](Windows-keytype.md#virtualbackgroundsource)。 |
 
 **返回值**

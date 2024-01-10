@@ -147,18 +147,18 @@ KTV 错误码。
   | kWarningCodePublishStreamFailed | `-2002` | 发布音视频流失败。<br>当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。 |
   | kWarningCodeSubscribeStreamFailed404 | `-2003` | 订阅音视频流失败。<br>当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。 |
   | kWarningCodeSubscribeStreamFailed5xx | `-2004` | 订阅音视频流失败。<br>当你订阅所在房间中的音视频流时，由于服务器错误导致订阅失败。SDK 会自动重试订阅。 |
-  | kWarningCodePublishStreamForbiden | `-2009` | 当调用 [setUserVisibility](85532.md#setuservisibility) 将自身可见性设置为 false 后，再尝试发布流会触发此警告。 |
+  | kWarningCodePublishStreamForbiden | `-2009` | 当调用 [setUserVisibility](Electron-api.md#setuservisibility) 将自身可见性设置为 false 后，再尝试发布流会触发此警告。 |
   | kWarningCodeSendCustomMessage | `-2011` | 发送自定义广播消息失败，当前你未在房间中。 |
-  | kWarningCodeUserNotifyStop | `-2013` | 当房间内人数超过 500 人时，停止向房间内已有用户发送 [onUserJoined](85533.md#onuserjoined) 和 [onUserLeave](85533.md#onuserleave) 回调，并通过广播提示房间内所有用户。 |
+  | kWarningCodeUserNotifyStop | `-2013` | 当房间内人数超过 500 人时，停止向房间内已有用户发送 [onUserJoined](Electron-event.md#onuserjoined) 和 [onUserLeave](Electron-event.md#onuserleave) 回调，并通过广播提示房间内所有用户。 |
   | kWarningCodeUserInPublish | `-2014` | 用户已经在其他房间发布过流，或者用户正在发布公共流。 |
   | kWarningCodeOldRoomBeenReplaced | `-2016` | 新生成的房间已经替换了同样roomId的旧房间 |
   | kWarningCodeInEchoTestMode | `-2017` | 当前正在进行回路测试，该接口调用无效 |
   | kWarningCodeNoCameraPermission | `-5001` | 摄像头权限异常，当前应用没有获取摄像头权限。 |
-  | kWarningCodeSetScreenAudioStreamIndexFailed | `-5010` | 不支持在 [publishScreen](85532.md#publishscreen) 之后，<br>通过 [setScreenAudioStreamIndex](85532.md#setscreenaudiostreamindex) 设置屏幕共享时的音频采集方式。 |
+  | kWarningCodeSetScreenAudioStreamIndexFailed | `-5010` | 不支持在 [publishScreen](Electron-api.md#publishscreen) 之后，<br>通过 [setScreenAudioStreamIndex](Electron-api.md#setscreenaudiostreamindex) 设置屏幕共享时的音频采集方式。 |
   | kWarningCodeInvalidVoicePitch | `-5011` | 设置语音音高不合法 |
   | kWarningCodeInvalidAudioFormat | `-5012` | 设置音频格式不合法 |
   | kWarningCodeInvalidCallForExtAudio | `-5013` | 外部音频源新旧接口混用 |
-  | kWarningCodeInvalidCanvasHandle | `-6001` | 指定的内部渲染画布句柄无效。   当你调用 [setupLocalVideo(85532.md#setuplocalvideo) 或 [setupRemoteVideo](85532.md#setupremotevideo) 时指定了无效的画布句柄，触发此回调。 |
+  | kWarningCodeInvalidCanvasHandle | `-6001` | 指定的内部渲染画布句柄无效。   当你调用 [setupLocalVideo(Electron-api.md#setuplocalvideo) 或 [setupRemoteVideo](Electron-api.md#setupremotevideo) 时指定了无效的画布句柄，触发此回调。 |
   | kWarningLicenseFileExpired | `-7001` | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。 |
 
 
@@ -167,14 +167,14 @@ KTV 错误码。
 
 类型: `enum`
 
-回调错误码。  SDK 内部遇到不可恢复的错误时，会通过 [onError](85533.md#onerror) 回调通知用户。
+回调错误码。  SDK 内部遇到不可恢复的错误时，会通过 [onError](Electron-event.md#onerror) 回调通知用户。
 
 - **成员**
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kErrorCodeInvalidToken | `-1000` | Token 无效。调用 [joinRoom](85532.md#joinroom) 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 [updateToken](85532.md#updatetoken) 方法更新 Token。 |
-  | kErrorCodeJoinRoom | `-1001` | 加入房间错误。调用 [joinRoom](85532.md#joinroom) 方法时发生未知错误导致加入房间失败。需要用户重新加入房间。 |
+  | kErrorCodeInvalidToken | `-1000` | Token 无效。调用 [joinRoom](Electron-api.md#joinroom) 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 [updateToken](Electron-api.md#updatetoken) 方法更新 Token。 |
+  | kErrorCodeJoinRoom | `-1001` | 加入房间错误。调用 [joinRoom](Electron-api.md#joinroom) 方法时发生未知错误导致加入房间失败。需要用户重新加入房间。 |
   | kErrorCodeNoPublishPermission | `-1002` | 没有发布音视频流权限。用户在所在房间中发布音视频流失败，失败原因为用户没有发布流的权限。 |
   | kErrorCodeNoSubscribePermission | `-1003` | 没有订阅音视频流权限。用户订阅所在房间中的音视频流失败，失败原因为用户没有订阅流的权限。 |
   | kErrorCodeDuplicateLogin | `-1004` | 用户重复登录。本地用户所在房间中有相同用户 ID 的用户加入房间，导致本地用户被踢出房间。 |
@@ -213,7 +213,7 @@ KTV 错误码。
   | kAudioMixingErrorIdNotFound | `3` | 混音 ID 异常 |
   | kAudioMixingErrorSetPositionFailed | `4` | 设置混音文件的播放位置出错 |
   | kAudioMixingErrorInValidVolume | `5` | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-  | kAudioMixingErrorLoadConflict | `6` | 播放的文件与预加载的文件不一致，请先使用 [unloadAudioMixing](85532.md#unloadaudiomixing) 卸载文件 |
+  | kAudioMixingErrorLoadConflict | `6` | 播放的文件与预加载的文件不一致，请先使用 [unloadAudioMixing](Electron-api.md#unloadaudiomixing) 卸载文件 |
   | kAudioMixingErrorIdTypeNotMatch | `7` | 不支持此混音类型。 |
   | kAudioMixingErrorInValidPitch | `8` | 设置混音文件的音调不合法 |
   | kAudioMixingErrorInValidAudioTrack | `9` | 设置混音文件的音轨不合法 |

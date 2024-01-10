@@ -1,3 +1,66 @@
+# IRTCAudioDeviceManager
+```java
+public interface com.ss.bytertc.engine.IRTCAudioDeviceManager
+```
+
+IRTCAudioDeviceManager 接口
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **abstract int** | [startAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-startaudioplaybackdevicetest) |
+| **abstract int** | [stopAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-stopaudioplaybackdevicetest) |
+
+
+## 函数说明
+<span id="IRTCAudioDeviceManager-startaudioplaybackdevicetest"></span>
+### startAudioPlaybackDeviceTest
+```java
+public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.startAudioPlaybackDeviceTest(
+    String testAudioFilePath,
+    int interval)
+```
+启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 `onAudioPlaybackDeviceTestVolume` 回调播放时的音量信息。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| testAudioFilePath | **String** | 指定播放设备检测的音频文件网络地址。支持的格式包括 mp3，aac，m4a，3gp 和 wav。 |
+| interval | **int** | 设置 `onAudioPlaybackDeviceTestVolume` 音量回调的时间间隔，推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 10 毫秒。 |
+
+**返回值**
+方法调用结果  
+
++ 0：方法调用成功  
++ < 0：方法调用失败  
+
+
+**注意**
+
++ 该方法可在进房前和进房后调用，不可与其它音频设备测试功能同时应用。  
++ 调用 [stopAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-stopaudioplaybackdevicetest) 可以停止测试。
+
+
+<span id="IRTCAudioDeviceManager-stopaudioplaybackdevicetest"></span>
+### stopAudioPlaybackDeviceTest
+```java
+public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.stopAudioPlaybackDeviceTest()
+```
+停止音频播放测试。
+
+**返回值**
+方法调用结果  
+
++ 0：方法调用成功  
++ < 0：方法调用失败
+
+**注意**
+调用 [startAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-startaudioplaybackdevicetest) 后，调用本方法停止测试。
+
+
 # RTCRoom
 ```java
 public abstract class com.ss.bytertc.engine.RTCRoom
@@ -11,40 +74,41 @@ public abstract class com.ss.bytertc.engine.RTCRoom
 | --- | --- |
 | **abstract void** | [destroy](#RTCRoom-destroy) |
 | **abstract int** | [joinRoom](#RTCRoom-joinroom) |
-| **abstract void** | [setRTCRoomEventHandler](#RTCRoom-setrtcroomeventhandler) |
-| **abstract void** | [leaveRoom](#RTCRoom-leaveroom) |
-| **abstract void** | [setUserVisibility](#RTCRoom-setuservisibility) |
+| **abstract int** | [setRTCRoomEventHandler](#RTCRoom-setrtcroomeventhandler) |
+| **abstract int** | [leaveRoom](#RTCRoom-leaveroom) |
+| **abstract int** | [setUserVisibility](#RTCRoom-setuservisibility) |
 | **abstract int** | [updateToken](#RTCRoom-updatetoken) |
 | **abstract long** | [sendUserMessage](#RTCRoom-sendusermessage) |
 | **abstract long** | [sendUserBinaryMessage](#RTCRoom-senduserbinarymessage) |
 | **abstract long** | [sendRoomMessage](#RTCRoom-sendroommessage) |
 | **abstract long** | [sendRoomBinaryMessage](#RTCRoom-sendroombinarymessage) |
-| **abstract void** | [setMultiDeviceAVSync](#RTCRoom-setmultideviceavsync) |
+| **abstract int** | [setMultiDeviceAVSync](#RTCRoom-setmultideviceavsync) |
 | **abstract int** | [setRemoteVideoConfig](#RTCRoom-setremotevideoconfig) |
-| **abstract void** | [publishStream](#RTCRoom-publishstream) |
-| **abstract void** | [unpublishStream](#RTCRoom-unpublishstream) |
-| **abstract void** | [publishScreen](#RTCRoom-publishscreen) |
-| **abstract void** | [unpublishScreen](#RTCRoom-unpublishscreen) |
+| **abstract int** | [publishStream](#RTCRoom-publishstream) |
+| **abstract int** | [unpublishStream](#RTCRoom-unpublishstream) |
+| **abstract int** | [publishScreen](#RTCRoom-publishscreen) |
+| **abstract int** | [unpublishScreen](#RTCRoom-unpublishscreen) |
 | **abstract int** | [subscribeStream](#RTCRoom-subscribestream) |
 | **abstract int** | [subscribeAllStreams](#RTCRoom-subscribeallstreams) |
 | **abstract int** | [unsubscribeStream](#RTCRoom-unsubscribestream) |
 | **abstract int** | [unsubscribeAllStreams](#RTCRoom-unsubscribeallstreams) |
 | **abstract int** | [subscribeScreen](#RTCRoom-subscribescreen) |
 | **abstract int** | [unsubscribeScreen](#RTCRoom-unsubscribescreen) |
-| **abstract void** | [pauseAllSubscribedStream](#RTCRoom-pauseallsubscribedstream) |
-| **abstract void** | [resumeAllSubscribedStream](#RTCRoom-resumeallsubscribedstream) |
+| **abstract int** | [pauseAllSubscribedStream](#RTCRoom-pauseallsubscribedstream) |
+| **abstract int** | [resumeAllSubscribedStream](#RTCRoom-resumeallsubscribedstream) |
 | **abstract int** | [startForwardStreamToRooms](#RTCRoom-startforwardstreamtorooms) |
 | **abstract int** | [updateForwardStreamToRooms](#RTCRoom-updateforwardstreamtorooms) |
-| **abstract void** | [stopForwardStreamToRooms](#RTCRoom-stopforwardstreamtorooms) |
-| **abstract void** | [pauseForwardStreamToAllRooms](#RTCRoom-pauseforwardstreamtoallrooms) |
-| **abstract void** | [resumeForwardStreamToAllRooms](#RTCRoom-resumeforwardstreamtoallrooms) |
+| **abstract int** | [stopForwardStreamToRooms](#RTCRoom-stopforwardstreamtorooms) |
+| **abstract int** | [pauseForwardStreamToAllRooms](#RTCRoom-pauseforwardstreamtoallrooms) |
+| **abstract int** | [resumeForwardStreamToAllRooms](#RTCRoom-resumeforwardstreamtoallrooms) |
 | **abstract IRangeAudio** | [getRangeAudio](#RTCRoom-getrangeaudio) |
 | **abstract ISpatialAudio** | [getSpatialAudio](#RTCRoom-getspatialaudio) |
-| **abstract void** | [setRemoteRoomAudioPlaybackVolume](#RTCRoom-setremoteroomaudioplaybackvolume) |
+| **abstract int** | [setRemoteRoomAudioPlaybackVolume](#RTCRoom-setremoteroomaudioplaybackvolume) |
 | **abstract int** | [setAudioSelectionConfig](#RTCRoom-setaudioselectionconfig) |
 | **abstract long** | [setRoomExtraInfo](#RTCRoom-setroomextrainfo) |
 | **abstract int** | [startSubtitle](#RTCRoom-startsubtitle) |
 | **abstract int** | [stopSubtitle](#RTCRoom-stopsubtitle) |
+| **abstract String** | [getRoomId](#RTCRoom-getroomid) |
 | **abstract int** | [[deprecated] subscribeUserStream](#RTCRoom-subscribeuserstream) |
 
 
@@ -66,13 +130,13 @@ public abstract int com.ss.bytertc.engine.RTCRoom.joinRoom(
     RTCRoomConfig roomConfig)
 ```
 加入房间。<br>
-多房间场景下，调用 [createRTCRoom](#RTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br>
+调用 [createRTCRoom](#RTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br>
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **String** | 动态密钥。用于对进房用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>使用不同 AppID 的 App 是不能互通的。  <br/>请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。具体失败原因会通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。 |
+| token | **String** | 动态密钥。用于对进房用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>使用不同 AppID 的 App 是不能互通的。  <br/>请务必保证生成 Token 使用的 AppID 和创建引擎时使用的 AppID 相同，否则会导致加入房间失败。|
 | userInfo | **UserInfo** | 用户信息。参看 [UserInfo](Android-keytype.md#userinfo)。 |
 | roomConfig | **RTCRoomConfig** | 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 [RTCRoomConfig](Android-keytype.md#rtcroomconfig)。 |
 
@@ -81,20 +145,21 @@ public abstract int com.ss.bytertc.engine.RTCRoom.joinRoom(
 + 0：方法调用成功。  
 + -1：roomID / userInfo.uid 包含了无效的参数。  
 + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 [leaveRoom](#RTCRoom-leaveroom) 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  
-+ -3：room 为空。  
+具体失败原因会通过 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。 
 
 
 **注意**
 
 + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onRoomStateChanged](Android-callback#IRTCRoomEventHandler-onroomstatechanged) 回调通知，错误类型详见 [ERROR_CODE_DUPLICATE_LOGIN](Android-errorcode.md#ErrorCode-error_code_duplicate_login)。  
-+ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Android-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。关于可见性设置参看 [setUserVisibility](#RTCRoom-setuservisibility)。  
++ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Android-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。
++ 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用[setUserVisibility](#RTCRoom-setuservisibility) 更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。通常情况下，一个 RTC 房间最多同时容纳 50 名可见用户，其中最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Android-callback.md#IRTCVideoEventHandler-onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知；如果加入房间的用户是可见用户，远端用户会收到 [onUserJoined](Android-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。  
 
 
 <span id="RTCRoom-setrtcroomeventhandler"></span>
 ### setRTCRoomEventHandler
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.setRTCRoomEventHandler(
+public abstract int com.ss.bytertc.engine.RTCRoom.setRTCRoomEventHandler(
     IRTCRoomEventHandler rtcRoomEventHandler)
 ```
 通过设置 [RTCRoom](#rtcroom) 对象的事件句柄，监听此对象对应的回调事件。
@@ -105,15 +170,25 @@ public abstract void com.ss.bytertc.engine.RTCRoom.setRTCRoomEventHandler(
 | --- | --- | --- |
 | rtcRoomEventHandler | **IRTCRoomEventHandler** | 参看 [IRTCRoomEventHandler](Android-callback.md#irtcroomeventhandler) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCRoom-leaveroom"></span>
 ### leaveRoom
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.leaveRoom()
+public abstract int com.ss.bytertc.engine.RTCRoom.leaveRoom()
 ```
 离开房间。  <br>
 用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br>
 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Android-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br>
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -125,25 +200,36 @@ public abstract void com.ss.bytertc.engine.RTCRoom.leaveRoom()
 <span id="RTCRoom-setuservisibility"></span>
 ### setUserVisibility
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.setUserVisibility(
+public abstract int com.ss.bytertc.engine.RTCRoom.setUserVisibility(
     boolean enable)
 ```
-设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br>
+设置用户可见性。未调用该接口前，本地用户默认对他人可见。
+默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| enable | **boolean** | 设置用户是否对房间内其他用户可见：  <br/>• true: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。  <br/>• false: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+| enable | **boolean** | 设置用户是否对房间内其他用户可见：  <br/>• true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。<br/>• false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0: 调用失败。参看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明。
 
 
 **注意**
 
-+ 在加入房间前后，用户均可调用此方法设置用户可见性。 
-+ 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调通知：
-- 从可见换至不可见时，房间内其他用户会收到 [onUserLeave](Android-callback.md#IRTCRoomEventHandler-onuserleave)；  
-- 从不可见切换至可见时，房间内其他用户会收到 [onUserJoined](Android-callback.md#IRTCRoomEventHandler-onuserjoined) 。
-+ 若调用该方法将可见性设为 false，此时尝试发布流会收到 `WARNING_CODE_PUBLISH_STREAM_FORBIDEN` 警告。
++ 在加入房间前后，用户均可调用此方法设置用户可见性。
++ 设置用户可见性，会收到设置成功/失败回调 [onUserVisibilityChanged](Android-callback.md#IRTCRoomEventHandler-onuservisibilitychanged)。（v3.54 新增）
+&#x0020;  • 在加入房间前设置用户可见性，若设置的可见性与默认值不同，将在加入房间时触发本回调。
+&#x0020;  • 在加入房间后设置用户可见性，若可见性前后不同，会触发本回调。
+&#x0020;  • 在断网重连后，若可见性发生改变，会触发本回调。
+
++ 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调。
+&#x0020;  • 从可见换至不可见时，房间内其他用户会收到 [onUserLeave](Android-callback.md#IRTCRoomEventHandler-onuserleave)。
+&#x0020;  • 从不可见切换至可见时，房间内其他用户会收到 [onUserJoined](Android-callback.md#IRTCRoomEventHandler-onuserjoined)。
+&#x0020;  • 若调用该方法将可见性设为 `false`，此时尝试发布流会收到 `WARNING_CODE_PUBLISH_STREAM_FORBIDEN` 警告。
 
 
 <span id="RTCRoom-updatetoken"></span>
@@ -153,13 +239,13 @@ public abstract int com.ss.bytertc.engine.RTCRoom.updateToken(
     String token)
 ```
 更新 Token。
-Token 中同时包含进房、发布和订阅权限，各权限有一定的有效期，并且到期前 30 秒会触发回调，提示用户更新 Token 相关权限。此时需要重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
+收到 [onTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire)， 或 [onSubscribePrivilegeTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **String** | 重新获取的有效 Token。<br/>如果传入的 Token 无效，回调错误码为 [ErrorCode](Android-errorcode.md#errorcode) 中的 `-1010` 提示传入的 Token 无效。 |
+| token | **String** | 重新获取的有效 Token。<br/>如果 Token 无效，你会收到 [onRoomStateChanged](Android-callback.md#IRTCRoomEventHandler-onroomstatechanged)，错误码是 `-1010`。 |
 
 **返回值**
 方法调用结果：
@@ -279,7 +365,7 @@ public abstract long com.ss.bytertc.engine.RTCRoom.sendRoomBinaryMessage(
 <span id="RTCRoom-setmultideviceavsync"></span>
 ### setMultiDeviceAVSync
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.setMultiDeviceAVSync(
+public abstract int com.ss.bytertc.engine.RTCRoom.setMultiDeviceAVSync(
     String audioUserId)
 ```
 设置发流端音画同步。  <br>
@@ -290,6 +376,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.setMultiDeviceAVSync(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audioUserId | **String** | 音频发送端的用户 ID，将该参数设为空则可解除当前音视频的同步关系。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -336,7 +427,7 @@ public abstract int com.ss.bytertc.engine.RTCRoom.setRemoteVideoConfig(
 <span id="RTCRoom-publishstream"></span>
 ### publishStream
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.publishStream(
+public abstract int com.ss.bytertc.engine.RTCRoom.publishStream(
     MediaStreamType type)
 ```
 在当前所在房间内发布本地通过摄像头/麦克风采集的媒体流
@@ -346,6 +437,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.publishStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定发布音频/视频，参看 [MediaStreamType](Android-keytype.md#mediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -361,7 +457,7 @@ public abstract void com.ss.bytertc.engine.RTCRoom.publishStream(
 <span id="RTCRoom-unpublishstream"></span>
 ### unpublishStream
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.unpublishStream(
+public abstract int com.ss.bytertc.engine.RTCRoom.unpublishStream(
     MediaStreamType type)
 ```
 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
@@ -371,6 +467,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.unpublishStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定停止发布音频/视频，参看 [MediaStreamType](Android-keytype.md#mediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -382,7 +483,7 @@ public abstract void com.ss.bytertc.engine.RTCRoom.unpublishStream(
 <span id="RTCRoom-publishscreen"></span>
 ### publishScreen
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.publishScreen(
+public abstract int com.ss.bytertc.engine.RTCRoom.publishScreen(
     MediaStreamType type)
 ```
 在当前所在房间内发布本地屏幕共享音视频流
@@ -392,6 +493,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.publishScreen(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定发布屏幕音频/视频，参看 [MediaStreamType](Android-keytype.md#mediastreamtype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -408,7 +514,7 @@ public abstract void com.ss.bytertc.engine.RTCRoom.publishScreen(
 <span id="RTCRoom-unpublishscreen"></span>
 ### unpublishScreen
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.unpublishScreen(
+public abstract int com.ss.bytertc.engine.RTCRoom.unpublishScreen(
     MediaStreamType type)
 ```
 停止将本地屏幕共享音视频流发布到当前所在房间中
@@ -418,6 +524,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.unpublishScreen(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **MediaStreamType** | 媒体流类型，用于指定停止发布屏幕音频/视频，参看 [MediaStreamType](Android-keytype.md#mediastreamtype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -483,7 +594,7 @@ public abstract int com.ss.bytertc.engine.RTCRoom.subscribeStream(
 
 **注意**
 
-+ 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
++ 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
 + 你必须先通过 [onUserPublishStream](Android-callback.md#IRTCRoomEventHandler-onuserpublishstream) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。  
 + 调用该方法后，你会收到 [onStreamSubscribed](Android-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream](#RTCRoom-unsubscribestream) 取消订阅或本端用户退房。 
@@ -602,7 +713,7 @@ public abstract int com.ss.bytertc.engine.RTCRoom.subscribeScreen(
 
 **注意**
 
-+ 当调用本接口时，当前用户已经订阅该远端用户，不论是通过手动订阅还是自动订阅，都将根据本次传入的参数，更新订阅配置。
++ 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
 + 你必须先通过 [onUserPublishScreen](Android-callback.md#IRTCRoomEventHandler-onuserpublishscreen) 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。  
 + 调用该方法后，你会收到 [onStreamSubscribed](Android-callback.md#IRTCRoomEventHandler-onstreamsubscribed) 通知方法调用结果。  
 + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeScreen](#RTCRoom-unsubscribescreen) 取消订阅或本端用户退房。 
@@ -642,7 +753,7 @@ public abstract int com.ss.bytertc.engine.RTCRoom.unsubscribeScreen(
 <span id="RTCRoom-pauseallsubscribedstream"></span>
 ### pauseAllSubscribedStream
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.pauseAllSubscribedStream(
+public abstract int com.ss.bytertc.engine.RTCRoom.pauseAllSubscribedStream(
     PauseResumeControlMediaType mediaType)
 ```
 暂停接收来自远端的媒体流。
@@ -652,6 +763,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.pauseAllSubscribedStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mediaType | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Android-keytype.md#pauseresumecontrolmediatype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -665,7 +781,7 @@ public abstract void com.ss.bytertc.engine.RTCRoom.pauseAllSubscribedStream(
 <span id="RTCRoom-resumeallsubscribedstream"></span>
 ### resumeAllSubscribedStream
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.resumeAllSubscribedStream(
+public abstract int com.ss.bytertc.engine.RTCRoom.resumeAllSubscribedStream(
     PauseResumeControlMediaType mediaType)
 ```
 恢复接收来自远端的媒体流
@@ -675,6 +791,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.resumeAllSubscribedStream(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mediaType | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Android-keytype.md#pauseresumecontrolmediatype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -745,10 +866,15 @@ public abstract int com.ss.bytertc.engine.RTCRoom.updateForwardStreamToRooms(
 <span id="RTCRoom-stopforwardstreamtorooms"></span>
 ### stopForwardStreamToRooms
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.stopForwardStreamToRooms()
+public abstract int com.ss.bytertc.engine.RTCRoom.stopForwardStreamToRooms()
 ```
 停止跨房间媒体流转发。
 通过 [startForwardStreamToRooms](#RTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -762,11 +888,16 @@ public abstract void com.ss.bytertc.engine.RTCRoom.stopForwardStreamToRooms()
 <span id="RTCRoom-pauseforwardstreamtoallrooms"></span>
 ### pauseForwardStreamToAllRooms
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.pauseForwardStreamToAllRooms()
+public abstract int com.ss.bytertc.engine.RTCRoom.pauseForwardStreamToAllRooms()
 ```
 暂停跨房间媒体流转发。
 通过 [startForwardStreamToRooms](#RTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
 调用本方法暂停向所有目标房间转发后，你可以随时调用 [resumeForwardStreamToAllRooms](#RTCRoom-resumeforwardstreamtoallrooms) 快速恢复转发。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -775,10 +906,15 @@ public abstract void com.ss.bytertc.engine.RTCRoom.pauseForwardStreamToAllRooms(
 <span id="RTCRoom-resumeforwardstreamtoallrooms"></span>
 ### resumeForwardStreamToAllRooms
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.resumeForwardStreamToAllRooms()
+public abstract int com.ss.bytertc.engine.RTCRoom.resumeForwardStreamToAllRooms()
 ```
 恢复跨房间媒体流转发。
 调用 [pauseForwardStreamToAllRooms](#RTCRoom-pauseforwardstreamtoallrooms) 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -824,7 +960,7 @@ public abstract ISpatialAudio com.ss.bytertc.engine.RTCRoom.getSpatialAudio()
 <span id="RTCRoom-setremoteroomaudioplaybackvolume"></span>
 ### setRemoteRoomAudioPlaybackVolume
 ```java
-public abstract void com.ss.bytertc.engine.RTCRoom.setRemoteRoomAudioPlaybackVolume(
+public abstract int com.ss.bytertc.engine.RTCRoom.setRemoteRoomAudioPlaybackVolume(
     int volume)
 ```
 调节某个房间内所有远端用户的音频播放音量。
@@ -834,6 +970,11 @@ public abstract void com.ss.bytertc.engine.RTCRoom.setRemoteRoomAudioPlaybackVol
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | volume | **int** | 音频播放音量和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。<br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。 <br/>• 0: 静音  <br/>• 100: 原始音量，默认值  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -903,7 +1044,7 @@ public abstract long com.ss.bytertc.engine.RTCRoom.setRoomExtraInfo(
 public abstract int com.ss.bytertc.engine.RTCRoom.startSubtitle(
     SubtitleConfig subtitleConfig)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 识别或翻译房间内所有用户的语音，形成字幕。<br>
 语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Android-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br>
@@ -922,17 +1063,22 @@ public abstract int com.ss.bytertc.engine.RTCRoom.startSubtitle(
 
 
 **注意**
-此方法需要在进房后调用。  
-如果想要指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 `extraInfo` 参数传入 `"source_language": "zh"` JSON 字符串，设置源语言为中文；传入 `"source_language": "en"`JSON 字符串，设置源语言为英文；传入 `"source_language": "ja"` JSON 字符串，设置源语言为日文。如果你未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。  
-使用字幕功能前，你需要[开通机器翻译服务](https://www.volcengine.com/docs/4640/130262)，并前往 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
 
++ 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。
++ 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
++ 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
++ 此方法需要在进房后调用。
++ 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 extraInfo 参数传入格式为`"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
+    + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E5%9C%BA%E6%99%AF-%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
+    + 翻译模式下，你需要传入机器翻译规定语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
+  
 
 <span id="RTCRoom-stopsubtitle"></span>
 ### stopSubtitle
 ```java
 public abstract int com.ss.bytertc.engine.RTCRoom.stopSubtitle()
 ```
-> Available since 3.52.
+> Available since 3.52
 
 关闭字幕。 <br>
 调用该方法后，用户会收到 [onSubtitleStateChanged](Android-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否关闭。
@@ -941,6 +1087,19 @@ public abstract int com.ss.bytertc.engine.RTCRoom.stopSubtitle()
 
 +  0: 调用成功。  
 + !0: 调用失败。
+
+
+<span id="RTCRoom-getroomid"></span>
+### getRoomId
+```java
+public abstract String com.ss.bytertc.engine.RTCRoom.getRoomId()
+```
+> Available since 3.53
+
+获取房间 ID。
+
+**返回值**
+房间 ID。
 
 
 # RTCVideo
@@ -958,6 +1117,7 @@ RTCVideo Class
 | **static synchronized RTCVideo** | [createRTCVideo](#RTCVideo-creatertcvideo) |
 | **static synchronized void** | [destroyRTCVideo](#RTCVideo-destroyrtcvideo) |
 | **static String** | [getSDKVersion](#RTCVideo-getsdkversion) |
+| **static int** | [setLogConfig](#RTCVideo-setlogconfig) |
 | **static String** | [getErrorDescription](#RTCVideo-geterrordescription) |
 | **static int** | [[deprecated] setDeviceId](#RTCVideo-setdeviceid) |
 | **static int** | [[deprecated] setEnv](#RTCVideo-setenv) |
@@ -967,70 +1127,72 @@ RTCVideo Class
 
 | 返回 | 名称 |
 | --- | --- |
-| **abstract void** | [setRtcVideoEventHandler](#RTCVideo-setrtcvideoeventhandler) |
+| **abstract int** | [setRtcVideoEventHandler](#RTCVideo-setrtcvideoeventhandler) |
 | **abstract IRTCAudioDeviceManager** | [getAudioDeviceManager](#RTCVideo-getaudiodevicemanager) |
-| **abstract void** | [startVideoCapture](#RTCVideo-startvideocapture) |
-| **abstract void** | [stopVideoCapture](#RTCVideo-stopvideocapture) |
-| **abstract void** | [startAudioCapture](#RTCVideo-startaudiocapture) |
-| **abstract void** | [stopAudioCapture](#RTCVideo-stopaudiocapture) |
-| **abstract void** | [setAudioScenario](#RTCVideo-setaudioscenario) |
-| **abstract void** | [setAudioProfile](#RTCVideo-setaudioprofile) |
-| **abstract void** | [setAnsMode](#RTCVideo-setansmode) |
+| **abstract int** | [startVideoCapture](#RTCVideo-startvideocapture) |
+| **abstract int** | [stopVideoCapture](#RTCVideo-stopvideocapture) |
+| **abstract int** | [startAudioCapture](#RTCVideo-startaudiocapture) |
+| **abstract int** | [stopAudioCapture](#RTCVideo-stopaudiocapture) |
+| **abstract int** | [setAudioScenario](#RTCVideo-setaudioscenario) |
+| **abstract int** | [setAudioProfile](#RTCVideo-setaudioprofile) |
+| **abstract int** | [setAnsMode](#RTCVideo-setansmode) |
 | **abstract int** | [setVoiceChangerType](#RTCVideo-setvoicechangertype) |
 | **abstract int** | [setVoiceReverbType](#RTCVideo-setvoicereverbtype) |
 | **abstract int** | [setLocalVoiceEqualization](#RTCVideo-setlocalvoiceequalization) |
 | **abstract int** | [setLocalVoiceReverbParam](#RTCVideo-setlocalvoicereverbparam) |
 | **abstract int** | [enableLocalVoiceReverb](#RTCVideo-enablelocalvoicereverb) |
 | **abstract int** | [setLocalVideoCanvas](#RTCVideo-setlocalvideocanvas) |
-| **abstract void** | [updateLocalVideoCanvas](#RTCVideo-updatelocalvideocanvas) |
-| **abstract void** | [setLocalVideoSink](#RTCVideo-setlocalvideosink) |
-| **abstract void** | [setRemoteVideoSink](#RTCVideo-setremotevideosink) |
-| **abstract void** | [updateRemoteStreamVideoCanvas](#RTCVideo-updateremotestreamvideocanvas) |
-| **abstract void** | [setRemoteVideoCanvas](#RTCVideo-setremotevideocanvas) |
-| **abstract void** | [setLocalVideoMirrorType](#RTCVideo-setlocalvideomirrortype) |
-| **abstract void** | [setVideoRotationMode](#RTCVideo-setvideorotationmode) |
-| **abstract void** | [switchCamera](#RTCVideo-switchcamera) |
-| **abstract void** | [setAudioRoute](#RTCVideo-setaudioroute) |
+| **abstract int** | [updateLocalVideoCanvas](#RTCVideo-updatelocalvideocanvas) |
+| **abstract int** | [setLocalVideoSink](#RTCVideo-setlocalvideosink) |
+| **abstract int** | [setRemoteVideoSink](#RTCVideo-setremotevideosink) |
+| **abstract int** | [updateRemoteStreamVideoCanvas](#RTCVideo-updateremotestreamvideocanvas) |
+| **abstract int** | [setRemoteVideoCanvas](#RTCVideo-setremotevideocanvas) |
+| **abstract int** | [setRemoteVideoSuperResolution](#RTCVideo-setremotevideosuperresolution) |
+| **abstract int** | [setVideoDenoiser](#RTCVideo-setvideodenoiser) |
+| **abstract int** | [setLocalVideoMirrorType](#RTCVideo-setlocalvideomirrortype) |
+| **abstract int** | [setVideoRotationMode](#RTCVideo-setvideorotationmode) |
+| **abstract int** | [switchCamera](#RTCVideo-switchcamera) |
+| **abstract int** | [setAudioRoute](#RTCVideo-setaudioroute) |
 | **abstract AudioRoute** | [getAudioRoute](#RTCVideo-getaudioroute) |
 | **abstract int** | [setDefaultAudioRoute](#RTCVideo-setdefaultaudioroute) |
-| **abstract void** | [enableExternalSoundCard](#RTCVideo-enableexternalsoundcard) |
-| **abstract void** | [setCaptureVolume](#RTCVideo-setcapturevolume) |
-| **abstract void** | [setPlaybackVolume](#RTCVideo-setplaybackvolume) |
-| **abstract void** | [setLocalVoicePitch](#RTCVideo-setlocalvoicepitch) |
-| **abstract void** | [enableVocalInstrumentBalance](#RTCVideo-enablevocalinstrumentbalance) |
-| **abstract void** | [enablePlaybackDucking](#RTCVideo-enableplaybackducking) |
-| **abstract long** | [login](#RTCVideo-login) |
-| **abstract void** | [logout](#RTCVideo-logout) |
-| **abstract void** | [updateLoginToken](#RTCVideo-updatelogintoken) |
-| **abstract void** | [setServerParams](#RTCVideo-setserverparams) |
-| **abstract void** | [getPeerOnlineStatus](#RTCVideo-getpeeronlinestatus) |
+| **abstract int** | [enableExternalSoundCard](#RTCVideo-enableexternalsoundcard) |
+| **abstract int** | [setCaptureVolume](#RTCVideo-setcapturevolume) |
+| **abstract int** | [setPlaybackVolume](#RTCVideo-setplaybackvolume) |
+| **abstract int** | [setLocalVoicePitch](#RTCVideo-setlocalvoicepitch) |
+| **abstract int** | [enableVocalInstrumentBalance](#RTCVideo-enablevocalinstrumentbalance) |
+| **abstract int** | [enablePlaybackDucking](#RTCVideo-enableplaybackducking) |
+| **abstract int** | [login](#RTCVideo-login) |
+| **abstract int** | [logout](#RTCVideo-logout) |
+| **abstract int** | [updateLoginToken](#RTCVideo-updatelogintoken) |
+| **abstract int** | [setServerParams](#RTCVideo-setserverparams) |
+| **abstract int** | [getPeerOnlineStatus](#RTCVideo-getpeeronlinestatus) |
 | **abstract long** | [sendUserMessageOutsideRoom](#RTCVideo-sendusermessageoutsideroom) |
 | **abstract long** | [sendUserBinaryMessageOutsideRoom](#RTCVideo-senduserbinarymessageoutsideroom) |
 | **abstract long** | [sendServerMessage](#RTCVideo-sendservermessage) |
 | **abstract long** | [sendServerBinaryMessage](#RTCVideo-sendserverbinarymessage) |
-| **abstract NetworkDetectionStartReturn** | [startNetworkDetection](#RTCVideo-startnetworkdetection) |
-| **abstract void** | [stopNetworkDetection](#RTCVideo-stopnetworkdetection) |
-| **abstract void** | [enableAudioFrameCallback](#RTCVideo-enableaudioframecallback) |
-| **abstract void** | [disableAudioFrameCallback](#RTCVideo-disableaudioframecallback) |
-| **abstract void** | [registerAudioFrameObserver](#RTCVideo-registeraudioframeobserver) |
-| **abstract void** | [registerAudioProcessor](#RTCVideo-registeraudioprocessor) |
-| **abstract void** | [enableAudioProcessor](#RTCVideo-enableaudioprocessor) |
-| **abstract void** | [disableAudioProcessor](#RTCVideo-disableaudioprocessor) |
+| **abstract int** | [startNetworkDetection](#RTCVideo-startnetworkdetection) |
+| **abstract int** | [stopNetworkDetection](#RTCVideo-stopnetworkdetection) |
+| **abstract int** | [enableAudioFrameCallback](#RTCVideo-enableaudioframecallback) |
+| **abstract int** | [disableAudioFrameCallback](#RTCVideo-disableaudioframecallback) |
+| **abstract int** | [registerAudioFrameObserver](#RTCVideo-registeraudioframeobserver) |
+| **abstract int** | [registerAudioProcessor](#RTCVideo-registeraudioprocessor) |
+| **abstract int** | [enableAudioProcessor](#RTCVideo-enableaudioprocessor) |
+| **abstract int** | [disableAudioProcessor](#RTCVideo-disableaudioprocessor) |
 | **abstract int** | [registerLocalVideoProcessor](#RTCVideo-registerlocalvideoprocessor) |
-| **abstract void** | [setVideoDigitalZoomConfig](#RTCVideo-setvideodigitalzoomconfig) |
-| **abstract void** | [setVideoDigitalZoomControl](#RTCVideo-setvideodigitalzoomcontrol) |
-| **abstract void** | [startVideoDigitalZoomControl](#RTCVideo-startvideodigitalzoomcontrol) |
-| **abstract void** | [stopVideoDigitalZoomControl](#RTCVideo-stopvideodigitalzoomcontrol) |
-| **abstract void** | [registerLocalEncodedVideoFrameObserver](#RTCVideo-registerlocalencodedvideoframeobserver) |
-| **abstract void** | [registerRemoteEncodedVideoFrameObserver](#RTCVideo-registerremoteencodedvideoframeobserver) |
-| **abstract void** | [setVideoSourceType](#RTCVideo-setvideosourcetype) |
+| **abstract int** | [setVideoDigitalZoomConfig](#RTCVideo-setvideodigitalzoomconfig) |
+| **abstract int** | [setVideoDigitalZoomControl](#RTCVideo-setvideodigitalzoomcontrol) |
+| **abstract int** | [startVideoDigitalZoomControl](#RTCVideo-startvideodigitalzoomcontrol) |
+| **abstract int** | [stopVideoDigitalZoomControl](#RTCVideo-stopvideodigitalzoomcontrol) |
+| **abstract int** | [registerLocalEncodedVideoFrameObserver](#RTCVideo-registerlocalencodedvideoframeobserver) |
+| **abstract int** | [registerRemoteEncodedVideoFrameObserver](#RTCVideo-registerremoteencodedvideoframeobserver) |
+| **abstract int** | [setVideoSourceType](#RTCVideo-setvideosourcetype) |
 | **abstract int** | [pushExternalVideoFrame](#RTCVideo-pushexternalvideoframe) |
 | **abstract int** | [startPushMixedStreamToCDN](#RTCVideo-startpushmixedstreamtocdn) |
 | **abstract int** | [updatePushMixedStreamToCDN](#RTCVideo-updatepushmixedstreamtocdn) |
-| **abstract void** | [startPushSingleStreamToCDN](#RTCVideo-startpushsinglestreamtocdn) |
-| **abstract void** | [stopPushStreamToCDN](#RTCVideo-stoppushstreamtocdn) |
+| **abstract int** | [startPushSingleStreamToCDN](#RTCVideo-startpushsinglestreamtocdn) |
+| **abstract int** | [stopPushStreamToCDN](#RTCVideo-stoppushstreamtocdn) |
 | **abstract int** | [setVideoCaptureConfig](#RTCVideo-setvideocaptureconfig) |
-| **abstract void** | [enableSimulcastMode](#RTCVideo-enablesimulcastmode) |
+| **abstract int** | [enableSimulcastMode](#RTCVideo-enablesimulcastmode) |
 | **abstract int** | [setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig) |
 | **abstract int** | [setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig) |
 | **abstract int** | [setScreenVideoEncoderConfig](#RTCVideo-setscreenvideoencoderconfig) |
@@ -1040,41 +1202,43 @@ RTCVideo Class
 | **abstract int** | [pullExternalAudioFrame](#RTCVideo-pullexternalaudioframe) |
 | **abstract int** | [pushScreenVideoFrame](#RTCVideo-pushscreenvideoframe) |
 | **abstract int** | [setRemoteAudioPlaybackVolume](#RTCVideo-setremoteaudioplaybackvolume) |
-| **abstract void** | [setAudioAlignmentProperty](#RTCVideo-setaudioalignmentproperty) |
+| **abstract int** | [setAudioAlignmentProperty](#RTCVideo-setaudioalignmentproperty) |
 | **abstract RTCRoom** | [createRTCRoom](#RTCVideo-creatertcroom) |
-| **abstract void** | [setPublishFallbackOption](#RTCVideo-setpublishfallbackoption) |
-| **abstract void** | [setSubscribeFallbackOption](#RTCVideo-setsubscribefallbackoption) |
+| **abstract int** | [setPublishFallbackOption](#RTCVideo-setpublishfallbackoption) |
+| **abstract int** | [setSubscribeFallbackOption](#RTCVideo-setsubscribefallbackoption) |
 | **abstract int** | [setRemoteUserPriority](#RTCVideo-setremoteuserpriority) |
 | **abstract int** | [sendSEIMessage](#RTCVideo-sendseimessage) |
 | **abstract int** | [setBusinessId](#RTCVideo-setbusinessid) |
-| **abstract void** | [setEncryptInfo](#RTCVideo-setencryptinfo) |
-| **abstract void** | [setCustomizeEncryptHandler](#RTCVideo-setcustomizeencrypthandler) |
+| **abstract int** | [setEncryptInfo](#RTCVideo-setencryptinfo) |
+| **abstract int** | [setCustomizeEncryptHandler](#RTCVideo-setcustomizeencrypthandler) |
 | **abstract IVideoEffect** | [getVideoEffectInterface](#RTCVideo-getvideoeffectinterface) |
 | **abstract int** | [enableEffectBeauty](#RTCVideo-enableeffectbeauty) |
 | **abstract int** | [setBeautyIntensity](#RTCVideo-setbeautyintensity) |
-| **abstract void** | [setVideoOrientation](#RTCVideo-setvideoorientation) |
-| **abstract void** | [setRuntimeParameters](#RTCVideo-setruntimeparameters) |
+| **abstract int** | [setVideoOrientation](#RTCVideo-setvideoorientation) |
+| **abstract int** | [setRuntimeParameters](#RTCVideo-setruntimeparameters) |
 | **abstract int** | [feedback](#RTCVideo-feedback) |
-| **abstract void** | [startASR](#RTCVideo-startasr) |
-| **abstract void** | [stopASR](#RTCVideo-stopasr) |
+| **abstract long** | [getNativeHandle](#RTCVideo-getnativehandle) |
+| **abstract int** | [startASR](#RTCVideo-startasr) |
+| **abstract int** | [stopASR](#RTCVideo-stopasr) |
 | **abstract int** | [startFileRecording](#RTCVideo-startfilerecording) |
-| **abstract void** | [stopFileRecording](#RTCVideo-stopfilerecording) |
+| **abstract int** | [stopFileRecording](#RTCVideo-stopfilerecording) |
 | **abstract int** | [startAudioRecording](#RTCVideo-startaudiorecording) |
 | **abstract int** | [stopAudioRecording](#RTCVideo-stopaudiorecording) |
-| **abstract IAudioMixingManager** | [getAudioMixingManager](#RTCVideo-getaudiomixingmanager) |
-| **abstract void** | [setScreenAudioSourceType](#RTCVideo-setscreenaudiosourcetype) |
-| **abstract void** | [setScreenAudioStreamIndex](#RTCVideo-setscreenaudiostreamindex) |
+| **abstract IAudioEffectPlayer** | [getAudioEffectPlayer](#RTCVideo-getaudioeffectplayer) |
+| **abstract IMediaPlayer** | [getMediaPlayer](#RTCVideo-getmediaplayer) |
+| **abstract int** | [setScreenAudioSourceType](#RTCVideo-setscreenaudiosourcetype) |
+| **abstract int** | [setScreenAudioStreamIndex](#RTCVideo-setscreenaudiostreamindex) |
 | **abstract int** | [pushScreenAudioFrame](#RTCVideo-pushscreenaudioframe) |
-| **abstract void** | [startScreenCapture](#RTCVideo-startscreencapture) |
-| **abstract void** | [updateScreenCapture](#RTCVideo-updatescreencapture) |
-| **abstract void** | [stopScreenCapture](#RTCVideo-stopscreencapture) |
-| **abstract void** | [setExternalVideoEncoderEventHandler](#RTCVideo-setexternalvideoencodereventhandler) |
+| **abstract int** | [startScreenCapture](#RTCVideo-startscreencapture) |
+| **abstract int** | [updateScreenCapture](#RTCVideo-updatescreencapture) |
+| **abstract int** | [stopScreenCapture](#RTCVideo-stopscreencapture) |
+| **abstract int** | [setExternalVideoEncoderEventHandler](#RTCVideo-setexternalvideoencodereventhandler) |
 | **abstract int** | [pushExternalEncodedVideoFrame](#RTCVideo-pushexternalencodedvideoframe) |
-| **abstract void** | [setVideoDecoderConfig](#RTCVideo-setvideodecoderconfig) |
-| **abstract void** | [requestRemoteVideoKeyFrame](#RTCVideo-requestremotevideokeyframe) |
-| **abstract void** | [setEarMonitorMode](#RTCVideo-setearmonitormode) |
-| **abstract void** | [setEarMonitorVolume](#RTCVideo-setearmonitorvolume) |
-| **abstract void** | [enableAudioPropertiesReport](#RTCVideo-enableaudiopropertiesreport) |
+| **abstract int** | [setVideoDecoderConfig](#RTCVideo-setvideodecoderconfig) |
+| **abstract int** | [requestRemoteVideoKeyFrame](#RTCVideo-requestremotevideokeyframe) |
+| **abstract int** | [setEarMonitorMode](#RTCVideo-setearmonitormode) |
+| **abstract int** | [setEarMonitorVolume](#RTCVideo-setearmonitorvolume) |
+| **abstract int** | [enableAudioPropertiesReport](#RTCVideo-enableaudiopropertiesreport) |
 | **abstract int** | [sendStreamSyncInfo](#RTCVideo-sendstreamsyncinfo) |
 | **abstract boolean** | [isCameraTorchSupported](#RTCVideo-iscameratorchsupported) |
 | **abstract boolean** | [isCameraZoomSupported](#RTCVideo-iscamerazoomsupported) |
@@ -1086,6 +1250,8 @@ RTCVideo Class
 | **abstract boolean** | [isCameraExposurePositionSupported](#RTCVideo-iscameraexposurepositionsupported) |
 | **abstract int** | [setCameraExposurePosition](#RTCVideo-setcameraexposureposition) |
 | **abstract int** | [setCameraExposureCompensation](#RTCVideo-setcameraexposurecompensation) |
+| **abstract int** | [enableCameraAutoExposureFaceMode](#RTCVideo-enablecameraautoexposurefacemode) |
+| **abstract int** | [setCameraAdaptiveMinimumFrameRate](#RTCVideo-setcameraadaptiveminimumframerate) |
 | **abstract int** | [startPushPublicStream](#RTCVideo-startpushpublicstream) |
 | **abstract int** | [stopPushPublicStream](#RTCVideo-stoppushpublicstream) |
 | **abstract int** | [updatePublicStreamParam](#RTCVideo-updatepublicstreamparam) |
@@ -1096,33 +1262,33 @@ RTCVideo Class
 | **abstract int** | [setPublicStreamAudioPlaybackVolume](#RTCVideo-setpublicstreamaudioplaybackvolume) |
 | **abstract int** | [startEchoTest](#RTCVideo-startechotest) |
 | **abstract int** | [stopEchoTest](#RTCVideo-stopechotest) |
-| **abstract void** | [setVideoWatermark](#RTCVideo-setvideowatermark) |
-| **abstract void** | [clearVideoWatermark](#RTCVideo-clearvideowatermark) |
+| **abstract int** | [setVideoWatermark](#RTCVideo-setvideowatermark) |
+| **abstract int** | [clearVideoWatermark](#RTCVideo-clearvideowatermark) |
 | **abstract int** | [setDummyCaptureImagePath](#RTCVideo-setdummycaptureimagepath) |
 | **abstract long** | [takeLocalSnapshot](#RTCVideo-takelocalsnapshot) |
 | **abstract long** | [takeRemoteSnapshot](#RTCVideo-takeremotesnapshot) |
-| **abstract void** | [startCloudProxy](#RTCVideo-startcloudproxy) |
-| **abstract void** | [stopCloudProxy](#RTCVideo-stopcloudproxy) |
+| **abstract int** | [startCloudProxy](#RTCVideo-startcloudproxy) |
+| **abstract int** | [stopCloudProxy](#RTCVideo-stopcloudproxy) |
 | **abstract ISingScoringManager** | [getSingScoringManager](#RTCVideo-getsingscoringmanager) |
 | **abstract NetworkTimeInfo** | [getNetworkTimeInfo](#RTCVideo-getnetworktimeinfo) |
-| **abstract KTVManager** | [getKTVManager](#RTCVideo-getktvmanager) |
+| **abstract IKTVManager** | [getKTVManager](#RTCVideo-getktvmanager) |
 | **abstract int** | [startHardwareEchoDetection](#RTCVideo-starthardwareechodetection) |
 | **abstract int** | [stopHardwareEchoDetection](#RTCVideo-stophardwareechodetection) |
-| **abstract void** | [setCellularEnhancement](#RTCVideo-setcellularenhancement) |
+| **abstract int** | [setCellularEnhancement](#RTCVideo-setcellularenhancement) |
 | **abstract int** | [setLocalProxy](#RTCVideo-setlocalproxy) |
-| **abstract void** | [[deprecated] setInternalEventHandler](#RTCVideo-setinternaleventhandler) |
+| **abstract int** | [[deprecated] setInternalEventHandler](#RTCVideo-setinternaleventhandler) |
 | **abstract int** | [[deprecated] replaceBackground](#RTCVideo-replacebackground) |
 | **abstract int** | [[deprecated] setAudioPlaybackDevice](#RTCVideo-setaudioplaybackdevice) |
-| **abstract void** | [[deprecated] registerLocalAudioProcessor](#RTCVideo-registerlocalaudioprocessor) |
-| **abstract void** | [[deprecated] startLiveTranscoding](#RTCVideo-startlivetranscoding) |
-| **abstract void** | [[deprecated] stopLiveTranscoding](#RTCVideo-stoplivetranscoding) |
-| **abstract void** | [[deprecated] updateLiveTranscoding](#RTCVideo-updatelivetranscoding) |
+| **abstract int** | [[deprecated] registerLocalAudioProcessor](#RTCVideo-registerlocalaudioprocessor) |
+| **abstract int** | [[deprecated] startLiveTranscoding](#RTCVideo-startlivetranscoding) |
+| **abstract int** | [[deprecated] stopLiveTranscoding](#RTCVideo-stoplivetranscoding) |
+| **abstract int** | [[deprecated] updateLiveTranscoding](#RTCVideo-updatelivetranscoding) |
 | **abstract int** | [[deprecated] setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig) |
 | **abstract int** | [[deprecated] setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig) |
-| **abstract void** | [[deprecated] setOnDestroyCompletedCallback](#RTCVideo-setondestroycompletedcallback) |
+| **abstract int** | [[deprecated] setOnDestroyCompletedCallback](#RTCVideo-setondestroycompletedcallback) |
 | **abstract int** | [[deprecated] sendSEIMessage](#RTCVideo-sendseimessage) |
 | **abstract int** | [[deprecated] checkVideoEffectLicense](#RTCVideo-checkvideoeffectlicense) |
-| **abstract void** | [[deprecated] setVideoEffectAlgoModelPath](#RTCVideo-setvideoeffectalgomodelpath) |
+| **abstract int** | [[deprecated] setVideoEffectAlgoModelPath](#RTCVideo-setvideoeffectalgomodelpath) |
 | **abstract int** | [[deprecated] enableVideoEffect](#RTCVideo-enablevideoeffect) |
 | **abstract int** | [[deprecated] setVideoEffectNodes](#RTCVideo-setvideoeffectnodes) |
 | **abstract int** | [[deprecated] updateVideoEffectNode](#RTCVideo-updatevideoeffectnode) |
@@ -1130,7 +1296,8 @@ RTCVideo Class
 | **abstract int** | [[deprecated] setVideoEffectColorFilter](#RTCVideo-setvideoeffectcolorfilter) |
 | **abstract int** | [[deprecated] setVideoEffectColorFilterIntensity](#RTCVideo-setvideoeffectcolorfilterintensity) |
 | **abstract int** | [[deprecated] registerFaceDetectionObserver](#RTCVideo-registerfacedetectionobserver) |
-| **abstract void** | [[deprecated] muteAudioPlayback](#RTCVideo-muteaudioplayback) |
+| **abstract IAudioMixingManager** | [[deprecated] getAudioMixingManager](#RTCVideo-getaudiomixingmanager) |
+| **abstract int** | [[deprecated] muteAudioPlayback](#RTCVideo-muteaudioplayback) |
 
 
 ## 函数说明
@@ -1179,7 +1346,8 @@ public static synchronized void com.ss.bytertc.engine.RTCVideo.destroyRTCVideo()
 
 + 请确保和需要销毁的 [RTCVideo](#rtcvideo) 实例相关的业务场景全部结束后，才调用此方法  
 + 该方法在调用之后，会销毁所有和此 [RTCVideo](#rtcvideo) 实例相关的内存，并且停止与媒体服务器的任何交互  
-+ 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，也不要在回调中等待主线程的执行，并同时在主线程调用本方法。不然会造成死锁。
++ 调用本方法会启动 SDK 退出逻辑。引擎线程会保留，直到退出逻辑完成。因此，不要在回调线程中直接调用此 API，会导致死锁。同时此方法是耗时操作，不建议在主线程调用本方法，避免主线程阻塞。
+
 
 
 <span id="RTCVideo-getsdkversion"></span>
@@ -1192,6 +1360,30 @@ public static String com.ss.bytertc.engine.RTCVideo.getSDKVersion()
 **返回值**
 SDK 当前的版本号。
 
+
+<span id="RTCVideo-setlogconfig"></span>
+### setLogConfig
+```java
+public static int com.ss.bytertc.engine.RTCVideo.setLogConfig(
+    RTCLogConfig logConfig)
+```
+配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| logConfig | **RTCLogConfig** | 本地日志参数，参看 [RTCLogConfig](Android-keytype.md#rtclogconfig)。 |
+
+**返回值**
+
++ 0：成功。
++ –1：失败，本方法必须在创建引擎前调用。
++ –2：失败，参数填写错误。
+
+
+**注意**
+本方法必须在调用 [createRTCVideo](#RTCVideo-creatertcvideo) 之前调用。
 
 <span id="RTCVideo-geterrordescription"></span>
 ### getErrorDescription
@@ -1266,7 +1458,7 @@ public static int com.ss.bytertc.engine.RTCVideo.setEnv(
 <span id="RTCVideo-setinternaleventhandler"></span>
 ### setInternalEventHandler
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setInternalEventHandler(
+public abstract int com.ss.bytertc.engine.RTCVideo.setInternalEventHandler(
     IRTCEngineInternalEventHandler handler)
 ```
 > Deprecated  since 3.45 and will be deleted in 3.51.
@@ -1279,11 +1471,16 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setInternalEventHandler(
 | --- | --- | --- |
 | handler | **IRTCEngineInternalEventHandler** | 内部事件回调 handler，详见[IRTCEngineInternalEventHandler](#irtcengineinternaleventhandler) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCVideo-setrtcvideoeventhandler"></span>
 ### setRtcVideoEventHandler
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setRtcVideoEventHandler(
+public abstract int com.ss.bytertc.engine.RTCVideo.setRtcVideoEventHandler(
     IRTCVideoEventHandler engineEventHandler)
 ```
 设置引擎事件回调的接收类，必须继承自 [IRTCVideoEventHandler](Android-callback.md#irtcvideoeventhandler) 。
@@ -1293,6 +1490,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setRtcVideoEventHandler(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | engineEventHandler | **IRTCVideoEventHandler** | 事件处理器接口类，详见 [IRTCVideoEventHandler](Android-callback.md#irtcvideoeventhandler) 。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1311,18 +1513,23 @@ public abstract IRTCAudioDeviceManager com.ss.bytertc.engine.RTCVideo.getAudioDe
 获取音频设备管理接口
 
 **返回值**
-音频设备管理接口 IRTCAudioDeviceManager
+音频设备管理接口 [IRTCAudioDeviceManager](Android-api.md#irtcaudiodevicemanager)
 
 
 <span id="RTCVideo-startvideocapture"></span>
 ### startVideoCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startVideoCapture()
+public abstract int com.ss.bytertc.engine.RTCVideo.startVideoCapture()
 ```
 立即开启内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>
 调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
 本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartvideocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1338,12 +1545,17 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startVideoCapture()
 <span id="RTCVideo-stopvideocapture"></span>
 ### stopVideoCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopVideoCapture()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopVideoCapture()
 ```
 立即关闭内部视频采集。默认为关闭状态。  <br>
 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。
 调用该方法，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1355,17 +1567,22 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopVideoCapture()
 <span id="RTCVideo-startaudiocapture"></span>
 ### startAudioCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startAudioCapture()
+public abstract int com.ss.bytertc.engine.RTCVideo.startAudioCapture()
 ```
 开启内部音频采集。默认为关闭状态。  <br>
 内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。
 调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
 
-+ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onWarning](Android-callback.md#IRTCVideoEventHandler-onwarning) 回调。  
++ 若未取得当前设备的麦克风权限，调用该方法后会触发 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 回调，对应的错误码为 `MediaDeviceError.MEDIA_DEVICE_ERROR_NOPERMISSION = 1`。
 + 调用 [stopAudioCapture](#RTCVideo-stopaudiocapture) 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  
 + 由于不同硬件设备初始化响应时间不同，频繁调用 [stopAudioCapture](#RTCVideo-stopaudiocapture) 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 [publishStream](#RTCRoom-publishstream)/[unpublishStream](#RTCRoom-unpublishstream) 实现临时闭麦和重新开麦。
 + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  
@@ -1375,12 +1592,17 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startAudioCapture()
 <span id="RTCVideo-stopaudiocapture"></span>
 ### stopAudioCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopAudioCapture()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopAudioCapture()
 ```
 立即关闭内部音频采集。默认为关闭状态。  <br>
 内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。
 调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br>
-非隐身用户进房后调用该方法，房间中的其他用户会收到 [onUserStopAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1392,7 +1614,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopAudioCapture()
 <span id="RTCVideo-setaudioscenario"></span>
 ### setAudioScenario
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setAudioScenario(
+public abstract int com.ss.bytertc.engine.RTCVideo.setAudioScenario(
     AudioScenarioType audioScenario)
 ```
 设置音频场景类型。
@@ -1405,6 +1627,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAudioScenario(
 | --- | --- | --- |
 | audioScenario | **AudioScenarioType** | 音频场景类型，参看 [AudioScenarioType](Android-keytype.md#audioscenariotype)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -1416,7 +1643,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAudioScenario(
 <span id="RTCVideo-setaudioprofile"></span>
 ### setAudioProfile
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setAudioProfile(
+public abstract int com.ss.bytertc.engine.RTCVideo.setAudioProfile(
     AudioProfileType audioProfile)
 ```
 设置音质档位。<br>
@@ -1428,6 +1655,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAudioProfile(
 | --- | --- | --- |
 | audioProfile | **AudioProfileType** | 音质档位，参看 [AudioProfileType](Android-keytype.md#audioprofiletype) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -1438,7 +1670,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAudioProfile(
 <span id="RTCVideo-setansmode"></span>
 ### setAnsMode
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setAnsMode(
+public abstract int com.ss.bytertc.engine.RTCVideo.setAnsMode(
     AnsMode ansMode)
 ```
 支持根据业务场景，设置通话中的音频降噪模式。
@@ -1449,9 +1681,25 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAnsMode(
 | --- | --- | --- |
 | ansMode | **AnsMode** | 降噪模式。具体参见 [AnsMode](Android-keytype.md#ansmode)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
-该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
+
++ 该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
++ 降噪算法包含传统降噪和 AI 降噪。传统降噪主要是抑制平稳噪声，比如空调声、风扇声等。而 AI 降噪主要是抑制非平稳噪声，比如键盘敲击声、桌椅碰撞声等。
++ 只有在以下 [ChannelProfile](Android-keytype.md#channelprofile) 场景下，调用本接口可以开启 AI 降噪。其余场景的 AI 降噪不会生效。
+    -  游戏语音模式： `CHANNEL_PROFILE_GAME(2)`
+    -  高音质游戏模式： `CHANNEL_PROFILE_GAME_HD(8)`
+    -  云游戏模式： `CHANNEL_PROFILE_CLOUD_GAME(3)`
+    -  1 vs 1 音视频通话： `CHANNEL_PROFILE_CHAT(5)`
+    -  多端同步播放音视频： `CHANNEL_PROFILE_LW_TOGETHER(7)`
+    -  云端会议中的个人设备： `CHANNEL_PROFIEL_MEETING`
+    -  课堂互动模式： `CHANNEL_PROFILE_MEETING_ROOM(17)`
+    -  云端会议中的会议室终端： `CHANNEL_PROFILE_CLASSROOM(18)`
 
 <span id="RTCVideo-setvoicechangertype"></span>
 ### setVoiceChangerType
@@ -1513,7 +1761,6 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVoiceReverbType(
 + 对 RTC SDK 内部采集的音频和自定义采集的音频都生效。 
 + 只对单声道音频生效。
 + 与 [setVoiceChangerType](#RTCVideo-setvoicechangertype) 互斥，后设置的特效会覆盖先设置的特效。 
-+ 使用本接口前，请联系 RTC 技术支持了解更多详情。
 
 
 <span id="RTCVideo-setlocalvoiceequalization"></span>
@@ -1616,10 +1863,10 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setLocalVideoCanvas(
 <span id="RTCVideo-updatelocalvideocanvas"></span>
 ### updateLocalVideoCanvas
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.updateLocalVideoCanvas(
+public abstract int com.ss.bytertc.engine.RTCVideo.updateLocalVideoCanvas(
     StreamIndex streamIndex,
     int renderMode,
-    int background_color)
+    int backgroundColor)
 ```
 修改本地视频渲染模式和背景色。
 
@@ -1629,7 +1876,12 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateLocalVideoCanvas(
 | --- | --- | --- |
 | streamIndex | **StreamIndex** | 视频流属性。参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 | renderMode | **int** | 渲染模式。参看 [VideoCanvas](Android-keytype.md#videocanvas).renderMode |
-| background_color | **int** | 背景颜色。参看 [VideoCanvas](Android-keytype.md#videocanvas).background_color |
+| backgroundColor | **int** | 背景颜色。参看 [VideoCanvas](Android-keytype.md#videocanvas).background_color |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1638,7 +1890,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateLocalVideoCanvas(
 <span id="RTCVideo-setlocalvideosink"></span>
 ### setLocalVideoSink
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVideoSink(
+public abstract int com.ss.bytertc.engine.RTCVideo.setLocalVideoSink(
     StreamIndex index,
     IVideoSink videoSink,
     @IVideoSink.PixelFormat int requiredFormat)
@@ -1653,6 +1905,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVideoSink(
 | videoSink | **IVideoSink** | 自定义视频渲染器，参看 [IVideoSink](Android-keytype.md#ivideosink) |
 | requiredFormat | **@IVideoSink.PixelFormat int** | videoSink 适用的视频帧编码格式，参看 [PixelFormat](Android-keytype.md#pixelformat) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -1665,7 +1922,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVideoSink(
 <span id="RTCVideo-setremotevideosink"></span>
 ### setRemoteVideoSink
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setRemoteVideoSink(
+public abstract int com.ss.bytertc.engine.RTCVideo.setRemoteVideoSink(
     RemoteStreamKey streamKey,
     IVideoSink videoSink,
     @IVideoSink.PixelFormat int requiredFormat)
@@ -1680,6 +1937,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setRemoteVideoSink(
 | videoSink | **IVideoSink** | 自定义视频渲染器，参看 [IVideoSink](Android-keytype.md#ivideosink) |
 | requiredFormat | **@IVideoSink.PixelFormat int** | videoSink 适用的视频帧编码格式，参看 [PixelFormat](Android-keytype.md#pixelformat) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -1691,10 +1953,10 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setRemoteVideoSink(
 <span id="RTCVideo-updateremotestreamvideocanvas"></span>
 ### updateRemoteStreamVideoCanvas
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.updateRemoteStreamVideoCanvas(
-    RemoteStreamKey stream_key,
+public abstract int com.ss.bytertc.engine.RTCVideo.updateRemoteStreamVideoCanvas(
+    RemoteStreamKey streamKey,
     int renderMode,
-    int background_color)
+    int backgroundColor)
 ```
 修改远端视频渲染模式和背景色。
 
@@ -1702,9 +1964,14 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateRemoteStreamVideoCanva
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| streamKey | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
 | renderMode | **int** | 渲染模式，参看 [VideoCanvas](Android-keytype.md#videocanvas).renderMode |
-| background_color | **int** | 背景颜色，参看 [VideoCanvas](Android-keytype.md#videocanvas).background_color |
+| backgroundColor | **int** | 背景颜色，参看 [VideoCanvas](Android-keytype.md#videocanvas).background_color |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1713,8 +1980,8 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateRemoteStreamVideoCanva
 <span id="RTCVideo-setremotevideocanvas"></span>
 ### setRemoteVideoCanvas
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setRemoteVideoCanvas(
-    RemoteStreamKey stream_key,
+public abstract int com.ss.bytertc.engine.RTCVideo.setRemoteVideoCanvas(
+    RemoteStreamKey streamKey,
     VideoCanvas videoCanvas)
 ```
 渲染来自指定远端用户的视频流时，设置使用的视图和渲染模式。<br>
@@ -1724,17 +1991,80 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setRemoteVideoCanvas(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
+| streamKey | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey) |
 | videoCanvas | **VideoCanvas** | 视图信息和渲染模式，参看 [VideoCanvas](Android-keytype.md#videocanvas) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
 本地用户离开房间时，会解除调用此 API 建立的绑定关系；远端用户离开房间则不会影响。
 
+<span id="RTCVideo-setremotevideosuperresolution"></span>
+### setRemoteVideoSuperResolution
+```java
+public abstract int com.ss.bytertc.engine.RTCVideo.setRemoteVideoSuperResolution(
+    RemoteStreamKey streamKey,
+    VideoSuperResolutionMode mode)
+```
+> Available since 3.54
+
+设置远端视频超分模式。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| streamKey | **RemoteStreamKey** | 远端流信息，用于指定需要设置超分的视频流来源及属性，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
+| mode | **VideoSuperResolutionMode** | 超分模式，参看 [VideoSuperResolutionMode](Android-keytype.md#videosuperresolutionmode)。 |
+
+**返回值**
+
++ 0: RETURN_STATUS_SUCCESS，SDK 调用成功，并不代表超分模式实际状态，需要根据回调 [onRemoteVideoSuperResolutionModeChanged](Android-callback.md#IRTCVideoEventHandler-onremotevideosuperresolutionmodechanged) 判断实际状态。
++ -1: RETURN_STATUS_NATIVE_IN_VALID，native library 未加载。
++ -2: RETURN_STATUS_PARAMETER_ERR，参数非法，指针为空或字符串为空。
++ -9: RETURN_STATUS_SCREEN_NOT_SUPPORT，不支持对屏幕流开启超分。
+
+
+**注意**
+
++ 该功能仅 arm 架构支持。
++ 该方法须进房后调用。
++ 远端用户视频流的原始分辨率不能超过 640 × 360 px。
++ 支持对一路远端流开启超分，不支持对多路流开启超分。
+
+
+<span id="RTCVideo-setvideodenoiser"></span>
+### setVideoDenoiser
+```java
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoDenoiser(
+    VideoDenoiseMode mode)
+```
+> Available since 3.54
+
+设置视频降噪模式。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **VideoDenoiseMode** | 视频降噪模式。参看 [VideoDenoiseMode](Android-keytype.md#videodenoisemode)。 |
+
+**返回值**
+
++ 0: API 调用成功。 用户可以根据回调函数 [onVideoDenoiseModeChanged](Android-callback.md#IRTCVideoEventHandler-onvideodenoisemodechanged) 判断视频降噪是否开启。
++ < 0: API 调用失败。
+
+**注意**
+该功能仅 arm 架构支持。
+
 <span id="RTCVideo-setlocalvideomirrortype"></span>
 ### setLocalVideoMirrorType
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVideoMirrorType(
+public abstract int com.ss.bytertc.engine.RTCVideo.setLocalVideoMirrorType(
     MirrorType mirrorType)
 ```
 为采集到的视频流开启镜像
@@ -1744,6 +2074,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVideoMirrorType(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mirrorType | **MirrorType** | 镜像类型，参看 [MirrorType](Android-keytype.md#mirrortype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1762,7 +2097,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVideoMirrorType(
 <span id="RTCVideo-setvideorotationmode"></span>
 ### setVideoRotationMode
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoRotationMode(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoRotationMode(
     VideoRotationMode rotationMode)
 ```
 设置采集视频的旋转模式。默认以 App 方向为旋转参考系。<br>
@@ -1773,6 +2108,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoRotationMode(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | rotationMode | **VideoRotationMode** | 视频旋转参考系为 App 方向或重力方向，参看 [VideoRotationMode](Android-keytype.md#videorotationmode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1785,7 +2125,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoRotationMode(
 <span id="RTCVideo-switchcamera"></span>
 ### switchCamera
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.switchCamera(
+public abstract int com.ss.bytertc.engine.RTCVideo.switchCamera(
     CameraId cameraId)
 ```
 切换视频内部采集时使用的前置/后置摄像头 <br>
@@ -1814,7 +2154,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.switchCamera(
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.replaceBackground(
     BackgroundMode mode,
-    DivideModel divide_model)
+    DivideModel divideModel)
 ```
 > Deprecated  since 3.45 and will be deleted in 3.51.
 
@@ -1825,7 +2165,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.replaceBackground(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mode | **BackgroundMode** | 背景模式，用于设置预置背景，是否虚化等 详见 [BackgroundMode](Android-keytype.md#backgroundmode) |
-| divide_model | **DivideModel** | 选择使用哪种分割模型，@return  <br/>分割模型类型详见 [DivideModel](Android-keytype.md#dividemodel)<br/>• 0: 方法调用成功；  <br/>• < 0: 方法调用失败； |
+| divideModel | **DivideModel** | 选择使用哪种分割模型，@return  <br/>分割模型类型详见 [DivideModel](Android-keytype.md#dividemodel)<br/>• 0: 方法调用成功；  <br/>• < 0: 方法调用失败； |
 
 
 <span id="RTCVideo-setaudioplaybackdevice"></span>
@@ -1862,7 +2202,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setAudioPlaybackDevice(
 <span id="RTCVideo-setaudioroute"></span>
 ### setAudioRoute
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setAudioRoute(
+public abstract int com.ss.bytertc.engine.RTCVideo.setAudioRoute(
     AudioRoute audioRoute)
 ```
 强制切换当前的音频播放路由。默认使用 [setDefaultAudioRoute](#RTCVideo-setdefaultaudioroute) 中设置的音频路由。
@@ -1873,6 +2213,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAudioRoute(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | audioRoute | **AudioRoute** | 音频播放路由，参见 [AudioRoute](Android-keytype.md#audioroute)。<br/>对 Android 设备，不同的音频设备连接状态下，可切换的音频设备情况不同。参见[移动端设置音频路由](https://www.volcengine.com/docs/6348/117836)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1922,7 +2267,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setDefaultAudioRoute(
 <span id="RTCVideo-enableexternalsoundcard"></span>
 ### enableExternalSoundCard
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enableExternalSoundCard(
+public abstract int com.ss.bytertc.engine.RTCVideo.enableExternalSoundCard(
     boolean enable)
 ```
 启用匹配外置声卡的音频处理模式
@@ -1932,6 +2277,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableExternalSoundCard(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | enable | **boolean** | • true: 开启 <br/>• false: 不开启(默认) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -1943,7 +2293,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableExternalSoundCard(
 <span id="RTCVideo-setcapturevolume"></span>
 ### setCaptureVolume
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setCaptureVolume(
+public abstract int com.ss.bytertc.engine.RTCVideo.setCaptureVolume(
     StreamIndex index,
     int volume)
 ```
@@ -1956,6 +2306,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setCaptureVolume(
 | index | **StreamIndex** | 流索引，指定调节主流还是调节屏幕流的音量，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 | volume | **int** | 采集的音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。<br/>只改变音频数据的音量信息，不涉及本端硬件的音量调节。<br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。<br/>• 0：静音  <br/>• 100：原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 在开启音频采集前后，你都可以使用此接口设定采集音量。
@@ -1963,7 +2318,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setCaptureVolume(
 <span id="RTCVideo-setplaybackvolume"></span>
 ### setPlaybackVolume
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setPlaybackVolume(
+public abstract int com.ss.bytertc.engine.RTCVideo.setPlaybackVolume(
     int volume)
 ```
 调节本地播放的所有远端用户混音后的音量。<br>
@@ -1975,6 +2330,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setPlaybackVolume(
 | --- | --- | --- |
 | volume | **int** | 音频播放音量值和原始音量的比值，范围是 [0, 400]，单位为 %，自带溢出保护。  <br/>为保证更好的通话质量，建议将 volume 值设为 [0,100]。  <br/>• 0：静音  <br/>• 100：原始音量  <br/>• 400: 最大可为原始音量的 4 倍(自带溢出保护) |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 假设某远端用户 A 始终在被调节的目标用户范围内，当该方法与 [setRemoteAudioPlaybackVolume](#RTCVideo-setremoteaudioplaybackvolume) 或 [setRemoteRoomAudioPlaybackVolume](#RTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
@@ -1982,7 +2342,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setPlaybackVolume(
 <span id="RTCVideo-setlocalvoicepitch"></span>
 ### setLocalVoicePitch
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVoicePitch(
+public abstract int com.ss.bytertc.engine.RTCVideo.setLocalVoicePitch(
     int pitch)
 ```
 开启本地语音变调功能，多用于 K 歌场景。  <br>
@@ -1994,11 +2354,16 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setLocalVoicePitch(
 | --- | --- | --- |
 | pitch | **int** | 相对于语音原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [onWarning](Android-callback#IRTCVideoEventHandler-onwarning) 回调，提示 [WarningCode](Android-errorcode.md#warningcode) 错误码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCVideo-enablevocalinstrumentbalance"></span>
 ### enableVocalInstrumentBalance
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enableVocalInstrumentBalance(
+public abstract int com.ss.bytertc.engine.RTCVideo.enableVocalInstrumentBalance(
     boolean enable)
 ```
 开启/关闭音量均衡功能。  <br>
@@ -2010,6 +2375,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableVocalInstrumentBalance
 | --- | --- | --- |
 | enable | **boolean** | 是否开启音量均衡功能：  <br/>• true: 是  <br/>• false: 否 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 该接口须在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件之前调用。
@@ -2017,7 +2387,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableVocalInstrumentBalance
 <span id="RTCVideo-enableplaybackducking"></span>
 ### enablePlaybackDucking
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enablePlaybackDucking(
+public abstract int com.ss.bytertc.engine.RTCVideo.enablePlaybackDucking(
     boolean enable)
 ```
 打开/关闭音量闪避功能，适用于在 RTC 通话过程中会同时播放短视频或音乐的场景，如“一起看”、“在线 KTV”等。  <br>
@@ -2029,11 +2399,16 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enablePlaybackDucking(
 | --- | --- | --- |
 | enable | **boolean** | 是否开启音量闪避：  <br/>• true: 是  <br/>• false: 否 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCVideo-login"></span>
 ### login
 ```java
-public abstract long com.ss.bytertc.engine.RTCVideo.login(
+public abstract int com.ss.bytertc.engine.RTCVideo.login(
     String token,
     String uid)
 ```
@@ -2059,9 +2434,14 @@ public abstract long com.ss.bytertc.engine.RTCVideo.login(
 <span id="RTCVideo-logout"></span>
 ### logout
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.logout()
+public abstract int com.ss.bytertc.engine.RTCVideo.logout()
 ```
 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2073,7 +2453,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.logout()
 <span id="RTCVideo-updatelogintoken"></span>
 ### updateLoginToken
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.updateLoginToken(
+public abstract int com.ss.bytertc.engine.RTCVideo.updateLoginToken(
     String token)
 ```
 更新用户用于登录的 Token  <br>
@@ -2086,6 +2466,11 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 | --- | --- | --- |
 | token | **String** | 更新的动态密钥 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -2096,7 +2481,7 @@ Token 有一定的有效期，当 Token 过期时，需调用此方法更新登�
 <span id="RTCVideo-setserverparams"></span>
 ### setServerParams
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setServerParams(
+public abstract int com.ss.bytertc.engine.RTCVideo.setServerParams(
     String signature,
     String url)
 ```
@@ -2107,8 +2492,13 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setServerParams(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| signature | **String** | 动态签名  <br/>应用服务器会使用该签名对请求进行鉴权验证。 |
+| signature | **String** | 动态签名，应用服务器可使用该签名验证消息来源。<br>签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br>设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。 |
 | url | **String** | 应用服务器的地址 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2120,8 +2510,8 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setServerParams(
 <span id="RTCVideo-getpeeronlinestatus"></span>
 ### getPeerOnlineStatus
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.getPeerOnlineStatus(
-    String peer_user_id)
+public abstract int com.ss.bytertc.engine.RTCVideo.getPeerOnlineStatus(
+    String peerUserID)
 ```
 查询对端用户或本端用户的登录状态
 
@@ -2129,7 +2519,12 @@ public abstract void com.ss.bytertc.engine.RTCVideo.getPeerOnlineStatus(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| peer_user_id | **String** | 需要查询的用户 ID |
+| peerUserID | **String** | 需要查询的用户 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2260,7 +2655,7 @@ public abstract long com.ss.bytertc.engine.RTCVideo.sendServerBinaryMessage(
 <span id="RTCVideo-startnetworkdetection"></span>
 ### startNetworkDetection
 ```java
-public abstract NetworkDetectionStartReturn com.ss.bytertc.engine.RTCVideo.startNetworkDetection(
+public abstract int com.ss.bytertc.engine.RTCVideo.startNetworkDetection(
     boolean isTestUplink,
     int expectedUplinkBitrate,
     boolean isTestDownlink,
@@ -2278,7 +2673,9 @@ public abstract NetworkDetectionStartReturn com.ss.bytertc.engine.RTCVideo.start
 | expectedDownlinkBitrate | **int** | 期望下行带宽，单位：kbps范围为 `{0, [100-10000]}`，其中， `0` 表示由 SDK 指定最高码率。 |
 
 **返回值**
-开启通话前网络探测结果，详见 [NetworkDetectionStartReturn](Android-errorcode.md#networkdetectionstartreturn)
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2290,9 +2687,14 @@ public abstract NetworkDetectionStartReturn com.ss.bytertc.engine.RTCVideo.start
 <span id="RTCVideo-stopnetworkdetection"></span>
 ### stopNetworkDetection
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopNetworkDetection()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopNetworkDetection()
 ```
 停止通话前网络探测
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2303,7 +2705,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopNetworkDetection()
 <span id="RTCVideo-enableaudioframecallback"></span>
 ### enableAudioFrameCallback
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioFrameCallback(
+public abstract int com.ss.bytertc.engine.RTCVideo.enableAudioFrameCallback(
     AudioFrameCallbackMethod method,
     AudioFormat format)
 ```
@@ -2316,6 +2718,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioFrameCallback(
 | method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Android-keytype.md#audioframecallbackmethod)。  <br/>当音频回调方法设置为 `AUDIO_FRAME_CALLBACK_RECORD(0)`、`AUDIO_FRAME_CALLBACK_PLAYBACK(1)`、`AUDIO_FRAME_CALLBACK_MIXED(2)`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `AUDIO_FRAME_CALLBACK_REMOTE_USER(3)`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。 |
 | format | **AudioFormat** | 音频参数格式，参看 [AudioFormat](Android-keytype.md#audioformat)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 开启音频回调并调用 [registerAudioFrameObserver](#RTCVideo-registeraudioframeobserver) 后，[IAudioFrameObserver](Android-callback.md#iaudioframeobserver) 会收到对应的音频回调。两者调用顺序没有限制且相互独立。  
@@ -2323,7 +2730,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioFrameCallback(
 <span id="RTCVideo-disableaudioframecallback"></span>
 ### disableAudioFrameCallback
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.disableAudioFrameCallback(
+public abstract int com.ss.bytertc.engine.RTCVideo.disableAudioFrameCallback(
     AudioFrameCallbackMethod method)
 ```
 关闭音频回调
@@ -2334,6 +2741,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.disableAudioFrameCallback(
 | --- | --- | --- |
 | method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Android-keytype.md#audioframecallbackmethod)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 该方法需要在调用 [enableAudioFrameCallback](#RTCVideo-enableaudioframecallback) 之后调用。
@@ -2341,7 +2753,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.disableAudioFrameCallback(
 <span id="RTCVideo-registeraudioframeobserver"></span>
 ### registerAudioFrameObserver
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.registerAudioFrameObserver(
+public abstract int com.ss.bytertc.engine.RTCVideo.registerAudioFrameObserver(
     IAudioFrameObserver observer)
 ```
 注册音频数据回调观察者。  <br>
@@ -2352,14 +2764,19 @@ public abstract void com.ss.bytertc.engine.RTCVideo.registerAudioFrameObserver(
 | --- | --- | --- |
 | observer | **IAudioFrameObserver** | 音频数据观察者，参看 [IAudioFrameObserver](Android-callback.md#iaudioframeobserver)。如果传入 null，则取消注册。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
-注册音频数据回调观察者并调用 [enableAudioFrameCallback](#RTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Android-callback.md#iaudioframeobserver) 会收到对应的音频回调。对回调中收到的音频数据进行处理，不会影响 RTC 的编码发送或渲染。
+注册音频数据回调观察者并调用 [enableAudioFrameCallback](#RTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Android-callback.md#iaudioframeobserver) 会收到对应的音频回调。
 
 <span id="RTCVideo-registerlocalaudioprocessor"></span>
 ### registerLocalAudioProcessor
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.registerLocalAudioProcessor(
+public abstract int com.ss.bytertc.engine.RTCVideo.registerLocalAudioProcessor(
     IAudioProcessor audioProcessor,
     AudioFormat audioFormat)
 ```
@@ -2376,6 +2793,11 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 | audioProcessor | **IAudioProcessor** | 自定义音频处理器，参看 [IAudioProcessor](Android-callback.md#iaudioprocessor)。如果传入null，则不对 RTC SDK 采集得到的音频帧进行自定义处理。 |
 | audioFormat | **AudioFormat** | 自定义音频参数格式，参看 [AudioFormat](Android-keytype.md#audioformat)，SDK 将按指定设置给出音频帧。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 重复调用此接口时，仅最后一次调用生效。效果不会叠加。
@@ -2383,28 +2805,31 @@ SDK 只持有 processor 的弱引用，你应保证其生命周期。
 <span id="RTCVideo-registeraudioprocessor"></span>
 ### registerAudioProcessor
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.registerAudioProcessor(
+public abstract int com.ss.bytertc.engine.RTCVideo.registerAudioProcessor(
     IAudioFrameProcessor processor)
 ```
 注册自定义音频处理器。<br>
-注册完成后，你可以调用 [enableAudioProcessor](#RTCVideo-enableaudioprocessor)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。
+注册完成后，你可以调用 [enableAudioProcessor](#RTCVideo-enableaudioprocessor)，对本地采集或接收到的远端音频进行处理。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| processor | **IAudioFrameProcessor** | 自定义音频处理器，详见 [IAudioFrameProcessor](Android-callback.md#iaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
+| processor | **IAudioFrameProcessor** | 自定义音频处理器，详见 [IAudioFrameProcessor](Android-callback.md#iaudioframeprocessor)。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。需要取消注册时，设置此参数为 nullptr。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
-
-- 重复调用此接口时，仅最后一次调用生效。
-- 更多相关信息，详见[音频自定义处理](https://www.volcengine.com/docs/6348/80635)。
+重复调用此接口时，仅最后一次调用生效。
 
 <span id="RTCVideo-enableaudioprocessor"></span>
 ### enableAudioProcessor
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioProcessor(
+public abstract int com.ss.bytertc.engine.RTCVideo.enableAudioProcessor(
     AudioProcessorMethod method,
     AudioFormat format)
 ```
@@ -2417,6 +2842,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioProcessor(
 | method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](Android-keytype#audioprocessormethod)。可多次调用此接口，处理不同类型的音频帧。  <br/>选择不同类型的音频帧将收到对应的回调：<br/>• 选择本地采集的音频时，会收到 [onProcessRecordAudioFrame](Android-callback.md#IAudioFrameProcessor-onprocessrecordaudioframe)。  <br/>• 选择远端音频流的混音音频时，会收到 [onProcessPlayBackAudioFrame](Android-callback.md#IAudioFrameProcessor-onprocessplaybackaudioframe)。  <br/>• 选择远端音频流时，会收到 [onProcessRemoteUserAudioFrame](Android-callback.md#IAudioFrameProcessor-onprocessremoteuseraudioframe)。  <br/>• 选择软件耳返音频时，会收到 [onProcessEarMonitorAudioFrame](Android-callback.md#IAudioFrameProcessor-onprocessearmonitoraudioframe)。  <br/>• 选择屏幕共享音频流时，会收到 [onProcessScreenAudioFrame](Android-callback.md#IAudioFrameProcessor-onprocessscreenaudioframe)。 |
 | format | **AudioFormat** | 设定自定义处理时获取的音频帧格式，参看 [AudioFormat](Android-keytype.md#audioformat)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -2427,7 +2857,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioProcessor(
 <span id="RTCVideo-disableaudioprocessor"></span>
 ### disableAudioProcessor
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.disableAudioProcessor(
+public abstract int com.ss.bytertc.engine.RTCVideo.disableAudioProcessor(
     AudioProcessorMethod method)
 ```
 关闭自定义音频处理。
@@ -2437,6 +2867,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.disableAudioProcessor(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | method | **AudioProcessorMethod** | 音频帧类型，参看 [AudioProcessorMethod](Android-keytype.md#audioprocessormethod)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="RTCVideo-registerlocalvideoprocessor"></span>
@@ -2454,7 +2889,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.registerLocalVideoProcessor(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | processor | **IVideoProcessor** | 自定义视频处理器，详见 [IVideoProcessor](#ivideoprocessor)。如果传入 null，则不对 RTC SDK 采集得到的视频帧进行前处理。<br/>SDK 只持有 processor 的弱引用，你应保证其生命周期。 |
-| config | **VideoPreprocessorConfig** | 自定义视频前处理器适用的设置，详见 [VideoPreprocessorConfig](Android-keytype.md#videopreprocessorconfig)。<br/>当前，`config` 中的 `required_pixel_format` 仅支持：`I420`、`TEXTURE_2D` 和 `UNKNOWN`：<br/>• 设置为 `UNKNOWN` 时，RTC SDK 给出供 processor 处理的视频帧格式即采集的格式。<br/>你可以通过 [getPixelFormat](Android-keytype.md#VideoFrame-getpixelformat) 获取实际采集的视频帧格式，支持的格式为：`kVideoPixelFormatI420`、 `kVideoPixelFormatTexture2D` 和 `kVideoPixelFormatTextureOES`<br/>• 设置为 `I420` 或 `TEXTURE_2D` 时，RTC SDK 会将采集得到的视频转变为对应的格式，供前处理使用。<br/>• 设置为其他值时，此方法调用失败。 |
+| config | **VideoPreprocessorConfig** | 自定义视频前处理器适用的设置，详见 [VideoPreprocessorConfig](Android-keytype.md#videopreprocessorconfig)。<br/>当前，`config` 中的 `required_pixel_format` 仅支持：`I420`、`TEXTURE_2D` 和 `Unknown`：<br/>• 设置为 `Unknown` 时，RTC SDK 给出供 processor 处理的视频帧格式即采集的格式。<br/>你可以通过 [getPixelFormat](Android-keytype.md#VideoFrame-getpixelformat) 获取实际采集的视频帧格式，支持的格式为：`kVideoPixelFormatI420`、 `kVideoPixelFormatTexture2D` 和 `kVideoPixelFormatTextureOES`<br/>• 设置为 `I420` 或 `TEXTURE_2D` 时，RTC SDK 会将采集得到的视频转变为对应的格式，供前处理使用。<br/>• 设置为其他值时，此方法调用失败。 |
 
 **返回值**
 
@@ -2468,7 +2903,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.registerLocalVideoProcessor(
 <span id="RTCVideo-setvideodigitalzoomconfig"></span>
 ### setVideoDigitalZoomConfig
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomConfig(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomConfig(
     ZoomConfigType type,
     float size)
 ```
@@ -2483,6 +2918,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomConfig(
 | type | **ZoomConfigType** | 数码变焦参数类型，缩放系数或移动步长。参看 [ZoomConfigType](Android-keytype.md#zoomconfigtype)。必填。 |
 | size | **float** | 缩放系数或移动步长，保留到小数点后三位。默认值为 0。必填。<br/>选择不同 `type` 时有不同的取值范围。当计算后的结果超过缩放和移动边界时，取临界值。<br/>• `ZOOM_FOCUS_OFFSET(0)`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl](#RTCVideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。<br/>• `ZOOM_MOVE_OFFSET(1)`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl](#RTCVideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。 |
 
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
+
 
 **注意**
 
@@ -2493,7 +2933,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomConfig(
 <span id="RTCVideo-setvideodigitalzoomcontrol"></span>
 ### setVideoDigitalZoomControl
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomControl(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomControl(
     ZoomDirectionType direction)
 ```
 > Available since 3.51
@@ -2505,6 +2945,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomControl(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | direction | **ZoomDirectionType** | 数码变焦操作类型，参看 [ZoomDirectionType](Android-keytype.md#zoomdirectiontype)。 |
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -2519,7 +2964,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDigitalZoomControl(
 <span id="RTCVideo-startvideodigitalzoomcontrol"></span>
 ### startVideoDigitalZoomControl
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startVideoDigitalZoomControl(
+public abstract int com.ss.bytertc.engine.RTCVideo.startVideoDigitalZoomControl(
     ZoomDirectionType direction)
 ```
 > Available since 3.51
@@ -2531,6 +2976,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startVideoDigitalZoomControl
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | direction | **ZoomDirectionType** | 数码变焦操作类型，参看 [ZoomDirectionType](Android-keytype.md#zoomdirectiontype)。 |
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -2546,11 +2996,16 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startVideoDigitalZoomControl
 <span id="RTCVideo-stopvideodigitalzoomcontrol"></span>
 ### stopVideoDigitalZoomControl
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopVideoDigitalZoomControl()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopVideoDigitalZoomControl()
 ```
 > Available since 3.51
 
 停止本地摄像头持续数码变焦。
+
+**返回值**
+
++ 0：成功。  
++ !0：失败。  
 
 
 **注意**
@@ -2559,7 +3014,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopVideoDigitalZoomControl(
 <span id="RTCVideo-registerlocalencodedvideoframeobserver"></span>
 ### registerLocalEncodedVideoFrameObserver
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.registerLocalEncodedVideoFrameObserver(
+public abstract int com.ss.bytertc.engine.RTCVideo.registerLocalEncodedVideoFrameObserver(
     ILocalEncodedVideoFrameObserver observer)
 ```
 注册本地视频帧监测器。  <br>
@@ -2571,6 +3026,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.registerLocalEncodedVideoFra
 | --- | --- | --- |
 | observer | **ILocalEncodedVideoFrameObserver** | 本地频帧监测器，参看 [ILocalEncodedVideoFrameObserver](Android-callback.md#ilocalencodedvideoframeobserver) 。将参数设置为 null 则取消注册。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 该方法可在进房前后的任意时间调用，在进房前调用可保证尽可能早地监测视频帧并触发回调
@@ -2578,7 +3038,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.registerLocalEncodedVideoFra
 <span id="RTCVideo-registerremoteencodedvideoframeobserver"></span>
 ### registerRemoteEncodedVideoFrameObserver
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.registerRemoteEncodedVideoFrameObserver(
+public abstract int com.ss.bytertc.engine.RTCVideo.registerRemoteEncodedVideoFrameObserver(
     IRemoteEncodedVideoFrameObserver observer)
 ```
 注册远端编码后视频数据回調。  <br>
@@ -2589,6 +3049,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.registerRemoteEncodedVideoFr
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **IRemoteEncodedVideoFrameObserver** | 远端编码后视频数据监测器，参看 [IRemoteEncodedVideoFrameObserver](Android-callback.md#iremoteencodedvideoframeobserver) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2601,7 +3066,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.registerRemoteEncodedVideoFr
 <span id="RTCVideo-setvideosourcetype"></span>
 ### setVideoSourceType
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoSourceType(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoSourceType(
     StreamIndex index,
     VideoSourceType type)
 ```
@@ -2614,6 +3079,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoSourceType(
 | --- | --- | --- |
 | index | **StreamIndex** | 视频流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
 | type | **VideoSourceType** | 视频输入源类型，参看 [VideoSourceType](Android-keytype.md#videosourcetype) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2656,7 +3126,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalVideoFrame(
 <span id="RTCVideo-startlivetranscoding"></span>
 ### startLiveTranscoding
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startLiveTranscoding(
+public abstract int com.ss.bytertc.engine.RTCVideo.startLiveTranscoding(
     String taskId,
     LiveTranscoding liveTranscode,
     ILiveTranscodingObserver observer)
@@ -2674,10 +3144,14 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startLiveTranscoding(
 | liveTranscode | **LiveTranscoding** | 转推直播配置参数。详见 [LiveTranscoding](Android-keytype.md#livetranscoding)。 |
 | observer | **ILiveTranscodingObserver** | 端云一体转推直播观察者。详见 [ILiveTranscodingObserver](Android-callback.md#ilivetranscodingobserver)。  <br/>通过注册 observer 接收转推直播相关的回调。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamMixingEvent](Android-callback.md#ILiveTranscodingObserver-onstreammixingevent) 回调。
 + 调用 [stopLiveTranscoding](#RTCVideo-stoplivetranscoding) 停止转推直播。
 
@@ -2685,7 +3159,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startLiveTranscoding(
 <span id="RTCVideo-stoplivetranscoding"></span>
 ### stopLiveTranscoding
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopLiveTranscoding(
+public abstract int com.ss.bytertc.engine.RTCVideo.stopLiveTranscoding(
     String taskId)
 ```
 > Deprecated  since 3.52, will be deleted in 3.58, use [stopPushStreamToCDN](#RTCVideo-stoppushstreamtocdn) instead.
@@ -2699,11 +3173,16 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopLiveTranscoding(
 | --- | --- | --- |
 | taskId | **String** | 转推直播任务 ID。可以指定想要停止的转推直播任务。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCVideo-updatelivetranscoding"></span>
 ### updateLiveTranscoding
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.updateLiveTranscoding(
+public abstract int com.ss.bytertc.engine.RTCVideo.updateLiveTranscoding(
     String taskId,
     LiveTranscoding transcoding)
 ```
@@ -2718,6 +3197,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateLiveTranscoding(
 | --- | --- | --- |
 | taskId | **String** | 转推直播任务 ID。指定想要更新参数设置的转推直播任务。 |
 | transcoding | **LiveTranscoding** | 转推直播配置参数，参看 [LiveTranscoding](Android-keytype.md#livetranscoding)。除特殊说明外，均支持过程中更新。<br/>调用时，结构体中没有传入值的属性，会被更新为默认值。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="RTCVideo-startpushmixedstreamtocdn"></span>
@@ -2750,9 +3234,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.startPushMixedStreamToCDN(
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onMixingEvent](Android-callback.md#IMixedStreamObserver-onmixingevent) 回调。
-+ 如果你在[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=callback)配置了转推直播的服务端回调，调用本接口会收到 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted)。重复调用该接口时，第二次调用会同时触发 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 和 [TranscodeUpdated](https://www.volcengine.com/docs/6348/75125#transcodeupdated)。
 + 调用 [stopPushStreamToCDN](#RTCVideo-stoppushstreamtocdn) 停止转推直播。
 
 
@@ -2785,7 +3267,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.updatePushMixedStreamToCDN(
 <span id="RTCVideo-startpushsinglestreamtocdn"></span>
 ### startPushSingleStreamToCDN
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startPushSingleStreamToCDN(
+public abstract int com.ss.bytertc.engine.RTCVideo.startPushSingleStreamToCDN(
     String taskId,
     PushSingleStreamParam param,
     IPushSingleStreamToCDNObserver observer)
@@ -2800,10 +3282,14 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startPushSingleStreamToCDN(
 | param | **PushSingleStreamParam** | 转推直播配置参数。详见 [PushSingleStreamParam](Android-keytype.md#pushsinglestreamparam)。 |
 | observer | **IPushSingleStreamToCDNObserver** | 单流转推直播观察者。详见 [IPushSingleStreamToCDNObserver](Android-callback.md#ipushsinglestreamtocdnobserver)。  <br/>通过注册 observer 接收单流转推直播相关的回调。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
-+ 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
 + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamPushEvent](Android-callback.md#IPushSingleStreamToCDNObserver-onstreampushevent) 回调。
 + 调用 [stopPushStreamToCDN](#RTCVideo-stoppushstreamtocdn) 停止任务。
 + 由于本功能不进行编解码，所以推到 RTMP 的视频流会根据推流端的分辨率、编码方式、关闭摄像头等变化而变化。
@@ -2812,7 +3298,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startPushSingleStreamToCDN(
 <span id="RTCVideo-stoppushstreamtocdn"></span>
 ### stopPushStreamToCDN
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopPushStreamToCDN(
+public abstract int com.ss.bytertc.engine.RTCVideo.stopPushStreamToCDN(
     String taskId)
 ```
 停止转推直播。<br>
@@ -2823,6 +3309,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopPushStreamToCDN(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | taskId | **String** | 任务 ID。可以指定想要停止的单流转推直播或合流转推直播任务。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -2862,7 +3353,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoCaptureConfig(
 <span id="RTCVideo-enablesimulcastmode"></span>
 ### enableSimulcastMode
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enableSimulcastMode(
+public abstract int com.ss.bytertc.engine.RTCVideo.enableSimulcastMode(
     boolean enabled)
 ```
 该方法设置视频流发布端是否开启发布多路编码参数不同的视频流的模式。
@@ -2873,12 +3364,17 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableSimulcastMode(
 | --- | --- | --- |
 | enabled | **boolean** | 是否开启推送多路视频流模式： <br/>• true：开启 <br/>• false：关闭（默认） |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 你应在进房前或进房后但未发布流时，调用此方法。  
 + 开启推送多路流后，不能动态关闭，也不能更新多路流的路数和编码参数。 
-+ 开启推送多路视频流模式后，你可以调用 [setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig-1) 为多路视频流分别设置编码参数。 
++ 开启推送多路视频流模式后，你可以在发布流前调用 [setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig-1) 为多路视频流分别设置编码参数。 
 + 该功能关闭时，或该功能开启但未设置多路流参数时，默认只发一路视频流，该流的编码参数为：分辨率 640px × 360px，帧率 15fps。
 
 
@@ -2943,7 +3439,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 ### setVideoEncoderConfig
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
-    VideoEncoderConfig max_solution)
+    VideoEncoderConfig maxSolution)
 ```
 <span id="RTCVideo-setvideoencoderconfig-1"></span>视频发布端设置期望发布的最大分辨率视频流参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。  <br>
 该接口支持设置一路视频流参数，设置多路参数请使用重载 API：[setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig-2)
@@ -2952,7 +3448,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| max_solution | **VideoEncoderConfig** | 期望发布的最大分辨率视频流参数。参看 [VideoEncoderConfig](Android-keytype.md#videoencoderconfig)。 |
+| maxSolution | **VideoEncoderConfig** | 期望发布的最大分辨率视频流参数。参看 [VideoEncoderConfig](Android-keytype.md#videoencoderconfig)。 |
 
 **返回值**
 方法调用结果： 
@@ -2963,8 +3459,8 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 
 **注意**
 
-+ 你可以同时使用 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 方法来发布多路分辨率不同的流。具体而言，若期望发布多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 方法开启多路流模式，SDK 会根据订阅端的设置智能调整发布的流数（最多发布 4 条）以及各路流的参数。其中，调用本方法设置的分辨率为各路流中的最大分辨率。具体规则参看[推送多路流](70139)文档。
-+ 调用该方法前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
++ 你可以同时使用 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 方法来发布多路分辨率不同的流。具体而言，若期望发布多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 方法开启多路流模式，SDK 会根据订阅端的设置智能调整发布的流数（最多发布 4 条）以及各路流的参数。其中，调用本方法设置的分辨率为各路流中的最大分辨率。具体规则参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。
++ 调用该方法前，SDK 默认发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
 + 使用自定义采集时，必须调用该方法设置编码参数，以保证远端收到画面的完整性。
 + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 [setScreenVideoEncoderConfig](#RTCVideo-setscreenvideoencoderconfig)。
 
@@ -2973,7 +3469,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 ### setVideoEncoderConfig
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
-    VideoEncoderConfig[] channel_solutions)
+    VideoEncoderConfig[] channelSolutions)
 ```
 <span id="RTCVideo-setvideoencoderconfig-2"></span>视频发布端设置推送多路流时各路流的参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。
 
@@ -2981,7 +3477,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| channel_solutions | **VideoEncoderConfig[]** | 要推送的多路视频流的参数，最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。  <br/>当设置了多路参数时，分辨率和帧率必须是从大到小排列。需注意，所设置的分辨率是各路流的最大分辨率。参看 [VideoEncoderConfig](Android-keytype.md#videoencoderconfig)。 |
+| channelSolutions | **VideoEncoderConfig[]** | 要推送的多路视频流的参数，最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。  <br/>当设置了多路参数时，分辨率和帧率必须是从大到小排列。需注意，所设置的分辨率是各路流的最大分辨率。参看 [VideoEncoderConfig](Android-keytype.md#videoencoderconfig)。 |
 
 **返回值**
 方法调用结果： 
@@ -2992,8 +3488,8 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 
 **注意**
 
-+ 该方法设置的多路参数是否均生效，取决于是否同时调用了 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 则默认发布设置的第一条流，多个分辨率的设置会在开启推送多路流模式之后生效。  
-+ 若期望推送多路不同分辨率的流，你需要在发布流之前调用本方法以及[enableSimulcastMode](#RTCVideo-enablesimulcastmode) 方法。
++ 该方法设置的多路参数是否均生效，取决于是否同时调用了 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 开启发布多路参数不同的视频流模式。若未开启推送多路流模式，但调用本方法设置了多个分辨率，SDK 则默认发布设置的第一条流，多个分辨率的设置将会在开启推送多路流模式之后生效。  
++ 若期望推送多路不同分辨率的流，你需要在发布流之前调用本方法以及 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 方法。
 + 开启推送多路流后，不能动态关闭，也不能更新多路流的路数和编码参数。  
 + 调用该方法设置多路视频流参数前，SDK 默认仅发布一条分辨率为 640px × 360px，帧率为 15fps 的视频流。  
 + 调用该方法设置分辨率不同的多条流后，SDK 会根据订阅端设置的期望订阅参数自动匹配发送的流，具体规则参看[推送多路流](https://www.volcengine.com/docs/6348/70139)文档。  
@@ -3004,7 +3500,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEncoderConfig(
 ### setScreenVideoEncoderConfig
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.setScreenVideoEncoderConfig(
-    ScreenVideoEncoderConfig screen_solution)
+    ScreenVideoEncoderConfig screenSolution)
 ```
 为发布的屏幕共享视频流设置期望的编码参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。
 
@@ -3012,7 +3508,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setScreenVideoEncoderConfig(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| screen_solution | **ScreenVideoEncoderConfig** | 屏幕共享视频流参数。参看 [ScreenVideoEncoderConfig](Android-keytype.md#screenvideoencoderconfig)。 |
+| screenSolution | **ScreenVideoEncoderConfig** | 屏幕共享视频流参数。参看 [ScreenVideoEncoderConfig](Android-keytype.md#screenvideoencoderconfig)。 |
 
 **返回值**
 
@@ -3090,7 +3586,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **AudioFrame** | 音频数据帧，详见 [AudioFrame](Android-keytype.md#audioframe) |
+| audioFrame | **AudioFrame** | 音频数据帧，详见 [AudioFrame](Android-keytype.md#audioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
 
 **返回值**
 方法调用结果  
@@ -3102,8 +3598,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalAudioFrame(
 **注意**
 
 + 推送自定义采集的音频数据前，必须先调用 [setAudioSourceType](#RTCVideo-setaudiosourcetype) 开启自定义采集。
-+ 你必须每隔 10 毫秒推送一次外部采集的音频数据。单次推送的 samples (音频采样点个数）应该为 audioFrame.sampleRate / 100。比如设置采样率为 48000 时， 每次应该推送 480 个采样点。  
-+ 音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。
++ 你必须每隔 10 毫秒推送一次外部采集的音频数据。单次推送的 samples (音频采样点个数) 应该为 audioFrame.sampleRate / 100。比如设置采样率为 48000 时， 每次应该推送 480 个采样点。  
 
 
 <span id="RTCVideo-pullexternalaudioframe"></span>
@@ -3112,8 +3607,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalAudioFrame(
 public abstract int com.ss.bytertc.engine.RTCVideo.pullExternalAudioFrame(
     AudioFrame audioFrame)
 ```
-拉取远端音频数据。<br>
-可用于自定义音频渲染。
+拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。
 
 **传入参数**
 
@@ -3159,7 +3653,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushScreenVideoFrame(
 <span id="RTCVideo-setondestroycompletedcallback"></span>
 ### setOnDestroyCompletedCallback
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setOnDestroyCompletedCallback(
+public abstract int com.ss.bytertc.engine.RTCVideo.setOnDestroyCompletedCallback(
     Runnable callback)
 ```
 > Deprecated  since 3.45 and will be deleted in 3.51.
@@ -3171,6 +3665,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setOnDestroyCompletedCallbac
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | callback | **Runnable** | App 接收引擎销毁的回调函数。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="RTCVideo-setremoteaudioplaybackvolume"></span>
@@ -3207,7 +3706,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setRemoteAudioPlaybackVolume(
 <span id="RTCVideo-setaudioalignmentproperty"></span>
 ### setAudioAlignmentProperty
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setAudioAlignmentProperty(
+public abstract int com.ss.bytertc.engine.RTCVideo.setAudioAlignmentProperty(
     RemoteStreamKey streamKey,
     AudioAlignmentMode mode)
 ```
@@ -3219,6 +3718,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setAudioAlignmentProperty(
 | --- | --- | --- |
 | streamKey | **RemoteStreamKey** | 作为对齐基准的远端音频流。参看 [RemoteStreamKey](Android-keytype#remotestreamkey)。<br/>一般选择主唱的音频流。<br/>你必须在收到 [onUserPublishStream](Android-callback.md#IRTCRoomEventHandler-onuserpublishstream), 确认此音频流已发布后，调用此 API。 |
 | mode | **AudioAlignmentMode** | 是否对齐，默认不对齐。参看 [AudioAlignmentMode](Android-keytype.md#audioalignmentmode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3260,7 +3764,7 @@ public abstract RTCRoom com.ss.bytertc.engine.RTCVideo.createRTCRoom(
 <span id="RTCVideo-setpublishfallbackoption"></span>
 ### setPublishFallbackOption
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setPublishFallbackOption(
+public abstract int com.ss.bytertc.engine.RTCVideo.setPublishFallbackOption(
     PublishFallbackOption option)
 ```
 设置发布的音视频流的回退选项。  <br>
@@ -3272,19 +3776,25 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setPublishFallbackOption(
 | --- | --- | --- |
 | option | **PublishFallbackOption** | 本地发布的音视频流回退选项，参看 [PublishFallbackOption](Android-keytype.md#publishfallbackoption)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 该方法仅在调用 [enableSimulcastMode](#RTCVideo-enablesimulcastmode) 开启了发送多路视频流的情况下生效。  
-+ 该方法必须在进房前设置，进房后设置或更改设置无效。  
-+ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](Android-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调通知。  
++ 该方法必须在进房前设置，进房后设置或更改设置无效。
++ 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [onPerformanceAlarms](Android-callback.md#IRTCVideoEventHandler-onperformancealarms) 回调发出的告警，以便采集设备配合调整。
++ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](Android-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调，通知该情况。  
 + 你可以调用客户端 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
 <span id="RTCVideo-setsubscribefallbackoption"></span>
 ### setSubscribeFallbackOption
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setSubscribeFallbackOption(
+public abstract int com.ss.bytertc.engine.RTCVideo.setSubscribeFallbackOption(
     SubscribeFallbackOptions option)
 ```
 设置订阅的音视频流的回退选项。 <br>
@@ -3295,6 +3805,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setSubscribeFallbackOption(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | option | **SubscribeFallbackOptions** | 订阅的音视频流回退选项，参看 [SubscribeFallbackOptions](Android-keytype.md#subscribefallbackoptions)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3388,7 +3903,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.sendSEIMessage(
 | --- | --- | --- |
 | streamIndex | **StreamIndex** | 指定携带 SEI 数据的媒体流类型，参看 [StreamIndex](Android-keytype.md#streamindex-2)。<br/>语音通话场景下，该值需设为 `STREAM_INDEX_MAIN`，否则 SEI 数据会被丢弃从而无法送达远端。 |
 | message | **byte[]** | SEI 消息，建议每帧 SEI 数据总长度不超过 4 KB。超过长度限制的消息会被丢弃。 |
-| repeatCount | **int** | 消息发送重复次数。取值范围是 [0, max{29, %{视频帧率}-1}]。推荐范围 [2,4]。<br/>调用此接口后，这些 SEI 数据会添加到从当前视频帧开始的连续 `%{repeatCount+1}` 个视频帧中。 |
+| repeatCount | **int** | 消息发送重复次数。取值范围是 [0, max{29, %{视频帧率}-1}]。推荐范围 [2,4]。<br/>调用此接口后，这些 SEI 数据会添加到从当前视频帧开始的连续 `%{repeatCount}+1` 个视频帧中。 |
 | mode | **SEICountPerFrame** | SEI 发送模式，参看 [SEICountPerFrame](Android-keytype.md#seicountperframe)。 |
 
 **返回值**
@@ -3438,7 +3953,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setBusinessId(
 <span id="RTCVideo-setencryptinfo"></span>
 ### setEncryptInfo
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setEncryptInfo(
+public abstract int com.ss.bytertc.engine.RTCVideo.setEncryptInfo(
     int aesType,
     String key)
 ```
@@ -3451,6 +3966,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setEncryptInfo(
 | aesType | **int** | 加密类型。可选参数为 0、1、2、3、4。代表的含义如下：<br/>0. 不加密 <br/>1. AES-128-CBC  <br/>2. AES-256-CBC  <br/>3. AES-128-ECB  <br/>4. AES-256-ECB |
 | key | **String** | 加密密钥。长度限制为36位，超出部分将会被截断。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -3461,7 +3981,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setEncryptInfo(
 <span id="RTCVideo-setcustomizeencrypthandler"></span>
 ### setCustomizeEncryptHandler
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setCustomizeEncryptHandler(
+public abstract int com.ss.bytertc.engine.RTCVideo.setCustomizeEncryptHandler(
     RTCEncryptHandler handler)
 ```
 设置自定义加密和解密方式。
@@ -3472,12 +3992,17 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setCustomizeEncryptHandler(
 | --- | --- | --- |
 | handler | **RTCEncryptHandler** | 自定义加密handler，需要实现里面的加密和解密方法。参看 [IRTCEncryptionHandler](Android-callback.md#irtcencryptionhandler)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 该方法与 [setEncryptInfo](#RTCVideo-setencryptinfo) 为互斥关系，即按照调用顺序，最后一个调用的方法为最终生效的版本  
 + 该方法必须在进房前调用，可重复调用，以最后调用的参数作为生效参数  
-+ 无论加密或者解密，其对原始数据的长度修改，需要控制在90%-120%之间，即如果输入数据为100字节，则处理完成后的数据必须在 90 至 120 字节之间，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃  
++ 无论加密或者解密，其对原始数据的长度修改，需要控制在 180% 以内，即如果输入数据为 100 字节，则处理完成后的数据必须在 180 字节以内，如果加密或解密结果超出该长度限制，则该音视频帧会被丢弃  
 + 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率，是否使用该方法，需要由使用方谨慎评估  
 
 
@@ -3524,7 +4049,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.checkVideoEffectLicense(
 <span id="RTCVideo-setvideoeffectalgomodelpath"></span>
 ### setVideoEffectAlgoModelPath
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoEffectAlgoModelPath(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoEffectAlgoModelPath(
     String modelPath)
 ```
 > Deprecated  since 3.50 and will be deleted in 3.55, use [initCVResource](#IVideoEffect-initcvresource) instead.
@@ -3537,6 +4062,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoEffectAlgoModelPath(
 | --- | --- | --- |
 | modelPath | **String** | 模型路径 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCVideo-enablevideoeffect"></span>
 ### enableVideoEffect
@@ -3544,7 +4074,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoEffectAlgoModelPath(
 public abstract int com.ss.bytertc.engine.RTCVideo.enableVideoEffect(
     boolean enable)
 ```
-> Deprecated  since 3.50 and will be deleted in 3.55, use [enableVideoEffect](#IVideoEffect-enablevideoeffect) instead.
+> Deprecated  since 3.50 and will be deleted in 3.55, use [enableVideoEffect](#RTCVideo-enablevideoeffect) instead.
 
 创建/销毁视频特效引擎
 
@@ -3750,7 +4280,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.enableEffectBeauty(
 + 0: 调用成功。
 + –1000: 未集成特效 SDK。
 + –1001: RTC SDK 版本不支持此功能。
-+ –1002: 特效 SDK 当前版本不支持此功能，建议使用特效 SDK V4.3.1 版本。
++ –1002: 特效 SDK 当前版本不支持此功能，建议使用特效 SDK V4.3.2 版本。
 + –1003: 联系技术支持人员。
 + –1004: 正在下载相关资源，下载完成后生效。
 + <0: 调用失败，特效 SDK 内部错误，具体错误码请参考[错误码表](https://www.volcengine.com/docs/6705/102042)。
@@ -3759,7 +4289,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.enableEffectBeauty(
 **注意**
 
 + 本方法不能与高级视频特效接口共用。如已购买高级视频特效，建议调用 [enableVideoEffect](#IVideoEffect-enablevideoeffect) 使用高级特效、贴纸功能等。 
-+ 使用此功能需要[集成](https://www.volcengine.com/docs/6348/114717)特效 SDK，建议使用特效 SDK V4.3.1+ 版本。 
++ 使用此功能需要[集成](https://www.volcengine.com/docs/6348/114717)特效 SDK，建议使用特效 SDK V4.3.2+ 版本。 
 + 调用 [setBeautyIntensity](#RTCVideo-setbeautyintensity) 设置基础美颜强度。若在调用本方法前没有设置美颜强度，则初始美白、磨皮、锐化强度均为 0.5。 
 + 本方法仅适用于视频源，不适用于屏幕源。 
 
@@ -3797,7 +4327,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setBeautyIntensity(
 <span id="RTCVideo-setvideoorientation"></span>
 ### setVideoOrientation
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoOrientation(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoOrientation(
     VideoOrientation orientation)
 ```
 在自定义视频前处理及编码前，设置 RTC 链路中的视频帧朝向，默认为 Adaptive 模式。
@@ -3809,17 +4339,22 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoOrientation(
 | --- | --- | --- |
 | orientation | **VideoOrientation** | 视频帧朝向，参看 [VideoOrientation](Android-keytype.md#videoorientation)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
-+ 设置视频帧朝向仅对内部视频采集生效，不适用于外部视频源和屏幕源。  
++ 视频帧朝向设置仅适用于内部采集视频源。对于自定义采集视频源，设置视频帧朝向可能会导致错误，例如宽高对调。屏幕源不支持设置视频帧朝向。  
 + 编码分辨率的更新与视频帧处理是异步操作，进房后切换视频帧朝向可能导致画面出现短暂的裁切异常，因此建议在进房前设置视频帧朝向，且不在进房后进行切换。
 
 
 <span id="RTCVideo-setruntimeparameters"></span>
 ### setRuntimeParameters
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setRuntimeParameters(
+public abstract int com.ss.bytertc.engine.RTCVideo.setRuntimeParameters(
     JSONObject params)
 ```
 设置运行时的参数
@@ -3829,6 +4364,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setRuntimeParameters(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | params | **JSONObject** | 保留参数 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3859,13 +4399,33 @@ public abstract int com.ss.bytertc.engine.RTCVideo.feedback(
 
 
 **注意**
-如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
 
++ 你可以在 [RTC 控制台](https://console.volcengine.com/rtc/callQualityRTC/feedback)上查看用户通过此接口提交的反馈详情和整体趋势。 
++ 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
+
+
+<span id="RTCVideo-getnativehandle"></span>
+### getNativeHandle
+```java
+public abstract long com.ss.bytertc.engine.RTCVideo.getNativeHandle()
+```
+> Available since 353
+
+获取 C++ 层 [IRTCVideo 句柄](https://www.volcengine.com/docs/6348/Windows-api#irtcvideo)。
+
+**返回值**
+
++ \>0：方法调用成功, 返回 C++ 层 `IRTCVideo` 的地址。
++ -1：方法调用失败
+
+
+**注意**
+在一些场景下，获取 C++ 层 `IRTCVideo`，并通过其完成操作，相较于通过 Java 封装层完成有显著更高的执行效率。典型的场景有：视频/音频帧自定义处理，音视频通话加密等。
 
 <span id="RTCVideo-startasr"></span>
 ### startASR
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startASR(
+public abstract int com.ss.bytertc.engine.RTCVideo.startASR(
     RTCASRConfig asrConfig,
     IRTCASREngineEventHandler handler)
 ```
@@ -3879,13 +4439,23 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startASR(
 | asrConfig | **RTCASRConfig** | 校验信息，参看 [RTCASRConfig](Android-keytype.md#rtcasrconfig) |
 | handler | **IRTCASREngineEventHandler** | 语音识别服务使用状态回调，参看 [IRTCASREngineEventHandler](Android-callback.md#irtcasrengineeventhandler)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 <span id="RTCVideo-stopasr"></span>
 ### stopASR
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopASR()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopASR()
 ```
 关闭语音识别服务
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="RTCVideo-startfilerecording"></span>
@@ -3921,7 +4491,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.startFileRecording(
 <span id="RTCVideo-stopfilerecording"></span>
 ### stopFileRecording
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopFileRecording(
+public abstract int com.ss.bytertc.engine.RTCVideo.stopFileRecording(
     StreamIndex type)
 ```
 停止本地录制
@@ -3931,6 +4501,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopFileRecording(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **StreamIndex** | 流属性，指定停止主流或者屏幕流录制，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -3964,6 +4539,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.startAudioRecording(
 **注意**
 
 + 录制包含各种音频效果。但不包含混音的背景音乐。
++ 调用 [stopAudioRecording](#RTCVideo-stopaudiorecording) 关闭录制。
 + 加入房间前后均可调用。在进房前调用该方法，退房之后，录制任务不会自动停止，需调用[stopAudioRecording](#RTCVideo-stopaudiorecording) 关闭录制。在进房后调用该方法，退房之后，录制任务会自动被停止。如果加入了多个房间，录制的文件中会包含各个房间的音频。
 + 调用该方法后，你会收到 [onAudioRecordingStateUpdate](Android-callback.md#IRTCVideoEventHandler-onaudiorecordingstateupdate) 回调。  
 
@@ -3989,16 +4565,51 @@ public abstract int com.ss.bytertc.engine.RTCVideo.stopAudioRecording()
 ```java
 public abstract IAudioMixingManager com.ss.bytertc.engine.RTCVideo.getAudioMixingManager()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use getAudioEffectPlayer and getMediaPlayer instead
+
 混音管理接口创建
 
 **返回值**
 混音管理实例，详见[IAudioMixingManager](#iaudiomixingmanager)
 
 
+<span id="RTCVideo-getaudioeffectplayer"></span>
+### getAudioEffectPlayer
+```java
+public abstract IAudioEffectPlayer com.ss.bytertc.engine.RTCVideo.getAudioEffectPlayer()
+```
+> Available since 3.53
+
+创建音效播放器实例。
+
+**返回值**
+音效播放器。详见 [IAudioEffectPlayer](#iaudioeffectplayer)。
+
+
+<span id="RTCVideo-getmediaplayer"></span>
+### getMediaPlayer
+```java
+public abstract IMediaPlayer com.ss.bytertc.engine.RTCVideo.getMediaPlayer(
+    int playerId)
+```
+> Available since 3.53
+
+创建音乐播放器实例。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| playerId | **int** | 音乐播放器实例 id。取值范围为 `[0, 3]`。最多同时存在4个实例，超出取值范围时返回 nullptr。 |
+
+**返回值**
+音乐播放器实例，详见 [IMediaPlayer](#imediaplayer)
+
+
 <span id="RTCVideo-setscreenaudiosourcetype"></span>
 ### setScreenAudioSourceType
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setScreenAudioSourceType(
+public abstract int com.ss.bytertc.engine.RTCVideo.setScreenAudioSourceType(
     AudioSourceType sourceType)
 ```
 在屏幕共享时，设置屏幕音频的采集方式（内部采集/自定义采集）
@@ -4008,6 +4619,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setScreenAudioSourceType(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | sourceType | **AudioSourceType** | 屏幕音频输入源类型, 参看 [AudioSourceType](Android-keytype.md#audiosourcetype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4022,7 +4638,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setScreenAudioSourceType(
 <span id="RTCVideo-setscreenaudiostreamindex"></span>
 ### setScreenAudioStreamIndex
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setScreenAudioStreamIndex(
+public abstract int com.ss.bytertc.engine.RTCVideo.setScreenAudioStreamIndex(
     StreamIndex index)
 ```
 在屏幕共享时，设置屏幕音频流和麦克风采集到的音频流的混流方式
@@ -4032,6 +4648,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setScreenAudioStreamIndex(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | index | **StreamIndex** | 混流方式，参看 [StreamIndex](Android-keytype.md#streamindex-2) <br/>• `STREAM_INDEX_MAIN`: 将屏幕音频流和麦克风采集到的音频流混流 <br/>• `STREAM_INDEX_SCREEN`: 默认值，将屏幕音频流和麦克风采集到的音频流分为两路音频流 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4049,7 +4670,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushScreenAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audioFrame | **AudioFrame** | 音频数据帧，参见 [AudioFrame](Android-keytype.md#audioframe) |
+| audioFrame | **AudioFrame** | 音频数据帧，参见 [AudioFrame](Android-keytype.md#audioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
 
 **返回值**
 方法调用结果  
@@ -4061,15 +4682,14 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushScreenAudioFrame(
 **注意**
 
 + 调用此接口推送屏幕共享时的自定义采集的音频数据前，必须调用 [setScreenAudioSourceType](#RTCVideo-setscreenaudiosourcetype) 开启屏幕音频自定义采集。  
-+ 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。  
-+ 音频采样格式为 S16。音频缓冲区内的数据格式必须为 PCM 数据，其容量大小应该为 samples × frame.channel × 2。  
++ 你应每隔 10 毫秒，调用一次此方法推送一次自定义采集的音频帧。一次推送的音频帧中应包含 frame.sample_rate / 100 个音频采样点。比如，假如采样率为 48000Hz，则每次应该推送 480 个采样点。
 + 调用此接口将自定义采集的音频帧推送到 RTC SDK 后，你必须调用 [publishScreen](#RTCRoom-publishscreen) 将采集到的屏幕音频推送到远端。在调用 [publishScreen](#RTCRoom-publishscreen) 前，推送到 RTC SDK 的音频帧信息会丢失。
 
 
 <span id="RTCVideo-startscreencapture"></span>
 ### startScreenCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startScreenCapture(
+public abstract int com.ss.bytertc.engine.RTCVideo.startScreenCapture(
     ScreenMediaType type,
     Intent mediaProjectionResultData)
 ```
@@ -4081,6 +4701,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startScreenCapture(
 | --- | --- | --- |
 | type | **ScreenMediaType** | 媒体类型，参看 [ScreenMediaType](Android-keytype.md#screenmediatype)。 |
 | mediaProjectionResultData | **Intent** | 向 Android 设备申请屏幕共享权限后，拿到的 Intent 数据，参看 [getMediaProjection](https://developer.android.com/reference/android/media/projection/MediaProjectionManager#getMediaProjection(int,%20android.content.Intent))。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4094,7 +4719,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startScreenCapture(
 <span id="RTCVideo-updatescreencapture"></span>
 ### updateScreenCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.updateScreenCapture(
+public abstract int com.ss.bytertc.engine.RTCVideo.updateScreenCapture(
     ScreenMediaType type)
 ```
 使用 RTC SDK 内部屏幕采集后，更新采集的媒体类型。
@@ -4107,8 +4732,8 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateScreenCapture(
 
 **返回值**
 
-+ 0: 成功  
-+ -1: 失败  
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4117,9 +4742,14 @@ public abstract void com.ss.bytertc.engine.RTCVideo.updateScreenCapture(
 <span id="RTCVideo-stopscreencapture"></span>
 ### stopScreenCapture
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopScreenCapture()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopScreenCapture()
 ```
 在屏幕共享时，停止使用 RTC SDK 内部采集方式采集屏幕音视频。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4131,8 +4761,8 @@ public abstract void com.ss.bytertc.engine.RTCVideo.stopScreenCapture()
 <span id="RTCVideo-setexternalvideoencodereventhandler"></span>
 ### setExternalVideoEncoderEventHandler
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setExternalVideoEncoderEventHandler(
-    IExternalVideoEncoderEventHandler encoder_handler)
+public abstract int com.ss.bytertc.engine.RTCVideo.setExternalVideoEncoderEventHandler(
+    IExternalVideoEncoderEventHandler handler)
 ```
 注册自定义编码帧推送事件回调
 
@@ -4140,7 +4770,12 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setExternalVideoEncoderEvent
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| encoder_handler | **IExternalVideoEncoderEventHandler** | 自定义编码帧回调类，参看 [IExternalVideoEncoderEventHandler](Android-callback.md#iexternalvideoencodereventhandler) |
+| handler | **IExternalVideoEncoderEventHandler** | 自定义编码帧回调类，参看 [IExternalVideoEncoderEventHandler](Android-callback.md#iexternalvideoencodereventhandler) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4153,9 +4788,9 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setExternalVideoEncoderEvent
 ### pushExternalEncodedVideoFrame
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalEncodedVideoFrame(
-    StreamIndex index,
-    int video_index,
-    RTCEncodedVideoFrame video_stream)
+    StreamIndex streamIndex,
+    int videoIndex,
+    RTCEncodedVideoFrame encodedVideoFrame)
 ```
 推送自定义编码后的视频流
 
@@ -4163,9 +4798,9 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalEncodedVideoFrame
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| index | **StreamIndex** | 需要推送的编码流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
-| video_index | **int** | 对应的编码流下标，从 0 开始，如果调用 [setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig) 设置了多路流，此处数量须与之保持一致 |
-| video_stream | **RTCEncodedVideoFrame** | 编码流视频帧信息，参看 [RTCEncodedVideoFrame](Android-keytype.md#rtcencodedvideoframe)。 |
+| streamIndex | **StreamIndex** | 需要推送的编码流的属性，参看 [StreamIndex](Android-keytype.md#streamindex-2) |
+| videoIndex | **int** | 对应的编码流下标，从 0 开始，如果调用 [setVideoEncoderConfig](#RTCVideo-setvideoencoderconfig) 设置了多路流，此处数量须与之保持一致 |
+| encodedVideoFrame | **RTCEncodedVideoFrame** | 编码流视频帧信息，参看 [RTCEncodedVideoFrame](Android-keytype.md#rtcencodedvideoframe)。 |
 
 **返回值**
 方法调用结果：
@@ -4184,7 +4819,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.pushExternalEncodedVideoFrame
 <span id="RTCVideo-setvideodecoderconfig"></span>
 ### setVideoDecoderConfig
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDecoderConfig(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoDecoderConfig(
     RemoteStreamKey key,
     VideoDecoderConfig config)
 ```
@@ -4197,6 +4832,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDecoderConfig(
 | key | **RemoteStreamKey** | 远端流信息，指定对哪一路视频流进行解码方式设置，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
 | config | **VideoDecoderConfig** | 视频解码方式，参看 [VideoDecoderConfig](Android-keytype.md#videodecoderconfig)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -4207,8 +4847,8 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoDecoderConfig(
 <span id="RTCVideo-requestremotevideokeyframe"></span>
 ### requestRemoteVideoKeyFrame
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.requestRemoteVideoKeyFrame(
-    RemoteStreamKey stream_info)
+public abstract int com.ss.bytertc.engine.RTCVideo.requestRemoteVideoKeyFrame(
+    RemoteStreamKey streamKey)
 ```
 在订阅远端视频流之后，向远端请求关键帧
 
@@ -4216,7 +4856,12 @@ public abstract void com.ss.bytertc.engine.RTCVideo.requestRemoteVideoKeyFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_info | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
+| streamKey | **RemoteStreamKey** | 远端流信息，参看 [RemoteStreamKey](Android-keytype.md#remotestreamkey)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4228,7 +4873,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.requestRemoteVideoKeyFrame(
 <span id="RTCVideo-setearmonitormode"></span>
 ### setEarMonitorMode
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setEarMonitorMode(
+public abstract int com.ss.bytertc.engine.RTCVideo.setEarMonitorMode(
     EarMonitorMode mode)
 ```
 打开/关闭耳返功能。
@@ -4239,18 +4884,23 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setEarMonitorMode(
 | --- | --- | --- |
 | mode | **EarMonitorMode** | 耳返功能是否开启，详见 [EarMonitorMode](Android-keytype.md#earmonitormode)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
 + 耳返功能仅适用于由 RTC SDK 内部采集的音频。  
 + 使用耳返功能必须佩戴耳机。为保证低延时耳返最佳体验，建议佩戴有线耳机。蓝牙耳机不支持硬件耳返。 
-+ RTC SDK 支持硬件耳返和软件耳返。一般来说，硬件耳返延时低且音质好。如果 App 在手机厂商的硬件耳返白名单内，且运行环境存在支持硬件耳返的 SDK，RTC SDK 默认启用硬件耳返。使用华为手机硬件耳返功能时，请添加[华为硬件耳返的依赖配置](https://www.volcengine.com/docs/6348/113523)。
++ RTC SDK 支持硬件耳返和软件耳返。一般来说，硬件耳返延时低且音质好。如果 App 在手机厂商的硬件耳返白名单内，且运行环境存在支持硬件耳返的 SDK，RTC SDK 默认启用硬件耳返。使用华为手机硬件耳返功能时，请添加[华为硬件耳返的依赖配置](https://www.volcengine.com/docs/6348/1155036#如何在华为手机使用硬件耳返功能？)。
 
 
 <span id="RTCVideo-setearmonitorvolume"></span>
 ### setEarMonitorVolume
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setEarMonitorVolume(
+public abstract int com.ss.bytertc.engine.RTCVideo.setEarMonitorVolume(
     int volume)
 ```
 设置耳返音量。
@@ -4261,6 +4911,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setEarMonitorVolume(
 | --- | --- | --- |
 | volume | **int** | 耳返音量，调节范围：[0,100]，单位：% |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -4270,7 +4925,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setEarMonitorVolume(
 <span id="RTCVideo-enableaudiopropertiesreport"></span>
 ### enableAudioPropertiesReport
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioPropertiesReport(
+public abstract int com.ss.bytertc.engine.RTCVideo.enableAudioPropertiesReport(
     AudioPropertiesConfig config)
 ```
 启用音频信息提示。开启提示后，你可以收到 [onLocalAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport)，[onRemoteAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 和 [onActiveSpeaker](Android-callback.md#IRTCVideoEventHandler-onactivespeaker)。
@@ -4280,6 +4935,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.enableAudioPropertiesReport(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | config | **AudioPropertiesConfig** | 详见 [AudioPropertiesConfig](Android-keytype.md#audiopropertiesconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="RTCVideo-sendstreamsyncinfo"></span>
@@ -4390,7 +5050,7 @@ public abstract float com.ss.bytertc.engine.RTCVideo.getCameraZoomMaxRatio()
 ### setCameraTorch
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.setCameraTorch(
-    TorchState torch_state)
+    TorchState torchState)
 ```
 打开/关闭当前使用的摄像头（前置/后置）的闪光灯
 
@@ -4398,7 +5058,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setCameraTorch(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| torch_state | **TorchState** | 闪光灯状态。参考 [TorchState](Android-keytype.md#torchstate) |
+| torchState | **TorchState** | 闪光灯状态。参考 [TorchState](Android-keytype.md#torchstate) |
 
 **返回值**
 
@@ -4528,10 +5188,63 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setCameraExposureCompensation
 + 调用 [stopVideoCapture](#RTCVideo-stopvideocapture) 关闭内部采集后，设置的曝光补偿失效。
 
 
+<span id="RTCVideo-enablecameraautoexposurefacemode"></span>
+### enableCameraAutoExposureFaceMode
+```java
+public abstract int com.ss.bytertc.engine.RTCVideo.enableCameraAutoExposureFaceMode(
+    boolean enable)
+```
+> Available since 353
+
+启用或禁用内部采集时人脸自动曝光模式。此模式会改善强逆光下，脸部过暗的问题；但也会导致 ROI 以外区域过亮/过暗的问题。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| enable | **boolean** | 是否启用。默认开启。 |
+
+**返回值**
+
++ 0: 成功。 
++ < 0: 失败。
+
+
+**注意**
+你必须在调用 [startVideoCapture](#RTCVideo-startvideocapture) 开启内部采集前，调用此接口方可生效。
+
+<span id="RTCVideo-setcameraadaptiveminimumframerate"></span>
+### setCameraAdaptiveMinimumFrameRate
+```java
+public abstract int com.ss.bytertc.engine.RTCVideo.setCameraAdaptiveMinimumFrameRate(
+    int framerate)
+```
+> Available since 353
+
+设置内部采集适用动态帧率时，帧率的最小值。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| framerate | **int** | 最小值。单位为 fps。默认值是 7。<br/>动态帧率的最大帧率是通过 [setVideoCaptureConfig](#RTCVideo-setvideocaptureconfig) 设置的帧率值。当传入参数大于最大帧率时，使用固定帧率模式，帧率为最大帧率；当传入参数小于最大帧率时，使用动态帧率。 |
+
+**返回值**
+
++ 0: 成功. 
++ !0: 失败.
+
+
+**注意**
+
++ 你必须在调用 [startVideoCapture](#RTCVideo-startvideocapture) 开启内部采集前，调用此接口方可生效。
++ 如果由于性能降级、静态适配等原因导致采集最大帧率变化时，已设置的最小帧率值会与新的采集最大帧率值重新比较。比较结果变化可能导致固定/动态帧率模式切换。
+
+
 <span id="RTCVideo-muteaudioplayback"></span>
 ### muteAudioPlayback
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.muteAudioPlayback(
+public abstract int com.ss.bytertc.engine.RTCVideo.muteAudioPlayback(
     MuteState muteState)
 ```
 > Deprecated  since 3.45 and will be deleted in 3.51, use [setPlaybackVolume](#RTCVideo-setplaybackvolume) instead.
@@ -4543,6 +5256,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.muteAudioPlayback(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | muteState | **MuteState** | 播放状态，标识是否播放本地音频流，详见：[MuteState](Android-keytype.md#mutestate) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4650,12 +5368,12 @@ public abstract int com.ss.bytertc.engine.RTCVideo.startPlayPublicStream(
 
 **注意**
 
++ 一个客户端最多同时播放 5 路公共流，请及时调用 [stopPlayPublicStream](#RTCVideo-stopplaypublicstream) 取消订阅公共流，避免订阅的公共流数量超限。
 + 在调用本接口之前，建议先绑定渲染视图。
 - 调用 [setPublicStreamVideoCanvas](#RTCVideo-setpublicstreamvideocanvas) 绑定内部渲染视图：
 - 调用 [setPublicStreamVideoSink](#RTCVideo-setpublicstreamvideosink) 绑定自定义渲染视图：
 + 调用本接口后，可以通过 [onFirstPublicStreamVideoFrameDecoded](Android-callback.md#IRTCVideoEventHandler-onfirstpublicstreamvideoframedecoded) 和 [onFirstPublicStreamAudioFrame](Android-callback.md#IRTCVideoEventHandler-onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
 + 调用本接口后，可以通过 [onPublicStreamSEIMessageReceived](Android-callback.md#IRTCVideoEventHandler-onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
-+ 调用 [stopPlayPublicStream](#RTCVideo-stopplaypublicstream) 取消订阅公共流。
 
 
 <span id="RTCVideo-stopplaypublicstream"></span>
@@ -4808,7 +5526,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.stopEchoTest()
 <span id="RTCVideo-setvideowatermark"></span>
 ### setVideoWatermark
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setVideoWatermark(
+public abstract int com.ss.bytertc.engine.RTCVideo.setVideoWatermark(
     StreamIndex streamIndex,
     String imagePath,
     RTCWatermarkConfig watermarkConfig)
@@ -4823,6 +5541,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoWatermark(
 | imagePath | **String** | 水印图片路径，支持本地文件绝对路径、Asset 资源路径（/assets/xx.png）、URI 地址（content://），长度限制为 512 字节。  <br/>水印图片为 PNG 或 JPG 格式。 |
 | watermarkConfig | **RTCWatermarkConfig** | 水印参数，参看 [RTCWatermarkConfig](Android-keytype.md#rtcwatermarkconfig)。 |
 
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
 
 **注意**
 
@@ -4836,7 +5559,7 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setVideoWatermark(
 <span id="RTCVideo-clearvideowatermark"></span>
 ### clearVideoWatermark
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.clearVideoWatermark(
+public abstract int com.ss.bytertc.engine.RTCVideo.clearVideoWatermark(
     StreamIndex streamIndex)
 ```
 移除指定视频流的水印。
@@ -4846,6 +5569,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.clearVideoWatermark(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | streamIndex | **StreamIndex** | 需要移除水印的视频流属性，参看 [StreamIndex](Android-keytype.md#streamindex-2)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 <span id="RTCVideo-setdummycaptureimagepath"></span>
@@ -4857,7 +5585,6 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setDummyCaptureImagePath(
 摄像头处于关闭状态时，使用静态图片填充本地推送的视频流。
 调用 `stopVideoCapture` 接口时，会开始推静态图片。若要停止发送图片，可传入空字符串或启用内部摄像头采集。
 可重复调用该接口来更新图片。
-
 
 **传入参数**
 
@@ -4930,7 +5657,7 @@ public abstract long com.ss.bytertc.engine.RTCVideo.takeRemoteSnapshot(
 <span id="RTCVideo-startcloudproxy"></span>
 ### startCloudProxy
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.startCloudProxy(
+public abstract int com.ss.bytertc.engine.RTCVideo.startCloudProxy(
     List<CloudProxyInfo> cloudProxiesInfo)
 ```
 开启云代理
@@ -4940,6 +5667,11 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startCloudProxy(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | cloudProxiesInfo | **List<CloudProxyInfo>** | 云代理服务器信息列表。参看 [CloudProxyInfo](Android-keytype.md#cloudproxyinfo)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4953,9 +5685,14 @@ public abstract void com.ss.bytertc.engine.RTCVideo.startCloudProxy(
 <span id="RTCVideo-stopcloudproxy"></span>
 ### stopCloudProxy
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.stopCloudProxy()
+public abstract int com.ss.bytertc.engine.RTCVideo.stopCloudProxy()
 ```
 关闭云代理
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
 
 
 **注意**
@@ -4992,19 +5729,19 @@ public abstract NetworkTimeInfo com.ss.bytertc.engine.RTCVideo.getNetworkTimeInf
 <span id="RTCVideo-getktvmanager"></span>
 ### getKTVManager
 ```java
-public abstract KTVManager com.ss.bytertc.engine.RTCVideo.getKTVManager()
+public abstract IKTVManager com.ss.bytertc.engine.RTCVideo.getKTVManager()
 ```
 创建 KTV 管理接口。
 
 **返回值**
-KTV 管理接口，参看 [KTVManager](#ktvmanager)。
+KTV 管理接口，参看 [IKTVManager](#iktvmanager)。
 
 
 <span id="RTCVideo-starthardwareechodetection"></span>
 ### startHardwareEchoDetection
 ```java
 public abstract int com.ss.bytertc.engine.RTCVideo.startHardwareEchoDetection(
-    String test_audio_file_path)
+    String testAudioFilePath)
 ```
 开启通话前回声检测
 
@@ -5012,7 +5749,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.startHardwareEchoDetection(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| test_audio_file_path | **String** | 用于回声检测的音频文件的绝对路径，路径字符串使用 UTF-8 编码格式，支持以下音频格式: mp3，aac，m4a，3gp，wav。<br/>音频文件不为静音文件，推荐时长为 10 ～ 20 秒。 |
+| testAudioFilePath | **String** | 用于回声检测的音频文件的绝对路径，路径字符串使用 UTF-8 编码格式，支持以下音频格式: mp3，aac，m4a，3gp，wav。<br/>音频文件不为静音文件，推荐时长为 10 ～ 20 秒。 |
 
 **返回值**
 方法调用结果：  
@@ -5028,7 +5765,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.startHardwareEchoDetection(
 + 开启检测前，你需要向用户获取音频设备的使用权限。
 + 开启检测前，请确保音频设备没有被静音，采集和播放音量正常。
 + 调用本接口后监听 onHardwareEchoDetectionResult 获取检测结果。
-+ 检测期间，进程将独占音频设备，无法使用其他音频设备测试接口： [startEchoTest](#RTCVideo-startechotest)、[startAudioDeviceRecordTest](#IRTCAudioDeviceManager-startaudiodevicerecordtest) 或 [startAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-startaudioplaybackdevicetest)。 
++ 检测期间，进程将独占音频设备，无法使用其他音频设备测试接口： [startEchoTest](#RTCVideo-startechotest) 或 [startAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-startaudioplaybackdevicetest)。 
 + 调用 [stopHardwareEchoDetection](#RTCVideo-stophardwareechodetection) 停止检测，释放对音频设备的占用。
 
 
@@ -5056,7 +5793,7 @@ public abstract int com.ss.bytertc.engine.RTCVideo.stopHardwareEchoDetection()
 <span id="RTCVideo-setcellularenhancement"></span>
 ### setCellularEnhancement
 ```java
-public abstract void com.ss.bytertc.engine.RTCVideo.setCellularEnhancement(
+public abstract int com.ss.bytertc.engine.RTCVideo.setCellularEnhancement(
     MediaTypeEnhancementConfig config)
 ```
 启用蜂窝网络辅助增强，改善通话质量。
@@ -5066,6 +5803,13 @@ public abstract void com.ss.bytertc.engine.RTCVideo.setCellularEnhancement(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | config | **MediaTypeEnhancementConfig** | 参看 [MediaTypeEnhancementConfig](Android-keytype.md#mediatypeenhancementconfig)。 |
+
+**返回值**
+方法调用结果：  
+
++ 0: 成功。
++ -1：失败，内部错误。 
++ -2: 失败，输入参数错误。 
 
 
 **注意**
@@ -5092,6 +5836,431 @@ public abstract int com.ss.bytertc.engine.RTCVideo.setLocalProxy(
 + 调用该方法设置本地代理后，SDK 会触发 [onLocalProxyStateChanged](Android-callback.md#IRTCVideoEventHandler-onlocalproxystatechanged) ，返回代理连接的状态。 
 
 
+# IAudioEffectPlayer
+```java
+public abstract class com.ss.bytertc.engine.audio.IAudioEffectPlayer
+```
+
+音效播放器<br>
+调用 [setEventHandler](#IAudioEffectPlayer-seteventhandler) 设置回调句柄以获取相关回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **abstract int** | [start](#IAudioEffectPlayer-start) |
+| **abstract int** | [stop](#IAudioEffectPlayer-stop) |
+| **abstract int** | [stopAll](#IAudioEffectPlayer-stopall) |
+| **abstract int** | [preload](#IAudioEffectPlayer-preload) |
+| **abstract int** | [unload](#IAudioEffectPlayer-unload) |
+| **abstract int** | [unloadAll](#IAudioEffectPlayer-unloadall) |
+| **abstract int** | [pause](#IAudioEffectPlayer-pause) |
+| **abstract int** | [pauseAll](#IAudioEffectPlayer-pauseall) |
+| **abstract int** | [resume](#IAudioEffectPlayer-resume) |
+| **abstract int** | [resumeAll](#IAudioEffectPlayer-resumeall) |
+| **abstract int** | [setPosition](#IAudioEffectPlayer-setposition) |
+| **abstract int** | [getPosition](#IAudioEffectPlayer-getposition) |
+| **abstract int** | [setVolume](#IAudioEffectPlayer-setvolume) |
+| **abstract int** | [setVolumeAll](#IAudioEffectPlayer-setvolumeall) |
+| **abstract int** | [getVolume](#IAudioEffectPlayer-getvolume) |
+| **abstract int** | [getDuration](#IAudioEffectPlayer-getduration) |
+| **abstract int** | [setEventHandler](#IAudioEffectPlayer-seteventhandler) |
+
+
+## 函数说明
+<span id="IAudioEffectPlayer-start"></span>
+### start
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.start(
+    int effectId,
+    String filePath,
+    AudioEffectPlayerConfig config)
+```
+开始播放音效文件。<br>
+可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个音效文件，实现音效叠加。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID。用于标识音效，请保证音效 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，上一个音效会停止，下一个音效开始，并收到 [onAudioEffectPlayerStateChanged](Android-callback.md#IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged)。 |
+| filePath | **String** | 音效文件路径。<br/>支持在线文件的 URL、本地文件的 URI、本地文件的绝对路径或以 `/assets/` 开头的本地文件路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音效文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地音效文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线音效文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
+| config | **AudioEffectPlayerConfig** | 音效配置，详见 [AudioEffectPlayerConfig](Android-keytype.md#audioeffectplayerconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 如果已经通过 [preload](#IAudioEffectPlayer-preload) 将文件加载至内存，确保此处的 ID 与 [preload](#IAudioEffectPlayer-preload) 设置的 ID 相同。
++ 开始播放音效文件后，可以调用 [stop](#IAudioEffectPlayer-stop) 方法停止播放音效文件。
+
+
+<span id="IAudioEffectPlayer-stop"></span>
+### stop
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.stop(
+    int effectId)
+```
+停止播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以调用本方法停止播放音效文件。
++ 调用本方法停止播放音效文件后，该音效文件会被自动卸载。
+
+
+<span id="IAudioEffectPlayer-stopall"></span>
+### stopAll
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.stopAll()
+```
+停止播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以调用本方法停止播放所有音效文件。
++ 调用本方法停止播放所有音效文件后，该音效文件会被自动卸载。
+
+
+<span id="IAudioEffectPlayer-preload"></span>
+### preload
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.preload(
+    int effectId,
+    String filePath)
+```
+预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID。用于标识音效，请保证音效 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [start](#IAudioEffectPlayer-start)，再使用相同的 ID 调用本方法 ，会收到回调 [onAudioEffectPlayerStateChanged](Android-callback.md#IAudioEffectPlayerEventHandler-onaudioeffectplayerstatechanged) ，通知前一个音效停止，然后加载下一个音效。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [start](#IAudioEffectPlayer-start) 播放 B.mp3，请先调用 [unload](#IAudioEffectPlayer-unload) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。 |
+| filePath | **String** | 音效文件路径。支持本地文件的 URI、本地文件的绝对路径或以 `/assets/` 开头的本地文件路径。<br/>预加载的文件长度不得超过 20s。<br/>不同平台支持的音效文件格式和 [start](#IAudioEffectPlayer-start) 一致。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 本方法只是预加载指定音效文件，只有调用 [start](#IAudioEffectPlayer-start) 方法才开始播放指定音效文件。
++ 调用本方法预加载的指定音效文件可以通过 [unload](#IAudioEffectPlayer-unload) 卸载。
+
+
+<span id="IAudioEffectPlayer-unload"></span>
+### unload
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.unload(
+    int effectId)
+```
+卸载指定音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 或 [preload](#IAudioEffectPlayer-preload) 后调用此接口。
+
+<span id="IAudioEffectPlayer-unloadall"></span>
+### unloadAll
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.unloadAll()
+```
+卸载所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+<span id="IAudioEffectPlayer-pause"></span>
+### pause
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.pause(
+    int effectId)
+```
+暂停播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放音效文件。
++ 调用本方法暂停播放音效文件后，可调用 [resume](#IAudioEffectPlayer-resume) 方法恢复播放。
+
+
+<span id="IAudioEffectPlayer-pauseall"></span>
+### pauseAll
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.pauseAll()
+```
+暂停播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用 [start](#IAudioEffectPlayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放所有音效文件。
++ 调用本方法暂停播放所有音效文件后，可调用 [resumeAll](#IAudioEffectPlayer-resumeall) 方法恢复所有播放。
+
+
+<span id="IAudioEffectPlayer-resume"></span>
+### resume
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.resume(
+    int effectId)
+```
+恢复播放音效文件。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+调用 [pause](#IAudioEffectPlayer-pause) 方法暂停播放音效文件后，可以通过调用本方法恢复播放。
+
+<span id="IAudioEffectPlayer-resumeall"></span>
+### resumeAll
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.resumeAll()
+```
+恢复播放所有音效文件。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+调用 [pauseAll](#IAudioEffectPlayer-pauseall) 方法暂停所有正在播放音效文件后，可以通过调用本方法恢复播放。
+
+<span id="IAudioEffectPlayer-setposition"></span>
+### setPosition
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.setPosition(
+    int effectId,
+    int position)
+```
+设置音效文件的起始播放位置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+| position | **int** | 音效文件起始播放位置，单位为毫秒。<br/>你可以通过 [getDuration](#IAudioEffectPlayer-getduration) 获取音效文件总时长，position 的值应小于音效文件总时长。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
++ 仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+
+<span id="IAudioEffectPlayer-getposition"></span>
+### getPosition
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.getPosition(
+    int effectId)
+```
+获取音效文件播放进度。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 音效文件播放进度，单位为毫秒。
++ < 0: 失败
+
+
+**注意**
+
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
++ 仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+
+<span id="IAudioEffectPlayer-setvolume"></span>
+### setVolume
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.setVolume(
+    int effectId,
+    int volume)
+```
+调节指定音效的音量大小，包括音效文件和 PCM 音频。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+<span id="IAudioEffectPlayer-setvolumeall"></span>
+### setVolumeAll
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.setVolumeAll(
+    int volume)
+```
+设置所有音效的音量大小，包括音效文件和 PCM 音效。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+该接口的优先级低于 [setVolume](#IAudioEffectPlayer-setvolume)，即通过 [setVolume](#IAudioEffectPlayer-setvolume) 单独设置了音量的音效 ID，不受该接口设置的影响。
+
+<span id="IAudioEffectPlayer-getvolume"></span>
+### getVolume
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.getVolume(
+    int effectId)
+```
+获取当前音量。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 当前音量值。  
++ < 0: 失败
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+<span id="IAudioEffectPlayer-getduration"></span>
+### getDuration
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.getDuration(
+    int effectId)
+```
+获取音效文件时长。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| effectId | **int** | 音效 ID |
+
+**返回值**
+
++ \>0: 成功, 音效文件时长，单位为毫秒。  
++ < 0: 失败
+
+
+**注意**
+仅在调用 [start](#IAudioEffectPlayer-start) 后调用此接口。
+
+<span id="IAudioEffectPlayer-seteventhandler"></span>
+### setEventHandler
+```java
+public abstract int com.ss.bytertc.engine.audio.IAudioEffectPlayer.setEventHandler(
+    IAudioEffectPlayerEventHandler handler)
+```
+设置回调句柄。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| handler | **IAudioEffectPlayerEventHandler** | 参看 [IAudioEffectPlayerEventHandler](Android-callback.md#iaudioeffectplayereventhandler)。 |
+
+**返回值**
+
++ 0: 成功。  
++ < 0: 失败。
+
+
 # IAudioMixingManager
 ```java
 public abstract class com.ss.bytertc.engine.audio.IAudioMixingManager
@@ -5104,32 +6273,32 @@ public abstract class com.ss.bytertc.engine.audio.IAudioMixingManager
 
 | 返回 | 名称 |
 | --- | --- |
-| **abstract void** | [startAudioMixing](#IAudioMixingManager-startaudiomixing) |
-| **abstract void** | [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) |
-| **abstract void** | [stopAllAudioMixing](#IAudioMixingManager-stopallaudiomixing) |
-| **abstract void** | [pauseAudioMixing](#IAudioMixingManager-pauseaudiomixing) |
-| **abstract void** | [pauseAllAudioMixing](#IAudioMixingManager-pauseallaudiomixing) |
-| **abstract void** | [resumeAudioMixing](#IAudioMixingManager-resumeaudiomixing) |
-| **abstract void** | [resumeAllAudioMixing](#IAudioMixingManager-resumeallaudiomixing) |
-| **abstract void** | [preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) |
-| **abstract void** | [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) |
-| **abstract void** | [setAllAudioMixingVolume](#IAudioMixingManager-setallaudiomixingvolume) |
-| **abstract void** | [setAudioMixingVolume](#IAudioMixingManager-setaudiomixingvolume) |
-| **abstract int** | [getAudioMixingDuration](#IAudioMixingManager-getaudiomixingduration) |
-| **abstract int** | [getAudioMixingCurrentPosition](#IAudioMixingManager-getaudiomixingcurrentposition) |
-| **abstract void** | [setAudioMixingPosition](#IAudioMixingManager-setaudiomixingposition) |
-| **abstract int** | [getAudioMixingPlaybackDuration](#IAudioMixingManager-getaudiomixingplaybackduration) |
-| **abstract void** | [setAudioMixingDualMonoMode](#IAudioMixingManager-setaudiomixingdualmonomode) |
-| **abstract void** | [setAudioMixingPitch](#IAudioMixingManager-setaudiomixingpitch) |
-| **abstract int** | [setAudioMixingPlaybackSpeed](#IAudioMixingManager-setaudiomixingplaybackspeed) |
-| **abstract void** | [setAudioMixingLoudness](#IAudioMixingManager-setaudiomixingloudness) |
-| **abstract void** | [setAudioMixingProgressInterval](#IAudioMixingManager-setaudiomixingprogressinterval) |
-| **abstract void** | [enableAudioMixingFrame](#IAudioMixingManager-enableaudiomixingframe) |
-| **abstract void** | [disableAudioMixingFrame](#IAudioMixingManager-disableaudiomixingframe) |
-| **abstract int** | [pushAudioMixingFrame](#IAudioMixingManager-pushaudiomixingframe) |
-| **abstract int** | [getAudioTrackCount](#IAudioMixingManager-getaudiotrackcount) |
-| **abstract void** | [selectAudioTrack](#IAudioMixingManager-selectaudiotrack) |
-| **abstract void** | [registerAudioFileFrameObserver](#IAudioMixingManager-registeraudiofileframeobserver) |
+| **abstract void** | [[deprecated] startAudioMixing](#IAudioMixingManager-startaudiomixing) |
+| **abstract void** | [[deprecated] stopAudioMixing](#IAudioMixingManager-stopaudiomixing) |
+| **abstract void** | [[deprecated] stopAllAudioMixing](#IAudioMixingManager-stopallaudiomixing) |
+| **abstract void** | [[deprecated] pauseAudioMixing](#IAudioMixingManager-pauseaudiomixing) |
+| **abstract void** | [[deprecated] pauseAllAudioMixing](#IAudioMixingManager-pauseallaudiomixing) |
+| **abstract void** | [[deprecated] resumeAudioMixing](#IAudioMixingManager-resumeaudiomixing) |
+| **abstract void** | [[deprecated] resumeAllAudioMixing](#IAudioMixingManager-resumeallaudiomixing) |
+| **abstract void** | [[deprecated] preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) |
+| **abstract void** | [[deprecated] unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) |
+| **abstract void** | [[deprecated] setAllAudioMixingVolume](#IAudioMixingManager-setallaudiomixingvolume) |
+| **abstract void** | [[deprecated] setAudioMixingVolume](#IAudioMixingManager-setaudiomixingvolume) |
+| **abstract int** | [[deprecated] getAudioMixingDuration](#IAudioMixingManager-getaudiomixingduration) |
+| **abstract int** | [[deprecated] getAudioMixingCurrentPosition](#IAudioMixingManager-getaudiomixingcurrentposition) |
+| **abstract void** | [[deprecated] setAudioMixingPosition](#IAudioMixingManager-setaudiomixingposition) |
+| **abstract int** | [[deprecated] getAudioMixingPlaybackDuration](#IAudioMixingManager-getaudiomixingplaybackduration) |
+| **abstract void** | [[deprecated] setAudioMixingDualMonoMode](#IAudioMixingManager-setaudiomixingdualmonomode) |
+| **abstract void** | [[deprecated] setAudioMixingPitch](#IAudioMixingManager-setaudiomixingpitch) |
+| **abstract int** | [[deprecated] setAudioMixingPlaybackSpeed](#IAudioMixingManager-setaudiomixingplaybackspeed) |
+| **abstract void** | [[deprecated] setAudioMixingLoudness](#IAudioMixingManager-setaudiomixingloudness) |
+| **abstract void** | [[deprecated] setAudioMixingProgressInterval](#IAudioMixingManager-setaudiomixingprogressinterval) |
+| **abstract void** | [[deprecated] enableAudioMixingFrame](#IAudioMixingManager-enableaudiomixingframe) |
+| **abstract void** | [[deprecated] disableAudioMixingFrame](#IAudioMixingManager-disableaudiomixingframe) |
+| **abstract int** | [[deprecated] pushAudioMixingFrame](#IAudioMixingManager-pushaudiomixingframe) |
+| **abstract int** | [[deprecated] getAudioTrackCount](#IAudioMixingManager-getaudiotrackcount) |
+| **abstract void** | [[deprecated] selectAudioTrack](#IAudioMixingManager-selectaudiotrack) |
+| **abstract void** | [[deprecated] registerAudioFileFrameObserver](#IAudioMixingManager-registeraudiofileframeobserver) |
 
 
 ## 函数说明
@@ -5141,6 +6310,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.startAudioM
     String filePath,
     AudioMixingConfig config)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 开始播放音频文件。<br>
 可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
 
@@ -5148,7 +6319,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.startAudioM
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 `onAudioMixingStateChanged` 回调通知前一次混音已停止。 |
+| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，SDK 会使用 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调通知前一次混音已停止。 |
 | filePath | **String** | 用于混音文件路径。<br/>支持在线文件的 URL、本地文件的 URI、本地文件的绝对路径或以 `/assets/` 开头的本地文件路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的音频文件采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/><tr><td>Linux</td><td></td><td></td><td></td><td></td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/></table><br/>不同平台支持的在线音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
 | config | **AudioMixingConfig** | 混音配置  <br/>可以设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端，详见 [AudioMixingConfig](Android-keytype.md#audiomixingconfig) |
 
@@ -5156,7 +6327,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.startAudioM
 **注意**
 
 + 如果已经通过 [preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) 将文件加载至内存，确保此处的 ID 与 [preloadAudioMixing](#IAudioMixingManager-preloadaudiomixing) 设置的 ID 相同。  
-+ 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法播放音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。  
 + 开始播放音频文件后，可以调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 方法停止播放音频文件。  
 + 本方法的混音数据来源于外部文件，而 [enableAudioMixingFrame](#IAudioMixingManager-enableaudiomixingframe) 的混音数据来源于外部缓存且音频格式为 PCM，这两种混音方式可以共存。
 
@@ -5167,6 +6338,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.startAudioM
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.stopAudioMixing(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 停止播放音频文件及混音。
 
 **传入参数**
@@ -5179,7 +6352,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.stopAudioMi
 **注意**
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件后，可以调用本方法停止播放音频文件。  
-+ 调用本方法停止播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法停止播放音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)。
 + 调用本方法停止播放音频文件后，该音频文件会被自动卸载。
 
 
@@ -5188,6 +6361,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.stopAudioMi
 ```java
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.stopAllAudioMixing()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 停止播放所有音频文件及混音。
 
 
@@ -5204,6 +6379,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.stopAllAudi
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.pauseAudioMixing(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 暂停播放音频文件及混音。
 
 **传入参数**
@@ -5217,7 +6394,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.pauseAudioM
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件后，可以通过调用本方法暂停播放音频文件。  
 + 调用本方法暂停播放音频文件后，可调用 [resumeAudioMixing](#IAudioMixingManager-resumeaudiomixing) 方法恢复播放及混音。  
-+ 调用本方法暂停播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。
++ 调用本方法暂停播放音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)
 
 
 <span id="IAudioMixingManager-pauseallaudiomixing"></span>
@@ -5225,6 +6402,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.pauseAudioM
 ```java
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.pauseAllAudioMixing()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 暂停播放所有音频文件及混音。
 
 
@@ -5232,7 +6411,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.pauseAllAud
 
 + 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法开始播放音频文件及混音后，可以通过调用本方法暂停播放所有音频文件及混音。  
 + 调用本方法暂停播放所有音频文件及混音后，可调用 [resumeAllAudioMixing](#IAudioMixingManager-resumeallaudiomixing) 方法恢复所有播放及混音。  
-+ 调用本方法暂停播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已暂停播放和混音。
++ 调用本方法暂停播放所有音频文件及混音后，会收到 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，通知已暂停播放和混音。
 
 
 <span id="IAudioMixingManager-resumeaudiomixing"></span>
@@ -5241,6 +6420,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.pauseAllAud
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.resumeAudioMixing(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 恢复播放音频文件及混音。
 
 **传入参数**
@@ -5253,7 +6434,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.resumeAudio
 **注意**
 
 + 调用 [pauseAudioMixing](#IAudioMixingManager-pauseaudiomixing) 方法暂停播放音频文件后，可以通过调用本方法恢复播放及混音。  
-+ 调用本方法恢复播放音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。
++ 调用本方法恢复播放音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)
 
 
 <span id="IAudioMixingManager-resumeallaudiomixing"></span>
@@ -5261,13 +6442,15 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.resumeAudio
 ```java
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.resumeAllAudioMixing()
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 恢复播放所有音频文件及混音。
 
 
 **注意**
 
 + 调用 [pauseAllAudioMixing](#IAudioMixingManager-pauseallaudiomixing) 方法暂停所有正在播放音频文件及混音后，可以通过调用本方法恢复播放及混音。  
-+ 调用本方法恢复播放所有音频文件及混音后，会收到 `onAudioMixingStateChanged` 回调，通知已恢复播放和混音。
++ 调用本方法恢复播放所有音频文件及混音后，会收到 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，通知已恢复播放和混音。
 
 
 <span id="IAudioMixingManager-preloadaudiomixing"></span>
@@ -5277,20 +6460,22 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.preloadAudi
     int mixId,
     String filePath)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing)，再使用相同的 ID 调用本方法 ，会先回调 `onAudioMixingStateChanged`  上一个混音停止，然后加载后一个混音。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 播放 B.mp3，请先调用 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。 |
+| mixId | **int** | 混音 ID。用于标识混音，请保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  <br/>如果先调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing)，再使用相同的 ID 调用本方法 ，会先回调 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)  上一个混音停止，然后加载后一个混音。  <br/>调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 播放 B.mp3，请先调用 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。 |
 | filePath | **String** | 混音文件路径。<br/>支持本地文件的 URI、本地文件的绝对路径或以 `/assets/` 开头的本地文件路径。预加载的文件长度不得超过 20s。<br/>不同平台支持的音频文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
 
 
 **注意**
 
 + 本方法只是预加载指定音频文件，只有调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 方法才开始播放指定音频文件。 
-+ 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。  
++ 调用本方法预加载音频文件后，关于当前的混音状态，会收到回调 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)
 + 调用本方法预加载的指定音频文件可以通过 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载。
 
 
@@ -5300,6 +6485,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.preloadAudi
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.unloadAudioMixing(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 卸载指定音乐文件。
 
 **传入参数**
@@ -5310,7 +6497,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.unloadAudio
 
 
 **注意**
-调用本方法卸载该文件后，关于当前的混音状态，会收到回调 `onAudioMixingStateChanged`。
+调用本方法卸载该文件后，关于当前的混音状态，[onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged)
 
 <span id="IAudioMixingManager-setallaudiomixingvolume"></span>
 ### setAllAudioMixingVolume
@@ -5319,6 +6506,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAllAudio
     int volume,
     AudioMixingType type)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCAudioEffectPlayer instead
+
 设置默认的混音音量大小，包括音频文件混音和 PCM 混音。
 
 **传入参数**
@@ -5340,6 +6529,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
     int volume,
     AudioMixingType type)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 调节指定混音的音量大小，包括音频文件混音和 PCM 混音。
 
 **传入参数**
@@ -5360,6 +6551,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
 public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.getAudioMixingDuration(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 获取音频文件时长。
 
 **传入参数**
@@ -5383,6 +6576,8 @@ public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.getAudioMixi
 public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.getAudioMixingCurrentPosition(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 获取音频文件播放进度。
 
 **传入参数**
@@ -5407,6 +6602,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
     int mixId,
     int position)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 设置音频文件的起始播放位置。
 
 **传入参数**
@@ -5426,6 +6623,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
 public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.getAudioMixingPlaybackDuration(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 获取混音音频文件的实际播放时长（单位：毫秒）。
 
 **传入参数**
@@ -5453,6 +6652,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
     int mixId,
     AudioMixingDualMonoMode mode)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 设置当前音频文件的声道模式
 
 **传入参数**
@@ -5476,6 +6677,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
     int mixId,
     int pitch)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+
 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
 使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
 
@@ -5484,11 +6687,11 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mixId | **int** | 混音 ID |
-| pitch | **int** | 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 `onAudioMixingStateChanged` 回调，提示 [AudioMixingState](Android-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[AudioMixingError](Android-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。 |
+| pitch | **int** | 相对于音乐文件原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。  <br/>取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。  <br/>超出取值范围则设置失败，并且会触发 [onAudioMixingStateChanged](Android-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，提示 [AudioMixingState](Android-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[AudioMixingError](Android-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_ID_TYPE_INVALID_PITCH` 设置混音文件音调不合法。 |
 
 
 **注意**
-本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错
+本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调报错
 
 <span id="IAudioMixingManager-setaudiomixingplaybackspeed"></span>
 ### setAudioMixingPlaybackSpeed
@@ -5497,6 +6700,8 @@ public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMixi
     int mixId,
     int speed)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 设置混音时音频文件的播放速度
 
 **传入参数**
@@ -5504,14 +6709,14 @@ public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMixi
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | mixId | **int** | 混音 ID |
-| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 `onAudioMixingStateChanged` 回调，提示 [AudioMixingState](Android-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[AudioMixingError](Android-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_INVALID_PLAYBACK_SPEED` 设置混音文件的播放速度不合法。 |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 [50,200]，默认值为 100。  <br/>超出取值范围则设置失败，你会收到 [onAudioMixingStateChanged](Android-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调，提示 [AudioMixingState](Android-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_FAILED` 混音播放失败，[AudioMixingError](Android-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_INVALID_PLAYBACK_SPEED` 设置混音文件的播放速度不合法。 |
 
 
 **注意**
 
 + 暂不支持对 PCM 音频数据进行变速调整。  
-+ 你需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始混音，并且收到`onAudioMixingStateChanged` 回调提示 [AudioMixingState](Android-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_PLAYING`，[AudioMixingError](Android-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_OK` 之后调用该方法。  
-+ 在 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `AUDIO_MIXING_STATE_FAILED` 错误码为 `AUDIO_MIXING_ERROR_ID_NOT_FOUND` 的 `onAudioMixingStateChanged` 回调。
++ 你需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始混音，并且收到[onAudioMixingStateChanged](Android-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调提示 [AudioMixingState](Android-keytype.md#audiomixingstate) 状态为 `AUDIO_MIXING_STATE_PLAYING`，[AudioMixingError](Android-keytype.md#audiomixingerror) 错误码为 `AUDIO_MIXING_ERROR_OK` 之后调用该方法。  
++ 在 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止混音或 [unloadAudioMixing](#IAudioMixingManager-unloadaudiomixing) 卸载音频文件后调用该 API，会收到状态为 `AUDIO_MIXING_STATE_FAILED` 错误码为 `AUDIO_MIXING_ERROR_ID_NOT_FOUND` 的 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调。
 
 
 <span id="IAudioMixingManager-setaudiomixingloudness"></span>
@@ -5521,6 +6726,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
     int mixId,
     float loudness)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
 
 **传入参数**
@@ -5541,6 +6748,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
     int mixId,
     long interval)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 设置混音时音频文件播放进度回调的间隔
 
 **传入参数**
@@ -5552,7 +6761,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.setAudioMix
 
 
 **注意**
-本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 `onAudioMixingStateChanged` 回调报错。  若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 在 [AudioMixingConfig](Android-keytype.md#audiomixingconfig) 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
+本方法需要在调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 开始播放音频文件后、调用 [stopAudioMixing](#IAudioMixingManager-stopaudiomixing) 停止播放音频文件前使用，否则会触发 [onAudioMixingStateChanged](Android-callback#IRTCVideoEventHandler-onaudiomixingstatechanged) 回调报错。  若想在音乐文件开始播放前设置播放进度回调间隔，你需调用 [startAudioMixing](#IAudioMixingManager-startaudiomixing) 在 [AudioMixingConfig](Android-keytype.md#audiomixingconfig) 中设置时间间隔，开始播放后可以通过此接口更新回调间隔。
 
 
 <span id="IAudioMixingManager-enableaudiomixingframe"></span>
@@ -5562,6 +6771,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.enableAudio
     int mixId,
     AudioMixingType type)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 启动 PCM 音频数据混音。<br>
 要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 id。
 
@@ -5569,7 +6780,7 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.enableAudio
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| mixId | **int** | 混音 ID。用于标识混音，保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 `onAudioMixingStateChanged` 通知前一次混音已停止。 |
+| mixId | **int** | 混音 ID。用于标识混音，保证混音 ID 唯一性。  <br/>如果使用相同的 ID 重复调用本方法后，前一次混音会停止，后一次混音开始，会收到 [onAudioMixingStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiomixingstatechanged) 通知前一次混音已停止。 |
 | type | **AudioMixingType** | 混音类型。是否本地播放、以及是否发送到远端，详见 [AudioMixingType](Android-keytype.md#audiomixingtype)。 |
 
 
@@ -5585,6 +6796,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.enableAudio
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.disableAudioMixingFrame(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 关闭 PCM 混音
 
 **传入参数**
@@ -5601,6 +6814,8 @@ public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.pushAudioMix
     int mixId,
     AudioFrame audioFrame)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 推送 PCM 音频帧数据用于混音
 
 **传入参数**
@@ -5628,6 +6843,8 @@ public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.pushAudioMix
 public abstract int com.ss.bytertc.engine.audio.IAudioMixingManager.getAudioTrackCount(
     int mixId)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 获取当前音频文件的音轨索引
 
 **传入参数**
@@ -5656,6 +6873,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.selectAudio
     int mixId,
     int audioTrackIndex)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 指定当前音频文件的播放音轨
 
 **传入参数**
@@ -5678,6 +6897,8 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.selectAudio
 public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.registerAudioFileFrameObserver(
     IAudioFileFrameObserver observer)
 ```
+> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+
 注册本地音频文件混音的音频帧观察者。
 当本地音频文件混音时，会收到相关回调。
 
@@ -5686,6 +6907,538 @@ public abstract void com.ss.bytertc.engine.audio.IAudioMixingManager.registerAud
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **IAudioFileFrameObserver** | 参看 [IAudioFileFrameObserver](Android-callback.md#iaudiofileframeobserver)。 |
+
+
+# IMediaPlayer
+```java
+public abstract class com.ss.bytertc.engine.audio.IMediaPlayer
+```
+
+音乐播放器<br>
+调用 [setEventHandler](#IMediaPlayer-seteventhandler) 设置回调句柄以获取相关回调。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **abstract int** | [open](#IMediaPlayer-open) |
+| **abstract int** | [start](#IMediaPlayer-start) |
+| **abstract int** | [openWithCustomSource](#IMediaPlayer-openwithcustomsource) |
+| **abstract int** | [stop](#IMediaPlayer-stop) |
+| **abstract int** | [pause](#IMediaPlayer-pause) |
+| **abstract int** | [resume](#IMediaPlayer-resume) |
+| **abstract int** | [setVolume](#IMediaPlayer-setvolume) |
+| **abstract int** | [getVolume](#IMediaPlayer-getvolume) |
+| **abstract int** | [getTotalDuration](#IMediaPlayer-gettotalduration) |
+| **abstract int** | [getPlaybackDuration](#IMediaPlayer-getplaybackduration) |
+| **abstract int** | [getPosition](#IMediaPlayer-getposition) |
+| **abstract int** | [setAudioPitch](#IMediaPlayer-setaudiopitch) |
+| **abstract int** | [setPosition](#IMediaPlayer-setposition) |
+| **abstract int** | [setAudioDualMonoMode](#IMediaPlayer-setaudiodualmonomode) |
+| **abstract int** | [getAudioTrackCount](#IMediaPlayer-getaudiotrackcount) |
+| **abstract int** | [selectAudioTrack](#IMediaPlayer-selectaudiotrack) |
+| **abstract int** | [setPlaybackSpeed](#IMediaPlayer-setplaybackspeed) |
+| **abstract int** | [setProgressInterval](#IMediaPlayer-setprogressinterval) |
+| **abstract int** | [setLoudness](#IMediaPlayer-setloudness) |
+| **abstract int** | [registerAudioFrameObserver](#IMediaPlayer-registeraudioframeobserver) |
+| **abstract int** | [pushExternalAudioFrame](#IMediaPlayer-pushexternalaudioframe) |
+| **abstract int** | [setEventHandler](#IMediaPlayer-seteventhandler) |
+
+
+## 函数说明
+<span id="IMediaPlayer-open"></span>
+### open
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.open(
+    String filePath,
+    MediaPlayerConfig config)
+```
+打开音乐文件。
+一个播放器实例仅能够同时打开一个音乐文件。如果需要同时打开多个音乐文件，请创建多个音乐播放器实例。
+要播放 PCM 格式的音频数据，参看 [openWithCustomSource](#IMediaPlayer-openwithcustomsource)。`openWithCustomSource` 和此 API 互斥。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| filePath | **String** | 音乐文件路径。<br/>支持在线文件的 URL、本地文件的 URI、本地文件的绝对路径或以 `/assets/` 开头的本地文件路径。对于在线文件的 URL，仅支持 https 协议。<br/>推荐的采样率：8KHz、16KHz、22.05KHz、44.1KHz、48KHz。<br/>不同平台支持的本地文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table><br/>不同平台支持的在线文件格式:<br/><table><br/><tr><th></th><th>mp3</th><th>mp4</th><th>aac</th><th>m4a</th><th>3gp</th><th>wav</th><th>ogg</th><th>ts</th><th>wma</th></tr><br/><tr><td>Android</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>iOS/macOS</td><td>Y</td><td></td><td>Y</td><td>Y</td><td></td><td>Y</td><td></td><td></td><td></td></tr><br/><tr><td>Windows</td><td>Y</td><td></td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td></td><td>Y</td><td>Y</td></tr><br/></table> |
+| config | **MediaPlayerConfig** | 详见 [MediaPlayerConfig](Android-keytype.md#mediaplayerconfig)。 |
+
+
+<span id="IMediaPlayer-start"></span>
+### start
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.start()
+```
+播放音乐。你仅需要在调用 [open](#IMediaPlayer-open)，且未开启自动播放时，调用此方法。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 要播放 PCM 格式的音频数据，参看 [openWithCustomSource](#IMediaPlayer-openwithcustomsource)。`openWithCustomSource` 和此 API 互斥。
++ 调用本方法播放音频文件后，可调用 [stop](#IMediaPlayer-stop) 方法暂停播放。
+
+
+<span id="IMediaPlayer-openwithcustomsource"></span>
+### openWithCustomSource
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.openWithCustomSource(
+    MediaPlayerCustomSource source,
+    MediaPlayerConfig config)
+```
+启动音频裸数据混音。
+要播放音乐文件，参看 [open](#IMediaPlayer-open)。`open` 与此 API 互斥。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| source | **MediaPlayerCustomSource** | 数据源，详见 [MediaPlayerCustomSource](Android-keytype.md#mediaplayercustomsource) |
+| config | **MediaPlayerConfig** | 详见 [MediaPlayerConfig](Android-keytype.md#mediaplayerconfig) |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用本方法启动后，再调用 [pushExternalAudioFrame](#IMediaPlayer-pushexternalaudioframe) 推送音频数据，才会开始混音。
++ 如要结束 PCM 音频数据混音，调用 [stop](#IMediaPlayer-stop)。
+
+
+<span id="IMediaPlayer-stop"></span>
+### stop
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.stop()
+```
+调用 [open](#IMediaPlayer-open), [start](#IMediaPlayer-start), 或 [openWithCustomSource](#IMediaPlayer-openwithcustomsource) 开始播放后，可以调用本方法停止。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+<span id="IMediaPlayer-pause"></span>
+### pause
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.pause()
+```
+调用 [open](#IMediaPlayer-open)，或 [start](#IMediaPlayer-start) 开始播放音频文件后，调用本方法暂停播放。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 调用本方法暂停播放后，可调用 [resume](#IMediaPlayer-resume) 恢复播放。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-resume"></span>
+### resume
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.resume()
+```
+调用 [pause](#IMediaPlayer-pause) 暂停音频播放后，调用本方法恢复播放。
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setvolume"></span>
+### setVolume
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setVolume(
+    int volume,
+    AudioMixingType type)
+```
+调节指定混音的音量大小，包括音乐文件混音和 PCM 混音。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volume | **int** | 播放音量相对原音量的比值。单位为 %。范围为 `[0, 400]`，建议范围是 `[0, 100]`。带溢出保护。 |
+| type | **AudioMixingType** | 详见 [AudioMixingType](Android-keytype.md#audiomixingtype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+仅在音频播放进行状态时，调用此方法。
+
+<span id="IMediaPlayer-getvolume"></span>
+### getVolume
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.getVolume(
+    AudioMixingType type)
+```
+获取当前音量
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| type | **AudioMixingType** | 详见 [AudioMixingType](Android-keytype.md#audiomixingtype)。 |
+
+**返回值**
+
++ \>0: 成功, 当前音量值。  
++ < 0: 失败
+
+
+**注意**
+仅在音频播放进行状态时，调用此方法。包括音乐文件混音和 PCM 混音。
+
+<span id="IMediaPlayer-gettotalduration"></span>
+### getTotalDuration
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.getTotalDuration()
+```
+获取音乐文件时长。
+
+**返回值**
+
++ \>0: 成功, 音乐文件时长，单位为毫秒。  
++ < 0: 失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-getplaybackduration"></span>
+### getPlaybackDuration
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.getPlaybackDuration()
+```
+获取混音音乐文件的实际播放时长，单位为毫秒。
+
+**返回值**
+
++ \>0: 实际播放时长。
++ < 0: 失败。
+
+
+**注意**
+
++ 实际播放时长指的是歌曲不受停止、跳转、倍速、卡顿影响的播放时长。例如，若歌曲正常播放到 1:30 时停止播放 30s 或跳转进度到 2:00, 随后继续正常播放 2分钟，则实际播放时长为 3分30秒。
++ 仅在音频播放进行状态，且 [setProgressInterval](#IMediaPlayer-setprogressinterval) 设置间隔大于 `0` 时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-getposition"></span>
+### getPosition
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.getPosition()
+```
+获取音乐文件播放进度。
+
+**返回值**
+
++ \>0: 成功, 音乐文件播放进度，单位为毫秒。
++ < 0: 失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setaudiopitch"></span>
+### setAudioPitch
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setAudioPitch(
+    int pitch)
+```
+开启变调功能，多用于 K 歌场景。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| pitch | **int** | 与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 仅支持音乐文件混音，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setposition"></span>
+### setPosition
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setPosition(
+    int position)
+```
+设置音乐文件的起始播放位置。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| position | **int** | 音乐文件起始播放位置，单位为毫秒。  <br/>你可以通过 [getTotalDuration](#IMediaPlayer-gettotalduration) 获取音乐文件总时长，position 的值应小于音乐文件总时长。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 此接口仅支持音频文件，不支持 PCM 数据。
++ 在播放在线文件时，调用此接口可能造成播放延迟的现象。
+
+
+<span id="IMediaPlayer-setaudiodualmonomode"></span>
+### setAudioDualMonoMode
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setAudioDualMonoMode(
+    AudioMixingDualMonoMode mode)
+```
+设置当前音乐文件的声道模式
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **AudioMixingDualMonoMode** | 声道模式。默认的声道模式和源文件一致，详见 [AudioMixingDualMonoMode](Android-keytype.md#audiomixingdualmonomode)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-getaudiotrackcount"></span>
+### getAudioTrackCount
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.getAudioTrackCount()
+```
+获取当前音乐文件的音轨数
+
+**返回值**
+
++ \>= 0：成功，返回当前音乐文件的音轨数
++ < 0：方法调用失败
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音乐文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-selectaudiotrack"></span>
+### selectAudioTrack
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.selectAudioTrack(
+    int index)
+```
+指定当前音乐文件的播放音轨
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| index | **int** | 指定的播放音轨，从 0 开始，取值范围为 `[0, getAudioTrackCount()-1]`。<br/>设置的参数值需要小于 [getAudioTrackCount](#IMediaPlayer-getaudiotrackcount) 的返回值 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音乐文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setplaybackspeed"></span>
+### setPlaybackSpeed
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setPlaybackSpeed(
+    int speed)
+```
+设置播放速度
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| speed | **int** | 播放速度与原始文件速度的比例，单位：%，取值范围为 `[50,200]`，默认值为 100。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法对音频文件可用，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setprogressinterval"></span>
+### setProgressInterval
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setProgressInterval(
+    long interval)
+```
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Android-callback.md#IMediaPlayerEventHandler-onmediaplayerplayingprogress) 的间隔。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| interval | **long** | 时间间隔，单位毫秒。<br/>• interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。<br/>• interval <= 0 时，不会触发回调。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-setloudness"></span>
+### setLoudness
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setLoudness(
+    float loudness)
+```
+如果你需要使用 [enableVocalInstrumentBalance](#RTCVideo-enablevocalinstrumentbalance) 对音频文件/PCM 音频数据设置音量均衡，你必须通过此接口传入其原始响度。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| loudness | **float** | 原始响度，单位：lufs，取值范围为 `[-70.0, 0.0]`。<br/>当设置的值小于 -70.0lufs 时，则默认调整为 -70.0lufs，大于 0.0lufs 时，则不对该响度做音量均衡处理。默认值为 1.0lufs，即不做处理。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+
++ 仅在音频播放进行状态时，调用此方法。
++ 此方法对音频文件和音频裸数据播放都可用。
+
+
+<span id="IMediaPlayer-registeraudioframeobserver"></span>
+### registerAudioFrameObserver
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.registerAudioFrameObserver(
+    IMediaPlayerAudioFrameObserver observer)
+```
+注册回调句柄以在本地音乐文件混音时，收到相关回调。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| observer | **IMediaPlayerAudioFrameObserver** | 参看 [IMediaPlayerAudioFrameObserver](Android-callback.md#imediaplayeraudioframeobserver)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0 : 调用失败。查看 [ReturnStatus](Android-keytype.md#returnstatus) 获得更多错误说明
+
+
+**注意**
+此接口仅支持音频文件，不支持 PCM 数据。
+
+
+<span id="IMediaPlayer-pushexternalaudioframe"></span>
+### pushExternalAudioFrame
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.pushExternalAudioFrame(
+    AudioFrame audioFrame)
+```
+推送用于混音的 PCM 音频帧数据
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| audioFrame | **AudioFrame** | 音频帧，详见 [AudioFrame](Android-keytype.md#audioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
+
+**返回值**
+
++ 0: 成功  
++ < 0: 失败
+
+
+**注意**
+
++ 调用该方法前，须通过 [openWithCustomSource](#IMediaPlayer-openwithcustomsource) 启动外部音频流混音。
++ 使用参考建议：首次推送数据，请在应用侧先缓存一定数据（如 200 毫秒），然后一次性推送过去；此后的推送操作定时 10 毫秒一次，并且每次的音频数据量为 10 毫秒数据量。
++ 如果要暂停播放，暂停推送即可。
+
+
+<span id="IMediaPlayer-seteventhandler"></span>
+### setEventHandler
+```java
+public abstract int com.ss.bytertc.engine.audio.IMediaPlayer.setEventHandler(
+    IMediaPlayerEventHandler handler)
+```
+设置回调句柄。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| handler | **IMediaPlayerEventHandler** | 参看 [IMediaPlayerEventHandler](Android-callback.md#imediaplayereventhandler)。 |
+
+**返回值**
+
++ 0: 成功。  
++ < 0: 失败。
 
 
 # IRangeAudio
@@ -6173,7 +7926,7 @@ void com.ss.bytertc.engine.audio.ISpatialAudio.disableRemoteOrientation()
 int com.ss.bytertc.engine.audio.ISpatialAudio.updateSelfPosition(
     PositionInfo positionInfo)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 设置本地用户在自建空间直角坐标系中的收听坐标和收听朝向，以实现本地用户预期的空间音频收听效果。
 
@@ -6191,8 +7944,10 @@ int com.ss.bytertc.engine.audio.ISpatialAudio.updateSelfPosition(
 
 
 **注意**
-该方法需在进房后调用。调用该接口更新坐标前，你需调用 [enableSpatialAudio](#ISpatialAudio-enablespatialaudio) 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
-调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+
++ 该方法需在进房后调用。 
++ 调用该接口更新坐标前，你需调用 [enableSpatialAudio](#ISpatialAudio-enablespatialaudio) 开启空间音频功能。空间音频相关 API 和调用时序详见[空间音频](https://www.volcengine.com/docs/6348/93903)。
++ 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
 
 
 <span id="ISpatialAudio-updateremoteposition"></span>
@@ -6202,7 +7957,7 @@ int com.ss.bytertc.engine.audio.ISpatialAudio.updateRemotePosition(
     String uid,
     PositionInfo positionInfo)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 设置房间内某一远端用户在本地用户自建的空间音频坐标系中的发声位置和发声朝向，以实现本地用户预期的空间音频收听效果。
 
@@ -6221,8 +7976,9 @@ int com.ss.bytertc.engine.audio.ISpatialAudio.updateRemotePosition(
 
 
 **注意**
-该方法需在创建房间后调用。 
-调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
+
++ 该方法需在创建房间后调用。 
++ 调用此接口在本地进行的设定对其他用户的空间音频收听效果不会产生任何影响。
 
 
 <span id="ISpatialAudio-removeremoteposition"></span>
@@ -6231,7 +7987,7 @@ int com.ss.bytertc.engine.audio.ISpatialAudio.updateRemotePosition(
 int com.ss.bytertc.engine.audio.ISpatialAudio.removeRemotePosition(
     String uid)
 ```
-> Available since 3.52.
+> Available since 3.52
 
 移除调用 [updateRemotePosition](#ISpatialAudio-updateremoteposition) 为某一远端用户设置的空间音频效果。
 
@@ -6252,7 +8008,7 @@ int com.ss.bytertc.engine.audio.ISpatialAudio.removeRemotePosition(
 ```java
 int com.ss.bytertc.engine.audio.ISpatialAudio.removeAllRemotePosition()
 ```
-> Available since 3.52.
+> Available since 3.52
 
 移除调用 [updateRemotePosition](#ISpatialAudio-updateremoteposition) 为所有远端用户设置的空间音频效果。
 
@@ -6293,8 +8049,8 @@ public abstract class com.ss.bytertc.engine.video.IVideoEffect
 ### initCVResource
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.initCVResource(
-    String license_file,
-    String algo_model_dir)
+    String licenseFile,
+    String algoModelDir)
 ```
 检查视频特效证书，设置算法模型路径，并初始化特效模块。
 
@@ -6302,8 +8058,8 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.initCVResource(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| license_file | **String** | 证书文件的绝对路径，用于鉴权。 |
-| algo_model_dir | **String** | 算法模型绝对路径，即存放特效 SDK 所有算法模型的目录。 |
+| licenseFile | **String** | 证书文件的绝对路径，用于鉴权。 |
+| algoModelDir | **String** | 算法模型绝对路径，即存放特效 SDK 所有算法模型的目录。 |
 
 **返回值**
 
@@ -6359,7 +8115,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.disableVideoEffect(
 ### setEffectNodes
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.setEffectNodes(
-    List<String> effect_nodes)
+    List<String> effectNodes)
 ```
 设置视频特效素材包。
 
@@ -6367,7 +8123,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.setEffectNodes(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| effect_nodes | **List<String>** | 特效素材包绝对路径数组。<br/>要取消当前视频特效，将此参数设置为 null。 |
+| effectNodes | **List<String>** | 特效素材包绝对路径数组。<br/>要取消当前视频特效，将此参数设置为 null。 |
 
 **返回值**
 
@@ -6385,7 +8141,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.setEffectNodes(
 ### updateEffectNode
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.updateEffectNode(
-    String effect_node,
+    String effectNode,
     String key,
     float value)
 ```
@@ -6395,7 +8151,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.updateEffectNode(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| effect_node | **String** | 特效素材包绝对路径，参考[素材包结构说明](https://www.volcengine.com/docs/6705/102039)。 |
+| effectNode | **String** | 特效素材包绝对路径，参考[素材包结构说明](https://www.volcengine.com/docs/6705/102039)。 |
 | key | **String** | 需要设置的素材 key 名称，参考[素材 key 对应说明](https://www.volcengine.com/docs/6705/102041)。 |
 | value | **float** | 特效强度值，取值范围 [0,1]，超出范围时设置无效。 |
 
@@ -6412,7 +8168,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.updateEffectNode(
 ### setColorFilter
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.setColorFilter(
-    String filter_res)
+    String filterRes)
 ```
 设置颜色滤镜。
 
@@ -6420,7 +8176,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.setColorFilter(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| filter_res | **String** | 滤镜资源包绝对路径。 |
+| filterRes | **String** | 滤镜资源包绝对路径。 |
 
 **返回值**
 
@@ -6461,7 +8217,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.setColorFilterInten
 ### enableVirtualBackground
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.enableVirtualBackground(
-    String bg_sticker_res,
+    String backgroundStickerRes,
     VirtualBackgroundSource source)
 ```
 将摄像头采集画面中的人像背景替换为指定图片或纯色背景。
@@ -6470,7 +8226,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.enableVirtualBackgr
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| bg_sticker_res | **String** | 背景贴纸特效素材绝对路径。 |
+| backgroundStickerRes | **String** | 背景贴纸特效素材绝对路径。 |
 | source | **VirtualBackgroundSource** | 背景贴纸对象，参看 [VirtualBackgroundSource](Android-keytype.md#virtualbackgroundsource)。 |
 
 **返回值**
@@ -6512,7 +8268,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.disableVirtualBackg
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.registerFaceDetectionObserver(
     IFaceDetectionObserver observer,
-    int interval_ms)
+    int intervalMs)
 ```
 > Deprecated  since 3.50 and will be deleted in 3.55, use [enableFaceDetection](#IVideoEffect-enablefacedetection) and [disableFaceDetection](#IVideoEffect-disablefacedetection) instead.
 
@@ -6524,7 +8280,7 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.registerFaceDetecti
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **IFaceDetectionObserver** | 人脸检测结果回调观察者，参看 [IFaceDetectionObserver](Android-callback.md#ifacedetectionobserver)。 |
-| interval_ms | **int** | 时间间隔，必须大于 0。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval+视频采集帧间隔`。 |
+| intervalMs | **int** | 时间间隔，必须大于 0。单位：ms。实际收到回调的时间间隔大于 `interval`，小于 `interval+视频采集帧间隔`。 |
 
 **返回值**
 
@@ -6540,8 +8296,8 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.registerFaceDetecti
 ```java
 public abstract int com.ss.bytertc.engine.video.IVideoEffect.enableFaceDetection(
     IFaceDetectionObserver observer,
-    int interval_ms,
-    String face_model_path)
+    int intervalMs,
+    String faceModelPath)
 ```
 开启人脸识别功能，并设置人脸检测结果回调观察者。
 此观察者后，你会周期性收到 [onFaceDetectResult](Android-callback.md#IFaceDetectionObserver-onfacedetectresult) 回调。
@@ -6551,8 +8307,8 @@ public abstract int com.ss.bytertc.engine.video.IVideoEffect.enableFaceDetection
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | observer | **IFaceDetectionObserver** | 人脸检测结果回调观察者，参看 [IFaceDetectionObserver](Android-callback.md#ifacedetectionobserver)。 |
-| interval_ms | **int** | 两次回调之间的最小时间间隔，必须大于 0，单位为毫秒。实际收到回调的时间间隔大于 interval_ms，小于 interval_ms+视频采集帧间隔。 |
-| face_model_path | **String** | 人脸检测算法模型文件路径，一般为 ttfacemodel 文件夹中 tt_face_vXXX.model 文件的绝对路径。 |
+| intervalMs | **int** | 两次回调之间的最小时间间隔，必须大于 0，单位为毫秒。实际收到回调的时间间隔大于 interval_ms，小于 interval_ms+视频采集帧间隔。 |
+| faceModelPath | **String** | 人脸检测算法模型文件路径，一般为 ttfacemodel 文件夹中 tt_face_vXXX.model 文件的绝对路径。 |
 
 **返回值**
 
@@ -6646,138 +8402,9 @@ public void com.ss.bytertc.engine.video.IVideoProcessor.onGLEnvRelease()
 OpenGL 环境即将销毁时，收到此回调。此时，你可以释放纹理等资源。
 
 
-# IRTCAudioDeviceManager
+# IKTVManager
 ```java
-public interface com.ss.bytertc.engine.IRTCAudioDeviceManager
-```
-
-IRTCAudioDeviceManager 接口
-
-
-## 成员函数
-
-| 返回 | 名称 |
-| --- | --- |
-| **abstract int** | [startAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-startaudioplaybackdevicetest) |
-| **abstract int** | [stopAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-stopaudioplaybackdevicetest) |
-| **abstract int** | [startAudioDeviceRecordTest](#IRTCAudioDeviceManager-startaudiodevicerecordtest) |
-| **abstract int** | [stopAudioDeviceRecordAndPlayTest](#IRTCAudioDeviceManager-stopaudiodevicerecordandplaytest) |
-| **abstract int** | [stopAudioDevicePlayTest](#IRTCAudioDeviceManager-stopaudiodeviceplaytest) |
-
-
-## 函数说明
-<span id="IRTCAudioDeviceManager-startaudioplaybackdevicetest"></span>
-### startAudioPlaybackDeviceTest
-```java
-public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.startAudioPlaybackDeviceTest(
-    String testAudioFilePath,
-    int interval)
-```
-启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 `onAudioPlaybackDeviceTestVolume` 回调播放时的音量信息。
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| testAudioFilePath | **String** | 指定播放设备检测的音频文件网络地址。支持的格式包括 mp3，aac，m4a，3gp 和 wav。 |
-| interval | **int** | 设置 `onAudioPlaybackDeviceTestVolume` 音量回调的时间间隔，推荐设置为 200 毫秒或以上。单位为毫秒。最小值为 10 毫秒。 |
-
-**返回值**
-方法调用结果  
-
-+ 0：方法调用成功  
-+ < 0：方法调用失败  
-
-
-**注意**
-
-+ 该方法可在进房前和进房后调用，不可与其它音频设备测试功能同时应用。  
-+ 调用 [stopAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-stopaudioplaybackdevicetest) 可以停止测试。
-
-
-<span id="IRTCAudioDeviceManager-stopaudioplaybackdevicetest"></span>
-### stopAudioPlaybackDeviceTest
-```java
-public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.stopAudioPlaybackDeviceTest()
-```
-停止音频播放测试。
-
-**返回值**
-方法调用结果  
-
-+ 0：方法调用成功  
-+ < 0：方法调用失败
-
-
-**注意**
-调用 [startAudioPlaybackDeviceTest](#IRTCAudioDeviceManager-startaudioplaybackdevicetest) 后，调用本方法停止测试。
-
-<span id="IRTCAudioDeviceManager-startaudiodevicerecordtest"></span>
-### startAudioDeviceRecordTest
-```java
-public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.startAudioDeviceRecordTest(
-    int interval)
-```
-开始音频采集设备和音频播放设备测试。<br>
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| interval | **int** | 测试中会收到 `enableAudioPropertiesReport` 回调，本参数指定了该周期回调的时间间隔，单位为毫秒。建议设置到大于 200 毫秒。最小不得少于 10 毫秒。 |
-
-**返回值**
-方法调用结果  
-
-+ 0：方法调用成功  
-+ < 0：方法调用失败  
-
-
-**注意**
-
-+ 该方法在进房前后均可调用。且不可与其它音频设备测试功能同时应用。  
-+ 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 [stopAudioDeviceRecordAndPlayTest](#IRTCAudioDeviceManager-stopaudiodevicerecordandplaytest) 来停止采集并开始播放此前采集到的声音。
-+ 调用 [stopAudioDevicePlayTest](#IRTCAudioDeviceManager-stopaudiodeviceplaytest) 可以停止音频设备采集和播放测试。
-+ 你不应在测试过程中，调用 `enableAudioPropertiesReport` 注册音量提示回调。
-+ 该方法仅在本地进行音频设备测试，不涉及网络连接。  
-
-
-<span id="IRTCAudioDeviceManager-stopaudiodevicerecordandplaytest"></span>
-### stopAudioDeviceRecordAndPlayTest
-```java
-public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.stopAudioDeviceRecordAndPlayTest()
-```
-停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>
-调用 [startAudioDeviceRecordTest](#IRTCAudioDeviceManager-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
-
-**返回值**
-方法调用结果  
-
-+ 0：方法调用成功  
-+ < 0：方法调用失败  
-
-
-**注意**
-调用本接口开始播放录音后，可以在播放过程中调用 [stopAudioDevicePlayTest](#IRTCAudioDeviceManager-stopaudiodeviceplaytest) 停止播放。
-
-<span id="IRTCAudioDeviceManager-stopaudiodeviceplaytest"></span>
-### stopAudioDevicePlayTest
-```java
-public abstract int com.ss.bytertc.engine.IRTCAudioDeviceManager.stopAudioDevicePlayTest()
-```
-停止由调用 [startAudioDeviceRecordTest](#IRTCAudioDeviceManager-startaudiodevicerecordtest) 开始的音频播放设备测试。
-在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。
-
-**返回值**
-方法调用结果  
-
-+ 0：方法调用成功  
-+ < 0：方法调用失败
-
-
-# KTVManager
-```java
-public abstract class com.ss.bytertc.ktv.KTVManager
+public abstract class com.ss.bytertc.ktv.IKTVManager
 ```
 
 KTV 管理接口。
@@ -6787,25 +8414,25 @@ KTV 管理接口。
 
 | 返回 | 名称 |
 | --- | --- |
-| **abstract void** | [setKTVManagerEventHandler](#KTVManager-setktvmanagereventhandler) |
-| **abstract void** | [setMaxCacheSize](#KTVManager-setmaxcachesize) |
-| **abstract void** | [getMusicList](#KTVManager-getmusiclist) |
-| **abstract void** | [searchMusic](#KTVManager-searchmusic) |
-| **abstract void** | [getHotMusic](#KTVManager-gethotmusic) |
-| **abstract void** | [getMusicDetail](#KTVManager-getmusicdetail) |
-| **abstract int** | [downloadMusic](#KTVManager-downloadmusic) |
-| **abstract int** | [downloadLyric](#KTVManager-downloadlyric) |
-| **abstract int** | [downloadMidi](#KTVManager-downloadmidi) |
-| **abstract void** | [cancelDownload](#KTVManager-canceldownload) |
-| **abstract void** | [clearCache](#KTVManager-clearcache) |
-| **abstract KTVPlayer** | [getKTVPlayer](#KTVManager-getktvplayer) |
+| **abstract void** | [setKTVManagerEventHandler](#IKTVManager-setktvmanagereventhandler) |
+| **abstract void** | [setMaxCacheSize](#IKTVManager-setmaxcachesize) |
+| **abstract void** | [getMusicList](#IKTVManager-getmusiclist) |
+| **abstract void** | [searchMusic](#IKTVManager-searchmusic) |
+| **abstract void** | [getHotMusic](#IKTVManager-gethotmusic) |
+| **abstract void** | [getMusicDetail](#IKTVManager-getmusicdetail) |
+| **abstract int** | [downloadMusic](#IKTVManager-downloadmusic) |
+| **abstract int** | [downloadLyric](#IKTVManager-downloadlyric) |
+| **abstract int** | [downloadMidi](#IKTVManager-downloadmidi) |
+| **abstract void** | [cancelDownload](#IKTVManager-canceldownload) |
+| **abstract void** | [clearCache](#IKTVManager-clearcache) |
+| **abstract IKTVPlayer** | [getKTVPlayer](#IKTVManager-getktvplayer) |
 
 
 ## 函数说明
-<span id="KTVManager-setktvmanagereventhandler"></span>
+<span id="IKTVManager-setktvmanagereventhandler"></span>
 ### setKTVManagerEventHandler
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.setKTVManagerEventHandler(
+public abstract void com.ss.bytertc.ktv.IKTVManager.setKTVManagerEventHandler(
     IKTVManagerEventHandler ktvManagerEventHandler)
 ```
 设置 KTV 回调接口。
@@ -6817,10 +8444,10 @@ public abstract void com.ss.bytertc.ktv.KTVManager.setKTVManagerEventHandler(
 | ktvManagerEventHandler | **IKTVManagerEventHandler** | KTV 回调类，参看 [IKTVManagerEventHandler](Android-callback.md#iktvmanagereventhandler)。 |
 
 
-<span id="KTVManager-setmaxcachesize"></span>
+<span id="IKTVManager-setmaxcachesize"></span>
 ### setMaxCacheSize
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.setMaxCacheSize(
+public abstract void com.ss.bytertc.ktv.IKTVManager.setMaxCacheSize(
     int maxCacheSizeMB)
 ```
 设置歌曲文件最大占用的本地缓存。
@@ -6832,10 +8459,10 @@ public abstract void com.ss.bytertc.ktv.KTVManager.setMaxCacheSize(
 | maxCacheSizeMB | **int** | 本地缓存，单位 MB。<br/>设置值小于等于 0 时，使用默认值 1024 MB。 |
 
 
-<span id="KTVManager-getmusiclist"></span>
+<span id="IKTVManager-getmusiclist"></span>
 ### getMusicList
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.getMusicList(
+public abstract void com.ss.bytertc.ktv.IKTVManager.getMusicList(
     int pageNum,
     int pageSize,
     @NonNull MusicFilterType[] filters)
@@ -6854,10 +8481,10 @@ public abstract void com.ss.bytertc.ktv.KTVManager.getMusicList(
 **注意**
 调用接口后，你会收到 [onMusicListResult](Android-callback.md#IKTVManagerEventHandler-onmusiclistresult) 回调歌曲列表。
 
-<span id="KTVManager-searchmusic"></span>
+<span id="IKTVManager-searchmusic"></span>
 ### searchMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.searchMusic(
+public abstract void com.ss.bytertc.ktv.IKTVManager.searchMusic(
     @NonNull String keyWord,
     int pageNum,
     int pageSize,
@@ -6878,10 +8505,10 @@ public abstract void com.ss.bytertc.ktv.KTVManager.searchMusic(
 **注意**
 调用接口后，你会收到 [onSearchMusicResult](Android-callback.md#IKTVManagerEventHandler-onsearchmusicresult) 回调歌曲列表。
 
-<span id="KTVManager-gethotmusic"></span>
+<span id="IKTVManager-gethotmusic"></span>
 ### getHotMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.getHotMusic(
+public abstract void com.ss.bytertc.ktv.IKTVManager.getHotMusic(
     @NonNull MusicHotType[] hotTypes,
     @NonNull MusicFilterType[] filters)
 ```
@@ -6898,10 +8525,10 @@ public abstract void com.ss.bytertc.ktv.KTVManager.getHotMusic(
 **注意**
 调用接口后，你会收到 [onHotMusicResult](Android-callback.md#IKTVManagerEventHandler-onhotmusicresult) 回调歌曲列表。
 
-<span id="KTVManager-getmusicdetail"></span>
+<span id="IKTVManager-getmusicdetail"></span>
 ### getMusicDetail
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.getMusicDetail(
+public abstract void com.ss.bytertc.ktv.IKTVManager.getMusicDetail(
     @NonNull String musicId)
 ```
 获取音乐详细信息。
@@ -6916,10 +8543,10 @@ public abstract void com.ss.bytertc.ktv.KTVManager.getMusicDetail(
 **注意**
 调用接口后，你会收到 [onMusicDetailResult](Android-callback.md#IKTVManagerEventHandler-onmusicdetailresult) 回调。
 
-<span id="KTVManager-downloadmusic"></span>
+<span id="IKTVManager-downloadmusic"></span>
 ### downloadMusic
 ```java
-public abstract int com.ss.bytertc.ktv.KTVManager.downloadMusic(
+public abstract int com.ss.bytertc.ktv.IKTVManager.downloadMusic(
     @NonNull String musicId)
 ```
 下载音乐。
@@ -6941,10 +8568,10 @@ public abstract int com.ss.bytertc.ktv.KTVManager.downloadMusic(
 + 音乐下载进度更新时，你会收到 [onDownloadMusicProgress](Android-callback.md#IKTVManagerEventHandler-ondownloadmusicprogress) 回调。
 
 
-<span id="KTVManager-downloadlyric"></span>
+<span id="IKTVManager-downloadlyric"></span>
 ### downloadLyric
 ```java
-public abstract int com.ss.bytertc.ktv.KTVManager.downloadLyric(
+public abstract int com.ss.bytertc.ktv.IKTVManager.downloadLyric(
     @NonNull String musicId,
     @NonNull DownloadLyricType lyricType)
 ```
@@ -6967,10 +8594,10 @@ public abstract int com.ss.bytertc.ktv.KTVManager.downloadLyric(
 + 若歌词下载失败，你会收到 [onDownloadFailed](Android-callback.md#IKTVManagerEventHandler-ondownloadfailed) 回调。
 
 
-<span id="KTVManager-downloadmidi"></span>
+<span id="IKTVManager-downloadmidi"></span>
 ### downloadMidi
 ```java
-public abstract int com.ss.bytertc.ktv.KTVManager.downloadMidi(
+public abstract int com.ss.bytertc.ktv.IKTVManager.downloadMidi(
     @NonNull String musicId)
 ```
 下载 MIDI 文件。
@@ -6991,10 +8618,10 @@ public abstract int com.ss.bytertc.ktv.KTVManager.downloadMidi(
 + 若文件下载失败，你会收到 [onDownloadFailed](Android-callback.md#IKTVManagerEventHandler-ondownloadfailed) 回调。
 
 
-<span id="KTVManager-canceldownload"></span>
+<span id="IKTVManager-canceldownload"></span>
 ### cancelDownload
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.cancelDownload(
+public abstract void com.ss.bytertc.ktv.IKTVManager.cancelDownload(
     int downloadId)
 ```
 取消下载任务。
@@ -7006,28 +8633,28 @@ public abstract void com.ss.bytertc.ktv.KTVManager.cancelDownload(
 | downloadId | **int** | 下载任务 ID。 |
 
 
-<span id="KTVManager-clearcache"></span>
+<span id="IKTVManager-clearcache"></span>
 ### clearCache
 ```java
-public abstract void com.ss.bytertc.ktv.KTVManager.clearCache()
+public abstract void com.ss.bytertc.ktv.IKTVManager.clearCache()
 ```
 清除当前音乐缓存文件，包括音乐音频和歌词。
 
 
-<span id="KTVManager-getktvplayer"></span>
+<span id="IKTVManager-getktvplayer"></span>
 ### getKTVPlayer
 ```java
-public abstract KTVPlayer com.ss.bytertc.ktv.KTVManager.getKTVPlayer()
+public abstract IKTVPlayer com.ss.bytertc.ktv.IKTVManager.getKTVPlayer()
 ```
 获取 KTV 播放器。
 
 **返回值**
-KTV 播放器接口，参看 [KTVPlayer](#ktvplayer)。
+KTV 播放器接口，参看 [IKTVPlayer](#iktvplayer)。
 
 
-# KTVPlayer
+# IKTVPlayer
 ```java
-public abstract class com.ss.bytertc.ktv.KTVPlayer
+public abstract class com.ss.bytertc.ktv.IKTVPlayer
 ```
 
 KTV 播放器接口。
@@ -7037,22 +8664,22 @@ KTV 播放器接口。
 
 | 返回 | 名称 |
 | --- | --- |
-| **abstract void** | [setPlayerEventHandler](#KTVPlayer-setplayereventhandler) |
-| **abstract void** | [playMusic](#KTVPlayer-playmusic) |
-| **abstract void** | [pauseMusic](#KTVPlayer-pausemusic) |
-| **abstract void** | [resumeMusic](#KTVPlayer-resumemusic) |
-| **abstract void** | [stopMusic](#KTVPlayer-stopmusic) |
-| **abstract void** | [seekMusic](#KTVPlayer-seekmusic) |
-| **abstract void** | [setMusicVolume](#KTVPlayer-setmusicvolume) |
-| **abstract void** | [switchAudioTrackType](#KTVPlayer-switchaudiotracktype) |
-| **abstract void** | [setMusicPitch](#KTVPlayer-setmusicpitch) |
+| **abstract void** | [setPlayerEventHandler](#IKTVPlayer-setplayereventhandler) |
+| **abstract void** | [playMusic](#IKTVPlayer-playmusic) |
+| **abstract void** | [pauseMusic](#IKTVPlayer-pausemusic) |
+| **abstract void** | [resumeMusic](#IKTVPlayer-resumemusic) |
+| **abstract void** | [stopMusic](#IKTVPlayer-stopmusic) |
+| **abstract void** | [seekMusic](#IKTVPlayer-seekmusic) |
+| **abstract void** | [setMusicVolume](#IKTVPlayer-setmusicvolume) |
+| **abstract void** | [switchAudioTrackType](#IKTVPlayer-switchaudiotracktype) |
+| **abstract void** | [setMusicPitch](#IKTVPlayer-setmusicpitch) |
 
 
 ## 函数说明
-<span id="KTVPlayer-setplayereventhandler"></span>
+<span id="IKTVPlayer-setplayereventhandler"></span>
 ### setPlayerEventHandler
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.setPlayerEventHandler(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.setPlayerEventHandler(
     IKTVPlayerEventHandler playerEventHandler)
 ```
 设置 KTV 播放器进度及状态回调接口。
@@ -7064,10 +8691,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.setPlayerEventHandler(
 | playerEventHandler | **IKTVPlayerEventHandler** | KTV 播放器回调类，参看 [IKTVPlayerEventHandler](Android-callback.md#iktvplayereventhandler)。 |
 
 
-<span id="KTVPlayer-playmusic"></span>
+<span id="IKTVPlayer-playmusic"></span>
 ### playMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.playMusic(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.playMusic(
     @NonNull String musicId,
     @NonNull AudioTrackType trackType,
     @NonNull AudioPlayType playType)
@@ -7091,10 +8718,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.playMusic(
 + 若音乐文件不存在，会触发 [onPlayStateChanged](Android-callback.md#IKTVPlayerEventHandler-onplaystatechanged) 回调，errorCode 为 –3020，playState 为 4。
 
 
-<span id="KTVPlayer-pausemusic"></span>
+<span id="IKTVPlayer-pausemusic"></span>
 ### pauseMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.pauseMusic(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.pauseMusic(
     @NonNull String musicId)
 ```
 暂停播放歌曲。
@@ -7113,10 +8740,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.pauseMusic(
 + 若未进房，会触发 [onPlayStateChanged](Android-callback.md#IKTVPlayerEventHandler-onplaystatechanged) 回调，errorCode 为 –3022，playState 为 4。
 
 
-<span id="KTVPlayer-resumemusic"></span>
+<span id="IKTVPlayer-resumemusic"></span>
 ### resumeMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.resumeMusic(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.resumeMusic(
     @NonNull String musicId)
 ```
 继续播放歌曲。
@@ -7135,10 +8762,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.resumeMusic(
 + 若未进房，会触发 [onPlayStateChanged](Android-callback.md#IKTVPlayerEventHandler-onplaystatechanged) 回调，errorCode 为 –3022，playState 为 4。
 
 
-<span id="KTVPlayer-stopmusic"></span>
+<span id="IKTVPlayer-stopmusic"></span>
 ### stopMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.stopMusic(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.stopMusic(
     @NonNull String musicId)
 ```
 停止播放歌曲。
@@ -7157,10 +8784,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.stopMusic(
 + 若未进房，会触发 [onPlayStateChanged](Android-callback.md#IKTVPlayerEventHandler-onplaystatechanged) 回调，errorCode 为 –3022，playState 为 4。
 
 
-<span id="KTVPlayer-seekmusic"></span>
+<span id="IKTVPlayer-seekmusic"></span>
 ### seekMusic
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.seekMusic(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.seekMusic(
     @NonNull String musicId,
     int position)
 ```
@@ -7182,10 +8809,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.seekMusic(
 + 若未进房，会触发 [onPlayStateChanged](Android-callback.md#IKTVPlayerEventHandler-onplaystatechanged) 回调，errorCode 为 –3022，playState 为 4。
 
 
-<span id="KTVPlayer-setmusicvolume"></span>
+<span id="IKTVPlayer-setmusicvolume"></span>
 ### setMusicVolume
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.setMusicVolume(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.setMusicVolume(
     @NonNull String musicId,
     int volume)
 ```
@@ -7207,10 +8834,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.setMusicVolume(
 + 若未进房，会触发 [onPlayStateChanged](Android-callback.md#IKTVPlayerEventHandler-onplaystatechanged) 回调，errorCode 为 –3022，playState 为 4。
 
 
-<span id="KTVPlayer-switchaudiotracktype"></span>
+<span id="IKTVPlayer-switchaudiotracktype"></span>
 ### switchAudioTrackType
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.switchAudioTrackType(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.switchAudioTrackType(
     @NonNull String musicId)
 ```
 切换歌曲原唱伴唱。
@@ -7225,10 +8852,10 @@ public abstract void com.ss.bytertc.ktv.KTVPlayer.switchAudioTrackType(
 **注意**
 调用本接口时音乐必须处于播放中状态。
 
-<span id="KTVPlayer-setmusicpitch"></span>
+<span id="IKTVPlayer-setmusicpitch"></span>
 ### setMusicPitch
 ```java
-public abstract void com.ss.bytertc.ktv.KTVPlayer.setMusicPitch(
+public abstract void com.ss.bytertc.ktv.IKTVPlayer.setMusicPitch(
     @NonNull String musicId,
     int pitch)
 ```
