@@ -19,10 +19,11 @@
 | [updateToken](#rtcengine-updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
 | [setAudioCaptureDevice](#rtcengine-setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
 | [setVideoCaptureDevice](#rtcengine-setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
-| [startVideoCapture](#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
-| [stopVideoCapture](#rtcengine-stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
-| [startAudioCapture](#rtcengine-startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
-| [stopAudioCapture](#rtcengine-stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
+| [startVideoCapture](#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
+| [stopVideoCapture](#rtcengine-stopvideocapture) | 关闭内部视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
+| [startAudioCapture](#rtcengine-startaudiocapture) | 开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
+| [stopAudioCapture](#rtcengine-stopaudiocapture) | 立即关闭内部音频采集。<br>发布流后调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
+| [startAudioAndVideoCapture](#rtcengine-startaudioandvideocapture) | 使用内部采集模块同时开启音视频采集。调用该方法，浏览器会同时请求麦克风和摄像头授权，用户只需授权一次。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 和 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
 | [startScreenCapture](#rtcengine-startscreencapture) | 使用内部采集模块，采集当前屏幕视频流，用于共享。 |
 | [stopScreenCapture](#rtcengine-stopscreencapture) | 停止屏幕共享流内部采集。 |
 | [setLocalVideoPlayer](#rtcengine-setlocalvideoplayer) | 设置本地视频渲染时，使用的视图，并设置渲染模式。<br>调用本方法绑定视图以后，你可以通过 `onPlayerEvent` 来监听播放状态。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
@@ -40,20 +41,20 @@
 | [setVideoEncoderConfig](#rtcengine-setvideoencoderconfig) | 在视频发布端设置发布的视频流参数。 |
 | [setScreenEncoderConfig](#rtcengine-setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
 | [setRemoteVideoConfig](#rtcengine-setremotevideoconfig) | 设置期望订阅的远端视频流的参数。 |
-| [enableSimulcastMode](#rtcengine-enablesimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式 |
+| [enableSimulcastMode](#rtcengine-enablesimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式。 |
 | [enableAudioPropertiesReport](#rtcengine-enableaudiopropertiesreport) | 启用音频信息提示。 |
 | [startLiveTranscoding](#rtcengine-startlivetranscoding) | 开启转推直播，并设置合流的视频视图布局和音频属性。 |
 | [updateLiveTranscoding](#rtcengine-updatelivetranscoding) | 更新转推直播参数。<br>使用 [startLiveTranscoding](Web-api.md#startlivetranscoding) 启用转推直播功能后，使用此方法更新功能配置参数。 |
 | [stopLiveTranscoding](#rtcengine-stoplivetranscoding) | 停止转推直播。<br>关于启动转推直播，参看 [startLiveTranscoding](Web-api.md#startlivetranscoding)。 |
 | [setBusinessId](#rtcengine-setbusinessid) | 设置业务标识参数<br>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
-| [setUserVisibility](#rtcengine-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
+| [setUserVisibility](#rtcengine-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br>默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。 |
 | [setExternalVideoTrack](#rtcengine-setexternalvideotrack) | 使用用户自定义的 videoTrack。<br>调用本方法前必须先调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 设置为自定义视频采集。 |
 | [setExternalAudioTrack](#rtcengine-setexternalaudiotrack) | 使用用户自定义的 audioTrack。<br>调用本方法前必须先调用 [setAudioSourceType](Web-api.md#setaudiosourcetype) 设置为自定义音频采集。 |
 | [setVideoSourceType](#rtcengine-setvideosourcetype) | 设置向 SDK 输入的视频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startVideoCapture](Web-api.md#startvideocapture) 手动开启内部采集。 |
 | [setAudioSourceType](#rtcengine-setaudiosourcetype) | 设置向 SDK 输入的音频源<br>默认使用内部采集。内部采集指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br>该方法进房前后均可调用。<br>当你已调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启内部采集后，再调用此方法切换至自定义采集时，SDK 会自动关闭内部采集。<br>当你调用此方法开启自定义采集，再调用此方法切换至内部采集时，必须再调用 [startAudioCapture](Web-api.md#startaudiocapture) 手动开启内部采集。 |
 | [getAudioMixingManager](#rtcengine-getaudiomixingmanager) | 混音管理接口创建 |
 | [setAudioCaptureConfig](#rtcengine-setaudiocaptureconfig) | 设置 RTC SDK 内部采集时的音频采集参数。默认参数由浏览器决定。 |
-| [login](#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登陆用户发送文本或二进制消息。 |
+| [login](#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登录用户发送文本或二进制消息。 |
 | [logout](#rtcengine-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](#rtcengine-updatelogintoken) | 更新用户用于登录的 Token。Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。 |
 | [getPeerOnlineStatus](#rtcengine-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态。在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。 |
@@ -72,7 +73,7 @@
 | [setPublicStreamVideoPlayer](#rtcengine-setpublicstreamvideoplayer) | 为指定公共流设置使用的视图和渲染模式。 |
 | [setDummyCaptureImagePath](#rtcengine-setdummycaptureimagepath) | 停止内部摄像头采集时，使用静态图片填充本地推送的视频流。 |
 | [defaultTranscoding](#rtcengine-defaulttranscoding) | 获取合流转推默认参数。 |
-| [setSubscribeFallbackOption](#rtcengine-setsubscribefallbackoption) | 设置订阅的音视频流的回退选项。<br>回退指：设置网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。 |
+| [setSubscribeFallbackOption](#rtcengine-setsubscribefallbackoption) | 设置订阅的音视频流的回退选项。<br>回退指在网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。 |
 | [setRemoteUserPriority](#rtcengine-setremoteuserpriority) | 设置用户优先级。<br>该方法与 [setSubscribeFallbackOption](Web-api.md#setsubscribefallbackoption) 搭配使用。<br>开启回退后，会优先保证收到的高优先级用户的流的质量。 |
 | [startAudioPlaybackDeviceTest](#rtcengine-startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。 |
 | [stopAudioPlaybackDeviceTest](#rtcengine-stopaudioplaybackdevicetest) | 停止音频播放设备测试。 |
@@ -114,6 +115,7 @@
 
   + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则先进房的用户将自动退房并收到 `DUPLICATE_LOGIN` 错误。
   + 本地用户调用 [setUserVisibility](#setuservisibility) 将自身设为可见后加入房间，远端用户会收到 [onUserJoined](Web-event.md#onuserjoined) 回调通知。
+  + 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用 [setUserVisibility](#setuservisibility)，将其更改为不可见用户，从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
   + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Web-event.md#onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，如果加入房间的为可见用户，远端用户会收到 [onUserJoined](Web-event.md#onuserjoined)  回调通知。
 
 - **参数**
@@ -148,6 +150,12 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  + `INVALID_TOKEN`: 进房时使用了已过期的 Token 或使用的 Token 无效。
+  + `JOIN_ROOM_FAILED`: 进房失败，具体错误原因请参看对应的 message。
+  + `REPEAT_JOIN`: 重复进房。
+  + `ROOM_FORBIDDEN`: 房间被封禁导致进房失败。
+  + `USER_FORBIDDEN`: 用户被封禁导致进房失败。
 
 ### leaveRoom <span id="rtcengine-leaveroom"></span> 
 
@@ -204,6 +212,9 @@
 
   类型: <code>Promise<void\></code>
 
+  + `NO_PUBLISH_PERMISSION`: 无发布权限，请先调用 [setUserVisibility](#setuservisibility) 将自身切换至可见后再发布流。
+  + `PUBLISH_FAILED`: 发布流失败，具体原因查看 message。
+
 ### unpublishStream <span id="rtcengine-unpublishstream"></span> 
 
 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
@@ -258,6 +269,9 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  + `NO_PUBLISH_PERMISSION`: 无发布权限，请先调用 [setUserVisibility](#setuservisibility) 将自身切换至可见后再发布流。
+  + `PUBLISH_FAILED`: 发布流失败，具体原因查看 message。
 
 ### unpublishScreen <span id="rtcengine-unpublishscreen"></span> 
 
@@ -319,6 +333,8 @@
 
   类型: <code>Promise<void\></code>
 
+  `STREAM_NOT_EXIST`: 目标流不存在。请输入正确的 ID，或确认目标流在房间内。
+
 ### unsubscribeStream <span id="rtcengine-unsubscribestream"></span> 
 
 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。
@@ -347,6 +363,8 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  `STREAM_NOT_EXIST`: 目标流不存在。请输入正确的 ID，或确认目标流在房间内。
 
 ### subscribeScreen <span id="rtcengine-subscribescreen"></span> 
 
@@ -418,7 +436,7 @@
 - **类型**
 
   ```ts
-  (token: string) => void
+  (token: string) => Promise<void>
   ```
 
 - **注意**
@@ -434,6 +452,13 @@
     类型: <code>string</code>
 
     获取的新的有效 Token。
+
+- **返回值**
+
+  类型: <code>Promise<void\></code>
+
+  + `UPDATE_TOKEN_WITH_INVALID_TOKEN`: 传入的 Token 无效。
+  + `UPDATE_TOKEN_BEFORE_JOIN`: 不在房间内，请先调用 [joinRoom](#joinroom) 加入房间。
 
 ### setAudioCaptureDevice <span id="rtcengine-setaudiocapturedevice"></span> 
 
@@ -493,7 +518,7 @@
 
 开启内部视频采集。默认为关闭状态。
 内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。
-发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。
 
 - **类型**
 
@@ -520,11 +545,15 @@
   类型: <code>Promise<MediaTrackSettings\></code>
 
   实际生效的视频采集参数。参看 [MediaTrackSettings](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings)。请关注其中的 `frameRate`, `height`, `width` 等值。
+  还可能返回如下错误码。
+
+  + `REPEAT_CAPTURE`: 重复采集。
+  + `GET_VIDEO_TRACK_FAILED`: 采集视频失败，请确认是否有可用的采集设备，或是否被其他 App 占用。
+  + `STREAM_TYPE_NOT_MATCH`: 流类型不匹配。调用 setVideoSourceType 设置了自定义媒体源后，又调用内部采集相关的接口。
 
 ### stopVideoCapture <span id="rtcengine-stopvideocapture"></span> 
 
-关闭内部视频采集。默认为关闭状态。
-内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。
+关闭内部视频采集。
 发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。
 
 - **类型**
@@ -542,11 +571,13 @@
 
   类型: <code>Promise<void\></code>
 
+  `STREAM_TYPE_NOT_MATCH`: 流类型不匹配。调用 setVideoSourceType 设置了自定义媒体源后，又调用内部采集相关的接口。
+
 ### startAudioCapture <span id="rtcengine-startaudiocapture"></span> 
 
-立即开启内部音频采集。默认为关闭状态。
+开启内部音频采集。默认为关闭状态。
 内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。
-发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
 
 - **类型**
 
@@ -572,12 +603,16 @@
   类型: <code>Promise<MediaTrackSettings\></code>
 
   实际生效的音频采集参数。参看 [MediaTrackSettings](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings)。
+  还可能返回如下错误码。
+
+  + `REPEAT_CAPTURE`: 重复采集。
+  + `GET_AUDIO_TRACK_FAILED`: 采集音频失败，请确认是否有可用的采集设备，或是否被其他 App 占用。
+  + `STREAM_TYPE_NOT_MATCH`: 流类型不匹配。调用 setAudioSourceType 设置了自定义媒体源后，又调用内部采集相关的接口。
 
 ### stopAudioCapture <span id="rtcengine-stopaudiocapture"></span> 
 
-立即关闭内部音频采集。默认为关闭状态。
-内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。
-调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。
+立即关闭内部音频采集。
+发布流后调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。
 
 - **类型**
 
@@ -593,6 +628,60 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  `STREAM_TYPE_NOT_MATCH`: 流类型不匹配。调用 setAudioSourceType 设置了自定义媒体源后，又调用内部采集相关的接口。
+
+### startAudioAndVideoCapture <span id="rtcengine-startaudioandvideocapture"></span> 
+
+使用内部采集模块同时开启音视频采集。调用该方法，浏览器会同时请求麦克风和摄像头授权，用户只需授权一次。
+可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 和 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。
+
+- **类型**
+
+  ```ts
+  (optionsOrAudioDeviceId?: { audioDeviceId?: string; videoDeviceId?: string;} | string, videoDeviceId?: string) => Promise<{ audioTrackSettings: MediaTrackSettings; videoTrackSettings: MediaTrackSettings;}>
+  ```
+
+- **注意**
+
+  + 采集的音视频可以通过 [publishStream](#publishstream) 发布/ [unPublishStream](#unpublishstream) 取消发布。
+  + 该方法和 [startVideoCapture](#startvideocapture) / [startAudioCapture](#startaudiocapture) 无法同时调用。
+  + 调用该方法时，摄像头和麦克风其中之一无法完成采集，则音视频采集失败。
+  + 若需停止音视频采集，调用 [stopVideoCapture](#stopvideocapture) / [stopAudioCapture](#stopaudiocapture)。
+
+- **参数**
+
+  - **optionsOrAudioDeviceId**
+
+    类型: <code>string | { audioDeviceId?: string | undefined; videoDeviceId?: string | undefined; } | undefined</code>
+
+    单参数使用时可以同时设置音视频设备 ID；双参数使用时为音频设备 ID。
+
+    - **成员**
+
+      | 名称 | 类型 | 描述 |
+      | :-- | :-- | :-- |
+      | audioDeviceId | `string | undefined` | 音频设备 ID。 |
+      | videoDeviceId | `string | undefined` | 视频设备 ID。 |
+
+
+  - **videoDeviceId**
+
+    类型: <code>string | undefined</code>
+
+    视频设备 ID。
+
+- **返回值**
+
+  类型: <code>Promise<{ audioTrackSettings: MediaTrackSettings; videoTrackSettings: MediaTrackSettings }\></code>
+
+  实际生效的音视频采集参数。参看 [MediaTrackSettings](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings)。请关注其中的 `deviceId`, `channelCount`, `sampleRate`, `frameRate`, `height`, `width` 等值。
+  还可能返回如下错误码。
+
+  + `REPEAT_CAPTURE`: 重复采集。
+  + `GET_AUDIO_TRACK_FAILED`: 采集音频失败，请确认是否有可用的采集设备，或是否被其他 App 占用。
+  + `GET_VIDEO_TRACK_FAILED`: 采集视频失败，请确认是否有可用的采集设备，或是否被其他 App 占用。
+  + `STREAM_TYPE_NOT_MATCH`: 流类型不匹配。调用 setAudioSourceType/setVideoSourceType 设置了自定义媒体源后，又调用内部采集相关的接口。
 
 ### startScreenCapture <span id="rtcengine-startscreencapture"></span> 
 
@@ -622,6 +711,8 @@
 
   类型: <code>Promise<void\></code>
 
+  `GET_SCREEN_TRACK_FAILED`: 采集屏幕共享失败。
+
 ### stopScreenCapture <span id="rtcengine-stopscreencapture"></span> 
 
 停止屏幕共享流内部采集。
@@ -645,7 +736,7 @@
 - **类型**
 
   ```ts
-  (streamIndex: StreamIndex, videoPlayerOption?: Partial<VideoPlayerOption>) => HTMLVideoElement | undefined
+  (streamIndex: StreamIndex, videoPlayerOption?: Partial<Omit<VideoPlayerOption, 'rotation'>>) => HTMLVideoElement | undefined
   ```
 
 - **注意**
@@ -662,7 +753,7 @@
 
   - **videoPlayerOption**
 
-    类型: <code>Partial<[VideoPlayerOption](Web-keytype.md#videoplayeroption)\> | undefined</code>
+    类型: <code>Partial<Omit<[VideoPlayerOption](Web-keytype.md#videoplayeroption), "rotation"\>\> | undefined</code>
 
     视图信息和渲染模式
 
@@ -692,13 +783,13 @@
 
     类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
-    视频流属性
+    视频流属性。
 
-  - **videoPlayer**
+  - **videoPlayerOption**
 
     类型: <code>[VideoPlayerOption](Web-keytype.md#videoplayeroption)</code>
 
-    视图信息和渲染模式
+    视图信息和渲染模式。4.56 版本起支持通过 `rotation` 参数设置远端视频渲染的旋转角度。
 
 - **返回值**
 
@@ -742,11 +833,14 @@
 
     类型: <code>string</code>
 
-    音频播放设备（扬声器或者耳机），你可以通过调用 [enumerateDevices](#enumeratedevices)
+    音频播放设备（扬声器或者耳机）ID，你可以通过调用 [enumerateDevices](#enumeratedevices) 获取。
 
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  + `INVALID_DEVICE_ID`: 输入的设备 ID 无效。
+  + `NOT_SUPPORTED`: 浏览器不支持设置音频播放设备或测试音频采集/播放设备。
 
 ### play <span id="rtcengine-play"></span> 
 
@@ -873,6 +967,12 @@
 
   类型: <code>Promise<unknown\> | undefined</code>
 
+  + `USER_MESSAGE_TIMEOUT`: 发送消息超时。
+  + `USER_MESSAGE_BROKEN`: 通道断开，发送失败。
+  + `USER_MESSAGE_NO_RECEIVER`: 找不到接收者，请检查传入的 userId 是否正确。
+  + `USER_MESSAGE_NOT_JOIN`: 消息发送方没有加入房间。
+  + `USER_MESSAGE_UNKNOWN`: 消息未知错误。
+
 ### sendUserBinaryMessage <span id="rtcengine-senduserbinarymessage"></span> 
 
 给房间内指定的用户发送点对点二进制消息。
@@ -905,6 +1005,12 @@
 - **返回值**
 
   类型: <code>Promise<unknown\></code>
+
+  + `USER_MESSAGE_TIMEOUT`: 发送消息超时。
+  + `USER_MESSAGE_BROKEN`: 通道断开，发送失败。
+  + `USER_MESSAGE_NO_RECEIVER`: 找不到接收者，请检查传入的 userId 是否正确。
+  + `USER_MESSAGE_NOT_JOIN`: 消息发送方没有加入房间。
+  + `USER_MESSAGE_UNKNOWN`: 消息未知错误。
 
 ### sendRoomMessage <span id="rtcengine-sendroommessage"></span> 
 
@@ -964,6 +1070,7 @@
 
 - **注意**
 
+  + 收发 SEI 消息依赖浏览器 Chrome 86 及以上版本、H.264 编解码。
   + 你可以通过此接口对 RTC SDK 内部采集的视频帧添加 SEI。
   + 如果调用此接口之后的 2s 内，没有可带 SEI 的视频帧（比如没有开启视频采集和传输），那么，SEI 数据不会被加进视频帧中。
   + 消息发送成功后，远端会收到 [onSEIMessageReceived](Web-event.md#onseimessagereceived) 事件。
@@ -974,7 +1081,7 @@
 
     类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
-    指定携带 SEI 信息的媒体流类型
+    指定携带 SEI 信息的媒体流类型。此处仅支持视频流，不支持纯音频流。
 
   - **message**
 
@@ -986,7 +1093,7 @@
 
     类型: <code>number</code>
 
-    消息发送重复次数。取值范围是 [0, max{29, %{视频帧率}-1}]。推荐范围 [2,4]。调用此接口后，SEI 数据会添加到当前视频帧开始的连续 `repeatCount` 个视频帧中。
+    消息发送重复次数，SEI 数据会添加到当前视频帧开始的连续 `repeatCount+1` 个视频帧中。取值范围 `[0, min{30, %{视频帧率}×2}]`，推荐范围 `[2,4]`。
 
 ### setVideoEncoderConfig <span id="rtcengine-setvideoencoderconfig"></span> 
 
@@ -1087,7 +1194,7 @@
 
 ### enableSimulcastMode <span id="rtcengine-enablesimulcastmode"></span> 
 
-在视频发布端设置摄像头视频流的大小流模式
+在视频发布端设置摄像头视频流的大小流模式。
 
 - **类型**
 
@@ -1099,6 +1206,7 @@
 
   + 仅可以在发布之前进行大小流模式的设置。
   + 开启大小流模式后，SDK 会自动设置各路视频的编码参数。如果你需要手动设置，可以调用 [setVideoEncoderConfig](#setvideoencoderconfig)。
+  + 由于浏览器限制，Firefox 80 版本开启大小流后，对端仅可以订阅到小流。
 
 - **参数**
 
@@ -1106,9 +1214,14 @@
 
     类型: <code>boolean</code>
 
+    是否开启大小流。
+
 - **返回值**
 
   类型: <code>boolean</code>
+
+  + `true`：设置成功。
+  + `false`：设置失败。
 
 ### enableAudioPropertiesReport <span id="rtcengine-enableaudiopropertiesreport"></span> 
 
@@ -1147,7 +1260,6 @@
 
 - **注意**
 
-  + 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
   + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamMixingEvent](Web-event.md#onstreammixingevent) 回调。
   + 如果你在[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=callback)配置了转推直播的服务端回调，调用本接口会收到 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted)。重复调用该接口时，第二次调用会同时触发 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 和 [TranscodeUpdated](https://www.volcengine.com/docs/6348/75125#transcodeupdated)。
   + 调用 [stopLiveTranscoding](#stoplivetranscoding) 停止转推直播。
@@ -1229,9 +1341,13 @@
 
   类型: <code>boolean</code>
 
+  + `true`：设置成功。
+  + `false`：设置失败。
+
 ### setUserVisibility <span id="rtcengine-setuservisibility"></span> 
 
 设置用户可见性。未调用该接口前，本地用户默认对他人可见。
+默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
 
 - **类型**
 
@@ -1252,10 +1368,10 @@
 
     类型: <code>boolean</code>
 
-    用户是否对房间内其他用户可见：
+    用户是否对房间内其他用户可见。
 
-+ `true`: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
-+ `false`: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+     + `true`: 可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
+     + `false`: 不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
 
 - **返回值**
 
@@ -1428,7 +1544,7 @@
 ### login <span id="rtcengine-login"></span> 
 
 登录即时消息服务器。
-调用此方法登录后，可以向同 `appID` 下其他已登陆用户发送文本或二进制消息。
+调用此方法登录后，可以向同 `appID` 下其他已登录用户发送文本或二进制消息。
 
 - **类型**
 
@@ -1460,6 +1576,9 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  + `ALREADY_LOGIN`: 已有相同 userId 的用户登录了实时信令服务器，请勿重复登录或使用不同的 userId 登录。
+  + `LOGIN_FAILED`: 登录实时信令服务器失败，具体原因查看 message。
 
 ### logout <span id="rtcengine-logout"></span> 
 
@@ -1561,6 +1680,12 @@
 
   类型: <code>Promise<any\></code>
 
+  + `USER_MESSAGE_TIMEOUT`: 发送消息超时。
+  + `USER_MESSAGE_BROKEN`: 通道断开，发送失败。
+  + `USER_MESSAGE_NO_RECEIVER`: 找不到接收者，请检查传入的 userId 是否正确。
+  + `NOT_LOGIN`: 消息发送方没有登录。
+  + `USER_MESSAGE_UNKNOWN`: 消息未知错误。
+
 ### sendUserBinaryMessageOutsideRoom <span id="rtcengine-senduserbinarymessageoutsideroom"></span> 
 
 给房间外指定的用户发送二进制消息（P2P）
@@ -1594,6 +1719,12 @@
 
   类型: <code>Promise<any\></code>
 
+  + `USER_MESSAGE_TIMEOUT`: 发送消息超时。
+  + `USER_MESSAGE_BROKEN`: 通道断开，发送失败。
+  + `USER_MESSAGE_NO_RECEIVER`: 找不到接收者，请检查传入的 userId 是否正确。
+  + `NOT_LOGIN`: 消息发送方没有登录。
+  + `USER_MESSAGE_UNKNOWN`: 消息未知错误。
+
 ### setServerParams <span id="rtcengine-setserverparams"></span> 
 
 设置业务服务器参数。调用 [sendServerMessage](Web-api.md#sendservermessage) 或 [sendServerBinaryMessage](Web-api.md#sendserverbinarymessage) 发送消息给业务服务器之前，必须需要设置有效签名和业务服务器地址。
@@ -1615,7 +1746,9 @@
 
     类型: <code>string</code>
 
-    动态签名。业务服务器会使用该签名对请求进行鉴权验证。
+    动态签名，应用服务器可使用该签名对消息来源进行验证。
+签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。
+设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。
 
   - **url**
 
@@ -1653,6 +1786,15 @@
 
   类型: <code>Promise<any\></code>
 
+  + `USER_MESSAGE_TIMEOUT`: 发送消息超时。
+  + `USER_MESSAGE_BROKEN`: 通道断开，发送失败。
+  + `USER_MESSAGE_NO_RECEIVER`: 找不到接收者，请检查传入的 userId 是否正确。
+  + `USER_MESSAGE_SEND_TO_SERVER_ERROR`: 服务器无应答。
+  + `USER_MESSAGE_SERVER_RESPONSE_ERROR`: 业务服务器 Http 响应状态码不是 200。
+  + `NOT_LOGIN`: 消息发送方没有登录。
+  + `USER_MESSAGE_SERVER_PARAMS_NOTSET`: 尚未设置业务服务器参数。
+  + `USER_MESSAGE_UNKNOWN`: 消息未知错误。
+
 ### sendServerBinaryMessage <span id="rtcengine-sendserverbinarymessage"></span> 
 
 客户端给业务服务器发送二进制消息（P2Server）
@@ -1678,6 +1820,15 @@
 - **返回值**
 
   类型: <code>Promise<any\></code>
+
+  + `USER_MESSAGE_TIMEOUT`: 发送消息超时。
+  + `USER_MESSAGE_BROKEN`: 通道断开，发送失败。
+  + `USER_MESSAGE_NO_RECEIVER`: 找不到接收者，请检查传入的 userId 是否正确。
+  + `USER_MESSAGE_SEND_TO_SERVER_ERROR`: 服务器无应答。
+  + `USER_MESSAGE_SERVER_RESPONSE_ERROR`: 业务服务器 Http 响应状态码不是 200。
+  + `NOT_LOGIN`: 消息发送方没有登录。
+  + `USER_MESSAGE_SERVER_PARAMS_NOTSET`: 尚未设置业务服务器参数。
+  + `USER_MESSAGE_UNKNOWN`: 消息未知错误。
 
 ### startCloudProxy <span id="rtcengine-startcloudproxy"></span> 
 
@@ -1756,6 +1907,8 @@
 
   类型: <code>Promise<void\></code>
 
+  `REPEAT_PUSH`: 重复发布公共流。
+
 ### updatePublicStreamParam <span id="rtcengine-updatepublicstreamparam"></span> 
 
 更新公共流参数。
@@ -1785,6 +1938,8 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  `REPEAT_PLAY`: 重复订阅公共流。
 
 ### stopPushPublicStream <span id="rtcengine-stoppushpublicstream"></span> 
 
@@ -1941,7 +2096,7 @@
 ### setSubscribeFallbackOption <span id="rtcengine-setsubscribefallbackoption"></span> 
 
 设置订阅的音视频流的回退选项。
-回退指：设置网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。
+回退指在网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。
 
 - **类型**
 
@@ -2036,7 +2191,8 @@
 
   类型: <code>Promise<void\></code>
 
-  当测试流程结束时 Resolve
+  当测试流程结束时 Resolve。
+  `REPEAT_DEVICE_TEST`: 重复开启检测。
 
 ### stopAudioPlaybackDeviceTest <span id="rtcengine-stopaudioplaybackdevicetest"></span> 
 
@@ -2089,7 +2245,12 @@
 
   类型: <code>Promise<void\></code>
 
-  当测试流程结束时 Resolve
+  当测试流程结束时 Resolve。
+  还可能返回如下错误码。
+
+  + `NOT_SUPPORTED`: 浏览器不支持设置音频播放设备或测试音频采集/播放设备。
+  + `REPEAT_DEVICE_TEST`: 重复开启检测。
+  + `AUDIO_DEVICE_RECORD_FAILED`: 开启音频设备测试失败，请重试。
 
 ### stopAudioDeviceRecordAndPlayTest <span id="rtcengine-stopaudiodevicerecordandplaytest"></span> 
 
@@ -2294,6 +2455,8 @@
 
   类型: <code>Promise<ImageData\></code>
 
+  `INVOKED_BEFORE_CAPTURE`: 指定的视频流不存在，请确保指定的流已发布。
+
 ### takeRemoteSnapshot <span id="rtcengine-takeremotesnapshot"></span> 
 
 截取远端视频画面
@@ -2321,6 +2484,8 @@
 - **返回值**
 
   类型: <code>Promise<ImageData\></code>
+
+  `STREAM_NOT_EXIST`: 目标流不存在。请输入正确的 ID，或确认目标流在房间内。
 
 ### registerExtension <span id="rtcengine-registerextension"></span> 
 
@@ -2358,10 +2523,13 @@
 
 - **注意**
 
-  + 使用字幕功能前，你需要[开通机器翻译服务](https://www.volcengine.com/docs/4640/130262)，并前往 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)，在功能配置页面开启字幕功能。
+  + 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。
+     + 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
+     + 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
   + 此方法需要在进房后调用。
-  + 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 `extraInfo` 参数传入 JSON 字符串，将源语言设置为中文、英文、日文，对应的字符串分别为 `"source_language": "zh"`, `"source_language": "en"`, `"source_language": "ja"`。
-  + 如未指定源语言，SDK 会将浏览器的语种设定为源语言。如浏览器语种不是中文、英文、日文，此时 SDK 会自动将中文设为源语言。
+  + 如需指定源语言，你需要在调用 [joinRoom](#joinroom) 接口进房时，通过 `extraInfo` 参数传入格式为 `"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将浏览器语种设定为源语言。如果你的浏览器语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
+    + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E5%9C%BA%E6%99%AF-%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
+    + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
 
 - **参数**
 
@@ -2374,6 +2542,8 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  `SUBTITLE_ALREADY_ON`: 重复调用，字幕已开启。
 
 ### stopSubtitle <span id="rtcengine-stopsubtitle"></span> 
 
@@ -3004,6 +3174,8 @@
 
   类型: <code>Promise<void\></code>
 
+  `LOAD_RESOURCES_FAILED`: 资源加载失败。请传入正确的资源路径。
+
 ### stopAudioMixing <span id="audiomixingmanager-stopaudiomixing"></span> 
 
 停止播放音频文件
@@ -3108,6 +3280,8 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  `LOAD_RESOURCES_FAILED`: 资源加载失败。请传入正确的资源路径。
 
 ### unloadAudioMixing <span id="audiomixingmanager-unloadaudiomixing"></span> 
 
