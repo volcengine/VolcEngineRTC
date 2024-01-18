@@ -76,7 +76,6 @@ dependencies {
     implementation "com.volcengine:VolcEngineRTC:$VOLCENGINE"
 
     implementation files('libs/ByteEffect.aar')
-    implementation files('libs/audiosdk-tob-6.1.1-tobrtc.aar')
     implementation'com.faceunity:core:8.7.0'
     implementation'com.faceunity:model:8.7.0'
     implementation "com.bytedanceapi:ttsdk-player_premium:1.39.2.8"

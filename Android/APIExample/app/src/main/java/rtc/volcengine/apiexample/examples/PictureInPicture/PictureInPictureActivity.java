@@ -33,7 +33,7 @@ import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
-import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
+
 
 /**
  * 功能名称： VolcEngineRTC 画中画

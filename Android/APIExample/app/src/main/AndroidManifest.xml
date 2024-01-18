@@ -32,9 +32,6 @@
             android:name=".examples.ThirdBeauty.ThirdBeautyActivity"
             android:exported="false" />
         <activity
-            android:name=".examples.mediaplayer.MediaPlayerActivity"
-            android:exported="false" />
-        <activity
             android:name=".examples.CDNStreamActivity"
             android:exported="false" />
         <activity

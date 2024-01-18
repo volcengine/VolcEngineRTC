@@ -40,7 +40,7 @@ import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.examples.CrossRoomPKActivity;
 import rtc.volcengine.apiexample.examples.MultiRoomActivity;
-import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
+
 
 /**
  * 功能名称： VolcEngineRTC 音效混音
