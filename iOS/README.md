@@ -99,9 +99,11 @@ iOS 示例项目的目录结构如下：
 
 ## 常见问题
 
-- 使用模拟器编译报错 `No such module 'VolcEngineRTC'`？ 
+- 使用模拟器编译报错 `No such module 'VolcEngineRTC'`？
+
 	**解决方案**：如果你使用的是搭载 Apple 芯片的 Mac 电脑，该问题可能是编译的架构（ARM64）和模拟器的架构（x86_64）不匹配导致的，请使用真机编译。
-- Xcode 15 编译报错 `Sandbox: rsync.samba(xxxxx) deny(1)`？ 
+- Xcode 15 编译报错 `Sandbox: rsync.samba(xxxxx) deny(1)`？
+
   **解决方案**：选中项目，进入 **TARGETS** > **项目名称** > **Build Settings**，在 **Build Options** 中将 **User Script Sandboxing** 修改为 **No**。
 	![](https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_0a34216d68b3a916cb081ed62acdf2ea.png)
 
