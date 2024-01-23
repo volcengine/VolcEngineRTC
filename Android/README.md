@@ -7,7 +7,7 @@
 - Android Studio Arctic Fox | 2020.3.1 或以上版本（本文使用 Android Studio Giraffe | 2022.3.1 版本）
 - Android 4.4 或以上版本的 Android 真机或模拟器
 
-> **Note**
+> [!NOTE]
 > 推荐使用真机进行调试，连接指南参看[在硬件设备上运行应用](https://developer.android.com/studio/run/device?hl=zh-cn)。
 
 - Android 设备和开发电脑可以正常访问互联网
