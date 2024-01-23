@@ -81,7 +81,6 @@ cd Windows
 ## 常见问题
 
 - [如何在 macOS 上安装 Qt？](https://www.volcengine.com/docs/6348/1152682#%E5%A6%82%E4%BD%95%E5%9C%A8-macos-%E4%B8%8A%E5%AE%89%E8%A3%85-qt%EF%BC%9F)
-	
 - [如何设置日志文件？](https://www.volcengine.com/docs/6348/114721)
 
 ## 相关文档
