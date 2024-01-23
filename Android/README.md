@@ -33,8 +33,8 @@ git checkout ApiExample_Demo
 └── examples
     ├── QuickStartActivity.java              // 快速开始 https://www.volcengine.com/docs/6348/70134
     ├── AudioMixing
-    │   ├── AudioEffectMixingActivity.java  // 播放音效 https://www.volcengine.com/docs/6348/1178326
-    │   ├── AudioMediaMixingActivity.java   // 播放音乐文件 https://www.volcengine.com/docs/6348/70141
+    │   ├── AudioEffectMixingActivity.java   // 播放音效 https://www.volcengine.com/docs/6348/1178326
+    │   ├── AudioMediaMixingActivity.java    // 播放音乐文件 https://www.volcengine.com/docs/6348/70141
     │   └── AudioMixingActivity.java
     ├── CDNStreamActivity.java               // 推流到 CDN https://www.volcengine.com/docs/6348/69817
     ├── CrossRoomPKActivity.java             // 跨房 PK https://www.volcengine.com/docs/6348/104398
@@ -42,9 +42,9 @@ git checkout ApiExample_Demo
     ├── PictureInPicture                     // 画中画 https://www.volcengine.com/docs/6348/1178325
     ├── RawAudioDataActivity.java            // 原始音频数据 https://www.volcengine.com/docs/6348/1178324
     ├── ThirdBeauty
-    │   ├── Fubeauty                        // 自定义视频处理（相芯美颜） https://www.volcengine.com/docs/6348/79888
+    │   ├── Fubeauty                         // 自定义视频处理（相芯美颜） https://www.volcengine.com/docs/6348/79888
     │   ├── ThirdBeautyActivity.java
-    │   └── byteBeauty                      // 智能美化特效（付费版） https://www.volcengine.com/docs/6348/114717
+    │   └── byteBeauty                       // 智能美化特效（付费版） https://www.volcengine.com/docs/6348/114717
     ├── VideoConfigActivity.java             // 视频参数配置 https://www.volcengine.com/docs/6348/70122
     └── VoiceEffectActivity.java             // 变声、混响、降噪 https://www.volcengine.com/docs/6348/1178327
 ```
@@ -75,3 +75,11 @@ git checkout ApiExample_Demo
 - [如何在华为手机使用硬件耳返功能？](https://www.volcengine.com/docs/6348/1155036#如何在华为手机使用硬件耳返功能？)
 - [使用模拟器调试时出现花屏？](https://www.volcengine.com/docs/6348/1155036#使用模拟器调试时出现花屏)
 - [OpenCL 库 Android 12 适配说明](1155036#opencl-%E5%BA%93-android-12-%E9%80%82%E9%85%8D%E8%AF%B4%E6%98%8E)
+
+## 相关文档
+
+- [API 文档](https://www.volcengine.com/docs/6348/70079)
+- [发版说明](https://www.volcengine.com/docs/6348/110078)
+- [高级功能](https://www.volcengine.com/docs/6348/69814)
+- [最佳实践](https://www.volcengine.com/docs/6348/130768)
+- [场景方案](https://www.volcengine.com/docs/6348/70008)
