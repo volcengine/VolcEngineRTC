@@ -2,12 +2,13 @@
 
 ## 前提条件
 
+> [!NOTE]
+> 推荐使用真机进行调试，模拟机可能无法体验部分功能。真机连接指南参看[在硬件设备上运行应用](https://developer.android.com/studio/run/device?hl=zh-cn)。
+
 在开始集成 RTC SDK 前，请确保满足以下要求：
 
 - Android Studio Arctic Fox | 2020.3.1 或以上版本（本文使用 Android Studio Giraffe | 2022.3.1 版本）
 - Android 4.4 或以上版本的 Android 真机或模拟器
-> [!NOTE]
-> 推荐使用真机进行调试，连接指南参看[在硬件设备上运行应用](https://developer.android.com/studio/run/device?hl=zh-cn)。
 - Android 设备和开发电脑可以正常访问互联网
 - 在[火山引擎控制台](https://console.volcengine.com/auth/login/)上[开通实时音视频服务](https://www.volcengine.com/docs/6348/69865)，你需要从控制台获取 AppID 和 AppKey 用于项目跑通
 
@@ -65,7 +66,7 @@ git checkout ApiExample_Demo
 2. 单击 Android Studio 窗口右上角的 **Sync Project with** **Gradle** **Files**（或使用 **Shift ⇧** + **Command ⌘** + **O** 快捷键）同步项目，拉取项目依赖。
 3. 单击 Android Studio 窗口右上角的 **Run 'app'** （或使用 **Control ⌃** + **R** 快捷键）开始编译。
 4. 编译成功后，你的 Android 设备上会出现 API Example 应用，在弹窗中选择开启摄像头和麦克风权限。应用界面如下：
-	![](https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_7d56419c1081d47306335366aa34b978.png)
+    ![](https://portal.volccdn.com/obj/volcfe/cloud-universal-doc/upload_2ed0da872b31a35b08f7c73bf4eadb17.png)
 
 ## 常见问题
 
