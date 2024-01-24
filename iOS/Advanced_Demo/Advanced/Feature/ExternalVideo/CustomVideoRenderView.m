@@ -28,17 +28,10 @@
 }
 
 #pragma mark - ByteRTCVideoSinkDelegate
-
-- (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
-                 rotation:(ByteRTCVideoRotation)rotation
-              contentType:(ByteRTCVideoContentType)contentType
-             extendedData:(NSData * _Nullable)extendedData {
-    
-    NSLog(@"rotation = %ld",(long)rotation);
-    
-    [CustomFrameRender renderImageBuffer:pixelBuffer
+- (void)onFrame:(ByteRTCVideoFrame *)videoFrame {
+    [CustomFrameRender renderImageBuffer:videoFrame.textureBuf
                                  forView:self.renderImageView
-                                rotation:[self deviceOrientationRotation:rotation]];
+                                rotation:[self deviceOrientationRotation:videoFrame.rotation]];
 }
 
 - (VideoRotation)deviceOrientationRotation:(ByteRTCVideoRotation)rotation {

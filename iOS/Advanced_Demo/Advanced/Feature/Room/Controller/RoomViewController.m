@@ -184,7 +184,12 @@
 - (void)setLocalRenderView{
     if (self.preJoinSetting.useCustomRender) {
         /// 外部渲染
-        [self.rtcVideo setLocalVideoSink:ByteRTCStreamIndexMain withSink:self.localView.customRenderView withPixelFormat:ByteRTCVideoSinkPixelFormatNV12];
+        ByteRTCLocalVideoSinkConfig *config = [[ByteRTCLocalVideoSinkConfig alloc] init];
+        config.requiredPixelFormat = ByteRTCVideoSinkPixelFormatNV12;
+        config.position = ByteRTCLocalVideoRenderPositionAfterPreprocess;
+        
+        [self.rtcVideo setLocalVideoRender:ByteRTCStreamIndexMain withSink:self.localView.customRenderView withLocalRenderConfig:config];
+        
         self.localView.uid = self.userID;
     } else {
         /// RTC SDK 内部渲染
@@ -268,7 +273,14 @@
     
     if (self.preJoinSetting.useCustomRender) {
         /// 设置远端用户视频渲染视图(外部渲染)
-        [self.rtcVideo setRemoteVideoSink:streamKey withSink:userLiveView.customRenderView withPixelFormat:ByteRTCVideoSinkPixelFormatNV12];
+        ByteRTCRemoteVideoSinkConfig *config = [[ByteRTCRemoteVideoSinkConfig alloc] init];
+        config.position = ByteRTCRemoteVideoRenderPositionAfterDecoder;
+        config.requiredPixelFormat = ByteRTCVideoSinkPixelFormatNV12;
+        config.applyRotation = NO;
+        config.mirrorType = ByteRTCVideoRenderMirrorTypeOff;
+        
+        [self.rtcVideo setRemoteVideoRender:streamKey withSink:userLiveView.customRenderView withRemoteRenderConfig:config];
+        
         NSString *uid = streamKey.userId;
         userLiveView.uid = uid;
         
