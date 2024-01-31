@@ -65,9 +65,9 @@ cd Windows
 
 1. 在[控制台](https://console.volcengine.com/rtc/listRTC)上获取 AppID 和 AppKey，并将其分别填入 `src/Public/Config.h` 中的 `g_appid` 和 `g_appkey`。请正确填写信息，否则编译无法成功。
 2. （可选）示例项目中智能美化特效、相芯美颜、美声与特效功能需要单独填写鉴权信息。不填写鉴权信息不会影响 Demo 的编译运行，但你将无法体验相关功能。
-  - [智能美化特效](https://www.volcengine.com/docs/6705/1160378)：在 `src/Public/Config.h` 填写 `g_byte_beauty_key` 和 `g_byte_secret`，请联系[智能美化特效商务团队](https://www.volcengine.com/docs/6705/101956)获取相关信息。
-  - [相芯美颜](https://www.faceunity.com/developer/)：在 `src/Advanced/FuBeauty/authpack.h` 填写 `g_auth_package`，请发送邮件至 marketing@faceunity.com 进行咨询。
-  - [美声与特效](https://www.volcengine.com/docs/6489/171423)：在 `src/Public/Config.h` 填写 `g_sami_key` 和 `g_sami_token`，请参考 [SDK 快速入门](https://www.volcengine.com/docs/6489/171423)文档**获取授权信息**章节。
+   - [智能美化特效](https://www.volcengine.com/docs/6705/1160378)：在 `src/Public/Config.h` 填写 `g_byte_beauty_key` 和 `g_byte_secret`，请联系[智能美化特效商务团队](https://www.volcengine.com/docs/6705/101956)获取相关信息。
+   - [相芯美颜](https://www.faceunity.com/developer/)：在 `src/Advanced/FuBeauty/authpack.h` 填写 `g_auth_package`，请发送邮件至 marketing@faceunity.com 进行咨询。
+   - [美声与特效](https://www.volcengine.com/docs/6489/171423)：在 `src/Public/Config.h` 填写 `g_sami_key` 和 `g_sami_token`，请参考 [SDK 快速入门](https://www.volcengine.com/docs/6489/171423)文档**获取授权信息**章节。
 
 ## 编译并运行示例项目
 
