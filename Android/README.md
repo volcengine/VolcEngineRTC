@@ -76,7 +76,7 @@ git checkout ApiExample_Demo
 - [应用的 `targetSDKVersion` >= 31 时如何配置蓝牙权限？](https://www.volcengine.com/docs/6348/1155036#%E5%BA%94%E7%94%A8%E7%9A%84-targetsdkversion-31-%E6%97%B6%E5%A6%82%E4%BD%95%E9%85%8D%E7%BD%AE%E8%93%9D%E7%89%99%E6%9D%83%E9%99%90%EF%BC%9F)
 - [如何在华为手机使用硬件耳返功能？](https://www.volcengine.com/docs/6348/1155036#如何在华为手机使用硬件耳返功能？)
 - [使用模拟器调试时出现花屏？](https://www.volcengine.com/docs/6348/1155036#使用模拟器调试时出现花屏)
-- [OpenCL 库 Android 12 适配说明](1155036#opencl-%E5%BA%93-android-12-%E9%80%82%E9%85%8D%E8%AF%B4%E6%98%8E)
+- [OpenCL 库 Android 12 适配说明](https://www.volcengine.com/docs/6348/1155036#opencl-%E5%BA%93-android-12-%E9%80%82%E9%85%8D%E8%AF%B4%E6%98%8E)
 
 ## 相关文档
 
