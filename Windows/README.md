@@ -101,7 +101,7 @@ cd Windows
 
 ## 相关文档
 
-- [API 文档](https://www.volcengine.com/docs/6348/70079)
+- [API 文档](https://www.volcengine.com/docs/6348/70094)
 - [发版说明](https://www.volcengine.com/docs/6348/110078)
 - [高级功能](https://www.volcengine.com/docs/6348/69814)
 - [最佳实践](https://www.volcengine.com/docs/6348/130768)
