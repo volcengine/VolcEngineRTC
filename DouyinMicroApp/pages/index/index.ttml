@@ -1,0 +1,22 @@
+<view class="page">
+  <image class="banner" src="../../image/banner.png"></image>
+
+  <view class="header">
+    <text>{{title}}</text>
+  </view>
+
+  <view class="explorer">
+    <view tt:for="{{exampleGroups}}" class="example-group" tt:key="{{item.title}}">
+      <text class="group-title">{{item.title}}</text>
+
+      <view class="examples">
+        <view tt:for="{{item.examples}}" tt:for-item="example" tt:key="{{example.path}}" class="example"
+          data-path="{{example.path}}" bindtap="handleViewExample">
+          <text class="example-title">{{example.title}}</text>
+
+          <image class="icon-right" src="../../image/icon_right.png"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

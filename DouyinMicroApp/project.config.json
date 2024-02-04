@@ -1,0 +1,18 @@
+{
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "autoCompile": true,
+    "compileHotReLoad": true,
+    "nativeCompile": true,
+    "useCompilerPlugins": [
+      "typescript"
+    ]
+  },
+  "appid": "",
+  "projectname": "抖开RTC快速开始Demo",
+  "douyinProjectType": "native"
+}

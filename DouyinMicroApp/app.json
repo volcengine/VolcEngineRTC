@@ -1,0 +1,12 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/basic/quickstart/index"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#1D2129",
+    "navigationBarTitleText": "火山引擎实时音视频",
+    "navigationBarTextStyle":"white"
+  }
+}
