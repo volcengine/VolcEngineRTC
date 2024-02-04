@@ -1,0 +1,74 @@
+.page {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f4f5f7;
+}
+
+.banner {
+  position: absolute;
+  width: 100vw;
+  z-index: -1;
+}
+
+.header {
+  height: 200rpx;
+  box-sizing: border-box;
+  padding-top: 56rpx;
+  padding-left: 32rpx;
+  /* z-index: 1; */
+}
+
+.header text {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #111214;
+}
+
+.explorer {
+  box-sizing: border-box;
+  width: 100vw;
+  padding: 0 32rpx; 
+}
+
+.explorer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 32rpx;
+}
+
+.group-title {
+  height: 44rpx;
+  font-size: 26rpx;
+  padding-left: 32rpx;
+  margin-bottom: 8rpx;
+  color: #737A87;
+}
+
+.examples {
+  background-color: #fff;
+  border-radius: 16rpx;
+}
+
+.example {
+  padding: 30rpx 32rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.example-title {
+  font-size: 3prpx;
+  font-weight: 400;
+  color: #161823;
+}
+
+/* .examples .example:not(:last-child) {
+  border-bottom: 1rpx solid #737A87;
+} */
+
+.example .icon-right {
+  width: 24rpx;
+  height: 24rpx;
+}
