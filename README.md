@@ -1,4 +1,4 @@
-# 火山引擎实时音视频 veRTC SDK
+# 火山引擎实时音视频 veRTC SDK 示例项目
 
 ## 产品介绍
 
@@ -21,11 +21,15 @@ veRTC SDK 支持 Android、iOS、macOS、Windows、Linux、Web、小程序、Ele
 │   ├── ApiExample      // Swift 示例项目
 │   └── README.md       // 跑通 iOS 示例项目
 ├── Windows
-│   ├── ...
 │   ├── API_Example.pro // C++ 示例项目，可在 macOS 和 Windows 下编译运行
-│   └── README.md       // 跑通 Windows 示例项目
+│   ├── README.md       // 跑通 Windows 示例项目
+│   └── ...
 ├── mac
 │   └── README.md       // 跑通 macOS 示例项目
+├── DouyinMicroApp
+    ├── pages           // 抖音小程序示例项目
+    ├── README.md       // 跑通抖音小程序示例项目
+    └── ...
 └── README.md
 ```
 
