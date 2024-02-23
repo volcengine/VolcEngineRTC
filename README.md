@@ -27,9 +27,9 @@ veRTC SDK 支持 Android、iOS、macOS、Windows、Linux、Web、小程序、Ele
 ├── mac
 │   └── README.md       // 跑通 macOS 示例项目
 ├── DouyinMicroApp
-    ├── pages           // 抖音小程序示例项目
-    ├── README.md       // 跑通抖音小程序示例项目
-    └── ...
+│   ├── pages           // 抖音小程序示例项目
+│   ├── README.md       // 跑通抖音小程序示例项目
+│   └── ...
 └── README.md
 ```
 
