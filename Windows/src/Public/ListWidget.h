@@ -11,7 +11,8 @@ public:
     void autoAdjustHeight();
 
 private:
-    int m_itemHeight = 34;
+    int m_itemHeight = 30;
+    QWidget *m_parent = nullptr;
 };
 
 #endif // LISTWIDGET_H

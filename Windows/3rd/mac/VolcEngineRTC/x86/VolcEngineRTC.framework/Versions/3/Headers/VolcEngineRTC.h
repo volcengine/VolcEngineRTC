@@ -13,6 +13,7 @@
 #import <VolcEngineRTC/objc/rtc/ByteRTCKTVPlayer.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCMediaDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCMediaPlayer.h>
+#import <VolcEngineRTC/objc/rtc/ByteRTCP2PInternal.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRangeAudio.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCRtsDefines.h>
 #import <VolcEngineRTC/objc/rtc/ByteRTCScreenCapturerExt.h>

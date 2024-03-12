@@ -6,6 +6,7 @@
 
 #include <QDebug>
 #include <vector>
+#include <QScrollBar>
 
 #include "MultiRoom.h"
 #include "FaceUnityWidget.h"
@@ -19,6 +20,8 @@
 #include "RawAudioData.h"
 #include "QuickStartWidget.h"
 #include "Resources.h"
+#include "SEIMessage.h"
+#include "AudioMessage.h"
 
 
 enum FunctionTyp{
@@ -33,7 +36,9 @@ enum FunctionTyp{
     TYPE_VIDEO_CONFIG,
     TYPE_PUSHCDN_BYSERVER,
     TYPE_BYTE_BEAUTY,    
-    TYPE_FU_BEAUTY , 
+    TYPE_FU_BEAUTY ,
+    TYPE_SEI,
+    TYPE_AUDIO_MESSAGE,
     TYPE_END
 };
 
@@ -114,6 +119,13 @@ QString getStringByType(int type) {
     case TYPE_FU_BEAUTY:
         result = QStringLiteral("相芯美颜");
         break;
+
+    case TYPE_SEI:
+        result = QStringLiteral("发送SEI");
+        break;
+    case TYPE_AUDIO_MESSAGE:
+        result = QStringLiteral("音频随帧");
+        break;
     default:
         break;
     }
@@ -159,6 +171,14 @@ BaseWidget* MainWindow::createFunctionWidget(int type, QWidget* parent) {
     case TYPE_FU_BEAUTY:
         item = new FaceUnityWidget(parent);
         break;
+
+    case TYPE_SEI:
+        item = new SEIMessage(parent);
+        break;
+
+    case TYPE_AUDIO_MESSAGE:
+        item = new AudioMessage(parent);
+        break;
     default:
         break;
     }
@@ -196,11 +216,15 @@ QListWidgetItem *MainWindow::createListItem(int type, QListWidget *&widget){
     case TYPE_FU_BEAUTY:
         widget = ui->listWidget_plugin;
         break;
+    case TYPE_SEI:
+    case TYPE_AUDIO_MESSAGE:
+        widget = ui->listWidget_message;
+        break;
     default:
         break;
     }
     item = new QListWidgetItem(getStringByType(type), widget, type);
-    item->setSizeHint(QSize(200, 34));
+    item->setSizeHint(QSize(200, 26));
     if (widget) {
         widget->addItem(item);
         widget->setStyleSheet("QListWidget{font-family: PingFang SC;font-size: 13px;font-style: normal;font-weight: 400;}"
@@ -247,7 +271,6 @@ void MainWindow::initListViews()
     ui->listWidget_plugin->autoAdjustHeight();
     ui->listWidget_video->autoAdjustHeight();
     ui->listWidget_stream->autoAdjustHeight();
-
-
+    ui->listWidget_message->autoAdjustHeight();
 }
 

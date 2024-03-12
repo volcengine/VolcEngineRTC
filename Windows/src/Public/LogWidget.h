@@ -18,6 +18,9 @@ public:
     void appendAPI(const QString &str);
     void appendAPI(const QStringList list);
 
+private slots:
+    void onBtnClearClicked();
+
 private:
     Ui::LogWidget *ui;
 };

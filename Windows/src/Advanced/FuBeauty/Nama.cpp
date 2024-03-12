@@ -361,7 +361,7 @@ void NamaNameSpace::Nama::makeCurrent()
 {
 #ifdef _WIN32
     
-    BOOL r = wglMakeCurrent(hgldc, hglrc);
+    wglMakeCurrent(hgldc, hglrc);
 #else
     CGLSetCurrentContext(cglContext);
 #endif
@@ -568,6 +568,7 @@ int Nama::RenderItems(uchar* frame, int width, int height, int inframeType)
             int handle[] = { mBeautyHandles, Nama::m_curRenderItem };
             int handleSize = sizeof(handle) / sizeof(handle[0]);
             try {
+               
                 ret = fuRenderItemsEx2(FU_FORMAT_I420_BUFFER, reinterpret_cast<int*>(frame), FU_FORMAT_I420_BUFFER, reinterpret_cast<int*>(frame),
                     width, height, mFrameID, handle, handleSize, NAMA_RENDER_FEATURE_FULL, NULL);
             }
@@ -579,6 +580,7 @@ int Nama::RenderItems(uchar* frame, int width, int height, int inframeType)
         if (fuGetSystemError())
         {
             std::string str_error = fuGetSystemErrorString(fuGetSystemError());
+            qDebug() << Q_FUNC_INFO << "error:" << QString::fromStdString(str_error);
         }
         ++mFrameID;
     }

@@ -7,36 +7,36 @@ class IRTCRoom;
 class IRTCVideo;
 class IAmazingEffect;
 
-/** 
+/** {zh}
  * @type keytype
  * @brief 5.18版本后，飞书会议弱网提示专用，设置订阅视频基线数据用于计算网络等级
  */
 struct SubscribeVideoBaseline {
-    /** 
+    /** {zh}
      * @brief 网络等级判定为优秀的视频宽/高中小值的基线，-1表示业务不设置计算时忽略此参数
      */
     int32_t acceptable_good_video_pixel_baseline = -1;
-    /** 
+    /** {zh}
      * @brief 网络等级判定为优秀的视频帧率基线，-1表示业务不设置计算时忽略此参数
      */
     int32_t acceptable_good_video_fps_baseline = -1;
-    /** 
+    /** {zh}
      * @brief 网络等级判定为差视频宽/高中小值的基线，-1表示业务不设置计算时忽略此参数
      */
     int32_t acceptable_bad_video_pixel_baseline = -1;
-    /** 
+    /** {zh}
      * @brief 网络等级判定为差的视频帧率基线，-1表示业务不设置计算时忽略此参数
      */
     int32_t acceptable_bad_video_fps_baseline = -1;
-    /** 
+    /** {zh}
      * @brief 业务可以接受的最小分辨率宽度，-1表示业务忽略此参数
      */
     int32_t acceptable_min_video_resolution_width = -1;
-    /** 
+    /** {zh}
      * @brief 业务可以接受的最小分辨率高度，-1表示业务忽略此参数
      */
     int32_t acceptable_min_video_resolution_height = -1;
-    /** 
+    /** {zh}
      * @brief 流的优先级，-1表示业务忽略此参数
      */
     int32_t stream_priority = -1;

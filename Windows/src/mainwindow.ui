@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>720</height>
+    <width>1409</width>
+    <height>1025</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1280</width>
-    <height>720</height>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>2000</width>
-    <height>977</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -157,48 +157,84 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QFrame" name="frame">
+       <widget class="QScrollArea" name="scrollArea">
         <property name="minimumSize">
          <size>
-          <width>220</width>
+          <width>200</width>
           <height>0</height>
          </size>
         </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(246, 248, 250);</string>
+        <property name="focusPolicy">
+         <enum>Qt::WheelFocus</enum>
         </property>
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOn</enum>
         </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
+        <property name="widgetResizable">
+         <bool>true</bool>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="spacing">
-          <number>0</number>
+        <widget class="QWidget" name="scrollAreaWidgetContents_2">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>254</width>
+           <height>978</height>
+          </rect>
          </property>
-         <property name="leftMargin">
-          <number>12</number>
-         </property>
-         <property name="topMargin">
-          <number>12</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QLabel{
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QFrame" name="frame">
+            <property name="minimumSize">
+             <size>
+              <width>220</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(246, 248, 250);</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLabel{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -211,61 +247,70 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>基础功能</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QLabel" name="label_9">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_quick_start">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QLabel{
+               </property>
+               <property name="text">
+                <string>基础功能</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_9">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_quick_start">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLabel{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -278,40 +323,40 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>高级功能</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_room">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
+               </property>
+               <property name="text">
+                <string>高级功能</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_room">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -325,81 +370,87 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>房间管理</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/img/Resources/ui/room.png</normaloff>
-             <normalon>:/img/Resources/ui/room2.png</normalon>:/img/Resources/ui/room.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_room">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_audio_video">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
+               </property>
+               <property name="text">
+                <string>房间管理</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/room.png</normaloff>
+                 <normalon>:/img/Resources/ui/room2.png</normalon>:/img/Resources/ui/room.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_room">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_audio_video">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -413,81 +464,87 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>音视频传输</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/img/Resources/ui/trans.png</normaloff>
-             <normalon>:/img/Resources/ui/trans2.png</normalon>:/img/Resources/ui/trans.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QLabel" name="label_5">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_audio_video">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_audio">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
+               </property>
+               <property name="text">
+                <string>音视频传输</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/trans.png</normaloff>
+                 <normalon>:/img/Resources/ui/trans2.png</normalon>:/img/Resources/ui/trans.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_audio_video">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_audio">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -501,81 +558,87 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>音频管理</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/img/Resources/ui/audio.png</normaloff>
-             <normalon>:/img/Resources/ui/audio2.png</normalon>:/img/Resources/ui/audio.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_6">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_audio">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_video">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
+               </property>
+               <property name="text">
+                <string>音频管理</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/audio.png</normaloff>
+                 <normalon>:/img/Resources/ui/audio2.png</normalon>:/img/Resources/ui/audio.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_audio">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_video">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -589,81 +652,87 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>视频管理</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/img/Resources/ui/video.png</normaloff>
-             <normalon>:/img/Resources/ui/video2.png</normalon>:/img/Resources/ui/video.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QLabel" name="label_7">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_video">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_publish_stream">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
+               </property>
+               <property name="text">
+                <string>视频管理</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/video.png</normaloff>
+                 <normalon>:/img/Resources/ui/video2.png</normalon>:/img/Resources/ui/video.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_video">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_publish_stream">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -677,81 +746,78 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>直播相关</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/img/Resources/ui/cdn.png</normaloff>
-             <normalon>:/img/Resources/ui/cdn2.png</normalon>:/img/Resources/ui/cdn.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
-           <item>
-            <widget class="QLabel" name="label_8">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_stream">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_third_party">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton{
+               </property>
+               <property name="text">
+                <string>直播相关</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/cdn.png</normaloff>
+                 <normalon>:/img/Resources/ui/cdn2.png</normalon>:/img/Resources/ui/cdn.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <item>
+                <widget class="QLabel" name="label_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_stream">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
 	text-align:left;
 	font-weight: bold;
 	padding-left: 10px;
@@ -765,82 +831,175 @@
 }
 
 </string>
-           </property>
-           <property name="text">
-            <string>重要组件</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources.qrc">
-             <normaloff>:/img/Resources/ui/plugin.png</normaloff>:/img/Resources/ui/plugin.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_13">
-           <item>
-            <widget class="QLabel" name="label_16">
-             <property name="minimumSize">
-              <size>
-               <width>28</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ListWidget" name="listWidget_plugin">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+               </property>
+               <property name="text">
+                <string>消息管理</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/plugin.png</normaloff>:/img/Resources/ui/plugin.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_9">
+               <item>
+                <widget class="QLabel" name="label_15">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_message">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_third_party">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton{
+	text-align:left;
+	font-weight: bold;
+	padding-left: 10px;
+	color: #020814;
+	font-family: PingFang SC;	
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 22px; /* 169.231% */
+	letter-spacing: 0.039px;
+}
+
+</string>
+               </property>
+               <property name="text">
+                <string>重要组件</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/img/Resources/ui/plugin.png</normaloff>:/img/Resources/ui/plugin.png</iconset>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_16">
+                 <property name="minimumSize">
+                  <size>
+                   <width>28</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="ListWidget" name="listWidget_plugin">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
+                 <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>

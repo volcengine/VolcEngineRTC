@@ -55,8 +55,6 @@
 *    为了展示简单，所有功能的token都由客户端生成，接口Utils::generateToken，请在真正接入时视具体情况而定
 */
 
-const std::string str_uid1 = "crosspk_uid_win";
-
 CrossRoomPK::CrossRoomPK(QWidget *parent) :
     BaseWidget(parent),
     ui(new Ui::CrossRoomPK)
@@ -123,7 +121,7 @@ void CrossRoomPK::onBtnCrossStartClicked()
 void CrossRoomPK::onBtnCrossUpdateClicked()
 {
     if (m_video == nullptr || m_room1 == nullptr) return;
-    std::string uid = str_uid1;
+    std::string uid = m_uid;
 
     QStringList list = ui->lineEdit_cross->text().split(" ", Qt::SkipEmptyParts);
 
@@ -165,6 +163,7 @@ void CrossRoomPK::onBtnCrossPauseClicked()
         box.exec();
         return;
     }
+    appendAPI("pauseForwardStreamToAllRooms");
 }
 
 void CrossRoomPK::onBtnCrossResumeClicked()

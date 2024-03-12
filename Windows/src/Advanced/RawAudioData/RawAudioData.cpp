@@ -165,14 +165,22 @@ void RawAudioData::updateAudioCaptureList()
     }
 
     int count = collection->getCount();
+    int default_index = 0;
+
     ui->comboBox_device->blockSignals(true);
+    ui->comboBox_device->clear();
     for (int i = 0; i < count; i++) {
         bytertc::AudioDeviceInfo info;
         collection->getDevice(i, &info);
-        
-        ui->comboBox_device->addItem(info.device_name, QVariant(*info.device_id));
+        if (info.is_system_default) {
+            default_index = i;
+        }
+        ui->comboBox_device->addItem(info.device_name, QVariant(info.device_id));
+        qDebug() << Q_FUNC_INFO <<  "index:" << i << ",name:" << info.device_name << ",id:" << info.device_id
+                 << ",test:" << ui->comboBox_device->itemData(i).toString();
     }
     collection->release();
+    ui->comboBox_device->setCurrentIndex(default_index);
     ui->comboBox_device->blockSignals(false);
 
     appendAPI("enumerateAudioCaptureDevices");
@@ -290,8 +298,9 @@ void RawAudioData::onComboDeviceIndexChanged(int index)
 {
     if (m_audio == nullptr) return;
     std::string id = ui->comboBox_device->itemData(index).toString().toStdString();
+    m_audio->followSystemCaptureDevice(false);
     m_audio->setAudioCaptureDevice(id.c_str());
-    appendAPI("setAudioCaptureDevice");
+    appendAPI("setAudioCaptureDevice,id:" + QString::fromStdString(id));
 }
 
 void RawAudioData::onCheckRecordChanged(int)
@@ -404,8 +413,14 @@ void RawAudioData::onSigAudioDeviceWarning(std::string device_id, bytertc::RTCAu
 
 void RawAudioData::onSigAudioDeviceStateChanged(std::string device_id, bytertc::RTCAudioDeviceType device_type, bytertc::MediaDeviceState device_state, bytertc::MediaDeviceError device_error)
 {
-    QString str = "onAudioDeviceStateChanged, deviceid:" + QString::fromStdString(device_id) + ",device_type:" + QString::number(device_type) + ",error:" + QString::number(device_error);
+    QString str = "onAudioDeviceStateChanged, deviceid:" + QString::fromStdString(device_id) + ",device_type:" + QString::number(device_type) + ",state:" + QString::number(device_state) + ",error:" + QString::number(device_error);
     appendCallback(str);
+
+    std::string cur_id = ui->comboBox_device->currentData().toString().toStdString();
+
+    if (device_state == bytertc::kMediaDeviceStateRemoved || device_state == bytertc::kMediaDeviceStateAdded) {
+        updateAudioCaptureList(); //设备被拔出 或 有新设备插入时，更新设备列表
+    }
 }
 
 void RawAudioData::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType)

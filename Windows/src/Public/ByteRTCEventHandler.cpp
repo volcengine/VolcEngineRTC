@@ -122,6 +122,8 @@ ByteRTCEventHandler::ByteRTCEventHandler(QObject* parent)
     qRegisterMetaType<bytertc::RemoteStreamKey>();
     qRegisterMetaType<bytertc::VideoFrameInfo>();
     qRegisterMetaType<bytertc::StreamIndex>();
+    qRegisterMetaType<bytertc::SyncInfoStreamType>();
+    qRegisterMetaType<ByteRTCEventHandler::Stru_RemoteStreamKey>();
     
 }
 
@@ -157,6 +159,7 @@ void ByteRTCEventHandler::onNetworkTypeChanged(bytertc::NetworkType type)
 void ByteRTCEventHandler::onAudioDeviceStateChanged(const char *device_id, bytertc::RTCAudioDeviceType device_type, bytertc::MediaDeviceState device_state, bytertc::MediaDeviceError device_error)
 {
     std::string str_device_id = device_id == nullptr ? "" : device_id;
+    qDebug() << Q_FUNC_INFO << "deviceid:" << QString::fromStdString(str_device_id) << ",devicetype:" << device_type << ",state:" << device_state << ",error:" << device_error;
     emit sigAudioDeviceStateChanged(str_device_id, device_type, device_state, device_error);
 }
 
@@ -242,6 +245,34 @@ void ByteRTCEventHandler::onMediaPlayerStateChanged(int playerId, bytertc::Playe
 void ByteRTCEventHandler::onMediaPlayerPlayingProgress(int playerId, int64_t progress)
 {
     emit sigMediaPlayerPlayingProgress(playerId, progress);
+}
+
+void ByteRTCEventHandler::onSEIMessageReceived(bytertc::RemoteStreamKey stream_key, const uint8_t *message, int length)
+{
+
+    std::string str(reinterpret_cast<const char*>(message), length);
+    qDebug() << Q_FUNC_INFO << "roomid:" << stream_key.room_id
+             << ",uid:" << stream_key.user_id
+             << ",message:" << QString::fromStdString(str);
+
+    Stru_RemoteStreamKey sstream_key;
+    sstream_key.stream_index = stream_key.stream_index;
+    sstream_key.room_id = stream_key.room_id == nullptr ? "" : stream_key.room_id;
+    sstream_key.user_id = stream_key.user_id == nullptr ? "" : stream_key.user_id;
+
+    emit sigSEIMessageReceived(sstream_key, str);
+}
+
+void ByteRTCEventHandler::onStreamSyncInfoReceived(bytertc::RemoteStreamKey stream_key, bytertc::SyncInfoStreamType stream_type, const uint8_t *data, int32_t length)
+{
+
+    std::string str(reinterpret_cast<const char*>(data), length);
+    Stru_RemoteStreamKey sstream_key;
+    sstream_key.stream_index = stream_key.stream_index;
+    sstream_key.room_id = stream_key.room_id == nullptr ? "" : stream_key.room_id;
+    sstream_key.user_id = stream_key.user_id == nullptr ? "" : stream_key.user_id;
+
+    emit sigStreamSyncInfoReceived(sstream_key, stream_type, str);
 }
 
 void ByteRTCEventHandler::onFirstRemoteVideoFrameRendered(const bytertc::RemoteStreamKey key, const bytertc::VideoFrameInfo& info)

@@ -51,6 +51,7 @@ cd Windows
     │   ├── RawAudioData   // 原始音频数据 https://www.volcengine.com/docs/6348/1178324
     │   ├── SoundEffects   // 变声、混响、降噪 https://www.volcengine.com/docs/6348/1178327
     │   └── VideoConfig    // 视频参数配置 https://www.volcengine.com/docs/6348/70122、视频采集旋转方向 https://www.volcengine.com/docs/6348/106458
+    │   └── Message        // SEI消息、音频随帧消息 https://www.volcengine.com/docs/6348/70140
     ├── Info.plist
     ├── Public
     ├── app.ico

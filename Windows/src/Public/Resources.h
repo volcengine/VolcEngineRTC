@@ -38,7 +38,7 @@ static QString str_qss_btn1 = "QPushButton{background-color:#1664FF;color:white;
 
 static QString str_qss_btn2_3 = "QPushButton{background-color:#F6F8FA;color:#42464E;border-radius:4px;font-family: PingFang SC;font-size: 13px;} "
                                   "QPushButton:hover{background-color:#FAFBFC;color:#42464E; border: 1px solid #4a79f6;font-family: PingFang SC;font-size: 13px;} "
-                                  "QPushButton:hover{background-color:#FAFBFC;color:#42464E;border: 1px  solid #05F;font-family: PingFang SC;font-size: 13px;} "
+                                  "QPushButton:checked{background-color:#CACBCC;color:#42464E;border: 1px  solid #05F;font-family: PingFang SC;font-size: 13px;} "
                                   "QPushButton:disabled{background-color:#F6F8FA;color:#42464E;border: 1px solid #05F;font-family: PingFang SC;font-size: 13px;}";
 
 static QString str_qss_btn4 = "QPushButton{color:#1664FF; border:none; background:transparent;font-family: PingFang SC;font-size: 12px;} "

@@ -10,6 +10,8 @@ LogWidget::LogWidget(QWidget *parent) :
     ui(new Ui::LogWidget)
 {
     ui->setupUi(this);
+    ui->btn_clear->setStyleSheet(APIDemo::str_qss_btn2_3);
+    connect(ui->btn_clear, &QPushButton::clicked, this, &LogWidget::onBtnClearClicked);
     ui->textEdit->verticalScrollBar()->setStyleSheet(APIDemo::str_qss_scrollstyle);
     //color: var(--text-color-text-2, #42464E);font-family: Menlo;font-size: 12px;font-style: normal;font-weight: 400;line-height: 150%;
 }
@@ -34,4 +36,9 @@ void LogWidget::appendAPI(const QStringList list)
     for (int i = 0; i < list.size(); i++) {
         ui->textEdit->append("API:" + list[i]);
     }
+}
+
+void LogWidget::onBtnClearClicked()
+{
+    ui->textEdit->clear();
 }

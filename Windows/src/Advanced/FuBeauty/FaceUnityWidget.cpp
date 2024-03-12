@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QIcon>
 #include <QMessageBox>
+#include <qiodevice.h>
 
 #include "PixTextWidget.h"
 #include "Config.h"
@@ -83,24 +84,31 @@ FaceUnityWidget::FaceUnityWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     initUI();
-    resetData();
     initConnections();
     showItem();
     initRTC();
     initNama();
-    m_process_num = 0;
     m_thread_process = new std::thread(&FaceUnityWidget::funcProcessVideoFrame, this);
+
+    //用于测试
+    m_outFile = new QFile("out.yuv");
+    bool ret = m_outFile->open(QIODevice::WriteOnly);
+    m_inFile = new QFile("in.yuv");
+    ret = m_inFile->open(QIODevice::WriteOnly);
+    
 
 }
 
 FaceUnityWidget::~FaceUnityWidget()
 {
-    resetData();
     cleanThread();
     cleanRTC();
     cleanNama();
     resetFaceBueatyValue();
     onBtnRevertClicked();
+
+    m_outFile->close();
+    m_inFile->close();
     delete ui;
 
 }
@@ -183,6 +191,7 @@ int FaceUnityWidget::initNama()
             QStringLiteral("相芯美颜初始化失败，请检查相芯证书是否填写到 authpack.h 中"), QMessageBox::Ok);
         box.exec();
     }
+
 #endif
     return 0;
 }
@@ -216,7 +225,7 @@ void FaceUnityWidget::initUI()
     ui->lineEdit_room->setStyleSheet(APIDemo::str_qss_text);
     ui->lineEdit_uid->setStyleSheet(APIDemo::str_qss_text);
     ui->btn_joinroom->setStyleSheet(APIDemo::str_qss_btn1);
-    ui->btn_revert->setStyleSheet(APIDemo::str_qss_btn2_3);
+    //ui->btn_revert->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
     ui->label_t1->setStyleSheet(APIDemo::str_qss_label_ttile);
     ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
@@ -241,9 +250,6 @@ int FaceUnityWidget::joinRoom()
         return -3;
     }
 
-    bytertc::VideoPreprocessorConfig videoConfig;
-    videoConfig.required_pixel_format = bytertc::kVideoPixelFormatI420;
-    m_video->registerLocalVideoProcessor(dynamic_cast<bytertc::IVideoProcessor*>(this), videoConfig);
     bytertc::VideoCanvas canvas((void*)ui->widget->getWinId(), bytertc::RenderMode::kRenderModeHidden, 0);
     m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, canvas);
     m_room = m_video->createRTCRoom(roomid.c_str());
@@ -252,6 +258,11 @@ int FaceUnityWidget::joinRoom()
         box.exec();
         return -4;
     }
+
+
+    bytertc::VideoPreprocessorConfig videoConfig;
+    videoConfig.required_pixel_format = bytertc::kVideoPixelFormatI420;
+    m_video->registerLocalVideoProcessor(dynamic_cast<bytertc::IVideoProcessor*>(this), videoConfig);
 
     m_room_handler = createRoomHandler(roomid, uid);
     m_room->setRTCRoomEventHandler(m_room_handler.get());
@@ -296,117 +307,53 @@ void FaceUnityWidget::funcProcessVideoFrame()
         if (m_thread_run == false) {
             return;
         }
-        std::unique_lock<std::mutex> l(m_mutex_process);
-        m_cond1.wait(l, [this]() {return m_thread_run == false || m_process_num > 0; });
-        dealVideoFrame();
-        m_process_num--;
-        m_cond2.notify_one();
 
+        VideoFrame curFrame;
+        {
+            std::unique_lock<std::mutex> l1(m_mutex_in);
+            m_cond_in.wait(l1, [this]() { return m_inLocalFrames.size() > 0 || m_thread_run == false; });
+
+            if (m_inLocalFrames.size() > 0) {
+                curFrame = m_inLocalFrames.back(); //get 1 frame from in frames
+                m_inLocalFrames.pop_back();
+            }
+        }
+
+        if (curFrame.frame == nullptr) {
+            continue;
+        }
+
+        if (m_dmp_out) {
+            m_inFile->write((const char*)curFrame.yuv_buffer, curFrame.width*curFrame.height*3/2);
+        }
+
+        if (m_nama) {
+            m_nama->processVideoFrame(curFrame.yuv_buffer, curFrame.width, curFrame.height); //process video frame
+        }
+
+        if (m_dmp_out) { //输出到文件
+            m_outFile->write((const char*)curFrame.yuv_buffer, curFrame.width * curFrame.height*3/2);
+        }
+
+        {
+            std::unique_lock<std::mutex> l2(m_mutex_out);
+            m_outLocalFrames.push_back(curFrame); // push 1 frame to out frames
+            qDebug() << Q_FUNC_INFO << "push frame to m_outLocalFrames,size=" << m_outLocalFrames.size();
+        }
     }
 }
 
-void FaceUnityWidget::dealVideoFrame()
+bytertc::IVideoFrame *FaceUnityWidget::processVideoFrame(bytertc::IVideoFrame * src)
 {
-#ifdef CNAMASDK_H
-    if (m_currentFrame == nullptr || m_nama == nullptr) {
-        qWarning() << Q_FUNC_INFO << "current frame is null or not init nama";
-        return;
-    }
-    int ret = 0;
-    int width = m_currentFrame->width();
-    int height = m_currentFrame->height();
-    static uint8_t* frameBuffer= new uint8_t[4 * 3000 * 3000];
-
-    // 为了提高内存的访问速度，ByteRTC SDK回调出来的视频帧会出现
-    // ystride>width、 ustride>width/2 和 vstride>width/2 的情况，
-    // 相芯SDK要求输入的数据是 ystride=width, ustrive=width/2,vstride=width/2
-    // 因此需要做内存转换
-    if (m_currentFrame->getPlaneStride(0) > width
-        || m_currentFrame->getPlaneStride(1) > (width+1)/2
-        || m_currentFrame->getPlaneStride(2) > (width+1)/2) {
-
-        int dst_offset = 0;
-        int src_offset = 0;
-        for(int i=0; i<height; i++) {
-            memcpy(frameBuffer + dst_offset, m_currentFrame->getPlaneData(0) + src_offset, width);
-            src_offset += m_currentFrame->getPlaneStride(0);
-            dst_offset += width;
-        }
-        src_offset = 0;
-        for (int i=0; i<height/2; i++) {
-            memcpy(frameBuffer + dst_offset, m_currentFrame->getPlaneData(1) + src_offset, width/2);
-            src_offset += m_currentFrame->getPlaneStride(1);
-            dst_offset += width/2;
-        }
-        src_offset = 0;
-        for (int i=0; i<height/2; i++) {
-            memcpy(frameBuffer + dst_offset, m_currentFrame->getPlaneData(2) + src_offset, width/2);
-            src_offset += m_currentFrame->getPlaneStride(2);
-            dst_offset += width/2;
-        }
-        ret = m_nama->processVideoFrame(frameBuffer, width, height);
-        if (ret != 0) {
-            qWarning() << Q_FUNC_INFO << "processVideoFrame error:" << ret;
-            return;
-        }
-        src_offset = 0;
-        dst_offset = 0;
-
-        for(int i=0; i<height; i++) {
-            memcpy(m_currentFrame->getPlaneData(0) + dst_offset, frameBuffer + src_offset, width);
-            src_offset += width;
-            dst_offset += m_currentFrame->getPlaneStride(0);
-        }
-
-        dst_offset = 0;
-        for(int i=0; i<height/2; i++) {
-            memcpy(m_currentFrame->getPlaneData(1) + dst_offset, frameBuffer + src_offset, width/2);
-            src_offset += width/2;
-            dst_offset += m_currentFrame->getPlaneStride(1);
-        }
-
-        dst_offset = 0;
-        for(int i=0; i<height/2; i++) {
-            memcpy(m_currentFrame->getPlaneData(2) + dst_offset, frameBuffer + src_offset, width/2);
-            src_offset += width/2;
-            dst_offset += m_currentFrame->getPlaneStride(2);
-        }
-
-    } else {
-        memcpy(frameBuffer, m_currentFrame->getPlaneData(0), width*height);
-        memcpy(frameBuffer + width*height, m_currentFrame->getPlaneData(1), width*height/4);
-        memcpy(frameBuffer + width * height *5/4, m_currentFrame->getPlaneData(2), width*height/4);
-        ret = m_nama->processVideoFrame(frameBuffer, width, height);
-        if (ret != 0) {
-            qWarning() << Q_FUNC_INFO << "processVideoFrame error:" << ret;
-            return;
-        }
-        memcpy(m_currentFrame->getPlaneData(0), frameBuffer, width*height);
-        memcpy(m_currentFrame->getPlaneData(1), frameBuffer + width*height, width*height/4);
-        memcpy(m_currentFrame->getPlaneData(2), frameBuffer + width*height*5/4, width*height/4);
-    }
-
-#endif
-}
-
-bytertc::IVideoFrame *FaceUnityWidget::processVideoFrame(bytertc::IVideoFrame * videoFrame)
-{
-    if (!videoFrame) return nullptr;
-
-    std::unique_lock<std::mutex> lock(m_mutex_process);
-    m_process_num++;
-    m_currentFrame = videoFrame;
-    m_cond1.notify_one();
-
-    m_cond2.wait(lock, [this]() {return m_thread_run == false || m_process_num == 0; });
-    return m_currentFrame;
+    if (!src) return nullptr;
+    pushVideoFrame(src); //push to in frames
+    return popVideoFrame(src); //pop from out frames
 }
 
 void FaceUnityWidget::cleanThread()
 {
     m_thread_run = false;
-    m_cond1.notify_all();
-    m_cond2.notify_all();
+    m_cond_in.notify_all();
     if (m_thread_process ) {
         if (m_thread_process->joinable()) {
             m_thread_process->join();
@@ -435,7 +382,7 @@ void FaceUnityWidget::initConnections()
     connect(ui->slider_zhailian, &QSlider::valueChanged, this, &FaceUnityWidget::onSliderValueChanged);
     connect(ui->slider_xiaolian, &QSlider::valueChanged, this, &FaceUnityWidget::onSliderValueChanged);
     connect(ui->slider_dayan, &QSlider::valueChanged, this, &FaceUnityWidget::onSliderValueChanged);
-    connect(ui->btn_revert, &QPushButton::clicked, this, &FaceUnityWidget::onBtnRevertClicked);
+    //connect(ui->btn_revert, &QPushButton::clicked, this, &FaceUnityWidget::onBtnRevertClicked);
 
     connect(ui->btn_filter_bailiang, &QPushButton::clicked, this, &FaceUnityWidget::onBtnFilterClicked);
     connect(ui->btn_filter_fennen, &QPushButton::clicked, this, &FaceUnityWidget::onBtnFilterClicked);
@@ -443,6 +390,7 @@ void FaceUnityWidget::initConnections()
     connect(ui->btn_filter_nuan, &QPushButton::clicked, this, &FaceUnityWidget::onBtnFilterClicked);
     connect(ui->btn_filter_orign, &QPushButton::clicked, this, &FaceUnityWidget::onBtnFilterClicked);
     connect(ui->btn_filter_qingxin, &QPushButton::clicked, this, &FaceUnityWidget::onBtnFilterClicked);
+
 
 
     auto btn_func1 = [this](QPushButton* btn, int type) {
@@ -477,12 +425,6 @@ void FaceUnityWidget::initConnections()
 
 }
 
-void FaceUnityWidget::resetData()
-{
-    std::unique_lock<std::mutex> l(m_mutex_process);
-    m_currentFrame = nullptr;
-    m_process_num = 0;
-}
 
 
 void FaceUnityWidget::onBtnJoinRoomClicked()
@@ -659,6 +601,132 @@ void FaceUnityWidget::onSigLeaveRoom(std::string roomid, std::string uid, bytert
              + ",uid:" + QString::fromStdString(uid);
     appendCallback(str);
 
+}
+
+void FaceUnityWidget::pushVideoFrame(bytertc::IVideoFrame *src)
+{
+    clearVideoFrames(); //only receive 1 frame
+   
+    VideoFrame frame;
+    copyIVideoFram2LocalFrame(src, frame); //copy src buffer data to frame
+
+    std::unique_lock<std::mutex> l(m_mutex_in);
+    m_inLocalFrames.push_back(frame); //push in frames
+    m_cond_in.notify_one(); // notify another thread to process
+}
+
+bytertc::IVideoFrame *FaceUnityWidget::popVideoFrame(bytertc::IVideoFrame *src)
+{
+    bytertc::IVideoFrame* dst = src;
+    std::unique_lock<std::mutex> l(m_mutex_out);
+
+    if (m_outLocalFrames.size() == 0) { //输出队列中没有数据，直接返回
+        qDebug() << Q_FUNC_INFO << "m_outLocalFrames size=0";
+        return src;
+    }
+
+    VideoFrame frame = m_outLocalFrames.back();
+    copyLocalFrame2IVideoFrame(dst, frame); //取出一帧处理好的数据
+    frame.cleanBuffer();
+    m_outLocalFrames.pop_back();
+
+    qDebug() << "popback m_outLocalFrames,size=" << m_outLocalFrames.size();
+    return dst;
+}
+
+void FaceUnityWidget::clearVideoFrames()
+{
+    {
+        std::unique_lock<std::mutex> l1(m_mutex_in);
+        std::vector<VideoFrame>::iterator ite = m_inLocalFrames.begin();
+        for (; ite != m_inLocalFrames.end();) {
+            ite->cleanBuffer();
+            ite = m_inLocalFrames.erase(ite);
+        }
+    }
+}
+
+
+void FaceUnityWidget::copyIVideoFram2LocalFrame(bytertc::IVideoFrame *src, VideoFrame &frame)
+{
+    std::unique_lock<std::mutex> l(m_mutex_in);
+    int width = src->width();
+    int height = src->height();
+    int size = width * height;
+    frame.frame = src;
+    frame.width = width;
+    frame.height = height;
+
+
+    frame.yuv_buffer = new uint8_t[size*3/2];
+
+    //按行拷贝
+    if (src->getPlaneStride(0) > src->width() || src->getPlaneStride(1) > src->width() / 2 || src->getPlaneStride(2) > src->width() / 2) {
+        int dst_offset = 0;
+        int src_offset = 0;
+        for (int i = 0; i < src->height(); i++) {
+            memcpy(frame.yuv_buffer + dst_offset, src->getPlaneData(0) + src_offset, width);
+            src_offset += src->getPlaneStride(0);
+            dst_offset += width;
+        }
+        src_offset = 0;
+        for (int i = 0; i < height / 2; i++) {
+            memcpy(frame.yuv_buffer + dst_offset, src->getPlaneData(1) + src_offset, width / 2);
+            src_offset += src->getPlaneStride(1);
+            dst_offset += width / 2;
+        }
+        src_offset = 0;
+        for (int i = 0; i < height / 2; i++) {
+            memcpy(frame.yuv_buffer + dst_offset, src->getPlaneData(2) + src_offset, width / 2);
+            src_offset += src->getPlaneStride(2);
+            dst_offset += width / 2;
+        }
+    } //按块拷贝
+    else {
+        memcpy(frame.yuv_buffer, src->getPlaneData(0), size);
+        memcpy(frame.yuv_buffer + size, src->getPlaneData(1), size / 4);
+        memcpy(frame.yuv_buffer + size *5/4, src->getPlaneData(2), size/4);
+    }
+
+}
+
+void FaceUnityWidget::copyLocalFrame2IVideoFrame(bytertc::IVideoFrame *dst, VideoFrame &frame) //dst作为参考帧和目标帧
+{
+    if (frame.yuv_buffer == nullptr || dst == nullptr) return;
+    int size = dst->width() * dst->height();
+    int dst_offset = 0;
+    int src_offset = 0;
+
+    if (dst->getPlaneStride(0) > dst->width() || dst->getPlaneStride(1) > dst->width() / 2 || dst->getPlaneStride(2) > dst->width() / 2) {
+        
+        src_offset = 0;
+        dst_offset = 0;
+
+        for (int i = 0; i < dst->height(); i++) {
+            memcpy(dst->getPlaneData(0) + dst_offset, frame.yuv_buffer + src_offset, dst->width());
+            src_offset += dst->width();
+            dst_offset += dst->getPlaneStride(0);
+        }
+
+        dst_offset = 0;
+        for (int i = 0; i < dst->height() / 2; i++) {
+            memcpy(dst->getPlaneData(1) + dst_offset, frame.yuv_buffer + src_offset, dst->width() / 2);
+            src_offset += dst->width() / 2;
+            dst_offset += dst->getPlaneStride(1);
+        }
+
+        dst_offset = 0;
+        for (int i = 0; i < dst->height() / 2; i++) {
+            memcpy(dst->getPlaneData(2) + dst_offset, frame.yuv_buffer + src_offset, dst->width() / 2);
+            src_offset += dst->width() / 2;
+            dst_offset += dst->getPlaneStride(2);
+        }
+    }
+    else {
+        memcpy(dst->getPlaneData(0), frame.yuv_buffer, size);
+        memcpy(dst->getPlaneData(1), frame.yuv_buffer + size, size / 4);
+        memcpy(dst->getPlaneData(2), frame.yuv_buffer + size*5/4, size/4);
+    }
 }
 
 void FaceUnityWidget::onBtnFilterClicked()

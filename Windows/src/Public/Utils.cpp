@@ -124,7 +124,7 @@ bool Utils::checkIDValid(const QString name, const QString properity, QString &e
         error_msg = "ok";
         return true;
     } else {
-        error_msg = "只支持数字、大小写字母、@._-";
+        error_msg = QStringLiteral("只支持数字、大小写字母、@._-");
         return false;
     }
     return false;

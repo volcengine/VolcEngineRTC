@@ -9,50 +9,98 @@
 #import <Foundation/Foundation.h>
 #import "ByteRTCAudioDefines.h"
 
-/** 
+/**
+ * @locale zh
  * @type keytype
  * @brief 空间音频音量随距离衰减模式
  */
- typedef NS_ENUM(NSInteger, ByteRTCAttenuationType) {
-    /** 
+ /**
+ * @locale en
+ * @type keytype
+ * @brief Volume Roll-off modes that a sound has in an audio source
+ */
+typedef NS_ENUM(NSInteger, ByteRTCAttenuationType) {
+    /**
+     * @locale zh
      * @brief 不随距离衰减
      */
+    /**
+     * @locale en
+     * @brief Disable Volume Attenuation
+     */
     ByteRTCAttenuationTypeNone = 0,
-    /** 
+    /**
+     * @locale zh
      * @brief 线性衰减，音量随距离增大而线性减小
      */
+    /**
+     * @locale en
+     * @brief Linear roll-off mode which lowers the volume of the sound over the distance
+     */
     ByteRTCAttenuationTypeLinear = 1,
-    /** 
+    /**
+     * @locale zh
      * @brief 指数型衰减，音量随距离增大进行指数衰减
+     */
+    /**
+     * @locale en
+     * @brief Exponential roll-off mode which exponentially decreases the volume of the sound with the distance raising
      */
     ByteRTCAttenuationTypeExponential = 2
 };
 
-/** 
+/**
+ * @locale zh
  * @type keytype
  * @brief 本地用户能收听到、且具有衰减效果的音频接收范围
  */
+/**
+ * @locale en
+ * @type keytype
+ * @brief The range where local user can hear audio with attenuation effect.
+ */
 BYTERTC_APPLE_EXPORT @interface ByteRTCReceiveRange : NSObject
-/** 
+/**
+ * @locale zh
  * @brief 能够接收语音、并且具有衰减效果的最小距离值，该值须 ≥ 0，但 ≤ max。  <br>
  *        小于该值的范围内没有范围语音效果，即收听到的音频音量相同。
  */
+/**
+ * @locale en
+ * @brief The minimum distance at which the local user can hear the attenuated audio from remote users.  <br>
+ *        The value must be ≥ 0, but ≤ max.  <br>
+ *        No attenuation effect for audio from distances less than this value you set.
+ */
 @property(nonatomic, assign) int min;
-/** 
+/**
+ * @locale zh
  * @brief 能够收听语音的最大距离值，该值须 > 0 且 ≥ min。  <br>
  *        当收听者和声源距离处于 [min, max) 之间时，收听到的音量根据距离呈衰减效果。  <br>
  *        超出该值范围的音频将无法收听到。
+ */
+/**
+ * @locale en
+ * @brief The maximum distance at which the local user can hear audio from remote users.  <br>
+ *        The value must be ≥ min, and > 0.  <br>
+ *        Audio from distances larger than the value you set cannot be heard.
  */
 @property(nonatomic, assign) int max;
 @end
 
 
-/** 
+/**
+ * @locale zh
  * @type api
  * @brief 范围语音接口实例
  */
+/**
+ * @locale en
+ * @type api
+ * @brief Range audio instance
+ */
 BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
-/** 
+/**
+ * @locale zh
  * @type api
  * @region 范围语音
  * @brief 开启/关闭范围语音功能。  <br>
@@ -60,10 +108,22 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @param enable 是否开启范围语音功能：  <br>
  *        + YES: 开启  <br>
  *        + NO: 关闭（默认）
- * @notes 该方法进房前后都可调用，为保证进房后范围语音效果的平滑切换，你需在该方法前先调用 updatePosition:{@link #ByteRTCRangeAudio#updatePosition:} 设置自身位置坐标，然后开启该方法收听范围语音效果。
+ * @note 该方法进房前后都可调用，为保证进房后范围语音效果的平滑切换，你需在该方法前先调用 updatePosition:{@link #ByteRTCRangeAudio#updatePosition:} 设置自身位置坐标，然后开启该方法收听范围语音效果。
+ */
+/**
+ * @locale en
+ * @type api
+ * @region Range Audio
+ * @brief Enables/disables the range audio function.  <br>
+ *        Range audio means that within a certain range in a same RTC room, the audio volume of the remote user received by the local user will be amplified/attenuated as the remote user moves closer/away. The audio coming from out of the range cannot be heard. See updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} to set audio receiving range.
+ * @param enable Whether to enable audio range function：  <br>
+ *        + YES: Enable  <br>
+ *        + NO: Disable（Defaulting setting）
+ * @note You can call this API anytime before or after entering a room. To ensure a smooth switch to the range audio mode after entering the room, you need to call updatePosition:{@link #ByteRTCRangeAudio#updatePosition:} before this API to set your own position coordinates, and then enable the range audio function.
  */
 - (void)enableRangeAudio:(BOOL)enable;
-/** 
+/**
+ * @locale zh
  * @type api
  * @region 范围语音
  * @brief 更新本地用户的音频收听范围。
@@ -72,8 +132,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  *        + 0：成功；  <br>
  *        + !0: 失败。
  */
+/**
+ * @locale en
+ * @type api
+ * @region Range Audio
+ * @brief Updates the audio receiving range for the local user.
+ * @param range Audio receiving range, see ByteRTCReceiveRange{@link #ByteRTCReceiveRange}.
+ * @return API call result:  <br>
+ *        + 0: Success  <br>
+ *        + !0: Failure
+ */
 - (int)updateReceiveRange:(ByteRTCReceiveRange* _Nonnull) range;
-/** 
+/**
+ * @locale zh
  * @type api
  * @region 范围语音
  * @brief 更新本地用户在房间内空间直角坐标系中的位置坐标。
@@ -81,11 +152,23 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @return 方法调用结果： <br>
  *        + 0：成功；  <br>
  *        + !0：失败。
- * @notes 调用该接口更新坐标后，你需调用 enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} 开启范围语音功能以收听范围语音效果。 <br>
+ * @note 调用该接口更新坐标后，你需调用 enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} 开启范围语音功能以收听范围语音效果。 
+ */
+/**
+ * @locale en
+ * @type api
+ * @region Range Audio
+ * @brief Updates the coordinate of the local user's position in the rectangular coordinate system in the current room.
+ * @param pos 3D coordinate values, the default value is [0, 0, 0], see [ByteRTCPosition](70088#position-2).
+ * @return API call result: <br>
+ *        + 0: Success  <br>
+ *        + !0: Failure
+ * @note After calling this API, you should call enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} to enable range audio function to actually enjoy the range audio effect.  
  */
 - (int)updatePosition:(ByteRTCPosition* _Nonnull) pos;
 
-/** 
+/**
+ * @locale zh
  * @type api
  * @region 范围语音
  * @brief 设置范围语音的音量衰减模式。
@@ -94,17 +177,39 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRangeAudio :NSObject
  * @return 调用是否成功<br>
  *         + `0`:调用成功<br>
  *         + `-1`:调用失败。原因为在调用 enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:} 开启范围语音前或进房前调用本接口
- * @notes 音量衰减范围通过 updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} 进行设置。
+ * @note 音量衰减范围通过 updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} 进行设置。
+ */
+/**
+ * @locale en
+ * @type api
+ * @region Range Audio
+ * @brief Set the volume attenuation mode of the range audio.
+ * @param type Volume roll-off mode. It is linear roll-off mode by default. Refer to ByteRTCAttenuationType{@link #ByteRTCAttenuationType} for more details.
+ * @param coefficient Coefficient for the exponential roll-off mode. The default value is 1. It ranges [0.1,100]. We recommended to set it to `50`. The volume roll-off speed gets faster as this value increases.
+ * @return Result of the call<br>
+ *         + `0`: Success<br>
+ *         + `-1`: Failure because of calling this API before the user has joined a room or before enabling the Range Audio feature by calling enableRangeAudio:{@link #ByteRTCRangeAudio#enableRangeAudio:}.
+ * @note Call updateReceiveRange:{@link #ByteRTCRangeAudio#updateReceiveRange:} to set the range outside which the volume of the sound does not attenuate.
  */
 - (int)setAttenuationModel:(ByteRTCAttenuationType) type coefficient:(float)coefficient;
 
-/** 
+/**
+ * @locale zh
  * @type api
  * @region 范围语音
  * @brief 添加标签组，用于标记相互之间通话不衰减的用户组。<br>
  *        在同一个 RTC 房间中，如果多个用户的标签组之间有交集，那么，他们之间互相通话时，通话不衰减。<br>
  *        比如，用户身处多个队伍，队伍成员间通话不衰减。那么，可以为每个队伍绑定专属标签，每个用户的标签组包含用户所属各个队伍的标签。
  * @param flags 标签组。
+ */
+/**
+ * @locale en
+ * @type api
+ * @region Range Audio
+ * @brief Set the flags to mark the user groups, within which the users talk without attenuation. <br>
+ *        In the RTC room, if the flags of the users intersects with each other, the users talk without attenuation. <br>
+ *        For example, the user is a member of multiple teams, and teammates of the same team talks without attentuation. You can set the flag for each team, and includes the flags of the user's teams in the user's flags. 
+ * @param flags Array of flags.
  */
 - (void) setNoAttenuationFlags:(NSArray <NSString *> *_Nonnull)flags;
 

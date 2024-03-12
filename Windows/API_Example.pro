@@ -7,6 +7,8 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
+CONFIG += sdk_no_version_check
 
 TARGET = API_Example
 TEMPLATE = app
@@ -44,12 +46,14 @@ INCLUDEPATH += \
     src/Advanced/FuBeauty \
     src/Advanced/FuBeauty/Sound \
     src/Advanced/ \
+    src/Advanced/message \
     src/Basic
 
 SOURCES += \
     src/Advanced/AudioMixing/AudioMixItem.cpp \
     src/Advanced/AudioMixing/AudioMixingEffect.cpp \
     src/Advanced/AudioMixing/AudioMixingMedia.cpp \
+    src/Advanced/Message/AudioMessage.cpp \
     src/Advanced/RawAudioData/RawAudioData.cpp \
     src/Advanced/ByteBeauty/ByteBeautyWidget.cpp \
     src/Advanced/CDNStream/CDNStreamByServer.cpp \
@@ -58,6 +62,7 @@ SOURCES += \
     src/Advanced/FuBeauty/Nama.cpp \
     src/Advanced/FuBeauty/PixTextWidget.cpp \
     src/Advanced/MultiRoom/MultiRoom.cpp \
+    src/Advanced/Message/SEIMessage.cpp \
     src/Advanced/SoundEffects/SoundEffectsWidget.cpp \
     src/Advanced/VideoConfig/VideoConfigWidget.cpp \
     src/Basic/QuickStartWidget.cpp \
@@ -77,6 +82,7 @@ HEADERS += \
     src/Advanced/AudioMixing/AudioMixItem.h \
     src/Advanced/AudioMixing/AudioMixingEffect.h \
     src/Advanced/AudioMixing/AudioMixingMedia.h \
+    src/Advanced/Message/AudioMessage.h \
     src/Advanced/RawAudioData/RawAudioData.h \
     src/Advanced/ByteBeauty/ByteBeautyWidget.h \
     src/Advanced/CDNStream/CDNStreamByServer.h \
@@ -88,6 +94,7 @@ HEADERS += \
     src/Advanced/FuBeauty/PixTextWidget.h \
     src/Advanced/FuBeauty/authpack.h \
     src/Advanced/MultiRoom/MultiRoom.h \
+    src/Advanced/Message/SEIMessage.h \
     src/Advanced/SoundEffects/SoundEffectsWidget.h \
     src/Advanced/VideoConfig/VideoConfigWidget.h \
     src/Basic/QuickStartWidget.h \
@@ -145,6 +152,7 @@ FORMS += \
     src/Advanced/AudioMixing/AudioMixItem.ui \
     src/Advanced/AudioMixing/AudioMixingEffect.ui \
     src/Advanced/AudioMixing/AudioMixingMedia.ui \
+    src/Advanced/Message/AudioMessage.ui \
     src/Advanced/RawAudioData/RawAudioData.ui \
     src/Advanced/ByteBeauty/ByteBeautyWidget.ui \
     src/Advanced/CDNStream/CDNStreamByServer.ui \
@@ -152,6 +160,7 @@ FORMS += \
     src/Advanced/FuBeauty/FaceUnityWidget.ui \
     src/Advanced/FuBeauty/PixTextWidget.ui \
     src/Advanced/MultiRoom/MultiRoom.ui \
+    src/Advanced/Message/SEIMessage.ui \
     src/Advanced/SoundEffects/SoundEffectsWidget.ui \
     src/Advanced/VideoConfig/VideoConfigWidget.ui \
     src/Basic/QuickStartWidget.ui \
@@ -305,12 +314,12 @@ macx: {
 
     PATH3=$$PWD/Resources
     PATH4=$$PWD/3rd/mac/VolcEngineRTC/cvlab
-    QMAKE_POST_LINK += $$[QT_INSTALL_BINS]/macdeployqt $$DESTDIR/API_Example.app
+    QMAKE_POST_LINK += $$[QT_INSTALL_BINS]/macdeployqt $$DESTDIR/API_Example.app -no-strip
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH1) $$system_path($$DESTDIR/API_Example.app/Contents/Frameworks)
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH2) $$system_path($$DESTDIR/API_Example.app/Contents/Frameworks) #相芯美颜
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH3) $$system_path($$DESTDIR/API_Example.app/Contents/MacOS)
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH4) $$system_path($$DESTDIR/API_Example.app/Contents/MacOS/Resources)
-    #QMAKE_POST_LINK += && $$[QT_INSTALL_BINS]/macdeployqt $$DESTDIR/API_Example.app -dmg
+    QMAKE_POST_LINK += && $$[QT_INSTALL_BINS]/macdeployqt $$DESTDIR/API_Example.app -dmg -no-strip
 }
 
 

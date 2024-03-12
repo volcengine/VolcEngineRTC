@@ -12,37 +12,37 @@
 
 #define BYTERTC_APPLE_EXPORT __attribute__((visibility("default")))
 
-/** 
+/** {zh}
  * @type keytype
  * @brief 5.18版本后，飞书会议弱网提示专用，设置订阅视频基线数据用于计算网络等级
  */
 
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoBaseline: NSObject
-/** 
+/** {zh}
  * @brief 网络等级判定为优秀的视频分辨率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableGoodVideoPixelBaseline;
-/** 
+/** {zh}
  * @brief 网络等级判定为优秀的视频帧率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableGoodVideoFpsBaseline;
-/** 
+/** {zh}
  * @brief 网络等级判定为差的视频分辨率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableBadVideoPixelBaseline;
-/** 
+/** {zh}
  * @brief 网络等级判定为差的视频帧率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableBadVideoFpsBaseline;
-/** 
+/** {zh}
  * @brief 业务可以接受的最小分辨率宽度，-1表示业务忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableMinVideoResolutionWidth;
-/** 
+/** {zh}
  * @brief 业务可以接受的最小分辨率宽度，-1表示业务忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableMinVideoResolutionHeight;
-/** 
+/** {zh}
  * @brief 流的优先级，-1表示业务忽略此参数
  */
 @property (nonatomic, assign) NSInteger streamPriority;
@@ -154,4 +154,30 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 * @param [ByteRTCVideo *_Nonnull] ivideo 目标ByteRTCVideo
 */
 + (ByteRTCAmazingEffect* _Null_unspecified) getAmazingEffectInterface:(ByteRTCVideo *_Nonnull)video;
+
+/**
+ * @hidden
+ * @brief 设置屏幕流多分辨率参数
+ * @return 0 成功 !0失败
+ */
++ (int)setScreenVideoConfigs:(ByteRTCVideo * _Nonnull)video;
+
+/**
+ * @hidden
+ * @brief 清空屏幕流多分辨率参数
+ * @return 0 成功 !0失败
+ */
++ (int)resetScreenVideoConfigs:(ByteRTCVideo * _Nonnull)video;
+
+/**
+ * @brief 获取上行带宽状态
+ * @param [ByteRTCRoom*] room 目标room
+ */
++ (int)getUplinkNetworkBandwidthEstimationStatus:(ByteRTCRoom *_Nonnull)room;
+
+/**
+ * @brief 获取下行带宽状态
+ * @param [ByteRTCRoom*] room 目标room
+ */
++ (int)getDownlinkNetworkBandwidthEstimationStatus:(ByteRTCRoom *_Nonnull)room;
 @end

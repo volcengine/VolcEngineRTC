@@ -79,12 +79,12 @@ void MultiRoom::onBtn1Clicked()
 
     if (m_room1 == nullptr) {
         if (!Utils::checkIDValid(QString::fromStdString(room1), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("roomid1 error ") + qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QStringLiteral("roomid1 error ") + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
         if (!Utils::checkIDValid(QString::fromStdString(uid1), QStringLiteral("用户名"), qstr_error)) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("uid1 error ") + qstr_error, QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QStringLiteral("uid1 error ") + qstr_error, QMessageBox::Ok);
             box.exec();
             return;
         }
@@ -121,6 +121,9 @@ void MultiRoom::onBtn1Clicked()
         m_remote_u1.roomid = room1;
         QStringList list = { "createRTCRoom", "setRTCRoomEventHandler", "setLocalVideoCanvas", "joinRoom" };
         appendAPI(list);
+
+        QString str_message = "token:" + QString::fromStdString(token);
+        appendAPI(str_message);
     }
     else {
         
@@ -267,7 +270,7 @@ void MultiRoom::onSigRoomStateChanged(std::string roomid, std::string uid, int s
 
     QPushButton* btn = nullptr;
     if (state == 0) {
-        if (uid == m_uid1) {
+        if (uid == m_uid1 && roomid == ui->lineEdit_room1->text().toStdString()) {
             btn = ui->btn1;
         }
         else {

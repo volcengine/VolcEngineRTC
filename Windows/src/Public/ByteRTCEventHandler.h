@@ -145,6 +145,11 @@ private:
 
     virtual void onMediaPlayerPlayingProgress(int playerId, int64_t progress) override;
 
+    void onSEIMessageReceived(bytertc::RemoteStreamKey stream_key, const uint8_t* message, int length) override;
+
+    void onStreamSyncInfoReceived(bytertc::RemoteStreamKey stream_key, bytertc::SyncInfoStreamType stream_type,
+                                          const uint8_t* data, int32_t length) override;
+
 
 signals:
     void sigWarning(int);
@@ -180,6 +185,10 @@ signals:
 
     void sigMediaPlayerPlayingProgress(int playerId, int64_t progress);
 
+    void sigSEIMessageReceived(ByteRTCEventHandler::Stru_RemoteStreamKey stream_key, std::string str);
+
+    void sigStreamSyncInfoReceived(ByteRTCEventHandler::Stru_RemoteStreamKey stream_key, bytertc::SyncInfoStreamType stream_type, std::string str);
+
 
 private:
     bool m_supportClientPushStream = false;
@@ -208,5 +217,7 @@ Q_DECLARE_METATYPE(bytertc::MediaDeviceError)
 Q_DECLARE_METATYPE(bytertc::VideoFrameInfo)
 Q_DECLARE_METATYPE(bytertc::RemoteStreamKey)
 Q_DECLARE_METATYPE(bytertc::StreamIndex)
+Q_DECLARE_METATYPE(bytertc::SyncInfoStreamType)
+Q_DECLARE_METATYPE(ByteRTCEventHandler::Stru_RemoteStreamKey)
 
 #endif // BYTERTCEVENTHANDLER_H

@@ -248,7 +248,7 @@ void CDNStreamByServer::initData()
     ui->btn_start->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->btn_stop->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->btn_update->setStyleSheet(APIDemo::str_qss_btn2_3);
-    ui->btn_color->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_color->setStyleSheet("background-color: rgb(0,0,0);");
     ui->comboBox_a_code1->setStyleSheet(APIDemo::str_qss_combobox);
     ui->comboBox_a_code2->setStyleSheet(APIDemo::str_qss_combobox);
     ui->comboBox_channel->setStyleSheet(APIDemo::str_qss_combobox);
@@ -581,9 +581,10 @@ void CDNStreamByServer::on_btncolor_clicked()
     if (dlg.exec() == QDialog::Accepted) {
         QColor c = dlg.selectedColor();
         QString name = c.name();
-        QString sty = "background-color:" + name;
+        QString sty = QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue());
         ui->btn_color->setStyleSheet(sty);
         m_str_color = name.toStdString();
+        qDebug() << Q_FUNC_INFO << sty;
     }
     
 }

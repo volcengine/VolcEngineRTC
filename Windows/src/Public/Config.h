@@ -6,22 +6,21 @@
 using namespace std;
 
 
-//璇峰～鍐欎粠鎺у埗鍙扮敵璇风殑AppID
+//请填写从控制台申请的AppID
 static const std::string g_appid = ;
 
-//璇峰～鍐欎粠鎺у埗鍙扮敵璇风殑AppID
+//请填写从控制台申请的AppID
 static const std::string g_appkey = ;
 
-//瀛楄妭浠樿垂缇庨key
+//字节付费美颜key
 static const std::string g_byte_beauty_key = "";
-//瀛楄妭浠樿垂缇庨secret
+//字节付费美颜secret
 static const std::string g_byte_beauty_secret = "";
 
-//sami key鐢ㄤ簬鍙樺０
+//sami key用于变声
 static const std::string g_sami_key = "";
-//sami token鐢ㄤ簬鍙樺０
+//sami token用于变声
 static const std::string g_sami_token = "";
-
 
 
 #endif // CONFIG_H
