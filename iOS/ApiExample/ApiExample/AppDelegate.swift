@@ -8,6 +8,7 @@
 
 import UIKit
 import IQKeyboardManagerSwift
+import TTSDKFramework
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,7 +25,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         IQKeyboardManager.shared.enable = true
         
+        // 初始化TTSDK
+        self.setupTTSDK()
+        
         return true
+    }
+    
+    func setupTTSDK() {
+        // 用拿到的APPID创建TTSDKConfiguration
+        let configuration = TTSDKConfiguration.defaultConfiguration(withAppID: TTSDKAppID)
+        // 添加控制台的 App 信息
+        configuration.appName = TTSDKAppName
+        configuration.channel = "local_test"
+        configuration.bundleID = TTSDKBundleID
+        let licenseFilePath = Bundle.main.path(forResource: "tt_license.lic", ofType: nil)
+        configuration.licenseFilePath = licenseFilePath ?? ""
+        TTSDKManager.start(with: configuration)
+        TVLManager.startOpenGLESActivity()
+
     }
 }
 

@@ -1,14 +1,14 @@
 source 'https://cdn.cocoapods.org/'
 source 'https://github.com/volcengine/volcengine-specs.git'
 
-
 platform :ios, '11.0'
 
 target 'ApiExample' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod 'VolcEngineRTC', '3.57.1.3700'
+  pod 'VolcEngineRTC', '3.58.1.100'
+
   pod 'SnapKit'
   
   # 请求token需要依赖
@@ -19,4 +19,8 @@ target 'ApiExample' do
   
   # 相芯美颜SDK
   pod 'FURenderKit', '8.7.0'
+  
+  ## TT rtmp拉流sdk
+  pod 'TTSDKFramework', '1.40.3.6-premium', :subspecs => ['LivePull']
+
 end

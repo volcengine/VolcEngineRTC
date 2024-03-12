@@ -1,1 +1,1 @@
-static char g_auth_package[]={};
+static char g_auth_package[] = {};

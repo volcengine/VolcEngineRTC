@@ -7,10 +7,22 @@
 //
 
 
-// 开源移除authpack
-
-let kAppID  = 
-let kAppKey = 
+let kAppID  = ""
+let kAppKey = ""
 
 let kCDNUrl = ""
-let CVLicenseName = ""
+
+let kPullUrl = ""
+
+let CVLicenseNameDebug = ""
+let CVLicenseNameRelease = ""
+
+#if DEBUG
+let CVLicenseName = CVLicenseNameDebug
+#else
+let CVLicenseName = CVLicenseNameRelease
+#endif
+
+let TTSDKAppID = ""
+let TTSDKAppName = ""
+let TTSDKBundleID = ""

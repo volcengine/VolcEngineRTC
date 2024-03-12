@@ -80,9 +80,15 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         let grpup5 = ["直播相关":[dic51]]
         
         let dic62 = ["第三方美颜":"BeautyViewController"]
-        let grpup6 = ["重要组件":[dic62]]
+        let pullItem = ["RTMP拉流":"PullRTMPViewController"]
+        let grpup6 = ["重要组件":[dic62,pullItem]]
+        
+        let seiItem = ["SEI":"SEIViewController"]
+        let seiAudioItem = ["音频随帧":"AudioSEIViewController"]
 
-        let dataArray = [grpup0,grpup1,grpup2,grpup3,grpup4,grpup5,grpup6]
+        let messageGroup = ["消息管理":[seiItem,seiAudioItem]]
+
+        let dataArray = [grpup0,grpup1,grpup2,grpup3,grpup4,grpup5,grpup6,messageGroup]
         
         return dataArray
     }()

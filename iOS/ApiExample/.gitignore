@@ -2,3 +2,6 @@ Pods/
 Podfile.lock
 *.xcworkspace
 DerivedData/
+ApiExample/Config.swift
+**/tt_license.lic
+**/authpack.h

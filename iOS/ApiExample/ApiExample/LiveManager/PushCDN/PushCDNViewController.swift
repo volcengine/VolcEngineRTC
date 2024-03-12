@@ -123,6 +123,8 @@ class PushCDNViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRo
         
         // 设置默认合流参数
         self.mixConfig = ByteRTCMixedStreamConfig.default()
+        self.mixConfig?.layoutConfig.backgroundColor = "#FFFFFF"
+
     }
     
     @objc func startPushCDN()  {
@@ -133,7 +135,6 @@ class PushCDNViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRo
             let userId = userSettingItem.text
             
             self.mixConfig?.layoutConfig.regions = self.getMixRegions()
-            self.mixConfig?.layoutConfig.backgroundColor = "#FFFFFF"
             
             self.mixConfig?.roomID = roomId!
             self.mixConfig?.userID = userId!
@@ -145,6 +146,9 @@ class PushCDNViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRo
     }
     
     @objc func updatePushConfig()  {
+        // 更新布局
+        self.mixConfig?.layoutConfig.regions = self.getMixRegions()
+
         self.rtcVideo?.updatePushMixedStream(toCDN: taskId, mixedConfig: self.mixConfig!)
     }
     

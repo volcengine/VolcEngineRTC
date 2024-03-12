@@ -204,7 +204,18 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
         
         // 设置采集帧率
         self.captureFpsSheetView.didSelectOption = {(value) in
-            weakSelf?.captureConfig?.frameRate = Int(value)
+            
+            switch value {
+            case 0:
+                weakSelf?.captureConfig?.frameRate = 15
+            case 1:
+                weakSelf?.captureConfig?.frameRate = 30
+            case 2:
+                weakSelf?.captureConfig?.frameRate = 60
+            default:
+                weakSelf?.captureConfig?.frameRate = 15
+            }
+            
             weakSelf?.rtcVideo?.setVideoCaptureConfig(weakSelf?.captureConfig)
         }
         
@@ -229,10 +240,20 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
             weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
-        // 设置帧率
+        // 设置编码帧率
         self.fpsSheetView.didSelectOption = {(value) in
-            weakSelf?.encoderCfg?.frameRate = Int(value)
             
+            switch value {
+            case 0:
+                weakSelf?.encoderCfg?.frameRate = 15
+            case 1:
+                weakSelf?.encoderCfg?.frameRate = 30
+            case 2:
+                weakSelf?.encoderCfg?.frameRate = 60
+            default:
+                weakSelf?.encoderCfg?.frameRate = 15
+            }
+                        
             weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
@@ -243,7 +264,7 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
         }
         
         // 设置最低码率
-        self.maxBitrateSettingItem.onValueChanged = {(value) in
+        self.minBitrateSettingItem.onValueChanged = {(value) in
             weakSelf?.encoderCfg?.minBitrate = Int(value)!
             weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
         }

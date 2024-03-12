@@ -20,7 +20,9 @@ class TextFieldView: UIView {
             return self.inputTextField.text
         }
         set {
-            self.inputTextField.text = newValue ?? ""
+            DispatchQueue.main.async {
+                self.inputTextField.text = newValue ?? ""
+            }
         }
     }
     

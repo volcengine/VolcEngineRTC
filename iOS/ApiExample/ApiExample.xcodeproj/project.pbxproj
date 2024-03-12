@@ -110,6 +110,10 @@
 		CC7E64DD2AF4CAA100B9D0D7 /* ToastComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E64DC2AF4CAA100B9D0D7 /* ToastComponents.swift */; };
 		CC7E64DF2AF4CFD000B9D0D7 /* StepButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E64DE2AF4CFD000B9D0D7 /* StepButton.swift */; };
 		CC7E64E12AFA347000B9D0D7 /* CustomVideoRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E64E02AFA347000B9D0D7 /* CustomVideoRenderView.swift */; };
+		CCB1E61C2B5805480040AFA0 /* SEIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1E61B2B5805480040AFA0 /* SEIViewController.swift */; };
+		CCB1E61E2B5911BD0040AFA0 /* AudioSEIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1E61D2B5911BD0040AFA0 /* AudioSEIViewController.swift */; };
+		CCB1E6212B5923890040AFA0 /* PullRTMPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1E6202B5923890040AFA0 /* PullRTMPViewController.swift */; };
+		CCB1E6232B5928000040AFA0 /* tt_license.lic in Resources */ = {isa = PBXBuildFile; fileRef = CCB1E6222B5928000040AFA0 /* tt_license.lic */; };
 		CCC607FD2B21C649000EFE3B /* BaseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC607FC2B21C649000EFE3B /* BaseButton.swift */; };
 		CCC607FF2B230234000EFE3B /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC607FE2B230234000EFE3B /* TextFieldView.swift */; };
 		CCC608012B26DE7B000EFE3B /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC608002B26DE7B000EFE3B /* SliderView.swift */; };
@@ -269,6 +273,10 @@
 		CC7E64DC2AF4CAA100B9D0D7 /* ToastComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastComponents.swift; sourceTree = "<group>"; };
 		CC7E64DE2AF4CFD000B9D0D7 /* StepButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepButton.swift; sourceTree = "<group>"; };
 		CC7E64E02AFA347000B9D0D7 /* CustomVideoRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoRenderView.swift; sourceTree = "<group>"; };
+		CCB1E61B2B5805480040AFA0 /* SEIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SEIViewController.swift; sourceTree = "<group>"; };
+		CCB1E61D2B5911BD0040AFA0 /* AudioSEIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSEIViewController.swift; sourceTree = "<group>"; };
+		CCB1E6202B5923890040AFA0 /* PullRTMPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullRTMPViewController.swift; sourceTree = "<group>"; };
+		CCB1E6222B5928000040AFA0 /* tt_license.lic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tt_license.lic; sourceTree = "<group>"; };
 		CCC607FC2B21C649000EFE3B /* BaseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseButton.swift; sourceTree = "<group>"; };
 		CCC607FE2B230234000EFE3B /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
 		CCC608002B26DE7B000EFE3B /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
@@ -322,6 +330,7 @@
 				CC443D4A2ABD829300DF3DDD /* ViewController.swift */,
 				CC7E63EB2AF348D700B9D0D7 /* Config.swift */,
 				CC7E63A72AD145ED00B9D0D7 /* ApiExample-Bridging-Header.h */,
+				CCB1E6222B5928000040AFA0 /* tt_license.lic */,
 				CC6AE85A2B03243900E63421 /* Common */,
 				CC7E639C2AD13E4400B9D0D7 /* TokenGenerator */,
 				CC7E64D72AF4C87B00B9D0D7 /* QuickStart */,
@@ -331,6 +340,7 @@
 				CC7E63C42AE1169200B9D0D7 /* VideoManager */,
 				CC7E63C92AE118E100B9D0D7 /* LiveManager */,
 				CC7E63C72AE118E100B9D0D7 /* ImportantComponents */,
+				CCB1E6132B57F85A0040AFA0 /* SEI */,
 				CC443D4C2ABD829300DF3DDD /* Main.storyboard */,
 				CC443D4F2ABD829500DF3DDD /* Assets.xcassets */,
 				CC443D512ABD829500DF3DDD /* LaunchScreen.storyboard */,
@@ -488,6 +498,7 @@
 		CC7E63C72AE118E100B9D0D7 /* ImportantComponents */ = {
 			isa = PBXGroup;
 			children = (
+				CCB1E61F2B59236B0040AFA0 /* PullRTMP */,
 				CC7E63C82AE118E100B9D0D7 /* Beauty */,
 			);
 			path = ImportantComponents;
@@ -763,6 +774,23 @@
 			path = QuickStart;
 			sourceTree = "<group>";
 		};
+		CCB1E6132B57F85A0040AFA0 /* SEI */ = {
+			isa = PBXGroup;
+			children = (
+				CCB1E61B2B5805480040AFA0 /* SEIViewController.swift */,
+				CCB1E61D2B5911BD0040AFA0 /* AudioSEIViewController.swift */,
+			);
+			path = SEI;
+			sourceTree = "<group>";
+		};
+		CCB1E61F2B59236B0040AFA0 /* PullRTMP */ = {
+			isa = PBXGroup;
+			children = (
+				CCB1E6202B5923890040AFA0 /* PullRTMPViewController.swift */,
+			);
+			path = PullRTMP;
+			sourceTree = "<group>";
+		};
 		D4AC22F72E4A483E78D592A7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -865,6 +893,7 @@
 				CC7E64972AF3DA0800B9D0D7 /* qianzhihe.bundle in Resources */,
 				CC7E63B22AD3DDA300B9D0D7 /* rtc_test.aac in Resources */,
 				CC7E648E2AF3DA0800B9D0D7 /* tianmei.bundle in Resources */,
+				CCB1E6232B5928000040AFA0 /* tt_license.lic in Resources */,
 				CC7E64902AF3DA0800B9D0D7 /* chaomo.bundle in Resources */,
 				CC7E649C2AF3DA0800B9D0D7 /* xinggan.bundle in Resources */,
 				CC7E649F2AF3DA0800B9D0D7 /* fashi.bundle in Resources */,
@@ -976,6 +1005,7 @@
 				CC7E64822AF3DA0800B9D0D7 /* FUTipHUD.m in Sources */,
 				CC7E639B2AD1333B00B9D0D7 /* Tool.swift in Sources */,
 				CCC607FD2B21C649000EFE3B /* BaseButton.swift in Sources */,
+				CCB1E6212B5923890040AFA0 /* PullRTMPViewController.swift in Sources */,
 				CC7E64852AF3DA0800B9D0D7 /* FUSquareButton.m in Sources */,
 				CC7E64E12AFA347000B9D0D7 /* CustomVideoRenderView.swift in Sources */,
 				CC7E647F2AF3DA0800B9D0D7 /* FUBeautyFilterView.m in Sources */,
@@ -996,8 +1026,10 @@
 				CC7E64832AF3DA0800B9D0D7 /* FUBodyView.m in Sources */,
 				CC7E647D2AF3DA0800B9D0D7 /* FUSlider.m in Sources */,
 				CC7E64812AF3DA0800B9D0D7 /* FUBeautyShapeView.m in Sources */,
+				CCB1E61C2B5805480040AFA0 /* SEIViewController.swift in Sources */,
 				CC7E63CE2AE1212700B9D0D7 /* CommonVideoConfigViewController.swift in Sources */,
 				CC7E63AF2AD29B7500B9D0D7 /* AudioEffectMixingViewController.swift in Sources */,
+				CCB1E61E2B5911BD0040AFA0 /* AudioSEIViewController.swift in Sources */,
 				CC58B5892B075B6E00C03D52 /* SwitchSetingView.swift in Sources */,
 				CC7E64702AF3DA0800B9D0D7 /* FUMakeupViewModel.m in Sources */,
 				CC7E63DA2AEA476400B9D0D7 /* PushCDNViewController.swift in Sources */,
@@ -1206,7 +1238,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1234,10 +1266,10 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCVertcDemoDist;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCVertcDemoAPIExampleDist;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/ApiExample/ApiExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
