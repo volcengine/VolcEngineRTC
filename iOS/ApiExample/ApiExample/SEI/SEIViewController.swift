@@ -1,10 +1,65 @@
-//
-//  SEIViewController.swift
-//  ApiExample
-//
-//  Created by bytedance on 2024/1/17.
-//  Copyright © 2021 bytedance. All rights reserved.
-//
+/**
+* 功能名称： VolcEngineRTC SEI方案
+* 功能简单描述：在音视频流媒体应用中，除了可以收发音视频内容外，可能还需要收发一些与音视频内容同步的文本消息。
+*   你可以 H.264/H.265 视频视频流中插入 SEI，并在订阅端接收这些信息。
+* 参考文档：https://www.volcengine.com/docs/6348/70140
+*
+* 此功能涉及的API及回调：
+*     createRTCVideo 创建引擎
+*     destroyRTCVideo 销毁引擎
+*     startAudioCapture 开启音频采集
+*     startVideoCapture 开启视频采集
+*     createRTCRoom 创建RTC房间
+*     joinRoom 进入RTC房间
+*     leaveRoom 离开RTC房间
+*     destroy 销毁RTC房间
+*
+*     通用方案： RTC本端通过sendSEIMessage发送SEI， RTC远端收到onSEIMessageReceived，当合流转推时，RTMP流 h264视频中包含SEI信息
+*     相关接口：
+*     sendSEIMessage 发送SEI信息
+*     onSEIMessageReceived 收到SEI信息的回调
+*     当时纯音频场景时，本端需要发布视频流，远端需要订阅视频流才能收到SEI
+*
+*     合流转推方案：合流转推时通过 setLayoutConfig 接口将app_data设置在SEI信息中，观众端拉流时可以解析SEI，SEI结构如下
+*     {
+        "app_data": "自定义消息",
+        "canvas": {
+            "bgnd": "#000000",
+            "h": 640,
+            "w": 360
+        },
+        "regions": [{
+            "alpha": 1.0,
+            "contentControl": 0,
+            "height": 640,
+            "locationX": 0,
+            "locationY": 50,
+            "renderMode": 1,
+            "uid": "user_343",
+            "width": 360,
+            "zorder": 0
+            }],
+        "ts": 1705994199709
+    }
+      相关接口：
+*     startPushMixedStreamToCDN 开始合流转推
+*     setLayoutConfig 设置SEI中的app_data信息
+*     stopPushStreamToCDN 停止合流转推
+*
+*
+*     音频随帧方案：请参考音频随帧部分
+*
+*     其他接口：
+*     setLocalVideoCanvas 设置本地视频渲染视图
+
+*
+*     onRoomStateChanged 房间状态回调
+*     onLeaveRoom 离房回调
+*     onUserJoined 用户加入回调
+*     onUserLeave  用户离开回调
+*     onUserPublishStream 用户发流回调
+*     onUserUnpublishStream 用户停止发流回调
+*/
 
 import UIKit
 import SnapKit
