@@ -1,0 +1,104 @@
+<resources>
+    <string name="camera_dialog_title">Warning</string>
+    <string name="camera_dialog_message">Camera permissions are disabled or the camera is occupied by another app!</string>
+    <string name="sorry_no_permission">Sorry ,your license is not supported for these functions.</string>
+    <string name="camera_dialog_open">Retry</string>
+    <string name="camera_dialog_back">quit</string>
+
+    <string name="home_function_name_beauty">Beautification</string>
+    <string name="home_function_name_makeup">Makeup</string>
+    <string name="home_function_name_sticker">Sticker</string>
+    <string name="home_function_name_beauty_body">Body</string>
+
+    <string name="fu_base_is_tracking_text">No face tracking</string>
+    <string name="toast_not_detect_face">No face tracking</string>
+    <string name="toast_not_detect_body">No body tracking</string>
+    <string name="toast_not_detect_gesture">No gesture tracking</string>
+    <string name="toast_not_detect_face_or_body">No face or body tracking</string>
+
+    <string name="confirm">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="dialog_confirm_delete">Are you sure to delete?</string>
+    <string name="dialog_reset_avatar_model">Reset all parameters to default?</string>
+    <string name="toast_delete_succeed">Delete succeed</string>
+    <string name="toast_delete_failed">Delete failed</string>
+    <string name="live_photo_save_succeed">Save succeed</string>
+
+    <string name="recover">Recover</string>
+    <string name="beauty_box_heavy_blur_fine">Fine smooth</string>
+    <string name="beauty_box_color_level">Whiten</string>
+    <string name="beauty_box_red_level">Ruddy</string>
+    <string name="beauty_box_sharpen">Sharpen</string>
+    <string name="beauty_box_eye_bright">Eye brighten</string>
+    <string name="beauty_box_tooth_whiten">Tooth whiten</string>
+    <string name="beauty_box_eye_enlarge">Eye enlarge</string>
+    <string name="beauty_box_eye_circle">Eye round</string>
+    <string name="beauty_box_cheek_thinning">Cheek thin</string>
+    <string name="beauty_box_cheek_v">V face</string>
+    <string name="beauty_box_cheekbones">Cheekbone</string>
+    <string name="beauty_box_lower_jaw">Jawbone</string>
+    <string name="beauty_box_cheek_narrow">CheekNarrow</string>
+    <string name="beauty_box_cheek_short">Cheek short</string>
+    <string name="beauty_box_cheek_small">Cheek small</string>
+    <string name="beauty_box_intensity_chin">Chin</string>
+    <string name="beauty_box_intensity_forehead">Forehead</string>
+    <string name="beauty_box_intensity_nose">Nose</string>
+    <string name="beauty_box_intensity_mouth">Mouth</string>
+    <string name="beauty_radio_skin_beauty">Skin</string>
+    <string name="beauty_radio_face_shape">Reshape</string>
+    <string name="beauty_radio_filter">Filter</string>
+    <string name="beauty_radio_style">Presets</string>
+    <string name="beauty_micro_pouch">Circle</string>
+    <string name="beauty_micro_nasolabial">Wrinkles</string>
+    <string name="beauty_micro_smile">Smile</string>
+    <string name="beauty_brow_height">Brow height</string>
+    <string name="beauty_brow_space">Brow space</string>
+    <string name="beauty_eye_lid">Eye lid</string>
+    <string name="beauty_eye_height">Eye height</string>
+    <string name="beauty_brow_thick">Brow thick</string>
+    <string name="beauty_lip_thick">Lip thick</string>
+    <string name="beauty_face_three">Face three dimensional</string>
+    <string name="beauty_micro_canthus">Canthus</string>
+    <string name="beauty_micro_philtrum">Philtrum</string>
+    <string name="beauty_micro_long_nose">Length</string>
+    <string name="beauty_micro_eye_space">Eye distance</string>
+    <string name="beauty_micro_eye_rotate">Slant</string>
+
+    <string name="origin">Origin</string>
+    <string name="bailiang_1">Bright 1</string>
+    <string name="fennen_1">Pink 1</string>
+    <string name="lengsediao_1">Cold tone 1</string>
+    <string name="ziran_1">Nature 1</string>
+    <string name="zhiganhui_1">Grey 1</string>
+
+
+    <string name="makeup_radio_remove">Remover</string>
+    <string name="makeup_combination_sexy">Sexy</string>
+    <string name="makeup_combination_sweet">Sweet</string>
+    <string name="makeup_combination_neighbor">Next-door</string>
+    <string name="makeup_combination_occident">European</string>
+    <string name="makeup_combination_charming">Charming</string>
+    <string name="makeup_combination_jianling">Tender</string>
+    <string name="makeup_combination_nuandong">Warm</string>
+    <string name="makeup_combination_hongfeng">Maple</string>
+    <string name="makeup_combination_shaonv">Maiden</string>
+    <string name="makeup_combination_ziyun">Purple</string>
+    <string name="makeup_combination_yanshimao">Cat</string>
+    <string name="makeup_combination_renyu">Mermaid</string>
+    <string name="makeup_combination_chuqiu">Autumn</string>
+    <string name="makeup_combination_qianzhihe">Crane</string>
+    <string name="makeup_combination_chaomo">Model</string>
+    <string name="makeup_combination_chuju">Daisy</string>
+    <string name="makeup_combination_gangfeng">HK style</string>
+    <string name="makeup_combination_rose">Rose</string>
+
+    <string name="slimming">Body</string>
+    <string name="long_legs">Leg</string>
+    <string name="thin_waist">Waist</string>
+    <string name="beautify_shoulder">Shoulder</string>
+    <string name="beautify_hip_slim">Hip</string>
+    <string name="beautify_head_slim">Head shrink</string>
+    <string name="beautify_leg_thin_slim">Thin leg</string>
+
+    <string name="face_beauty_function_tips">%s is only supported for high-end computers</string>
+</resources>

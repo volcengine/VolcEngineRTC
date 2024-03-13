@@ -1,0 +1,33 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 749
+        versionName "8.7.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    configurations.configureEach {
+        resolutionStrategy.cacheChangingModulesFor 0,'seconds'
+        resolutionStrategy.cacheDynamicVersionsFor 0,'seconds'
+    }
+    api 'com.faceunity:core:8.7.0'
+    api 'com.faceunity:model:8.7.0'
+
+    api "androidx.recyclerview:recyclerview:1.0.0"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+}

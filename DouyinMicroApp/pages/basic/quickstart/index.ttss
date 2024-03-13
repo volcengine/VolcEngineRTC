@@ -1,0 +1,64 @@
+.page {
+  box-sizing: border-box;
+  width: 100vw;
+  padding: 0 32rpx;
+}
+
+.title {
+  box-sizing: border-box;
+  padding-top: 32rpx;
+  padding-bottom: 24rpx;
+}
+
+.streams {
+  width: 100%;
+  height: 500rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.streams > * {
+  width: calc(50% - 24rpx);
+  background-color: #000;
+}
+
+.input-roomId {
+  margin-top: 24rpx;
+  margin-bottom: 16rpx;
+  border-bottom: 1px solid #000;
+  font-size: 28rpx;
+}
+
+.title text {
+  font-size: 48rpx;
+  line-height: 48rpx;
+  font-weight: 500;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  row-gap: 32rpx;
+}
+
+.content > view {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 64rpx;
+}
+
+
+.content text {
+  font-size: 28rpx;
+  line-height: 28rpx;
+}
+
+.content button {
+  height: 100%;
+  margin: 0;
+  font-size: 28rpx;
+  border-radius: 8rpx;
+}

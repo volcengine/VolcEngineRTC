@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".examples.AudioMixing.AudioMediaMixingActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/local_view_container"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            />
+
+        <LinearLayout
+            android:id="@+id/main_room_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <EditText
+                android:id="@+id/room_id_input"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="36dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:hint="房间ID"
+                android:paddingLeft="5dp"
+                android:layout_marginTop="10dp"
+                />
+            <Button
+                android:id="@+id/btn_join_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="加入房间"
+                android:layout_gravity="right"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/layout_background">
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:text="音乐混音" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:text="文件："/>
+
+                <EditText
+                    android:id="@+id/res_input1"
+                    android:layout_width="0dp"
+                    android:textSize="12sp"
+                    android:text="qilixiang.m4a"
+                    android:paddingLeft="10dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="4"
+                    android:enabled="false"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_open"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="打开"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_play"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="播放"
+                    android:layout_weight="1"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_pause"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="暂停"
+                    android:layout_weight="1"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_resume"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="恢复"
+                    android:layout_weight="1"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_stop"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="停止"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="播放进度"/>
+
+                <SeekBar
+                    android:id="@+id/progress_bar1"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginBottom="5dp"
+                    android:progress="0"
+                    android:thumb="@null"
+                    android:splitTrack="false"/>
+                <TextView
+                    android:id="@+id/progress_text1"
+                    android:layout_marginEnd="16dp"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+                <EditText
+                    android:id="@+id/progress_input"
+                    android:layout_width="match_parent"
+                    android:textSize="12sp"
+                    android:layout_height="36dp"
+                    android:layout_weight="4"
+                    android:hint="进度ms"
+                    android:paddingLeft="5dp"
+                    android:inputType="number"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_set_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="设置进度"/>
+
+                <EditText
+                    android:id="@+id/audio_track_input"
+                    android:layout_width="match_parent"
+                    android:textSize="12sp"
+                    android:layout_height="36dp"
+                    android:paddingLeft="5dp"
+                    android:layout_weight="4"
+                    android:hint="音轨(0,1)"
+                    android:inputType="number"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_set_audio_track"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="0dp"
+                    android:text="设置音轨"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="5dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/layout_background"
+            >
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:text="PCM混音" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_play2"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="播放"
+                    android:layout_weight="1"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_pause2"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="暂停"
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_resume2"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="恢复"
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_stop2"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="停止"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/grey"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="音量"/>
+
+            <SeekBar
+                android:id="@+id/volume_bar1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:max="400"
+                android:progress="100"/>
+            <TextView
+                android:id="@+id/volume_text1"
+                android:layout_marginEnd="16dp"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:gravity="center"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

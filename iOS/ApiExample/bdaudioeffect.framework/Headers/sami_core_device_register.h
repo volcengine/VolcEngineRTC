@@ -1,0 +1,16 @@
+//
+// Created by CHENZEMIN on 2022/8/11.
+//
+
+#ifndef SAMI_CORE_SAMI_CORE_DEVICE_REGISTER_H
+#define SAMI_CORE_SAMI_CORE_DEVICE_REGISTER_H
+
+#include "sami_core_def.h"
+
+SAMI_CORE_EXTERN_C_BEGIN
+
+SAMI_CORE_DLL_EXPORT int SAMICoreDeviceRegisterInit(void *bd_did);
+
+SAMI_CORE_EXTERN_C_END
+
+#endif  //SAMI_CORE_SAMI_CORE_DEVICE_REGISTER_H

@@ -1,0 +1,81 @@
+<view class="page">
+  <view class="title">
+    <text>快速开始</text>
+  </view>
+
+  <view class="streams">
+    <view class="stream-local">
+      <rtc-room tt:if="{{showLocalStream}}" user-id="{{ userId }}" mode="camera" binderror="handleRTCError">
+      </rtc-room>
+    </view>
+
+    <view class="stream-remote">
+      <rtc-room tt:if="{{showRemoteStream}}" user-id="{{ remoteStreams[0].userId }}" mode="{{ remoteStreams[0].mode }}"
+        binderror="handleRTCError">
+      </rtc-room>
+    </view>
+  </view>
+
+  <input class="input-roomId" type="text" placeholder="请输入 roomId" value="{{roomId}}" bindinput="handleRoomIdInput">
+  </input>
+
+  <view class="content">
+
+    <view>
+      <text>
+        Step1: 创建引擎
+      </text>
+
+      <button open-type="button" bindtap="createEngine">
+        创建引擎
+      </button>
+    </view>
+
+    <view>
+      <text>
+        Step2: 采集音视频
+      </text>
+      <button open-type="button" bindtap="startCapture">
+        开启采集
+      </button>
+    </view>
+
+    <view>
+      <text>
+        Step3: 本地渲染
+      </text>
+      <button open-type="button" bindtap="renderLocalStream">
+        设置本地渲染
+      </button>
+    </view>
+
+
+    <view>
+      <text>
+        Step4: 加入房间
+      </text>
+      <button open-type="button" bindtap="joinRtcRoom">
+        加入房间
+      </button>
+    </view>
+
+    <view>
+      <text>
+        Step5: 停止采集
+      </text>
+      <button open-type="button" bindtap="stopCapture">
+        停止采集
+      </button>
+    </view>
+
+    <view>
+      <text>
+        Step6: 离开房间
+      </text>
+      <button open-type="button" bindtap="leaveRoom">
+        离开房间
+      </button>
+    </view>
+
+  </view>
+</view>

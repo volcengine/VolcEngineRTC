@@ -1,0 +1,12 @@
+{
+  "name": "veRTC快速开始Demo",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@douyin-microapp/typings": "*"
+  }
+}
