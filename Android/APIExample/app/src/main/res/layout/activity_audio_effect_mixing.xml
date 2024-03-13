@@ -203,7 +203,6 @@
                 android:id="@+id/res_input2"
                 android:layout_width="0dp"
                 android:textSize="12sp"
-                android:enabled="true"
                 android:paddingLeft="10dp"
                 android:layout_height="36dp"
                 android:layout_weight="4"/>

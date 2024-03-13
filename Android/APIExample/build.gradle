@@ -5,5 +5,5 @@ plugins {
 }
 
 ext {
-    VOLCENGINE = '3.57.1.3700'
+    VOLCENGINE = '3.58.1.2700'
 }

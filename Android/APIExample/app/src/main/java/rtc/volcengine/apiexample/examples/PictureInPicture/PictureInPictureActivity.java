@@ -33,7 +33,7 @@ import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
-
+import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： VolcEngineRTC 画中画
@@ -174,7 +174,7 @@ public class PictureInPictureActivity extends BaseActivity {
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
 
         RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
-        // 设置本地视频渲染视图
+        // 设置远端视频渲染视图
         rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
     }
 
@@ -213,10 +213,11 @@ public class PictureInPictureActivity extends BaseActivity {
     }
 
     private void closeFloatingWindow() {
-        floatWindowManager.closeWindow();
-        if (textureView.getParent() != null) {
-            remoteViewContainer.addView(textureView);
+        if (!floatWindowManager.isWindowOpen()) {
+            return;
         }
+        floatWindowManager.closeWindow();
+        remoteViewContainer.addView(textureView);
     }
 
     @Override

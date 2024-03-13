@@ -42,6 +42,7 @@ import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
+import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： VolcEngineRTC 视频常用配置
@@ -252,12 +253,10 @@ public class VideoConfigActivity extends BaseActivity {
                 config.capturePreference = VideoCaptureConfig.CapturePreference.AUTO_PERFORMANCE;
                 break;
         }
-        if (config.capturePreference == VideoCaptureConfig.CapturePreference.MANUAL) {
-            // capturePreference为manual时，手动设置视频参数才会生效
-            config.width = width.isEmpty() ? 1920 : Integer.parseInt(width);
-            config.height = height.isEmpty() ? 1080 : Integer.parseInt(height);
-            config.frameRate = frameRate.isEmpty() ? 30 : Integer.parseInt(frameRate);
-        }
+        // capturePreference为manual时，手动设置视频参数才会生效
+        config.width = width.isEmpty() ? 1920 : Integer.parseInt(width);
+        config.height = height.isEmpty() ? 1080 : Integer.parseInt(height);
+        config.frameRate = frameRate.isEmpty() ? 30 : Integer.parseInt(frameRate);
         rtcVideo.setVideoCaptureConfig(config);
     }
 

@@ -20,6 +20,15 @@
         android:theme="@style/Theme.APIExample"
         tools:targetApi="31">
         <activity
+            android:name=".examples.PullStreamActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.StreamSyncInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.SEIMessageActivity"
+            android:exported="false" />
+        <activity
             android:name=".examples.QuickStartActivity"
             android:exported="false" />
         <activity
@@ -30,6 +39,9 @@
             android:exported="false" />
         <activity
             android:name=".examples.ThirdBeauty.ThirdBeautyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.mediaplayer.MediaPlayerActivity"
             android:exported="false" />
         <activity
             android:name=".examples.CDNStreamActivity"

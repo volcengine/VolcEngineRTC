@@ -26,6 +26,7 @@ import com.ss.bytertc.engine.type.ChannelProfile;
 import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 import com.ss.bytertc.engine.type.StreamRemoveReason;
+import com.ss.bytertc.engine.utils.LogUtil;
 import com.ss.bytertc.engine.video.IVideoEffect;
 
 import java.io.File;
@@ -108,8 +109,7 @@ public class ByteBeautyActivity extends BaseActivity {
         setTitle(R.string.title_byte_beauty);
         initUI();
         effectResourceManager = new EffectResourceManager(this);
-        effectResourceManager.initVideoEffectResource();
-        
+        new Thread(() -> effectResourceManager.initVideoEffectResource()).start();
 
         // 创建引擎
         rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, videoEventHandler, null, null);
@@ -175,6 +175,7 @@ public class ByteBeautyActivity extends BaseActivity {
     }
 
     private void setTabViewVisibility(TabLayout.Tab tab, boolean visible) {
+        Log.i(TAG, "tab:" + tab.getText().toString() + " visible:" + visible);
         String tabTitle = tab.getText() == null ? "" : tab.getText().toString();
         for (int i = 0; i < effectLayoutContainer.getChildCount(); i++) {
             View view = effectLayoutContainer.getChildAt(i);

@@ -40,7 +40,7 @@ import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.examples.CrossRoomPKActivity;
 import rtc.volcengine.apiexample.examples.MultiRoomActivity;
-
+import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： VolcEngineRTC 音效混音
@@ -206,11 +206,22 @@ public class AudioEffectMixingActivity extends BaseActivity {
         // preload
         btnPreload2.setOnClickListener(v -> {
             path2 = resInput2.getText().toString();
+            if (TextUtils.isEmpty(path2)) {
+                ToastUtil.showShortToast(this, "url is null");
+                return;
+            }
             effectPlayer.preload(EFFECT_ID_2, path2);
         });
         // unload
         btnUnload2.setOnClickListener(v -> effectPlayer.unload(EFFECT_ID_2));
-        btnPlay2.setOnClickListener(v -> startEffect(EFFECT_ID_2, path2));
+        btnPlay2.setOnClickListener(v -> {
+            path2 = resInput2.getText().toString();
+            if (TextUtils.isEmpty(path2)) {
+                ToastUtil.showShortToast(this, "url is null");
+                return;
+            }
+            startEffect(EFFECT_ID_2, path2);
+        });
         btnStop2.setOnClickListener(v -> effectPlayer.stop(EFFECT_ID_2));
         btnPause2.setOnClickListener(v -> effectPlayer.pause(EFFECT_ID_2));
         btnResume2.setOnClickListener(v -> effectPlayer.resume(EFFECT_ID_2));
