@@ -99,6 +99,10 @@ public class FloatWindowManager {
         return closeButton;
     }
 
+    public boolean isWindowOpen() {
+        return isWindowOpen;
+    }
+
     private int convertDpToPixel(float dp, float density) {
         return (int) (dp * density + 0.5f);
     }

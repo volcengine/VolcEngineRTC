@@ -3,8 +3,10 @@ package rtc.volcengine.apiexample.examples;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.TextureView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
@@ -29,11 +31,16 @@ import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 import com.ss.bytertc.engine.type.StreamRemoveReason;
 import com.ss.bytertc.engine.video.VideoFrame;
+import com.ss.mediakit.medialoader.AVMDLLog;
+import com.ss.ttvideoengine.utils.TTVideoEngineLog;
 
+import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import rtc.volcengine.apiexample.BaseActivity;
+import rtc.volcengine.apiexample.BuildConfig;
 import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.MD5Utils;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
@@ -78,9 +85,11 @@ import rtc.volcengine.apiexample.common.annotations.ApiExample;
 @ApiExample(name = "推流到CDN", order = 8)
 public class CDNStreamActivity extends BaseActivity {
     private static final String TAG = "CDNStreamActivity";
-    private static final String roomID = "cdn_stream";
+    private String roomID;
     private static final String CDN_TASK_ID = "111";
     private FrameLayout localViewContainer;
+    private Button btnJoinRoom;
+    private EditText roomIdInput;
     private FrameLayout[] remoteContainers = new FrameLayout[3];
     private HashMap<String, Integer> remoteUserViewMap = new HashMap<>();
     private ArrayList<String> userNameList = new ArrayList<>();
@@ -93,6 +102,7 @@ public class CDNStreamActivity extends BaseActivity {
     private RTCRoom rtcRoom;
 
     private MixedStreamConfig mixedStreamConfig;
+    private boolean isJoined;
 
 
     @Override
@@ -108,9 +118,8 @@ public class CDNStreamActivity extends BaseActivity {
         setLocalRenderView();
         // 开启音视频采集
         rtcVideo.startVideoCapture();
-//        rtcVideo.startAudioCapture();
+        rtcVideo.startAudioCapture();
 
-        joinRoom(roomID);
         userNameList.add(localUid);
 
         mixedStreamConfig = MixedStreamConfig.defaultMixedStreamConfig();
@@ -124,6 +133,8 @@ public class CDNStreamActivity extends BaseActivity {
         cdnAddressInput = findViewById(R.id.cdn_address_input);
         layoutColorInput = findViewById(R.id.layout_color_input);
         layoutMode = findViewById(R.id.layout_mode_spinner);
+        btnJoinRoom = findViewById(R.id.btn_join_room);
+        roomIdInput = findViewById(R.id.room_id_input);
 
         btnStartPush = findViewById(R.id.btn_start_push);
         btnUpdatePushConfig = findViewById(R.id.btn_update_push_config);
@@ -132,8 +143,25 @@ public class CDNStreamActivity extends BaseActivity {
         btnStartPush.setOnClickListener(v -> startPushCDNStream());
         btnUpdatePushConfig.setOnClickListener(v -> updateCDNStreamConfig());
         btnStopPush.setOnClickListener(v -> stopPushCDNStream());
+        btnJoinRoom.setOnClickListener(v -> {
+            String roomId = roomIdInput.getText().toString();
+            if (isJoined) {
+                leaveRoom();
 
-        cdnAddressInput.setText(getRTMPAddr(roomID, CDN_TASK_ID));
+                isJoined = false;
+                btnJoinRoom.setText("进入房间");
+                return;
+            }
+            if (TextUtils.isEmpty(roomId)) {
+                ToastUtil.showAlert(this, "roomID is null");
+                return;
+            }
+            joinRoom(roomId);
+            isJoined = true;
+            btnJoinRoom.setText("退出房间");
+
+            cdnAddressInput.setText(getRTMPAddr(roomId, CDN_TASK_ID));
+        });
     }
 
     /**
@@ -189,6 +217,7 @@ public class CDNStreamActivity extends BaseActivity {
      * @param roomId
      */
     private void joinRoom(String roomId) {
+        this.roomID = roomId;
         rtcRoom = rtcVideo.createRTCRoom(roomId);
         rtcRoom.setRTCRoomEventHandler(rtcRoomEventHandler);
         String token = requestRoomToken(roomId);
@@ -317,6 +346,7 @@ public class CDNStreamActivity extends BaseActivity {
     IMixedStreamObserver mixedStreamObserver = new IMixedStreamObserver() {
         @Override
         public boolean isSupportClientPushStream() {
+            ToastUtil.showShortToast(CDNStreamActivity.this, "isSupportClientPushStream");
             return false;
         }
 
@@ -405,9 +435,7 @@ public class CDNStreamActivity extends BaseActivity {
     };
 
     public static String getRTMPAddr(String roomID, String taskID) {
-        // 生成推流地址
-        String addr = "";
-        return addr;
+        return "";
     }
 
     @Override

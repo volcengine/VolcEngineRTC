@@ -7,9 +7,9 @@ public class ExampleInfo {
     private String category;
     private String exampleName;
     private Class<Activity> action;
-    private int order;
+    private double order;
 
-    public ExampleInfo(String exampleName, Class action, int order) {
+    public ExampleInfo(String exampleName, Class action, double order) {
         this.action = action;
         this.exampleName = exampleName;
         this.order = order;
@@ -19,7 +19,7 @@ public class ExampleInfo {
         return action;
     }
 
-    public int getOrder() {
+    public double getOrder() {
         return order;
     }
 

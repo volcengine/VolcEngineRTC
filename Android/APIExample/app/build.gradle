@@ -58,27 +58,46 @@ android {
         pickFirst 'lib/armeabi-v7a/libbytertc_vp8codec_extension.so'
         pickFirst 'lib/armeabi-v7a/libh265enc.so'
 
+
         pickFirst 'lib/x86/libbytertc_fdk-aac_extension.so'
         pickFirst 'lib/x86/libbytertc_nico_extension.so'
         pickFirst 'lib/x86/libbytertc_vp8codec_extension.so'
         pickFirst 'lib/x86/libh265enc.so'
 
 
+
         pickFirst 'lib/x86_64/libbytertc_fdk-aac_extension.so'
         pickFirst 'lib/x86_64/libbytertc_nico_extension.so'
         pickFirst 'lib/x86_64/libbytertc_vp8codec_extension.so'
         pickFirst 'lib/x86_64/libh265enc.so'
+
     }
+
+
+    configurations.all {
+//        all*.exclude group: 'com.bytedance.applog', module: 'RangersAppLog-Log'
+//        all*.exclude group: 'com.bytedance.applog', module: 'RangersAppLog-Lite-cn'
+        all*.exclude group: 'com.bytedanceapi', module: 'ttsdk-ttbmf'
+    }
+
 }
+
+
 
 dependencies {
 
     implementation "com.volcengine:VolcEngineRTC:$VOLCENGINE"
+//    implementation "com.ss.bytertc:VolcEngineRTC:$VOLCENGINE"
 
     implementation files('libs/ByteEffect.aar')
     implementation'com.faceunity:core:8.7.0'
     implementation'com.faceunity:model:8.7.0'
-    implementation "com.bytedanceapi:ttsdk-player_premium:1.39.2.8"
+    implementation "com.bytedanceapi:ttsdk-player_premium:1.40.2.8"
+
+    implementation ("com.bytedanceapi:ttsdk-ttlivepull:1.40.2.8") {
+    }
+    implementation 'commons-net:commons-net:3.6'
+
     // 日志上报 SDK，用于点播日志上传, 使用 6.14.3 及以上版本
     implementation "com.bytedance.applog:RangersAppLog-Lite-cn:6.15.0"
     // 用于视频源获取

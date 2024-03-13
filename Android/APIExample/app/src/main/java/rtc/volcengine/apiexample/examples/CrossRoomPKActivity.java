@@ -22,6 +22,7 @@ import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
 import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
+import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 
 import java.util.Collections;
@@ -31,7 +32,7 @@ import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
-
+import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： ByteRTC 跨房转推
@@ -257,7 +258,11 @@ public class CrossRoomPKActivity extends BaseActivity {
             ToastUtil.showShortToast(CrossRoomPKActivity.this, "onUserJoined, uid:" + userInfo.getUid());
         }
 
-
+        @Override
+        public void onUserPublishStream(String uid, MediaStreamType type) {
+            super.onUserPublishStream(uid, type);
+            ToastUtil.showShortToast(CrossRoomPKActivity.this, "onUserPublishStream, uid:" + uid);
+        }
     };
 
     /**

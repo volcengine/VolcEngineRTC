@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
                         ApiExample apiExample = activityClass.getAnnotation(ApiExample.class);
                         String category = apiExample.category();
                         String name = apiExample.name();
-                        int order = apiExample.order();
+                        double order = apiExample.order();
                         ExampleInfo info = new ExampleInfo(name, activityClass, order);
                         if (!TextUtils.isEmpty(category)) {
                             info.setCategory(category);
@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity {
                     }
                 }
             }
-            Collections.sort(exampleList, (o1, o2) -> Integer.compare(o1.getOrder(), o2.getOrder()));
+            Collections.sort(exampleList, (o1, o2) -> Double.compare(o1.getOrder(), o2.getOrder()));
         } catch (PackageManager.NameNotFoundException | ClassNotFoundException e) {
             e.printStackTrace();
         }
