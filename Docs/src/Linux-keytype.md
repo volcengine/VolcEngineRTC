@@ -75,10 +75,9 @@ AudioChannel bytertc::AudioFormat::channel = kAudioChannelAuto;
 int bytertc::AudioFormat::samples_per_call = 0;
 ```
 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
-最小值为回调间隔是 0.01s 时的值，即 `sampleRate
+最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
 最大值是 `2048`。超出取值范围时，采样点数取默认值。
-该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback](Linux-api.md#RTCVideo-enableaudioframecallback) 开启只读模式回调时设置该参数不生效。
-
+该参数仅在调用 [enableAudioProcessor](Linux-api.md#IRTCVideo-enableaudioprocessor) 开启回调时生效，调用 [enableAudioFrameCallback](Linux-api.md#IRTCVideo-enableaudioframecallback)  开启回调时不生效。
 
 
 # AudioProcessorMethod
@@ -93,9 +92,9 @@ enum bytertc::AudioProcessorMethod
 
 | 类型 | 说明 |
 | --- | --- |
-| **kAudioFrameProcessorRecord** | 本地采集的音频。 |
-| **kAudioFrameProcessorPlayback** | 远端音频流的混音音频。 |
-| **kAudioFrameProcessorRemoteUser** | 各个远端音频流。 |
+| **kAudioProcessorMethodRecord** | 本地采集的音频。 |
+| **kAudioProcessorMethodPlayback** | 远端音频流的混音音频。 |
+| **kAudioProcessorMethodRemoteUser** | 各个远端音频流。 |
 
 
 # RTCAudioDeviceType
@@ -716,7 +715,7 @@ int bytertc::AudioMixingConfig::play_count;
 ```cpp
 int bytertc::AudioMixingConfig::position;
 ```
-混音时音频文件播放进度条位置，参数为整数，单位为毫秒
+混音时音频文件播放的起始位置。参数为整数，单位为毫秒。
 
 
 <span id="AudioMixingConfig-callback_on_progress_interval"></span>
@@ -947,6 +946,7 @@ struct bytertc::AudioPropertiesConfig
 | **AudioReportMode** | [local_main_report_mode](#AudioPropertiesConfig-local_main_report_mode) |
 | **float** | [smooth](#AudioPropertiesConfig-smooth) |
 | **AudioPropertiesMode** | [audio_report_mode](#AudioPropertiesConfig-audio_report_mode) |
+| **bool** | [enable_voice_pitch](#AudioPropertiesConfig-enable_voice_pitch) |
 
 
 ## 变量说明
@@ -1004,6 +1004,14 @@ AudioPropertiesMode bytertc::AudioPropertiesConfig::audio_report_mode = kAudioPr
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
 
 
+<span id="AudioPropertiesConfig-enable_voice_pitch"></span>
+### enable_voice_pitch
+```cpp
+bool bytertc::AudioPropertiesConfig::enable_voice_pitch = false;
+```
+是否回调本地用户的人声基频。
+
+
 
 # AudioPropertiesInfo
 ```cpp
@@ -1021,6 +1029,7 @@ struct bytertc::AudioPropertiesInfo
 | **int** | [nonlinear_volume](#AudioPropertiesInfo-nonlinear_volume) |
 | **float** | [spectrum](#AudioPropertiesInfo-spectrum) |
 | **int** | [vad](#AudioPropertiesInfo-vad) |
+| **double** | [voice_pitch](#AudioPropertiesInfo-voice_pitch) |
 
 
 ## 变量说明
@@ -1068,6 +1077,19 @@ int bytertc::AudioPropertiesInfo::vad = -1;
 + 1: 检测到人声。<br>
 + 0: 未检测到人声。<br>
 + -1: 未开启 VAD。<br>
+
+
+<span id="AudioPropertiesInfo-voice_pitch"></span>
+### voice_pitch
+```cpp
+double bytertc::AudioPropertiesInfo::voice_pitch = 0;
+```
+本地用户的人声基频，单位为赫兹。 <br>
+同时满足以下两个条件时，返回的值为本地用户的人声基频：
+
++ 调用 [enableAudioPropertiesReport](Linux-api.md#IRTCVideo-enableaudiopropertiesreport)，并设置参数 enable_voice_pitch 的值为 `true`。 <br>
++ 本地采集的音频中包含本地用户的人声。 <br>
+其他情况下返回 `0`。
 
 
 
@@ -1320,8 +1342,8 @@ enum bytertc::AudioAbilityType
 | 类型 | 说明 |
 | --- | --- |
 | **kAudioAbilityTypeUnknown** | 未知 |
-| **kAudioAbilityAble** | 音量可设置 |
-| **kAudioAbilityUnable** | 音量不可设置 |
+| **kAudioAbilityTypeAble** | 音量可设置 |
+| **kAudioAbilityTypeUnable** | 音量不可设置 |
 
 
 # AudioAlignmentMode
@@ -1336,8 +1358,8 @@ enum bytertc::AudioAlignmentMode
 
 | 类型 | 说明 |
 | --- | --- |
-| **kAudioAlighmentModeOff** | 不对齐 |
-| **kAudioAlighmentModeAudioMixing** | 远端音频流都对齐伴奏进度同步播放 |
+| **kAudioAlignmentModeOff** | 不对齐 |
+| **kAudioAlignmentModeAudioMixing** | 远端音频流都对齐伴奏进度同步播放 |
 
 
 # AudioDeviceInfo
@@ -1763,7 +1785,7 @@ enum bytertc::AudioFrameType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kFrameTypePCM16** | PCM 16bit |
+| **kAudioFrameTypePCM16** | PCM 16bit |
 
 
 # AudioFrameBuilder
@@ -1962,11 +1984,11 @@ enum class bytertc::AudioFrameCallbackMethod
 
 | 类型 | 说明 |
 | --- | --- |
-| **kAudioFrameCallbackRecord** | 本地麦克风录制的音频数据回调 |
-| **kAudioFrameCallbackPlayback** | 订阅的远端所有用户混音后的音频数据回调 |
-| **kAudioFrameCallbackMixed** | 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调 |
-| **kAudioFrameCallbackRemoteUser** | 订阅的远端每个用户混音前的音频数据回调 |
-| **kAudioFrameCallbackRecordScreen** | 本地屏幕录制的音频数据回调 |
+| **kRecord** | 本地麦克风录制的音频数据回调 |
+| **kPlayback** | 订阅的远端所有用户混音后的音频数据回调 |
+| **kMixed** | 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调 |
+| **kRemoteUser** | 订阅的远端每个用户混音前的音频数据回调 |
+| **kRecordScreen** | 本地屏幕录制的音频数据回调 |
 
 
 # ReturnStatus
@@ -2004,6 +2026,7 @@ enum bytertc::ReturnStatus
 | **kReturnStatusAudioDeviceInitFailed** | 系统错误，设备初始化失败。 |
 | **kReturnStatusAudioDeviceStartFailed** | 系统错误，设备开启失败。 |
 | **kReturnStatusNativeInvalid** | 失败，无效对象。 |
+| **kReturnStatusVideoTimeStampWarning** | 警告。推送视频帧到 RTC SDK 时，相邻视频帧的时间戳差异应当和推帧操作的间隔相同。如果不同，会收到此警告。 |
 
 
 # StreamRemoveReason
@@ -2020,7 +2043,7 @@ enum bytertc::StreamRemoveReason
 | --- | --- |
 | **kStreamRemoveReasonUnpublish** | 远端用户停止发布流。  <br> |
 | **kStreamRemoveReasonPublishFailed** | 远端用户发布流失败。  <br> |
-| **kStreamRemoveReasonKeepLiveFailed** | 保活失败。  <br> |
+| **kStreamRemoveReasonKeepLiveFailed** | 媒体服务器 10s 没收到客户端的媒体数据。 |
 | **kStreamRemoveReasonClientDisconnected** | 远端用户断网。  <br> |
 | **kStreamRemoveReasonRepublish** | 远端用户重新发布流。  <br> |
 | **kStreamRemoveReasonOther** | 其他原因。  <br> |
@@ -2072,8 +2095,8 @@ SEI 发送模式。
 
 | 类型 | 说明 |
 | --- | --- |
-| **kSingleSEIPerFrame** | 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。 |
-| **kMultiSEIPerFrame** | 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。 |
+| **kSEICountPerFrameSingle** | 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。 |
+| **kSEICountPerFrameMulti** | 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。 |
 
 
 # NetworkQualityStats
@@ -2267,13 +2290,13 @@ enum bytertc::MediaDeviceState
 | **kMediaDeviceStateRuntimeError** | 设备运行时错误<br><br/>例如，当媒体设备的预期行为是正常采集，但没有收到采集数据时，将回调该状态。 |
 | **kMediaDeviceStatePaused** | 设备已暂停。包括：<br/>+ 采集过程中，目标应用窗体最小化到任务栏。<br/>+ 开启采集或采集过程中，目标应用窗体被隐藏。<br/>+ 采集过程中，目标应用窗体正在被拉伸。<br/>+ 采集过程中，目标应用窗体正在被拖动。 |
 | **kMediaDeviceStateResumed** | 设备已恢复 |
-| **kMediaDeviceStateAdded** | 设备已插入 |
-| **kMediaDeviceStateRemoved** | 设备被移除 |
-| **kMediaDeviceInterruptionBegan** | 用户合盖打断了视频通话。如果系统未休眠或关机，将在开盖后自动恢复视频通话。 |
-| **kMediaDeviceInterruptionEnded** | 视频通话已从合盖打断中恢复 |
-| **kMediaDeviceBecomeSystemDefault** | 设备成为系统默认 |
-| **kMediaDeviceResignSystemDefault** | 设备不再是系统默认 |
-| **kMediaDeviceListUpdated** | 设备列表更新通知。请调用 [enumerateVideoCaptureDevices](Linux-api.md#IVideoDeviceManager-enumeratevideocapturedevices) 更新设备列表。 |
+| **kMediaDeviceStateAdded** | 设备已插入<br/>你可以调用获取设备接口更新设备列表。 |
+| **kMediaDeviceStateRemoved** | 设备被移除<br/>你可以调用获取设备接口更新设备列表。 |
+| **kMediaDeviceStateInterruptionBegan** | 用户合盖打断了视频通话。如果系统未休眠或关机，将在开盖后自动恢复视频通话。 |
+| **kMediaDeviceStateInterruptionEnded** | 视频通话已从合盖打断中恢复 |
+| **kMediaDeviceStateBecomeSystemDefault** | 设备成为系统默认 |
+| **kMediaDeviceStateResignSystemDefault** | 设备不再是系统默认 |
+| **kMediaDeviceStateListUpdated** | 获取设备列表超时后，收到设备列表通知。<br/>再次调用获取设备接口更新设备列表。 |
 
 
 # MediaDeviceError
@@ -2457,8 +2480,8 @@ enum bytertc::LocalAudioStreamState
 | **kLocalAudioStreamStateRecording** | 本地音频录制设备启动成功。<br/>采集到音频首帧时回调该状态，对应错误码 kLocalAudioStreamErrorOk |
 | **kLocalAudioStreamStateEncoding** | 本地音频首帧编码成功。<br/>音频首帧编码成功时回调该状态，对应错误码 kLocalAudioStreamErrorOk |
 | **kLocalAudioStreamStateFailed** | 本地音频启动失败，在以下时机回调该状态：  <br><br/>+ 本地录音设备启动失败，对应错误码 kLocalAudioStreamErrorRecordFailure <br><br/>+ 检测到没有录音设备权限，对应错误码 kLocalAudioStreamErrorDeviceNoPermission <br><br/>+ 音频编码失败，对应错误码 kLocalAudioStreamErrorEncodeFailure |
-| **kLocalAudioStreamMute** | 本地音频静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](Linux-api.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
-| **kLocalAudioStreamUnmute** | 本地音频解除静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](Linux-api.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
+| **kLocalAudioStreamStateMute** | 本地音频静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](Linux-api.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
+| **kLocalAudioStreamStateUnmute** | 本地音频解除静音成功后回调该状态。<br/>调用 [setAudioCaptureDeviceMute](Linux-api.md#IAudioDeviceManager-setaudiocapturedevicemute) 成功后回调，对应错误码 [LocalAudioStreamError](#localaudiostreamerror) 中的 kLocalAudioStreamErrorOk 。  <br> |
 
 
 # LocalAudioStreamError
@@ -2690,8 +2713,8 @@ struct bytertc::RtcRoomStats
 
 | 类型 | 名称 |
 | --- | --- |
-| **float** | [txLostrate](#RtcRoomStats-txlostrate) |
-| **float** | [rxLostrate](#RtcRoomStats-rxlostrate) |
+| **float** | [tx_lostrate](#RtcRoomStats-tx_lostrate) |
+| **float** | [rx_lostrate](#RtcRoomStats-rx_lostrate) |
 | **int** | [rtt](#RtcRoomStats-rtt) |
 | **unsigned int** | [duration](#RtcRoomStats-duration) |
 | **unsigned int** | [tx_bytes](#RtcRoomStats-tx_bytes) |
@@ -2711,18 +2734,18 @@ struct bytertc::RtcRoomStats
 
 
 ## 变量说明
-<span id="RtcRoomStats-txlostrate"></span>
-### txLostrate
+<span id="RtcRoomStats-tx_lostrate"></span>
+### tx_lostrate
 ```cpp
-float bytertc::RtcRoomStats::txLostrate;
+float bytertc::RtcRoomStats::tx_lostrate;
 ```
 当前应用的上行丢包率，取值范围为 [0, 1]
 
 
-<span id="RtcRoomStats-rxlostrate"></span>
-### rxLostrate
+<span id="RtcRoomStats-rx_lostrate"></span>
+### rx_lostrate
 ```cpp
-float bytertc::RtcRoomStats::rxLostrate;
+float bytertc::RtcRoomStats::rx_lostrate;
 ```
 当前应用的下行丢包率，取值范围为 [0, 1]
 
@@ -3370,7 +3393,7 @@ int bytertc::RemoteVideoStats::height;
 ```cpp
 float bytertc::RemoteVideoStats::video_loss_rate;
 ```
-视频丢包率。统计周期内的视频下行丢包率，单位为 % ，取值范围：[0，1] 。
+视频丢包率。统计周期内的视频下行丢包率，取值范围：[0，1] 。
 
 
 <span id="RemoteVideoStats-received_kbitrate"></span>
@@ -3850,6 +3873,23 @@ enum bytertc::StreamIndex
 | **kStreamIndexScreen** | 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。 |
 
 
+# AggregationOption
+```cpp
+enum bytertc::AggregationOption
+```
+
+流聚合策略
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kAggregationOptionMin** | 流聚合向下取值  （默认策略） |
+| **kAggregationOptionMax** | 流聚合向上取值 |
+| **kAggregationOptionMajority** | 流聚合按比例取值，比例相同时，向下取值 |
+
+
 # RemoteStreamKey
 ```cpp
 struct bytertc::RemoteStreamKey
@@ -4077,12 +4117,12 @@ enum bytertc::UserWorkerType
 
 | 类型 | 说明 |
 | --- | --- |
-| **UserWorkerNormal** | 正常用户，没有任何特殊属性  <br> |
-| **UserWorkerSupportSip** | 用户支持SIP流，信令只下发SIP流  <br> |
-| **UserWorkerByteVc1Transcoder** | 用户支持屏幕流的bytevc1到H264转码  <br> |
-| **UserWorkerNeedUserListAndCb** | 用户需要信令服务器下发全量的用户列表和回调函数  <br> |
-| **UserWorkerNeedStreamCallBack** | 用户需要在房间进入多人模式时获取房间内所有流的相关回调  <br> |
-| **UserWorkerAudioSelectionExemption** | 用户选择设置不支持音频选路功能  <br> |
+| **kUserWorkerTypeNormal** | 正常用户，没有任何特殊属性  <br> |
+| **kUserWorkerTypeSupportSip** | 用户支持SIP流，信令只下发SIP流  <br> |
+| **kUserWorkerTypeByteVc1Transcoder** | 用户支持屏幕流的bytevc1到H264转码  <br> |
+| **kUserWorkerTypeNeedUserListAndCb** | 用户需要信令服务器下发全量的用户列表和回调函数  <br> |
+| **kUserWorkerTypeNeedStreamCallBack** | 用户需要在房间进入多人模式时获取房间内所有流的相关回调  <br> |
+| **kUserWorkerTypeAudioSelectionExemption** | 用户选择设置不支持音频选路功能  <br> |
 
 
 # AVSyncState
@@ -4428,32 +4468,32 @@ struct bytertc::RTCWatermarkConfig
 
 | 类型 | 名称 |
 | --- | --- |
-| **bool** | [visibleInPreview](#RTCWatermarkConfig-visibleinpreview) |
-| **ByteWatermark** | [positionInLandscapeMode](#RTCWatermarkConfig-positioninlandscapemode) |
-| **ByteWatermark** | [positionInPortraitMode](#RTCWatermarkConfig-positioninportraitmode) |
+| **bool** | [visible_in_preview](#RTCWatermarkConfig-visible_in_preview) |
+| **ByteWatermark** | [position_in_landscape_mode](#RTCWatermarkConfig-position_in_landscape_mode) |
+| **ByteWatermark** | [position_in_portrait_mode](#RTCWatermarkConfig-position_in_portrait_mode) |
 
 
 ## 变量说明
-<span id="RTCWatermarkConfig-visibleinpreview"></span>
-### visibleInPreview
+<span id="RTCWatermarkConfig-visible_in_preview"></span>
+### visible_in_preview
 ```cpp
-bool bytertc::RTCWatermarkConfig::visibleInPreview = true;
+bool bytertc::RTCWatermarkConfig::visible_in_preview = true;
 ```
 水印是否在视频预览中可见，默认可见。
 
 
-<span id="RTCWatermarkConfig-positioninlandscapemode"></span>
-### positionInLandscapeMode
+<span id="RTCWatermarkConfig-position_in_landscape_mode"></span>
+### position_in_landscape_mode
 ```cpp
-ByteWatermark bytertc::RTCWatermarkConfig::positionInLandscapeMode;
+ByteWatermark bytertc::RTCWatermarkConfig::position_in_landscape_mode;
 ```
 横屏时的水印位置和大小，参看 [ByteWatermark](#bytewatermark)。
 
 
-<span id="RTCWatermarkConfig-positioninportraitmode"></span>
-### positionInPortraitMode
+<span id="RTCWatermarkConfig-position_in_portrait_mode"></span>
+### position_in_portrait_mode
 ```cpp
-ByteWatermark bytertc::RTCWatermarkConfig::positionInPortraitMode;
+ByteWatermark bytertc::RTCWatermarkConfig::position_in_portrait_mode;
 ```
 视频编码的方向模式为竖屏时的水印位置和大小，参看 [ByteWatermark](#bytewatermark)。
 
@@ -4519,11 +4559,11 @@ struct bytertc::EchoTestConfig
 | 类型 | 名称 |
 | --- | --- |
 | **void*** | [view](#EchoTestConfig-view) |
-| **bool** | [enableAudio](#EchoTestConfig-enableaudio) |
-| **bool** | [enableVideo](#EchoTestConfig-enablevideo) |
-| **int** | [audioPropertiesReportInterval](#EchoTestConfig-audiopropertiesreportinterval) |
+| **bool** | [enable_audio](#EchoTestConfig-enable_audio) |
+| **bool** | [enable_video](#EchoTestConfig-enable_video) |
+| **int** | [audio_properties_report_interval](#EchoTestConfig-audio_properties_report_interval) |
 | **const char*** | [uid](#EchoTestConfig-uid) |
-| **const char*** | [roomId](#EchoTestConfig-roomid) |
+| **const char*** | [room_id](#EchoTestConfig-room_id) |
 | **const char*** | [token](#EchoTestConfig-token) |
 
 
@@ -4536,23 +4576,23 @@ void* bytertc::EchoTestConfig::view;
 用于渲染接收到的视频的视图
 
 
-<span id="EchoTestConfig-enableaudio"></span>
-### enableAudio
+<span id="EchoTestConfig-enable_audio"></span>
+### enable_audio
 ```cpp
-bool bytertc::EchoTestConfig::enableAudio;
+bool bytertc::EchoTestConfig::enable_audio;
 ```
 是否检测音频。检测设备为系统默认音频设备。  <br>
 
 + true：是  <br>
 - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioPropertiesReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态  <br>
-- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame](Linux-api.md#IRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
+- 若使用自定义采集，此时你需调用 [pushExternalAudioFrame](#pushexternalaudioframe) 将采集到的音频推送给 SDK  <br>
 + false：否  <br>
 
 
-<span id="EchoTestConfig-enablevideo"></span>
-### enableVideo
+<span id="EchoTestConfig-enable_video"></span>
+### enable_video
 ```cpp
-bool bytertc::EchoTestConfig::enableVideo;
+bool bytertc::EchoTestConfig::enable_video;
 ```
 是否检测视频。PC 端默认检测列表中第一个视频设备。  <br>
 
@@ -4565,10 +4605,10 @@ bool bytertc::EchoTestConfig::enableVideo;
 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
 
-<span id="EchoTestConfig-audiopropertiesreportinterval"></span>
-### audioPropertiesReportInterval
+<span id="EchoTestConfig-audio_properties_report_interval"></span>
+### audio_properties_report_interval
 ```cpp
-int bytertc::EchoTestConfig::audioPropertiesReportInterval;
+int bytertc::EchoTestConfig::audio_properties_report_interval;
 ```
 音量信息提示间隔，单位：ms，默认为 100ms <br>
 
@@ -4585,10 +4625,10 @@ const char* bytertc::EchoTestConfig::uid;
 进行音视频通话回路测试的用户 ID
 
 
-<span id="EchoTestConfig-roomid"></span>
-### roomId
+<span id="EchoTestConfig-room_id"></span>
+### room_id
 ```cpp
-const char* bytertc::EchoTestConfig::roomId;
+const char* bytertc::EchoTestConfig::room_id;
 ```
 测试用户加入的房间 ID。  <br>
 
@@ -4614,12 +4654,12 @@ enum bytertc::AudioDumpStatus
 
 | 类型 | 说明 |
 | --- | --- |
-| **kAudioDumpStartFailure** | 音频dump启动失败 |
-| **kAudioDumpStartSuccess** | 音频dump启动成功 |
-| **kAudioDumpStopFailure** | 音频dump停止失败 |
-| **kAudioDumpStopSuccess** | 音频dump停止成功 |
-| **kAudioDumpRunningFailure** | 音频dump运行失败 |
-| **kAudioDumpRunningSuccess** | 音频dump运行成功 |
+| **kAudioDumpStatusStartFailure** | 音频dump启动失败 |
+| **kAudioDumpStatusStartSuccess** | 音频dump启动成功 |
+| **kAudioDumpStatusStopFailure** | 音频dump停止失败 |
+| **kAudioDumpStatusStopSuccess** | 音频dump停止成功 |
+| **kAudioDumpStatusRunningFailure** | 音频dump运行失败 |
+| **kAudioDumpStatusRunningSuccess** | 音频dump运行成功 |
 
 
 # NetworkDetectionStopReason
@@ -4696,10 +4736,10 @@ enum bytertc::HardwareEchoDetectionResult
 
 | 类型 | 说明 |
 | --- | --- |
-| **kHardwareEchoDetectionCanceled** | 主动调用 `stopHardwareEchoDetection` 结束流程时，未有回声检测结果。 |
-| **kHardwareEchoDetectionUnknown** | 未检测出结果。建议重试，如果仍然失败请联系技术支持协助排查。 |
-| **kHardwareEchoDetectionNormal** | 无回声 |
-| **kHardwareEchoDetectionPoor** | 有回声。可通过 UI 建议用户使用耳机设备入会。 |
+| **kHardwareEchoDetectionResultCanceled** | 主动调用 `stopHardwareEchoDetection` 结束流程时，未有回声检测结果。 |
+| **kHardwareEchoDetectionResultUnknown** | 未检测出结果。建议重试，如果仍然失败请联系技术支持协助排查。 |
+| **kHardwareEchoDetectionResultNormal** | 无回声 |
+| **kHardwareEchoDetectionResultPoor** | 有回声。可通过 UI 建议用户使用耳机设备入会。 |
 
 
 # AudioSelectionPriority
@@ -4730,17 +4770,17 @@ enum bytertc::SetRoomExtraInfoResult
 
 | 类型 | 说明 |
 | --- | --- |
-| **kSetRoomExtraInfoSuccess** | 设置房间附加信息成功 |
-| **kSetRoomExtraInfoErrorNotJoinRoom** | 设置失败，尚未加入房间 |
-| **kSetRoomExtraInfoErrorKeyIsNull** | 设置失败，key 指针为空 |
-| **kSetRoomExtraInfoErrorValueIsNull** | 设置失败，value 指针为空 |
-| **kSetRoomExtraInfoResultUnknow** | 设置失败，未知错误 |
-| **kSetRoomExtraInfoErrorKeyIsEmpty** | 设置失败，key 长度为 0 |
-| **kSetRoomExtraInfoErrorTooOften** | 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。 |
-| **kSetRoomExtraInfoErrorSilentUser** | 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。 |
-| **kSetRoomExtraInfoErrorKeyTooLong** | 设置失败，Key 长度超过 10 字节 |
-| **kSetRoomExtraInfoErrorValueTooLong** | 设置失败，value 长度超过 128 字节 |
-| **kSetRoomExtraInfoErrorServer** | 设置失败，服务器错误 |
+| **kSetRoomExtraInfoResultSuccess** | 设置房间附加信息成功 |
+| **kSetRoomExtraInfoResultErrorNotJoinRoom** | 设置失败，尚未加入房间 |
+| **kSetRoomExtraInfoResultErrorKeyIsNull** | 设置失败，key 指针为空 |
+| **kSetRoomExtraInfoResultErrorValueIsNull** | 设置失败，value 指针为空 |
+| **kSetRoomExtraInfoResultResultUnknow** | 设置失败，未知错误 |
+| **kSetRoomExtraInfoResultErrorKeyIsEmpty** | 设置失败，key 长度为 0 |
+| **kSetRoomExtraInfoResultErrorTooOften** | 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。 |
+| **kSetRoomExtraInfoResultErrorSilentUser** | 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。 |
+| **kSetRoomExtraInfoResultErrorKeyTooLong** | 设置失败，Key 长度超过 10 字节 |
+| **kSetRoomExtraInfoResultErrorValueTooLong** | 设置失败，value 长度超过 128 字节 |
+| **kSetRoomExtraInfoResultErrorServer** | 设置失败，服务器错误 |
 
 
 # SubtitleState
@@ -4824,6 +4864,8 @@ struct bytertc::SubtitleMessage
 | --- | --- |
 | **const char*** | [user_id](#SubtitleMessage-user_id) |
 | **const char*** | [text](#SubtitleMessage-text) |
+| **const char*** | [language](#SubtitleMessage-language) |
+| **SubtitleMode** | [mode](#SubtitleMessage-mode) |
 | **int** | [sequence](#SubtitleMessage-sequence) |
 | **bool** | [definite](#SubtitleMessage-definite) |
 
@@ -4842,7 +4884,23 @@ const char* bytertc::SubtitleMessage::user_id;
 ```cpp
 const char* bytertc::SubtitleMessage::text;
 ```
-语音识别或翻译后的文本, 采用 UTF-8 编码。
+字幕文本, 采用 UTF-8 编码。
+
+
+<span id="SubtitleMessage-language"></span>
+### language
+```cpp
+const char* bytertc::SubtitleMessage::language;
+```
+字幕语种，根据字幕模式为原文或译文对应的语种。
+
+
+<span id="SubtitleMessage-mode"></span>
+### mode
+```cpp
+SubtitleMode bytertc::SubtitleMessage::mode;
+```
+字幕模式，参看 [SubtitleMode](#subtitlemode)。
 
 
 <span id="SubtitleMessage-sequence"></span>
@@ -4850,7 +4908,7 @@ const char* bytertc::SubtitleMessage::text;
 ```cpp
 int bytertc::SubtitleMessage::sequence;
 ```
-语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
+字幕文本序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
 
 
 <span id="SubtitleMessage-definite"></span>
@@ -4924,20 +4982,11 @@ struct bytertc::MediaPlayerCustomSource
 
 | 类型 | 名称 |
 | --- | --- |
-| **IMediaPlayerCustomSourceProvider*** | [provider](#MediaPlayerCustomSource-provider) |
 | **MediaPlayerCustomSourceMode** | [mode](#MediaPlayerCustomSource-mode) |
 | **MediaPlayerCustomSourceStreamType** | [type](#MediaPlayerCustomSource-type) |
 
 
 ## 变量说明
-<span id="MediaPlayerCustomSource-provider"></span>
-### provider
-```cpp
-IMediaPlayerCustomSourceProvider* bytertc::MediaPlayerCustomSource::provider = nullptr;
-```
-仅在使用内存播放时，传入对应的 [IMediaPlayerCustomSourceProvider](Linux-callback.md#imediaplayercustomsourceprovider) 实例。
-
-
 <span id="MediaPlayerCustomSource-mode"></span>
 ### mode
 ```cpp
@@ -4967,8 +5016,8 @@ enum bytertc::StreamLayoutMode
 
 | 类型 | 说明 |
 | --- | --- |
-| **kLayoutAutoMode** | 自动布局 |
-| **kLayoutCustomerMode** | 自定义 |
+| **kStreamLayoutModeAuto** | 自动布局 |
+| **kStreamLayoutModeCustom** | 自定义 |
 
 
 # SourceCrop
@@ -4983,41 +5032,41 @@ typedef struct bytertc::SourceCrop
 
 | 类型 | 名称 |
 | --- | --- |
-| **float** | [LocationX](#SourceCrop-locationx) |
-| **float** | [LocationY](#SourceCrop-locationy) |
-| **float** | [WidthProportion](#SourceCrop-widthproportion) |
-| **float** | [HeightProportion](#SourceCrop-heightproportion) |
+| **float** | [location_x](#SourceCrop-location_x) |
+| **float** | [location_y](#SourceCrop-location_y) |
+| **float** | [width_proportion](#SourceCrop-width_proportion) |
+| **float** | [height_proportion](#SourceCrop-height_proportion) |
 
 
 ## 变量说明
-<span id="SourceCrop-locationx"></span>
-### LocationX
+<span id="SourceCrop-location_x"></span>
+### location_x
 ```cpp
-float bytertc::SourceCrop::LocationX = 0.0;
+float bytertc::SourceCrop::location_x = 0.0;
 ```
 裁剪后得到的视频帧左上角横坐标相对于裁剪前整体画面的归一化比例，取值范围[0.0, 1.0)
 
 
-<span id="SourceCrop-locationy"></span>
-### LocationY
+<span id="SourceCrop-location_y"></span>
+### location_y
 ```cpp
-float bytertc::SourceCrop::LocationY = 0.0;
+float bytertc::SourceCrop::location_y = 0.0;
 ```
 裁剪后得到的视频帧左上角纵坐标相对于裁剪前整体画面的归一化比例，取值范围[0.0, 1.0)
 
 
-<span id="SourceCrop-widthproportion"></span>
-### WidthProportion
+<span id="SourceCrop-width_proportion"></span>
+### width_proportion
 ```cpp
-float bytertc::SourceCrop::WidthProportion = 0.0;
+float bytertc::SourceCrop::width_proportion = 0.0;
 ```
 裁剪后得到的视频帧宽度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]
 
 
-<span id="SourceCrop-heightproportion"></span>
-### HeightProportion
+<span id="SourceCrop-height_proportion"></span>
+### height_proportion
 ```cpp
-float bytertc::SourceCrop::HeightProportion = 0.0;
+float bytertc::SourceCrop::height_proportion = 0.0;
 ```
 裁剪后得到的视频帧高度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]
 
@@ -5227,8 +5276,8 @@ struct bytertc::PublicStreamLayout
 
 | 类型 | 名称 |
 | --- | --- |
-| **int** | [layoutMode](#PublicStreamLayout-layoutmode) |
-| **int** | [interMode](#PublicStreamLayout-intermode) |
+| **int** | [layout_mode](#PublicStreamLayout-layout_mode) |
+| **int** | [interpolation_mode](#PublicStreamLayout-interpolation_mode) |
 | **const char*** | [background_image](#PublicStreamLayout-background_image) |
 | **const char*** | [background_color](#PublicStreamLayout-background_color) |
 | **PublicStreamLayoutRegion*** | [regions](#PublicStreamLayout-regions) |
@@ -5236,10 +5285,10 @@ struct bytertc::PublicStreamLayout
 
 
 ## 变量说明
-<span id="PublicStreamLayout-layoutmode"></span>
-### layoutMode
+<span id="PublicStreamLayout-layout_mode"></span>
+### layout_mode
 ```cpp
-int bytertc::PublicStreamLayout::layoutMode;
+int bytertc::PublicStreamLayout::layout_mode;
 ```
 布局模式。必填。<br>
 
@@ -5247,10 +5296,10 @@ int bytertc::PublicStreamLayout::layoutMode;
 + `2`: 自定义模式。
 
 
-<span id="PublicStreamLayout-intermode"></span>
-### interMode
+<span id="PublicStreamLayout-interpolation_mode"></span>
+### interpolation_mode
 ```cpp
-int bytertc::PublicStreamLayout::interMode;
+int bytertc::PublicStreamLayout::interpolation_mode;
 ```
 插帧模式<br>
 
@@ -5591,9 +5640,25 @@ enum bytertc::LoginType
 | **kLoginTypeReconnected** | 重连。用户网络较差，失去与服务器的连接，SDK 自动重连登录成功。 |
 
 
-# USER_ONLINE_STATUS
+# LogoutReason
 ```cpp
-enum bytertc::USER_ONLINE_STATUS
+enum bytertc::LogoutReason
+```
+
+用户登出的原因
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kLogoutReasonLogout** | 用户主动退出<br/>用户调用 `logout` 接口登出，或者销毁引擎登出。 |
+| **kLogoutReasonDuplicateLogin** | 用户被动退出<br/>另一个用户以相同 UserId 进行了 `login`，导致本端用户被踢出。 |
+
+
+# UserOnlineStatus
+```cpp
+enum bytertc::UserOnlineStatus
 ```
 
 用户在线状态。
@@ -5621,7 +5686,7 @@ struct bytertc::ServerACKMsg
 | 类型 | 名称 |
 | --- | --- |
 | **int** | [length](#ServerACKMsg-length) |
-| **char*** | [ACKMsg](#ServerACKMsg-ackmsg) |
+| **char*** | [ack_msg](#ServerACKMsg-ack_msg) |
 
 
 ## 变量说明
@@ -5633,10 +5698,10 @@ int bytertc::ServerACKMsg::length;
 回调消息长度
 
 
-<span id="ServerACKMsg-ackmsg"></span>
-### ACKMsg
+<span id="ServerACKMsg-ack_msg"></span>
+### ack_msg
 ```cpp
-char* bytertc::ServerACKMsg::ACKMsg;
+char* bytertc::ServerACKMsg::ack_msg;
 ```
 回调消息内容
 
@@ -5657,34 +5722,6 @@ enum bytertc::MessageConfig
 | **kMessageConfigReliableOrdered** | 低延时可靠有序消息 |
 | **kMessageConfigUnreliableOrdered** | 超低延时有序消息 |
 | **kMessageConfigUnreliableUnordered** | 超低延时无序消息 |
-
-
-# UserMessageSendResult
-```cpp
-enum bytertc::UserMessageSendResult
-```
-
-发送消息结果，成功或失败，及失败原因
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **kUserMessageSendResultSuccess** | 发送消息成功 |
-| **kUserMessageSendResultTimeout** | 发送超时，没有发送成功 |
-| **kUserMessageSendResultNetworkDisconnected** | 通道断开，没有发送 |
-| **kUserMessageSendResultNoReceiver** | 找不到接收方 |
-| **kUserMessageSendResultNoRelayPath** | 远端用户没有登录或进房 |
-| **kUserMessageSendResultExceedQPS** | 超过 QPS 限制 |
-| **kUserMessageSendResultNotJoin** | 消息发送方没有加入房间 |
-| **kUserMessageSendResultInit** | 连接未完成初始化,没有可用的数据传输通道连接 |
-| **kUserMessageSendResultNoConnection** | 没有可用的数据传输通道连接 |
-| **kUserMessageSendResultExceedMaxLength** | 消息超过最大长度，当前为 64 KB |
-| **kUserMessageSendResultEmptyUser** | 接收消息的单个用户 id 为空 |
-| **kUserMessageSendResultNotLogin** | 房间外或应用服务器消息发送方没有登录 |
-| **kUserMessageSendResultServerParamsNotSet** | 发送消息给业务方服务器之前没有设置参数 |
-| **kUserMessageSendResultUnknown** | 未知错误 |
 
 
 # RoomMessageSendResult
@@ -5786,8 +5823,8 @@ enum bytertc::BusinessCheckCode
 
 | 类型 | 说明 |
 | --- | --- |
-| **ERROR_ALREADY_IN_ROOM** | 用户已经在房间中。  <br><br/>业务标识需要在加入房间之前设置，加入后设置无效。  <br> |
-| **ERROR_INPUT_INVALIDATE** | 输入参数非法。  <br><br/>用户传入的业务标识参数非法，参数合法性参考 `setBusinessId` 方法的参数说明。  <br> |
+| **kBusinessCheckCodeAlreadyInRoom** | 用户已经在房间中。  <br><br/>业务标识需要在加入房间之前设置，加入后设置无效。  <br> |
+| **kBusinessCheckCodeInputInvalidate** | 输入参数非法。  <br><br/>用户传入的业务标识参数非法，参数合法性参考 `setBusinessId` 方法的参数说明。  <br> |
 
 
 # SysStats
@@ -5891,9 +5928,9 @@ HTTP/HTTPS 代理状态
 
 | 类型 | 说明 |
 | --- | --- |
-| **kHttpInit** | HTTP/HTTPS 初始化状态 |
-| **kHttpConnected** | HTTP/HTTPS 连接成功 |
-| **kHttpError** | HTTP/HTTPS 连接失败 |
+| **kHttpProxyStateInit** | HTTP/HTTPS 初始化状态 |
+| **kHttpProxyStateConnected** | HTTP/HTTPS 连接成功 |
+| **kHttpProxyStateError** | HTTP/HTTPS 连接失败 |
 
 
 # Socks5ProxyState
@@ -6135,6 +6172,7 @@ struct bytertc::LogConfig
 | **const char*** | [log_path](#LogConfig-log_path) |
 | **LocalLogLevel** | [log_level](#LogConfig-log_level) |
 | **uint32_t** | [log_file_size](#LogConfig-log_file_size) |
+| **const char*** | [log_filename_prefix](#LogConfig-log_filename_prefix) |
 
 
 ## 变量说明
@@ -6165,6 +6203,15 @@ uint32_t bytertc::LogConfig::log_file_size = 10;
 <ul><li> 若 1 ≤ <code>log_file_size</code> ≤ 2，则会生成一个日志文件。</li><li>若 <code>log_file_size</code> > 2，假设 <code>log_file_size/2</code> 的整数部分为 N，则前 N 个文件，每个文件会写满 2 MB，第 N+1 个文件大小不超过 <code>log_file_size mod 2</code>，否则会删除最老的文件，以此类推。</li></ul>
 
 
+<span id="LogConfig-log_filename_prefix"></span>
+### log_filename_prefix
+```cpp
+const char* bytertc::LogConfig::log_filename_prefix = nullptr;
+```
+日志文件名前缀，选填。该字符串必须符合正则表达式：[a-zA-Z0-9_@\-\.]{1,128}。
+最终的日志文件名为`前缀 + "_" + 文件创建时间 + "_rtclog".log`，如 `logPrefix_2023-05-25_172324_rtclog.log`。
+
+
 
 # PositionInfo
 ```cpp
@@ -6188,7 +6235,7 @@ struct bytertc::PositionInfo
 ```cpp
 Position bytertc::PositionInfo::position;
 ```
-用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 [Position](#position)。
+用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 [Position](#position-2)。
 
 
 <span id="PositionInfo-orientation"></span>
@@ -6202,7 +6249,7 @@ HumanOrientation bytertc::PositionInfo::orientation;
 
 # TranscoderContentControlType
 ```cpp
-enum bytertc::TranscoderContentControlType
+enum class bytertc::TranscoderContentControlType
 ```
 
 合流输出内容类型
@@ -6346,7 +6393,7 @@ virtual void bytertc::ITranscoderParamBase::setOther(
 ### flatten
 ```cpp
 virtual const char* bytertc::ITranscoderParamBase::flatten(
-    const char* contentType,
+    const char* content_type,
     const char* action)
 ```
 将合流参数转成 json 字符串
@@ -6355,7 +6402,7 @@ virtual const char* bytertc::ITranscoderParamBase::flatten(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| contentType | **const char*** | 内容属性，表明是合流信令 |
+| content_type | **const char*** | 内容属性，表明是合流信令 |
 | action | **const char*** | 合流状态，可选取值如下：  <br/>• started: 开启合流  <br/>• layoutChanged: 更新合流布局  <br/>• stopped: 停止合流 |
 
 **返回值**
@@ -6374,22 +6421,22 @@ enum bytertc::StreamMixingEvent
 
 | 类型 | 说明 |
 | --- | --- |
-| **kStreamMixingStart** | 请求发起转推直播任务 |
-| **kStreamMixingStartSuccess** | 发起转推直播任务成功 |
-| **kStreamMixingStartFailed** | 发起转推直播任务失败 |
-| **kStreamMixingUpdate** | 请求更新转推直播任务配置 |
-| **kStreamMixingUpdateSuccess** | 成功更新转推直播任务配置 |
-| **kStreamMixingUpdateFailed** | 更新转推直播任务配置失败 |
-| **kStreamMixingStop** | 请求结束转推直播任务 |
-| **kStreamMixingStopSuccess** | 结束转推直播任务成功 |
-| **kStreamMixingStopFailed** | 结束转推直播任务失败 |
-| **kStreamMixingChangeMixType** | 更新转推直播任务配置的请求超时 |
-| **kStreamMixingFirstAudioFrameByClientMix** | 得到客户端合流音频首帧 |
-| **kStreamMixingFirstVideoFrameByClientMix** | 收到客户端合流视频首帧 |
-| **kStreamMixingUpdateTimeout** | 更新转推直播任务配置超时 |
-| **kStreamMixingStartTimeout** | 发起转推直播任务配置超时 |
-| **kStreamMixingRequestParamError** | 合流布局参数错误 |
-| **kStreamMixingMixImageEvent** | 合流加图片 |
+| **kStreamMixingEventStart** | 请求发起转推直播任务 |
+| **kStreamMixingEventStartSuccess** | 发起转推直播任务成功 |
+| **kStreamMixingEventStartFailed** | 发起转推直播任务失败 |
+| **kStreamMixingEventUpdate** | 请求更新转推直播任务配置 |
+| **kStreamMixingEventUpdateSuccess** | 成功更新转推直播任务配置 |
+| **kStreamMixingEventUpdateFailed** | 更新转推直播任务配置失败 |
+| **kStreamMixingEventStop** | 请求结束转推直播任务 |
+| **kStreamMixingEventStopSuccess** | 结束转推直播任务成功 |
+| **kStreamMixingEventStopFailed** | 结束转推直播任务失败 |
+| **kStreamMixingEventChangeMixType** | 更新转推直播任务配置的请求超时 |
+| **kStreamMixingEventFirstAudioFrameByClientMix** | 得到客户端合流音频首帧 |
+| **kStreamMixingEventFirstVideoFrameByClientMix** | 收到客户端合流视频首帧 |
+| **kStreamMixingEventUpdateTimeout** | 更新转推直播任务配置超时 |
+| **kStreamMixingEventStartTimeout** | 发起转推直播任务配置超时 |
+| **kStreamMixingEventRequestParamError** | 合流布局参数错误 |
+| **kStreamMixingEventMixImageEvent** | 合流加图片 |
 
 
 # MixedStreamType
@@ -6438,6 +6485,22 @@ enum bytertc::MixedStreamAudioCodecType
 | 类型 | 说明 |
 | --- | --- |
 | **kMixedStreamAudioCodecTypeAAC** | AAC 格式。 |
+
+
+# MixedStreamSEIContentMode
+```cpp
+enum bytertc::MixedStreamSEIContentMode
+```
+
+服务端合流转推 SEI 内容。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kMixedStreamSEIContentModeDefault** | 视频流中包含全部的 SEI 信息。默认设置。 |
+| **kMixedStreamSEIContentModeEnableVolumeIndication** | 随非关键帧传输的 SEI 数据中仅包含音量信息。<br><br/>当设置 `MixedStreamServerControlConfig.enable_volume_indication` 为 True 时，此参数设置生效。 |
 
 
 # MixedStreamVideoCodecType
@@ -6523,6 +6586,38 @@ enum bytertc::MixedStreamClientMixVideoFormat
 | **kMixedStreamClientMixVideoFormatTexture2D** | OpenGL GL_TEXTURE_2D 格式纹理。支持系统：安卓。 |
 | **kMixedStreamClientMixVideoFormatCVPixelBufferBGRA** | CVPixelBuffer BGRA。iOS 默认回调格式。支持系统: iOS。 |
 | **kMixedStreamClientMixVideoFormatNV12** | YUV NV12。macOS 默认回调格式。支持系统: macOS。 |
+
+
+# MixedStreamPushMode
+```cpp
+enum bytertc::MixedStreamPushMode
+```
+
+服务端合流转推发起模式。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kMixedStreamPushModeOnStream** | 无用户发布媒体流时，发起合流任务无效。默认设置。<br><br/>当有用户发布媒体流时，才能发起合流任务。 |
+| **kMixedStreamPushModeOnStartRequest** | 无用户发布媒体流时，可以使用占位图发起合流任务。<br><br/>占位图设置参看 [alternate_image_url](#MixedStreamLayoutRegionConfig-alternate_image_url) 和 [alternate_image_fill_mode](#MixedStreamLayoutRegionConfig-alternate_image_fill_mode) |
+
+
+# MixedStreamAlternateImageFillMode
+```cpp
+enum bytertc::MixedStreamAlternateImageFillMode
+```
+
+服务端合流占位图填充模式。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kMixedStreamAlternateImageFillModeFit** | 占位图跟随用户原始视频帧相同的比例缩放。默认设置。 |
+| **kMixedStreamAlternateImageFillModeFill** | 占位图不跟随用户原始视频帧相同的比例缩放，保持图片原有比例。 |
 
 
 # MixedStreamVideoType
@@ -6622,14 +6717,14 @@ typedef struct bytertc::MixedStreamVideoConfig
 | **int32_t** | [gop](#MixedStreamVideoConfig-gop) |
 | **int32_t** | [bitrate](#MixedStreamVideoConfig-bitrate) |
 | **MixedStreamVideoCodecType** | [video_codec](#MixedStreamVideoConfig-video_codec) |
-| **bool** | [enable_Bframe](#MixedStreamVideoConfig-enable_bframe) |
+| **bool** | [enable_bframe](#MixedStreamVideoConfig-enable_bframe) |
 
 
 ## 变量说明
 <span id="MixedStreamVideoConfig-width"></span>
 ### width
 ```cpp
-int32_t bytertc::MixedStreamVideoConfig::width = 360;
+int32_t bytertc::MixedStreamVideoConfig::width = MIXED_STREAM_VIDEO_DEFAULT_WIDTH;
 ```
 合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。建议设置。
 设置值为非偶数时，自动向上取偶数。
@@ -6638,7 +6733,7 @@ int32_t bytertc::MixedStreamVideoConfig::width = 360;
 <span id="MixedStreamVideoConfig-height"></span>
 ### height
 ```cpp
-int32_t bytertc::MixedStreamVideoConfig::height = 640;
+int32_t bytertc::MixedStreamVideoConfig::height = MIXED_STREAM_DEFAULT_VIDEO_HEIGHT;
 ```
 合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。建议设置。
 设置值为非偶数时，自动向上取偶数。
@@ -6674,14 +6769,14 @@ int32_t bytertc::MixedStreamVideoConfig::bitrate = 500;
 ```cpp
 MixedStreamVideoCodecType bytertc::MixedStreamVideoConfig::video_codec = MixedStreamVideoCodecType::kMixedStreamVideoCodecTyp/;"
 ```
-视频编码格式，参看 [MixedStreamVideoCodecType](#mixedstreamvideocodectype)。默认值为 `0`。
-本参数不支持过程中更新。建议设置。
+视频编码格式，参看 [MixedStreamVideoCodecType](#mixedstreamvideocodectype)。默认值为 `0`。建议设置。
+本参数不支持过程中更新。
 
 
 <span id="MixedStreamVideoConfig-enable_bframe"></span>
-### enable_Bframe
+### enable_bframe
 ```cpp
-bool bytertc::MixedStreamVideoConfig::enable_Bframe = false;
+bool bytertc::MixedStreamVideoConfig::enable_bframe = false;
 ```
 是否在合流中开启B帧，仅服务端合流支持：  <br>
 
@@ -6806,6 +6901,129 @@ HumanOrientation bytertc::MixedStreamSpatialAudioConfig::audience_spatial_orient
 
 
 
+# MixedStreamServerControlConfig
+```cpp
+typedef struct bytertc::MixedStreamServerControlConfig
+```
+
+服务端合流控制参数
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **bool** | [enable_volume_indication](#MixedStreamServerControlConfig-enable_volume_indication) |
+| **float** | [volume_indication_interval](#MixedStreamServerControlConfig-volume_indication_interval) |
+| **int** | [talk_volume](#MixedStreamServerControlConfig-talk_volume) |
+| **bool** | [is_add_volume_value](#MixedStreamServerControlConfig-is_add_volume_value) |
+| **MixedStreamSEIContentMode** | [sei_content_mode](#MixedStreamServerControlConfig-sei_content_mode) |
+| **int** | [sei_payload_type](#MixedStreamServerControlConfig-sei_payload_type) |
+| **const char*** | [sei_payload_uuid](#MixedStreamServerControlConfig-sei_payload_uuid) |
+| **MixedStreamMediaType** | [media_type](#MixedStreamServerControlConfig-media_type) |
+| **MixedStreamPushMode** | [push_stream_mode](#MixedStreamServerControlConfig-push_stream_mode) |
+
+
+## 变量说明
+<span id="MixedStreamServerControlConfig-enable_volume_indication"></span>
+### enable_volume_indication
+```cpp
+bool bytertc::MixedStreamServerControlConfig::enable_volume_indication = false;
+```
+是否开启单独发送声音提示 SEI 的功能：<br>
+
++ True：开启；
++ False：关闭。（默认值）
+开启后，你可以通过 `MixedStreamServerControlConfig.sei_content_mode` 控制 SEI 的内容是否只携带声音信息。
+
+
+<span id="MixedStreamServerControlConfig-volume_indication_interval"></span>
+### volume_indication_interval
+```cpp
+float bytertc::MixedStreamServerControlConfig::volume_indication_interval = 2.0f;
+```
+声音提示间隔，单位为秒，取值范围为 [0.3,+∞)，默认值为 2。<br>
+此值仅取整百毫秒。若传入两位及以上小数，则四舍五入取第一位小数的值。例如，若传入 0.36，则取 0.4。
+
+
+<span id="MixedStreamServerControlConfig-talk_volume"></span>
+### talk_volume
+```cpp
+int bytertc::MixedStreamServerControlConfig::talk_volume = 0;
+```
+有效音量大小，取值范围为 [0, 255]，默认值为 0。<br>
+超出取值范围则自动调整为默认值，即 0。
+
+
+<span id="MixedStreamServerControlConfig-is_add_volume_value"></span>
+### is_add_volume_value
+```cpp
+bool bytertc::MixedStreamServerControlConfig::is_add_volume_value = false;
+```
+声音信息 SEI 是否包含音量值：
+
++ True：是；
++ False：否，默认值。
+
+
+<span id="MixedStreamServerControlConfig-sei_content_mode"></span>
+### sei_content_mode
+```cpp
+MixedStreamSEIContentMode bytertc::MixedStreamServerControlConfig::sei_content_mode = kMixedStreamSEIContentModeDefault;
+```
+设置 SEI 内容。参看 [MixedStreamSEIContentMode](#mixedstreamseicontentmode)。
+
+
+<span id="MixedStreamServerControlConfig-sei_payload_type"></span>
+### sei_payload_type
+```cpp
+int bytertc::MixedStreamServerControlConfig::sei_payload_type = 100;
+```
+SEI 信息的 payload type。<br>
+默认值为 `100`，只支持设置 `5` 和 `100`。<br>
+在转推直播的过程中，该参数不支持变更。
+
+
+<span id="MixedStreamServerControlConfig-sei_payload_uuid"></span>
+### sei_payload_uuid
+```cpp
+const char* bytertc::MixedStreamServerControlConfig::sei_payload_uuid = nullptr;
+```
+SEI 信息的 payload UUID。
+
+**注意:**
+PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   
+该参数长度需为32位，否则会收到错误码为1091的回调。  
+该参数每个字符的范围需为 [0, 9] [a, f] [A, F] 
+该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。
+在转推直播的过程中，该参数不支持变更。
+
+PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   
+该参数长度需为32位，否则会收到错误码为1091的回调。  
+该参数每个字符的范围需为 [0, 9] [a, f] [A, F] 
+该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。
+在转推直播的过程中，该参数不支持变更。
+
+
+<span id="MixedStreamServerControlConfig-media_type"></span>
+### media_type
+```cpp
+MixedStreamMediaType bytertc::MixedStreamServerControlConfig::media_type = MixedStreamMediaType::kMixedStreamMediaTypeAudioAndVideo;
+```
+设置合流推到 CDN 时输出的媒体流类型。参看 [MixedStreamMediaType](#mixedstreammediatype)。<br>
+默认输出音视频流。支持输出纯音频流，但暂不支持输出纯视频流。
+
+
+<span id="MixedStreamServerControlConfig-push_stream_mode"></span>
+### push_stream_mode
+```cpp
+MixedStreamPushMode bytertc::MixedStreamServerControlConfig::push_stream_mode = MixedStreamPushMode::kMixedStreamPushModeOnStream;
+```
+设置是否在没有用户发布流的情况下发起转推直播。具体参看 [MixedStreamPushMode](#mixedstreampushmode)。<br>
+该参数在发起合流任务后的转推直播过程中不支持动态变更。
+
+
+
 # MixedStreamLayoutRegionConfig
 ```cpp
 typedef struct bytertc::MixedStreamLayoutRegionConfig
@@ -6821,10 +7039,10 @@ typedef struct bytertc::MixedStreamLayoutRegionConfig
 | --- | --- |
 | **const char*** | [region_id](#MixedStreamLayoutRegionConfig-region_id) |
 | **const char*** | [room_id](#MixedStreamLayoutRegionConfig-room_id) |
-| **float** | [location_x](#MixedStreamLayoutRegionConfig-location_x) |
-| **float** | [location_y](#MixedStreamLayoutRegionConfig-location_y) |
-| **float** | [width_proportion](#MixedStreamLayoutRegionConfig-width_proportion) |
-| **float** | [height_proportion](#MixedStreamLayoutRegionConfig-height_proportion) |
+| **int** | [location_x](#MixedStreamLayoutRegionConfig-location_x) |
+| **int** | [location_y](#MixedStreamLayoutRegionConfig-location_y) |
+| **int** | [width](#MixedStreamLayoutRegionConfig-width) |
+| **int** | [height](#MixedStreamLayoutRegionConfig-height) |
 | **float** | [alpha](#MixedStreamLayoutRegionConfig-alpha) |
 | **float** | [corner_radius](#MixedStreamLayoutRegionConfig-corner_radius) |
 | **int32_t** | [z_order](#MixedStreamLayoutRegionConfig-z_order) |
@@ -6835,6 +7053,8 @@ typedef struct bytertc::MixedStreamLayoutRegionConfig
 | **MixedStreamLayoutRegionType** | [region_content_type](#MixedStreamLayoutRegionConfig-region_content_type) |
 | **uint8_t*** | [image_water_mark](#MixedStreamLayoutRegionConfig-image_water_mark) |
 | **MixedStreamLayoutRegionImageWaterMarkConfig** | [image_water_mark_param](#MixedStreamLayoutRegionConfig-image_water_mark_param) |
+| **MixedStreamAlternateImageFillMode** | [alternate_image_fill_mode](#MixedStreamLayoutRegionConfig-alternate_image_fill_mode) |
+| **const char*** | [alternate_image_url](#MixedStreamLayoutRegionConfig-alternate_image_url) |
 | **Position** | [spatial_position](#MixedStreamLayoutRegionConfig-spatial_position) |
 | **bool** | [apply_spatial_audio](#MixedStreamLayoutRegionConfig-apply_spatial_audio) |
 
@@ -6860,33 +7080,35 @@ const char* bytertc::MixedStreamLayoutRegionConfig::room_id = nullptr;
 <span id="MixedStreamLayoutRegionConfig-location_x"></span>
 ### location_x
 ```cpp
-float bytertc::MixedStreamLayoutRegionConfig::location_x = 0.0f;
+int bytertc::MixedStreamLayoutRegionConfig::location_x = 0;
 ```
-视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
+单个用户画面左上角在整个画布坐标系中的 X 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的横向位移。<br>
+取值范围为 [0, 整体画布宽度)。默认值为 0。
 
 
 <span id="MixedStreamLayoutRegionConfig-location_y"></span>
 ### location_y
 ```cpp
-float bytertc::MixedStreamLayoutRegionConfig::location_y = 0.0f;
+int bytertc::MixedStreamLayoutRegionConfig::location_y = 0;
 ```
-视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
+单个用户画面左上角在整个画布坐标系中的 Y 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的纵向位移。<br>
+取值范围为 [0, 整体画布高度)。默认值为 0。
 
 
-<span id="MixedStreamLayoutRegionConfig-width_proportion"></span>
-### width_proportion
+<span id="MixedStreamLayoutRegionConfig-width"></span>
+### width
 ```cpp
-float bytertc::MixedStreamLayoutRegionConfig::width_proportion = 1.0f;
+int bytertc::MixedStreamLayoutRegionConfig::width = MIXED_STREAM_VIDEO_DEFAULT_WIDTH;
 ```
-视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。建议设置。
+单个用户画面的宽度。取值范围为 [0, 整体画布宽度]，默认值为 360。
 
 
-<span id="MixedStreamLayoutRegionConfig-height_proportion"></span>
-### height_proportion
+<span id="MixedStreamLayoutRegionConfig-height"></span>
+### height
 ```cpp
-float bytertc::MixedStreamLayoutRegionConfig::height_proportion = 1.0f;
+int bytertc::MixedStreamLayoutRegionConfig::height = MIXED_STREAM_DEFAULT_VIDEO_HEIGHT;
 ```
-视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。建议设置。
+单个用户画面的高度。取值范围为 [0, 整体画布高度]，默认值为 640。
 
 
 <span id="MixedStreamLayoutRegionConfig-alpha"></span>
@@ -6924,8 +7146,8 @@ bool bytertc::MixedStreamLayoutRegionConfig::is_local_user = false;
 是否为本地用户：  <br>
 
 + true: 是  <br>
-+ false: 否 <br>
-客户端合流时，必须为 true。
++ false: 否
+
 
 <span id="MixedStreamLayoutRegionConfig-stream_type"></span>
 ### stream_type
@@ -6973,6 +7195,23 @@ uint8_t* bytertc::MixedStreamLayoutRegionConfig::image_water_mark = nullptr;
 MixedStreamLayoutRegionImageWaterMarkConfig bytertc::MixedStreamLayoutRegionConfig::image_water_mark_param;
 ```
 合流布局区域数据的对应参数。当类型为视频流时传空，类型为图片时传入对应图片的参数，参看 [MixedStreamLayoutRegionImageWaterMarkConfig](#mixedstreamlayoutregionimagewatermarkconfig)。
+
+
+<span id="MixedStreamLayoutRegionConfig-alternate_image_fill_mode"></span>
+### alternate_image_fill_mode
+```cpp
+MixedStreamAlternateImageFillMode bytertc::MixedStreamLayoutRegionConfig::alternate_image_fill_mode = kMixedStreamAlternateImageFill/;"
+```
+设置占位图的填充模式。<br>
+该参数用来控制当用户停止发布视频流，画面恢复为占位图后，此时占位图的填充模式。参看 [MixedStreamAlternateImageFillMode](#mixedstreamalternateimagefillmode)。
+
+
+<span id="MixedStreamLayoutRegionConfig-alternate_image_url"></span>
+### alternate_image_url
+```cpp
+const char* bytertc::MixedStreamLayoutRegionConfig::alternate_image_url = nullptr;
+```
+设置占位图的 URL，长度小于 1024 字符.
 
 
 <span id="MixedStreamLayoutRegionConfig-spatial_position"></span>
@@ -7342,7 +7581,7 @@ bool bytertc::TranscoderLayoutRegion::screen_stream = false;
 <span id="TranscoderLayoutRegion-content_control"></span>
 ### content_control
 ```cpp
-TranscoderContentControlType bytertc::TranscoderLayoutRegion::content_control = kHasAudioAndVideo;
+TranscoderContentControlType bytertc::TranscoderLayoutRegion::content_control = TranscoderContentControlType::kHasAudioAndVid/;"
 ```
 （仅服务端合流支持设置）合流内容控制。默认值为 `kHasAudioAndVideo`，参看 [TranscoderContentControlType](#transcodercontentcontroltype)。
 
@@ -7838,15 +8077,15 @@ virtual void bytertc::ITranscoderParam::setLayoutParam(
     const char* bg_color,
     const char* app_data)
 ```
-设置视频流合流整体布局信息。建议设置。
+设置视频流合流整体布局信息。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| regions[] | **TranscoderLayoutRegion** | 用户布局信息列表。为 [TranscoderLayoutRegion](#transcoderlayoutregion) 数据类型的数组。每一个该类型对象为一路单独的视频流的布局信息。<br/>值不合法或未设置时，自动使用默认值。建议设置。 |
-| regions_size | **int32_t** | 合流视窗数量。建议设置。 |
-| bg_color | **const char*** | 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。<br/>值不合法或未设置时，自动使用默认值。建议设置。 |
+| regions[] | **TranscoderLayoutRegion** | 用户布局信息列表。为 [TranscoderLayoutRegion](#transcoderlayoutregion) 数据类型的数组。每一个该类型对象为一路单独的视频流的布局信息。<br/>值不合法或未设置时，自动使用默认值。 |
+| regions_size | **int32_t** | 合流视窗数量。 |
+| bg_color | **const char*** | 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。<br/>值不合法或未设置时，自动使用默认值。 |
 | app_data | **const char*** | 透传的 App 数据，长度不超过 4 KB。 |
 
 
@@ -7906,6 +8145,10 @@ class bytertc::IMixedStreamConfig
 | **virtual void** | [setVideoConfig](#IMixedStreamConfig-setvideoconfig) |
 | **virtual void** | [setLayoutConfig](#IMixedStreamConfig-setlayoutconfig) |
 | **virtual void** | [setClientMixConfig](#IMixedStreamConfig-setclientmixconfig) |
+| **virtual MixedStreamServerControlConfig** | [getServerControlConfig](#IMixedStreamConfig-getservercontrolconfig) |
+| **virtual void** | [setServerControlConfig](#IMixedStreamConfig-setservercontrolconfig) |
+| **virtual void** | [setBackgroundImageURL](#IMixedStreamConfig-setbackgroundimageurl) |
+| **virtual const char*** | [getBackgroundImageURL](#IMixedStreamConfig-getbackgroundimageurl) |
 | **virtual IMixedStreamConfig*** | [defaultMixedStreamConfig](#IMixedStreamConfig-defaultmixedstreamconfig) |
 
 
@@ -8080,15 +8323,15 @@ virtual void bytertc::IMixedStreamConfig::setLayoutConfig(
     const char* background_color,
     const char* user_extra_info)
 ```
-设置视频流合流整体布局信息。建议设置。
+设置视频流合流整体布局信息。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| regions[] | **MixedStreamLayoutRegionConfig** | 用户布局信息列表。为 [MixedStreamLayoutRegionConfig](#mixedstreamlayoutregionconfig) 数据类型的数组。每一个该类型对象为一路单独的视频流的布局信息。<br/>值不合法或未设置时，自动使用默认值。 |
-| regions_size | **int32_t** | 合流视窗数量。 |
-| background_color | **const char*** | 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。<br/>值不合法或未设置时，自动使用默认值。 |
+| regions[] | **MixedStreamLayoutRegionConfig** | 用户布局信息列表。为 [MixedStreamLayoutRegionConfig](#mixedstreamlayoutregionconfig) 数据类型的数组。每一个该类型对象为一路单独的视频流的布局信息。<br/>值不合法或未设置时，自动使用默认值。建议设置。 |
+| regions_size | **int32_t** | 合流视窗数量。建议设置。 |
+| background_color | **const char*** | 合流背景颜色，用十六进制颜色码（HEX）表示。例如，#FFFFFF 表示纯白，#000000 表示纯黑。默认值为 #000000。建议设置。<br/>值不合法或未设置时，自动使用默认值。 |
 | user_extra_info | **const char*** | 透传的 App 数据。 |
 
 
@@ -8099,6 +8342,45 @@ virtual void bytertc::IMixedStreamConfig::setClientMixConfig(
     MixedStreamClientMixConfig&)
 ```
 设置客户端合流信息，参看 [MixedStreamClientMixConfig](#mixedstreamclientmixconfig)。
+
+
+<span id="IMixedStreamConfig-getservercontrolconfig"></span>
+### getServerControlConfig
+```cpp
+virtual MixedStreamServerControlConfig bytertc::IMixedStreamConfig::getServerControlConfig()
+```
+获取服务端合流控制参数。参看 [MixedStreamServerControlConfig](#mixedstreamservercontrolconfig)。
+
+
+<span id="IMixedStreamConfig-setservercontrolconfig"></span>
+### setServerControlConfig
+```cpp
+virtual void bytertc::IMixedStreamConfig::setServerControlConfig(
+    MixedStreamServerControlConfig& config)
+```
+设置服务端合流控制参数。参看 [MixedStreamServerControlConfig](#mixedstreamservercontrolconfig)。
+
+
+<span id="IMixedStreamConfig-setbackgroundimageurl"></span>
+### setBackgroundImageURL
+```cpp
+virtual void bytertc::IMixedStreamConfig::setBackgroundImageURL(
+    const char* background_image_url)
+```
+> Available since 3.57
+
+设置合流后整体画布的背景图片 URL，长度最大为 1024 bytes。<br>
+支持的图片格式包括：JPG, JPEG, PNG。如果背景图片的宽高和整体屏幕的宽高不一致，背景图片会缩放到铺满屏幕。
+
+
+<span id="IMixedStreamConfig-getbackgroundimageurl"></span>
+### getBackgroundImageURL
+```cpp
+virtual const char* bytertc::IMixedStreamConfig::getBackgroundImageURL()
+```
+> Available since 3.57
+
+获取背景图片的地址。
 
 
 <span id="IMixedStreamConfig-defaultmixedstreamconfig"></span>
@@ -8127,7 +8409,7 @@ typedef struct bytertc::PushSingleStreamParam
 | **const char*** | [room_id](#PushSingleStreamParam-room_id) |
 | **const char*** | [user_id](#PushSingleStreamParam-user_id) |
 | **const char*** | [uri](#PushSingleStreamParam-uri) |
-| **const bool** | [is_screen_stream](#PushSingleStreamParam-is_screen_stream) |
+| **bool** | [is_screen_stream](#PushSingleStreamParam-is_screen_stream) |
 
 
 ## 变量说明
@@ -8159,7 +8441,7 @@ const char* bytertc::PushSingleStreamParam::uri;
 <span id="PushSingleStreamParam-is_screen_stream"></span>
 ### is_screen_stream
 ```cpp
-const bool bytertc::PushSingleStreamParam::is_screen_stream;
+bool bytertc::PushSingleStreamParam::is_screen_stream;
 ```
 媒体流是否为屏幕流。
 
@@ -8311,434 +8593,6 @@ bool bytertc::RemoteStreamSwitch::after_enable;
 FallbackOrRecoverReason bytertc::RemoteStreamSwitch::reason;
 ```
 触发流回退的原因，详见类型 [FallbackOrRecoverReason](#fallbackorrecoverreason) 。
-
-
-
-# LiveTranscodingContentControl
-```cpp
-enum bytertc::LiveTranscodingContentControl
-```
-
-转推直播包含内容。
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **kVideoAndAudio** | 输出的混流包含音频和视频 |
-| **kAudioOnly** | 输出的混流只包含音频 |
-| **kVideoOnly** | 输出的混流只包含视频 |
-
-
-# LiveTranscodingVideoCodec
-```cpp
-enum bytertc::LiveTranscodingVideoCodec
-```
-
-转推直播视频编码器格式。
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **kLiveTranscondingH264** | 使用 H264 编码格式 |
-| **kLiveTranscodingByteVC1** | 自定义编码器 |
-
-
-# LiveTranscodingAudioCodec
-```cpp
-enum bytertc::LiveTranscodingAudioCodec
-```
-
-转推直播音频编码格式。
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **kLiveTranscodingAAC** | 使用 AAC 编码格式 |
-
-
-# LiveTranscodingAudioProfile
-```cpp
-enum bytertc::LiveTranscodingAudioProfile
-```
-
-AAC 编码等级。
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **kLiveTranscodingAACLC** | 编码等级 AAC-LC （默认） |
-| **kLiveTranscodingAACMAIN** | 编码等级 AAC-MAIN |
-| **kLiveTranscodingHEV1** | 编码等级 HE-AAC v1 |
-| **KLiveTranscodingHEV2** | 编码等级 HE-AAC v2 |
-
-
-# LiveTranscodingVideoConfig
-```cpp
-struct bytertc::LiveTranscodingVideoConfig
-```
-
-转推视频配置。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **LiveTranscodingVideoCodec** | [codec](#LiveTranscodingVideoConfig-codec) |
-| **int** | [fps](#LiveTranscodingVideoConfig-fps) |
-| **int** | [gop](#LiveTranscodingVideoConfig-gop) |
-| **bool** | [low_latency](#LiveTranscodingVideoConfig-low_latency) |
-| **int** | [bitrate](#LiveTranscodingVideoConfig-bitrate) |
-| **int** | [width](#LiveTranscodingVideoConfig-width) |
-| **int** | [height](#LiveTranscodingVideoConfig-height) |
-
-
-## 变量说明
-<span id="LiveTranscodingVideoConfig-codec"></span>
-### codec
-```cpp
-LiveTranscodingVideoCodec bytertc::LiveTranscodingVideoConfig::codec;
-```
-转推直播视频编码器格式。详见 [LiveTranscodingVideoCodec](#livetranscodingvideocodec)
-
-
-<span id="LiveTranscodingVideoConfig-fps"></span>
-### fps
-```cpp
-int bytertc::LiveTranscodingVideoConfig::fps;
-```
-合流视频帧率信息
-
-
-<span id="LiveTranscodingVideoConfig-gop"></span>
-### gop
-```cpp
-int bytertc::LiveTranscodingVideoConfig::gop;
-```
-视频 I 帧间隔。
-
-
-<span id="LiveTranscodingVideoConfig-low_latency"></span>
-### low_latency
-```cpp
-bool bytertc::LiveTranscodingVideoConfig::low_latency;
-```
-是否使用低延时特性。取值含义如下:  <br>
-
-+ true: 使用低延时特性  <br>
-+ false: 不使用低延时特性
-
-
-<span id="LiveTranscodingVideoConfig-bitrate"></span>
-### bitrate
-```cpp
-int bytertc::LiveTranscodingVideoConfig::bitrate;
-```
-合流视频码率，单位为 bps 。
-
-
-<span id="LiveTranscodingVideoConfig-width"></span>
-### width
-```cpp
-int bytertc::LiveTranscodingVideoConfig::width;
-```
-宽（像素）
-
-
-<span id="LiveTranscodingVideoConfig-height"></span>
-### height
-```cpp
-int bytertc::LiveTranscodingVideoConfig::height;
-```
-高（像素）
-
-
-
-# LiveTranscodingAudioConfig
-```cpp
-struct bytertc::LiveTranscodingAudioConfig
-```
-
-转推音频配置。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **LiveTranscodingAudioCodec** | [codec](#LiveTranscodingAudioConfig-codec) |
-| **int** | [bitrate](#LiveTranscodingAudioConfig-bitrate) |
-| **int** | [sample_rate](#LiveTranscodingAudioConfig-sample_rate) |
-| **int** | [channels](#LiveTranscodingAudioConfig-channels) |
-| **LiveTranscodingAudioProfile** | [aac_profile](#LiveTranscodingAudioConfig-aac_profile) |
-
-
-## 变量说明
-<span id="LiveTranscodingAudioConfig-codec"></span>
-### codec
-```cpp
-LiveTranscodingAudioCodec bytertc::LiveTranscodingAudioConfig::codec = kLiveTranscodingAAC;
-```
-转推直播音频编码器格式。详见 [LiveTranscodingAudioCodec](#livetranscodingaudiocodec)
-
-
-<span id="LiveTranscodingAudioConfig-bitrate"></span>
-### bitrate
-```cpp
-int bytertc::LiveTranscodingAudioConfig::bitrate;
-```
-合流音频码率，单位为 bps 。
-
-
-<span id="LiveTranscodingAudioConfig-sample_rate"></span>
-### sample_rate
-```cpp
-int bytertc::LiveTranscodingAudioConfig::sample_rate;
-```
-音频帧采样率，单位 HZ。目前支持的采样率有：8000HZ， 16000HZ， 32000HZ， 44100HZ，48000HZ。
-
-
-<span id="LiveTranscodingAudioConfig-channels"></span>
-### channels
-```cpp
-int bytertc::LiveTranscodingAudioConfig::channels;
-```
-音频声道数，可取 1 或 2。
-
-
-<span id="LiveTranscodingAudioConfig-aac_profile"></span>
-### aac_profile
-```cpp
-LiveTranscodingAudioProfile bytertc::LiveTranscodingAudioConfig::aac_profile = kLiveTranscodingAACLC;
-```
-AAC 编码等级。详见 [LiveTranscodingAudioProfile](#livetranscodingaudioprofile)
-
-
-
-# LiveTranscodingRegion
-```cpp
-struct bytertc::LiveTranscodingRegion
-```
-
-单个视频流在合流中的布局信息。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **const char*** | [uid](#LiveTranscodingRegion-uid) |
-| **const char*** | [roomId](#LiveTranscodingRegion-roomid) |
-| **double** | [x](#LiveTranscodingRegion-x) |
-| **double** | [y](#LiveTranscodingRegion-y) |
-| **double** | [w](#LiveTranscodingRegion-w) |
-| **double** | [h](#LiveTranscodingRegion-h) |
-| **int** | [zorder](#LiveTranscodingRegion-zorder) |
-| **double** | [alpha](#LiveTranscodingRegion-alpha) |
-| **LiveTranscodingContentControl** | [content_control](#LiveTranscodingRegion-content_control) |
-| **RenderMode** | [render_mode](#LiveTranscodingRegion-render_mode) |
-
-
-## 变量说明
-<span id="LiveTranscodingRegion-uid"></span>
-### uid
-```cpp
-const char* bytertc::LiveTranscodingRegion::uid = nullptr;
-```
-视频流发布用户的用户 ID 。必填。
-
-
-<span id="LiveTranscodingRegion-roomid"></span>
-### roomId
-```cpp
-const char* bytertc::LiveTranscodingRegion::roomId = nullptr;
-```
-视频流发布用户的房间 ID 。必填。
-
-
-<span id="LiveTranscodingRegion-x"></span>
-### x
-```cpp
-double bytertc::LiveTranscodingRegion::x;
-```
-用户视频布局相对画布左侧的偏移量。相对值，范围为[0.0, 1.0]。
-
-
-<span id="LiveTranscodingRegion-y"></span>
-### y
-```cpp
-double bytertc::LiveTranscodingRegion::y;
-```
-用户视频布局相对画布顶端的偏移量。相对值，范围为[0.0, 1.0]。
-
-
-<span id="LiveTranscodingRegion-w"></span>
-### w
-```cpp
-double bytertc::LiveTranscodingRegion::w;
-```
-用户视频宽度相对用户原始视频宽度的比例。相对值，范围为[0.0, 1.0]。
-
-
-<span id="LiveTranscodingRegion-h"></span>
-### h
-```cpp
-double bytertc::LiveTranscodingRegion::h;
-```
-用户视频高度相对用户原始视频高度的比例。相对值，范围为[0.0, 1.0]。
-
-
-<span id="LiveTranscodingRegion-zorder"></span>
-### zorder
-```cpp
-int bytertc::LiveTranscodingRegion::zorder;
-```
-用户视频布局在画布中的层级。0为底层，值越大越上层，范围为[0, 100]。
-
-
-<span id="LiveTranscodingRegion-alpha"></span>
-### alpha
-```cpp
-double bytertc::LiveTranscodingRegion::alpha;
-```
-透明度。范围为 [0.0, 1.0]。
-
-
-<span id="LiveTranscodingRegion-content_control"></span>
-### content_control
-```cpp
-LiveTranscodingContentControl bytertc::LiveTranscodingRegion::content_control = kVideoAndAudio;
-```
-转推直播包含内容。详见 [LiveTranscodingContentControl](#livetranscodingcontentcontrol)
-
-
-<span id="LiveTranscodingRegion-render_mode"></span>
-### render_mode
-```cpp
-RenderMode bytertc::LiveTranscodingRegion::render_mode = kRenderModeHidden;
-```
-渲染模式
-
-
-
-# LiveTranscodingLayout
-```cpp
-struct bytertc::LiveTranscodingLayout
-```
-
-转推流布局设置。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **const char*** | [app_data](#LiveTranscodingLayout-app_data) |
-| **const char*** | [background_color](#LiveTranscodingLayout-background_color) |
-| **LiveTranscodingRegion*** | [regions](#LiveTranscodingLayout-regions) |
-| **int** | [regions_num](#LiveTranscodingLayout-regions_num) |
-
-
-## 变量说明
-<span id="LiveTranscodingLayout-app_data"></span>
-### app_data
-```cpp
-const char* bytertc::LiveTranscodingLayout::app_data = nullptr;
-```
-SEI 信息，长度不得超 4096 bytes
-
-
-<span id="LiveTranscodingLayout-background_color"></span>
-### background_color
-```cpp
-const char* bytertc::LiveTranscodingLayout::background_color = nullptr;
-```
-视频的背景颜色。格式为 RGB 定义下的 Hex 值，如 #FFB6C1 表示浅粉色。默认值 #000000，表示为黑色
-
-
-<span id="LiveTranscodingLayout-regions"></span>
-### regions
-```cpp
-LiveTranscodingRegion* bytertc::LiveTranscodingLayout::regions = nullptr;
-```
-转推直播布局信息。详见 [LiveTranscodingRegion](#livetranscodingregion)
-
-
-<span id="LiveTranscodingLayout-regions_num"></span>
-### regions_num
-```cpp
-int bytertc::LiveTranscodingLayout::regions_num = 0;
-```
-合流的数量
-
-
-
-# LiveTranscodingConfig
-```cpp
-struct bytertc::LiveTranscodingConfig
-```
-
-转推直播配置信息。
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **const char*** | [url](#LiveTranscodingConfig-url) |
-| **LiveTranscodingVideoConfig** | [video_config](#LiveTranscodingConfig-video_config) |
-| **LiveTranscodingAudioConfig** | [audio_config](#LiveTranscodingConfig-audio_config) |
-| **LiveTranscodingLayout** | [layout](#LiveTranscodingConfig-layout) |
-| **const char*** | [advanced_config](#LiveTranscodingConfig-advanced_config) |
-
-
-## 变量说明
-<span id="LiveTranscodingConfig-url"></span>
-### url
-```cpp
-const char* bytertc::LiveTranscodingConfig::url = nullptr;
-```
-设置推流地址。
-
-
-<span id="LiveTranscodingConfig-video_config"></span>
-### video_config
-```cpp
-LiveTranscodingVideoConfig bytertc::LiveTranscodingConfig::video_config;
-```
-转推视频配置。详见 [LiveTranscodingVideoConfig](#livetranscodingvideoconfig)
-
-
-<span id="LiveTranscodingConfig-audio_config"></span>
-### audio_config
-```cpp
-LiveTranscodingAudioConfig bytertc::LiveTranscodingConfig::audio_config;
-```
-转推音频配置。详见 [LiveTranscodingAudioConfig](#livetranscodingaudioconfig)
-
-
-<span id="LiveTranscodingConfig-layout"></span>
-### layout
-```cpp
-LiveTranscodingLayout bytertc::LiveTranscodingConfig::layout;
-```
-转推流布局设置。详见 [LiveTranscodingLayout](#livetranscodinglayout)
-
-
-<span id="LiveTranscodingConfig-advanced_config"></span>
-### advanced_config
-```cpp
-const char* bytertc::LiveTranscodingConfig::advanced_config = nullptr;
-```
-设置动态扩展自定义参数。
 
 
 
@@ -9016,6 +8870,22 @@ enum bytertc::VideoStreamType
 | **kVideoStreamTypeLow** | 低分辨率视频 |
 
 
+# RenderTargetType
+```cpp
+enum bytertc::RenderTargetType
+```
+
+渲染目标类型
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kRenderTargetTypeView** | 指定渲染目标类型为 SurfaceView/TextureView (Android), UIView(iOS), NSView(macOS), HWND (Windows) |
+| **kRenderTargetTypeSurface** | 仅在 Android 平台生效，指定渲染目标类型为 Surface |
+
+
 # VideoCanvas
 ```cpp
 struct bytertc::VideoCanvas
@@ -9032,13 +8902,15 @@ struct bytertc::VideoCanvas
 | **void*** | [view](#VideoCanvas-view) |
 | **int** | [render_mode](#VideoCanvas-render_mode) |
 | **uint32_t** | [background_color](#VideoCanvas-background_color) |
+| **RenderTargetType** | [render_target_type](#VideoCanvas-render_target_type) |
+| **VideoRotation** | [render_rotation](#VideoCanvas-render_rotation) |
 
 
 ## 变量说明
 <span id="VideoCanvas-view"></span>
 ### view
 ```cpp
-void* bytertc::VideoCanvas::view;
+void* bytertc::VideoCanvas::view = NULL;
 ```
 本地视图句柄
 
@@ -9046,7 +8918,7 @@ void* bytertc::VideoCanvas::view;
 <span id="VideoCanvas-render_mode"></span>
 ### render_mode
 ```cpp
-int bytertc::VideoCanvas::render_mode;
+int bytertc::VideoCanvas::render_mode = kRenderModeHidden;
 ```
 视频渲染模式，参看 [RenderMode](#rendermode)
 
@@ -9054,9 +8926,73 @@ int bytertc::VideoCanvas::render_mode;
 <span id="VideoCanvas-background_color"></span>
 ### background_color
 ```cpp
-uint32_t bytertc::VideoCanvas::background_color;
+uint32_t bytertc::VideoCanvas::background_color = 0;
 ```
 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+
+
+<span id="VideoCanvas-render_target_type"></span>
+### render_target_type
+```cpp
+RenderTargetType bytertc::VideoCanvas::render_target_type = kRenderTargetTypeView;
+```
+渲染目标的类型。参看 [RenderTargetType](#rendertargettype)。
+
+
+<span id="VideoCanvas-render_rotation"></span>
+### render_rotation
+```cpp
+VideoRotation bytertc::VideoCanvas::render_rotation = kVideoRotation0;
+```
+视频帧旋转角度。参看 [VideoRotation](#videorotation)。默认为 0 度，即不做旋转处理。<br>
+该设置仅对远端视频有效，对本地视频设置不生效。
+
+
+
+# RemoteVideoRenderConfig
+```cpp
+struct bytertc::RemoteVideoRenderConfig
+```
+
+远端视频帧渲染设置
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **int** | [render_mode](#RemoteVideoRenderConfig-render_mode) |
+| **uint32_t** | [background_color](#RemoteVideoRenderConfig-background_color) |
+| **VideoRotation** | [render_rotation](#RemoteVideoRenderConfig-render_rotation) |
+
+
+## 变量说明
+<span id="RemoteVideoRenderConfig-render_mode"></span>
+### render_mode
+```cpp
+int bytertc::RemoteVideoRenderConfig::render_mode = kRenderModeHidden;
+```
+渲染模式：
+
++ 1（`RENDER_MODE_HIDDEN`）视窗填满优先，默认值。视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
++ 2（`RENDER_MODE_FIT`）视频帧内容全部显示优先。视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将填充 `backgroundColor`。缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
++ 3（`RENDER_MODE_FILL`）视频帧自适应画布。视频帧非等比缩放，直至画布被填满。在此过程中，视频帧的长宽比例可能会发生变化。
+
+
+<span id="RemoteVideoRenderConfig-background_color"></span>
+### background_color
+```cpp
+uint32_t bytertc::RemoteVideoRenderConfig::background_color = 0;
+```
+用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+
+
+<span id="RemoteVideoRenderConfig-render_rotation"></span>
+### render_rotation
+```cpp
+VideoRotation bytertc::RemoteVideoRenderConfig::render_rotation = kVideoRotation0;
+```
+用户自定义画面旋转。可选值 0, 90, 180, 270， 默认值是0。其中0代表保持原始画面，90, 180, 270代表顺时针旋转原始canvas相应角度。
 
 
 
@@ -9503,6 +9439,156 @@ enum bytertc::IVideoSink::PixelFormat
 | **kOriginal** | 原始视频帧格式 |
 
 
+# LocalVideoRenderPosition
+```cpp
+enum bytertc::LocalVideoRenderPosition
+```
+
+本地视频帧回调位置。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kLocalVideoRenderPositionAfterCapture** | 采集后。 |
+| **kLocalVideoRenderPositionAfterPreProcess** | （默认值）前处理后。 |
+
+
+# VideoApplyRotation
+```cpp
+enum bytertc::VideoApplyRotation
+```
+
+是否将视频帧自动转正。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kVideoApplyRotationDefault** | （默认值）不旋转。 |
+| **kVideoApplyRotation0** | 自动转正视频，即根据视频帧的旋转角信息将视频帧旋转到 0 度。 |
+
+
+# VideoRenderMirrorType
+```cpp
+enum bytertc::VideoRenderMirrorType
+```
+
+是否将视频帧镜像。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kVideoSinkMirrorTypeON** | 开启镜像。 |
+| **kVideoSinkMirrorTypeOFF** | （默认值）不开启镜像。 |
+
+
+# LocalVideoSinkConfig
+```cpp
+struct bytertc::LocalVideoSinkConfig
+```
+
+本地视频帧回调配置。
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **LocalVideoRenderPosition** | [position](#LocalVideoSinkConfig-position) |
+| **VideoPixelFormat** | [pixel_format](#LocalVideoSinkConfig-pixel_format) |
+
+
+## 变量说明
+<span id="LocalVideoSinkConfig-position"></span>
+### position
+```cpp
+LocalVideoRenderPosition bytertc::LocalVideoSinkConfig::position = kLocalVideoRenderPositionAfterPreProcess;
+```
+本地视频帧回调位置，参看 [LocalVideoRenderPosition](#localvideorenderposition)，默认回调前处理后的视频帧。
+
+
+<span id="LocalVideoSinkConfig-pixel_format"></span>
+### pixel_format
+```cpp
+VideoPixelFormat bytertc::LocalVideoSinkConfig::pixel_format = kVideoPixelFormatUnknown;
+```
+本地视频帧回调格式，参看 [VideoPixelFormat](#videopixelformat)，默认值为 0。
+
+
+
+# RemoteVideoRenderPosition
+```cpp
+enum bytertc::RemoteVideoRenderPosition
+```
+
+远端视频帧回调位置。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kRemoteVideoRenderPositionAfterPostProcess** | （默认值）后处理后。 |
+
+
+# RemoteVideoSinkConfig
+```cpp
+struct bytertc::RemoteVideoSinkConfig
+```
+
+远端视频帧回调配置。
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **RemoteVideoRenderPosition** | [position](#RemoteVideoSinkConfig-position) |
+| **VideoPixelFormat** | [pixel_format](#RemoteVideoSinkConfig-pixel_format) |
+| **VideoApplyRotation** | [apply_rotation](#RemoteVideoSinkConfig-apply_rotation) |
+| **VideoRenderMirrorType** | [mirror_type](#RemoteVideoSinkConfig-mirror_type) |
+
+
+## 变量说明
+<span id="RemoteVideoSinkConfig-position"></span>
+### position
+```cpp
+RemoteVideoRenderPosition bytertc::RemoteVideoSinkConfig::position = kRemoteVideoRenderPositionAfterPostProcess;
+```
+远端视频帧回调位置，参看 [RemoteVideoRenderPosition](#remotevideorenderposition)，默认回调后处理后的视频帧。
+
+
+<span id="RemoteVideoSinkConfig-pixel_format"></span>
+### pixel_format
+```cpp
+VideoPixelFormat bytertc::RemoteVideoSinkConfig::pixel_format = kVideoPixelFormatUnknown;
+```
+远端视频帧回调格式，参看 [VideoPixelFormat](#videopixelformat)，默认值为 0。
+
+
+<span id="RemoteVideoSinkConfig-apply_rotation"></span>
+### apply_rotation
+```cpp
+VideoApplyRotation bytertc::RemoteVideoSinkConfig::apply_rotation = kVideoApplyRotationDefault;
+```
+是否将视频帧自动转正，参看 [VideoApplyRotation](#videoapplyrotation)，默认为不旋转。
+
+
+<span id="RemoteVideoSinkConfig-mirror_type"></span>
+### mirror_type
+```cpp
+VideoRenderMirrorType bytertc::RemoteVideoSinkConfig::mirror_type = kVideoSinkMirrorTypeOFF;
+```
+是否将视频帧镜像。参看 [VideoRenderMirrorType](#videorendermirrortype)，默认为不镜像。
+本设置与 [setRemoteVideoMirrorType](Linux-api.md#IRTCVideo-setremotevideomirrortype) （适用于内部渲染）相互独立。
+
+
+
 # MirrorType
 ```cpp
 enum bytertc::MirrorType
@@ -9520,9 +9606,25 @@ enum bytertc::MirrorType
 | **kMirrorTypeRenderAndEncoder** | 本地预览和编码传输时均有镜像效果 |
 
 
-# AdjustedMode
+# RemoteMirrorType
 ```cpp
-enum bytertc::AdjustedMode
+enum bytertc::RemoteMirrorType
+```
+
+远端流的镜像类型。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kRemoteMirrorTypeNone** | （默认值）远端视频渲染无镜像效果。 |
+| **kRemoteMirrorTypeRender** | 远端视频渲染有镜像效果。 |
+
+
+# VideoEnhancementMode
+```cpp
+enum bytertc::VideoEnhancementMode
 ```
 
 弱光适应类型
@@ -9532,8 +9634,8 @@ enum bytertc::AdjustedMode
 
 | 类型 | 说明 |
 | --- | --- |
-| **kAdjustedModeDisabled** | 关闭弱光适应 |
-| **kAdjustedModeEnabled** | 开启弱光适应 |
+| **kVideoEnhancementModeDisabled** | 关闭弱光适应 |
+| **kVideoEnhancementModeAuto** | 开启弱光适应 |
 
 
 # VideoSourceType
@@ -9566,8 +9668,8 @@ enum bytertc::ZoomConfigType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kZoomFocusOffset** | 设置缩放系数 |
-| **kZoomMoveOffset** | 设置移动步长 |
+| **kZoomConfigTypeFocusOffset** | 设置缩放系数 |
+| **kZoomConfigTypeMoveOffset** | 设置移动步长 |
 
 
 # ZoomDirectionType
@@ -9582,13 +9684,13 @@ enum bytertc::ZoomDirectionType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kCameraMoveLeft** | 相机向左移动 |
-| **kCameraMoveRight** | 相机向右移动 |
-| **kCameraMoveUp** | 相机向上移动 |
-| **kCameraMoveDown** | 相机向下移动 |
-| **kCameraZoomOut** | 相机缩小焦距 |
-| **kCameraZoomIn** | 相机放大焦距 |
-| **kCameraReset** | 恢复到原始画面 |
+| **kZoomDirectionTypeMoveLeft** | 相机向左移动 |
+| **kZoomDirectionTypeMoveRight** | 相机向右移动 |
+| **kZoomDirectionTypeMoveUp** | 相机向上移动 |
+| **kZoomDirectionTypeMoveDown** | 相机向下移动 |
+| **kZoomDirectionTypeZoomOut** | 相机缩小焦距 |
+| **kZoomDirectionTypeZoomIn** | 相机放大焦距 |
+| **kZoomDirectionTypeReset** | 恢复到原始画面 |
 
 
 # VideoFrameInfo
@@ -9738,17 +9840,17 @@ struct bytertc::VideoCaptureConfig
 
 | 类型 | 名称 |
 | --- | --- |
-| **CapturePreference** | [capturePreference](#VideoCaptureConfig-capturepreference) |
+| **CapturePreference** | [capture_preference](#VideoCaptureConfig-capture_preference) |
 | **int** | [width](#VideoCaptureConfig-width) |
 | **int** | [height](#VideoCaptureConfig-height) |
-| **int** | [frameRate](#VideoCaptureConfig-framerate) |
+| **int** | [frame_rate](#VideoCaptureConfig-frame_rate) |
 
 
 ## 变量说明
-<span id="VideoCaptureConfig-capturepreference"></span>
-### capturePreference
+<span id="VideoCaptureConfig-capture_preference"></span>
+### capture_preference
 ```cpp
-CapturePreference bytertc::VideoCaptureConfig::capturePreference = CapturePreference::KAuto;
+CapturePreference bytertc::VideoCaptureConfig::capture_preference = CapturePreference::kAuto;
 ```
 视频采集模式，参看 [CapturePreference](#capturepreference-2)
 
@@ -9769,10 +9871,10 @@ int bytertc::VideoCaptureConfig::height = 0;
 视频采集分辨率的高度，单位：px。
 
 
-<span id="VideoCaptureConfig-framerate"></span>
-### frameRate
+<span id="VideoCaptureConfig-frame_rate"></span>
+### frame_rate
 ```cpp
-int bytertc::VideoCaptureConfig::frameRate = 0;
+int bytertc::VideoCaptureConfig::frame_rate = 0;
 ```
 视频采集帧率，单位：fps。
 
@@ -9790,9 +9892,9 @@ enum bytertc::VideoCaptureConfig::CapturePreference
 
 | 类型 | 说明 |
 | --- | --- |
-| **KAuto** | （默认）自动设置采集参数。<br/>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
-| **KManual** | 手动设置采集参数，包括采集分辨率、帧率。 |
-| **KAutoPerformance** | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](Linux-api.md#IRTCVideo-setvideoencoderconfig) 中设置的参数。 |
+| **kAuto** | （默认）自动设置采集参数。<br/>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
+| **kManual** | 手动设置采集参数，包括采集分辨率、帧率。 |
+| **kAutoPerformance** | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](Linux-api.md#IRTCVideo-setvideoencoderconfig) 中设置的参数。 |
 
 
 # RecordingType
@@ -9807,9 +9909,9 @@ enum bytertc::RecordingType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kRecordAudioOnly** | 只录制音频 |
-| **kRecordVideoOnly** | 只录制视频 |
-| **kRecordVideoAndAudio** | 同时录制音频和视频 |
+| **kRecordingTypeAudioOnly** | 只录制音频 |
+| **kRecordingTypeVideoOnly** | 只录制视频 |
+| **kRecordingTypeVideoAndAudio** | 同时录制音频和视频 |
 
 
 # RTCVideoDeviceType
@@ -10012,16 +10114,34 @@ enum bytertc::ScreenMediaType
 enum bytertc::EffectBeautyMode
 ```
 
-基础美颜模式
+基础美颜模式。
 
 
 ## 枚举值
 
 | 类型 | 说明 |
 | --- | --- |
-| **kEffectBeautyWhite** | 美白 |
-| **kEffectBeautySmooth** | 磨皮 |
-| **kEffectBeautySharpen** | 锐化 |
+| **kEffectBeautyModeWhite** | 美白。 |
+| **kEffectBeautyModeSmooth** | 磨皮。 |
+| **kEffectBeautyModeSharpen** | 锐化。 |
+| **kEffectBeautyModeClear** | 清晰，需集成 v4.4.2+ 版本的特效 SDK。 |
+
+
+# VideoDeviceFacing
+```cpp
+enum bytertc::VideoDeviceFacing
+```
+
+视频设备朝向类型
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kVideoDeviceFacingFront** | 前置摄像头 |
+| **kVideoDeviceFacingBack** | 后置摄像头 |
+| **kVideoDeviceFacingUnknown** | 未知类型 |
 
 
 # VideoDeviceInfo
@@ -10041,6 +10161,7 @@ struct bytertc::VideoDeviceInfo
 | **int64_t** | [device_vid](#VideoDeviceInfo-device_vid) |
 | **int64_t** | [device_pid](#VideoDeviceInfo-device_pid) |
 | **DeviceTransportType** | [transport_type](#VideoDeviceInfo-transport_type) |
+| **VideoDeviceFacing** | [device_facing](#VideoDeviceInfo-device_facing) |
 
 
 ## 变量说明
@@ -10082,6 +10203,14 @@ int64_t bytertc::VideoDeviceInfo::device_pid;
 DeviceTransportType bytertc::VideoDeviceInfo::transport_type;
 ```
 设备的传输方式
+
+
+<span id="VideoDeviceInfo-device_facing"></span>
+### device_facing
+```cpp
+VideoDeviceFacing bytertc::VideoDeviceInfo::device_facing;
+```
+视频设备朝向类型
 
 
 
@@ -10136,7 +10265,7 @@ struct bytertc::ScreenCaptureSourceInfo
 | **const char*** | [source_name](#ScreenCaptureSourceInfo-source_name) |
 | **const char*** | [application](#ScreenCaptureSourceInfo-application) |
 | **int** | [pid](#ScreenCaptureSourceInfo-pid) |
-| **bool** | [primaryMonitor](#ScreenCaptureSourceInfo-primarymonitor) |
+| **bool** | [primary_monitor](#ScreenCaptureSourceInfo-primary_monitor) |
 | **Rectangle** | [region_rect](#ScreenCaptureSourceInfo-region_rect) |
 
 
@@ -10185,10 +10314,10 @@ int bytertc::ScreenCaptureSourceInfo::pid = 0;
 当共享对象为应用窗体时有效 <br>
 
 
-<span id="ScreenCaptureSourceInfo-primarymonitor"></span>
-### primaryMonitor
+<span id="ScreenCaptureSourceInfo-primary_monitor"></span>
+### primary_monitor
 ```cpp
-bool bytertc::ScreenCaptureSourceInfo::primaryMonitor = false;
+bool bytertc::ScreenCaptureSourceInfo::primary_monitor = false;
 ```
 共享的屏幕是否为主屏。<br>
 当共享对象为屏幕时有效 <br>
@@ -10267,8 +10396,8 @@ enum bytertc::VirtualBackgroundSourceType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kVirtualBackgroundSourceColor** | 使用纯色背景替换视频原有背景。 |
-| **kVirtualBackgroundSourceImage** | 使用自定义图片替换视频原有背景。 |
+| **kVirtualBackgroundSourceTypeColor** | 使用纯色背景替换视频原有背景。 |
+| **kVirtualBackgroundSourceTypeImage** | 使用自定义图片替换视频原有背景。 |
 
 
 # VirtualBackgroundSource
@@ -10292,7 +10421,7 @@ struct bytertc::VirtualBackgroundSource
 <span id="VirtualBackgroundSource-source_type"></span>
 ### source_type
 ```cpp
-VirtualBackgroundSourceType bytertc::VirtualBackgroundSource::source_type = kVirtualBackgroundSourceColor;
+VirtualBackgroundSourceType bytertc::VirtualBackgroundSource::source_type = kVirtualBackgroundSourceTypeColor;
 ```
 虚拟背景类型，详见 [VirtualBackgroundSourceType](#virtualbackgroundsourcetype) 。
 
@@ -10469,9 +10598,9 @@ enum bytertc::VideoCodecMode
 
 | 类型 | 说明 |
 | --- | --- |
-| **kCodecModeAuto** | 自动选择 |
-| **kCodecModeHardware** | 硬编码 |
-| **kCodecModeSoftware** | 软编码 |
+| **kVideoCodecModeAuto** | 自动选择 |
+| **kVideoCodecModeHardware** | 硬编码 |
+| **kVideoCodecModeSoftware** | 软编码 |
 
 
 # VideoEncodePreference
@@ -10591,10 +10720,10 @@ struct bytertc::VideoEncoderConfig
 | --- | --- |
 | **int** | [width](#VideoEncoderConfig-width) |
 | **int** | [height](#VideoEncoderConfig-height) |
-| **int** | [frameRate](#VideoEncoderConfig-framerate) |
-| **int** | [maxBitrate](#VideoEncoderConfig-maxbitrate) |
-| **int** | [minBitrate](#VideoEncoderConfig-minbitrate) |
-| **VideoEncodePreference** | [encoderPreference](#VideoEncoderConfig-encoderpreference) |
+| **int** | [frame_rate](#VideoEncoderConfig-frame_rate) |
+| **int** | [max_bitrate](#VideoEncoderConfig-max_bitrate) |
+| **int** | [min_bitrate](#VideoEncoderConfig-min_bitrate) |
+| **VideoEncodePreference** | [encoder_preference](#VideoEncoderConfig-encoder_preference) |
 
 
 ## 变量说明
@@ -10614,28 +10743,28 @@ int bytertc::VideoEncoderConfig::height;
 视频高度，单位：像素
 
 
-<span id="VideoEncoderConfig-framerate"></span>
-### frameRate
+<span id="VideoEncoderConfig-frame_rate"></span>
+### frame_rate
 ```cpp
-int bytertc::VideoEncoderConfig::frameRate;
+int bytertc::VideoEncoderConfig::frame_rate;
 ```
 视频帧率，单位：fps
 
 
-<span id="VideoEncoderConfig-maxbitrate"></span>
-### maxBitrate
+<span id="VideoEncoderConfig-max_bitrate"></span>
+### max_bitrate
 ```cpp
-int bytertc::VideoEncoderConfig::maxBitrate = SEND_KBPS_AUTO_CALCULATE;
+int bytertc::VideoEncoderConfig::max_bitrate = SEND_KBPS_AUTO_CALCULATE;
 ```
 最大编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。  <br>
 内部采集模式下默认值为 -1，即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。 <br>
 设为 0 则不对视频流进行编码发送。
 
 
-<span id="VideoEncoderConfig-minbitrate"></span>
-### minBitrate
+<span id="VideoEncoderConfig-min_bitrate"></span>
+### min_bitrate
 ```cpp
-int bytertc::VideoEncoderConfig::minBitrate = 0;
+int bytertc::VideoEncoderConfig::min_bitrate = 0;
 ```
 视频最小编码码率, 单位 kbps。编码码率不会低于 `minBitrate`。<br>
 默认值为 `0`。<br>
@@ -10646,10 +10775,10 @@ int bytertc::VideoEncoderConfig::minBitrate = 0;
 + 当 `maxBitrate` < `0` 时，适配码率模式。
 
 
-<span id="VideoEncoderConfig-encoderpreference"></span>
-### encoderPreference
+<span id="VideoEncoderConfig-encoder_preference"></span>
+### encoder_preference
 ```cpp
-VideoEncodePreference bytertc::VideoEncoderConfig::encoderPreference = VideoEncodePreference::kVideoEncodePreferenceFrame/;"
+VideoEncodePreference bytertc::VideoEncoderConfig::encoder_preference = VideoEncodePreference::kVideoEncodePreferenceFram/;"
 ```
 编码策略偏好，默认为帧率优先。参看 [VideoEncodePreference](#videoencodepreference)。
 
@@ -10741,7 +10870,7 @@ VideoCodecType bytertc::VideoSolutionDescription::codec_name = VideoCodecType::k
 <span id="VideoSolutionDescription-codec_mode"></span>
 ### codec_mode
 ```cpp
-VideoCodecMode bytertc::VideoSolutionDescription::codec_mode = VideoCodecMode::kCodecModeAuto;
+VideoCodecMode bytertc::VideoSolutionDescription::codec_mode = VideoCodecMode::kVideoCodecModeAuto;
 ```
 视频的编码模式。参看 [VideoCodecMode](#videocodecmode)
 
@@ -11647,10 +11776,10 @@ struct bytertc::ScreenVideoEncoderConfig
 | --- | --- |
 | **int** | [width](#ScreenVideoEncoderConfig-width) |
 | **int** | [height](#ScreenVideoEncoderConfig-height) |
-| **int** | [frameRate](#ScreenVideoEncoderConfig-framerate) |
-| **int** | [maxBitrate](#ScreenVideoEncoderConfig-maxbitrate) |
-| **int** | [minBitrate](#ScreenVideoEncoderConfig-minbitrate) |
-| **ScreenVideoEncodePreference** | [encoderPreference](#ScreenVideoEncoderConfig-encoderpreference) |
+| **int** | [frame_rate](#ScreenVideoEncoderConfig-frame_rate) |
+| **int** | [max_bitrate](#ScreenVideoEncoderConfig-max_bitrate) |
+| **int** | [min_bitrate](#ScreenVideoEncoderConfig-min_bitrate) |
+| **ScreenVideoEncodePreference** | [encoder_preference](#ScreenVideoEncoderConfig-encoder_preference) |
 
 
 ## 变量说明
@@ -11670,18 +11799,18 @@ int bytertc::ScreenVideoEncoderConfig::height;
 视频高度，单位：像素。
 
 
-<span id="ScreenVideoEncoderConfig-framerate"></span>
-### frameRate
+<span id="ScreenVideoEncoderConfig-frame_rate"></span>
+### frame_rate
 ```cpp
-int bytertc::ScreenVideoEncoderConfig::frameRate;
+int bytertc::ScreenVideoEncoderConfig::frame_rate;
 ```
 视频帧率，单位：fps。
 
 
-<span id="ScreenVideoEncoderConfig-maxbitrate"></span>
-### maxBitrate
+<span id="ScreenVideoEncoderConfig-max_bitrate"></span>
+### max_bitrate
 ```cpp
-int bytertc::ScreenVideoEncoderConfig::maxBitrate = SEND_KBPS_AUTO_CALCULATE;
+int bytertc::ScreenVideoEncoderConfig::max_bitrate = SEND_KBPS_AUTO_CALCULATE;
 ```
 最大编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
 设为 -1 即适配码率模式，系统将根据输入的分辨率和帧率自动计算适用的码率。
@@ -11689,18 +11818,18 @@ int bytertc::ScreenVideoEncoderConfig::maxBitrate = SEND_KBPS_AUTO_CALCULATE;
 3.44 及以上版本，内部采集时默认值为 -1，3.44 以前版本无默认值，需手动设置。
 
 
-<span id="ScreenVideoEncoderConfig-minbitrate"></span>
-### minBitrate
+<span id="ScreenVideoEncoderConfig-min_bitrate"></span>
+### min_bitrate
 ```cpp
-int bytertc::ScreenVideoEncoderConfig::minBitrate = 0;
+int bytertc::ScreenVideoEncoderConfig::min_bitrate = 0;
 ```
 最小编码码率，使用 SDK 内部采集时可选设置，自定义采集时必须设置，单位：kbps。
 最小编码码率必须小于或等于最大编码，否则不对视频流进行编码发送。
 
 
-<span id="ScreenVideoEncoderConfig-encoderpreference"></span>
-### encoderPreference
+<span id="ScreenVideoEncoderConfig-encoder_preference"></span>
+### encoder_preference
 ```cpp
-ScreenVideoEncodePreference bytertc::ScreenVideoEncoderConfig::encoderPreference = ScreenVideoEncodePreference::kScreenVideoEnc/;"
+ScreenVideoEncodePreference bytertc::ScreenVideoEncoderConfig::encoder_preference = ScreenVideoEncodePreference::kScreenVideoEn/;"
 ```
 屏幕流编码模式。参见 [ScreenVideoEncodePreference](#screenvideoencodepreference)。

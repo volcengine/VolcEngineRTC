@@ -25,7 +25,7 @@ BYTERTC_API bytertc::IRTCVideo* bytertc::createRTCVideo(
     const char* parameters)
 ```
 创建 IRTCVideo 实例。  <br>
-如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br>
+如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。 
 如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。
 
 **传入参数**
@@ -39,7 +39,7 @@ BYTERTC_API bytertc::IRTCVideo* bytertc::createRTCVideo(
 **返回值**
 
 + IRTCVideo：创建成功。返回一个可用的 [IRTCVideo](#irtcvideo) 实例  
-+ Null：创建失败。
++ Null：app_id 或者event_handler为空, event_handler 为空。
 
 
 ### destroyRTCVideo
@@ -88,7 +88,7 @@ BYTERTC_API const char* bytertc::getSDKVersion();
 BYTERTC_API int bytertc::setLogConfig(
     const LogConfig& log_config)
 ```
-配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。
+配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间、日志文件名前缀。
 
 **传入参数**
 
@@ -299,14 +299,14 @@ virtual int bytertc::IRTCRoom::joinRoom(
     const UserInfo& user_info,
     const RTCRoomConfig& config)
 ```
-创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br>
-同一房间内的用户间可以相互通话。  <br>
+加入房间。<br>
+调用 [createRTCRoom](#IRTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br>
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| token | **const char*** | 动态密钥，用于对登录用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>• 使用不同 App ID 的 App 是不能互通的。  <br/>• 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。具体失败原因会通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。 |
+| token | **const char*** | 动态密钥，用于对登录用户进行鉴权验证。  <br/>进入房间需要携带 Token。测试时可使用控制台生成临时 Token，正式上线需要使用密钥 SDK 在您的服务端生成并下发 Token。Token 有效期及生成方式参看[使用 Token 完成鉴权](70121)。  <br/>• 使用不同 App ID 的 App 是不能互通的。  <br/>• 请务必保证生成 Token 使用的 App ID 和创建引擎时使用的 App ID 相同，否则会导致加入房间失败。 |
 | user_info | **const UserInfo&** | 用户信息，参看 [UserInfo](Linux-keytype.md#userinfo)。 |
 | config | **const RTCRoomConfig&** | 房间参数配置，设置房间模式以及是否自动发布或订阅流。具体配置模式参看 [RTCRoomConfig](Linux-keytype.md#rtcroomconfig)。 |
 
@@ -315,14 +315,14 @@ virtual int bytertc::IRTCRoom::joinRoom(
 +  0: 成功  
 + -1：room_id / user_info.uid 包含了无效的参数。  
 + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 leaveRoom:[leaveRoom](#leaveroom) 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。  
+调用失败时，具体失败原因会通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调告知。  
 
 
 **注意**
 
 + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调通知，错误类型详见 [ErrorCode](Linux-errorcode.md#errorcode) 中的 kErrorCodeDuplicateLogin。  
-+ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。关于可见性设置参看 [setUserVisibility](#IRTCRoom-setuservisibility)。  
-+ 默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
-+ 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Linux-callback.md#IRTCVideoEventHandler-onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。
++ 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Linux-callback.md#IRTCRoomEventHandler-onuserjoined) 回调通知。
++ 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要在其进房后调用 setUserVisibility[onConnectionStateChanged](#onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调通知。
 
 
 <span id="IRTCRoom-leaveroom"></span>
@@ -882,7 +882,7 @@ virtual int bytertc::IRTCRoom::resumeAllSubscribedStream(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要暂停接收音频还是视频流，参看 [PauseResumeControlMediaType](Linux-keytype.md#pauseresumecontrolmediatype) |
+| media_type | **PauseResumeControlMediaType** | 媒体流类型，指定需要恢复接收音频还是视频流，参看 [PauseResumeControlMediaType](Linux-keytype.md#pauseresumecontrolmediatype) |
 
 **返回值**
 
@@ -1064,8 +1064,9 @@ virtual int bytertc::IRTCRoom::setRemoteRoomAudioPlaybackVolume(
 
 
 **注意**
-假设某远端用户 A 始终在被调节的目标用户范围内，+ 当该方法与 [setRemoteAudioPlaybackVolume](#IRTCVideo-setremoteaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量为后调用的方法设置的音量；
+如果某远端用户 A 始终在被调节的目标用户范围内，
 
++ 当该方法与 [setRemoteAudioPlaybackVolume](#IRTCVideo-setremoteaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量为后调用的方法设置的音量；
 + 当该方法与 [setPlaybackVolume](#IRTCVideo-setplaybackvolume) 方法共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
 
 
@@ -1134,7 +1135,8 @@ virtual int bytertc::IRTCRoom::startSubtitle(
 > Available since 3.52
 
 识别或翻译房间内所有用户的语音，形成字幕。<br>
-语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br>
+调用该方法时，可以在 [SubtitleMode](Linux-keytype#subtitlemode) 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 [onSubtitleMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你；<br>
+如果选择翻译模式，你会同时收到两个 [onSubtitleMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 回调，分别包含字幕原文及字幕译文。<br>
 调用该方法后，用户会收到 [onSubtitleStateChanged](Linux-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。
 
 **传入参数**
@@ -1156,8 +1158,8 @@ virtual int bytertc::IRTCRoom::startSubtitle(
 + 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
 + 此方法需要在进房后调用。  
 + 如需指定源语言，你需要在调用 `joinRoom` 接口进房时，通过 extraInfo 参数传入格式为`"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将系统语种设定为源语言。如果你的系统语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
-    + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
-    + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
++ 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880)。
++ 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
 
 
 <span id="IRTCRoom-stopsubtitle"></span>
@@ -1208,10 +1210,6 @@ class bytertc::IRTCVideo
 | **virtual int** | [setAudioProfile](#IRTCVideo-setaudioprofile) |
 | **virtual int** | [setAnsMode](#IRTCVideo-setansmode) |
 | **virtual int** | [enableAGC](#IRTCVideo-enableagc) |
-| **virtual int** | [setAudioSourceType](#IRTCVideo-setaudiosourcetype) |
-| **virtual int** | [setAudioRenderType](#IRTCVideo-setaudiorendertype) |
-| **virtual int** | [pushExternalAudioFrame](#IRTCVideo-pushexternalaudioframe) |
-| **virtual int** | [pullExternalAudioFrame](#IRTCVideo-pullexternalaudioframe) |
 | **virtual int** | [startVideoCapture](#IRTCVideo-startvideocapture) |
 | **virtual int** | [stopVideoCapture](#IRTCVideo-stopvideocapture) |
 | **virtual int** | [setVideoCaptureConfig](#IRTCVideo-setvideocaptureconfig) |
@@ -1223,9 +1221,8 @@ class bytertc::IRTCVideo
 | **virtual int** | [setLocalVideoCanvas](#IRTCVideo-setlocalvideocanvas) |
 | **virtual int** | [updateLocalVideoCanvas](#IRTCVideo-updatelocalvideocanvas) |
 | **virtual int** | [setRemoteVideoCanvas](#IRTCVideo-setremotevideocanvas) |
-| **virtual int** | [updateRemoteStreamVideoCanvas](#IRTCVideo-updateremotestreamvideocanvas) |
-| **virtual int** | [setLocalVideoSink](#IRTCVideo-setlocalvideosink) |
-| **virtual int** | [setRemoteVideoSink](#IRTCVideo-setremotevideosink) |
+| **virtual int** | [setLocalVideoRender](#IRTCVideo-setlocalvideorender) |
+| **virtual int** | [setRemoteVideoRender](#IRTCVideo-setremotevideorender) |
 | **virtual int** | [pushScreenVideoFrame](#IRTCVideo-pushscreenvideoframe) |
 | **virtual int** | [updateScreenCaptureRegion](#IRTCVideo-updatescreencaptureregion) |
 | **virtual int** | [startScreenVideoCapture](#IRTCVideo-startscreenvideocapture) |
@@ -1242,6 +1239,7 @@ class bytertc::IRTCVideo
 | **virtual int** | [setSubscribeFallbackOption](#IRTCVideo-setsubscribefallbackoption) |
 | **virtual int** | [setRemoteUserPriority](#IRTCVideo-setremoteuserpriority) |
 | **virtual int** | [setBusinessId](#IRTCVideo-setbusinessid) |
+| **virtual int** | [setRemoteVideoMirrorType](#IRTCVideo-setremotevideomirrortype) |
 | **virtual IVideoEffect*** | [getVideoEffectInterface](#IRTCVideo-getvideoeffectinterface) |
 | **virtual int** | [setEncryptInfo](#IRTCVideo-setencryptinfo) |
 | **virtual int** | [setCustomizeEncryptHandler](#IRTCVideo-setcustomizeencrypthandler) |
@@ -1308,7 +1306,11 @@ class bytertc::IRTCVideo
 | **virtual int** | [startCloudProxy](#IRTCVideo-startcloudproxy) |
 | **virtual int** | [stopCloudProxy](#IRTCVideo-stopcloudproxy) |
 | **virtual int** | [setLocalProxy](#IRTCVideo-setlocalproxy) |
+| **virtual int** | [setLowLightAdjusted](#IRTCVideo-setlowlightadjusted) |
 | **BYTERTC_DEPRECATED virtual int** | [[deprecated] setVideoEncoderConfig](#IRTCVideo-setvideoencoderconfig) |
+| **virtual int** | [[deprecated] updateRemoteStreamVideoCanvas](#IRTCVideo-updateremotestreamvideocanvas) |
+| **virtual int** | [[deprecated] setLocalVideoSink](#IRTCVideo-setlocalvideosink) |
+| **virtual int** | [[deprecated] setRemoteVideoSink](#IRTCVideo-setremotevideosink) |
 | **BYTERTC_DEPRECATED virtual int** | [[deprecated] sendSEIMessage](#IRTCVideo-sendseimessage) |
 | **virtual IAudioMixingManager*** | [[deprecated] getAudioMixingManager](#IRTCVideo-getaudiomixingmanager) |
 | **BYTERTC_DEPRECATED virtual int** | [[deprecated] muteAudioPlayback](#IRTCVideo-muteaudioplayback) |
@@ -1346,7 +1348,7 @@ virtual int bytertc::IRTCVideo::setCaptureVolume(
 virtual int bytertc::IRTCVideo::setPlaybackVolume(
     const int volume)
 ```
-调节本地播放的所有远端用户混音后的音量。<br>
+调节本地播放的所有远端用户音频混音后的音量，混音内容包括远端人声、音乐、音效等。<br>
 播放音频前或播放音频时，你都可以使用此接口设定播放音量。
 
 **传入参数**
@@ -1362,7 +1364,7 @@ virtual int bytertc::IRTCVideo::setPlaybackVolume(
 
 
 **注意**
-假设某远端用户 A 始终在被调节的目标用户范围内，当该方法与 [setRemoteAudioPlaybackVolume](#IRTCVideo-setremoteaudioplaybackvolume) 或 [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
+如果某远端用户 A 始终在被调节的目标用户范围内，当该方法与 [setRemoteAudioPlaybackVolume](#IRTCVideo-setremoteaudioplaybackvolume) 或 [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
 
 <span id="IRTCVideo-startaudiocapture"></span>
 ### startAudioCapture
@@ -1380,13 +1382,13 @@ virtual int bytertc::IRTCVideo::startAudioCapture()
 + < 0 : 调用失败。查看 [ReturnStatus](Linux-keytype.md#returnstatus) 获得更多错误说明
 
 
-**注意**  
+**注意**
 
 + 若未取得当前设备的麦克风权限，调用该方法后会触发 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 回调，对应的错误码为 `MediaDeviceError.kMediaDeviceErrorDeviceNoPermission = 1`。
 + 调用 [stopAudioCapture](#IRTCVideo-stopaudiocapture) 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。  
 + 由于不同硬件设备初始化响应时间不同，频繁调用 [stopAudioCapture](#IRTCVideo-stopaudiocapture) 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 [publishStream](#IRTCRoom-publishstream)/[unpublishStream](#IRTCRoom-unpublishstream) 实现临时闭麦和重新开麦。
 + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。  
-+ 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 [setAudioSourceType](#IRTCVideo-setaudiosourcetype) 关闭自定义采集，再调用此方法手动开启内部采集。
++ 如果需要从自定义音频采集切换为内部音频采集，你必须先停止发布流，调用 [setAudioSourceType](#setaudiosourcetype) 关闭自定义采集，再调用此方法手动开启内部采集。
 
 
 <span id="IRTCVideo-stopaudiocapture"></span>
@@ -1461,16 +1463,8 @@ virtual int bytertc::IRTCVideo::setAnsMode(
 **注意**
 
 + 该接口进房前后均可调用，可重复调用，仅最后一次调用生效。
-+ 降噪算法包含传统降噪和 AI 降噪。传统降噪主要是抑制平稳噪声，比如空调声、风扇声等。而 AI 降噪主要是抑制非平稳噪声，比如键盘敲击声、桌椅碰撞声等。
-+ 只有在以下 [RoomProfileType](Linux-keytype.md#roomprofiletype) 场景下，调用本接口可以开启 AI 降噪。其余场景的 AI 降噪不会生效。
-    + 游戏语音模式：kRoomProfileTypeGame
-    + 高音质游戏模式：kRoomProfileTypeGameHD
-    + 云游戏模式：kRoomProfileTypeCloudGame
-    + 1 vs 1 音视频通话：kRoomProfileTypeChat
-    + 多端同步播放音视频：kRoomProfileTypeLwTogether
-    + 云端会议中的个人设备：kRoomProfileTypeMeeting
-    + 课堂互动模式：kRoomProfileTypeClassroom
-    + 云端会议中的会议室终端：kRoomProfileTypeMeetingRoom
++ 降噪算法包含传统降噪和 AI 降噪。传统降噪主要是抑制平稳噪声，比如空调声、风扇声等。而 AI 降噪主要是抑制非平稳噪声，比如键盘敲击声、桌椅碰撞声等。房间设置为以下 `ChannelProfile` 时，AI 降噪始终为关闭状态，调用本接口只能调整传统降噪强度：`kRoomProfileTypeLowLatency`, `kRoomProfileTypeChorus` 和 `[Deprecated] kRoomProfileTypeLiveBroadcasting` 。
+
 
 <span id="IRTCVideo-enableagc"></span>
 ### enableAGC
@@ -1499,116 +1493,6 @@ virtual int bytertc::IRTCVideo::enableAGC(
 该方法在进房前后均可调用。如果你需要在进房前使用 AGC 功能，请联系技术支持获得私有参数，传入对应 [RoomProfileType](Linux-keytype.md#roomprofiletype) 。 
 要想在进房后开启 AGC 功能，你需要把 [RoomProfileType](Linux-keytype.md#roomprofiletype) 设置为 `kRoomProfileTypeMeeting` 、`kRoomProfileTypeMeetingRoom` 或 `kRoomProfileTypeClassroom` 。 
 AGC 功能生效后，不建议再调用 [setAudioCaptureDeviceVolume](#IAudioDeviceManager-setaudiocapturedevicevolume) 来调节设备麦克风的采集音量。
-
-
-<span id="IRTCVideo-setaudiosourcetype"></span>
-### setAudioSourceType
-```cpp
-virtual int bytertc::IRTCVideo::setAudioSourceType (
-    AudioSourceType type)
-```
-切换音频采集方式
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| type | **AudioSourceType** | 音频数据源，详见 [AudioSourceType](Linux-keytype.md#audiosourcetype)。<br/>默认使用内部音频采集。音频采集和渲染方式无需对应。 |
-
-**返回值**
-方法调用结果：  
-
-+ \>0: 切换成功。
-+ -1：切换失败。
-
-
-**注意**
-
-+ 进房前后调用此方法均有效。
-+ 如果你调用此方法由内部采集切换至自定义采集，SDK 会自动关闭内部采集。然后，调用 [pushExternalAudioFrame](#IRTCVideo-pushexternalaudioframe) 推送自定义采集的音频数据到 RTC SDK 用于传输。 
-+ 如果你调用此方法由自定义采集切换至内部采集，你必须再调用 [startAudioCapture](#IRTCVideo-startaudiocapture) 手动开启内部采集。 
-
-
-<span id="IRTCVideo-setaudiorendertype"></span>
-### setAudioRenderType
-```cpp
-virtual int bytertc::IRTCVideo::setAudioRenderType (
-    AudioRenderType type)
-```
-切换音频渲染方式
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| type | **AudioRenderType** | 音频输出类型，详见 [AudioRenderType](Linux-keytype.md#audiorendertype) <br/>默认使用内部音频渲染。音频采集和渲染方式无需对应。 |
-
-**返回值**
-方法调用结果：  
-
-+ \>0: 切换成功。
-+ -1：切换失败。
-
-
-**注意**
-
-+ 进房前后调用此方法均有效。
-+ 如果你调用此方法切换至自定义渲染，调用 [pullExternalAudioFrame](#IRTCVideo-pullexternalaudioframe) 获取音频数据。 
-
-
-<span id="IRTCVideo-pushexternalaudioframe"></span>
-### pushExternalAudioFrame
-```cpp
-virtual int bytertc::IRTCVideo::pushExternalAudioFrame(
-    IAudioFrame* audio_frame)
-```
-推送自定义采集的音频数据到 RTC SDK。
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| audio_frame | **IAudioFrame*** | 10 ms 对应的音频数据。详见 [IAudioFrame](Linux-keytype.md#iaudioframe)。<ul><li>音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。</li><li>必须指定具体的采样率和声道数，不支持设置为自动。</li></ul> |
-
-**返回值**
-方法调用结果  
-
-+ 0：方法调用成功  
-+ < 0：方法调用失败  
-
-
-**注意**
-
-+ 推送自定义采集的音频数据前，必须先调用 [setAudioSourceType](#IRTCVideo-setaudiosourcetype) 开启自定义采集。
-+ 你必须每 10 ms 推送一次数据。
-
-
-<span id="IRTCVideo-pullexternalaudioframe"></span>
-### pullExternalAudioFrame
-```cpp
-virtual int bytertc::IRTCVideo::pullExternalAudioFrame(
-    IAudioFrame* audio_frame)
-```
-拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| audio_frame | **IAudioFrame*** | 获取的 10 ms 内的音频数据。详见 [IAudioFrame](Linux-keytype.md#iaudioframe)。 |
-
-**返回值**
-方法调用结果：
-
-+ 0：成功；
-+ <0：失败。具体失败原因参看 [ReturnStatus](Linux-keytype.md#returnstatus)。
-
-
-**注意**
-
-+ 获取音频数据用于自定义渲染前，必须先调用 [setAudioRenderType](#IRTCVideo-setaudiorendertype) 开启自定义渲染。
-+ 由于 RTC SDK 的帧长为 10 毫秒，你应当每隔 10 毫秒拉取一次音频数据。确保音频采样点数（sample）x 拉取频率等于 audio_frame 的采样率 （sampleRate）。如设置采样率为 48000 时，每 10 毫秒调用本接口拉取数据，每次应拉取 480 个采样点。  
-+ 该函数运行在用户调用线程内，是一个同步函数。  
 
 
 <span id="IRTCVideo-startvideocapture"></span>
@@ -1691,7 +1575,7 @@ virtual int bytertc::IRTCVideo::setVideoCaptureRotation(
     VideoRotation rotation)
 ```
 设置本端采集的视频帧的旋转角度。
-当外接摄像头倒置或者倾斜安装时，调用本接口进行调整。
+当摄像头倒置或者倾斜安装时，可调用本接口进行调整。
 
 **传入参数**
 
@@ -1708,8 +1592,7 @@ virtual int bytertc::IRTCVideo::setVideoCaptureRotation(
 **注意**
 
 + 调用本接口也将对自定义采集视频画面生效，在原有的旋转角度基础上叠加本次设置。
-+ 通过 [enableVirtualBackground](#enablevirtualbackground) 增加的虚拟背景，不会跟随本接口的设置进行旋转。Linux 不适用。
-+ 通过本接口设置的旋转角度不会应用到转推直播中。
++ 对于 Windows SDK，视频贴纸特效或通过 [enableVirtualBackground](#enablevirtualbackground) 增加的虚拟背景，也会跟随本接口的设置进行旋转。
 
 
 <span id="IRTCVideo-enablesimulcastmode"></span>
@@ -1950,14 +1833,16 @@ virtual int bytertc::IRTCVideo::updateRemoteStreamVideoCanvas(
     const enum RenderMode render_mode,
     const uint32_t background_color)
 ```
-修改远端视频渲染模式和背景色。
+> Deprecated  since 3.56 on iOS and Android, and will be deleted in 3.62. Use [updateRemoteStreamVideoCanvas](Windows-api.md#updateremotestreamvideocanvas-2) instead.
+
+修改远端视频帧的渲染设置，包括渲染模式和背景颜色。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey) |
-| render_mode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Linux-keytype.md#rendermode) |
+| stream_key | **RemoteStreamKey** | 远端流信息。参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey)。 |
+| render_mode | **const enum RenderMode** | 渲染模式，参看 [RenderMode](Linux-keytype.md#rendermode)。 |
 | background_color | **const uint32_t** | 背景颜色，参看 [VideoCanvas](Linux-keytype.md#videocanvas).background_color |
 
 **返回值**
@@ -1977,6 +1862,8 @@ virtual int bytertc::IRTCVideo::setLocalVideoSink(
     IVideoSink* video_sink,
     IVideoSink::PixelFormat required_format)
 ```
+> Deprecated  since 3.57, use [setLocalVideoRender](#IRTCVideo-setlocalvideorender) instead.
+
 将本地视频流与自定义渲染器绑定。
 
 **传入参数**
@@ -1998,6 +1885,41 @@ virtual int bytertc::IRTCVideo::setLocalVideoSink(
 + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
 + 如果需要解除绑定，必须将 video_sink 设置为 null。退房时将清除绑定状态。
 + 一般在收到 [onFirstLocalVideoFrameCaptured](Linux-callback.md#IRTCVideoEventHandler-onfirstlocalvideoframecaptured) 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
++ 本方法获取的是前处理后的视频帧，如需获取其他位置的视频帧（如采集后的视频帧），请调用 [setLocalVideoRender](#IRTCVideo-setlocalvideorender)。
+
+
+<span id="IRTCVideo-setlocalvideorender"></span>
+### setLocalVideoRender
+```cpp
+virtual int bytertc::IRTCVideo::setLocalVideoRender(
+    StreamIndex index,
+    IVideoSink* video_sink,
+    LocalVideoSinkConfig& render_config)
+```
+> Available since 3.57
+
+将本地视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| index | **StreamIndex** | 视频流属性。采集的视频流/屏幕视频流，参看 [StreamIndex](Linux-keytype.md#streamindex)。 |
+| video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](Linux-keytype.md#ivideosink)。 |
+| render_config | **LocalVideoSinkConfig&** | 本地视频帧回调配置，参看 [LocalVideoSinkConfig](Linux-keytype.md#localvideosinkconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0: 调用失败。查看 [ReturnStatus](Linux-keytype.md#returnstatus) 获得更多错误说明。
+
+
+**注意**
+
++ RTC SDK 默认使用自带的渲染器（内部渲染器）进行视频渲染。
++ 退房时将清除绑定状态。
++ 如果需要解除绑定，你必须将 video_sink 设置为 null。
++ 一般在收到 [onFirstLocalVideoFrameCaptured](Linux-callback.md#IRTCVideoEventHandler-onfirstlocalvideoframecaptured) 回调通知完成本地视频首帧采集后，调用此方法为视频流绑定自定义渲染器；然后加入房间。
 
 
 <span id="IRTCVideo-setremotevideosink"></span>
@@ -2008,6 +1930,8 @@ virtual int bytertc::IRTCVideo::setRemoteVideoSink(
     IVideoSink* video_sink,
     IVideoSink::PixelFormat required_format)
 ```
+> Deprecated  since 3.57, use [setRemoteVideoRender](#IRTCVideo-setremotevideorender) instead.
+
 将远端视频流与自定义渲染器绑定。
 
 **传入参数**
@@ -2029,6 +1953,41 @@ virtual int bytertc::IRTCVideo::setRemoteVideoSink(
 + RTC SDK 默认使用 RTC SDK 自带的渲染器（内部渲染器）进行视频渲染。
 + 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream) 回调获取到远端流信息之后，再调用该方法。
 + 如果需要解除绑定，必须将 video_sink 设置为 null。退房时将清除绑定状态。
++ 本方法获取的是后处理后的视频帧，如需获取其他位置的视频帧（如解码后的视频帧），请调用 [setRemoteVideoRender](#IRTCVideo-setremotevideorender)。
+
+
+<span id="IRTCVideo-setremotevideorender"></span>
+### setRemoteVideoRender
+```cpp
+virtual int bytertc::IRTCVideo::setRemoteVideoRender(
+    RemoteStreamKey stream_key,
+    IVideoSink* video_sink,
+    RemoteVideoSinkConfig& config)
+```
+> Available since 3.57
+
+将远端视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| stream_key | **RemoteStreamKey** | 远端流信息，用于指定需要渲染的视频流来源及属性，参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey)。 |
+| video_sink | **IVideoSink*** | 自定义视频渲染器，参看 [IVideoSink](Linux-keytype.md#ivideosink)。 |
+| config | **RemoteVideoSinkConfig&** | 远端视频帧回调配置，参看 [RemoteVideoSinkConfig](Linux-keytype.md#remotevideosinkconfig)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0: 调用失败。查看 [ReturnStatus](Linux-keytype.md#returnstatus) 获得更多错误说明。
+
+
+**注意**
+
++ RTC SDK 默认使用自带的渲染器（内部渲染器）进行视频渲染。
++ 该方法进房前后均可以调用。若想在进房前调用，你需要在加入房间前获取远端流信息；若无法预先获取远端流信息，你可以在加入房间并通过 [onUserPublishStream](Linux-callback.md#IRTCRoomEventHandler-onuserpublishstream) 回调获取到远端流信息之后，再调用该方法。
++ 退房时将清除绑定状态。
++ 如果需要解除绑定，你必须将 video_sink 设置为 null。
 
 
 <span id="IRTCVideo-pushscreenvideoframe"></span>
@@ -2054,7 +2013,7 @@ virtual int bytertc::IRTCVideo::pushScreenVideoFrame(
 
 **注意**
 
-+ 暂时只支持 YUV420P 格式的视频帧。  
++ 支持格式：I420, NV12, RGBA, BGRA, ARGB。不支持 RGB24。
 + 该函数运行在用户调用线程内，即将销毁 IRTCVideo 实例前，请停止调用该函数推送屏幕共享数据  
 
 
@@ -2114,7 +2073,7 @@ virtual int bytertc::IRTCVideo::startScreenVideoCapture(
 + 调用此接口前，你可以调用 [setScreenVideoEncoderConfig](#IRTCVideo-setscreenvideoencoderconfig) 设置屏幕视频流的采集帧率和编码分辨率。  
 + 在收到 [onFirstLocalVideoFrameCaptured](Linux-callback.md#IRTCVideoEventHandler-onfirstlocalvideoframecaptured) 回调后通过调用 [setLocalVideoCanvas](#IRTCVideo-setlocalvideocanvas) 或 [setLocalVideoSink](#IRTCVideo-setlocalvideosink) 函数设置本地屏幕共享视图。  
 + 可以调用 [setLocalVideoSink](#IRTCVideo-setlocalvideosink) 将本地视频流与自定义渲染器绑定，通过回调 [onFrame](Linux-keytype.md#IVideoSink-onframe) 获取采集成功的本地视频帧。 
-+ 再开启采集屏幕视频流后，你可以调用 [updateScreenCaptureHighlightConfig](#IRTCVideo-updatescreencapturehighlightconfig) 更新边框高亮设置，调用 [updateScreenCaptureMouseCursor](#IRTCVideo-updatescreencapturemousecursor) 更新对鼠标的处理设置，调用 [updateScreenCaptureFilterConfig](#updatescreencapturefilterconfig) 设置需要过滤的窗口。  
++ 对于 Windows SDK，再开启采集屏幕视频流后，你可以调用 [updateScreenCaptureHighlightConfig](#IRTCVideo-updatescreencapturehighlightconfig)更新边框高亮设置，调用 [updateScreenCaptureMouseCursor](#IRTCVideo-updatescreencapturemousecursor)更新对鼠标的处理设置，调用 [updateScreenCaptureFilterConfig](#updatescreencapturefilterconfig)设置需要过滤的窗口。  
 
 
 <span id="IRTCVideo-stopscreenvideocapture"></span>
@@ -2244,7 +2203,7 @@ virtual IVideoFrame* bytertc::IRTCVideo::getWindowAppIcon(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| source_id | **view_t** | 屏幕共享对象的 ID，可通过 [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) 枚举共享对象列表中获取。详见 [view_t](Linux-keytype.md#view_t) |
+| source_id | **view_t** | 屏幕共享对象的 ID，可通过 [getScreenCaptureSourceList](#IRTCVideo-getscreencapturesourcelist) 枚举共享对象列表中获取。详见 [view_t](Windows-keytype.md#view-t)。 |
 | max_width | **int** | 最大宽度。返回的图标将是宽高相等的，输入宽高不等时，取二者较小值。宽高范围为 [32,256]，超出该范围将返回 nullptr，默认输出 100 x 100 的图像。 |
 | max_height | **int** | 最大高度。参见 max_width 的说明。 |
 
@@ -2367,7 +2326,8 @@ virtual int bytertc::IRTCVideo::setPublishFallbackOption(
 
 + 该方法仅在调用 [enableSimulcastMode](#IRTCVideo-enablesimulcastmode) 开启了发送多路视频流的情况下生效。  
 + 该方法必须在进房前设置，进房后设置或更改设置无效。  
-+ 设置回退后，本地发布的音视频流发生回退或从回退中恢复时，远端会收到 [onSimulcastSubscribeFallback](Linux-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调通知。  
++ 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [onPerformanceAlarms](Linux-callback.md#IRTCVideoEventHandler-onperformancealarms) 回调发出的告警，以便采集设备配合调整。
++ 设置回退后，本地发布的音视频流发生回退或从回退中恢复后，远端会收到 [onSimulcastSubscribeFallback](Linux-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 回调，通知该情况。  
 + 你可以调用客户端 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
@@ -2394,9 +2354,8 @@ virtual int bytertc::IRTCVideo::setSubscribeFallbackOption(
 
 **注意**
 
-+ 你必须在进房前设置，进房后设置或更改设置无效。 
-+ 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [onPerformanceAlarms](Linux-callback.md#IRTCVideoEventHandler-onperformancealarms) 回调发出的告警，以便采集设备配合调整。  
-+ 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onSimulcastSubscribeFallback](Linux-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 和 [onRemoteVideoSizeChanged](Linux-callback.md#IRTCVideoEventHandler-onremotevideosizechanged) 回调，通知该情况。  
++ 你必须在进房前设置，进房后设置或更改设置无效。  
++ 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onSimulcastSubscribeFallback](Linux-callback.md#IRTCVideoEventHandler-onsimulcastsubscribefallback) 和 [onRemoteVideoSizeChanged](Linux-callback.md#IRTCVideoEventHandler-onremotevideosizechanged) 回调通知。  
 + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 
@@ -2449,14 +2408,37 @@ virtual int bytertc::IRTCVideo::setBusinessId(
 **返回值**
 
 + 0： 成功  
-+ < 0： 失败，具体原因参照 [BusinessCheckCode](Linux-keytype.md#businesscheckcode) 。  
-+ -6001： 用户已经在房间中。  
-+ -6002： 输入非法，合法字符包括所有小写字母、大写字母和数字，除此外还包括四个独立字符，分别是：英文句号，短横线，下划线和 @ 。
++ -2: kReturnStatusParameterErr，参数非法。  
+
 
 
 **注意**
 
 + 需要在调用 [joinRoom](#IRTCRoom-joinroom) 之前调用，[joinRoom](#IRTCRoom-joinroom)之后调用该方法无效。
+
+
+<span id="IRTCVideo-setremotevideomirrortype"></span>
+### setRemoteVideoMirrorType
+```cpp
+virtual int bytertc::IRTCVideo::setRemoteVideoMirrorType(
+    RemoteStreamKey stream_key,
+    RemoteMirrorType mirror_type)
+```
+> Available since 3.57
+
+使用内部渲染时，为远端流开启镜像。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| stream_key | **RemoteStreamKey** | 远端流信息，用于指定需要镜像的视频流来源及属性，参看 [RemoteStreamKey](Linux-keytype.md#remotestreamkey)。 |
+| mirror_type | **RemoteMirrorType** | 远端流的镜像类型，参看 [RemoteMirrorType](Linux-keytype.md#remotemirrortype)。 |
+
+**返回值**
+
++ 0: 调用成功。
++ < 0: 调用失败，参看 [ReturnStatus](Linux-keytype.md#returnstatus) 获得更多错误说明。
 
 
 <span id="IRTCVideo-getvideoeffectinterface"></span>
@@ -2524,7 +2506,7 @@ virtual int bytertc::IRTCVideo::setCustomizeEncryptHandler(
 
 + 该方法与 [setEncryptInfo](#IRTCVideo-setencryptinfo) 为互斥关系，只能选择自定义加密方式或者默认加密方式。最终生效的加密方式取决于最后一个调用的方法。  
 + 该方法必须在进房之前调用，可重复调用，以最后调用的参数作为生效参数。  
-+ 无论加密或者解密，其对原始数据的长度修改，需要控制在 180% 以内，即如果输入数据为 100 字节，则处理完成后的数据必须在 180 字节以内，如果加密或解密结果超出该长度限制，则该音视频帧可能会被丢弃。 
++ 无论加密或者解密，其对原始数据的长度修改，需要控制在 180% 之间，即如果输入数据为 100 字节，则处理完成后的数据必须不超过 180 字节，如果加密或解密结果超出该长度限制，则该音视频帧可能会被丢弃。  
 + 数据加密/解密为串行执行，因而视实现方式不同，可能会影响到最终渲染效率。是否使用该方法，需要由使用方谨慎评估。
 
 
@@ -2542,7 +2524,7 @@ virtual int bytertc::IRTCVideo::enableAudioFrameCallback(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Linux-keytype.md#audioframecallbackmethod)。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRecord`、`kAudioFrameCallbackPlayback`、`kAudioFrameCallbackMixed`、`kAudioFrameCallbackRecordScreen`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `kAudioFrameCallbackRemoteUser`时，暂不支持音频参数格式中设置准确的采样率和声道，你需要设置为自动。 |
+| method | **AudioFrameCallbackMethod** | 音频回调方法，参看 [AudioFrameCallbackMethod](Linux-keytype.md#audioframecallbackmethod)。  <br/>当音频回调方法设置为 `kRecord`、`kPlayback`、`kMixed`、`kRecordScreen`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。  <br/>当音频回调方法设置为 `kRemoteUser`时，应将 `format` 的字段设置为默认值。 |
 | format | **AudioFormat** | 音频参数格式，参看 [AudioFormat](Linux-keytype.md#audioformat)。 |
 
 **返回值**
@@ -2598,7 +2580,7 @@ virtual int bytertc::IRTCVideo::registerAudioFrameObserver(
 
 
 **注意**
-注册音频数据回调观察者并调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Linux-callback.md#iaudioframeobserver) 会收到对应的音频回调。
+注册音频数据回调观察者并调用 [enableAudioFrameCallback](#IRTCVideo-enableaudioframecallback) 后，[IAudioFrameObserver](Linux-callback.md#iaudioframeobserver) 会收到对应的音频回调。对回调中收到的音频数据进行处理，不会影响 RTC 的编码发送或渲染。
 
 <span id="IRTCVideo-registeraudioprocessor"></span>
 ### registerAudioProcessor
@@ -2607,7 +2589,7 @@ virtual int bytertc::IRTCVideo::registerAudioProcessor(
     IAudioFrameProcessor* processor)
 ```
 注册自定义音频处理器。<br>
-注册完成后，你可以调用 [enableAudioProcessor](#IRTCVideo-enableaudioprocessor)，对本地采集或接收到的远端音频进行处理。
+注册完成后，你可以调用 [enableAudioProcessor](#IRTCVideo-enableaudioprocessor)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。
 
 **传入参数**
 
@@ -2622,7 +2604,10 @@ virtual int bytertc::IRTCVideo::registerAudioProcessor(
 
 
 **注意**
-重复调用此接口时，仅最后一次调用生效。
+
++ 重复调用此接口时，仅最后一次调用生效。
++ 更多相关信息，详见[音频自定义处理](https://www.volcengine.com/docs/6348/80635)。
+
 
 <span id="IRTCVideo-enableaudioprocessor"></span>
 ### enableAudioProcessor
@@ -2718,7 +2703,7 @@ virtual int bytertc::IRTCVideo::setVideoDigitalZoomConfig(
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | type | **ZoomConfigType** | 数码变焦参数类型，缩放系数或移动步长。参看 [ZoomConfigType](Linux-keytype.md#zoomconfigtype)。必填。 |
-| size | **float** | 缩放系数或移动步长，保留到小数点后三位。默认值为 0。必填。<br/>选择不同 `type` 时有不同的取值范围。当计算后的结果超过缩放和移动边界时，取临界值。<br/>• `kZoomFocusOffset`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。<br/>• `kZoomMoveOffset`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。 |
+| size | **float** | 缩放系数或移动步长，保留到小数点后三位。默认值为 0。必填。<br/>选择不同 `type` 时有不同的取值范围。当计算后的结果超过缩放和移动边界时，取临界值。<br/>• `kZoomConfigTypeFocusOffset`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。<br/>• `kZoomConfigTypeMoveOffset`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。 |
 
 **返回值**
 
@@ -2760,7 +2745,7 @@ virtual int bytertc::IRTCVideo::setVideoDigitalZoomControl(
 + 调用该方法进行移动前，应先使用本方法或 [startVideoDigitalZoomControl](#IRTCVideo-startvideodigitalzoomcontrol) 进行放大，否则无法移动。
 + 当数码变焦操作超出范围时，将置为临界值。例如，移动到了图片边界、放大到了 8 倍、缩小到原图大小。
 + 如果你希望实现持续数码变焦操作，调用 [startVideoDigitalZoomControl](#IRTCVideo-startvideodigitalzoomcontrol)。
-+ 如果你需要对摄像头进行光学变焦控制，参看 [setCameraZoomRatio](#setcamerazoomratio)。仅移动端适用。
++ 移动端可对摄像头进行光学变焦控制，参看 `setCameraZoomRatio`。
 
 
 <span id="IRTCVideo-startvideodigitalzoomcontrol"></span>
@@ -2792,7 +2777,7 @@ virtual int bytertc::IRTCVideo::startVideoDigitalZoomControl(
 + 当数码变焦操作超出范围时，将置为临界值并停止操作。例如，移动到了图片边界、放大到了 8 倍、缩小到原图大小。
 + 你也可以调用 [stopVideoDigitalZoomControl](#IRTCVideo-stopvideodigitalzoomcontrol) 手动停止控制。
 + 如果你希望实现单次数码变焦操作，调用 [setVideoDigitalZoomControl](#IRTCVideo-setvideodigitalzoomcontrol)。
-+ 如果你需要对摄像头进行光学变焦控制，参看 [setCameraZoomRatio](#setcamerazoomratio)。仅移动端适用。
++ 移动端可对摄像头进行光学变焦控制，参看 `setCameraZoomRatio`。
 
 
 <span id="IRTCVideo-stopvideodigitalzoomcontrol"></span>
@@ -2908,7 +2893,7 @@ virtual IAudioDeviceManager* bytertc::IRTCVideo::getAudioDeviceManager()
 设备音频管理接口创建
 
 **返回值**
-音频设备管理接口 [IAudioDeviceManager](Windows-api.md#iaudiodevicemanager)
+音频设备管理接口 [IAudioDeviceManager](Linux-api.md#iaudiodevicemanager)
 
 
 <span id="IRTCVideo-startfilerecording"></span>
@@ -3070,7 +3055,7 @@ virtual int bytertc::IRTCVideo::feedback(
     uint64_t type,
     const ProblemFeedbackInfo* info)
 ```
-将用户反馈的问题上报到 RTC
+将用户反馈的问题上报到 RTC。
 
 **传入参数**
 
@@ -3089,7 +3074,7 @@ virtual int bytertc::IRTCVideo::feedback(
 
 **注意**
 
-+ 你可以在 [RTC 控制台](https://console.volcengine.com/rtc/callQualityRTC/feedback)上查看用户通过此接口提交的反馈详情和整体趋势。 
++ 你可以在 [RTC 控制台](https://console.volcengine.com/rtc/callQualityRTC/feedback)上查看用户通过此接口提交的反馈详情和整体趋势。
 + 如果用户上报时在房间内，那么问题会定位到用户当前所在的一个或多个房间；如果用户上报时不在房间内，那么问题会定位到引擎此前退出的房间。
 
 
@@ -3098,7 +3083,7 @@ virtual int bytertc::IRTCVideo::feedback(
 ```cpp
 virtual IAudioMixingManager* bytertc::IRTCVideo::getAudioMixingManager()
 ```
-> Deprecated  since 353.1, will be deleted in 359, use getAudioEffectPlayer and getMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [getAudioEffectPlayer](#IRTCVideo-getaudioeffectplayer) or [getMediaPlayer](#IRTCVideo-getmediaplayer) instead
 
 混音管理接口创建
 
@@ -3146,6 +3131,7 @@ virtual int bytertc::IRTCVideo::login(
     const char* token,
     const char* uid)
 ```
+登录 RTS 服务器。
 必须先登录，才能调用 [sendUserMessageOutsideRoom](#IRTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](#IRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br>
 在调用本接口登录后，如果想要登出，需要调用 [logout](#IRTCVideo-logout)。
 
@@ -3170,6 +3156,7 @@ virtual int bytertc::IRTCVideo::login(
 ```cpp
 virtual int bytertc::IRTCVideo::logout()
 ```
+登出 RTS 服务器。
 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。
 
 **返回值**
@@ -3226,7 +3213,7 @@ virtual int bytertc::IRTCVideo::setServerParams(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| signature | **const char*** | 动态签名，应用服务器可使用该签名验证消息来源。<br>签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br>设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。 |
+| signature | **const char*** | 动态签名，应用服务器可使用该签名验证消息来源。<br/>签名需自行定义，可传入任意非空字符串，建议将 uid 等信息编码为签名。<br/>设置的签名会以 post 形式发送至通过本方法中 url 参数设置的应用服务器地址。 |
 | url | **const char*** | 应用服务器的地址 |
 
 **返回值**
@@ -3455,7 +3442,7 @@ virtual int bytertc::IRTCVideo::startScreenAudioCapture()
 
 **注意**
 
-+ 调用本接口时，采集模式应为内部模式。在外部采集模式下调用无效，并将触发 [onAudioDeviceWarning](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicewarning) 回调。
++ 本接口仅对内部采集生效，RTC SDK 默认使用内部采集模块采集屏幕音频。若已调用 [setScreenAudioSourceType](Linux-api#IRTCVideo-setscreenaudiosourcetype) 将音频输入源设置为 `kAudioSourceTypeExternal` 自定义采集，需先切换为 `kAudioSourceTypeInternal` 内部采集，否则该接口调用无效，并将触发 [onAudioDeviceWarning](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicewarning) 回调。
 + 采集后，你还需要调用 [publishScreen](#IRTCRoom-publishscreen) 将采集到的屏幕音频推送到远端。
 + 要关闭屏幕音频内部采集，调用 [stopScreenAudioCapture](#IRTCVideo-stopscreenaudiocapture)。
 
@@ -3635,8 +3622,9 @@ virtual int bytertc::IRTCVideo::setRemoteAudioPlaybackVolume(
 
 
 **注意**
-假设某远端用户 A 始终在被调节的目标用户范围内，+ 当该方法与 [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量为后调用的方法设置的音量；
+如果某远端用户 A 始终在被调节的目标用户范围内，
 
++ 当该方法与 [setRemoteRoomAudioPlaybackVolume](#IRTCRoom-setremoteroomaudioplaybackvolume) 共同使用时，本地收听用户 A 的音量为后调用的方法设置的音量；
 + 当该方法与 [setPlaybackVolume](#IRTCVideo-setplaybackvolume) 方法共同使用时，本地收听用户 A 的音量将为两次设置的音量效果的叠加。
 
 
@@ -3715,7 +3703,7 @@ virtual int bytertc::IRTCVideo::registerLocalEncodedVideoFrameObserver(
 virtual int bytertc::IRTCVideo::registerRemoteEncodedVideoFrameObserver(
     IRemoteEncodedVideoFrameObserver* observer)
 ```
-注册远端编码后视频数据回調。  <br>
+注册远端编码后视频数据回调。  <br>
 完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Linux-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调
 
 **传入参数**
@@ -3819,8 +3807,8 @@ virtual int bytertc::IRTCVideo::setVideoDecoderConfig(
 
 **注意**
 
-+ 该方法仅适用于手动订阅模式，并且在订阅远端流之前使用。  
 + 当你想要对远端流进行自定义解码时，你需要先调用 [registerRemoteEncodedVideoFrameObserver](#IRTCVideo-registerremoteencodedvideoframeobserver) 注册远端视频流监测器，然后再调用该接口将解码方式设置为自定义解码。监测到的视频数据会通过 [onRemoteEncodedVideoFrame](Linux-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调出来。
++ 自 3.56 起，要用于自动订阅场景下，你可以设置 `key` 中的 `RoomId` 和 `UserId` 为 `nullptr`，此时，通过此接口设置的解码方式根据 `key` 中的 `StreamIndex` 值，适用于所有的远端主流或屏幕流的解码方式。
 
 
 <span id="IRTCVideo-requestremotevideokeyframe"></span>
@@ -4117,7 +4105,7 @@ virtual int bytertc::IRTCVideo::setDummyCaptureImagePath(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| file_path | **const char*** | 设置静态图片的路径。  <br/>支持本地文件绝对路径，不支持网络链接，长度限制为 512 字节。   <br/>静态图片支持类型为 JPEG/JPG、PNG、BMP。  <br/>若图片宽高比与设置的编码宽高比不一致，图片会被等比缩放，黑边填充空白区域。推流帧率与码率与设置的编码参数一致。 |
+| file_path | **const char*** | 设置静态图片的路径。  <br/>支持本地文件绝对路径，不支持网络链接，长度限制为 512 字节。   <br/>静态图片支持类型为 JPEG/JPG、PNG、BMP。  <br/>若图片宽高比与设置的编码宽高比不一致，图片会按编码高宽等比缩放，并裁剪长边。推流帧率与码率与设置的编码参数一致。 |
 
 **返回值**
 
@@ -4200,6 +4188,35 @@ virtual int bytertc::IRTCVideo::setLocalProxy(
 
 + 该方法需要在进房前调用。
 + 调用该方法设置本地代理后，SDK 会触发 [onLocalProxyStateChanged](Linux-callback.md#IRTCVideoEventHandler-onlocalproxystatechanged) ，返回代理连接的状态。
+
+
+<span id="IRTCVideo-setlowlightadjusted"></span>
+### setLowLightAdjusted
+```cpp
+virtual int bytertc::IRTCVideo::setLowLightAdjusted(
+    VideoEnhancementMode mode)
+```
+> Available since 3.57
+
+设置视频暗光增强模式。
+对于光线不足、照明不均匀或背光等场景下推荐开启，可有效改善画面质量。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mode | **VideoEnhancementMode** | 默认不开启。参看 [VideoEnhancementMode](Linux-keytype.md#videoenhancementmode)。 |
+
+**返回值**
+
++ 0: API 调用成功。会立即生效，但需要等待下载和检测完成后才能看到增强后的效果。
++ < 0: API 调用失败。查看 [ReturnStatus](Linux-keytype.md#returnstatus) 获得更多错误说明。
+
+
+**注意**
+
++ 开启后会影响设备性能，应根据实际需求和设备性能决定是否开启。
++ 对 RTC SDK 内部采集的视频和自定义采集的视频都生效。
 
 
 # IDeviceCollection
@@ -4385,7 +4402,6 @@ class bytertc::IAudioDeviceManager
 | **virtual int** | [initAudioCaptureDeviceForTest](#IAudioDeviceManager-initaudiocapturedevicefortest) |
 | **virtual int** | [startAudioPlaybackDeviceTest](#IAudioDeviceManager-startaudioplaybackdevicetest) |
 | **virtual int** | [stopAudioPlaybackDeviceTest](#IAudioDeviceManager-stopaudioplaybackdevicetest) |
-| **virtual int** | [enableFilterSilentDevice](#IAudioDeviceManager-enablefiltersilentdevice) |
 
 
 ## 函数说明
@@ -4398,7 +4414,11 @@ virtual IAudioDeviceCollection* bytertc::IAudioDeviceManager::enumerateAudioPlay
 
 **返回值**
 包含系统中所有音频播放设备的列表，参看 [IAudioDeviceCollection](#iaudiodevicecollection)。
+等待超时后会返回空列表。超时时间默认为 10 s。建议通过 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 监听到 `kMediaDeviceListUpdated` 后，再次调用本接口获取。
 
+
+**注意**
+你可以在收到 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 了解设备变更后，重新调用本接口以获得新的设备列表。
 
 <span id="IAudioDeviceManager-enumerateaudiocapturedevices"></span>
 ### enumerateAudioCaptureDevices
@@ -4409,7 +4429,11 @@ virtual IAudioDeviceCollection* bytertc::IAudioDeviceManager::enumerateAudioCapt
 
 **返回值**
 一个包含系统中所有音频采集设备列表的对象，详见 [IAudioDeviceCollection](#iaudiodevicecollection)。
+等待超时后会返回空列表。超时时间默认为 10 s。建议通过 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 监听到 `kMediaDeviceListUpdated` 后，再次调用本接口获取。
 
+
+**注意**
+你可以在收到 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 了解设备变更后，重新调用本接口以获得新的设备列表。
 
 <span id="IAudioDeviceManager-followsystemplaybackdevice"></span>
 ### followSystemPlaybackDevice
@@ -4550,6 +4574,9 @@ virtual int bytertc::IAudioDeviceManager::setAudioCaptureDeviceVolume(
 + 0：方法调用成功  
 + < 0：方法调用失败
 
+**注意**
+调用 `setAudioCaptureDeviceMute` 设为 `true` 静音采集设备后的音量调节会在取消静音后生效。
+
 
 <span id="IAudioDeviceManager-getaudiocapturedevicevolume"></span>
 ### getAudioCaptureDeviceVolume
@@ -4634,6 +4661,11 @@ virtual int bytertc::IAudioDeviceManager::setAudioCaptureDeviceMute(
 + 0：方法调用成功  
 + < 0：方法调用失败
 
+**注意**
+
++ 该方法用于静音整个系统的音频采集。
++ 设该方法为 `true` 静音后仍可通过 `setAudioCaptureDeviceVolume` 调整采集音量，调整后的音量会在取消静音后生效。
+
 
 <span id="IAudioDeviceManager-getaudiocapturedevicemute"></span>
 ### getAudioCaptureDeviceMute
@@ -4702,7 +4734,7 @@ virtual int bytertc::IAudioDeviceManager::getAudioCaptureDevice(
 ### initAudioPlaybackDeviceForTest
 ```cpp
 virtual int bytertc::IAudioDeviceManager::initAudioPlaybackDeviceForTest(
-    const char deviceId[MAX_DEVICE_ID_LENGTH])
+    const char device_id[MAX_DEVICE_ID_LENGTH])
 ```
 尝试初始化音频播放设备，可检测出设备不存在、权限被拒绝/禁用等异常问题。
 
@@ -4710,7 +4742,7 @@ virtual int bytertc::IAudioDeviceManager::initAudioPlaybackDeviceForTest(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| deviceId | **const char** | 设备索引号 |
+| device_id | **const char** | 设备索引号 |
 
 **返回值**
 设备状态错误码
@@ -4731,7 +4763,7 @@ virtual int bytertc::IAudioDeviceManager::initAudioPlaybackDeviceForTest(
 ### initAudioCaptureDeviceForTest
 ```cpp
 virtual int bytertc::IAudioDeviceManager::initAudioCaptureDeviceForTest(
-    const char deviceId[MAX_DEVICE_ID_LENGTH])
+    const char device_id[MAX_DEVICE_ID_LENGTH])
 ```
 尝试初始化音频采集设备，可检测设备不存在、权限被拒绝/禁用等异常问题。
 
@@ -4739,7 +4771,7 @@ virtual int bytertc::IAudioDeviceManager::initAudioCaptureDeviceForTest(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| deviceId | **const char** | 设备索引 |
+| device_id | **const char** | 设备索引 |
 
 **返回值**
 设备状态错误码
@@ -4801,25 +4833,6 @@ virtual int bytertc::IAudioDeviceManager::stopAudioPlaybackDeviceTest()
 
 **注意**
 调用 [startAudioPlaybackDeviceTest](#IAudioDeviceManager-startaudioplaybackdevicetest) 后，调用本方法停止测试。
-
-
-<span id="IAudioDeviceManager-enablefiltersilentdevice"></span>
-### enableFilterSilentDevice
-```cpp
-virtual int bytertc::IAudioDeviceManager::enableFilterSilentDevice(
-    bool enable)
-```
-开启/关闭过滤无声设备功能。
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| enable | **bool** | 是否开启过滤无声设备功能:<br/>• 1: 是。<br/>• 0: 否。 |
-
-**返回值**
-
-+ 0：方法调用成功。
 
 
 # IAudioEffectPlayer
@@ -5303,7 +5316,7 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
     const char * file_path,
     const AudioMixingConfig& config)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer or IAudioEffectPlayer instead
 
 开始播放音频文件。
 可以通过传入不同的 ID 和 filepath 多次调用本方法，以实现同时播放多个混音文件，实现混音叠加。
@@ -5331,7 +5344,7 @@ virtual void bytertc::IAudioMixingManager::startAudioMixing(
 virtual void bytertc::IAudioMixingManager::stopAudioMixing(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 停止播放音频文件及混音。
 
@@ -5355,7 +5368,7 @@ virtual void bytertc::IAudioMixingManager::stopAudioMixing(
 virtual void bytertc::IAudioMixingManager::pauseAudioMixing(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 暂停播放音频文件及混音。
 
@@ -5379,7 +5392,7 @@ virtual void bytertc::IAudioMixingManager::pauseAudioMixing(
 virtual void bytertc::IAudioMixingManager::resumeAudioMixing(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 恢复播放音频文件及混音。
 
@@ -5403,7 +5416,7 @@ virtual void bytertc::IAudioMixingManager::preloadAudioMixing(
     int mix_id,
     const char* file_path)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 预加载指定音乐文件到内存中，以避免频繁播放同一文件时的重复加载，减少 CPU 占用。
 
@@ -5428,7 +5441,7 @@ virtual void bytertc::IAudioMixingManager::preloadAudioMixing(
 virtual void bytertc::IAudioMixingManager::unloadAudioMixing(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 卸载指定音乐文件。
 
@@ -5448,7 +5461,7 @@ virtual void bytertc::IAudioMixingManager::unloadAudioMixing(
 virtual int bytertc::IAudioMixingManager::getAudioMixingDuration(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 获取音频文件时长。
 
@@ -5473,7 +5486,7 @@ virtual int bytertc::IAudioMixingManager::getAudioMixingDuration(
 virtual int bytertc::IAudioMixingManager::getAudioMixingCurrentPosition(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 获取音频文件播放进度。
 
@@ -5499,7 +5512,7 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingPosition(
     int mix_id,
     int position)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 设置音频文件的起始播放位置
 
@@ -5521,7 +5534,7 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingDualMonoMode(
     int mix_id,
     AudioMixingDualMonoMode mode)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 设置当前音频文件的声道模式
 
@@ -5546,7 +5559,7 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingPitch(
     int mix_id,
     int pitch)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer or ByteRTCAudioEffectPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use [IMediaPlayer](#imediaplayer) or [IAudioEffectPlayer](#iaudioeffectplayer) instead
 
 开启本地播放音乐文件变调功能，多用于 K 歌场景。  <br>
 使用该方法，你可以对本地播放音乐文件的音调进行升调或降调等调整。
@@ -5569,7 +5582,7 @@ virtual int bytertc::IAudioMixingManager::setAudioMixingPlaybackSpeed(
     int mix_id,
     int speed)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 设置混音时音频文件的播放速度
 
@@ -5595,7 +5608,7 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingProgressInterval(
     int mix_id,
     int64_t interval)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer  instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer  instead
 
 设置混音时音频文件播放进度回调的间隔
 
@@ -5618,7 +5631,7 @@ virtual void bytertc::IAudioMixingManager::setAudioMixingLoudness(
     int mix_id,
     float loudness)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 如果你需要使用 `enableVocalInstrumentBalance` 对混音音频文件/PCM 音频数据进行音量调整，你必须通过此接口传入其原始响度。
 
@@ -5640,7 +5653,7 @@ virtual void bytertc::IAudioMixingManager::enableAudioMixingFrame(
     int mix_id,
     AudioMixingType type)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 启动 PCM 音频数据混音。<br>
 要实现多个 PCM 音频数据混音，多次调用本方法，并传入不同的 mix_id。
@@ -5665,7 +5678,7 @@ virtual void bytertc::IAudioMixingManager::enableAudioMixingFrame(
 virtual void bytertc::IAudioMixingManager::disableAudioMixingFrame(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 关闭 PCM 混音
 
@@ -5683,7 +5696,7 @@ virtual int bytertc::IAudioMixingManager::pushAudioMixingFrame(
     int mix_id,
     IAudioFrame* audio_frame)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 推送 PCM 音频帧数据用于混音
 
@@ -5712,7 +5725,7 @@ virtual int bytertc::IAudioMixingManager::pushAudioMixingFrame(
 virtual int bytertc::IAudioMixingManager::getAudioTrackCount(
     int mix_id)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 获取当前音频文件的音轨索引
 
@@ -5742,7 +5755,7 @@ virtual void bytertc::IAudioMixingManager::selectAudioTrack(
     int mix_id,
     int audio_track_index)
 ```
-> Deprecated  since 353.1, will be deleted in 359, use ByteRTCMediaPlayer instead
+> Deprecated  since 353.1, will be deleted in 359, use IMediaPlayer instead
 
 指定当前音频文件的播放音轨
 
@@ -5852,8 +5865,7 @@ virtual int bytertc::IMediaPlayer::start()
 **注意**
 
 + 要播放 PCM 格式的音频数据，参看 [openWithCustomSource](#IMediaPlayer-openwithcustomsource)。`openWithCustomSource` 和此 API 互斥。
-+ 调用本方法播放音频文件后，可调用 [stop](#IMediaPlayer-stop) 方法暂停播放。
-
++ 调用本方法播放音频文件后，可调用 [pause](#IMediaPlayer-pause) 方法暂停播放，或调用 [stop](#IMediaPlayer-stop) 方法停止播放。
 
 <span id="IMediaPlayer-openwithcustomsource"></span>
 ### openWithCustomSource
@@ -6200,7 +6212,7 @@ virtual int bytertc::IMediaPlayer::setProgressInterval(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| interval | **int64_t** | 时间间隔，单位毫秒。<br/>• interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。 <br/>• interval <= 0 时，不会触发回调。 |
+| interval | **int64_t** | 时间间隔，单位毫秒。<br/>• interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。<br/>• interval <= 0 时，不会触发回调。 |
 
 **返回值**
 
@@ -6276,7 +6288,7 @@ virtual int bytertc::IMediaPlayer::pushExternalAudioFrame(
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| audio_frame | **IAudioFrame*** | 音频帧，详见 [IAudioFrame](Linux-keytype.md#iaudioframe)。必须指定具体的采样率和声道数，不支持设置为自动。 |
+| audio_frame | **IAudioFrame*** | 音频帧，详见 [IAudioFrame](Linux-keytype.md#iaudioframe)。<br/>• 音频采样格式必须为 S16。音频缓冲区内的数据格式必须为 PCM，其容量大小应该为 audioFrame.samples × audioFrame.channel × 2。<br/>• 必须指定具体的采样率和声道数，不支持设置为自动。 |
 
 **返回值**
 
@@ -6480,8 +6492,12 @@ virtual IVideoDeviceCollection* bytertc::IVideoDeviceManager::enumerateVideoCapt
 获取当前系统内视频采集设备列表。
 
 **返回值**
-包含系统中所有视频采集设备的列表，参看 [IVideoDeviceCollection](#ivideodevicecollection)。  
+包含系统中所有视频采集设备的列表，参看 [IVideoDeviceCollection](#ivideodevicecollection)。
+等待超时后会返回空列表。超时时间默认为 10 s。建议通过 [onVideoDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 监听到 `kMediaDeviceListUpdated` 后，再次调用本接口获取。
 
+
+**注意**
+你可以在收到 [onVideoDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 了解设备变更后，重新调用本接口以获得新的设备列表。
 
 <span id="IVideoDeviceManager-setvideocapturedevice"></span>
 ### setVideoCaptureDevice
@@ -6528,13 +6544,14 @@ virtual int bytertc::IVideoDeviceManager::getVideoCaptureDevice(
 class bytertc::IVideoEffect
 ```
 
-高级视频特效。
+高级视频特效，参看[集成指南](https://www.volcengine.com/docs/6348/114717)。
 
 
 ## 成员函数
 
 | 返回 | 名称 |
 | --- | --- |
+| **virtual** | [~IVideoEffect](#IVideoEffect-~ivideoeffect) |
 | **virtual int** | [initCVResource](#IVideoEffect-initcvresource) |
 | **virtual int** | [getAuthMessage](#IVideoEffect-getauthmessage) |
 | **virtual int** | [freeAuthMessage](#IVideoEffect-freeauthmessage) |
@@ -6554,6 +6571,12 @@ class bytertc::IVideoEffect
 
 
 ## 函数说明
+<span id="IVideoEffect-~ivideoeffect"></span>
+### ~IVideoEffect
+```cpp
+virtual bytertc::IVideoEffect::~IVideoEffect()
+```
+
 <span id="IVideoEffect-initcvresource"></span>
 ### initCVResource
 ```cpp

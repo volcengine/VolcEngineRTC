@@ -809,7 +809,7 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioPropertiesMode)
 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
 最小值为回调间隔是 0.01s 时的值，即 `sampleRate
 最大值是 `2048`。超出取值范围时，采样点数取默认值。
-该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback](iOS-api.md#ByteRTCVideo-enableaudioframecallback-format) 开启只读模式回调时设置该参数不生效。
+该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback:format:](iOS-api.md#ByteRTCVideo-enableaudioframecallback-format) 开启只读模式回调时设置该参数不生效。
 
 
 
@@ -981,7 +981,7 @@ PCM 数据
 ```objectivec
 @property(assign, nonatomic) NSInteger position;
 ```
-混音时音频文件播放进度条位置，参数为整数，单位为毫秒
+混音时音频文件播放的起始位置。参数为整数，单位为毫秒。
 
 
 <span id="ByteRTCAudioMixingConfig-callbackonprogressinterval"></span>
@@ -1199,11 +1199,12 @@ PCM 数据
 | 类型 | 名称 |
 | --- | --- |
 | **NSInteger** | [interval](#ByteRTCAudioPropertiesConfig-interval) |
-| **BOOL** | [enable_spectrum](#ByteRTCAudioPropertiesConfig-enable_spectrum) |
-| **BOOL** | [enable_vad](#ByteRTCAudioPropertiesConfig-enable_vad) |
-| **ByteRTCAudioReportMode** | [local_main_report_mode](#ByteRTCAudioPropertiesConfig-local_main_report_mode) |
+| **BOOL** | [enableSpectrum](#ByteRTCAudioPropertiesConfig-enablespectrum) |
+| **BOOL** | [enableVad](#ByteRTCAudioPropertiesConfig-enablevad) |
+| **ByteRTCAudioReportMode** | [localMainReportMode](#ByteRTCAudioPropertiesConfig-localmainreportmode) |
 | **float** | [smooth](#ByteRTCAudioPropertiesConfig-smooth) |
-| **ByteRTCAudioPropertiesMode** | [audio_report_mode](#ByteRTCAudioPropertiesConfig-audio_report_mode) |
+| **ByteRTCAudioPropertiesMode** | [audioReportMode](#ByteRTCAudioPropertiesConfig-audioreportmode) |
+| **BOOL** | [enableVoicePitch](#ByteRTCAudioPropertiesConfig-enablevoicepitch) |
 
 
 ## 变量说明
@@ -1219,26 +1220,26 @@ PCM 数据
 + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
 
 
-<span id="ByteRTCAudioPropertiesConfig-enable_spectrum"></span>
-### enable_spectrum
+<span id="ByteRTCAudioPropertiesConfig-enablespectrum"></span>
+### enableSpectrum
 ```objectivec
-@property(assign, nonatomic) BOOL enable_spectrum;
+@property(assign, nonatomic) BOOL enableSpectrum;
 ```
 是否开启音频频谱检测。
 
 
-<span id="ByteRTCAudioPropertiesConfig-enable_vad"></span>
-### enable_vad
+<span id="ByteRTCAudioPropertiesConfig-enablevad"></span>
+### enableVad
 ```objectivec
-@property(assign, nonatomic) BOOL enable_vad;
+@property(assign, nonatomic) BOOL enableVad;
 ```
 是否开启人声检测 (VAD)。
 
 
-<span id="ByteRTCAudioPropertiesConfig-local_main_report_mode"></span>
-### local_main_report_mode
+<span id="ByteRTCAudioPropertiesConfig-localmainreportmode"></span>
+### localMainReportMode
 ```objectivec
-@property(assign, nonatomic) ByteRTCAudioReportMode local_main_report_mode;
+@property(assign, nonatomic) ByteRTCAudioReportMode localMainReportMode;
 ```
 音量回调模式。详见 [ByteRTCAudioReportMode](#bytertcaudioreportmode)。
 
@@ -1252,13 +1253,21 @@ PCM 数据
 默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。
 
 
-<span id="ByteRTCAudioPropertiesConfig-audio_report_mode"></span>
-### audio_report_mode
+<span id="ByteRTCAudioPropertiesConfig-audioreportmode"></span>
+### audioReportMode
 ```objectivec
-@property(assign, nonatomic) ByteRTCAudioPropertiesMode audio_report_mode;
+@property(assign, nonatomic) ByteRTCAudioPropertiesMode audioReportMode;
 ```
 [rtcEngine:onLocalAudioPropertiesReport:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [ByteRTCAudioPropertiesMode](#bytertcaudiopropertiesmode)。
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
+
+
+<span id="ByteRTCAudioPropertiesConfig-enablevoicepitch"></span>
+### enableVoicePitch
+```objectivec
+@property(assign, nonatomic) BOOL enableVoicePitch;
+```
+是否回调本地用户的人声基频。
 
 
 
@@ -1278,6 +1287,7 @@ PCM 数据
 | **NSInteger** | [nonlinearVolume](#ByteRTCAudioPropertiesInfo-nonlinearvolume) |
 | **NSInteger** | [vad](#ByteRTCAudioPropertiesInfo-vad) |
 | **NSArray<NSNumber*>*** | [spectrum](#ByteRTCAudioPropertiesInfo-spectrum) |
+| **NSInteger** | [voicePitch](#ByteRTCAudioPropertiesInfo-voicepitch) |
 
 
 ## 变量说明
@@ -1325,6 +1335,19 @@ PCM 数据
 @property(copy, nonatomic) NSArray<NSNumber*> * _Nonnull spectrum;
 ```
 频谱数组。默认长度为 257。
+
+
+<span id="ByteRTCAudioPropertiesInfo-voicepitch"></span>
+### voicePitch
+```objectivec
+@property(assign, nonatomic) NSInteger voicePitch;
+```
+本地用户的人声基频，单位为赫兹。 <br>
+同时满足以下两个条件时，返回的值为本地用户的人声基频：
+
++ 调用 [enableAudioPropertiesReport:](iOS-api.md#ByteRTCVideo-enableaudiopropertiesreport)，并设置参数 enableVoicePitch 的值为 `true`。 <br>
++ 本地采集的音频中包含本地用户的人声。 <br>
+其他情况下返回 `0`。
 
 
 
@@ -1396,9 +1419,9 @@ PCM 数据
 
 
 
-# Position
+# ByteRTCPosition
 ```objectivec
-@interface Position : NSObject
+@interface ByteRTCPosition : NSObject
 ```
 
 本地用户在房间内的位置坐标，需自行建立空间直角坐标系
@@ -1408,13 +1431,13 @@ PCM 数据
 
 | 类型 | 名称 |
 | --- | --- |
-| **float** | [x](#Position-x) |
-| **float** | [y](#Position-y) |
-| **float** | [z](#Position-z) |
+| **float** | [x](#ByteRTCPosition-x) |
+| **float** | [y](#ByteRTCPosition-y) |
+| **float** | [z](#ByteRTCPosition-z) |
 
 
 ## 变量说明
-<span id="Position-x"></span>
+<span id="ByteRTCPosition-x"></span>
 ### x
 ```objectivec
 @property(nonatomic, assign) float x;
@@ -1422,7 +1445,7 @@ PCM 数据
 x 坐标
 
 
-<span id="Position-y"></span>
+<span id="ByteRTCPosition-y"></span>
 ### y
 ```objectivec
 @property(nonatomic, assign) float y;
@@ -1430,7 +1453,7 @@ x 坐标
 y 坐标
 
 
-<span id="Position-z"></span>
+<span id="ByteRTCPosition-z"></span>
 ### z
 ```objectivec
 @property(nonatomic, assign) float z;
@@ -1439,9 +1462,9 @@ z 坐标
 
 
 
-# Orientation
+# ByteRTCOrientation
 ```objectivec
-@interface Orientation : NSObject
+@interface ByteRTCOrientation : NSObject
 ```
 
 方向朝向信息
@@ -1451,13 +1474,13 @@ z 坐标
 
 | 类型 | 名称 |
 | --- | --- |
-| **float** | [x](#Orientation-x) |
-| **float** | [y](#Orientation-y) |
-| **float** | [z](#Orientation-z) |
+| **float** | [x](#ByteRTCOrientation-x) |
+| **float** | [y](#ByteRTCOrientation-y) |
+| **float** | [z](#ByteRTCOrientation-z) |
 
 
 ## 变量说明
-<span id="Orientation-x"></span>
+<span id="ByteRTCOrientation-x"></span>
 ### x
 ```objectivec
 @property(nonatomic, assign) float x;
@@ -1465,7 +1488,7 @@ z 坐标
 x 坐标
 
 
-<span id="Orientation-y"></span>
+<span id="ByteRTCOrientation-y"></span>
 ### y
 ```objectivec
 @property(nonatomic, assign) float y;
@@ -1473,7 +1496,7 @@ x 坐标
 y 坐标
 
 
-<span id="Orientation-z"></span>
+<span id="ByteRTCOrientation-z"></span>
 ### z
 ```objectivec
 @property(nonatomic, assign) float z;
@@ -1482,44 +1505,44 @@ z 坐标
 
 
 
-# HumanOrientation
+# ByteRTCHumanOrientation
 ```objectivec
-@interface HumanOrientation : NSObject
+@interface ByteRTCHumanOrientation : NSObject
 ```
 
-三维朝向信息，三个向量需要两两垂直。参看 [Orientation](#orientation)。
+三维朝向信息，三个向量需要两两垂直。参看 [ByteRTCOrientation](#bytertcorientation)。
 
 
 ## 成员变量
 
 | 类型 | 名称 |
 | --- | --- |
-| **Orientation*** | [forward](#HumanOrientation-forward) |
-| **Orientation*** | [right](#HumanOrientation-right) |
-| **Orientation*** | [up](#HumanOrientation-up) |
+| **ByteRTCOrientation*** | [forward](#ByteRTCHumanOrientation-forward) |
+| **ByteRTCOrientation*** | [right](#ByteRTCHumanOrientation-right) |
+| **ByteRTCOrientation*** | [up](#ByteRTCHumanOrientation-up) |
 
 
 ## 变量说明
-<span id="HumanOrientation-forward"></span>
+<span id="ByteRTCHumanOrientation-forward"></span>
 ### forward
 ```objectivec
-@property(nonatomic, strong) Orientation* _Nonnull forward;
+@property(nonatomic, strong) ByteRTCOrientation* _Nonnull forward;
 ```
 正前方朝向，默认值为 {1,0,0}，即正前方朝向 x 轴正方向
 
 
-<span id="HumanOrientation-right"></span>
+<span id="ByteRTCHumanOrientation-right"></span>
 ### right
 ```objectivec
-@property(nonatomic, strong) Orientation* _Nonnull right;
+@property(nonatomic, strong) ByteRTCOrientation* _Nonnull right;
 ```
 正右方朝向，默认值为 {0,1,0}，即右手朝向 y 轴正方向
 
 
-<span id="HumanOrientation-up"></span>
+<span id="ByteRTCHumanOrientation-up"></span>
 ### up
 ```objectivec
-@property(nonatomic, strong) Orientation* _Nonnull up;
+@property(nonatomic, strong) ByteRTCOrientation* _Nonnull up;
 ```
 正上方朝向，默认值为 {0,0,1}，即头顶朝向 z 轴正方向
 
@@ -1903,25 +1926,25 @@ typedef NS_ENUM(NSInteger, ByteRTCAudioRecordingState)
 
 | 类型 | 名称 |
 | --- | --- |
-| **Position*** | [position](#ByteRTCPositionInfo-position) |
-| **HumanOrientation*** | [orientation](#ByteRTCPositionInfo-orientation) |
+| **ByteRTCPosition*** | [position](#ByteRTCPositionInfo-position) |
+| **ByteRTCHumanOrientation*** | [orientation](#ByteRTCPositionInfo-orientation) |
 
 
 ## 变量说明
 <span id="ByteRTCPositionInfo-position"></span>
 ### position
 ```objectivec
-@property(strong, nonatomic) Position *_Nonnull position;
+@property(strong, nonatomic) ByteRTCPosition *_Nonnull position;
 ```
-用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 [Position](#position)。
+用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 [ByteRTCPosition](#bytertcposition)。
 
 
 <span id="ByteRTCPositionInfo-orientation"></span>
 ### orientation
 ```objectivec
-@property(strong, nonatomic) HumanOrientation *_Nonnull orientation;
+@property(strong, nonatomic) ByteRTCHumanOrientation *_Nonnull orientation;
 ```
-用户在空间音频坐标系里的三维朝向信息。三个向量需要两两垂直。参看 [HumanOrientation](#humanorientation)。
+用户在空间音频坐标系里的三维朝向信息。三个向量需要两两垂直。参看 [ByteRTCHumanOrientation](#bytertchumanorientation)。
 
 
 
@@ -1975,7 +1998,7 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamRemoveReason)
 | --- | --- | --- |
 | ByteRTCStreamRemoveReasonUnpublish | 0 | 远端用户停止发布流。  <br> |
 | ByteRTCStreamRemoveReasonPublishFailed | 1 | 远端用户发布流失败。  <br> |
-| ByteRTCStreamRemoveReasonKeepLiveFailed | 2 | 保活失败。  <br> |
+| ByteRTCStreamRemoveReasonKeepLiveFailed | 2 | 媒体服务器 10s 没收到客户端的媒体数据。 |
 | ByteRTCStreamRemoveReasonClientDisconnected | 3 | 远端用户断网。  <br> |
 | ByteRTCStreamRemoveReasonRepublish | 4 | 远端用户重新发布流。  <br> |
 | ByteRTCStreamRemoveReasonOther | 5 | 其他原因。  <br> |
@@ -2062,8 +2085,8 @@ SEI 发送模式。
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| kSingleSEIPerFrame | 0 | 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。 |
-| kMultiSEIPerFrame | 1 | 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。 |
+| ByteRTCSEICountPerFrameSingle | 0 | 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。 |
+| ByteRTCSEICountPerFrameMulti | 1 | 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。 |
 
 
 # ByteRTCSubscribeState
@@ -2325,7 +2348,7 @@ typedef NS_ENUM(NSInteger, ByteRTCRemoteVideoState)
 | ByteRTCRemoteVideoStateStarting | 1 | 本地用户已接收远端视频首包 <br><br/>收到远端视频首包时回调该状态，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonLocalUnmuted |
 | ByteRTCRemoteVideoStateDecoding | 2 | 远端视频流正在解码，正常播放, 在以下时机回调该状态：  <br><br/>+ 成功解码远端视频首帧，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonLocalUnmuted  <br><br/>+ 网络由阻塞恢复正常，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonNetworkRecovery <br><br/>+ 本地用户恢复接收远端视频流，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonLocalUnmuted <br><br/>+ 远端用户恢复发送视频流，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonRemoteUnmuted  <br> |
 | ByteRTCRemoteVideoStateFrozen | 3 | 远端视频流卡顿 <br><br/>网络阻塞、丢包率等原因造成视频卡顿流时会回报该状态，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonNetworkCongestion |
-| ByteRTCRemoteVideoStateFailed | 4 | 远端视频流播放失败 <br> |
+| ByteRTCRemoteVideoStateFailed | 4 | 远端视频流播放失败 <br><br/>如果内部处理远端视频流失败，则会回调该方法， 对应错误码 [ByteRTCRemoteVideoStateChangeReason](#bytertcremotevideostatechangereason) 中的 ByteRTCRemoteVideoStateChangeReasonInternal |
 
 
 # ByteRTCRemoteVideoStateChangeReason
@@ -2386,8 +2409,8 @@ typedef NS_ENUM(NSInteger, ByteRTCMediaDeviceState)
 | ByteRTCMediaDeviceStateStarted | 1 | 设备已开启 |
 | ByteRTCMediaDeviceStateStopped | 2 | 设备已停止 |
 | ByteRTCMediaDeviceStateRuntimeError | 3 | 设备运行时错误<br><br/>例如，当媒体设备的预期行为是正常采集，但没有收到采集数据时，将回调该状态。 |
-| ByteRTCMediaDeviceStateAdded | 10 | 设备已插入 |
-| ByteRTCMediaDeviceStateRemoved | 11 | 设备被移除 |
+| ByteRTCMediaDeviceStateAdded | 10 | 设备已插入<br/>你可以调用获取设备接口更新设备列表。 |
+| ByteRTCMediaDeviceStateRemoved | 11 | 设备被移除<br/>你可以调用获取设备接口更新设备列表。 |
 | ByteRTCMediaDeviceStateInterruptionBegan | 12 | 系统通话，锁屏或第三方应用打断了音视频通话。将在通话结束或第三方应用结束占用后自动恢复。 |
 | ByteRTCMediaDeviceStateInterruptionEnded | 13 | 音视频通话已从系统电话或第三方应用打断中恢复 |
 
@@ -2667,9 +2690,9 @@ typedef NS_ENUM(NSInteger, ByteRTCMuteState)
 | ByteRTCMuteStateOn | 1 | 停止发送 |
 
 
-# ByteSEIStreamEventType
+# ByteRTCSEIStreamEventType
 ```objectivec
-typedef NS_ENUM(NSInteger, ByteSEIStreamEventType)
+typedef NS_ENUM(NSInteger, ByteRTCSEIStreamEventType)
 ```
 
 黑帧视频流状态
@@ -2679,8 +2702,8 @@ typedef NS_ENUM(NSInteger, ByteSEIStreamEventType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](iOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| ByteSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](iOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType:WithStreamIndex:](iOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。 |
+| ByteRTCSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](iOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| ByteRTCSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](iOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType:WithStreamIndex:](iOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 # ByteRTCStreamIndex
@@ -2697,6 +2720,23 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamIndex)
 | --- | --- | --- |
 | ByteRTCStreamIndexMain | 0 | 主流。包括：<br><br/>+ 由摄像头/麦克风通过内部采集机制，采集到的视频/音频; <br><br/>+ 通过自定义采集，采集到的视频/音频。 |
 | ByteRTCStreamIndexScreen | 1 | 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。 |
+
+
+# ByteRTCAggregationOption
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCAggregationOption)
+```
+
+流聚合策略
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCAggregationOptionMin | 0 | 流聚合向下取值  （默认策略） |
+| ByteRTCAggregationOptionMax | 1 | 流聚合向上取值 |
+| ByteRTCAggregationOptionMajority | 2 | 流聚合按比例取值，比例相同时，向下取值 |
 
 
 # ByteRTCSyncInfoStreamType
@@ -2801,9 +2841,9 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingState)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| RecordingStateError | 0 | 录制异常 |
-| RecordingStateProcessing | 1 | 录制进行中 |
-| RecordingStateSuccess | 2 | 录制文件保存成功，调用 `stopFileRecording:` 结束录制之后才会收到该状态码。 |
+| ByteRTCRecordingStateError | 0 | 录制异常 |
+| ByteRTCRecordingStateProcessing | 1 | 录制进行中 |
+| ByteRTCRecordingStateSuccess | 2 | 录制文件保存成功，调用 `stopFileRecording:` 结束录制之后才会收到该状态码。 |
 
 
 # ByteRTCRecordingErrorCode
@@ -2818,10 +2858,10 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingErrorCode)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| RecordingErrorCodeOk | 0 | 录制正常 |
-| RecordingErrorCodeNoPermission | -1 | 没有文件写权限 |
-| RecordingErrorCodeNotSupport | -2 | 当前版本 SDK 不支持本地录制功能，请联系技术支持人员 |
-| RecordingErrorCodeOther | -3 | 其他异常 |
+| ByteRTCRecordingErrorCodeOk | 0 | 录制正常 |
+| ByteRTCRecordingErrorCodeNoPermission | -1 | 没有文件写权限 |
+| ByteRTCRecordingErrorCodeNotSupport | -2 | 当前版本 SDK 不支持本地录制功能，请联系技术支持人员 |
+| ByteRTCRecordingErrorCodeOther | -3 | 其他异常 |
 
 
 # ByteRTCRecordingFileType
@@ -2836,8 +2876,8 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingFileType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| RecordingFileTypeAAC | 0 | aac 格式文件 |
-| RecordingFileTypeMP4 | 1 | mp4 格式文件 |
+| ByteRTCRecordingFileTypeAAC | 0 | aac 格式文件 |
+| ByteRTCRecordingFileTypeMP4 | 1 | mp4 格式文件 |
 
 
 # ByteRTCAVSyncState
@@ -2852,9 +2892,9 @@ typedef NS_ENUM(NSInteger, ByteRTCAVSyncState)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| AVSyncStateAVStreamSyncBegin | 0 | 音视频开始同步 |
-| AVSyncStateAudioStreamRemove | 1 | 音视频同步过程中音频移除，但不影响当前的同步关系 |
-| AVSyncStateVdieoStreamRemove | 2 | 音视频同步过程中视频移除，但不影响当前的同步关系 |
+| ByteRTCAVSyncStateAVStreamSyncBegin | 0 | 音视频开始同步 |
+| ByteRTCAVSyncStateAudioStreamRemove | 1 | 音视频同步过程中音频移除，但不影响当前的同步关系 |
+| ByteRTCAVSyncStateVideoStreamRemove | 2 | 音视频同步过程中视频移除，但不影响当前的同步关系 |
 
 
 # ByteRTCEchoTestResult
@@ -2869,14 +2909,14 @@ typedef NS_ENUM(NSInteger, ByteRTCEchoTestResult)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| EchoTestSuccess | 0 | 接收到采集的音视频的回放，通话回路检测成功 |
-| EchoTestTimeout | 1 | 测试超过 60s 仍未完成，已自动停止 |
-| EchoTestIntervalShort | 2 | 上一次测试结束和下一次测试开始之间的时间间隔少于 5s |
-| EchoTestAudioDeviceError | 3 | 音频采集异常 |
-| EchoTestVideoDeviceError | 4 | 视频采集异常 |
-| EchoTestAudioReceiveError | 5 | 音频接收异常 |
-| EchoTestVideoReceiveError | 6 | 视频接收异常 |
-| EchoTestInternalError | 7 | 内部错误，不可恢复 |
+| ByteRTCEchoTestResultSuccess | 0 | 接收到采集的音视频的回放，通话回路检测成功 |
+| ByteRTCEchoTestResultTimeout | 1 | 测试超过 60s 仍未完成，已自动停止 |
+| ByteRTCEchoTestResultIntervalShort | 2 | 上一次测试结束和下一次测试开始之间的时间间隔少于 5s |
+| ByteRTCEchoTestResultAudioDeviceError | 3 | 音频采集异常 |
+| ByteRTCEchoTestResultVideoDeviceError | 4 | 视频采集异常 |
+| ByteRTCEchoTestResultAudioReceiveError | 5 | 音频接收异常 |
+| ByteRTCEchoTestResultVideoReceiveError | 6 | 视频接收异常 |
+| ByteRTCEchoTestResultInternalError | 7 | 内部错误，不可恢复 |
 
 
 # ByteRTCBluetoothMode
@@ -2974,10 +3014,8 @@ typedef NS_ENUM(NSInteger, ByteRTCBluetoothMode)
 - 若使用 SDK 内部采集，此时设备摄像头会自动开启  <br>
 - 若使用自定义采集，此时你需调用 [pushExternalVideoFrame:](iOS-api.md#ByteRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK  <br>
 + false：否  <br>
+视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
 
-**注意:**
-视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
-视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
 
 <span id="ByteRTCEchoTestConfig-audioreportinterval"></span>
 ### audioReportInterval
@@ -3653,7 +3691,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 | **NSInteger** | [e2eDelay](#ByteRTCRemoteAudioStats-e2edelay) |
 | **NSInteger** | [statsInterval](#ByteRTCRemoteAudioStats-statsinterval) |
 | **NSInteger** | [rtt](#ByteRTCRemoteAudioStats-rtt) |
-| **NSInteger** | [total_rtt](#ByteRTCRemoteAudioStats-total_rtt) |
+| **NSInteger** | [totalRtt](#ByteRTCRemoteAudioStats-totalrtt) |
 | **NSInteger** | [quality](#ByteRTCRemoteAudioStats-quality) |
 | **NSInteger** | [jitterBufferDelay](#ByteRTCRemoteAudioStats-jitterbufferdelay) |
 | **NSInteger** | [numChannels](#ByteRTCRemoteAudioStats-numchannels) |
@@ -3731,10 +3769,10 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 客户端到服务端数据传输的往返时延，单位为 ms。  <br>
 
 
-<span id="ByteRTCRemoteAudioStats-total_rtt"></span>
-### total_rtt
+<span id="ByteRTCRemoteAudioStats-totalrtt"></span>
+### totalRtt
 ```objectivec
-@property(assign, nonatomic) NSInteger total_rtt;
+@property(assign, nonatomic) NSInteger totalRtt;
 ```
 发送端——服务端——接收端全链路数据传输往返时延。单位为 ms 。  <br>
 
@@ -3834,50 +3872,50 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 | 类型 | 名称 |
 | --- | --- |
-| **ByteRTCLocalAudioStats*** | [audio_stats](#ByteRTCLocalStreamStats-audio_stats) |
-| **ByteRTCLocalVideoStats*** | [video_stats](#ByteRTCLocalStreamStats-video_stats) |
-| **BOOL** | [is_screen](#ByteRTCLocalStreamStats-is_screen) |
-| **ByteRTCNetworkQuality** | [[deprecated] tx_quality](#ByteRTCLocalStreamStats-tx_quality) |
-| **ByteRTCNetworkQuality** | [[deprecated] rx_quality](#ByteRTCLocalStreamStats-rx_quality) |
+| **ByteRTCLocalAudioStats*** | [audioStats](#ByteRTCLocalStreamStats-audiostats) |
+| **ByteRTCLocalVideoStats*** | [videoStats](#ByteRTCLocalStreamStats-videostats) |
+| **BOOL** | [isScreen](#ByteRTCLocalStreamStats-isscreen) |
+| **ByteRTCNetworkQuality** | [[deprecated] txQuality](#ByteRTCLocalStreamStats-txquality) |
+| **ByteRTCNetworkQuality** | [[deprecated] rxQuality](#ByteRTCLocalStreamStats-rxquality) |
 
 
 ## 变量说明
-<span id="ByteRTCLocalStreamStats-audio_stats"></span>
-### audio_stats
+<span id="ByteRTCLocalStreamStats-audiostats"></span>
+### audioStats
 ```objectivec
-@property(strong, nonatomic) ByteRTCLocalAudioStats *_Nonnull audio_stats;
+@property(strong, nonatomic) ByteRTCLocalAudioStats *_Nonnull audioStats;
 ```
 本地设备发送音频流的统计信息，详见 [ByteRTCLocalAudioStats](#bytertclocalaudiostats)
 
 
-<span id="ByteRTCLocalStreamStats-video_stats"></span>
-### video_stats
+<span id="ByteRTCLocalStreamStats-videostats"></span>
+### videoStats
 ```objectivec
-@property(strong, nonatomic) ByteRTCLocalVideoStats *_Nonnull video_stats;
+@property(strong, nonatomic) ByteRTCLocalVideoStats *_Nonnull videoStats;
 ```
 本地设备发送视频流的统计信息，详见 [ByteRTCLocalVideoStats](#bytertclocalvideostats)
 
 
-<span id="ByteRTCLocalStreamStats-tx_quality"></span>
-### tx_quality
+<span id="ByteRTCLocalStreamStats-txquality"></span>
+### txQuality
 ```objectivec
-@property(assign, nonatomic) ByteRTCNetworkQuality tx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality txQuality;
 ```
 所属用户的媒体流上行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
 > Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
-<span id="ByteRTCLocalStreamStats-rx_quality"></span>
-### rx_quality
+<span id="ByteRTCLocalStreamStats-rxquality"></span>
+### rxQuality
 ```objectivec
-@property(assign, nonatomic) ByteRTCNetworkQuality rx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 ```
 所属用户的媒体流下行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
 > Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
-<span id="ByteRTCLocalStreamStats-is_screen"></span>
-### is_screen
+<span id="ByteRTCLocalStreamStats-isscreen"></span>
+### isScreen
 ```objectivec
-@property(nonatomic, assign) BOOL is_screen;
+@property(nonatomic, assign) BOOL isScreen;
 ```
 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
 
@@ -3898,11 +3936,11 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 | 类型 | 名称 |
 | --- | --- |
 | **NSString*** | [uid](#ByteRTCRemoteStreamStats-uid) |
-| **ByteRTCRemoteAudioStats*** | [audio_stats](#ByteRTCRemoteStreamStats-audio_stats) |
-| **ByteRTCRemoteVideoStats*** | [video_stats](#ByteRTCRemoteStreamStats-video_stats) |
-| **BOOL** | [is_screen](#ByteRTCRemoteStreamStats-is_screen) |
-| **ByteRTCNetworkQuality** | [[deprecated] tx_quality](#ByteRTCRemoteStreamStats-tx_quality) |
-| **ByteRTCNetworkQuality** | [[deprecated] rx_quality](#ByteRTCRemoteStreamStats-rx_quality) |
+| **ByteRTCRemoteAudioStats*** | [audioStats](#ByteRTCRemoteStreamStats-audiostats) |
+| **ByteRTCRemoteVideoStats*** | [videoStats](#ByteRTCRemoteStreamStats-videostats) |
+| **BOOL** | [isScreen](#ByteRTCRemoteStreamStats-isscreen) |
+| **ByteRTCNetworkQuality** | [[deprecated] txQuality](#ByteRTCRemoteStreamStats-txquality) |
+| **ByteRTCNetworkQuality** | [[deprecated] rxQuality](#ByteRTCRemoteStreamStats-rxquality) |
 
 
 ## 变量说明
@@ -3914,42 +3952,42 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 用户 ID 。音频来源的用户 ID 。  <br>
 
 
-<span id="ByteRTCRemoteStreamStats-audio_stats"></span>
-### audio_stats
+<span id="ByteRTCRemoteStreamStats-audiostats"></span>
+### audioStats
 ```objectivec
-@property(strong, nonatomic) ByteRTCRemoteAudioStats *_Nonnull audio_stats;
+@property(strong, nonatomic) ByteRTCRemoteAudioStats *_Nonnull audioStats;
 ```
 远端音频流的统计信息，详见 [ByteRTCRemoteAudioStats](#bytertcremoteaudiostats)
 
 
-<span id="ByteRTCRemoteStreamStats-video_stats"></span>
-### video_stats
+<span id="ByteRTCRemoteStreamStats-videostats"></span>
+### videoStats
 ```objectivec
-@property(strong, nonatomic) ByteRTCRemoteVideoStats *_Nonnull video_stats;
+@property(strong, nonatomic) ByteRTCRemoteVideoStats *_Nonnull videoStats;
 ```
 远端视频流的统计信息，详见 [ByteRTCRemoteVideoStats](#bytertcremotevideostats)
 
 
-<span id="ByteRTCRemoteStreamStats-tx_quality"></span>
-### tx_quality
+<span id="ByteRTCRemoteStreamStats-txquality"></span>
+### txQuality
 ```objectivec
-@property(assign, nonatomic) ByteRTCNetworkQuality tx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality txQuality;
 ```
 所属用户的媒体流上行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
 > Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
-<span id="ByteRTCRemoteStreamStats-rx_quality"></span>
-### rx_quality
+<span id="ByteRTCRemoteStreamStats-rxquality"></span>
+### rxQuality
 ```objectivec
-@property(assign, nonatomic) ByteRTCNetworkQuality rx_quality;
+@property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 ```
 所属用户的媒体流下行网络质量，详见 [ByteRTCNetworkQuality](#bytertcnetworkquality)
 
 > Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
-<span id="ByteRTCRemoteStreamStats-is_screen"></span>
-### is_screen
+<span id="ByteRTCRemoteStreamStats-isscreen"></span>
+### isScreen
 ```objectivec
-@property(nonatomic, assign) BOOL is_screen;
+@property(nonatomic, assign) BOOL isScreen;
 ```
 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。
 
@@ -4195,9 +4233,9 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 
 
-# ForwardStreamConfiguration
+# ByteRTCForwardStreamConfiguration
 ```objectivec
-@interface ForwardStreamConfiguration: NSObject
+@interface ByteRTCForwardStreamConfiguration: NSObject
 ```
 
 媒体流跨房间转发的目标房间的相关信息
@@ -4207,12 +4245,12 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 | 类型 | 名称 |
 | --- | --- |
-| **NSString*** | [roomId](#ForwardStreamConfiguration-roomid) |
-| **NSString*** | [token](#ForwardStreamConfiguration-token) |
+| **NSString*** | [roomId](#ByteRTCForwardStreamConfiguration-roomid) |
+| **NSString*** | [token](#ByteRTCForwardStreamConfiguration-token) |
 
 
 ## 变量说明
-<span id="ForwardStreamConfiguration-roomid"></span>
+<span id="ByteRTCForwardStreamConfiguration-roomid"></span>
 ### roomId
 ```objectivec
 @property(strong, nonatomic) NSString* _Nullable roomId;
@@ -4220,7 +4258,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 跨房间转发媒体流过程中目标房间 ID<br>
 
 
-<span id="ForwardStreamConfiguration-token"></span>
+<span id="ByteRTCForwardStreamConfiguration-token"></span>
 ### token
 ```objectivec
 @property(strong, nonatomic) NSString* _Nullable token;
@@ -4231,9 +4269,9 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 
 
-# ForwardStreamStateInfo
+# ByteRTCForwardStreamStateInfo
 ```objectivec
-@interface ForwardStreamStateInfo: NSObject
+@interface ByteRTCForwardStreamStateInfo: NSObject
 ```
 
 跨房间转发媒体流过程中的不同目标房间的状态和错误信息
@@ -4243,13 +4281,13 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 | 类型 | 名称 |
 | --- | --- |
-| **NSString*** | [roomId](#ForwardStreamStateInfo-roomid) |
-| **ByteRTCForwardStreamState** | [state](#ForwardStreamStateInfo-state) |
-| **ByteRTCForwardStreamError** | [error](#ForwardStreamStateInfo-error) |
+| **NSString*** | [roomId](#ByteRTCForwardStreamStateInfo-roomid) |
+| **ByteRTCForwardStreamState** | [state](#ByteRTCForwardStreamStateInfo-state) |
+| **ByteRTCForwardStreamError** | [error](#ByteRTCForwardStreamStateInfo-error) |
 
 
 ## 变量说明
-<span id="ForwardStreamStateInfo-roomid"></span>
+<span id="ByteRTCForwardStreamStateInfo-roomid"></span>
 ### roomId
 ```objectivec
 @property(strong, nonatomic) NSString* _Nullable roomId;
@@ -4258,7 +4296,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 空字符串代表所有目标房间
 
 
-<span id="ForwardStreamStateInfo-state"></span>
+<span id="ByteRTCForwardStreamStateInfo-state"></span>
 ### state
 ```objectivec
 @property(assign, nonatomic) ByteRTCForwardStreamState state;
@@ -4266,7 +4304,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 跨房间转发媒体流过程中该目标房间的状态，参看 [ByteRTCForwardStreamState](#bytertcforwardstreamstate)
 
 
-<span id="ForwardStreamStateInfo-error"></span>
+<span id="ByteRTCForwardStreamStateInfo-error"></span>
 ### error
 ```objectivec
 @property(assign, nonatomic) ByteRTCForwardStreamError error;
@@ -4275,9 +4313,9 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 
 
-# ForwardStreamEventInfo
+# ByteRTCForwardStreamEventInfo
 ```objectivec
-@interface ForwardStreamEventInfo: NSObject
+@interface ByteRTCForwardStreamEventInfo: NSObject
 ```
 
 跨房间转发媒体流过程中的不同目标房间发生的事件
@@ -4287,12 +4325,12 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 
 | 类型 | 名称 |
 | --- | --- |
-| **NSString*** | [roomId](#ForwardStreamEventInfo-roomid) |
-| **ByteRTCForwardStreamEvent** | [event](#ForwardStreamEventInfo-event) |
+| **NSString*** | [roomId](#ByteRTCForwardStreamEventInfo-roomid) |
+| **ByteRTCForwardStreamEvent** | [event](#ByteRTCForwardStreamEventInfo-event) |
 
 
 ## 变量说明
-<span id="ForwardStreamEventInfo-roomid"></span>
+<span id="ByteRTCForwardStreamEventInfo-roomid"></span>
 ### roomId
 ```objectivec
 @property(strong, nonatomic) NSString* _Nullable roomId;
@@ -4301,7 +4339,7 @@ SDK 订阅的远端视频流的分辨率下标。  <br>
 空字符串代表所有目标房间
 
 
-<span id="ForwardStreamEventInfo-event"></span>
+<span id="ByteRTCForwardStreamEventInfo-event"></span>
 ### event
 ```objectivec
 @property(assign, nonatomic) ByteRTCForwardStreamEvent event;
@@ -4606,6 +4644,8 @@ typedef NS_ENUM(NSInteger, ByteRTCSubtitleMode)
 | --- | --- |
 | **NSString*** | [userId](#ByteRTCSubtitleMessage-userid) |
 | **NSString*** | [text](#ByteRTCSubtitleMessage-text) |
+| **NSString*** | [language](#ByteRTCSubtitleMessage-language) |
+| **NSInteger** | [mode](#ByteRTCSubtitleMessage-mode) |
 | **NSInteger** | [sequence](#ByteRTCSubtitleMessage-sequence) |
 | **BOOL** | [definite](#ByteRTCSubtitleMessage-definite) |
 
@@ -4625,6 +4665,22 @@ typedef NS_ENUM(NSInteger, ByteRTCSubtitleMode)
 @property(copy, nonatomic) NSString *_Nonnull text;
 ```
 语音识别或翻译后的文本, 采用 UTF-8 编码。
+
+
+<span id="ByteRTCSubtitleMessage-language"></span>
+### language
+```objectivec
+@property(copy, nonatomic) NSString *_Nonnull language;
+```
+字幕语种，根据字幕模式为原文或译文对应的语种。
+
+
+<span id="ByteRTCSubtitleMessage-mode"></span>
+### mode
+```objectivec
+@property(assign, nonatomic) NSInteger mode;
+```
+字幕模式，参看 [ByteRTCSubtitleMode](#bytertcsubtitlemode)。
 
 
 <span id="ByteRTCSubtitleMessage-sequence"></span>
@@ -5020,9 +5076,9 @@ KTV 播放器错误码。
 
 
 
-# AttenuationType
+# ByteRTCAttenuationType
 ```objectivec
-typedef NS_ENUM(NSInteger, AttenuationType)
+typedef NS_ENUM(NSInteger, ByteRTCAttenuationType)
 ```
 
 空间音频音量随距离衰减模式
@@ -5032,14 +5088,14 @@ typedef NS_ENUM(NSInteger, AttenuationType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| AttenuationTypeNone | 0 | 不随距离衰减 |
-| AttenuationTypeLinear | 1 | 线性衰减，音量随距离增大而线性减小 |
-| AttenuationTypeExponential | 2 | 指数型衰减，音量随距离增大进行指数衰减 |
+| ByteRTCAttenuationTypeNone | 0 | 不随距离衰减 |
+| ByteRTCAttenuationTypeLinear | 1 | 线性衰减，音量随距离增大而线性减小 |
+| ByteRTCAttenuationTypeExponential | 2 | 指数型衰减，音量随距离增大进行指数衰减 |
 
 
-# ReceiveRange
+# ByteRTCReceiveRange
 ```objectivec
-@interface ReceiveRange : NSObject
+@interface ByteRTCReceiveRange : NSObject
 ```
 
 本地用户能收听到、且具有衰减效果的音频接收范围
@@ -5049,12 +5105,12 @@ typedef NS_ENUM(NSInteger, AttenuationType)
 
 | 类型 | 名称 |
 | --- | --- |
-| **int** | [min](#ReceiveRange-min) |
-| **int** | [max](#ReceiveRange-max) |
+| **int** | [min](#ByteRTCReceiveRange-min) |
+| **int** | [max](#ByteRTCReceiveRange-max) |
 
 
 ## 变量说明
-<span id="ReceiveRange-min"></span>
+<span id="ByteRTCReceiveRange-min"></span>
 ### min
 ```objectivec
 @property(nonatomic, assign) int min;
@@ -5063,7 +5119,7 @@ typedef NS_ENUM(NSInteger, AttenuationType)
 小于该值的范围内没有范围语音效果，即收听到的音频音量相同。
 
 
-<span id="ReceiveRange-max"></span>
+<span id="ByteRTCReceiveRange-max"></span>
 ### max
 ```objectivec
 @property(nonatomic, assign) int max;
@@ -5175,6 +5231,22 @@ typedef NS_ENUM(NSUInteger, ByteRTCLogLevel)
 | ByteRTCLogLevelError | 4 | 打印 error 级别信息。 |
 
 
+# ByteRTCLogoutReason
+```objectivec
+typedef NS_ENUM(NSUInteger, ByteRTCLogoutReason)
+```
+
+用户登出的原因
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCLogoutReasonLogout | 0 | 用户主动退出<br/>用户调用 `logout` 接口登出，或者销毁引擎登出。 |
+| ByteRTCLogoutReasonDuplicateLogin | 1 | 用户被动退出<br/>另一个用户以相同 UserId 进行了 `login`，导致本端用户被踢出。 |
+
+
 # ByteRTCMessageConfig
 ```objectivec
 typedef NS_ENUM(NSInteger, ByteRTCMessageConfig)
@@ -5240,77 +5312,77 @@ App 使用的 cpu 和 memory 信息  <br>
 
 | 类型 | 名称 |
 | --- | --- |
-| **unsigned** | [cpu_cores](#ByteRTCSysStats-cpu_cores) |
-| **double** | [cpu_app_usage](#ByteRTCSysStats-cpu_app_usage) |
-| **double** | [memory_usage](#ByteRTCSysStats-memory_usage) |
-| **unsigned** | [full_memory](#ByteRTCSysStats-full_memory) |
-| **unsigned** | [total_memory_usage](#ByteRTCSysStats-total_memory_usage) |
-| **unsigned** | [free_memory](#ByteRTCSysStats-free_memory) |
-| **double** | [memory_ratio](#ByteRTCSysStats-memory_ratio) |
-| **double** | [total_memory_ratio](#ByteRTCSysStats-total_memory_ratio) |
+| **unsigned** | [cpuCores](#ByteRTCSysStats-cpucores) |
+| **double** | [cpuAppUsage](#ByteRTCSysStats-cpuappusage) |
+| **double** | [memoryUsage](#ByteRTCSysStats-memoryusage) |
+| **unsigned** | [fullMemory](#ByteRTCSysStats-fullmemory) |
+| **unsigned** | [totalMemoryUsage](#ByteRTCSysStats-totalmemoryusage) |
+| **unsigned** | [freeMemory](#ByteRTCSysStats-freememory) |
+| **double** | [memoryRatio](#ByteRTCSysStats-memoryratio) |
+| **double** | [totalMemoryRatio](#ByteRTCSysStats-totalmemoryratio) |
 
 
 ## 变量说明
-<span id="ByteRTCSysStats-cpu_cores"></span>
-### cpu_cores
+<span id="ByteRTCSysStats-cpucores"></span>
+### cpuCores
 ```objectivec
-@property(assign, nonatomic) unsigned int cpu_cores;
+@property(assign, nonatomic) unsigned int cpuCores;
 ```
 当前系统 cpu 核数
 
 
-<span id="ByteRTCSysStats-cpu_app_usage"></span>
-### cpu_app_usage
+<span id="ByteRTCSysStats-cpuappusage"></span>
+### cpuAppUsage
 ```objectivec
-@property(assign, nonatomic) double cpu_app_usage;
+@property(assign, nonatomic) double cpuAppUsage;
 ```
 当前应用的 CPU 使用率，取值范围为 [0, 1]。
 
 
-<span id="ByteRTCSysStats-memory_usage"></span>
-### memory_usage
+<span id="ByteRTCSysStats-memoryusage"></span>
+### memoryUsage
 ```objectivec
-@property(assign, nonatomic) double memory_usage;
+@property(assign, nonatomic) double memoryUsage;
 ```
 当前App的内存使用（单位 MB）
 
 
-<span id="ByteRTCSysStats-full_memory"></span>
-### full_memory
+<span id="ByteRTCSysStats-fullmemory"></span>
+### fullMemory
 ```objectivec
-@property(assign, nonatomic) unsigned long long full_memory;
+@property(assign, nonatomic) unsigned long long fullMemory;
 ```
 全量内存（单位MB）
 
 
-<span id="ByteRTCSysStats-total_memory_usage"></span>
-### total_memory_usage
+<span id="ByteRTCSysStats-totalmemoryusage"></span>
+### totalMemoryUsage
 ```objectivec
-@property(assign, nonatomic) unsigned long long total_memory_usage;
+@property(assign, nonatomic) unsigned long long totalMemoryUsage;
 ```
 系统已使用内存（单位MB）
 
 
-<span id="ByteRTCSysStats-free_memory"></span>
-### free_memory
+<span id="ByteRTCSysStats-freememory"></span>
+### freeMemory
 ```objectivec
-@property(assign, nonatomic) unsigned long long free_memory;
+@property(assign, nonatomic) unsigned long long freeMemory;
 ```
 空闲可分配内存（单位MB）
 
 
-<span id="ByteRTCSysStats-memory_ratio"></span>
-### memory_ratio
+<span id="ByteRTCSysStats-memoryratio"></span>
+### memoryRatio
 ```objectivec
-@property(assign, nonatomic) double memory_ratio;
+@property(assign, nonatomic) double memoryRatio;
 ```
 当前应用的内存使用率（单位 %）
 
 
-<span id="ByteRTCSysStats-total_memory_ratio"></span>
-### total_memory_ratio
+<span id="ByteRTCSysStats-totalmemoryratio"></span>
+### totalMemoryRatio
 ```objectivec
-@property(assign, nonatomic) double total_memory_ratio;
+@property(assign, nonatomic) double totalMemoryRatio;
 ```
 系统内存使用率（单位 %）
 
@@ -5331,6 +5403,7 @@ App 使用的 cpu 和 memory 信息  <br>
 | **NSString*** | [logPath](#ByteRTCLogConfig-logpath) |
 | **ByteRTCLocalLogLevel** | [logLevel](#ByteRTCLogConfig-loglevel) |
 | **int** | [logFileSize](#ByteRTCLogConfig-logfilesize) |
+| **NSString*** | [logFilenamePrefix](#ByteRTCLogConfig-logfilenameprefix) |
 
 
 ## 变量说明
@@ -5359,6 +5432,15 @@ App 使用的 cpu 和 memory 信息  <br>
 若 `logFileSize` < 1，取 1 MB。若 `logFileSize` > 100，取 100 MB。<br>
 其中，单个日志文件最大为 2 MB：
 <ul><li> 若 1 ≤ <code>logFileSize</code> ≤ 2，则会生成一个日志文件。</li><li>若 <code>logFileSize</code> > 2，假设 <code>logFileSize/2</code> 的整数部分为 N，则前 N 个文件，每个文件会写满 2 MB，第 N+1 个文件大小不超过 <code>logFileSize mod 2</code>，否则会删除最老的文件，以此类推。</li></ul>
+
+
+<span id="ByteRTCLogConfig-logfilenameprefix"></span>
+### logFilenamePrefix
+```objectivec
+@property(copy, nonatomic) NSString *_Nonnull logFilenamePrefix;
+```
+日志文件名前缀，选填。该字符串必须符合正则表达式：[a-zA-Z0-9_@\-\.]{1,128}。
+最终的日志文件名为`前缀 + "_" + 文件创建时间 + "_rtclog".log`，如 `logPrefix_2023-05-25_172324_rtclog.log`。
 
 
 
@@ -5729,21 +5811,38 @@ typedef NS_ENUM(NSUInteger, ByteRTCMirrorType)
 | ByteRTCMirrorTypeRenderAndEncoder | 3 | 本地预览和编码传输时均有镜像效果 |
 
 
-# ByteRTCEffectBeautyMode
+# ByteRTCRemoteMirrorType
 ```objectivec
-typedef NS_ENUM(NSUInteger, ByteRTCEffectBeautyMode)
+typedef NS_ENUM(NSUInteger, ByteRTCRemoteMirrorType)
 ```
 
-基础美颜模式
+远端流的镜像类型。
 
 
 ### 枚举值
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteRTCEffectWhiteMode | 0 | 美白 |
-| ByteRTCEffectSmoothMode | 1 | 磨皮 |
-| ByteRTCEffectSharpenMode | 2 | 锐化 |
+| ByteRTCRemoteMirrorTypeNone | 0 | （默认值）远端视频渲染无镜像效果。 |
+| ByteRTCRemoteMirrorTypeRender | 1 | 远端视频渲染有镜像效果。 |
+
+
+# ByteRTCEffectBeautyMode
+```objectivec
+typedef NS_ENUM(NSUInteger, ByteRTCEffectBeautyMode)
+```
+
+基础美颜模式。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCEffectBeautyModeWhite | 0 | 美白。 |
+| ByteRTCEffectBeautyModeSmooth | 1 | 磨皮。 |
+| ByteRTCEffectBeautyModeSharpen | 2 | 锐化。 |
+| ByteRTCEffectBeautyModeClear | 3 | 清晰，需集成 v4.4.2+ 版本的特效 SDK。 |
 
 
 # ByteRTCVideoRotation
@@ -5925,6 +6024,37 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoPixelFormat)
 | ByteRTCVideoPixelFormatCVPixelBuffer | 12 | CVPixelBuffer |
 
 
+# ByteRTCLocalVideoRenderPosition
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCLocalVideoRenderPosition)
+```
+
+本地视频帧回调位置。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCLocalVideoRenderPositionAfterCapture | 0 | 采集后。 |
+| ByteRTCLocalVideoRenderPositionAfterPreprocess | 1 | （默认值）前处理后。 |
+
+
+# ByteRTCRemoteVideoRenderPosition
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCRemoteVideoRenderPosition)
+```
+
+远端视频帧回调位置。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCRemoteVideoRenderPositionAfterPostprocess | 1 | （默认值）后处理后。 |
+
+
 # ByteRTCVideoSinkPixelFormat
 ```objectivec
 typedef NS_ENUM(NSInteger, ByteRTCVideoSinkPixelFormat)
@@ -5941,7 +6071,39 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSinkPixelFormat)
 | ByteRTCVideoSinkPixelFormatI420 | 1 | YUV I420 格式 |
 | ByteRTCVideoSinkPixelFormatBGRA | 2 | BGRA 格式 |
 | ByteRTCVideoSinkPixelFormatRGBA | 5 | RGBA 格式, 字节序为 R8 G8 B8 A8 |
-| ByteRTCVideoSinkPixelFormatNV12 | 8 | YUV NV21 格式 |
+| ByteRTCVideoSinkPixelFormatNV12 | 8 | YUV NV12 格式 |
+
+
+# ByteRTCVideoApplyRotation
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCVideoApplyRotation)
+```
+
+是否将视频帧自动转正。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCVideoApplyRotationDefault | -1 | （默认值）不旋转。 |
+| ByteRTCVideoApplyRotation0 | 0 | 自动转正视频，即根据视频帧的旋转角信息将视频帧旋转到 0 度。 |
+
+
+# ByteRTCVideoRenderMirrorType
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCVideoRenderMirrorType)
+```
+
+是否将视频帧镜像。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCVideoRenderMirrorTypeOn | 1 | 开启镜像。 |
+| ByteRTCVideoRenderMirrorTypeOff | 2 | （默认值）不开启镜像。 |
 
 
 # ByteRTCVideoSuperResolutionModeChangedReason
@@ -6138,6 +6300,23 @@ typedef NS_ENUM(NSUInteger, ByteRTCMixedStreamLayoutRegionType)
 | ByteRTCMixedStreamLayoutRegionTypeImage | 1 | 合流布局区域类型为图片。 |
 
 
+# ByteRTCMixedStreamSyncStrategy
+```objectivec
+typedef NS_ENUM(NSUInteger, ByteRTCMixedStreamSyncStrategy)
+```
+
+合流同步策略
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCMixedStreamSyncStrategyNoSync | 0 | 不使用同步策略 |
+| ByteRTCMixedStreamSyncStrategyAudioPreciseSync | 1 | 使用音频精准同步策略 |
+| ByteRTCMixedStreamSyncStrategySimplexModeSync | 2 | 使用单通模式同步策略 |
+
+
 # ByteRTCMixedStreamVideoType
 ```objectivec
 typedef NS_ENUM(NSUInteger, ByteRTCMixedStreamVideoType)
@@ -6186,6 +6365,54 @@ typedef NS_ENUM(NSUInteger, ByteRTCTranscodingVideoCodec)
 | --- | --- | --- |
 | ByteRTCTranscodingVideoCodecH264 | 0 | H.264 格式，默认值。 |
 | ByteRTCTranscodingVideoCodecH265 | 1 | ByteVC1 格式。 |
+
+
+# ByteRTCMixedStreamSEIContentMode
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamSEIContentMode)
+```
+
+服务端合流转推 SEI 内容。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCMixedStreamSEIContentModeDefault | 0 | 视频流中包含全部的 SEI 信息。默认设置。 |
+| ByteRTCMixedStreamSEIContentModeEnableVolumeIndication | 1 | 随非关键帧传输的 SEI 数据中仅包含音量信息。<br><br/>当设置 `ByteRTCMixedStreamServerControlConfig.enableVolumeIndication` 为 True 时，此参数设置生效。 |
+
+
+# ByteRTCMixedStreamPushMode
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamPushMode)
+```
+
+服务端合流转推发起模式。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCMixedStreamPushModeOnStream | 0 | 无用户发布媒体流时，发起合流任务无效。默认设置。<br><br/>当有用户发布媒体流时，才能发起合流任务。 |
+| ByteRTCMixedStreamPushModeOnStartRequest | 1 | 无用户发布媒体流时，可以使用占位图发起合流任务。<br><br/>占位图设置参看 [alternateImageUrl](#ByteRTCMixedStreamLayoutRegionConfig-alternateimageurl) 和 [alternateImageFillMode](#ByteRTCMixedStreamLayoutRegionConfig-alternateimagefillmode) |
+
+
+# ByteRTCMixedStreamAlternateImageFillMode
+```objectivec
+typedef NS_ENUM(NSInteger, ByteRTCMixedStreamAlternateImageFillMode)
+```
+
+服务端合流占位图填充模式。
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCMixedStreamAlternateImageFillModeFit | 0 | 占位图跟随用户原始视频帧相同的比例缩放。默认设置。 |
+| ByteRTCMixedStreamAlternateImageFillModeFill | 1 | 占位图不跟随用户原始视频帧相同的比例缩放，保持图片原有比例。 |
 
 
 # ByteRTCSubscribeMediaType
@@ -6237,8 +6464,8 @@ typedef NS_ENUM(NSInteger, ByteRTCVideoSourceType)
 | --- | --- | --- |
 | ByteRTCVideoSourceTypeExternal | 0 | 自定义采集视频源 |
 | ByteRTCVideoSourceTypeInternal | 1 | 内部采集视频源 |
-| ByteRTCVideoSourceTypeEncodedManualSimulcast | 2 | 自定义编码视频源。  <br><br/>SDK 不会自动生成多路流，你需要自行生成并推送多路流 |
-| ByteRTCVideoSourceTypeEncodedAutoSimulcast | 3 | 自定义编码视频源。  <br><br/>你仅需推送分辨率最大的一路编码后视频流，SDK 将自动转码生成多路小流 |
+| ByteRTCVideoSourceTypeEncodedAutoSimulcast | 2 | 自定义编码视频源。  <br><br/>你仅需推送分辨率最大的一路编码后视频流，SDK 将自动转码生成多路小流 |
+| ByteRTCVideoSourceTypeEncodedManualSimulcast | 3 | 自定义编码视频源。  <br><br/>SDK 不会自动生成多路流，你需要自行生成并推送多路流 |
 
 
 # ByteRTCZoomConfigType
@@ -6253,8 +6480,8 @@ typedef NS_ENUM(NSInteger, ByteRTCZoomConfigType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteRTCZoomFocusOffset | 0 | 设置缩放系数 |
-| ByteRTCZoomMoveOffset | 1 | 设置移动步长 |
+| ByteRTCZoomConfigTypeFocusOffset | 0 | 设置缩放系数 |
+| ByteRTCZoomConfigTypeMoveOffset | 1 | 设置移动步长 |
 
 
 # ByteRTCZoomDirectionType
@@ -6269,13 +6496,13 @@ typedef NS_ENUM(NSInteger, ByteRTCZoomDirectionType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteRTCCameraMoveLeft | 0 | 相机向左移动 |
-| ByteRTCCameraMoveRight | 1 | 相机向右移动 |
-| ByteRTCCameraMoveUp | 2 | 相机向上移动 |
-| ByteRTCCameraMoveDown | 3 | 相机向下移动 |
-| ByteRTCCameraZoomOut | 4 | 相机缩小焦距 |
-| ByteRTCCameraZoomIn | 5 | 相机放大焦距 |
-| ByteRTCCameraReset | 6 | 恢复到原始画面 |
+| ByteRTCZoomDirectionTypeMoveLeft | 0 | 相机向左移动 |
+| ByteRTCZoomDirectionTypeMoveRight | 1 | 相机向右移动 |
+| ByteRTCZoomDirectionTypeMoveUp | 2 | 相机向上移动 |
+| ByteRTCZoomDirectionTypeMoveDown | 3 | 相机向下移动 |
+| ByteRTCZoomDirectionTypeZoomOut | 4 | 相机缩小焦距 |
+| ByteRTCZoomDirectionTypeZoomIn | 5 | 相机放大焦距 |
+| ByteRTCZoomDirectionTypeReset | 6 | 恢复到原始画面 |
 
 
 # ByteRTCVideoDecoderConfig
@@ -6340,9 +6567,9 @@ typedef NS_ENUM(NSInteger, ByteRTCRecordingType)
 
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| RecordAudioOnly | 0 | 只录制音频 |
-| RecordVideoOnly | 1 | 只录制视频 |
-| RecordVideoAndAudio | 2 | 同时录制音频和视频 |
+| ByteRTCRecordingTypeAudioOnly | 0 | 只录制音频 |
+| ByteRTCRecordingTypeVideoOnly | 1 | 只录制视频 |
+| ByteRTCRecordingTypeVideoAndAudio | 2 | 同时录制音频和视频 |
 
 
 # ByteRTCScreenMediaType
@@ -6520,6 +6747,22 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 | --- | --- | --- |
 | ByteRTCVideoRotationModeFollowApp | 0 | App 方向 |
 | ByteRTCVideoRotationModeFollowGSensor | 1 | 重力方向 |
+
+
+# ByteRTCVideoEnhancementMode
+```objectivec
+typedef NS_ENUM(NSUInteger, ByteRTCVideoEnhancementMode)
+```
+
+弱光适应类型
+
+
+### 枚举值
+
+| 类型 | 值 | 说明 |
+| --- | --- | --- |
+| ByteRTCVideoEnhancementModeDisabled | 0 | 关闭弱光适应 |
+| ByteRTCVideoEnhancementModeAuto | 1 | 开启弱光适应 |
 
 
 # ByteRTCExpressionDetectConfig
@@ -6857,6 +7100,7 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 | **ByteRTCView*** | [view](#ByteRTCVideoCanvas-view) |
 | **ByteRTCRenderMode** | [renderMode](#ByteRTCVideoCanvas-rendermode) |
 | **NSInteger** | [backgroundColor](#ByteRTCVideoCanvas-backgroundcolor) |
+| **ByteRTCVideoRotation** | [renderRotation](#ByteRTCVideoCanvas-renderrotation) |
 
 
 ## 变量说明
@@ -6882,6 +7126,58 @@ typedef NS_ENUM(NSUInteger, ByteRTCVideoRotationMode)
 @property(assign, nonatomic) NSInteger backgroundColor;
 ```
 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`,格式为 BGR。默认值是 `0x00000000`。其中，透明度设置无效。
+
+
+<span id="ByteRTCVideoCanvas-renderrotation"></span>
+### renderRotation
+```objectivec
+@property(assign, nonatomic) ByteRTCVideoRotation renderRotation;
+```
+视频帧旋转角度。参看 [ByteRTCVideoRotation](#bytertcvideorotation)。默认为 0 度，即不做旋转处理。<br>
+该设置仅对远端视频有效，对本地视频设置不生效。
+
+
+
+# ByteRTCRemoteVideoRenderConfig
+```objectivec
+@interface ByteRTCRemoteVideoRenderConfig : NSObject
+```
+
+远端视频帧渲染设置
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **ByteRTCRenderMode** | [renderMode](#ByteRTCRemoteVideoRenderConfig-rendermode) |
+| **NSInteger** | [backgroundColor](#ByteRTCRemoteVideoRenderConfig-backgroundcolor) |
+| **ByteRTCVideoRotation** | [renderRotation](#ByteRTCRemoteVideoRenderConfig-renderrotation) |
+
+
+## 变量说明
+<span id="ByteRTCRemoteVideoRenderConfig-rendermode"></span>
+### renderMode
+```objectivec
+@property(assign, nonatomic) ByteRTCRenderMode renderMode;
+```
+渲染模式，参看 [ByteRTCRenderMode](#bytertcrendermode)
+
+
+<span id="ByteRTCRemoteVideoRenderConfig-backgroundcolor"></span>
+### backgroundColor
+```objectivec
+@property(assign, nonatomic) NSInteger backgroundColor;
+```
+用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`,格式为 BGR。默认值是 `0x00000000`。其中，透明度设置无效。
+
+
+<span id="ByteRTCRemoteVideoRenderConfig-renderrotation"></span>
+### renderRotation
+```objectivec
+@property(assign, nonatomic) ByteRTCVideoRotation renderRotation;
+```
+视频帧旋转角度。参看 [ByteRTCVideoRotation](#bytertcvideorotation)。默认为 0 度，即不做旋转处理。
 
 
 
@@ -7417,11 +7713,9 @@ CVPixelBufferRef 类型的数据，当 format 为 kPixelFormatCVPixelBuffer 时�
 ```objectivec
 @property (assign, nonatomic) int numberOfPlanes;
 ```
-视频帧颜色 plane 数量; 当 textureBuf 有值时, 该值无意义
+视频帧颜色 plane 数量; 当 textureBuf 有值时, 该值无意义。<br>
+yuv 数据存储格式分为打包（packed）存储格式和平面（planar）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
 
-**注意:**
-yuv 数据存储格式分为打包（packed）存储格式和平面（planar）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
-yuv 数据存储格式分为打包（packed）存储格式和平面（planar）存储格式，planar 格式中 Y、U、V 分平面存储，packed 格式中 Y、U、V 交叉存储
 
 <span id="ByteRTCVideoFrame-planedatas"></span>
 ### planeDatas
@@ -7591,7 +7885,7 @@ yuv 数据存储格式分为打包（packed）存储格式和平面（planar）�
 | **ByteRTCTranscoderLayoutRegionType** | [type](#ByteRTCVideoCompositingRegion-type) |
 | **NSData*** | [data](#ByteRTCVideoCompositingRegion-data) |
 | **ByteRTCTranscoderLayoutRegionDataParam*** | [dataParam](#ByteRTCVideoCompositingRegion-dataparam) |
-| **Position*** | [spatialPosition](#ByteRTCVideoCompositingRegion-spatialposition) |
+| **ByteRTCPosition*** | [spatialPosition](#ByteRTCVideoCompositingRegion-spatialposition) |
 | **BOOL** | [applySpatialAudio](#ByteRTCVideoCompositingRegion-applyspatialaudio) |
 
 
@@ -7682,11 +7976,9 @@ yuv 数据存储格式分为打包（packed）存储格式和平面（planar）�
 ```objectivec
 @property(assign, nonatomic) CGFloat cornerRadius;
 ```
-（仅服务端合流支持设置）圆角半径相对画布宽度的比例。默认值为 `0.0`。
+（仅服务端合流支持设置）圆角半径相对画布宽度的比例。默认值为 `0.0`。<br>
+做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
 
-**注意:**
-做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
-做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
 
 <span id="ByteRTCVideoCompositingRegion-contentcontrol"></span>
 ### contentControl
@@ -7731,9 +8023,9 @@ yuv 数据存储格式分为打包（packed）存储格式和平面（planar）�
 <span id="ByteRTCVideoCompositingRegion-spatialposition"></span>
 ### spatialPosition
 ```objectivec
-@property (strong, nonatomic) Position * _Nullable spatialPosition;
+@property (strong, nonatomic) ByteRTCPosition * _Nullable spatialPosition;
 ```
-空间位置。参看 [Position](#position)。
+空间位置。参看 [ByteRTCPosition](#bytertcposition)。
 
 
 <span id="ByteRTCVideoCompositingRegion-applyspatialaudio"></span>
@@ -7741,7 +8033,10 @@ yuv 数据存储格式分为打包（packed）存储格式和平面（planar）�
 ```objectivec
 @property(assign, nonatomic) BOOL applySpatialAudio;
 ```
-该用户是否应用空间音频效果。
+设置某用户是否应用空间音频效果：
+
++ Yes：启用（默认值）
++ No：禁用
 
 
 
@@ -7975,8 +8270,8 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 | 类型 | 名称 |
 | --- | --- |
 | **BOOL** | [enableSpatialRender](#ByteRTCTranscodingSpatialConfig-enablespatialrender) |
-| **Position*** | [audienceSpatialPosition](#ByteRTCTranscodingSpatialConfig-audiencespatialposition) |
-| **HumanOrientation*** | [audienceSpatialOrientation](#ByteRTCTranscodingSpatialConfig-audiencespatialorientation) |
+| **ByteRTCPosition*** | [audienceSpatialPosition](#ByteRTCTranscodingSpatialConfig-audiencespatialposition) |
+| **ByteRTCHumanOrientation*** | [audienceSpatialOrientation](#ByteRTCTranscodingSpatialConfig-audiencespatialorientation) |
 
 
 ## 变量说明
@@ -7985,27 +8280,25 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 ```objectivec
 @property(assign, nonatomic) BOOL enableSpatialRender;
 ```
-是否开启推流 CDN 时的空间音频效果。
+是否开启推流 CDN 时的空间音频效果。<br>
+当你启用此效果时，你需要设定推流中各个 [ByteRTCTranscodingSpatialConfig](#bytertctranscodingspatialconfig) 的 `spatialPosition` 值，实现空间音频效果。
 
-**注意:**
-当你启用此效果时，你需要设定推流中各个 [ByteRTCTranscodingSpatialConfig](#bytertctranscodingspatialconfig) 的 `spatialPosition` 值，实现空间音频效果。
-当你启用此效果时，你需要设定推流中各个 [ByteRTCTranscodingSpatialConfig](#bytertctranscodingspatialconfig) 的 `spatialPosition` 值，实现空间音频效果。
 
 <span id="ByteRTCTranscodingSpatialConfig-audiencespatialposition"></span>
 ### audienceSpatialPosition
 ```objectivec
-@property (strong, nonatomic) Position * _Nullable audienceSpatialPosition;
+@property (strong, nonatomic) ByteRTCPosition * _Nullable audienceSpatialPosition;
 ```
-听众的空间位置。参看 [Position](#position)。<br>
+听众的空间位置。参看 [ByteRTCPosition](#bytertcposition)。<br>
 听众指收听来自 CDN 的音频流的用户。
 
 
 <span id="ByteRTCTranscodingSpatialConfig-audiencespatialorientation"></span>
 ### audienceSpatialOrientation
 ```objectivec
-@property(strong, nonatomic) HumanOrientation * _Nullable audienceSpatialOrientation;
+@property(strong, nonatomic) ByteRTCHumanOrientation * _Nullable audienceSpatialOrientation;
 ```
-听众的空间朝向。参看 [HumanOrientation](#humanorientation)。<br>
+听众的空间朝向。参看 [ByteRTCHumanOrientation](#bytertchumanorientation)。<br>
 听众指收听来自 CDN 的音频流的用户。
 
 
@@ -8214,8 +8507,8 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
 ```
 
-单个图片或视频流在合流中的布局信息。(新)<br>
-开启转推直播功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
+单个图片或视频流在合流中的布局信息。(新)
+开启合流功能后，在多路图片或视频流合流时，你可以设置其中一路流在合流中的预设布局信息。
 
 
 ## 成员变量
@@ -8224,10 +8517,10 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 | --- | --- |
 | **NSString*** | [userID](#ByteRTCMixedStreamLayoutRegionConfig-userid) |
 | **NSString*** | [roomID](#ByteRTCMixedStreamLayoutRegionConfig-roomid) |
-| **CGFloat** | [locationX](#ByteRTCMixedStreamLayoutRegionConfig-locationx) |
-| **CGFloat** | [locationY](#ByteRTCMixedStreamLayoutRegionConfig-locationy) |
-| **CGFloat** | [widthProportion](#ByteRTCMixedStreamLayoutRegionConfig-widthproportion) |
-| **CGFloat** | [heightProportion](#ByteRTCMixedStreamLayoutRegionConfig-heightproportion) |
+| **NSInteger** | [locationX](#ByteRTCMixedStreamLayoutRegionConfig-locationx) |
+| **NSInteger** | [locationY](#ByteRTCMixedStreamLayoutRegionConfig-locationy) |
+| **NSInteger** | [width](#ByteRTCMixedStreamLayoutRegionConfig-width) |
+| **NSInteger** | [height](#ByteRTCMixedStreamLayoutRegionConfig-height) |
 | **NSInteger** | [zOrder](#ByteRTCMixedStreamLayoutRegionConfig-zorder) |
 | **BOOL** | [isLocalUser](#ByteRTCMixedStreamLayoutRegionConfig-islocaluser) |
 | **ByteRTCMixedStreamVideoType** | [streamType](#ByteRTCMixedStreamLayoutRegionConfig-streamtype) |
@@ -8238,8 +8531,10 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 | **ByteRTCMixedStreamLayoutRegionType** | [regionContentType](#ByteRTCMixedStreamLayoutRegionConfig-regioncontenttype) |
 | **NSData*** | [imageWaterMark](#ByteRTCMixedStreamLayoutRegionConfig-imagewatermark) |
 | **ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig*** | [imageWaterMarkConfig](#ByteRTCMixedStreamLayoutRegionConfig-imagewatermarkconfig) |
-| **Position*** | [spatialPosition](#ByteRTCMixedStreamLayoutRegionConfig-spatialposition) |
+| **ByteRTCPosition*** | [spatialPosition](#ByteRTCMixedStreamLayoutRegionConfig-spatialposition) |
 | **BOOL** | [applySpatialAudio](#ByteRTCMixedStreamLayoutRegionConfig-applyspatialaudio) |
+| **ByteRTCMixedStreamAlternateImageFillMode** | [alternateImageFillMode](#ByteRTCMixedStreamLayoutRegionConfig-alternateimagefillmode) |
+| **NSString*** | [alternateImageUrl](#ByteRTCMixedStreamLayoutRegionConfig-alternateimageurl) |
 
 
 ## 变量说明
@@ -8263,33 +8558,35 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 <span id="ByteRTCMixedStreamLayoutRegionConfig-locationx"></span>
 ### locationX
 ```objectivec
-@property(assign, nonatomic) CGFloat locationX;
+@property(assign, nonatomic) NSInteger locationX;
 ```
-视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
+单个用户画面左上角在整个画布坐标系中的 X 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的横向位移。<br>
+取值范围为 [0, 整体画布宽度)。默认值为 0。
 
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-locationy"></span>
 ### locationY
 ```objectivec
-@property(assign, nonatomic) CGFloat locationY;
+@property(assign, nonatomic) NSInteger locationY;
 ```
-视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
+单个用户画面左上角在整个画布坐标系中的 Y 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的纵向位移。<br>
+取值范围为 [0, 整体画布高度)。默认值为 0。
 
 
-<span id="ByteRTCMixedStreamLayoutRegionConfig-widthproportion"></span>
-### widthProportion
+<span id="ByteRTCMixedStreamLayoutRegionConfig-width"></span>
+### width
 ```objectivec
-@property(assign, nonatomic) CGFloat widthProportion;
+@property(assign, nonatomic) NSInteger width;
 ```
-视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。建议设置。
+单个用户画面的宽度。取值范围为 [0, 整体画布宽度]，默认值为 360。
 
 
-<span id="ByteRTCMixedStreamLayoutRegionConfig-heightproportion"></span>
-### heightProportion
+<span id="ByteRTCMixedStreamLayoutRegionConfig-height"></span>
+### height
 ```objectivec
-@property(assign, nonatomic) CGFloat heightProportion;
+@property(assign, nonatomic) NSInteger height;
 ```
-视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。建议设置。
+单个用户画面的高度。取值范围为 [0, 整体画布高度]，默认值为 640。
 
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-zorder"></span>
@@ -8297,7 +8594,7 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 ```objectivec
 @property(assign, nonatomic) NSInteger zOrder;
 ```
-用户视频布局在画布中的层级。取值范围为 [0 - 100]，0 为底层，值越大越上层。默认值为 0。
+用户视频布局在画布中的层级。取值范围为 [0 - 100]，0 为底层，值越大越上层。默认值为 0。建议设置。
 
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-islocaluser"></span>
@@ -8305,7 +8602,7 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 ```objectivec
 @property(assign, nonatomic) BOOL isLocalUser;
 ```
-是否为本地用户。客户端合流时，必须为 true。
+是否为本地用户
 
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-streamtype"></span>
@@ -8329,11 +8626,9 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 ```objectivec
 @property(assign, nonatomic) CGFloat cornerRadius;
 ```
-圆角半径相对画布宽度的比例。默认值为 `0.0`。
+圆角半径相对画布宽度的比例。默认值为 `0.0`。<br>
+做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
 
-**注意:**
-做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
-做范围判定时，首先根据画布的宽高，将 `width`，`height`，和 `cornerRadius` 分别转换为像素值：`width_px`，`height_px`，和 `cornerRadius_px`。然后判定是否满足 `cornerRadius_px < min(width_px/2, height_px/2)`：若满足，则设置成功；若不满足，则将 `cornerRadius_px` 设定为 `min(width_px/2, height_px/2)`，然后将 `cornerRadius` 设定为 `cornerRadius_px` 相对画布宽度的比例值。
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-mediatype"></span>
 ### mediaType
@@ -8378,9 +8673,9 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 <span id="ByteRTCMixedStreamLayoutRegionConfig-spatialposition"></span>
 ### spatialPosition
 ```objectivec
-@property (strong, nonatomic) Position * _Nullable spatialPosition;
+@property (strong, nonatomic) ByteRTCPosition * _Nullable spatialPosition;
 ```
-空间位置。参看 [Position](#position)。
+空间位置。参看 [ByteRTCPosition](#bytertcposition)。
 
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-applyspatialaudio"></span>
@@ -8388,7 +8683,27 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 ```objectivec
 @property(assign, nonatomic) BOOL applySpatialAudio;
 ```
-该用户是否应用空间音频效果。
+设置某用户是否应用空间音频效果：
+
++ Yes：启用（默认值）
++ No：禁用
+
+
+<span id="ByteRTCMixedStreamLayoutRegionConfig-alternateimagefillmode"></span>
+### alternateImageFillMode
+```objectivec
+@property (assign, nonatomic)ByteRTCMixedStreamAlternateImageFillMode alternateImageFillMode;
+```
+设置占位图的填充模式。<br>
+该参数用来控制当用户停止发布视频流，画面恢复为占位图后，此时占位图的填充模式。参看 [ByteRTCMixedStreamAlternateImageFillMode](#bytertcmixedstreamalternateimagefillmode)。
+
+
+<span id="ByteRTCMixedStreamLayoutRegionConfig-alternateimageurl"></span>
+### alternateImageUrl
+```objectivec
+@property(copy, nonatomic)NSString * alternateImageUrl;
+```
+设置占位图的 URL，长度小于 1024 字符.
 
 
 
@@ -8408,6 +8723,7 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 | **NSString*** | [backgroundColor](#ByteRTCMixedStreamLayoutConfig-backgroundcolor) |
 | **NSArray<ByteRTCMixedStreamLayoutRegionConfig*>*** | [regions](#ByteRTCMixedStreamLayoutConfig-regions) |
 | **NSString*** | [userConfigExtraInfo](#ByteRTCMixedStreamLayoutConfig-userconfigextrainfo) |
+| **NSString*** | [backgroundImageUrl](#ByteRTCMixedStreamLayoutConfig-backgroundimageurl) |
 
 
 ## 变量说明
@@ -8435,6 +8751,15 @@ AAC 编码规格，参看 [ByteRTCAACProfile](#bytertcaacprofile)。默认值为
 @property(copy, nonatomic) NSString *_Nonnull userConfigExtraInfo;
 ```
 用户透传的额外数据。
+
+
+<span id="ByteRTCMixedStreamLayoutConfig-backgroundimageurl"></span>
+### backgroundImageUrl
+```objectivec
+@property(copy, nonatomic) NSString *_Nonnull backgroundImageUrl;
+```
+设置合流后整体画布的背景图片 URL，长度最大为 1024 bytes。<br>
+支持的图片格式包括：JPG, JPEG, PNG。如果背景图片的宽高和整体屏幕的宽高不一致，背景图片会缩放到铺满屏幕。
 
 
 
@@ -8598,8 +8923,8 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 | 类型 | 名称 |
 | --- | --- |
 | **BOOL** | [enableSpatialRender](#ByteRTCMixedStreamSpatialAudioConfig-enablespatialrender) |
-| **Position*** | [audienceSpatialPosition](#ByteRTCMixedStreamSpatialAudioConfig-audiencespatialposition) |
-| **HumanOrientation*** | [audienceSpatialOrientation](#ByteRTCMixedStreamSpatialAudioConfig-audiencespatialorientation) |
+| **ByteRTCPosition*** | [audienceSpatialPosition](#ByteRTCMixedStreamSpatialAudioConfig-audiencespatialposition) |
+| **ByteRTCHumanOrientation*** | [audienceSpatialOrientation](#ByteRTCMixedStreamSpatialAudioConfig-audiencespatialorientation) |
 
 
 ## 变量说明
@@ -8608,27 +8933,25 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 ```objectivec
 @property(assign, nonatomic) BOOL enableSpatialRender;
 ```
-是否开启推流 CDN 时的空间音频效果。
+是否开启推流 CDN 时的空间音频效果。<br>
+当你启用此效果时，你需要设定推流中各个 [ByteRTCMixedStreamLayoutRegionConfig](#bytertcmixedstreamlayoutregionconfig) 的 `spatialPosition` 值，实现空间音频效果。
 
-**注意:**
-当你启用此效果时，你需要设定推流中各个 [ByteRTCMixedStreamLayoutRegionConfig](#bytertcmixedstreamlayoutregionconfig) 的 `spatialPosition` 值，实现空间音频效果。
-当你启用此效果时，你需要设定推流中各个 [ByteRTCMixedStreamLayoutRegionConfig](#bytertcmixedstreamlayoutregionconfig) 的 `spatialPosition` 值，实现空间音频效果。
 
 <span id="ByteRTCMixedStreamSpatialAudioConfig-audiencespatialposition"></span>
 ### audienceSpatialPosition
 ```objectivec
-@property (strong, nonatomic) Position * _Nullable audienceSpatialPosition;
+@property (strong, nonatomic) ByteRTCPosition * _Nullable audienceSpatialPosition;
 ```
-听众的空间位置。参看 [Position](#position)。<br>
+听众的空间位置。参看 [ByteRTCPosition](#bytertcposition)。<br>
 听众指收听来自 CDN 的音频流的用户。
 
 
 <span id="ByteRTCMixedStreamSpatialAudioConfig-audiencespatialorientation"></span>
 ### audienceSpatialOrientation
 ```objectivec
-@property(strong, nonatomic) HumanOrientation * _Nullable audienceSpatialOrientation;
+@property(strong, nonatomic) ByteRTCHumanOrientation * _Nullable audienceSpatialOrientation;
 ```
-听众的空间朝向。参看 [HumanOrientation](#humanorientation)。<br>
+听众的空间朝向。参看 [ByteRTCHumanOrientation](#bytertchumanorientation)。<br>
 听众指收听来自 CDN 的音频流的用户。
 
 
@@ -8667,6 +8990,129 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 
 
 
+# ByteRTCMixedStreamServerControlConfig
+```objectivec
+@interface ByteRTCMixedStreamServerControlConfig : NSObject
+```
+
+服务端合流控制参数
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **BOOL** | [enableVolumeIndication](#ByteRTCMixedStreamServerControlConfig-enablevolumeindication) |
+| **CGFloat** | [volumeIndicationInterval](#ByteRTCMixedStreamServerControlConfig-volumeindicationinterval) |
+| **NSInteger** | [talkVolume](#ByteRTCMixedStreamServerControlConfig-talkvolume) |
+| **BOOL** | [isAddVolumeValue](#ByteRTCMixedStreamServerControlConfig-isaddvolumevalue) |
+| **ByteRTCMixedStreamSEIContentMode** | [seiContentMode](#ByteRTCMixedStreamServerControlConfig-seicontentmode) |
+| **NSInteger** | [seiPayloadType](#ByteRTCMixedStreamServerControlConfig-seipayloadtype) |
+| **NSString*** | [seiPayloadUUID](#ByteRTCMixedStreamServerControlConfig-seipayloaduuid) |
+| **ByteRTCMixedStreamMediaType** | [mediaType](#ByteRTCMixedStreamServerControlConfig-mediatype) |
+| **ByteRTCMixedStreamPushMode** | [pushStreamMode](#ByteRTCMixedStreamServerControlConfig-pushstreammode) |
+
+
+## 变量说明
+<span id="ByteRTCMixedStreamServerControlConfig-enablevolumeindication"></span>
+### enableVolumeIndication
+```objectivec
+@property(assign, nonatomic) BOOL enableVolumeIndication;
+```
+是否开启单独发送声音提示 SEI 的功能：<br>
+
++ True：开启；
++ False：关闭。（默认值）
+开启后，你可以通过 `ByteRTCMixedStreamServerControlConfig.seiContentMode` 控制 SEI 的内容是否只携带声音信息。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-volumeindicationinterval"></span>
+### volumeIndicationInterval
+```objectivec
+@property(assign, nonatomic) CGFloat volumeIndicationInterval;
+```
+声音提示间隔，单位为秒，取值范围为 [0.3,+∞)，默认值为 2。<br>
+此值仅取整百毫秒。若传入两位及以上小数，则四舍五入取第一位小数的值。例如，若传入 0.36，则取 0.4。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-talkvolume"></span>
+### talkVolume
+```objectivec
+@property(assign, nonatomic) NSInteger talkVolume;
+```
+有效音量大小，取值范围为 [0, 255]，默认值为 0。<br>
+超出取值范围则自动调整为默认值，即 0。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-isaddvolumevalue"></span>
+### isAddVolumeValue
+```objectivec
+@property(assign, nonatomic) BOOL isAddVolumeValue;
+```
+声音信息 SEI 是否包含音量值：
+
++ True：是；
++ False：否，默认值。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-seicontentmode"></span>
+### seiContentMode
+```objectivec
+@property(assign, nonatomic) ByteRTCMixedStreamSEIContentMode seiContentMode;
+```
+设置 SEI 内容。参看 [ByteRTCMixedStreamSEIContentMode](#bytertcmixedstreamseicontentmode)。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-seipayloadtype"></span>
+### seiPayloadType
+```objectivec
+@property(assign, nonatomic) NSInteger seiPayloadType;
+```
+SEI 信息的 payload type。<br>
+默认值为 `100`，只支持设置 `5` 和 `100`。<br>
+在转推直播的过程中，该参数不支持变更。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-seipayloaduuid"></span>
+### seiPayloadUUID
+```objectivec
+@property(copy, nonatomic) NSString *seiPayloadUUID;
+```
+SEI 信息的 payload UUID。
+
+**注意:**
+PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   
+该参数长度需为32位，否则会收到错误码为1091的回调。  
+该参数每个字符的范围需为 [0, 9] [a, f] [A, F] 
+该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。
+在转推直播的过程中，该参数不支持变更。
+
+PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   
+该参数长度需为32位，否则会收到错误码为1091的回调。  
+该参数每个字符的范围需为 [0, 9] [a, f] [A, F] 
+该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。
+在转推直播的过程中，该参数不支持变更。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-mediatype"></span>
+### mediaType
+```objectivec
+@property(assign, nonatomic) ByteRTCMixedStreamMediaType mediaType;
+```
+设置合流推到 CDN 时输出的媒体流类型。参看 [ByteRTCMixedStreamMediaType](#bytertcmixedstreammediatype)。<br>
+默认输出音视频流。支持输出纯音频流，但暂不支持输出纯视频流。
+
+
+<span id="ByteRTCMixedStreamServerControlConfig-pushstreammode"></span>
+### pushStreamMode
+```objectivec
+@property(assign, nonatomic) ByteRTCMixedStreamPushMode pushStreamMode;
+```
+设置是否在没有用户发布流的情况下发起转推直播。具体参看 [ByteRTCMixedStreamPushMode](#bytertcmixedstreampushmode)。<br>
+该参数在发起合流任务后的转推直播过程中不支持动态变更。
+
+
+
 # ByteRTCMixedStreamConfig
 ```objectivec
 @interface ByteRTCMixedStreamConfig : NSObject
@@ -8685,6 +9131,7 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 | **ByteRTCMixedStreamAudioConfig*** | [audioConfig](#ByteRTCMixedStreamConfig-audioconfig) |
 | **ByteRTCMixedStreamClientMixConfig*** | [clientMixConfig](#ByteRTCMixedStreamConfig-clientmixconfig) |
 | **ByteRTCMixedStreamSpatialAudioConfig*** | [spatialAudioConfig](#ByteRTCMixedStreamConfig-spatialaudioconfig) |
+| **ByteRTCMixedStreamServerControlConfig*** | [serverControlConfig](#ByteRTCMixedStreamConfig-servercontrolconfig) |
 | **NSString*** | [pushURL](#ByteRTCMixedStreamConfig-pushurl) |
 | **NSString*** | [roomID](#ByteRTCMixedStreamConfig-roomid) |
 | **NSString*** | [userID](#ByteRTCMixedStreamConfig-userid) |
@@ -8745,6 +9192,14 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 @property(strong, nonatomic) ByteRTCMixedStreamSpatialAudioConfig * _Nonnull spatialAudioConfig;
 ```
 转推 CDN 空间音频配置。详见 [ByteRTCMixedStreamSpatialAudioConfig](#bytertcmixedstreamspatialaudioconfig) 。
+
+
+<span id="ByteRTCMixedStreamConfig-servercontrolconfig"></span>
+### serverControlConfig
+```objectivec
+@property(strong, nonatomic) ByteRTCMixedStreamServerControlConfig * _Nonnull serverControlConfig;
+```
+服务端合流控制参数。详见 [ByteRTCMixedStreamServerControlConfig](#bytertcmixedstreamservercontrolconfig) 。
 
 
 <span id="ByteRTCMixedStreamConfig-pushurl"></span>
@@ -9052,6 +9507,93 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 | videoFrame | **ByteRTCVideoFrame*** | 视频帧 |
 
 
+# ByteRTCLocalVideoSinkConfig
+```objectivec
+@interface ByteRTCLocalVideoSinkConfig : NSObject
+```
+
+本地视频帧回调配置。
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **ByteRTCLocalVideoRenderPosition** | [position](#ByteRTCLocalVideoSinkConfig-position) |
+| **ByteRTCVideoSinkPixelFormat** | [requiredPixelFormat](#ByteRTCLocalVideoSinkConfig-requiredpixelformat) |
+
+
+## 变量说明
+<span id="ByteRTCLocalVideoSinkConfig-position"></span>
+### position
+```objectivec
+@property(nonatomic, assign) ByteRTCLocalVideoRenderPosition position;
+```
+本地视频帧回调位置，参看 [ByteRTCLocalVideoRenderPosition](#bytertclocalvideorenderposition)，默认回调前处理后的视频帧。
+
+
+<span id="ByteRTCLocalVideoSinkConfig-requiredpixelformat"></span>
+### requiredPixelFormat
+```objectivec
+@property(nonatomic, assign) ByteRTCVideoSinkPixelFormat requiredPixelFormat;
+```
+本地视频帧回调格式，参看 [ByteRTCVideoSinkPixelFormat](#bytertcvideosinkpixelformat)，默认值为 0。
+
+
+
+# ByteRTCRemoteVideoSinkConfig
+```objectivec
+@interface ByteRTCRemoteVideoSinkConfig : NSObject
+```
+
+远端视频帧回调配置。
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **ByteRTCRemoteVideoRenderPosition** | [position](#ByteRTCRemoteVideoSinkConfig-position) |
+| **ByteRTCVideoSinkPixelFormat** | [requiredPixelFormat](#ByteRTCRemoteVideoSinkConfig-requiredpixelformat) |
+| **ByteRTCVideoApplyRotation** | [applyRotation](#ByteRTCRemoteVideoSinkConfig-applyrotation) |
+| **ByteRTCVideoRenderMirrorType** | [mirrorType](#ByteRTCRemoteVideoSinkConfig-mirrortype) |
+
+
+## 变量说明
+<span id="ByteRTCRemoteVideoSinkConfig-position"></span>
+### position
+```objectivec
+@property(nonatomic, assign) ByteRTCRemoteVideoRenderPosition position;
+```
+远端视频帧回调位置，参看 [ByteRTCRemoteVideoRenderPosition](#bytertcremotevideorenderposition)，默认回调后处理后的视频帧。
+
+
+<span id="ByteRTCRemoteVideoSinkConfig-requiredpixelformat"></span>
+### requiredPixelFormat
+```objectivec
+@property(nonatomic, assign) ByteRTCVideoSinkPixelFormat requiredPixelFormat;
+```
+远端视频帧回调格式，参看 [ByteRTCVideoSinkPixelFormat](#bytertcvideosinkpixelformat)，默认值为 0。
+
+
+<span id="ByteRTCRemoteVideoSinkConfig-applyrotation"></span>
+### applyRotation
+```objectivec
+@property(nonatomic, assign) ByteRTCVideoApplyRotation applyRotation;
+```
+是否将视频帧自动转正，参看 [ByteRTCVideoApplyRotation](#bytertcvideoapplyrotation)，默认为不旋转。
+
+
+<span id="ByteRTCRemoteVideoSinkConfig-mirrortype"></span>
+### mirrorType
+```objectivec
+@property(nonatomic, assign) ByteRTCVideoRenderMirrorType mirrorType;
+```
+是否将视频帧镜像。参看 [ByteRTCVideoRenderMirrorType](#bytertcvideorendermirrortype)，默认为不镜像。
+本设置与 [setRemoteVideoMirrorType:withMirrorType:](iOS-api.md#ByteRTCVideo-setremotevideomirrortype-withmirrortype) （适用于内部渲染）相互独立。
+
+
+
 # ByteRTCVideoPreprocessorConfig
 ```objectivec
 @interface ByteRTCVideoPreprocessorConfig : NSObject
@@ -9064,14 +9606,14 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 
 | 类型 | 名称 |
 | --- | --- |
-| **ByteRTCVideoPixelFormat** | [required_pixel_format](#ByteRTCVideoPreprocessorConfig-required_pixel_format) |
+| **ByteRTCVideoPixelFormat** | [requiredPixelFormat](#ByteRTCVideoPreprocessorConfig-requiredpixelformat) |
 
 
 ## 变量说明
-<span id="ByteRTCVideoPreprocessorConfig-required_pixel_format"></span>
-### required_pixel_format
+<span id="ByteRTCVideoPreprocessorConfig-requiredpixelformat"></span>
+### requiredPixelFormat
 ```objectivec
-@property(nonatomic, assign) ByteRTCVideoPixelFormat required_pixel_format;
+@property(nonatomic, assign) ByteRTCVideoPixelFormat requiredPixelFormat;
 ```
 视频帧的像素格式，参看 [ByteRTCVideoPixelFormat](#bytertcvideopixelformat)。
 当前仅支持 `ByteRTCVideoPixelFormatI420` 和 `ByteRTCVideoPixelFormatUnknown` 格式。
@@ -9665,41 +10207,41 @@ AAC 编码规格，参看 [ByteRTCMixedStreamAudioProfile](#bytertcmixedstreamau
 
 | 类型 | 名称 |
 | --- | --- |
-| **CGFloat** | [LocationX](#ByteRTCSourceCropInfo-locationx) |
-| **CGFloat** | [LocationY](#ByteRTCSourceCropInfo-locationy) |
-| **CGFloat** | [WidthProportion](#ByteRTCSourceCropInfo-widthproportion) |
-| **CGFloat** | [HeightProportion](#ByteRTCSourceCropInfo-heightproportion) |
+| **CGFloat** | [locationX](#ByteRTCSourceCropInfo-locationx) |
+| **CGFloat** | [locationY](#ByteRTCSourceCropInfo-locationy) |
+| **CGFloat** | [widthProportion](#ByteRTCSourceCropInfo-widthproportion) |
+| **CGFloat** | [heightProportion](#ByteRTCSourceCropInfo-heightproportion) |
 
 
 ## 变量说明
 <span id="ByteRTCSourceCropInfo-locationx"></span>
-### LocationX
+### locationX
 ```objectivec
-@property(assign, nonatomic) CGFloat LocationX;
+@property(assign, nonatomic) CGFloat locationX;
 ```
 裁剪后得到的视频帧左上角横坐标相对于裁剪前整体画面的比例，取值范围[0.0, 1.0)
 
 
 <span id="ByteRTCSourceCropInfo-locationy"></span>
-### LocationY
+### locationY
 ```objectivec
-@property(assign, nonatomic) CGFloat LocationY;
+@property(assign, nonatomic) CGFloat locationY;
 ```
 裁剪后得到的视频帧左上角纵坐标相对于裁剪前整体画面的比例，取值范围[0.0, 1.0)
 
 
 <span id="ByteRTCSourceCropInfo-widthproportion"></span>
-### WidthProportion
+### widthProportion
 ```objectivec
-@property(assign, nonatomic) CGFloat WidthProportion;
+@property(assign, nonatomic) CGFloat widthProportion;
 ```
 裁剪后得到的视频帧宽度相对于裁剪前整体画面的比例，取值范围(0.0, 1.0]
 
 
 <span id="ByteRTCSourceCropInfo-heightproportion"></span>
-### HeightProportion
+### heightProportion
 ```objectivec
-@property(assign, nonatomic) CGFloat HeightProportion;
+@property(assign, nonatomic) CGFloat heightProportion;
 ```
 裁剪后得到的视频帧高度相对于裁剪前整体画面的比例，取值范围(0.0, 1.0]
 

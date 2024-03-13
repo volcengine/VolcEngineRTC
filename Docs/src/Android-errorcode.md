@@ -87,6 +87,7 @@ public class com.ss.bytertc.engine.type.ErrorCode
 ```
 
 回调错误码。
+SDK 内部遇到不可恢复的错误时，会通过 `onError` 回调通知用户。
 
 
 ## 成员变量
@@ -106,7 +107,6 @@ public class com.ss.bytertc.engine.type.ErrorCode
 | **int** | [ERROR_CODE_ROOM_DISMISS](#ErrorCode-error_code_room_dismiss) |
 | **int** | [ERROR_CODE_ROOM_ALREADY_EXIST](#ErrorCode-error_code_room_already_exist) |
 | **int** | [ERROR_CODE_USER_ID_DIFFERENT](#ErrorCode-error_code_user_id_different) |
-| **int** | [ERROR_CODE_EXCEEDS_THE_UPPER_LIMIT](#ErrorCode-error_code_exceeds_the_upper_limit) |
 | **int** | [ERROR_CODE_JOIN_ROOM_ROOM_FORBIDDEN](#ErrorCode-error_code_join_room_room_forbidden) |
 | **int** | [ERROR_CODE_JOIN_ROOM_USER_FORBIDDEN](#ErrorCode-error_code_join_room_user_forbidden) |
 | **int** | [ERROR_CODE_OVER_SUBSCRIBE_LIMIT](#ErrorCode-error_code_over_subscribe_limit) |
@@ -361,26 +361,6 @@ public static final int com.ss.bytertc.engine.type.LoginErrorCode.LOGIN_ERROR_CO
 ```
 调用 `login` 登录时服务器错误。
 
-
-
-# NetworkDetectionStartReturn
-```java
-public enum com.ss.bytertc.engine.type.NetworkDetectionStartReturn
-```
-
-开始探测的返回值。  <br>
-`startNetworkDetection` 返回对象类型
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **NetworkDetectionStartReturnSuccess (0)** | 成功开启网络探测。 |
-| **NetworkDetectionStartReturnParamErr (1)** | 开始探测失败。参数错误，上下行探测均为 `false`，或期望带宽超过了范围 [100,10000] |
-| **NetworkDetectionStartReturnStreaming (2)** | 开始探测失败。失败原因为，本地已经开始推拉流 |
-| **NetworkDetectionStartReturnStarted (3)** | 已经开始探测，无需重复开启 |
-| **NetworkDetectionStartReturnNotSupport (4)** | 不支持该功能 |
 
 
 # PublicStreamErrorCode

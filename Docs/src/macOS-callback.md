@@ -669,7 +669,7 @@ Token 订阅权限过期前 30 秒将触发该回调。<br>
 ### rtcRoom:onForwardStreamStateChanged:
 ```objectivec
 
-- (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onForwardStreamStateChanged:(NSArray<ForwardStreamStateInfo *> * _Nonnull)infos;
+- (void)rtcRoom:( ByteRTCRoom *_Nonnull)rtcRoom onForwardStreamStateChanged:(NSArray<ByteRTCForwardStreamStateInfo *> * _Nonnull)infos;
 ```
 跨房间媒体流转发状态和错误回调
 
@@ -678,14 +678,14 @@ Token 订阅权限过期前 30 秒将触发该回调。<br>
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | rtcRoom | **ByteRTCRoom*** | ByteRTCRoom 对象 |
-| infos | **NSArray<ForwardStreamStateInfo*>*** | 跨房间媒体流转发目标房间信息数组，详见 [ForwardStreamStateInfo](macOS-keytype.md#forwardstreamstateinfo) |
+| infos | **NSArray<ByteRTCForwardStreamStateInfo*>*** | 跨房间媒体流转发目标房间信息数组，详见 [ByteRTCForwardStreamStateInfo](macOS-keytype.md#bytertcforwardstreamstateinfo) |
 
 
 <span id="ByteRTCRoomDelegate-rtcroom-onforwardstreamevent"></span>
 ### rtcRoom:onForwardStreamEvent:
 ```objectivec
 
-- (void)rtcRoom:( ByteRTCRoom * _Nonnull)rtcRoom onForwardStreamEvent:(NSArray<ForwardStreamEventInfo *> * _Nonnull)infos;
+- (void)rtcRoom:( ByteRTCRoom * _Nonnull)rtcRoom onForwardStreamEvent:(NSArray<ByteRTCForwardStreamEventInfo *> * _Nonnull)infos;
 ```
 跨房间媒体流转发事件回调
 
@@ -694,7 +694,7 @@ Token 订阅权限过期前 30 秒将触发该回调。<br>
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | rtcRoom | **ByteRTCRoom*** | ByteRTCRoom 对象 |
-| infos | **NSArray<ForwardStreamEventInfo*>*** | 跨房间媒体流转发目标房间事件数组，详见 [ForwardStreamEventInfo](macOS-keytype.md#forwardstreameventinfo) |
+| infos | **NSArray<ByteRTCForwardStreamEventInfo*>*** | 跨房间媒体流转发目标房间事件数组，详见 [ByteRTCForwardStreamEventInfo](macOS-keytype.md#bytertcforwardstreameventinfo) |
 
 
 <span id="ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities"></span>
@@ -802,10 +802,12 @@ ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理�
 | **void** | [rtcEngine:onSEIStreamUpdate:eventType:](#ByteRTCVideoDelegate-rtcengine-onseistreamupdate-eventtype) |
 | **void** | [rtcEngine:onStreamSyncInfoReceived:streamType:data:](#ByteRTCVideoDelegate-rtcengine-onstreamsyncinforeceived-streamtype-data) |
 | **void** | [rtcEngine:onSysStats:](#ByteRTCVideoDelegate-rtcengine-onsysstats) |
+| **void** | [rtcEngine:onLocalAudioStateChanged:error:](#ByteRTCVideoDelegate-rtcengine-onlocalaudiostatechanged-error) |
 | **void** | [rtcEngine:onRemoteAudioStateChanged:state:reason:](#ByteRTCVideoDelegate-rtcengine-onremoteaudiostatechanged-state-reason) |
+| **void** | [rtcEngine:onLocalVideoStateChanged:withStreamState:withStreamError:](#ByteRTCVideoDelegate-rtcengine-onlocalvideostatechanged-withstreamstate-withstreamerror) |
 | **void** | [rtcEngine:onRemoteVideoStateChanged:withVideoState:withVideoStateReason:](#ByteRTCVideoDelegate-rtcengine-onremotevideostatechanged-withvideostate-withvideostatereason) |
 | **void** | [rtcEngine:onLoginResult:errorCode:elapsed:](#ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed) |
-| **void** | [rtcEngineOnLogout:](#ByteRTCVideoDelegate-rtcengineonlogout) |
+| **void** | [rtcEngine:onLogout:](#ByteRTCVideoDelegate-rtcengine-onlogout) |
 | **void** | [rtcEngine:onServerParamsSetResult:](#ByteRTCVideoDelegate-rtcengine-onserverparamssetresult) |
 | **void** | [rtcEngine:onGetPeerOnlineStatus:status:](#ByteRTCVideoDelegate-rtcengine-ongetpeeronlinestatus-status) |
 | **void** | [rtcEngine:onUserMessageReceivedOutsideRoom:message:](#ByteRTCVideoDelegate-rtcengine-onusermessagereceivedoutsideroom-message) |
@@ -832,8 +834,6 @@ ByteRTCVideoDelegate 协议包含了SDK提供的回调方法，SDK通过代理�
 | **void** | [rtcEngineOnNetworkTimeSynchronized:](#ByteRTCVideoDelegate-rtcengineonnetworktimesynchronized) |
 | **void** | [rtcEngine:onHardwareEchoDetectionResult:](#ByteRTCVideoDelegate-rtcengine-onhardwareechodetectionresult) |
 | **void** | [rtcEngine:onLocalProxyStateChanged:withProxyState:withProxyError:](#ByteRTCVideoDelegate-rtcengine-onlocalproxystatechanged-withproxystate-withproxyerror) |
-| **void** | [rtcEngine:onLocalAudioStateChanged:error:](#ByteRTCVideoDelegate-rtcengine-onlocalaudiostatechanged-error) |
-| **void** | [rtcEngine:onLocalVideoStateChanged:withStreamState:withStreamError:](#ByteRTCVideoDelegate-rtcengine-onlocalvideostatechanged-withstreamstate-withstreamerror) |
 | **void** | [[deprecated] rtcEngine:onUserMuteAudio:uid:muteState:](#ByteRTCVideoDelegate-rtcengine-onusermuteaudio-uid-mutestate) |
 | **void** | [[deprecated] rtcEngine:onUserMuteVideo:uid:withMuteState:](#ByteRTCVideoDelegate-rtcengine-onusermutevideo-uid-withmutestate) |
 | **void** | [[deprecated] rtcEngine:onMediaDeviceStateChanged:device_type:device_state:device_error:](#ByteRTCVideoDelegate-rtcengine-onmediadevicestatechanged-device_type-device_state-device_error) |
@@ -1052,7 +1052,7 @@ SDK 当前网络连接类型改变回调。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| volume | **int** | 音频设备测试播放音量。单位：毫秒。推荐设置为 200 ms。范围：[0,255] |
+| volume | **int** | 音频设备测试播放音量。取值范围：[0,255] |
 
 
 **注意**
@@ -1151,9 +1151,8 @@ SDK 当前网络连接类型改变回调。
 
 - (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onUserStopVideoCapture:(NSString * _Nonnull)roomId uid:(NSString * _Nonnull)uid;
 ```
-
-- 房间内的可见用户调用 [stopVideoCapture](macOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。
-- 若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。
+房间内的可见用户调用 [stopVideoCapture](macOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。<br>
+若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。
 
 **传入参数**
 
@@ -1517,7 +1516,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 ### rtcEngine:onSEIStreamUpdate:eventType:
 ```objectivec
 
-- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onSEIStreamUpdate:(ByteRTCRemoteStreamKey* _Nonnull)remoteStreamKey eventType:(ByteSEIStreamEventType)eventType;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onSEIStreamUpdate:(ByteRTCRemoteStreamKey* _Nonnull)remoteStreamKey eventType:(ByteRTCSEIStreamEventType)eventType;
 ```
 黑帧视频流发布状态回调。  <br>
 在语音通话场景下，本地用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过该回调通知远端用户。  <br>
@@ -1529,7 +1528,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | 当前 ByteRTCVideo 实例。 |
 | remoteStreamKey | **ByteRTCRemoteStreamKey*** | 远端流信息，参看 [ByteRTCRemoteStreamKey](macOS-keytype.md#bytertcremotestreamkey)。 |
-| eventType | **ByteSEIStreamEventType** | 黑帧视频流状态，参看 [ByteSEIStreamEventType](macOS-keytype.md#byteseistreameventtype) |
+| eventType | **ByteRTCSEIStreamEventType** | 黑帧视频流状态，参看 [ByteRTCSEIStreamEventType](macOS-keytype.md#bytertcseistreameventtype) |
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onstreamsyncinforeceived-streamtype-data"></span>
@@ -1572,7 +1571,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onLocalAudioStateChanged:(ByteRTCLocalAudioStreamState)state error:(ByteRTCLocalAudioStreamError)error;
 ```
-
 本地音频流的状态发生改变时，收到此回调。
 
 **传入参数**
@@ -1608,7 +1606,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onLocalVideoStateChanged:(ByteRTCStreamIndex)streamIndex withStreamState:(ByteRTCLocalVideoStreamState)state withStreamError:(ByteRTCLocalVideoStreamError)error;
 ```
-
 本地视频流的状态发生改变时，收到该事件。
 
 **传入参数**
@@ -1628,7 +1625,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 - (void)rtcEngine:(ByteRTCVideo *_Nonnull)engine onRemoteVideoStateChanged:(ByteRTCRemoteStreamKey*_Nonnull)streamKey withVideoState:(ByteRTCRemoteVideoState)state withVideoStateReason:(ByteRTCRemoteVideoStateChangeReason)reason;
 ```
 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
-本回调仅适用于主流，不适用于屏幕流。
 
 **传入参数**
 
@@ -1639,6 +1635,9 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | state | **ByteRTCRemoteVideoState** | 远端视频流的当前状态，参看 [ByteRTCRemoteVideoState](macOS-keytype.md#bytertcremotevideostate) |
 | reason | **ByteRTCRemoteVideoStateChangeReason** | 远端视频流状态改变的原因，参看 [ByteRTCRemoteVideoStateChangeReason](macOS-keytype.md#bytertcremotevideostatechangereason) |
 
+
+**注意**
+本回调仅适用于主流，不适用于屏幕流。
 
 <span id="ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed"></span>
 ### rtcEngine:onLoginResult:errorCode:elapsed:
@@ -1661,11 +1660,11 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 **注意**
 调用 [login:uid:](macOS-api.md#ByteRTCVideo-login-uid) 后，会收到此回调。
 
-<span id="ByteRTCVideoDelegate-rtcengineonlogout"></span>
-### rtcEngineOnLogout:
+<span id="ByteRTCVideoDelegate-rtcengine-onlogout"></span>
+### rtcEngine:onLogout:
 ```objectivec
 
-- (void)rtcEngineOnLogout:(ByteRTCVideo * _Nonnull)engine;
+- (void)rtcEngine:(ByteRTCVideo * _Nonnull)engine onLogout:(ByteRTCLogoutReason)reason;
 ```
 登出结果回调
 
@@ -1674,10 +1673,11 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 对象 |
+| reason | **ByteRTCLogoutReason** | 用户登出的原因，参看 [ByteRTCLogoutReason](macOS-keytype.md#bytertclogoutreason) |
 
 
 **注意**
-调用 [logout](macOS-api.md#ByteRTCVideo-logout) 后，会收到此回调。
+在以下两种情况下会收到此回调：调用 [logout](macOS-api.md#ByteRTCVideo-logout) 接口主动退出；或其他用户以相同 UserId 进行 `login` 导致本地用户被动登出。
 
 <span id="ByteRTCVideoDelegate-rtcengine-onserverparamssetresult"></span>
 ### rtcEngine:onServerParamsSetResult:
@@ -2122,12 +2122,13 @@ SOCKS5 代理状态改变时，收到该回调。
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 实例。 |
 | publicStreamId | **NSString*** | 公共流 ID。 |
-| message | **NSData*** | 收到的 SEI 消息内容。<br/>本回调可以获取通过调用客户端 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 插入的 SEI 信息。<br/>当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。 |
+| message | **NSData*** | 收到的 SEI 消息内容。<br/>本回调可以获取通过调用客户端 `sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:` 插入的 SEI 信息。<br/>当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。 |
 | sourceType | **ByteRTCDataMessageSourceType** | SEI 消息类型，自 3.52.1 版本后固定为 `0`，自定义消息。参看 [ByteRTCDataMessageSourceType](macOS-keytype.md#bytertcdatamessagesourcetype)。 |
 
 
 **注意**
 通过 Open API 插入的自定义信息，应通过回调 [rtcEngine:onPublicStreamDataMessageReceived:andMessage:andSourceType:](#ByteRTCVideoDelegate-rtcengine-onpublicstreamdatamessagereceived-andmessage-andsourcetype) 获取。
+
 
 <span id="ByteRTCVideoDelegate-rtcengine-onpublicstreamdatamessagereceived-andmessage-andsourcetype"></span>
 ### rtcEngine:onPublicStreamDataMessageReceived:andMessage:andSourceType:
@@ -2138,7 +2139,7 @@ SOCKS5 代理状态改变时，收到该回调。
 > Available since 3.52
 
 回调公共流中包含的数据信息。<br>
-通过 [startPlayPublicStream:](macOS-api.md#ByteRTCVideo-startplaypublicstream) 开始播放公共流后，通过此回调收到公共流中的数据消息。
+通过 [startPlayPublicStream:](macOS-api.md#ByteRTCVideo-startplaypublicstream) 开始播放公共流后，可以通过本回调获取公共流中的数据消息，包括调用 Open API 发送的 SEI 消息和音量回调。
 
 **传入参数**
 
@@ -2146,12 +2147,9 @@ SOCKS5 代理状态改变时，收到该回调。
 | --- | --- | --- |
 | engine | **ByteRTCVideo*** | ByteRTCVideo 实例。 |
 | publicStreamId | **NSString*** | 公共流 ID |
-| message | **NSData*** | 收到的数据消息内容，如下：<br/>• 调用公共流 OpenAPI 发送的自定义消息。<br/>• 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。JSON 格式说明如下：<br/>{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"Type"&nbsp;:&nbsp;"VolumeIndication", //具体业务类型<br/>&nbsp;&nbsp;&nbsp;&nbsp;"VolumeInfos"[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 业务类型对应信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"RoomId":"1000001", // 房间ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"UserId":"1000001", // 用户ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"StreamType":0, // 0:摄像头流；1:屏幕流<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LinearVolume":1 // 线性音量大小<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;]<br/>}|
-| sourceType | **ByteRTCDataMessageSourceType** | 数据消息来源，参看 [ByteRTCDataMessageSourceType](macOS-keytype.md#bytertcdatamessagesourcetype)。 |
+| message | **NSData*** | 收到的数据消息内容，如下：<br/>• 调用公共流 OpenAPI 发送的自定义消息。<br/>• 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。JSON 格式说明如下：<br/>{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"Type"&nbsp;:&nbsp;"VolumeIndication", //具体业务类型<br/>&nbsp;&nbsp;&nbsp;&nbsp;"VolumeInfos"[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 业务类型对应信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"RoomId":"1000001", // 房间ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"UserId":"1000001", // 用户ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"StreamType":0, // 0:摄像头流；1:屏幕流<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LinearVolume":1 // 线性音量大小<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;]<br/>} |
+| sourceType | **ByteRTCDataMessageSourceType** | 数据消息来源，参看 [ByteRTCDataMessageSourceType](macOS-keytype.md#bytertcdatamessagesourcetype)。通过调用客户端 API 插入的 SEI 信息，应通过回调 [rtcEngine:onPublicStreamSEIMessageReceived:andMessage:andSourceType:](#ByteRTCVideoDelegate-rtcengine-onpublicstreamseimessagereceived-andmessage-andsourcetype) 获取。 |
 
-
-**注意**
-通过调用客户端 API 插入的 SEI 信息，应通过回调 [rtcEngine:onPublicStreamSEIMessageReceived:andMessage:andSourceType:](#ByteRTCVideoDelegate-rtcengine-onpublicstreamseimessagereceived-andmessage-andsourcetype) 获取。
 
 <span id="ByteRTCVideoDelegate-rtcengine-onfirstpublicstreamvideoframedecoded-withframeinfo"></span>
 ### rtcEngine:onFirstPublicStreamVideoFrameDecoded:withFrameInfo:
@@ -2259,7 +2257,7 @@ SOCKS5 代理状态改变时，收到该回调。
 
 + 通话前调用 [startHardwareEchoDetection:](macOS-api.md#ByteRTCVideo-starthardwareechodetection) 后，将触发本回调返回检测结果。
 + 建议在收到检测结果后，调用 [stopHardwareEchoDetection](macOS-api.md#ByteRTCVideo-stophardwareechodetection) 停止检测，释放对音频设备的占用。
-+ 如果 SDK 在通话中检测到回声，将通过 [rtcEngine:onAudioDeviceWarning:deviceType:deviceWarning:](#ByteRTCVideoDelegate-rtcengine-onaudiodevicewarning-devicetype-devicewarning) 回调 `kMediaDeviceWarningLeakEchoDetected`。
++ 如果 SDK 在通话中检测到回声，将通过 [rtcEngine:onAudioDeviceWarning:deviceType:deviceWarning:](#ByteRTCVideoDelegate-rtcengine-onaudiodevicewarning-devicetype-devicewarning) 回调 `ByteRTCMediaDeviceWarningDetectLeakEcho`。
 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onlocalproxystatechanged-withproxystate-withproxyerror"></span>
@@ -2363,49 +2361,6 @@ SOCKS5 代理状态改变时，收到该回调。
 | --- | --- | --- |
 | audioFrame | **ByteRTCAudioFrame*** | 音频数据, 详见： [ByteRTCAudioFrame](macOS-keytype.md#bytertcaudioframe) |
 
-
-# ByteRTCAudioProcessor
-```objectivec
-@protocol ByteRTCAudioProcessor <NSObject>
-```
-
-> Deprecated since 3.42, use [ByteRTCAudioFrameProcessor](#bytertcaudioframeprocessor) instead.
-
-自定义音频处理器
-注意：回调函数是在 SDK 内部线程（非 UI 线程）同步抛出来的，请不要做耗时操作或直接操作 UI，否则可能导致 app 崩溃。
-
-
-## 成员函数
-
-| 返回 | 名称 |
-| --- | --- |
-| **int** | [processAudioFrame:](#ByteRTCAudioProcessor-processaudioframe) |
-
-
-## 函数说明
-<span id="ByteRTCAudioProcessor-processaudioframe"></span>
-### processAudioFrame:
-```objectivec
-
-- (int)processAudioFrame:(ByteRTCAudioFrame * _Nonnull)audioFrame;
-```
-获取 RTC SDK 采集得到的音频帧，并进行自定义处理，最终将处理后的音频帧给到 RTC SDK 用于编码传输。
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| audioFrame | **ByteRTCAudioFrame*** | RTC SDK 采集到的音频帧，自定义处理可直接对音频 buffer 中的数据进行修改。参看 [ByteRTCAudioFrame](macOS-keytype.md#bytertcaudioframe)。 |
-
-**返回值**
-
-0: 未处理  
-\>0: 处理成功  
-< 0: 处理失败
-
-
-**注意**
-在进行音频自定义处理前，你需要调用 `registerLocalAudioProcessor` 设置音频自定义处理器。
 
 # ByteRTCAudioFrameProcessor
 ```objectivec
@@ -2826,7 +2781,7 @@ SOCKS5 代理状态改变时，收到该回调。
 
 
 **注意**
-用户调用 [stopScreenCapture](#stopscreencapture) 后，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
+iOS 端调用 [stopScreenCapture](#stopscreencapture)，或 macOS 端调用 [stopScreenVideoCapture](macOS-api.md#ByteRTCVideo-stopscreenvideocapture)，会触发该方法通知 extension 端的 SDK 停止屏幕采集。
 
 <span id="ByteRtcScreenCapturerExtDelegate-onreceivemessagefromapp"></span>
 ### onReceiveMessageFromApp:
@@ -2990,6 +2945,7 @@ K 歌评分事件回调类。
 | **void** | [onStop:](#ByteRTCExternalVideoEncoderEventHandler-onstop) |
 | **void** | [onRateUpdate:withVideoIndex:withFps:withBitRate:](#ByteRTCExternalVideoEncoderEventHandler-onrateupdate-withvideoindex-withfps-withbitrate) |
 | **void** | [onRequestKeyFrame:withVideoIndex:](#ByteRTCExternalVideoEncoderEventHandler-onrequestkeyframe-withvideoindex) |
+| **void** | [onActiveVideoLayer:withVideoIndex:withActive:](#ByteRTCExternalVideoEncoderEventHandler-onactivevideolayer-withvideoindex-withactive) |
 
 
 ## 函数说明
@@ -3057,6 +3013,29 @@ K 歌评分事件回调类。
 | streamIndex | **ByteRTCStreamIndex** | 远端编码流的属性，参看 [ByteRTCStreamIndex](macOS-keytype.md#bytertcstreamindex) |
 | videoIndex | **NSInteger** | 对应编码流的下标 |
 
+
+<span id="ByteRTCExternalVideoEncoderEventHandler-onactivevideolayer-withvideoindex-withactive"></span>
+### onActiveVideoLayer:withVideoIndex:withActive:
+```objectivec
+
+- (void)onActiveVideoLayer:(ByteRTCStreamIndex)streamIndex withVideoIndex:(NSInteger)videoIndex withActive:(BOOL)active;
+```
+> Available since 3.56
+
+作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。
+你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| streamIndex | **ByteRTCStreamIndex** | 远端编码流的属性，参看 [ByteRTCStreamIndex](macOS-keytype.md#bytertcstreamindex)。 |
+| videoIndex | **NSInteger** | 对应编码流的下标 |
+| active | **BOOL** | 该路流可发送状态 |
+
+
+**注意**
+要收到此回调，必须调用 [setVideoSourceType:WithStreamIndex:](macOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 设置视频源是自定义编码，且通过 [setExternalVideoEncoderEventHandler:](macOS-api.md#ByteRTCVideo-setexternalvideoencodereventhandler) 设置了回调句柄。
 
 # ByteRTCRemoteEncodedVideoFrameObserver
 ```objectivec
@@ -3411,7 +3390,7 @@ K 歌评分事件回调类。
 | taskId | **NSInteger** | 本地截图任务的编号。和 [takeLocalSnapshot:callback:](macOS-api.md#ByteRTCVideo-takelocalsnapshot-callback) 的返回值一致。 |
 | streamIndex | **ByteRTCStreamIndex** | 截图的视频流的属性，参看 [ByteRTCStreamIndex](macOS-keytype.md#bytertcstreamindex)。 |
 | image | **ByteRTCImage*** | 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。 |
-| errorCode | **NSInteger** | 截图错误码：<br/>• 0: 成功 <br/>• -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br/>• -2: 截图错误。流无效。 |
+| errorCode | **NSInteger** | 截图错误码：<br/>• 0: 成功 <br/>• -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br/>• -2: 截图错误。流无效。<br/>• -3: 截图错误。截图超时,超时时间1秒。 |
 
 
 <span id="ByteRTCVideoSnapshotCallbackDelegate-ontakeremotesnapshotresult-streamkey-image-errorcode"></span>
@@ -3429,4 +3408,4 @@ K 歌评分事件回调类。
 | taskId | **NSInteger** | 远端截图任务的编号。和 [takeRemoteSnapshot:callback:](macOS-api.md#ByteRTCVideo-takeremotesnapshot-callback) 的返回值一致。 |
 | streamKey | **ByteRTCRemoteStreamKey*** | 截图的视频流，参看 [ByteRTCRemoteStreamKey](macOS-keytype.md#bytertcremotestreamkey)。 |
 | image | **ByteRTCImage*** | 截图。你可以保存为文件，或对其进行二次处理。截图失败时，为空。 |
-| errorCode | **NSInteger** | 截图错误码：<br/>• 0: 成功 <br/>• -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br/>• -2: 截图错误。流无效。 |
+| errorCode | **NSInteger** | 截图错误码：<br/>• 0: 成功 <br/>• -1: 截图错误。生成图片数据失败或 RGBA 编码失败 <br/>• -2: 截图错误。流无效。<br/>• -3: 截图错误。截图超时,超时时间1秒。 |

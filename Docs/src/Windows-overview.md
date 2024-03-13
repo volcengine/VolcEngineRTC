@@ -3,10 +3,10 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [createRTCVideo](Windows-api.md#creatertcvideo) | 创建 IRTCVideo 实例。  <br><br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br><br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
+| [createRTCVideo](Windows-api.md#creatertcvideo) | 创建 IRTCVideo 实例。  <br><br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。 <br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
 | [destroyRTCVideo](Windows-api.md#destroyrtcvideo) | 销毁由 [createRTCVideo](Windows-api.md#creatertcvideo) 所创建的引擎实例，并释放所有相关资源。<br> |
 | [getSDKVersion](Windows-api.md#getsdkversion) | 获取当前 SDK 版本信息。 |
-| [feedback](Windows-api.md#IRTCVideo-feedback) | 将用户反馈的问题上报到 RTC |
+| [feedback](Windows-api.md#IRTCVideo-feedback) | 将用户反馈的问题上报到 RTC。 |
 | [getErrorDescription](Windows-api.md#geterrordescription) | 获取 SDK 内各种错误码、警告码的描述文字。 |
 | [setBusinessId](Windows-api.md#IRTCVideo-setbusinessid) | 设置业务标识参数  <br><br/>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
 | [setRuntimeParameters](Windows-api.md#IRTCVideo-setruntimeparameters) | 设置运行时的参数 |
@@ -18,10 +18,10 @@
 | [createRTCRoom](Windows-api.md#IRTCVideo-creatertcroom) | 创建房间实例。<br><br/>调用此方法仅返回一个房间实例，你仍需调用 [joinRoom](Windows-api.md#IRTCRoom-joinroom) 才能真正地创建/加入房间。<br><br/>多次调用此方法以创建多个 [IRTCRoom](Windows-api.md#irtcroom) 实例。分别调用各 IRTCRoom 实例中的 [joinRoom](Windows-api.md#IRTCRoom-joinroom) 方法，同时加入多个房间。<br><br/>多房间模式下，用户可以同时订阅各房间的音视频流。 |
 | [destroy](Windows-api.md#IRTCRoom-destroy) | 退出并销毁调用 [createRTCRoom](Windows-api.md#IRTCVideo-creatertcroom) 所创建的房间实例。 |
 | [setRTCRoomEventHandler](Windows-api.md#IRTCRoom-setrtcroomeventhandler) | 通过设置 [IRTCRoom](Windows-api.md#irtcroom) 对象的事件句柄，监听此对象对应的回调事件。 |
-| [joinRoom](Windows-api.md#IRTCRoom-joinroom) | 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br><br/>同一房间内的用户间可以相互通话。  <br> |
+| [joinRoom](Windows-api.md#IRTCRoom-joinroom) | 加入房间。<br><br/>调用 [createRTCRoom](Windows-api.md#IRTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
 | [setRoomExtraInfo](Windows-api.md#IRTCRoom-setroomextrainfo) | 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。 |
 | [leaveRoom](Windows-api#IRTCRoom-leaveroom) | 离开房间。  <br><br/>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br><br/>加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br><br/>此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Windows-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br> |
-| [setUserVisibility](Windows-api.md#IRTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
+| [setUserVisibility](Windows-api.md#IRTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br/>默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。 |
 | [updateToken](Windows-api#IRTCRoom-updatetoken) | 更新 Token。<br/>收到 [onTokenWillExpire](Windows-callback.md#IRTCRoomEventHandler-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire](Windows-callback.md#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire)， 或 [onSubscribePrivilegeTokenWillExpire](Windows-callback.md#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。 |
 
 ## 音频管理
@@ -49,9 +49,8 @@
 | [stopAudioPlaybackDeviceTest](Windows-api.md#IAudioDeviceManager-stopaudioplaybackdevicetest) | 停止音频播放测试。  <br> |
 | [initAudioPlaybackDeviceForTest](Windows-api.md#IAudioDeviceManager-initaudioplaybackdevicefortest) | 尝试初始化音频播放设备，可检测出设备不存在、权限被拒绝/禁用等异常问题。 |
 | [initAudioCaptureDeviceForTest](Windows-api.md#IAudioDeviceManager-initaudiocapturedevicefortest) | 尝试初始化音频采集设备，可检测设备不存在、权限被拒绝/禁用等异常问题。 |
-| [enableFilterSilentDevice](Windows-api.md#IAudioDeviceManager-enablefiltersilentdevice) | 开启/关闭过滤无声设备功能。 |
 | [setCaptureVolume](Windows-api.md#IRTCVideo-setcapturevolume) | 调节音频采集音量 |
-| [setPlaybackVolume](Windows-api.md#IRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户混音后的音量。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
+| [setPlaybackVolume](Windows-api.md#IRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户音频混音后的音量，混音内容包括远端人声、音乐、音效等。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
 | [setRemoteAudioPlaybackVolume](Windows-api.md#IRTCVideo-setremoteaudioplaybackvolume) | 调节来自指定远端用户的音频播放音量。 |
 | [setRemoteRoomAudioPlaybackVolume](Windows-api.md#IRTCRoom-setremoteroomaudioplaybackvolume) | 调节某个房间内所有远端用户的音频播放音量。 |
 | [enableAudioPropertiesReport](Windows-api#IRTCVideo-enableaudiopropertiesreport) | 启用音频信息提示。开启提示后，你会收到 [onLocalAudioPropertiesReport](Windows-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport)，[onRemoteAudioPropertiesReport](Windows-callback.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 和 [onActiveSpeaker](Windows-callback.md#IRTCVideoEventHandler-onactivespeaker)。 |
@@ -79,7 +78,6 @@
 | [setLocalVideoCanvas](Windows-api.md#IRTCVideo-setlocalvideocanvas) | 设置本地视频渲染时使用的视图，并设置渲染模式。 |
 | [updateLocalVideoCanvas](Windows-api.md#IRTCVideo-updatelocalvideocanvas) | 修改本地视频渲染模式和背景色。 |
 | [setRemoteVideoCanvas](Windows-api.md#IRTCVideo-setremotevideocanvas) | 设置渲染指定视频流 `stream_key` 时，使用的视图和渲染模式。 <br><br/>如果需要解除某个用户的绑定视图，你可以把 `canvas` 设置为空。 |
-| [updateRemoteStreamVideoCanvas](Windows-api.md#IRTCVideo-updateremotestreamvideocanvas) | 修改远端视频渲染模式和背景色。 |
 | [enumerateVideoCaptureDevices](Windows-api.md#IVideoDeviceManager-enumeratevideocapturedevices) | 获取当前系统内视频采集设备列表。 |
 | [setVideoCaptureDevice](Windows-api.md#IVideoDeviceManager-setvideocapturedevice) | 设置当前视频采集设备 |
 | [getVideoDeviceManager](Windows-api.md#IRTCVideo-getvideodevicemanager) | 创建视频设备管理实例 |
@@ -123,7 +121,8 @@
 | 方法 | 描述 |
 | --- | --- |
 | [setLocalVideoMirrorType](Windows-api.md#IRTCVideo-setlocalvideomirrortype) | 为采集到的视频流开启镜像 |
-| [setVideoCaptureRotation](Windows-api.md#IRTCVideo-setvideocapturerotation) | 设置本端采集的视频帧的旋转角度。<br/>当外接摄像头倒置或者倾斜安装时，调用本接口进行调整。 |
+| [setRemoteVideoMirrorType](Windows-api.md#IRTCVideo-setremotevideomirrortype) | 使用内部渲染时，为远端流开启镜像。 |
+| [setVideoCaptureRotation](Windows-api.md#IRTCVideo-setvideocapturerotation) | 设置本端采集的视频帧的旋转角度。<br/>当摄像头倒置或者倾斜安装时，可调用本接口进行调整。 |
 | [setVideoWatermark](Windows-api.md#IRTCVideo-setvideowatermark) | 在指定视频流上添加水印。 |
 | [clearVideoWatermark](Windows-api.md#IRTCVideo-clearvideowatermark) | 移除指定视频流的水印。 |
 | [enableEffectBeauty](Windows-api.md#IRTCVideo-enableeffectbeauty) | 开启/关闭基础美颜。 |
@@ -142,6 +141,7 @@
 | [disableVirtualBackground](Windows-api.md#IVideoEffect-disablevirtualbackground) | 关闭虚拟背景。 |
 | [enableFaceDetection](Windows-api#IVideoEffect-enablefacedetection) | 开启人脸识别功能，并设置人脸检测结果回调观察者。<br/>此观察者后，你会周期性收到 [onFaceDetectResult](Windows-callback.md#IFaceDetectionObserver-onfacedetectresult) 回调。 |
 | [disableFaceDetection](Windows-api.md#IVideoEffect-disablefacedetection) | 关闭人脸识别功能。 |
+| [setVideoCaptureRotation](Windows-api.md#IRTCVideo-setvideocapturerotation) | 设置本端采集的视频帧的旋转角度。<br/>当摄像头倒置或者倾斜安装时，可调用本接口进行调整。 |
 | [setVideoDigitalZoomConfig](Windows-api.md#IRTCVideo-setvideodigitalzoomconfig) | 设置本地摄像头数码变焦参数，包括缩放倍数，移动步长。 |
 | [setVideoDigitalZoomControl](Windows-api.md#IRTCVideo-setvideodigitalzoomcontrol) | 控制本地摄像头数码变焦，缩放或移动一次。设置对本地预览画面和发布到远端的视频都生效。 |
 | [startVideoDigitalZoomControl](Windows-api.md#IRTCVideo-startvideodigitalzoomcontrol) | 开启本地摄像头持续数码变焦，缩放或移动。设置对本地预览画面和发布到远端的视频都生效。 |
@@ -164,17 +164,17 @@
 | --- | --- |
 | [setVideoSourceType](Windows-api.md#IRTCVideo-setvideosourcetype) | 设置向 SDK 输入的视频源，包括屏幕流<br/>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br> |
 | [pushExternalVideoFrame](Windows-api.md#IRTCVideo-pushexternalvideoframe) | 推送外部视频帧。 |
-| [setLocalVideoSink](Windows-api.md#IRTCVideo-setlocalvideosink) | 将本地视频流与自定义渲染器绑定。 |
-| [setRemoteVideoSink](Windows-api.md#IRTCVideo-setremotevideosink) | 将远端视频流与自定义渲染器绑定。 |
-| [registerRemoteEncodedVideoFrameObserver](Windows-api#IRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回調。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Windows-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调 |
+| [setLocalVideoRender](Windows-api.md#IRTCVideo-setlocalvideorender) | 将本地视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [setRemoteVideoRender](Windows-api.md#IRTCVideo-setremotevideorender) | 将远端视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [registerRemoteEncodedVideoFrameObserver](Windows-api#IRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回调。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Windows-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调 |
 | [setVideoDecoderConfig](Windows-api.md#IRTCVideo-setvideodecoderconfig) | 在订阅远端视频流之前，设置远端视频数据解码方式 |
 | [setAudioSourceType](Windows-api.md#IRTCVideo-setaudiosourcetype) | 切换音频采集方式 |
 | [setAudioRenderType](Windows-api.md#IRTCVideo-setaudiorendertype) | 切换音频渲染方式 |
 | [pushExternalAudioFrame](Windows-api.md#IRTCVideo-pushexternalaudioframe) | 推送自定义采集的音频数据到 RTC SDK。 |
-| [pullExternalAudioFrame](Windows-api.md#IRTCVideo-pullexternalaudioframe) |  拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
+| [pullExternalAudioFrame](Windows-api.md#IRTCVideo-pullexternalaudioframe) | 拉取下行音频数据用于自定义音频渲染。<br/>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
 | [registerLocalVideoProcessor](Windows-api.md#IRTCVideo-registerlocalvideoprocessor) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你可以调用 [processVideoFrame](Windows-api.md#IVideoProcessor-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
 | [processVideoFrame](Windows-api.md#IVideoProcessor-processvideoframe) | 获取 RTC SDK 采集得到的视频帧，根据 [registerLocalVideoProcessor](Windows-api.md#IRTCVideo-registerlocalvideoprocessor) 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。 |
-| [registerAudioProcessor](Windows-api.md#IRTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor](Windows-api.md#IRTCVideo-enableaudioprocessor)，对本地采集或接收到的远端音频进行处理。 |
+| [registerAudioProcessor](Windows-api.md#IRTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor](Windows-api.md#IRTCVideo-enableaudioprocessor)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。 |
 | [enableAudioProcessor](Windows-api.md#IRTCVideo-enableaudioprocessor) | 设置并开启指定的音频帧回调，进行自定义处理。 |
 | [disableAudioProcessor](Windows-api.md#IRTCVideo-disableaudioprocessor) | 关闭自定义音频处理。 |
 | [registerAudioFrameObserver](Windows-api.md#IRTCVideo-registeraudioframeobserver) | 注册音频数据回调观察者。  <br> |
@@ -205,8 +205,8 @@
 | --- | --- |
 | [sendRoomMessage](Windows-api.md#IRTCRoom-sendroommessage) | 给房间内的所有其他用户群发文本消息。 |
 | [sendRoomBinaryMessage](Windows-api.md#IRTCRoom-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。 |
-| [login](Windows-api.md#IRTCVideo-login) | 必须先登录，才能调用 [sendUserMessageOutsideRoom](Windows-api.md#IRTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](Windows-api.md#IRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](Windows-api.md#IRTCVideo-logout)。 |
-| [logout](Windows-api.md#IRTCVideo-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
+| [login](Windows-api.md#IRTCVideo-login) | 登录 RTS 服务器。<br>必须先登录，才能调用 [sendUserMessageOutsideRoom](Windows-api.md#IRTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](Windows-api.md#IRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](Windows-api.md#IRTCVideo-logout)。 |
+| [logout](Windows-api.md#IRTCVideo-logout) | 登出 RTS 服务器。<br>调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](Windows-api#IRTCVideo-updatelogintoken) | 更新用户用于登录的 Token  <br><br/>Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br><br/>调用 [login](Windows-api#IRTCVideo-login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](Windows-callback.md#IRTCVideoEventHandler-onloginresult) 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。 |
 | [setServerParams](Windows-api.md#IRTCVideo-setserverparams) | 设置应用服务器参数  <br><br/>客户端调用 [sendServerMessage](Windows-api.md#IRTCVideo-sendservermessage) 或 [sendServerBinaryMessage](Windows-api.md#IRTCVideo-sendserverbinarymessage) 发送消息给应用服务器之前，必须设置有效签名和应用服务器地址。 |
 | [getPeerOnlineStatus](Windows-api.md#IRTCVideo-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态 |
@@ -354,7 +354,7 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [startSubtitle](Windows-api#IRTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Windows-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Windows-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
+| [startSubtitle](Windows-api#IRTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>调用该方法时，可以在 [SubtitleMode](Windows-keytype#subtitlemode) 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 [onSubtitleMessageReceived](Windows-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你；<br><br/>如果选择翻译模式，你会同时收到两个 [onSubtitleMessageReceived](Windows-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 回调，分别包含字幕原文及字幕译文。<br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Windows-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
 | [stopSubtitle](Windows-api#IRTCRoom-stopsubtitle) | 关闭字幕。 <br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Windows-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
 
 ## 在线 KTV
@@ -408,7 +408,6 @@
 | [onPublishPrivilegeTokenWillExpire](Windows-callback#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire) | Token 发布权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken](Windows-api.md#IRTCRoom-updatetoken) 更新 Token 发布权限。 |
 | [onSubscribePrivilegeTokenWillExpire](Windows-callback#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) | Token 订阅权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken](Windows-api.md#IRTCRoom-updatetoken) 更新 Token 订阅权限有效期。 |
 
-
 ## 房间管理
 
 | 回调 | 描述 |
@@ -439,16 +438,18 @@
 | [onAudioPlaybackDeviceTestVolume](Windows-callback.md#IRTCVideoEventHandler-onaudioplaybackdevicetestvolume) | 回调音频设备测试时的播放音量 |
 | [onAudioDeviceVolumeChanged](Windows-callback.md#IRTCVideoEventHandler-onaudiodevicevolumechanged) | 音频设备音量改变回调。当通过系统设置，改变音频设备音量或静音状态时，触发本回调。本回调无需手动开启。 |
 | [onHardwareEchoDetectionResult](Windows-callback.md#IRTCVideoEventHandler-onhardwareechodetectionresult) | 通话前回声检测结果回调。 |
+| [onLocalAudioStateChanged](Windows-callback.md#IRTCVideoEventHandler-onlocalaudiostatechanged) | 本地音频流的状态发生改变时，收到此回调。 |
 
 ## 视频管理
 
 | 回调 | 描述 |
 | --- | --- |
 | [onUserStartVideoCapture](Windows-callback#IRTCVideoEventHandler-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Windows-api.md#IRTCVideo-startvideocapture) 开启内部视频采集时，房间内其他用户会收到此回调。 |
-| [onUserStopVideoCapture](Windows-callback#IRTCVideoEventHandler-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Windows-api.md#IRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。 |
+| [onUserStopVideoCapture](Windows-callback#IRTCVideoEventHandler-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Windows-api.md#IRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。<br/>若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。 |
 | [onVideoDeviceStateChanged](Windows-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) | 视频频设备状态回调。提示摄像头视频采集、屏幕视频采集等设备的状态。 |
 | [onVideoDeviceWarning](Windows-callback.md#IRTCVideoEventHandler-onvideodevicewarning) | 视频设备警告回调，包括视频采集设备等。 |
 | [onFaceDetectResult](Windows-callback.md#IFaceDetectionObserver-onfacedetectresult) | 特效 SDK 进行人脸检测结果的回调。 <br><br/>调用 [enableFaceDetection](Windows-api#IVideoEffect-enablefacedetection) 注册了 [IFaceDetectionObserver](Windows-callback.md#ifacedetectionobserver)，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
+| [onLocalVideoStateChanged](Windows-callback.md#IRTCVideoEventHandler-onlocalvideostatechanged) | 本地视频流的状态发生改变时，收到该事件。 |
 
 ## 音视频传输
 
@@ -492,6 +493,7 @@
 | [onStop](Windows-callback.md#IExternalVideoEncoderEventHandler-onstop) | 当收到该回调时，你需停止向 SDK 推送自定义编码视频帧 |
 | [onRateUpdate](Windows-callback.md#IExternalVideoEncoderEventHandler-onrateupdate) | 当自定义编码流的帧率或码率发生变化时，触发该回调 |
 | [onRequestKeyFrame](Windows-callback.md#IExternalVideoEncoderEventHandler-onrequestkeyframe) | 提示流发布端需重新生成关键帧的回调 |
+| [onActiveVideoLayer](Windows-callback.md#IExternalVideoEncoderEventHandler-onactivevideolayer) | 作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。<br/>你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。 |
 | [onLocalEncodedVideoFrame](Windows-callback#ILocalEncodedVideoFrameObserver-onlocalencodedvideoframe) | 调用 [registerLocalEncodedVideoFrameObserver](Windows-api.md#IRTCVideo-registerlocalencodedvideoframeobserver) 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。 |
 | [onRemoteEncodedVideoFrame](Windows-callback#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) | 调用 [registerRemoteEncodedVideoFrameObserver](Windows-api.md#IRTCVideo-registerremoteencodedvideoframeobserver) 后，SDK 监测到远端编码后视频数据时，触发该回调 |
 | [onProcessPlayBackAudioFrame](Windows-callback.md#IAudioFrameProcessor-onprocessplaybackaudioframe) | 回调远端音频混音的音频帧地址，供自定义音频处理。 |
@@ -610,7 +612,7 @@
 | [onSubtitleStateChanged](Windows-callback#IRTCRoomEventHandler-onsubtitlestatechanged) | 字幕状态发生改变回调。 <br><br/>当用户调用 [startSubtitle](Windows-api.md#IRTCRoom-startsubtitle) 和 [stopSubtitle](Windows-api.md#IRTCRoom-stopsubtitle) 使字幕状态发生改变或出现错误时，触发该回调。 |
 | [onSubtitleMessageReceived](Windows-callback#IRTCRoomEventHandler-onsubtitlemessagereceived) | 字幕相关内容回调。 <br><br/>当用户调用 [startSubtitle](Windows-api.md#IRTCRoom-startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
 
-## 音乐及打分
+## 在线 KTV
 
 | 回调 | 描述 |
 | --- | --- |

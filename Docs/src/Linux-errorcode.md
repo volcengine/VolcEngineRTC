@@ -12,9 +12,9 @@ enum bytertc::AudioRecordingErrorCode
 | --- | --- |
 | **kAudioRecordingErrorCodeOk** | 录制正常 |
 | **kAudioRecordingErrorCodeNoPermission** | 没有文件写权限 |
-| **kAudioRecordingErrorNotInRoom** | 没有进入房间 |
-| **kAudioRecordingAlreadyStarted** | 录制已经开始 |
-| **kAudioRecordingNotStarted** | 录制还未开始 |
+| **kAudioRecordingErrorCodeNotInRoom** | 没有进入房间 |
+| **kAudioRecordingErrorCodeAlreadyStarted** | 录制已经开始 |
+| **kAudioRecordingErrorCodeNotStarted** | 录制还未开始 |
 | **kAudioRecordingErrorCodeNotSupport** | 录制失败。文件格式不支持。 |
 | **kAudioRecordingErrorCodeOther** | 其他异常 |
 
@@ -92,6 +92,7 @@ enum bytertc::WarningCode
 | **kWarningCodeInvalidCallForExtAudio** | 外部音频源新旧接口混用 |
 | **kWarningCodeInvalidRemoteStreamKey** | 非法的远端流索引 |
 | **kWarningCodeInvalidCanvasHandle** | 指定的内部渲染画布句柄无效。  <br><br/>当你调用 [setLocalVideoCanvas](Linux-api.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
+| **kWarningLicenseFileExpired** | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。  <br> |
 | **kWarningInvaildSamiAppkeyORToken** | [音频技术](https://www.volcengine.com/docs/6489/71986) SDK 鉴权失效。联系技术支持人员。 |
 | **kWarningInvaildSamiResourcePath** | [音频技术](https://www.volcengine.com/docs/6489/71986) 资源加载失败。传入正确的 DAT 路径，或联系技术支持人员。 |
 | **kWarningLoadSamiLibraryFailed** | [音频技术](https://www.volcengine.com/docs/6489/71986) 库加载失败。使用正确的库，或联系技术支持人员。 |
@@ -185,6 +186,36 @@ enum bytertc::LoginErrorCode
 | **kLoginErrorCodeServerError** | 调用 `login` 登录时服务端出错。 |
 
 
+# UserMessageSendResult
+```cpp
+enum bytertc::UserMessageSendResult
+```
+
+发送消息结果，成功或失败，及失败原因
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **kUserMessageSendResultSuccess** | 发送消息成功 |
+| **kUserMessageSendResultTimeout** | 发送超时，没有发送成功 |
+| **kUserMessageSendResultNetworkDisconnected** | 通道断开，没有发送 |
+| **kUserMessageSendResultNoReceiver** | 找不到接收方 |
+| **kUserMessageSendResultNoRelayPath** | 远端用户没有登录或进房 |
+| **kUserMessageSendResultExceedQPS** | 超过 QPS 限制 |
+| **kUserMessageSendResultE2BSSendFailed** | 消息发送失败。应用服务器未收到客户端发送的消息。<br><br/>由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。 |
+| **kUserMessageSendResultE2BSReturnFailed** | 消息发送失败。应用服务器接收到了客户端发送的消息，但响应失败。<br><br/>由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。 |
+| **kUserMessageSendResultNotJoin** | 消息发送方没有加入房间 |
+| **kUserMessageSendResultInit** | 连接未完成初始化,没有可用的数据传输通道连接 |
+| **kUserMessageSendResultNoConnection** | 没有可用的数据传输通道连接 |
+| **kUserMessageSendResultExceedMaxLength** | 消息超过最大长度，当前为 64 KB |
+| **kUserMessageSendResultEmptyUser** | 接收消息的单个用户 id 为空 |
+| **kUserMessageSendResultNotLogin** | 房间外或应用服务器消息发送方没有登录 |
+| **kUserMessageSendResultServerParamsNotSet** | 发送消息给业务方服务器之前没有设置参数 |
+| **kUserMessageSendResultUnknown** | 未知错误 |
+
+
 # RtsErrorCode
 ```cpp
 enum bytertc::RtsErrorCode
@@ -229,7 +260,6 @@ enum bytertc::RtsWarningCode
 | **kRtsWarningCodeSendCustomMessage** | 发送自定义广播消息失败，当前你未在房间中。 |
 | **kRtsWarningCodeUserNotifyStop** | 当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。 |
 | **kRtsWarningCodeOldRoomBeenReplaced** | 新生成的房间已经替换了同样roomId的旧房间 |
-| **[deprecated] kRtsWarningCodeGetRoomFailed** |  |
 
 
 # SingleStreamPushEvent
@@ -244,12 +274,12 @@ enum bytertc::SingleStreamPushEvent
 
 | 类型 | 说明 |
 | --- | --- |
-| **kSingleStreamPushStart** | 开始推流。 |
-| **kSingleStreamPushSuccess** | 推流成功。 |
-| **kSingleStreamPushFailed** | 推流失败。 |
-| **kSingleStreamPushStop** | 停止推流。 |
-| **kSingleStreamPushTimeout** | 单流转推直播任务处理超时，请检查网络状态并重试。 |
-| **kSingleStreamPushParamError** | 参数错误。 |
+| **kSingleStreamPushEventStart** | 开始推流。 |
+| **kSingleStreamPushEventSuccess** | 推流成功。 |
+| **kSingleStreamPushEventFailed** | 推流失败。 |
+| **kSingleStreamPushEventStop** | 停止推流。 |
+| **kSingleStreamPushEventTimeout** | 单流转推直播任务处理超时，请检查网络状态并重试。 |
+| **kSingleStreamPushEventParamError** | 参数错误。 |
 
 
 # StreamMixingErrorCode
@@ -264,19 +294,19 @@ enum bytertc::StreamMixingErrorCode
 
 | 类型 | 说明 |
 | --- | --- |
-| **kStreamMixingErrorOK** | 推流成功。 |
-| **kStreamMixingErrorBase** | 未定义的合流错误 |
-| **kStreamMixingErrorInvalidParam** | 客户端 SDK 检测到无效推流参数。 |
-| **kStreamMixingErrorInvalidState** | 状态错误，需要在状态机正常状态下发起操作 |
-| **kStreamMixingErrorInvalidOperator** | 无效操作 |
-| **kStreamMixingErrorTimeout** | 转推直播任务处理超时，请检查网络状态并重试 |
-| **kStreamMixingErrorInvalidParamByServer** | 服务端检测到错误的推流参数 |
-| **kStreamMixingErrorSubTimeoutByServer** | 对流的订阅超时 |
-| **kStreamMixingErrorInvalidStateByServer** | 合流服务端内部错误。 |
-| **kStreamMixingErrorAuthenticationByCDN** | 合流服务端推 CDN 失败。 |
-| **kStreamMixingErrorTimeoutBySignaling** | 服务端接收信令超时，请检查网络状态并重试。 |
-| **kStreamMixingErrorMixImageFail** | 图片合流失败。 |
-| **kStreamMixingErrorUnKnownByServer** | 服务端未知错误。 |
+| **kStreamMixingErrorCodeOK** | 推流成功。 |
+| **kStreamMixingErrorCodeBase** | 未定义的合流错误 |
+| **kStreamMixingErrorCodeInvalidParam** | 客户端 SDK 检测到无效推流参数。 |
+| **kStreamMixingErrorCodeInvalidState** | 状态错误，需要在状态机正常状态下发起操作 |
+| **kStreamMixingErrorCodeInvalidOperator** | 无效操作 |
+| **kStreamMixingErrorCodeTimeout** | 转推直播任务处理超时，请检查网络状态并重试 |
+| **kStreamMixingErrorCodeInvalidParamByServer** | 服务端检测到错误的推流参数 |
+| **kStreamMixingErrorCodeSubTimeoutByServer** | 对流的订阅超时 |
+| **kStreamMixingErrorCodeInvalidStateByServer** | 合流服务端内部错误。 |
+| **kStreamMixingErrorCodeAuthenticationByCDN** | 合流服务端推 CDN 失败。 |
+| **kStreamMixingErrorCodeTimeoutBySignaling** | 服务端接收信令超时，请检查网络状态并重试。 |
+| **kStreamMixingErrorCodeMixImageFail** | 图片合流失败。 |
+| **kStreamMixingErrorCodeUnKnownByServer** | 服务端未知错误。 |
 
 
 # PublicStreamErrorCode

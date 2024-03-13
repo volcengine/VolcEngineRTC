@@ -183,8 +183,8 @@ SDK 内部遇到不可恢复的错误时，会通过 `rtcEngine:onError:` 回调
 | ByteRTSErrorCodeTokenExpired | -1009 | Token 过期。调用 `joinRoomByKey:roomId:userInfo:rtcRoomConfig:` 使用新的 Token 重新加入房间。 |
 | ByteRTSErrorCodeUpdateTokenWithInvalidToken | -1010 | 调用 `updateToken:` 传入的 Token 无效 |
 | ByteRTSErrorCodeRoomDismiss | -1011 | 服务端调用 OpenAPI 解散房间，所有用户被移出房间。 |
-| ByteRTSRoomAlreadyExist | -1013 | 通话回路检测已经存在同样 roomId 的房间了 |
-| ByteRTSUserIDDifferent | -1014 | 加入多个房间时使用了不同的 uid。<br><br/>同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。 |
+| ByteRTSErrorRoomAlreadyExist | -1013 | 通话回路检测已经存在同样 roomId 的房间了 |
+| ByteRTSErrorUserIDDifferent | -1014 | 加入多个房间时使用了不同的 uid。<br><br/>同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。 |
 | ByteRTSErrorCodeAbnormalServerStatus | -1084 | 服务端异常状态导致退出房间。  <br><br/>SDK与信令服务器断开，并不再自动重连，可联系技术支持。  <br> |
 
 
@@ -247,6 +247,8 @@ typedef NS_ENUM(NSInteger, ByteRTCUserMessageSendResult)
 | ByteRTCUserMessageSendResultNoReceiver | 3 | 找不到接收方 |
 | ByteRTCUserMessageSendResultNoRelayPath | 4 | 远端用户没有登录或进房 |
 | ByteRTCUserMessageSendResultExceedQPS | 5 | 超过 QPS 限制 |
+| ByteRTCUserMessageSendResultE2BSSendFailed | 17 | 消息发送失败。应用服务器未收到客户端发送的消息。<br><br/>由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。 |
+| ByteRTCUserMessageSendResultE2BSReturnFailed | 18 | 消息发送失败。应用服务器接收到了客户端发送的消息，但响应失败。<br><br/>由 `sendServerMessage`/`sendServerBinaryMessage` 触发，通过 `onServerMessageSendResult` 回调。 |
 | ByteRTCUserMessageSendResultNotJoin | 100 | 消息发送方没有加入房间 |
 | ByteRTCUserMessageSendResultInit | 101 | 连接未完成初始化 |
 | ByteRTCUserMessageSendResultNoConnection | 102 | 没有可用的数据传输通道连接 |
@@ -342,7 +344,7 @@ typedef NS_ENUM(NSInteger, ByteRTCStreamMixingErrorCode)
 | ByteRTCStreamMixingErrorCodeOK | 0 | 推流成功。 |
 | ByteRTCStreamMixingErrorCodeBase | 1090 | 未定义的合流错误 |
 | ByteRTCStreamMixingErrorCodeInvalidParam | 1091 | 客户端 SDK 检测到无效推流参数。 |
-| ByteRTCStreamMixingrrorCodeInvalidState | 1092 | 状态错误，需要在状态机正常状态下发起操作 |
+| ByteRTCStreamMixingErrorCodeInvalidState | 1092 | 状态错误，需要在状态机正常状态下发起操作 |
 | ByteRTCStreamMixingErrorCodeInvalidOperator | 1093 | 无效操作 |
 | ByteRTCStreamMixingErrorCodeTimeOut | 1094 | 转推直播任务处理超时，请检查网络状态并重试 |
 | ByteRTCStreamMixingErrorCodeInvalidParamByServer | 1095 | 服务端检测到错误的推流参数 |

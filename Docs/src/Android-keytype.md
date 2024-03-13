@@ -23,6 +23,53 @@ public long com.ss.bytertc.engine.NetworkTimeInfo.timestamp;
 
 
 
+# RemoteVideoRenderConfig
+```java
+public class com.ss.bytertc.engine.RemoteVideoRenderConfig
+```
+
+远端视频帧渲染设置
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **int** | [renderMode](#RemoteVideoRenderConfig-rendermode) |
+| **int** | [backgroundColor](#RemoteVideoRenderConfig-backgroundcolor) |
+| **VideoRotation** | [renderRotation](#RemoteVideoRenderConfig-renderrotation) |
+
+
+## 变量说明
+<span id="RemoteVideoRenderConfig-rendermode"></span>
+### renderMode
+```java
+public int com.ss.bytertc.engine.RemoteVideoRenderConfig.renderMode;
+```
+渲染模式。
+
++ 1（`RENDER_MODE_HIDDEN`）：视窗填满优先，默认值。视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。
++ 2（`RENDER_MODE_FIT`）：视频帧内容全部显示优先。视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将填充 `backgroundColor`。缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。
++ 3（`RENDER_MODE_FILL`）：视频帧自适应画布。视频帧非等比缩放，直至画布被填满。在此过程中，视频帧的长宽比例可能会发生变化。
+
+
+<span id="RemoteVideoRenderConfig-backgroundcolor"></span>
+### backgroundColor
+```java
+public int com.ss.bytertc.engine.RemoteVideoRenderConfig.backgroundColor;
+```
+用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+
+
+<span id="RemoteVideoRenderConfig-renderrotation"></span>
+### renderRotation
+```java
+public VideoRotation com.ss.bytertc.engine.RemoteVideoRenderConfig.renderRotation;
+```
+视频帧旋转角度。参看 [VideoRotation](#videorotation)。默认为 0 度，即不做旋转处理。
+
+
+
 # RTCRoomConfig
 ```java
 public class com.ss.bytertc.engine.RTCRoomConfig
@@ -84,7 +131,7 @@ public boolean com.ss.bytertc.engine.RTCRoomConfig.isAutoSubscribeVideo;
 ```java
 public RemoteVideoConfig com.ss.bytertc.engine.RTCRoomConfig.remoteVideoConfig = null;
 ```
-远端视频流参数，参看 [RemoteVideoConfig](#remotevideoconfig)
+远端视频流参数，参看 [RemoteVideoConfig](#remotevideoconfig-2)
 
 
 
@@ -194,8 +241,8 @@ public class com.ss.bytertc.engine.SubscribeConfig
 | **boolean** | [subVideo](#SubscribeConfig-subvideo) |
 | **boolean** | [subAudio](#SubscribeConfig-subaudio) |
 | **int** | [videoIndex](#SubscribeConfig-videoindex) |
-| **int** | [sub_width](#SubscribeConfig-sub_width) |
-| **int** | [sub_height](#SubscribeConfig-sub_height) |
+| **int** | [subWidth](#SubscribeConfig-subwidth) |
+| **int** | [subHeight](#SubscribeConfig-subheight) |
 | **int** | [framerate](#SubscribeConfig-framerate) |
 
 
@@ -233,18 +280,18 @@ public int com.ss.bytertc.engine.SubscribeConfig.videoIndex;
 用户可以在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。  <br>
 
 
-<span id="SubscribeConfig-sub_width"></span>
-### sub_width
+<span id="SubscribeConfig-subwidth"></span>
+### subWidth
 ```java
-public int com.ss.bytertc.engine.SubscribeConfig.sub_width = 0;
+public int com.ss.bytertc.engine.SubscribeConfig.subWidth = 0;
 ```
 视频宽度，单位：px
 
 
-<span id="SubscribeConfig-sub_height"></span>
-### sub_height
+<span id="SubscribeConfig-subheight"></span>
+### subHeight
 ```java
-public int com.ss.bytertc.engine.SubscribeConfig.sub_height = 0;
+public int com.ss.bytertc.engine.SubscribeConfig.subHeight = 0;
 ```
 视频高度，单位：px
 
@@ -272,10 +319,10 @@ public enum com.ss.bytertc.engine.SubscribeConfig.SVCLayer
 
 | 类型 | 说明 |
 | --- | --- |
-| **SVCLayerDefault(0)** | 不指定分层(默认值） |
-| **SVCLayerBase(1)** | T0层 |
-| **SVCLayerMain(2)** | T0+T1层 |
-| **SVCLayerHigh(3)** | T0+T1+T2层 |
+| **DEFAULT(0)** | 不指定分层(默认值） |
+| **BASE(1)** | T0层 |
+| **MAIN(2)** | T0+T1层 |
+| **HIGH(3)** | T0+T1+T2层 |
 
 
 # SubscribeState
@@ -341,86 +388,86 @@ CPU 和内存统计信息
 
 | 类型 | 名称 |
 | --- | --- |
-| **int** | [cpu_cores](#SysStats-cpu_cores) |
-| **double** | [cpu_app_usage](#SysStats-cpu_app_usage) |
-| **double** | [cpu_total_usage](#SysStats-cpu_total_usage) |
-| **double** | [memory_usage](#SysStats-memory_usage) |
-| **long** | [full_memory](#SysStats-full_memory) |
-| **long** | [total_memory_usage](#SysStats-total_memory_usage) |
-| **long** | [free_memory](#SysStats-free_memory) |
-| **double** | [memory_ratio](#SysStats-memory_ratio) |
-| **double** | [total_memory_ratio](#SysStats-total_memory_ratio) |
+| **int** | [cpuCores](#SysStats-cpucores) |
+| **double** | [cpuAppUsage](#SysStats-cpuappusage) |
+| **double** | [cpuTotalUsage](#SysStats-cputotalusage) |
+| **double** | [memoryUsage](#SysStats-memoryusage) |
+| **long** | [fullMemory](#SysStats-fullmemory) |
+| **long** | [totalMemoryUsage](#SysStats-totalmemoryusage) |
+| **long** | [freeMemory](#SysStats-freememory) |
+| **double** | [memoryRatio](#SysStats-memoryratio) |
+| **double** | [totalMemoryRatio](#SysStats-totalmemoryratio) |
 
 
 ## 变量说明
-<span id="SysStats-cpu_cores"></span>
-### cpu_cores
+<span id="SysStats-cpucores"></span>
+### cpuCores
 ```java
-public int com.ss.bytertc.engine.SysStats.cpu_cores;
+public int com.ss.bytertc.engine.SysStats.cpuCores;
 ```
 设备的 CPU 核数
 
 
-<span id="SysStats-cpu_app_usage"></span>
-### cpu_app_usage
+<span id="SysStats-cpuappusage"></span>
+### cpuAppUsage
 ```java
-public double com.ss.bytertc.engine.SysStats.cpu_app_usage;
+public double com.ss.bytertc.engine.SysStats.cpuAppUsage;
 ```
 应用的 CPU 使用率，取值范围为 [0, 1]。
 
 
-<span id="SysStats-cpu_total_usage"></span>
-### cpu_total_usage
+<span id="SysStats-cputotalusage"></span>
+### cpuTotalUsage
 ```java
-public double com.ss.bytertc.engine.SysStats.cpu_total_usage;
+public double com.ss.bytertc.engine.SysStats.cpuTotalUsage;
 ```
 系统的 CPU 使用率，取值范围为 [0, 1]。
 
 
-<span id="SysStats-memory_usage"></span>
-### memory_usage
+<span id="SysStats-memoryusage"></span>
+### memoryUsage
 ```java
-public double com.ss.bytertc.engine.SysStats.memory_usage;
+public double com.ss.bytertc.engine.SysStats.memoryUsage;
 ```
 应用的内存占用大小（单位 MB）
 
 
-<span id="SysStats-full_memory"></span>
-### full_memory
+<span id="SysStats-fullmemory"></span>
+### fullMemory
 ```java
-public long com.ss.bytertc.engine.SysStats.full_memory;
+public long com.ss.bytertc.engine.SysStats.fullMemory;
 ```
 设备的内存大小 单位：MB
 
 
-<span id="SysStats-total_memory_usage"></span>
-### total_memory_usage
+<span id="SysStats-totalmemoryusage"></span>
+### totalMemoryUsage
 ```java
-public long com.ss.bytertc.engine.SysStats.total_memory_usage;
+public long com.ss.bytertc.engine.SysStats.totalMemoryUsage;
 ```
 系统已使用内存 MB
 
 
-<span id="SysStats-free_memory"></span>
-### free_memory
+<span id="SysStats-freememory"></span>
+### freeMemory
 ```java
-public long com.ss.bytertc.engine.SysStats.free_memory;
+public long com.ss.bytertc.engine.SysStats.freeMemory;
 ```
 系统当前空闲内存（MB）
 
 
-<span id="SysStats-memory_ratio"></span>
-### memory_ratio
+<span id="SysStats-memoryratio"></span>
+### memoryRatio
 ```java
-public double com.ss.bytertc.engine.SysStats.memory_ratio;
+public double com.ss.bytertc.engine.SysStats.memoryRatio;
 ```
 当前应用的内存使用率（单位 %）
 
 
-<span id="SysStats-total_memory_ratio"></span>
-### total_memory_ratio
+<span id="SysStats-totalmemoryratio"></span>
+### totalMemoryRatio
 ```java
-public double com.ss.bytertc.engine.SysStats.total_memory_ratio;
+public double com.ss.bytertc.engine.SysStats.totalMemoryRatio;
 ```
 系统内存使用率（单位 %）
 
@@ -434,11 +481,38 @@ public class com.ss.bytertc.engine.UserInfo
 用户信息
 
 
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **String** | [uid](#UserInfo-uid) |
+| **String** | [extraInfo](#UserInfo-extrainfo) |
+
+
 ## 成员函数
 
 | 返回 | 名称 |
 | --- | --- |
 | **UserInfo** | [UserInfo](#UserInfo-userinfo) |
+
+
+## 变量说明
+<span id="UserInfo-uid"></span>
+### uid
+```java
+public String com.ss.bytertc.engine.UserInfo.uid;
+```
+用户 ID。该字符串符合正则表达式：`[a-zA-Z0-9_@\-\.]{1,128}`。<br>
+你需要自行设置或管理 uid，并保证同一房间内每个 uid 的唯一性。
+
+
+<span id="UserInfo-extrainfo"></span>
+### extraInfo
+```java
+public String com.ss.bytertc.engine.UserInfo.extraInfo;
+```
+用户的额外信息，最大长度为 200 字节。会在 `onUserJoined` 中回调给远端用户。
+
 
 
 ## 函数说明
@@ -476,7 +550,8 @@ public class com.ss.bytertc.engine.VideoCanvas
 | **int** | [RENDER_MODE_FILL](#VideoCanvas-render_mode_fill) |
 | **View** | [renderView](#VideoCanvas-renderview) |
 | **int** | [renderMode](#VideoCanvas-rendermode) |
-| **int** | [background_color](#VideoCanvas-background_color) |
+| **int** | [backgroundColor](#VideoCanvas-backgroundcolor) |
+| **VideoRotation** | [renderRotation](#VideoCanvas-renderrotation) |
 
 
 ## 变量说明
@@ -525,12 +600,21 @@ public int com.ss.bytertc.engine.VideoCanvas.renderMode;
 渲染模式，可选 `RENDER_MODE_HIDDEN(1)`, `RENDER_MODE_FIT(2)` 和 `RENDER_MODE_FILL(3)`。默认值为 `RENDER_MODE_HIDDEN(1)`。
 
 
-<span id="VideoCanvas-background_color"></span>
-### background_color
+<span id="VideoCanvas-backgroundcolor"></span>
+### backgroundColor
 ```java
-public int com.ss.bytertc.engine.VideoCanvas.background_color;
+public int com.ss.bytertc.engine.VideoCanvas.backgroundColor;
 ```
 用于填充画布空白部分的背景颜色。取值范围是 `[0x00000000, 0xFFFFFFFF]`。默认值是 `0x00000000`。其中，透明度设置无效。
+
+
+<span id="VideoCanvas-renderrotation"></span>
+### renderRotation
+```java
+public VideoRotation com.ss.bytertc.engine.VideoCanvas.renderRotation;
+```
+视频帧旋转角度。参看 [VideoRotation](#videorotation)。默认为 0 度，即不做旋转处理。<br>
+该设置仅对远端视频有效，对本地视频设置不生效。
 
 
 
@@ -642,7 +726,7 @@ public enum com.ss.bytertc.engine.VideoEncoderConfig.VideoCodecType
 
 | 类型 | 说明 |
 | --- | --- |
-| **CODEC_TYPE_AUTO(0)** | 自动选择编码模式 |
+| **CODEC_TYPE_AUTO(0)** | 其他 |
 | **CODEC_TYPE_H264(1)** | H264 |
 | **CODEC_TYPE_BYTEVC1(2)** | ByteVC1 |
 
@@ -659,10 +743,10 @@ public enum com.ss.bytertc.engine.VideoEncoderConfig.EncoderPreference
 
 | 类型 | 说明 |
 | --- | --- |
-| **Disabled(0)** | 无偏好。不降低帧率和分辨率。 |
-| **MaintainFramerate(1)** | （默认值）帧率优先。分辨率不变。 |
-| **MaintainQuality(2)** | 分辨率优先。 |
-| **Balance(3)** | 平衡帧率与分辨率。 |
+| **DISABLED(0)** | 无偏好。不降低帧率和分辨率。 |
+| **MAINTAIN_FRAMERATE(1)** | （默认值）帧率优先。分辨率不变。 |
+| **MAINTAIN_QUALITY(2)** | 分辨率优先。 |
+| **BALANCE(3)** | 平衡帧率与分辨率。 |
 
 
 # AudioAlignmentMode
@@ -931,7 +1015,7 @@ public int com.ss.bytertc.engine.data.AudioMixingConfig.playCount;
 ```java
 public int com.ss.bytertc.engine.data.AudioMixingConfig.position;
 ```
-混音时音频文件播放进度条位置，参数为整数，单位为毫秒
+混音时音频文件播放的起始位置。参数为整数，单位为毫秒。
 
 
 <span id="AudioMixingConfig-callbackonprogressinterval"></span>
@@ -1111,11 +1195,12 @@ public class com.ss.bytertc.engine.data.AudioPropertiesConfig
 | 类型 | 名称 |
 | --- | --- |
 | **int** | [interval](#AudioPropertiesConfig-interval) |
-| **boolean** | [enable_spectrum](#AudioPropertiesConfig-enable_spectrum) |
-| **boolean** | [enable_vad](#AudioPropertiesConfig-enable_vad) |
-| **AudioReportMode** | [local_main_report_mode](#AudioPropertiesConfig-local_main_report_mode) |
-| **AudioPropertiesMode** | [audio_report_mode](#AudioPropertiesConfig-audio_report_mode) |
+| **boolean** | [enableSpectrum](#AudioPropertiesConfig-enablespectrum) |
+| **boolean** | [enableVad](#AudioPropertiesConfig-enablevad) |
+| **AudioReportMode** | [localMainReportMode](#AudioPropertiesConfig-localmainreportmode) |
+| **AudioPropertiesMode** | [audioReportMode](#AudioPropertiesConfig-audioreportmode) |
 | **float** | [smooth](#AudioPropertiesConfig-smooth) |
+| **boolean** | [enableVoicePitch](#AudioPropertiesConfig-enablevoicepitch) |
 
 
 ## 变量说明
@@ -1131,34 +1216,34 @@ public int com.ss.bytertc.engine.data.AudioPropertiesConfig.interval;
 + `> 100`: 开启信息提示，并将信息提示间隔设置为此值  <br>
 
 
-<span id="AudioPropertiesConfig-enable_spectrum"></span>
-### enable_spectrum
+<span id="AudioPropertiesConfig-enablespectrum"></span>
+### enableSpectrum
 ```java
-public boolean com.ss.bytertc.engine.data.AudioPropertiesConfig.enable_spectrum = false;
+public boolean com.ss.bytertc.engine.data.AudioPropertiesConfig.enableSpectrum = false;
 ```
 是否开启音频频谱检测
 
 
-<span id="AudioPropertiesConfig-enable_vad"></span>
-### enable_vad
+<span id="AudioPropertiesConfig-enablevad"></span>
+### enableVad
 ```java
-public boolean com.ss.bytertc.engine.data.AudioPropertiesConfig.enable_vad = false;
+public boolean com.ss.bytertc.engine.data.AudioPropertiesConfig.enableVad = false;
 ```
 是否开启人声检测 (VAD)
 
 
-<span id="AudioPropertiesConfig-local_main_report_mode"></span>
-### local_main_report_mode
+<span id="AudioPropertiesConfig-localmainreportmode"></span>
+### localMainReportMode
 ```java
-public AudioReportMode com.ss.bytertc.engine.data.AudioPropertiesConfig.local_main_report_mode = AudioReportMode.AUDIO_REPORT_MODE_NORMAL;
+public AudioReportMode com.ss.bytertc.engine.data.AudioPropertiesConfig.localMainReportMode = AudioReportMode.AUDIO_REPORT_MODE_NORMAL;
 ```
 音量回调模式。详见 [AudioReportMode](#audioreportmode)。
 
 
-<span id="AudioPropertiesConfig-audio_report_mode"></span>
-### audio_report_mode
+<span id="AudioPropertiesConfig-audioreportmode"></span>
+### audioReportMode
 ```java
-public AudioPropertiesMode com.ss.bytertc.engine.data.AudioPropertiesConfig.audio_report_mode = AudioPropertiesMode.AUDIO_PROPERTIES_MODE_MIC/;"
+public AudioPropertiesMode com.ss.bytertc.engine.data.AudioPropertiesConfig.audioReportMode = AudioPropertiesMode.AUDIO_PROPERTIES_MODE_MICRO/;"
 ```
 [onLocalAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [AudioPropertiesMode](#audiopropertiesmode)。
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据，不包含本地混音音频数据。
@@ -1171,6 +1256,14 @@ public float com.ss.bytertc.engine.data.AudioPropertiesConfig.smooth = 1.0f;
 ```
 适用于音频属性信息提示的平滑系数。取值范围是 `(0.0, 1.0]`。<br>
 默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。
+
+
+<span id="AudioPropertiesConfig-enablevoicepitch"></span>
+### enableVoicePitch
+```java
+public boolean com.ss.bytertc.engine.data.AudioPropertiesConfig.enableVoicePitch = false;
+```
+是否回调本地用户的人声基频。
 
 
 
@@ -1190,6 +1283,7 @@ public class com.ss.bytertc.engine.data.AudioPropertiesInfo
 | **int** | [nonlinearVolume](#AudioPropertiesInfo-nonlinearvolume) |
 | **float[]** | [spectrum](#AudioPropertiesInfo-spectrum) |
 | **int** | [vad](#AudioPropertiesInfo-vad) |
+| **double** | [voicePitch](#AudioPropertiesInfo-voicepitch) |
 
 
 ## 变量说明
@@ -1237,6 +1331,19 @@ public int com.ss.bytertc.engine.data.AudioPropertiesInfo.vad;
 - 1: 检测到人声。<br>
 - 0: 未检测到人声。<br>
 - -1: 未开启 VAD。
+
+
+<span id="AudioPropertiesInfo-voicepitch"></span>
+### voicePitch
+```java
+public double com.ss.bytertc.engine.data.AudioPropertiesInfo.voicePitch = 0;
+```
+本地用户的人声基频，单位为赫兹。 <br>
+同时满足以下两个条件时，返回的值为本地用户的人声基频：
+
++ 调用 [enableAudioPropertiesReport](Android-api.md#RTCVideo-enableaudiopropertiesreport)，并设置参数 enableVoicePitch 的值为 `true`。 <br>
++ 本地采集的音频中包含本地用户的人声。<br>
+其他情况下返回 `0`。
 
 
 
@@ -1395,26 +1502,6 @@ public enum com.ss.bytertc.engine.data.AudioReportMode
 | **AUDIO_REPORT_MODE_RESET(2)** | 可见用户进房并停止推流后，开启音量回调，回调值重置为0。 |
 
 
-# AudioSampleRate
-```java
-public enum com.ss.bytertc.engine.data.AudioSampleRate
-```
-
-音频采样率，单位为 Hz。
-
-
-## 枚举值
-
-| 类型 | 说明 |
-| --- | --- |
-| **AUDIO_SAMPLE_RATE_AUTO(-1)** | 默认设置。48000Hz。 |
-| **AUDIO_SAMPLE_RATE_8000(8000)** | 8000Hz |
-| **AUDIO_SAMPLE_RATE_16000(16000)** | 16000Hz |
-| **AUDIO_SAMPLE_RATE_32000(32000)** | 32000Hz |
-| **AUDIO_SAMPLE_RATE_44100(44100)** | 44100Hz |
-| **AUDIO_SAMPLE_RATE_48000(48000)** | 48000Hz |
-
-
 # AudioRoute
 ```java
 public enum com.ss.bytertc.engine.data.AudioRoute
@@ -1452,6 +1539,26 @@ public int com.ss.bytertc.engine.data.AudioRoute.value()
 
 **返回值**
 当前值
+
+
+# AudioSampleRate
+```java
+public enum com.ss.bytertc.engine.data.AudioSampleRate
+```
+
+音频采样率，单位为 Hz。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **AUDIO_SAMPLE_RATE_AUTO(-1)** | 默认设置。48000Hz。 |
+| **AUDIO_SAMPLE_RATE_8000(8000)** | 8000Hz |
+| **AUDIO_SAMPLE_RATE_16000(16000)** | 16000Hz |
+| **AUDIO_SAMPLE_RATE_32000(32000)** | 32000Hz |
+| **AUDIO_SAMPLE_RATE_44100(44100)** | 44100Hz |
+| **AUDIO_SAMPLE_RATE_48000(48000)** | 48000Hz |
 
 
 # AudioSourceType
@@ -1550,11 +1657,11 @@ public enum com.ss.bytertc.engine.data.ColorSpace
 
 | 类型 | 说明 |
 | --- | --- |
-| **kColorSpaceUnknown(0)** | 色彩空间未知 |
-| **kColorSpaceYCbCrBT601LimitedRange(1)** | BT.601数字编码标准，色彩空间[16-235] |
-| **kColorSpaceYCbCrBT601FullRange(2)** | BT.601数字编码标准，颜色空间[0-255] |
-| **kColorSpaceYCbCrBT709LimitedRange(3)** | BT.7091数字编码标准，颜色空间[16-235] |
-| **kColorSpaceYCbCrBT709FullRange(4)** | BT.7091数字编码标准，颜色空间[0-255] |
+| **UNKNOWN(0)** | 色彩空间未知 |
+| **BT601_LIMITED_RANGE(1)** | BT.601数字编码标准，色彩空间[16-235] |
+| **BT601_FULL_RANGE(2)** | BT.601数字编码标准，颜色空间[0-255] |
+| **BT709_LIMITED_RANGE(3)** | BT.7091数字编码标准，颜色空间[16-235] |
+| **BT709_FULL_RANGE(4)** | BT.7091数字编码标准，颜色空间[0-255] |
 
 
 # DataMessageSourceType
@@ -1741,21 +1848,101 @@ public boolean com.ss.bytertc.engine.data.EchoTestConfig.getEchoEnabledVideo()
 public int com.ss.bytertc.engine.data.EchoTestConfig.getAudioReportInterval()
 ```
 
+# EngineConfig
+```java
+public class com.ss.bytertc.engine.data.EngineConfig
+```
+
+引擎配置
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **int** | [ENGINE_CONFIG_VALID](#EngineConfig-engine_config_valid) |
+| **int** | [ENGINE_CONFIG_INVALID_APP_ID](#EngineConfig-engine_config_invalid_app_id) |
+| **int** | [ENGINE_CONFIG_INVALID_NATIVE_LIB_PATH](#EngineConfig-engine_config_invalid_native_lib_path) |
+| **String** | [appID](#EngineConfig-appid) |
+| **Object** | [eglContext](#EngineConfig-eglcontext) |
+| **String** | [nativeLoadPath](#EngineConfig-nativeloadpath) |
+| **JSONObject** | [parameters](#EngineConfig-parameters) |
+
+
+## 变量说明
+<span id="EngineConfig-engine_config_valid"></span>
+### ENGINE_CONFIG_VALID
+```java
+public static final int com.ss.bytertc.engine.data.EngineConfig.ENGINE_CONFIG_VALID = 0;
+```
+EngineConfig 有效
+
+
+<span id="EngineConfig-engine_config_invalid_app_id"></span>
+### ENGINE_CONFIG_INVALID_APP_ID
+```java
+public static final int com.ss.bytertc.engine.data.EngineConfig.ENGINE_CONFIG_INVALID_APP_ID = 1;
+```
+EngineConfig 无效，AppID 无效
+
+
+<span id="EngineConfig-engine_config_invalid_native_lib_path"></span>
+### ENGINE_CONFIG_INVALID_NATIVE_LIB_PATH
+```java
+public static final int com.ss.bytertc.engine.data.EngineConfig.ENGINE_CONFIG_INVALID_NATIVE_LIB_PATH = 2;
+```
+EngineConfig 无效，nativeLoadPath 无效
+
+
+<span id="EngineConfig-appid"></span>
+### appID
+```java
+public String com.ss.bytertc.engine.data.EngineConfig.appID;
+```
+必填，每个应用的唯一标识符，由 RTC 控制台随机生成的。不同的 AppId 生成的实例在 RTC 中进行音视频通话完全独立，无法互通。
+
+
+<span id="EngineConfig-eglcontext"></span>
+### eglContext
+```java
+public Object com.ss.bytertc.engine.data.EngineConfig.eglContext = null;
+```
+选填，如果需要支持外部纹理硬编码，则需要以 `JObject` 方式传入 `eglContext`
+
+
+<span id="EngineConfig-nativeloadpath"></span>
+### nativeLoadPath
+```java
+public String com.ss.bytertc.engine.data.EngineConfig.nativeLoadPath = null;
+```
+选填，so文件加载地址，如果需要插件库动态加载，可以通过该字段设置动态库地址
+
+
+<span id="EngineConfig-parameters"></span>
+### parameters
+```java
+public JSONObject com.ss.bytertc.engine.data.EngineConfig.parameters = null;
+```
+选填，私有参数。如需使用请联系技术支持人员。
+
+
+
 # EffectBeautyMode
 ```java
 public enum com.ss.bytertc.engine.data.EffectBeautyMode
 ```
 
-基础美颜模式
+基础美颜模式。
 
 
 ## 枚举值
 
 | 类型 | 说明 |
 | --- | --- |
-| **EFFECT_WHITE_MODE(0)** | 美白 |
-| **EFFECT_SMOOTH_MODE(1)** | 磨皮 |
-| **EFFECT_SHARPEN_MODE(2)** | 锐化 |
+| **WHITE(0)** | 美白。 |
+| **SMOOTH(1)** | 磨皮。 |
+| **SHARPEN(2)** | 锐化。 |
+| **CLEAR(3)** | 清晰，需集成 v4.4.2+ 版本的特效 SDK。 |
 
 
 # ForwardStreamEventInfo
@@ -2218,27 +2405,18 @@ public boolean com.ss.bytertc.engine.data.MediaPlayerConfig.autoPlay = true;
 public class com.ss.bytertc.engine.data.MediaPlayerCustomSource
 ```
 
-混音配置
+音频源
 
 
 ## 成员变量
 
 | 类型 | 名称 |
 | --- | --- |
-| **IMediaPlayerCustomSourceProvider** | [provider](#MediaPlayerCustomSource-provider) |
 | **MediaPlayerCustomSourceMode** | [mode](#MediaPlayerCustomSource-mode) |
 | **MediaPlayerCustomSourceStreamType** | [type](#MediaPlayerCustomSource-type) |
 
 
 ## 变量说明
-<span id="MediaPlayerCustomSource-provider"></span>
-### provider
-```java
-public  IMediaPlayerCustomSourceProvider com.ss.bytertc.engine.data.MediaPlayerCustomSource.provider = null;
-```
-仅在使用内存播放时，传入对应的 [IMediaPlayerCustomSourceProvider](Android-callback.md#imediaplayercustomsourceprovider) 实例。
-
-
 <span id="MediaPlayerCustomSource-mode"></span>
 ### mode
 ```java
@@ -2299,10 +2477,10 @@ public enum com.ss.bytertc.engine.data.MediaPlayerCustomSourceSeekWhence
 
 | 类型 | 说明 |
 | --- | --- |
-| **Set(0)** | 从音频数据的头开始读取，读取的实际偏移量为参数 offset 的值。 |
-| **Cur(1)** | 从音频数据的某一位置开始读取，读取的实际偏移量为音频数据当前的读取位置位置加上参数 offset 的值。 |
-| **End(2)** | 从音频数据的尾开始读取，读取的实际数据偏移量为用户传入的音频数据大小加上参数 offset 的值。 |
-| **Size(3)** | 返回音频数据的大小。 |
+| **SET(0)** | 从音频数据的头开始读取，读取的实际偏移量为参数 offset 的值。 |
+| **CUR(1)** | 从音频数据的某一位置开始读取，读取的实际偏移量为音频数据当前的读取位置位置加上参数 offset 的值。 |
+| **END(2)** | 从音频数据的尾开始读取，读取的实际数据偏移量为用户传入的音频数据大小加上参数 offset 的值。 |
+| **SIZE(3)** | 返回音频数据的大小。 |
 
 
 # MediaPlayerCustomSourceStreamType
@@ -2537,7 +2715,7 @@ public class com.ss.bytertc.engine.data.PositionInfo
 ```java
 public Position com.ss.bytertc.engine.data.PositionInfo.position;
 ```
-用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 [Position](#position)。
+用户在空间音频坐标系里的位置，需自行建立空间直角坐标系。参看 [Position](#position-2)。
 
 
 <span id="PositionInfo-orientation"></span>
@@ -2614,7 +2792,7 @@ public String com.ss.bytertc.engine.data.RecordingConfig.dirPath;
 <span id="RecordingConfig-recordingfiletype"></span>
 ### recordingFileType
 ```java
-public RecordingFileType com.ss.bytertc.engine.data.RecordingConfig.recordingFileType = RecordingFileType.RECORDING_FILE_TYPE_MP4;
+public RecordingFileType com.ss.bytertc.engine.data.RecordingConfig.recordingFileType = RecordingFileType.MP4;
 ```
 录制存储文件格式，参看 [RecordingFileType](#recordingfiletype)
 
@@ -2818,12 +2996,37 @@ public int com.ss.bytertc.engine.data.RemoteAudioStateChangeReason.value()
 当前值
 
 
+# RemoteMirrorType
+```java
+public enum com.ss.bytertc.engine.data.RemoteMirrorType
+```
+
+远端流的镜像类型。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **NONE(0)** | （默认值）远端视频渲染无镜像效果。 |
+| **RENDER(1)** | 远端视频渲染有镜像效果。 |
+
+
 # RemoteStreamKey
 ```java
 public class com.ss.bytertc.engine.data.RemoteStreamKey
 ```
 
 远端流信息
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **String** | [roomId](#RemoteStreamKey-roomid) |
+| **String** | [userId](#RemoteStreamKey-userid) |
+| **StreamIndex** | [streamIndex](#RemoteStreamKey-streamindex) |
 
 
 ## 成员函数
@@ -2834,6 +3037,32 @@ public class com.ss.bytertc.engine.data.RemoteStreamKey
 | **String** | [getUserId](#RemoteStreamKey-getuserid) |
 | **StreamIndex** | [getStreamIndex](#RemoteStreamKey-getstreamindex) |
 | **boolean** | [hasNullProperty](#RemoteStreamKey-hasnullproperty) |
+
+
+## 变量说明
+<span id="RemoteStreamKey-roomid"></span>
+### roomId
+```java
+public String com.ss.bytertc.engine.data.RemoteStreamKey.roomId;
+```
+房间 ID
+
+
+<span id="RemoteStreamKey-userid"></span>
+### userId
+```java
+public String com.ss.bytertc.engine.data.RemoteStreamKey.userId;
+```
+用户 ID
+
+
+<span id="RemoteStreamKey-streamindex"></span>
+### streamIndex
+```java
+public StreamIndex com.ss.bytertc.engine.data.RemoteStreamKey.streamIndex;
+```
+流属性，包括主流、屏幕流。参看 [StreamIndex](Android-keytype.md#StreamIndex-2)
+
 
 
 ## 函数说明
@@ -2877,11 +3106,48 @@ public class com.ss.bytertc.engine.data.RemoteVideoConfig
 远端视频帧信息
 
 
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **int** | [width](#RemoteVideoConfig-width) |
+| **int** | [height](#RemoteVideoConfig-height) |
+| **int** | [framerate](#RemoteVideoConfig-framerate) |
+
+
 ## 成员函数
 
 | 返回 | 名称 |
 | --- | --- |
 | **RemoteVideoConfig** | [RemoteVideoConfig](#RemoteVideoConfig-remotevideoconfig) |
+
+
+## 变量说明
+<span id="RemoteVideoConfig-width"></span>
+### width
+```java
+public int com.ss.bytertc.engine.data.RemoteVideoConfig.width = 0;
+```
+视频宽度，单位：px
+
+
+<span id="RemoteVideoConfig-height"></span>
+### height
+```java
+public int com.ss.bytertc.engine.data.RemoteVideoConfig.height = 0;
+```
+视频高度，单位：px
+
+
+<span id="RemoteVideoConfig-framerate"></span>
+### framerate
+```java
+public int com.ss.bytertc.engine.data.RemoteVideoConfig.framerate = 0;
+```
+期望订阅的最高帧率，单位：fps，默认值为 0 即满帧订阅，设为大于 0 的值时开始生效。  <br>
+当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。  <br>
+仅码流支持 SVC 分级编码特性时方可生效。
+
 
 
 ## 函数说明
@@ -2938,6 +3204,7 @@ public enum com.ss.bytertc.engine.data.ReturnStatus
 | **RETURN_STATUS_AUDIO_DEVICE_INIT_FAILED(-108)** | 系统错误，设备初始化失败。 |
 | **RETURN_STATUS_AUDIO_DEVICE_START_FAILED(-109)** | 系统错误，设备开启失败。 |
 | **RETURN_STATUS_NATIVE_IN_VALID(-201)** | 失败。底层未初始化，engine 无效。 |
+| **RETURN_STATUS_VIDEO_TIMESTAMP_WARNING(-202)** | 警告。推送视频帧到 RTC SDK 时，相邻视频帧的时间戳差异应当和推帧操作的间隔相同。如果不同，会收到此警告。 |
 
 
 # RTCASRConfig
@@ -3038,24 +3305,25 @@ public class com.ss.bytertc.engine.data.RTCLogConfig
 
 | 类型 | 名称 |
 | --- | --- |
-| **String** | [log_path](#RTCLogConfig-log_path) |
-| **int** | [log_file_size](#RTCLogConfig-log_file_size) |
-| **LocalLogLevel** | [log_level](#RTCLogConfig-log_level) |
+| **String** | [logPath](#RTCLogConfig-logpath) |
+| **int** | [logFileSize](#RTCLogConfig-logfilesize) |
+| **LocalLogLevel** | [logLevel](#RTCLogConfig-loglevel) |
+| **String** | [logFilenamePrefix](#RTCLogConfig-logfilenameprefix) |
 
 
 ## 变量说明
-<span id="RTCLogConfig-log_path"></span>
-### log_path
+<span id="RTCLogConfig-logpath"></span>
+### logPath
 ```java
-public String com.ss.bytertc.engine.data.RTCLogConfig.log_path;
+public String com.ss.bytertc.engine.data.RTCLogConfig.logPath;
 ```
 日志存储路径，必填。
 
 
-<span id="RTCLogConfig-log_file_size"></span>
-### log_file_size
+<span id="RTCLogConfig-logfilesize"></span>
+### logFileSize
 ```java
-public int com.ss.bytertc.engine.data.RTCLogConfig.log_file_size = 10;
+public int com.ss.bytertc.engine.data.RTCLogConfig.logFileSize = 10;
 ```
 日志文件最大占用的总空间，单位为 MB，选填。取值范围为 1～100 MB，默认值为 10 MB。
 若 `logFileSize` < 1，取 1 MB。若 `logFileSize` > 100，取 100 MB。<br>
@@ -3063,12 +3331,21 @@ public int com.ss.bytertc.engine.data.RTCLogConfig.log_file_size = 10;
 <ul><li> 若 1 ≤ <code>logFileSize</code> ≤ 2，则会生成一个日志文件。</li><li>若 <code>logFileSize</code> > 2，假设 <code>logFileSize/2</code> 的整数部分为 N，则前 N 个文件，每个文件会写满 2 MB，第 N+1 个文件大小不超过 <code>logFileSize mod 2</code>，否则会删除最老的文件，以此类推。</li></ul>
 
 
-<span id="RTCLogConfig-log_level"></span>
-### log_level
+<span id="RTCLogConfig-loglevel"></span>
+### logLevel
 ```java
-public LocalLogLevel com.ss.bytertc.engine.data.RTCLogConfig.log_level = LocalLogLevel.WARNING;
+public LocalLogLevel com.ss.bytertc.engine.data.RTCLogConfig.logLevel = LocalLogLevel.WARNING;
 ```
 日志等级，参看 [LocalLogLevel](#localloglevel)，默认为警告级别，选填。
+
+
+<span id="RTCLogConfig-logfilenameprefix"></span>
+### logFilenamePrefix
+```java
+public String com.ss.bytertc.engine.data.RTCLogConfig.logFilenamePrefix;
+```
+日志文件名前缀，选填。该字符串必须符合正则表达式：[a-zA-Z0-9_@\-\.]{1,128}。
+最终的日志文件名为`前缀 + "_" + 文件创建时间 + "_rtclog".log`，如 `logPrefix_2023-05-25_172324_rtclog.log`。
 
 
 
@@ -3382,8 +3659,8 @@ public enum com.ss.bytertc.engine.data.VideoContentType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kVideoContentTypeNormalFrame(0)** | 普通视频 |
-| **kVideoContentTypeBlackFrame(1)** | 黑帧视频 |
+| **NORMAL_FRAME(0)** | 普通视频 |
+| **BLACK_FRAME(1)** | 黑帧视频 |
 
 
 # VideoDenoiseMode
@@ -3425,31 +3702,6 @@ public enum com.ss.bytertc.engine.data.VideoDenoiseModeChangedReason
 | **VIDEO_DENOISE_MODE_CHANGED_REASON_RESOLUTION(7)** | 分辨率导致视频降噪状态发生改变。分辨率过高会导致性能消耗过大，从而导致视频降噪模式关闭。若希望继续使用视频降噪，可选择降低分辨率。 |
 
 
-# VideoFrameInfo
-```java
-public class com.ss.bytertc.engine.data.VideoFrameInfo
-```
-
-视频帧信息
-
-
-## 成员变量
-
-| 类型 | 名称 |
-| --- | --- |
-| **VideoRotation** | [rotation](#VideoFrameInfo-rotation) |
-
-
-## 变量说明
-<span id="VideoFrameInfo-rotation"></span>
-### rotation
-```java
-public VideoRotation com.ss.bytertc.engine.data.VideoFrameInfo.rotation = VideoRotation.VIDEO_ROTATION_0;
-```
-视频帧顺时针旋转角度。参看 [VideoRotation](#videorotation)。
-
-
-
 # VideoFrameType
 ```java
 public enum com.ss.bytertc.engine.data.VideoFrameType
@@ -3462,8 +3714,51 @@ public enum com.ss.bytertc.engine.data.VideoFrameType
 
 | 类型 | 说明 |
 | --- | --- |
-| **kVideoFrameTypeRawMemory(0)** | CPU Buffer |
-| **kVideoFrameTypeGLTexture(2)** | GL Texture |
+| **RAW_MEMORY(0)** | CPU Buffer |
+| **GL_TEXTURE(2)** | GL Texture |
+
+
+# VideoFrameInfo
+```java
+public class com.ss.bytertc.engine.data.VideoFrameInfo
+```
+
+视频帧信息
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **int** | [width](#VideoFrameInfo-width) |
+| **int** | [height](#VideoFrameInfo-height) |
+| **VideoRotation** | [rotation](#VideoFrameInfo-rotation) |
+
+
+## 变量说明
+<span id="VideoFrameInfo-width"></span>
+### width
+```java
+public int com.ss.bytertc.engine.data.VideoFrameInfo.width = 0;
+```
+宽（像素）
+
+
+<span id="VideoFrameInfo-height"></span>
+### height
+```java
+public int com.ss.bytertc.engine.data.VideoFrameInfo.height = 0;
+```
+高（像素）
+
+
+<span id="VideoFrameInfo-rotation"></span>
+### rotation
+```java
+public VideoRotation com.ss.bytertc.engine.data.VideoFrameInfo.rotation = VideoRotation.VIDEO_ROTATION_0;
+```
+视频帧顺时针旋转角度。参看 [VideoRotation](#videorotation)。
+
 
 
 # VideoOrientation
@@ -3478,9 +3773,9 @@ public enum com.ss.bytertc.engine.data.VideoOrientation
 
 | 类型 | 说明 |
 | --- | --- |
-| **Adaptive(0)** | （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。 |
-| **Portrait(1)** | 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。 |
-| **Landscape(2)** | 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。 |
+| **ADAPTIVE(0)** | （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。 |
+| **PORTRAIT(1)** | 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。 |
+| **LANDSCAPE(2)** | 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。 |
 
 
 # VideoPictureType
@@ -3513,13 +3808,13 @@ public enum com.ss.bytertc.engine.data.VideoPixelFormat
 
 | 类型 | 说明 |
 | --- | --- |
-| **kVideoPixelFormatUnknown(0)** | 未知格式 |
-| **kVideoPixelFormatI420(1)** | I420格式 |
-| **kVideoPixelFormatNV12(2)** | NV12格式 |
-| **kVideoPixelFormatNV21(3)** | NV21格式 |
-| **kVideoPixelFormatRGBA(5)** | RGBA格式 |
-| **kVideoPixelFormatTexture2D(GLES10.GL_TEXTURE_2D)** | Texture2D格式 |
-| **kVideoPixelFormatTextureOES(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)** | TextureOES格式 |
+| **UNKNOWN(0)** | 未知格式 |
+| **I420(1)** | I420 格式 |
+| **NV12(2)** | NV12 格式 |
+| **NV21(3)** | NV21 格式 |
+| **RGBA(5)** | RGBA 格式 |
+| **TEXTURE_2D(GLES10.GL_TEXTURE_2D)** | Texture2D 格式 |
+| **TEXTURE_OES(GLES11Ext.GL_TEXTURE_EXTERNAL_OES)** | TextureOES 格式 |
 
 
 # VideoRotation
@@ -3552,8 +3847,8 @@ public enum com.ss.bytertc.engine.data.VideoRotationMode
 
 | 类型 | 说明 |
 | --- | --- |
-| **FollowApp(0)** | App 方向 |
-| **FollowGSensor(1)** | 重力方向 |
+| **FOLLOW_APP(0)** | App 方向 |
+| **FOLLOW_GSENSOR(1)** | 重力方向 |
 
 
 # VideoSourceType
@@ -3677,8 +3972,8 @@ public enum com.ss.bytertc.engine.data.VirtualBackgroundSourceType
 
 | 类型 | 说明 |
 | --- | --- |
-| **SourceTypeColor** | 使用纯色背景替换视频原有背景。 |
-| **SourceTypeImage** | 使用自定义图片背景替换视频原有背景。 |
+| **COLOR** | 使用纯色背景替换视频原有背景。 |
+| **IMAGE** | 使用自定义图片背景替换视频原有背景。 |
 
 
 # ZoomConfigType
@@ -3731,14 +4026,14 @@ public enum com.ss.bytertc.engine.handler.IRTCASREngineEventHandler.RTCASRErrorC
 
 | 类型 | 说明 |
 | --- | --- |
-| **RTCASRErrorNetworkInterrupted(-1)** | 网络连接中断，服务不可用，内部会进行重连 |
-| **RTCASRErrorAlreadyStarted(-2)** | 重复调用 `startASR`。开启语音识别服务后，你需要先调用 `stopASR` 停止语音识别服务，才能二次调用 `startASR` 再次开启服务。 |
-| **RTCASRErrorTokenEmpty(-3)** | 语音识别服务所需 token 为空 |
-| **RTCErrorSignatureKeyEmpty(-4)** | Signature 鉴权模式下 secretKey 为空 |
-| **RTCASRErrorUserIdNull(-5)** | 用户 ID 为空 |
-| **RTCASRErrorAPPIDNull(-6)** | 应用 ID 为空 |
-| **RTCASRErrorClusterNull(-7)** | 语音识别服务 cluster 为空 |
-| **RTCASRErrorOperationDenied(-8)** | 语音识别服务连接失败，该版本没有语音识别功能，请联系 RTC 技术支持。 |
+| **NETWORK_INTERRUPTED(-1)** | 网络连接中断，服务不可用，内部会进行重连 |
+| **ALREADY_STARTED(-2)** | 重复调用 `startASR`。开启语音识别服务后，你需要先调用 `stopASR` 停止语音识别服务，才能二次调用 `startASR` 再次开启服务。 |
+| **TOKEN_EMPTY(-3)** | 语音识别服务所需 token 为空 |
+| **SIGNATURE_KEY_EMPTY(-4)** | Signature 鉴权模式下 secretKey 为空 |
+| **USERID_NULL(-5)** | 用户 ID 为空 |
+| **APPID_NULL(-6)** | 应用 ID 为空 |
+| **CLUSTER_NULL(-7)** | 语音识别服务 cluster 为空 |
+| **OPERATION_DENIED(-8)** | 语音识别服务连接失败，该版本没有语音识别功能，请联系 RTC 技术支持。 |
 
 
 # ByteRTCStreamMixingEvent
@@ -4781,7 +5076,7 @@ public Region com.ss.bytertc.engine.live.LiveTranscoding.Region.uid(
 public Region com.ss.bytertc.engine.live.LiveTranscoding.Region.roomId(
     String)
 ```
-设置视频流发布用户的房间 ID。
+设置视频流发布用户的房间 ID。必填。
 
 **传入参数**
 
@@ -5020,6 +5315,14 @@ public Region com.ss.bytertc.engine.live.LiveTranscoding.Region.spatialPosition(
 public Region com.ss.bytertc.engine.live.LiveTranscoding.Region.applySpatialAudio(
     boolean)
 ```
+设置某用户是否应用空间音频效果。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| applySpatialAudio | **boolean** | 该用户是否应用空间音频效果：<br/>• true：启用（默认值）<br/>• false：禁用 |
+
 
 # DataParam
 ```java
@@ -5185,6 +5488,8 @@ public class com.ss.bytertc.engine.live.MixedStreamConfig
 | **ByteRTCStreamMixingType** | [getExpectedMixingType](#MixedStreamConfig-getexpectedmixingtype) |
 | **MixedStreamConfig** | [setAudioConfig](#MixedStreamConfig-setaudioconfig) |
 | **MixedStreamAudioConfig** | [getAudioConfig](#MixedStreamConfig-getaudioconfig) |
+| **MixedStreamConfig** | [setServerControlConfig](#MixedStreamConfig-setservercontrolconfig) |
+| **MixedStreamServerControlConfig** | [getServerControlConfig](#MixedStreamConfig-getservercontrolconfig) |
 | **MixedStreamConfig** | [setVideoConfig](#MixedStreamConfig-setvideoconfig) |
 | **MixedStreamVideoConfig** | [getVideoConfig](#MixedStreamConfig-getvideoconfig) |
 | **MixedStreamConfig** | [setClientMixConfig](#MixedStreamConfig-setclientmixconfig) |
@@ -5213,7 +5518,7 @@ public static MixedStreamConfig com.ss.bytertc.engine.live.MixedStreamConfig.def
 public MixedStreamConfig com.ss.bytertc.engine.live.MixedStreamConfig.setUserID(
     String userID)
 ```
-设置推流用户 ID。建议设置。本参数不支持过程中更新。
+设置推流用户 ID。本参数不支持过程中更新。建议设置。
 
 **传入参数**
 
@@ -5236,7 +5541,7 @@ public String com.ss.bytertc.engine.live.MixedStreamConfig.getUserID()
 public MixedStreamConfig com.ss.bytertc.engine.live.MixedStreamConfig.setRoomID(
     String roomID)
 ```
-设置推流用户所在的房间 ID。建议设置。本参数不支持过程中更新。
+设置推流用户所在的房间 ID。本参数不支持过程中更新。建议设置。
 
 **传入参数**
 
@@ -5259,7 +5564,7 @@ public String com.ss.bytertc.engine.live.MixedStreamConfig.getRoomID()
 public MixedStreamConfig com.ss.bytertc.engine.live.MixedStreamConfig.setPushURL(
     String pushURL)
 ```
-设置推流 CDN 地址。建议设置。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。
+设置推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。建议设置。
 本参数不支持过程中更新。
 
 **传入参数**
@@ -5326,6 +5631,33 @@ public MixedStreamAudioConfig com.ss.bytertc.engine.live.MixedStreamConfig.getAu
 获取音频转码配置参数。
 
 
+<span id="MixedStreamConfig-setservercontrolconfig"></span>
+### setServerControlConfig
+```java
+public MixedStreamConfig com.ss.bytertc.engine.live.MixedStreamConfig.setServerControlConfig(
+    MixedStreamServerControlConfig serverControlConfig)
+```
+> Available since 3.56
+
+设置服务端合流控制参数。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| serverControlConfig | **MixedStreamServerControlConfig** | 服务端合流控制参数，参看 [MixedStreamServerControlConfig](#mixedstreamservercontrolconfig)。 |
+
+
+<span id="MixedStreamConfig-getservercontrolconfig"></span>
+### getServerControlConfig
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.getServerControlConfig()
+```
+> Available since 3.56
+
+获取服务端合流控制参数的设置。
+
+
 <span id="MixedStreamConfig-setvideoconfig"></span>
 ### setVideoConfig
 ```java
@@ -5355,7 +5687,7 @@ public MixedStreamVideoConfig com.ss.bytertc.engine.live.MixedStreamConfig.getVi
 public MixedStreamConfig com.ss.bytertc.engine.live.MixedStreamConfig.setClientMixConfig(
     MixedStreamClientMixConfig clientMixConfig)
 ```
-设置客户端合流配置参数。
+设置客户端合流配置参数。建议设置。
 
 **传入参数**
 
@@ -5489,6 +5821,22 @@ public int com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamMediaType.get
 合流输出内容类型
 
 
+# MixedStreamSEIContentMode
+```java
+public enum com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamSEIContentMode
+```
+
+服务端合流转推 SEI 内容。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **MIXED_STREAM_SEI_CONTENT_MODE_DEFAULT(0)** | 视频流中包含全部的 SEI 信息。默认设置。 |
+| **MIXED_STREAM_SEI_CONTENT_MODE_ENABLE_VOLUME_INDICATION(1)** | 随非关键帧传输的 SEI 数据中仅包含音量信息。<br><br/>当设置 [setEnableVolumeIndication](#MixedStreamServerControlConfig-setenablevolumeindication) 为 true 时，此参数设置生效。 |
+
+
 # MixedStreamRenderMode
 ```java
 public enum com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamRenderMode
@@ -5594,6 +5942,38 @@ public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamAudioProfi
 
 **返回值**
 AAC 编码规格。
+
+
+# MixedStreamPushMode
+```java
+public enum com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamPushMode
+```
+
+服务端合流转推发起模式。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **ON_STREAM(0)** | 无用户发布媒体流时，发起合流任务无效。默认设置。<br><br/>当有用户发布媒体流时，才能发起合流任务。 |
+| **ON_START_REQUEST(1)** | 无用户发布媒体流时，可以使用占位图发起合流任务。<br><br/>占位图设置参看 [setAlternateImageURL](#MixedStreamLayoutRegionConfig-setalternateimageurl) 和 [setAlternateImageFillMode](#MixedStreamLayoutRegionConfig-setalternateimagefillmode)。 |
+
+
+# MixedStreamAlternateImageFillMode
+```java
+public enum com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamAlternateImageFillMode
+```
+
+服务端合流占位图填充模式。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **FIT (0)** | 占位图跟随用户原始视频帧相同的比例缩放。默认设置。 |
+| **FILL (1)** | 占位图不跟随用户原始视频帧相同的比例缩放，保持图片原有比例。 |
 
 
 # MixedStreamVideoConfig
@@ -5997,6 +6377,299 @@ public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamAudioConfi
 音频编码格式。
 
 
+# MixedStreamServerControlConfig
+```java
+public static class com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig
+```
+
+服务端合流控制参数。
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **MixedStreamServerControlConfig** | [setSeiPayloadType](#MixedStreamServerControlConfig-setseipayloadtype) |
+| **int** | [getSeiPayloadType](#MixedStreamServerControlConfig-getseipayloadtype) |
+| **MixedStreamServerControlConfig** | [setSeiPayloadUuid](#MixedStreamServerControlConfig-setseipayloaduuid) |
+| **String** | [getSeiPayloadUuid](#MixedStreamServerControlConfig-getseipayloaduuid) |
+| **MixedStreamServerControlConfig** | [setVolumeIndicationInterval](#MixedStreamServerControlConfig-setvolumeindicationinterval) |
+| **float** | [getVolumeIndicationInterval](#MixedStreamServerControlConfig-getvolumeindicationinterval) |
+| **MixedStreamServerControlConfig** | [setEnableVolumeIndication](#MixedStreamServerControlConfig-setenablevolumeindication) |
+| **boolean** | [getEnableVolumeIndication](#MixedStreamServerControlConfig-getenablevolumeindication) |
+| **MixedStreamServerControlConfig** | [setIsAddVolumeValue](#MixedStreamServerControlConfig-setisaddvolumevalue) |
+| **boolean** | [getIsAddVolumeValue](#MixedStreamServerControlConfig-getisaddvolumevalue) |
+| **MixedStreamServerControlConfig** | [setSeiContentMode](#MixedStreamServerControlConfig-setseicontentmode) |
+| **MixedStreamSEIContentMode** | [getSeiContentMode](#MixedStreamServerControlConfig-getseicontentmode) |
+| **MixedStreamServerControlConfig** | [setTalkVolume](#MixedStreamServerControlConfig-settalkvolume) |
+| **int** | [getTalkVolume](#MixedStreamServerControlConfig-gettalkvolume) |
+| **MixedStreamServerControlConfig** | [setPushStreamMode](#MixedStreamServerControlConfig-setpushstreammode) |
+| **MixedStreamPushMode** | [getPushStreamMode](#MixedStreamServerControlConfig-getpushstreammode) |
+| **MixedStreamServerControlConfig** | [setMediaType](#MixedStreamServerControlConfig-setmediatype) |
+| **MixedStreamMediaType** | [getMediaType](#MixedStreamServerControlConfig-getmediatype) |
+
+
+## 函数说明
+<span id="MixedStreamServerControlConfig-setseipayloadtype"></span>
+### setSeiPayloadType
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setSeiPayloadType(
+    int seiPayloadType)
+```
+> Available since 3.56
+
+设置合流转推 SEI 信息的 payload type。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| seiPayloadType | **int** | 默认值为 `100`，只支持设置 `5` 和 `100`。 |
+
+**返回值**
+MixedStreamServerControlConfig，参看 [MixedStreamServerControlConfig](#mixedstreamservercontrolconfig)。
+
+
+**注意**
+在转推直播的过程中，该参数不支持变更。
+
+<span id="MixedStreamServerControlConfig-getseipayloadtype"></span>
+### getSeiPayloadType
+```java
+public int com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getSeiPayloadType()
+```
+> Available since 3.56
+
+获取合流转推 SEI 信息的 payload type。
+
+
+<span id="MixedStreamServerControlConfig-setseipayloaduuid"></span>
+### setSeiPayloadUuid
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setSeiPayloadUuid(
+    String seiPayloadUuid)
+```
+> Available since 3.56
+
+设置合流转推 SEI 信息的 Payload UUID。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| seiPayloadUuid | **String** | 该参数长度需为32位，否则会收到错误码为1091的回调。该参数每个字符的范围需为 [0, 9] [a, f] [A, F]。<br/>该参数不应带有`-`字符，如系统自动生成的 UUID 中带有`-`，则应删去。 |
+
+**返回值**
+MixedStreamServerControlConfig，参看 [MixedStreamServerControlConfig](#mixedstreamservercontrolconfig)。
+
+
+**注意**
+PayloadType 为 `5` 时，必须填写 PayloadUUID，否则会收到错误回调，错误码为1091。  PayloadType 不是 `5` 时，不需要填写 PayloadUUID，如果填写会被后端忽略。   
+在转推直播的过程中，该参数不支持变更。
+
+
+<span id="MixedStreamServerControlConfig-getseipayloaduuid"></span>
+### getSeiPayloadUuid
+```java
+public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getSeiPayloadUuid()
+```
+> Available since 3.56
+
+获取合流转推 SEI 信息的 Payload UUID。
+
+
+<span id="MixedStreamServerControlConfig-setvolumeindicationinterval"></span>
+### setVolumeIndicationInterval
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setVolumeIndicationInterval(
+    float volumeIndicationInterval)
+```
+> Available since 3.56
+
+设置声音信息提示间隔。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| volumeIndicationInterval | **float** | 提示间隔，单位为秒，取值范围为 [0.3,+∞)，默认值为 2。<br/>此值仅取整百毫秒。若传入两位及以上小数，则四舍五入取第一位小数的值。例如，若传入 0.36，则取 0.4。 |
+
+
+<span id="MixedStreamServerControlConfig-getvolumeindicationinterval"></span>
+### getVolumeIndicationInterval
+```java
+public float com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getVolumeIndicationInterval()
+```
+> Available since 3.56
+
+获取音量提示间隔。
+
+
+<span id="MixedStreamServerControlConfig-setenablevolumeindication"></span>
+### setEnableVolumeIndication
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setEnableVolumeIndication(
+    boolean enableVolumeIndication)
+```
+> Available since 3.56
+
+设置是否开启单独发送声音提示 SEI 的功能。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| enableVolumeIndication | **boolean** | 是否开启单独发送声音提示 SEI：<br/>• true：开启；<br/>• false：关闭。（默认值） |
+
+
+**注意**
+开启后，你可以通过 [setSeiContentMode](#MixedStreamServerControlConfig-setseicontentmode) 控制 SEI 的内容是否只携带声音信息。
+
+<span id="MixedStreamServerControlConfig-getenablevolumeindication"></span>
+### getEnableVolumeIndication
+```java
+public boolean com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getEnableVolumeIndication()
+```
+> Available since 3.56
+
+获取是否开启单独发送声音提示 SEI 功能的设置。
+
+
+<span id="MixedStreamServerControlConfig-setisaddvolumevalue"></span>
+### setIsAddVolumeValue
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setIsAddVolumeValue(
+    boolean addVolumeValue)
+```
+> Available since 3.56
+
+设置声音信息 SEI 是否包含音量值。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| addVolumeValue | **boolean** | 是否包含音量值：<br/>• true：包含；<br/>• false：不包含。默认值。 |
+
+
+<span id="MixedStreamServerControlConfig-getisaddvolumevalue"></span>
+### getIsAddVolumeValue
+```java
+public boolean com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getIsAddVolumeValue()
+```
+> Available since 3.56
+
+获取声音信息 SEI 是否包含音量值的设置。
+
+
+<span id="MixedStreamServerControlConfig-setseicontentmode"></span>
+### setSeiContentMode
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setSeiContentMode(
+    MixedStreamSEIContentMode seiContentMode)
+```
+> Available since 3.56
+
+设置 SEI 内容。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| seiContentMode | **MixedStreamSEIContentMode** | SEI 内容，参看 [MixedStreamSEIContentMode](#mixedstreamseicontentmode)。 |
+
+
+<span id="MixedStreamServerControlConfig-getseicontentmode"></span>
+### getSeiContentMode
+```java
+public MixedStreamSEIContentMode com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getSeiContentMode()
+```
+> Available since 3.56
+
+获取 SEI 内容设置。
+
+
+<span id="MixedStreamServerControlConfig-settalkvolume"></span>
+### setTalkVolume
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setTalkVolume(
+    int talkVolume)
+```
+> Available since 3.56
+
+设置有效音量大小。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| talkVolume | **int** | 有效音量大小，取值范围为 [0, 255]，默认值为 0。<br/>超出取值范围则自动调整为默认值，即 0。 |
+
+
+<span id="MixedStreamServerControlConfig-gettalkvolume"></span>
+### getTalkVolume
+```java
+public int com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getTalkVolume()
+```
+> Available since 3.56
+
+获取有效音量大小。
+
+
+<span id="MixedStreamServerControlConfig-setpushstreammode"></span>
+### setPushStreamMode
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setPushStreamMode(
+    MixedStreamPushMode pushStreamMode)
+```
+> Available since 3.57
+
+设置是否在没有用户发布流的情况下发起转推直播。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| pushStreamMode | **MixedStreamPushMode** | 合流任务发起模式。具体参看 [MixedStreamPushMode](#mixedstreampushmode)。<br/>该参数在发起合流任务后的转推直播过程中不支持动态变更。 |
+
+
+<span id="MixedStreamServerControlConfig-getpushstreammode"></span>
+### getPushStreamMode
+```java
+public MixedStreamPushMode com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getPushStreamMode()
+```
+> Available since 3.57
+
+获取合流任务发起模式的设置。
+
+
+<span id="MixedStreamServerControlConfig-setmediatype"></span>
+### setMediaType
+```java
+public MixedStreamServerControlConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.setMediaType(
+    MixedStreamMediaType mediaType)
+```
+> Available since 3.57
+
+设置合流推到 CDN 时输出的媒体流类型。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| mediaType | **MixedStreamMediaType** | 输出的媒体流类型。参看 [MixedStreamMediaType](#mixedstreammediatype)。<br/>默认输出音视频流。支持输出纯音频流，但暂不支持输出纯视频流。 |
+
+
+<span id="MixedStreamServerControlConfig-getmediatype"></span>
+### getMediaType
+```java
+public MixedStreamMediaType com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamServerControlConfig.getMediaType()
+```
+> Available since 3.57
+
+获取合流推到 CDN 时输出的媒体流类型设置。
+
+
 # MixedStreamSpatialConfig
 ```java
 public static class com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamSpatialConfig
@@ -6176,13 +6849,13 @@ public static class com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayo
 | **MixedStreamLayoutRegionConfig** | [setUserID](#MixedStreamLayoutRegionConfig-setuserid) |
 | **String** | [getUserID](#MixedStreamLayoutRegionConfig-getuserid) |
 | **MixedStreamLayoutRegionConfig** | [setLocationX](#MixedStreamLayoutRegionConfig-setlocationx) |
-| **double** | [getLocationX](#MixedStreamLayoutRegionConfig-getlocationx) |
+| **int** | [getLocationX](#MixedStreamLayoutRegionConfig-getlocationx) |
 | **MixedStreamLayoutRegionConfig** | [setLocationY](#MixedStreamLayoutRegionConfig-setlocationy) |
-| **double** | [getLocationY](#MixedStreamLayoutRegionConfig-getlocationy) |
-| **MixedStreamLayoutRegionConfig** | [setWidthProportion](#MixedStreamLayoutRegionConfig-setwidthproportion) |
-| **double** | [getWidthProportion](#MixedStreamLayoutRegionConfig-getwidthproportion) |
-| **MixedStreamLayoutRegionConfig** | [setHeightProportion](#MixedStreamLayoutRegionConfig-setheightproportion) |
-| **double** | [getHeightProportion](#MixedStreamLayoutRegionConfig-getheightproportion) |
+| **int** | [getLocationY](#MixedStreamLayoutRegionConfig-getlocationy) |
+| **MixedStreamLayoutRegionConfig** | [setWidth](#MixedStreamLayoutRegionConfig-setwidth) |
+| **int** | [getWidth](#MixedStreamLayoutRegionConfig-getwidth) |
+| **MixedStreamLayoutRegionConfig** | [setHeight](#MixedStreamLayoutRegionConfig-setheight) |
+| **double** | [getHeight](#MixedStreamLayoutRegionConfig-getheight) |
 | **MixedStreamLayoutRegionConfig** | [setZOrder](#MixedStreamLayoutRegionConfig-setzorder) |
 | **int** | [getZOrder](#MixedStreamLayoutRegionConfig-getzorder) |
 | **MixedStreamLayoutRegionConfig** | [setAlpha](#MixedStreamLayoutRegionConfig-setalpha) |
@@ -6203,6 +6876,10 @@ public static class com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayo
 | **byte[]** | [getImageWaterMark](#MixedStreamLayoutRegionConfig-getimagewatermark) |
 | **MixedStreamLayoutRegionConfig** | [setImageWaterMarkConfig](#MixedStreamLayoutRegionConfig-setimagewatermarkconfig) |
 | **MixedStreamLayoutRegionImageWaterMarkConfig** | [getImageWaterMarkConfig](#MixedStreamLayoutRegionConfig-getimagewatermarkconfig) |
+| **MixedStreamLayoutRegionConfig** | [setAlternateImageFillMode](#MixedStreamLayoutRegionConfig-setalternateimagefillmode) |
+| **MixedStreamAlternateImageFillMode** | [getAlternateImageFillMode](#MixedStreamLayoutRegionConfig-getalternateimagefillmode) |
+| **MixedStreamLayoutRegionConfig** | [setAlternateImageURL](#MixedStreamLayoutRegionConfig-setalternateimageurl) |
+| **String** | [getAlternateImageURL](#MixedStreamLayoutRegionConfig-getalternateimageurl) |
 | **MixedStreamLayoutRegionConfig** | [setSpatialPosition](#MixedStreamLayoutRegionConfig-setspatialposition) |
 | **Position** | [getSpatialPosition](#MixedStreamLayoutRegionConfig-getspatialposition) |
 | **MixedStreamLayoutRegionConfig** | [setApplySpatialAudio](#MixedStreamLayoutRegionConfig-setapplyspatialaudio) |
@@ -6222,7 +6899,7 @@ public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfi
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| roomID | **String** | 房间 ID。 |
+| roomID | **String** | 房间 ID。必填。 |
 
 
 <span id="MixedStreamLayoutRegionConfig-getroomid"></span>
@@ -6260,92 +6937,108 @@ public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegi
 ### setLocationX
 ```java
 public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setLocationX(
-    double locationX)
+    int locationX)
 ```
-设置用户视频布局的相对位置。建议设置。
+> Available since 3.57
+
+设置单个用户画面左上角在整个画布坐标系中的 X 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的横向位移。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| locationX | **double** | 视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。 |
+| locationX | **int** | 用户画面左上角的横坐标。取值范围为 [0, 整体画布宽度)。默认值为 0。 |
 
 
 <span id="MixedStreamLayoutRegionConfig-getlocationx"></span>
 ### getLocationX
 ```java
-public double com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getLocationX()
+public int com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getLocationX()
 ```
-获取视频流对应区域左上角的横坐标相对整体画面的归一化比例。
+> Available since 3.57
+
+获取单个用户画面左上角的横坐标。
 
 
 <span id="MixedStreamLayoutRegionConfig-setlocationy"></span>
 ### setLocationY
 ```java
 public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setLocationY(
-    double locationY)
+    int locationY)
 ```
-设置用户视频布局的相对位置。建议设置。
+> Available since 3.57
+
+设置单个用户画面左上角在整个画布坐标系中的 Y 坐标（pixel），即以画布左上角为原点，用户画面左上角相对于原点的纵向位移。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| locationY | **double** | 视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。 |
+| locationY | **int** | 用户画面左上角的纵坐标。取值范围为 [0, 整体画布高度)。默认值为 0。 |
 
 
 <span id="MixedStreamLayoutRegionConfig-getlocationy"></span>
 ### getLocationY
 ```java
-public double com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getLocationY()
+public int com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getLocationY()
 ```
-获取视频流对应区域左上角的纵坐标相对整体画面的归一化比例。
+> Available since 3.57
+
+获取单个用户画面左上角的纵坐标。
 
 
-<span id="MixedStreamLayoutRegionConfig-setwidthproportion"></span>
-### setWidthProportion
+<span id="MixedStreamLayoutRegionConfig-setwidth"></span>
+### setWidth
 ```java
-public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setWidthProportion(
-    double widthProportion)
+public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setWidth(
+    int width)
 ```
-设置用户视频相对大小。建议设置。
+> Available since 3.57
+
+设置单个用户画面的宽度。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| widthProportion | **double** | 视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。 |
+| width | **int** | 用户画面宽度。取值范围为 [0, 整体画布宽度]，默认值为 360。 |
 
 
-<span id="MixedStreamLayoutRegionConfig-getwidthproportion"></span>
-### getWidthProportion
+<span id="MixedStreamLayoutRegionConfig-getwidth"></span>
+### getWidth
 ```java
-public double com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getWidthProportion()
+public int com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getWidth()
 ```
-获取视频流对应区域宽度相对整体画面的归一化比例。
+> Available since 3.57
+
+获取单个用户画面的宽度。
 
 
-<span id="MixedStreamLayoutRegionConfig-setheightproportion"></span>
-### setHeightProportion
+<span id="MixedStreamLayoutRegionConfig-setheight"></span>
+### setHeight
 ```java
-public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setHeightProportion(
-    double heightProportion)
+public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setHeight(
+    int height)
 ```
-设置用户视频相对大小。建议设置。
+> Available since 3.57
+
+设置单个用户画面的高度。
 
 **传入参数**
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| heightProportion | **double** | 视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。 |
+| height | **int** | 用户画面高度。取值范围为 [0, 整体画布高度]，默认值为 640。 |
 
 
-<span id="MixedStreamLayoutRegionConfig-getheightproportion"></span>
-### getHeightProportion
+<span id="MixedStreamLayoutRegionConfig-getheight"></span>
+### getHeight
 ```java
-public double com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getHeightProportion()
+public double com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getHeight()
 ```
-获取视频流对应区域高度相对整体画面的归一化比例。
+> Available since 3.57
+
+获取单个用户画面的高度。
 
 
 <span id="MixedStreamLayoutRegionConfig-setzorder"></span>
@@ -6595,6 +7288,55 @@ public MixedStreamLayoutRegionImageWaterMarkConfig com.ss.bytertc.engine.live.Mi
 获取图片合流布局区域数据的对应参数。
 
 
+<span id="MixedStreamLayoutRegionConfig-setalternateimagefillmode"></span>
+### setAlternateImageFillMode
+```java
+public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setAlternateImageFillMode(
+    MixedStreamAlternateImageFillMode alternateImageFillMode)
+```
+> Available since 3.57
+
+设置占位图的填充模式。<br>
+该方法用来控制当用户停止发布视频流，画面恢复为占位图后，此时占位图的填充模式。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| alternateImageFillMode | **MixedStreamAlternateImageFillMode** | 占位图的填充模式。参看 [MixedStreamAlternateImageFillMode](#mixedstreamalternateimagefillmode)。 |
+
+
+<span id="MixedStreamLayoutRegionConfig-getalternateimagefillmode"></span>
+### getAlternateImageFillMode
+```java
+public MixedStreamAlternateImageFillMode com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getAlternateImageFillMode()
+```
+> Available since 3.57
+
+获取占位图的填充模式设置。
+
+
+<span id="MixedStreamLayoutRegionConfig-setalternateimageurl"></span>
+### setAlternateImageURL
+```java
+public MixedStreamLayoutRegionConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.setAlternateImageURL(
+    String alternateImageUrl)
+```
+> Available since 3.57
+
+设置占位图的 URL，长度小于 1024 字符.
+
+
+<span id="MixedStreamLayoutRegionConfig-getalternateimageurl"></span>
+### getAlternateImageURL
+```java
+public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutRegionConfig.getAlternateImageURL()
+```
+> Available since 3.57
+
+获取占位图的 URL。
+
+
 <span id="MixedStreamLayoutRegionConfig-setspatialposition"></span>
 ### setSpatialPosition
 ```java
@@ -6751,6 +7493,8 @@ public static class com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayo
 | --- | --- |
 | **MixedStreamLayoutConfig** | [setBackgroundColor](#MixedStreamLayoutConfig-setbackgroundcolor) |
 | **String** | [getBackgroundColor](#MixedStreamLayoutConfig-getbackgroundcolor) |
+| **MixedStreamLayoutConfig** | [setBackgroundImageURL](#MixedStreamLayoutConfig-setbackgroundimageurl) |
+| **String** | [getBackgroundImageURL](#MixedStreamLayoutConfig-getbackgroundimageurl) |
 | **MixedStreamLayoutConfig** | [setRegions](#MixedStreamLayoutConfig-setregions) |
 | **MixedStreamLayoutRegionConfig[]** | [getRegions](#MixedStreamLayoutConfig-getregions) |
 | **MixedStreamLayoutConfig** | [setUserConfigExtraInfo](#MixedStreamLayoutConfig-setuserconfigextrainfo) |
@@ -6779,6 +7523,33 @@ public MixedStreamLayoutConfig com.ss.bytertc.engine.live.MixedStreamConfig.Mixe
 public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutConfig.getBackgroundColor()
 ```
 获取画布的背景颜色。
+
+
+<span id="MixedStreamLayoutConfig-setbackgroundimageurl"></span>
+### setBackgroundImageURL
+```java
+public MixedStreamLayoutConfig com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutConfig.setBackgroundImageURL(
+    String backgroundImageURL)
+```
+> Available since 3.57
+
+设置合流后整体画布的背景图片 URL。
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| backgroundImageURL | **String** | 背景图片 URL，长度最大为 1024 bytes。支持的图片格式包括：JPG, JPEG, PNG。如果背景图片的宽高和整体屏幕的宽高不一致，背景图片会缩放到铺满屏幕。 |
+
+
+<span id="MixedStreamLayoutConfig-getbackgroundimageurl"></span>
+### getBackgroundImageURL
+```java
+public String com.ss.bytertc.engine.live.MixedStreamConfig.MixedStreamLayoutConfig.getBackgroundImageURL()
+```
+> Available since 3.57
+
+获取背景图片的地址。
 
 
 <span id="MixedStreamLayoutConfig-setregions"></span>
@@ -6911,6 +7682,37 @@ public boolean com.ss.bytertc.engine.live.PushSingleStreamParam.isScreen = false
 
 
 
+# RTCNativeLibraryLoader
+```java
+public interface com.ss.bytertc.engine.loader.RTCNativeLibraryLoader
+```
+
+用户自定义动态库加载器实现
+
+
+## 成员函数
+
+| 返回 | 名称 |
+| --- | --- |
+| **boolean** | [load](#RTCNativeLibraryLoader-load) |
+
+
+## 函数说明
+<span id="RTCNativeLibraryLoader-load"></span>
+### load
+```java
+boolean com.ss.bytertc.engine.loader.RTCNativeLibraryLoader.load(
+    String libraryName)
+```
+SDK在需要加载动态库时通过该方法回调
+
+**传入参数**
+
+| 参数名 | 类型 | 说明 |
+| --- | --- | --- |
+| libraryName | **String** | 要加载的动态库名称 |
+
+
 # RTCEncodedVideoFrame
 ```java
 public class com.ss.bytertc.engine.mediaio.RTCEncodedVideoFrame
@@ -6998,37 +7800,6 @@ public VideoRotation com.ss.bytertc.engine.mediaio.RTCEncodedVideoFrame.videoRot
 ```
 视频帧旋转角度，默认旋转 0 度。参看 [VideoRotation](#videorotation)
 
-
-
-# RTCNativeLibraryLoader
-```java
-public interface com.ss.bytertc.engine.loader.RTCNativeLibraryLoader
-```
-
-用户自定义动态库加载器实现
-
-
-## 成员函数
-
-| 返回 | 名称 |
-| --- | --- |
-| **boolean** | [load](#RTCNativeLibraryLoader-load) |
-
-
-## 函数说明
-<span id="RTCNativeLibraryLoader-load"></span>
-### load
-```java
-boolean com.ss.bytertc.engine.loader.RTCNativeLibraryLoader.load(
-    String libraryName)
-```
-SDK在需要加载动态库时通过该方法回调
-
-**传入参数**
-
-| 参数名 | 类型 | 说明 |
-| --- | --- | --- |
-| libraryName | **String** | 要加载的动态库名称 |
 
 
 # PublicStreaming
@@ -8006,12 +8777,12 @@ public enum com.ss.bytertc.engine.type.AudioScenarioType
 
 | 类型 | 说明 |
 | --- | --- |
-| **AUDIO_SCENARIO_MUSIC(0)** | （默认）音乐场景。<br/>此场景适用于对音乐表现力有要求的场景，如音乐直播等。<br/><br><b>注意</b>：在此场景下，使用蓝牙耳麦时，会通过手机自带麦克风采集音频。因此，不适用“通话时手机放在包里”等类似场景。使用 `AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION` 可以不受此限制。<br>此外，使用扬声器时，开关麦可能发生音量突变。<br/><br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>媒体音量</td><td>通话音量</td></tr><br/><tr><td>内置听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td></tr><br/></table> |
-| **AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION(1)** | 高质量通话场景。兼顾外放/蓝牙耳机时的音频体验。<br>此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳麦进行音频采集的场景。<br/><br/><b>注意</b>：在此场景下，使用扬声器时，开关麦可能发生音量突变。使用 `AUDIO_SCENARIO_HIGHQUALITY_CHAT` 可以避免此种情况。<br><br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>媒体音量</td><td>通话音量</td></tr><br/><tr><td>内置听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr><br/></table> |
-| **AUDIO_SCENARIO_COMMUNICATION(2)** | 纯通话音量场景。<br>可以最大程度地消除回声，使通话清晰度达到最优。此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量，不会有音量突变的听感。<br/><br>适用于需要频繁上下麦的通话或会议场景。<br><br/>但是，此场景会压低使用媒体音量进行播放的其他音频的音量，且音质会变差。 |
-| **AUDIO_SCENARIO_MEDIA(3)** | 媒体场景。<br><br/>当设备是内置听筒时，使用通话音量。其余情况使用媒体音量。<br><br><b>注意</b>：在此场景下，使用蓝牙耳麦时，会通过手机自带麦克风采集音频。因此，不适用“通话时手机放在包里”等类似场景。<br/>外放通话时，可能出现回声和啸叫，请联系技术支持人员。 |
-| **AUDIO_SCENARIO_GAME_STREAMING(4)** | 游戏媒体场景。<br><br/>若外放通话且无游戏音效消除优化时音质不理想，请联系技术支持人员。<br/><br>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br><br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr><br/></table> |
-| **AUDIO_SCENARIO_HIGHQUALITY_CHAT(5)** | 高质量畅聊场景。  <br><br/>此场景和 `AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION` 高度类似，唯一的差异在于：此场景下，在使用设备自带的麦克风和扬声器进行通话时，开关麦始终采用通话音量，不会引起音量类型突变。 <br><br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr><br/></table> |
+| **AUDIO_SCENARIO_MUSIC(0)** | （默认）音乐场景。<br/>此场景适用于对音乐表现力有要求的场景，如音乐直播等。<br/>注意：在此场景下，使用蓝牙耳麦时，会通过手机自带麦克风采集音频。因此，不适用“通话时手机放在包里”等类似场景。使用 `AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION` 可以不受此限制。<br/>此外，使用扬声器时，开关麦可能发生音量突变。<br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>媒体音量</td><td>通话音量</td></tr><br/><tr><td>内置听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>媒体音量</td><td>媒体音量</td></tr><br/></table> |
+| **AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION(1)** | 高质量通话场景。兼顾外放/蓝牙耳机时的音频体验。<br/>此场景适用于对音乐表现力有要求，但又希望能够使用蓝牙耳麦进行音频采集的场景。<br/>注意：在此场景下，使用内置扬声器/听筒时，开关麦可能发生音量突变。使用 `AUDIO_SCENARIO_HIGHQUALITY_CHAT` 可以避免此种情况。<br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>媒体音量</td><td>通话音量</td></tr><br/><tr><td>内置听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr><br/></table> |
+| **AUDIO_SCENARIO_COMMUNICATION(2)** | 纯通话音量场景。<br><br/>可以最大程度地消除回声，使通话清晰度达到最优。此场景下，无论客户端音频采集播放设备和采集播放状态，全程使用通话音量，不会有音量突变的听感。<br/>适用于需要频繁上下麦的通话或会议场景。<br/>但是，此场景会压低使用媒体音量进行播放的其他音频的音量，且音质会变差。 |
+| **AUDIO_SCENARIO_MEDIA(3)** | 媒体场景。<br><br/>当设备是内置听筒时，使用通话音量。其余情况使用媒体音量。<br/>注意：在此场景下，使用蓝牙耳麦时，会通过手机自带麦克风采集音频。因此，不适用“通话时手机放在包里”等类似场景。<br/>外放通话时，可能出现回声和啸叫，请联系技术支持人员。 |
+| **AUDIO_SCENARIO_GAME_STREAMING(4)** | 游戏媒体场景。<br><br/>若外放通话且无游戏音效消除优化时音质不理想，请联系技术支持人员。<br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr><br/></table> |
+| **AUDIO_SCENARIO_HIGHQUALITY_CHAT(5)** | 高质量畅聊场景。  <br><br/>此场景和 `AUDIO_SCENARIO_HIGHQUALITY_COMMUNICATION` 高度类似，唯一的差异在于：此场景下，在使用设备自带的麦克风和扬声器进行通话时，开关麦始终采用通话音量，不会引起音量类型突变。 <br><br/>不同音频设备，开麦和闭麦状态下的使用的音量类型：<br><br/><table><br/><tr><th></th><th>闭麦</th><th>开麦</th></tr><br/><tr><td>内置扬声器</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>听筒</td><td>通话音量</td><td>通话音量</td></tr><br/><tr><td>有线耳机/ USB 耳机/ 外置声卡</td><td>媒体音量</td><td>媒体音量</td></tr><br/><tr><td>蓝牙耳机</td><td>通话音量</td><td>通话音量</td></tr><br/></table> |
 
 
 # AudioSelectionPriority
@@ -8670,6 +9441,42 @@ public enum com.ss.bytertc.engine.type.LocalVideoStreamState
 | **LOCAL_VIDEO_STREAM_STATE_FAILED(3)** | 本地视频启动失败<br/>+ 本地视频采集设备启动失败，对应错误码 [LocalVideoStreamError](#localvideostreamerror) 中的 `LOCAL_VIDEO_STREAM_ERROR_FAILURE` <br><br/>+ 检测到没有视频采集设备权限，对应错误码 [LocalVideoStreamError](#localvideostreamerror) 中的 `LOCAL_VIDEO_STREAM_ERROR_DEVICE_NO_PERMISSION`  <br><br/>+ 视频编码失败，对应错误码 [LocalVideoStreamError](#localvideostreamerror) 中的 `LOCAL_VIDEO_STREAM_ERROR_ENCODE_FAILURE` |
 
 
+# LogoutReason
+```java
+public class com.ss.bytertc.engine.type.LogoutReason
+```
+
+用户登出的原因
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **int** | [LOGOUT_REASON_LOGOUT](#LogoutReason-logout_reason_logout) |
+| **int** | [LOGOUT_REASON_DUPLICATE_LOGIN](#LogoutReason-logout_reason_duplicate_login) |
+
+
+## 变量说明
+<span id="LogoutReason-logout_reason_logout"></span>
+### LOGOUT_REASON_LOGOUT
+```java
+public static final int com.ss.bytertc.engine.type.LogoutReason.LOGOUT_REASON_LOGOUT = 0;
+```
+用户主动退出
+用户调用 `logout` 接口登出，或者销毁引擎登出。
+
+
+<span id="LogoutReason-logout_reason_duplicate_login"></span>
+### LOGOUT_REASON_DUPLICATE_LOGIN
+```java
+public static final int com.ss.bytertc.engine.type.LogoutReason.LOGOUT_REASON_DUPLICATE_LOGIN = 1;
+```
+用户被动退出
+另一个用户以相同 UserId 进行了 `login`，导致本端用户被踢出。
+
+
+
 # MediaDeviceError
 ```java
 public class  com.ss.bytertc.engine.type.MediaDeviceError
@@ -9056,9 +9863,9 @@ public enum com.ss.bytertc.engine.type.MessageConfig
 
 | 类型 | 说明 |
 | --- | --- |
-| **MessageConfigReliableOrdered (0)** | 低延时可靠有序消息 |
-| **MessageConfigUnreliableOrdered (1)** | 超低延时有序消息 |
-| **MessageConfigUnreliableUnordered (2)** | 超低延时无序消息 |
+| **RELIABLE_ORDERED (0)** | 低延时可靠有序消息 |
+| **UNRELIABLE_ORDERED (1)** | 超低延时有序消息 |
+| **UNRELIABLE_UNORDERED (2)** | 超低延时无序消息 |
 
 
 # NetworkDetectionLinkType
@@ -9074,8 +9881,8 @@ public enum com.ss.bytertc.engine.type.NetworkDetectionLinkType
 
 | 类型 | 说明 |
 | --- | --- |
-| **NetworkDetectionLinkTypeUp (0)** | 上行网络探测 |
-| **NetworkDetectionLinkTypeDown (1)** | 下行网络探测 |
+| **UP (0)** | 上行网络探测 |
+| **DOWN (1)** | 下行网络探测 |
 
 
 # NetworkDetectionStopReason
@@ -9091,11 +9898,11 @@ public enum com.ss.bytertc.engine.type.NetworkDetectionStopReason
 
 | 类型 | 说明 |
 | --- | --- |
-| **NetworkDetectionStopReasonUser (0)** | 用户主动停止 |
-| **NetworkDetectionStopReasonTimeout (1)** | 探测超过三分钟 |
-| **NetworkDetectionStopReasonConnectionLost (2)** | 探测网络连接断开。<br><br/>当超过 12s 没有收到回复，SDK 将断开网络连接，并且不再尝试重连。 |
-| **NetworkDetectionStopReasonStreaming (3)** | 本地开始推拉流，停止探测 |
-| **NetworkDetectionStopReasonInnerErr (4)** | 网络探测失败，内部异常 |
+| **USER (0)** | 用户主动停止 |
+| **TIMEOUT (1)** | 探测超过三分钟 |
+| **CONNECTION_LOST (2)** | 探测网络连接断开。<br><br/>当超过 12s 没有收到回复，SDK 将断开网络连接，并且不再尝试重连。 |
+| **STREAMING (3)** | 本地开始推拉流，停止探测 |
+| **INNER_ERR (4)** | 网络探测失败，内部异常 |
 
 
 # NetworkQuality
@@ -9278,9 +10085,9 @@ public enum com.ss.bytertc.engine.type.PauseResumeControlMediaType
 
 | 类型 | 说明 |
 | --- | --- |
-| **RTC_PAUSE_RESUME_CONTROL_AUDIO(0)** | 只控制音频，不影响视频 |
-| **RTC_PAUSE_RESUME_CONTROL_VIDEO(1)** | 只控制视频，不影响音频 |
-| **RTC_PAUSE_RESUME_CONTROL_AUDIO_AND_VIDEO(2)** | 同时控制音频和视频 |
+| **AUDIO(0)** | 只控制音频，不影响视频 |
+| **VIDEO(1)** | 只控制视频，不影响音频 |
+| **AUDIO_AND_VIDEO(2)** | 同时控制音频和视频 |
 
 
 # PerformanceAlarmMode
@@ -9295,8 +10102,8 @@ public enum com.ss.bytertc.engine.type.PerformanceAlarmMode
 
 | 类型 | 说明 |
 | --- | --- |
-| **PERFORMANCE_ALARM_MODE_NORMAL** | 未开启发布性能回退 |
-| **PERFORMANCE_ALARM_MODE_SIMULCAST** | 已开启发布性能回退 |
+| **NORMAL(0)** | 未开启发布性能回退 |
+| **SIMULCAST(1)** | 已开启发布性能回退 |
 
 
 # PerformanceAlarmReason
@@ -9311,10 +10118,10 @@ public enum com.ss.bytertc.engine.type.PerformanceAlarmReason
 
 | 类型 | 说明 |
 | --- | --- |
-| **PERFORMANCE_ALARM_REASON_BANDWIDTH_FALLBACKED** | 网络原因差，造成了发送性能回退。仅在开启发送性能回退时，会收到此原因。 |
-| **PERFORMANCE_ALARM_REASON_BANDWIDTH_RESUMED** | 网络性能恢复，发送性能回退恢复。仅在开启发送性能回退时，会收到此原因。 |
-| **PERFORMANCE_ALARM_REASON_PERFORMANCE_FALLBACKED** | 如果未开启发送性能回退，收到此告警时，意味着性能不足；<br><br/>如果开启了发送性能回退，收到此告警时，意味着性能不足，且已发生发送性能回退。 |
-| **PERFORMANCE_ALARM_REASON_PERFORMANCE_RESUMED** | 如果未开启发送性能回退，收到此告警时，意味着性能不足已恢复；<br><br/>如果开启了发送性能回退，收到此告警时，意味着性能不足已恢复，且已发生发送性能回退恢复。 |
+| **BANDWIDTH_FALLBACKED(0)** | 网络原因差，造成了发送性能回退。仅在开启发送性能回退时，会收到此原因。 |
+| **BANDWIDTH_RESUMED(1)** | 网络性能恢复，发送性能回退恢复。仅在开启发送性能回退时，会收到此原因。 |
+| **PERFORMANCE_FALLBACKED(2)** | 如果未开启发送性能回退，收到此告警时，意味着性能不足；<br><br/>如果开启了发送性能回退，收到此告警时，意味着性能不足，且已发生发送性能回退。 |
+| **PERFORMANCE_RESUMED(3)** | 如果未开启发送性能回退，收到此告警时，意味着性能不足已恢复；<br><br/>如果开启了发送性能回退，收到此告警时，意味着性能不足已恢复，且已发生发送性能回退恢复。 |
 
 
 # ProblemFeedbackInfo
@@ -9448,8 +10255,8 @@ public enum com.ss.bytertc.engine.type.PublishFallbackOption
 
 | 类型 | 说明 |
 | --- | --- |
-| **kPublishFallbackDisable(0)** | 上行网络不佳或设备性能不足时，不对音视频流作回退处理。默认设置。 |
-| **kPublishFallbackSimulcastSmallVideoOnly(1)** | 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。 |
+| **DISABLE(0)** | 上行网络不佳或设备性能不足时，不对音视频流作回退处理。默认设置。 |
+| **SIMULCAST_SMALL_VIDEO_ONLY(1)** | 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。 |
 
 
 ## 静态函数
@@ -9497,8 +10304,8 @@ public enum com.ss.bytertc.engine.type.RecordingFileType
 
 | 类型 | 说明 |
 | --- | --- |
-| **RECORDING_FILE_TYPE_AAC(0)** | aac 格式文件 |
-| **RECORDING_FILE_TYPE_MP4(1)** | mp4 格式文件 |
+| **AAC(0)** | aac 格式文件 |
+| **MP4(1)** | mp4 格式文件 |
 
 
 # RecordingState
@@ -9556,7 +10363,7 @@ public class com.ss.bytertc.engine.type.RemoteAudioStats
 | **int** | [playoutSampleRate](#RemoteAudioStats-playoutsamplerate) |
 | **int** | [statsInterval](#RemoteAudioStats-statsinterval) |
 | **int** | [rtt](#RemoteAudioStats-rtt) |
-| **int** | [total_rtt](#RemoteAudioStats-total_rtt) |
+| **int** | [totalRtt](#RemoteAudioStats-totalrtt) |
 | **int** | [quality](#RemoteAudioStats-quality) |
 | **int** | [jitterBufferDelay](#RemoteAudioStats-jitterbufferdelay) |
 | **int** | [numChannels](#RemoteAudioStats-numchannels) |
@@ -9634,10 +10441,10 @@ public int com.ss.bytertc.engine.type.RemoteAudioStats.rtt;
 客户端到服务端数据传输的往返时延，单位为 ms 。  <br>
 
 
-<span id="RemoteAudioStats-total_rtt"></span>
-### total_rtt
+<span id="RemoteAudioStats-totalrtt"></span>
+### totalRtt
 ```java
-public int com.ss.bytertc.engine.type.RemoteAudioStats.total_rtt;
+public int com.ss.bytertc.engine.type.RemoteAudioStats.totalRtt;
 ```
 发送端——服务端——接收端全链路数据传输往返时延。单位为 ms 。  <br>
 
@@ -9808,10 +10615,10 @@ public class com.ss.bytertc.engine.type.RemoteStreamSwitch
 | --- | --- |
 | **String** | [uid](#RemoteStreamSwitch-uid) |
 | **boolean** | [isScreen](#RemoteStreamSwitch-isscreen) |
-| **int** | [before_video_index](#RemoteStreamSwitch-before_video_index) |
-| **int** | [after_video_index](#RemoteStreamSwitch-after_video_index) |
-| **boolean** | [before_enable](#RemoteStreamSwitch-before_enable) |
-| **boolean** | [after_enable](#RemoteStreamSwitch-after_enable) |
+| **int** | [beforeVideoIndex](#RemoteStreamSwitch-beforevideoindex) |
+| **int** | [afterVideoIndex](#RemoteStreamSwitch-aftervideoindex) |
+| **boolean** | [beforeEnable](#RemoteStreamSwitch-beforeenable) |
+| **boolean** | [afterEnable](#RemoteStreamSwitch-afterenable) |
 | **FallbackOrRecoverReason** | [reason](#RemoteStreamSwitch-reason) |
 
 
@@ -9832,34 +10639,34 @@ public boolean com.ss.bytertc.engine.type.RemoteStreamSwitch.isScreen;
 是否是屏幕共享流
 
 
-<span id="RemoteStreamSwitch-before_video_index"></span>
-### before_video_index
+<span id="RemoteStreamSwitch-beforevideoindex"></span>
+### beforeVideoIndex
 ```java
-public int com.ss.bytertc.engine.type.RemoteStreamSwitch.before_video_index;
+public int com.ss.bytertc.engine.type.RemoteStreamSwitch.beforeVideoIndex;
 ```
 流切换前订阅视频流的分辨率对应的索引
 
 
-<span id="RemoteStreamSwitch-after_video_index"></span>
-### after_video_index
+<span id="RemoteStreamSwitch-aftervideoindex"></span>
+### afterVideoIndex
 ```java
-public int com.ss.bytertc.engine.type.RemoteStreamSwitch.after_video_index;
+public int com.ss.bytertc.engine.type.RemoteStreamSwitch.afterVideoIndex;
 ```
 流切换后订阅视频流的分辨率对应的索引
 
 
-<span id="RemoteStreamSwitch-before_enable"></span>
-### before_enable
+<span id="RemoteStreamSwitch-beforeenable"></span>
+### beforeEnable
 ```java
-public boolean com.ss.bytertc.engine.type.RemoteStreamSwitch.before_enable;
+public boolean com.ss.bytertc.engine.type.RemoteStreamSwitch.beforeEnable;
 ```
 流切换前是否有视频流
 
 
-<span id="RemoteStreamSwitch-after_enable"></span>
-### after_enable
+<span id="RemoteStreamSwitch-afterenable"></span>
+### afterEnable
 ```java
-public boolean com.ss.bytertc.engine.type.RemoteStreamSwitch.after_enable;
+public boolean com.ss.bytertc.engine.type.RemoteStreamSwitch.afterEnable;
 ```
 流切换后是否有视频流
 
@@ -9985,7 +10792,7 @@ public int com.ss.bytertc.engine.type.RemoteVideoStats.height;
 ```java
 public float com.ss.bytertc.engine.type.RemoteVideoStats.videoLossRate;
 ```
-视频丢包率。统计周期内的视频下行丢包率，单位为 % ，取值范围为 [0，1] 。
+视频丢包率。统计周期内的视频下行丢包率，取值范围为 [0，1] 。
 
 
 <span id="RemoteVideoStats-receivedkbitrate"></span>
@@ -10351,8 +11158,8 @@ public enum com.ss.bytertc.engine.type.SEIStreamUpdateEvent
 
 | 类型 | 说明 |
 | --- | --- |
-| **SEIStreamUpdateEventStreamAdd (0)** | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| **SEIStreamUpdateEventStreamRemove (1)** | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType](Android-api.md#RTCVideo-setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布。 |
+| **STREAM_ADD (0)** | 远端用户发布黑帧视频流。  <br><br/>纯语音通话场景下，远端用户调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| **STREAM_REMOVE (1)** | 远端黑帧视频流移除。该回调的触发时机包括：  <br><br/>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [sendSEIMessage](Android-api.md#RTCVideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；  <br><br/>+ 远端用户调用 [setVideoSourceType](Android-api.md#RTCVideo-setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 # SetRoomExtraInfoResult
@@ -10367,17 +11174,17 @@ public enum com.ss.bytertc.engine.type.SetRoomExtraInfoResult
 
 | 类型 | 说明 |
 | --- | --- |
-| **SetRoomExtraInfoResultSuccess(0)** | 设置房间附加信息成功 |
-| **SetRoomExtraInfoResultNotJoinRoom(-1)** | 设置失败，尚未加入房间 |
-| **SetRoomExtraInfoResultKeyIsNull(-2)** | 设置失败，key 指针为空 |
-| **SetRoomExtraInfoResultValueIsNull(-3)** | 设置失败，value 指针为空 |
-| **SetRoomExtraInfoResultUnknow(-99)** | 设置失败，未知错误 |
-| **SetRoomExtraInfoResultKeyIsEmpty(-400)** | 设置失败，key 长度为 0 |
-| **SetRoomExtraInfoResultTooOften(-406)** | 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。 |
-| **SetRoomExtraInfoResultSilentUser(-412)** | 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。 |
-| **SetRoomExtraInfoResultKeyTooLong(-413)** | 设置失败，Key 长度超过 10 字节 |
-| **SetRoomExtraInfoResultValueTooLong(-414)** | 设置失败，value 长度超过 128 字节 |
-| **SetRoomExtraInfoResultServerError(-500)** | 设置失败，服务器错误 |
+| **SUCCESS(0)** | 设置房间附加信息成功 |
+| **NOT_JOIN_ROOM(-1)** | 设置失败，尚未加入房间 |
+| **KEY_IS_NULL(-2)** | 设置失败，key 指针为空 |
+| **VALUE_IS_NULL(-3)** | 设置失败，value 指针为空 |
+| **UNKNOW(-99)** | 设置失败，未知错误 |
+| **KEY_IS_EMPTY(-400)** | 设置失败，key 长度为 0 |
+| **TOO_OFTEN(-406)** | 调用 `setRoomExtraInfo` 过于频繁，建议不超过 10 次/秒。 |
+| **SILENT_USER(-412)** | 设置失败，用户已调用 `setUserVisibility` 将自身设为隐身状态。 |
+| **KEY_TOO_LONG(-413)** | 设置失败，Key 长度超过 10 字节 |
+| **VALUE_TOO_LONG(-414)** | 设置失败，value 长度超过 128 字节 |
+| **SERVER_ERROR(-500)** | 设置失败，服务器错误 |
 
 
 # SourceWantedData
@@ -10440,7 +11247,7 @@ public enum com.ss.bytertc.engine.type.StreamRemoveReason
 | --- | --- |
 | **STREAM_REMOVE_REASON_UNPUBLISH(0)** | 远端用户停止发布流。  <br> |
 | **STREAM_REMOVE_REASON_PUBLISH_FAILED(1)** | 远端用户发布流失败。  <br> |
-| **STREAM_REMOVE_REASON_KEEP_LIVE_FAILED(2)** | 保活失败。  <br> |
+| **STREAM_REMOVE_REASON_KEEP_LIVE_FAILED(2)** | 媒体服务器 10s 没收到客户端的媒体数据。 |
 | **STREAM_REMOVE_REASON_CLIENT_DISCONNECTED(3)** | 远端用户断网。  <br> |
 | **STREAM_REMOVE_REASON_REPUBLISH(4)** | 远端用户重新发布流。  <br> |
 | **STREAM_REMOVE_REASON_OTHER(5)** | 其他原因。  <br> |
@@ -10491,10 +11298,10 @@ public enum com.ss.bytertc.engine.type.SubscribeMediaType
 
 | 类型 | 说明 |
 | --- | --- |
-| **RTC_SUBSCRIBE_MEDIA_TYPE_NONE(0)** | 既不订阅音频，也不订阅视频 |
-| **RTC_SUBSCRIBE_MEDIA_TYPE_AUDIO_ONLY(1)** | 只订阅音频，不订阅视频 |
-| **RTC_SUBSCRIBE_MEDIA_TYPE_VIDEO_ONLY(2)** | 只订阅视频，不订阅音频 |
-| **RTC_SUBSCRIBE_MEDIA_TYPE_AUDIO_AND_VIDEO(3)** | 同时订阅音频和视频 |
+| **NONE(0)** | 既不订阅音频，也不订阅视频 |
+| **AUDIO_ONLY(1)** | 只订阅音频，不订阅视频 |
+| **VIDEO_ONLY(2)** | 只订阅视频，不订阅音频 |
+| **AUDIO_AND_VIDEO(3)** | 同时订阅音频和视频 |
 
 
 # SubtitleConfig
@@ -10545,6 +11352,8 @@ public class com.ss.bytertc.engine.type.SubtitleMessage
 | --- | --- |
 | **String** | [userId](#SubtitleMessage-userid) |
 | **String** | [text](#SubtitleMessage-text) |
+| **String** | [language](#SubtitleMessage-language) |
+| **SubtitleMode** | [mode](#SubtitleMessage-mode) |
 | **int** | [sequence](#SubtitleMessage-sequence) |
 | **boolean** | [definite](#SubtitleMessage-definite) |
 
@@ -10570,7 +11379,23 @@ public String com.ss.bytertc.engine.type.SubtitleMessage.userId;
 ```java
 public String com.ss.bytertc.engine.type.SubtitleMessage.text;
 ```
-语音识别或翻译后的文本, 采用 UTF-8 编码。
+字幕文本, 采用 UTF-8 编码。
+
+
+<span id="SubtitleMessage-language"></span>
+### language
+```java
+public String com.ss.bytertc.engine.type.SubtitleMessage.language;
+```
+字幕语种，根据字幕模式为原文或译文对应的语种。
+
+
+<span id="SubtitleMessage-mode"></span>
+### mode
+```java
+public SubtitleMode com.ss.bytertc.engine.type.SubtitleMessage.mode;
+```
+字幕模式，参看 [SubtitleMode](#subtitlemode)。
 
 
 <span id="SubtitleMessage-sequence"></span>
@@ -10578,7 +11403,7 @@ public String com.ss.bytertc.engine.type.SubtitleMessage.text;
 ```java
 public int com.ss.bytertc.engine.type.SubtitleMessage.sequence;
 ```
-语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
+字幕文本序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。
 
 
 <span id="SubtitleMessage-definite"></span>
@@ -10597,6 +11422,8 @@ public boolean com.ss.bytertc.engine.type.SubtitleMessage.definite;
 public static SubtitleMessage com.ss.bytertc.engine.type.SubtitleMessage.create(
     String userId,
     String text,
+    String language,
+    int mode,
     int sequence,
     boolean definite)
 ```
@@ -10713,6 +11540,23 @@ public enum com.ss.bytertc.engine.type.UserVisibilityChangeError
 | **TOO_MANY_VISIBLE_USER(2)** | 房间内可见用户达到上限。 |
 
 
+# VideoDeviceFacing
+```java
+public enum com.ss.bytertc.engine.type.VideoDeviceFacing
+```
+
+视频设备朝向类型
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **FRONT(0)** | 前置摄像头 |
+| **BACK(1)** | 后置摄像头 |
+| **UNKNOWN(2)** | 未知类型 |
+
+
 # VideoDeviceType
 ```java
 public enum com.ss.bytertc.engine.type.VideoDeviceType
@@ -10768,11 +11612,11 @@ public enum com.ss.bytertc.engine.type.VoiceEqualizationBandFrequency
 | **VOICE_EQUALIZATION_BAND_FREQUENCY_125(2)** | 中心频率为 125Hz 的频带。 |
 | **VOICE_EQUALIZATION_BAND_FREQUENCY_250(3)** | 中心频率为 250Hz 的频带。 |
 | **VOICE_EQUALIZATION_BAND_FREQUENCY_500(4)** | 中心频率为 500Hz 的频带。 |
-| **VOICE_EQUALIZATION_BAND_FREQUENCY_1k(5)** | 中心频率为 1kHz 的频带。 |
-| **VOICE_EQUALIZATION_BAND_FREQUENCY_2k(6)** | 中心频率为 2kHz 的频带。 |
-| **VOICE_EQUALIZATION_BAND_FREQUENCY_4k(7)** | 中心频率为 4kHz 的频带。 |
-| **VOICE_EQUALIZATION_BAND_FREQUENCY_8k(8)** | 中心频率为 8kHz 的频带。 |
-| **VOICE_EQUALIZATION_BAND_FREQUENCY_16k(9)** | 中心频率为 16kHz 的频带。 |
+| **VOICE_EQUALIZATION_BAND_FREQUENCY_1K(5)** | 中心频率为 1kHz 的频带。 |
+| **VOICE_EQUALIZATION_BAND_FREQUENCY_2K(6)** | 中心频率为 2kHz 的频带。 |
+| **VOICE_EQUALIZATION_BAND_FREQUENCY_4K(7)** | 中心频率为 4kHz 的频带。 |
+| **VOICE_EQUALIZATION_BAND_FREQUENCY_8K(8)** | 中心频率为 8kHz 的频带。 |
+| **VOICE_EQUALIZATION_BAND_FREQUENCY_16K(9)** | 中心频率为 16kHz 的频带。 |
 
 
 # VoiceEqualizationConfig
@@ -11104,6 +11948,56 @@ RGBA 格式, 一个像素占据32位, 字节序为 A8 B8 G8 R8
 
 
 
+# LocalVideoRenderPosition
+```java
+public enum com.ss.bytertc.engine.video.LocalVideoRenderPosition
+```
+
+本地视频帧回调位置。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **AFTER_CAPTURE(0)** | 采集后。 |
+| **AFTER_PREPROCESS(1)** | （默认值）前处理后。 |
+
+
+# LocalVideoSinkConfig
+```java
+public class com.ss.bytertc.engine.video.LocalVideoSinkConfig
+```
+
+本地视频帧回调配置。
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **LocalVideoRenderPosition** | [position](#LocalVideoSinkConfig-position) |
+| **int** | [pixelFormat](#LocalVideoSinkConfig-pixelformat) |
+
+
+## 变量说明
+<span id="LocalVideoSinkConfig-position"></span>
+### position
+```java
+public LocalVideoRenderPosition com.ss.bytertc.engine.video.LocalVideoSinkConfig.position = LocalVideoRenderPosition.AFTER_PREPROCESS;
+```
+本地视频帧回调位置，参看 [LocalVideoRenderPosition](#localvideorenderposition)，默认回调前处理后的视频帧。
+
+
+<span id="LocalVideoSinkConfig-pixelformat"></span>
+### pixelFormat
+```java
+public int com.ss.bytertc.engine.video.LocalVideoSinkConfig.pixelFormat = 0;
+```
+本地视频帧回调格式，参看 [VideoPixelFormat](#videopixelformat)，默认值为 0。
+
+
+
 # Rectangle
 ```java
 public class com.ss.bytertc.engine.video.Rectangle
@@ -11180,6 +12074,74 @@ public com.ss.bytertc.engine.video.Rectangle.Rectangle(
 ```java
 public String com.ss.bytertc.engine.video.Rectangle.toString()
 ```
+
+# RemoteVideoRenderPosition
+```java
+public enum com.ss.bytertc.engine.video.RemoteVideoRenderPosition
+```
+
+远端视频帧回调位置。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **AFTER_POST_PROCESS(1)** | （默认值）后处理后。 |
+
+
+# RemoteVideoSinkConfig
+```java
+public class com.ss.bytertc.engine.video.RemoteVideoSinkConfig
+```
+
+远端视频帧回调配置。
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **RemoteVideoRenderPosition** | [position](#RemoteVideoSinkConfig-position) |
+| **int** | [pixelFormat](#RemoteVideoSinkConfig-pixelformat) |
+| **VideoApplyRotation** | [applyRotation](#RemoteVideoSinkConfig-applyrotation) |
+| **VideoRenderMirrorType** | [mirrorType](#RemoteVideoSinkConfig-mirrortype) |
+
+
+## 变量说明
+<span id="RemoteVideoSinkConfig-position"></span>
+### position
+```java
+public RemoteVideoRenderPosition com.ss.bytertc.engine.video.RemoteVideoSinkConfig.position = RemoteVideoRenderPosition.AFTER_POST_PROCESS;
+```
+远端视频帧回调位置，参看 [RemoteVideoRenderPosition](#remotevideorenderposition)，默认回调后处理后的视频帧。
+
+
+<span id="RemoteVideoSinkConfig-pixelformat"></span>
+### pixelFormat
+```java
+public int com.ss.bytertc.engine.video.RemoteVideoSinkConfig.pixelFormat = 0;
+```
+远端视频帧回调格式，参看 [VideoPixelFormat](#videopixelformat)，默认值为 0。
+
+
+<span id="RemoteVideoSinkConfig-applyrotation"></span>
+### applyRotation
+```java
+public VideoApplyRotation com.ss.bytertc.engine.video.RemoteVideoSinkConfig.applyRotation = VideoApplyRotation.DEFAULT;
+```
+是否将视频帧自动转正，参看 [VideoApplyRotation](#videoapplyrotation)，默认为不旋转。
+
+
+<span id="RemoteVideoSinkConfig-mirrortype"></span>
+### mirrorType
+```java
+public VideoRenderMirrorType com.ss.bytertc.engine.video.RemoteVideoSinkConfig.mirrorType = VideoRenderMirrorType.OFF;
+```
+是否将视频帧镜像。参看 [VideoRenderMirrorType](#videorendermirrortype)，默认为不镜像。
+本设置与 [setRemoteVideoMirrorType](Android-api.md#RTCVideo-setremotevideomirrortype) （适用于内部渲染）相互独立。
+
+
 
 # RTCWatermarkConfig
 ```java
@@ -11291,6 +12253,22 @@ public int com.ss.bytertc.engine.video.ScreenSharingParameters.minBitrate = 0;
 
 
 
+# VideoApplyRotation
+```java
+public enum com.ss.bytertc.engine.video.VideoApplyRotation
+```
+
+是否将视频帧自动转正。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **DEFAULT(-1)** | （默认值）不旋转。 |
+| **DEGREE_0(0)** | 自动转正视频，即根据视频帧的旋转角信息将视频帧旋转到 0 度。 |
+
+
 # VideoCaptureConfig
 ```java
 public class com.ss.bytertc.engine.video.VideoCaptureConfig
@@ -11358,6 +12336,49 @@ public enum com.ss.bytertc.engine.video.VideoCaptureConfig.CapturePreference
 | **AUTO(0)** | （默认）自动设置采集参数。<br/>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
 | **MANUAL(1)** | 手动设置采集参数，包括采集分辨率、帧率。 |
 | **AUTO_PERFORMANCE(2)** | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](Android-api.md#RTCVideo-setvideoencoderconfig) 中设置的参数。 |
+
+
+# VideoDeviceInfo
+```java
+public class com.ss.bytertc.engine.video.VideoDeviceInfo
+```
+
+视频设备信息
+
+
+## 成员变量
+
+| 类型 | 名称 |
+| --- | --- |
+| **String** | [deviceId](#VideoDeviceInfo-deviceid) |
+| **String** | [deviceName](#VideoDeviceInfo-devicename) |
+| **VideoDeviceFacing** | [deviceFacing](#VideoDeviceInfo-devicefacing) |
+
+
+## 变量说明
+<span id="VideoDeviceInfo-deviceid"></span>
+### deviceId
+```java
+public String com.ss.bytertc.engine.video.VideoDeviceInfo.deviceId;
+```
+设备 ID
+
+
+<span id="VideoDeviceInfo-devicename"></span>
+### deviceName
+```java
+public String com.ss.bytertc.engine.video.VideoDeviceInfo.deviceName;
+```
+设备名称
+
+
+<span id="VideoDeviceInfo-devicefacing"></span>
+### deviceFacing
+```java
+public VideoDeviceFacing com.ss.bytertc.engine.video.VideoDeviceInfo.deviceFacing;
+```
+视频设备朝向信息，参看 [VideoDeviceFacing](#videodevicefacing)。
+
 
 
 # VideoDimensions
@@ -11735,18 +12756,34 @@ public class com.ss.bytertc.engine.video.VideoPreprocessorConfig
 
 | 类型 | 名称 |
 | --- | --- |
-| **VideoPixelFormat** | [required_pixel_format](#VideoPreprocessorConfig-required_pixel_format) |
+| **VideoPixelFormat** | [requiredPixelFormat](#VideoPreprocessorConfig-requiredpixelformat) |
 
 
 ## 变量说明
-<span id="VideoPreprocessorConfig-required_pixel_format"></span>
-### required_pixel_format
+<span id="VideoPreprocessorConfig-requiredpixelformat"></span>
+### requiredPixelFormat
 ```java
-public VideoPixelFormat com.ss.bytertc.engine.video.VideoPreprocessorConfig.required_pixel_format = VideoPixelFormat.kVideoPixelFormatUnknown;
+public VideoPixelFormat com.ss.bytertc.engine.video.VideoPreprocessorConfig.requiredPixelFormat = VideoPixelFormat.UNKNOWN;
 ```
 设置请求的像素格式，参看 [VideoPixelFormat](#videopixelformat)。
 当前仅支持 `I420`、`TEXTURE_2D` 和 `UNKNOWN` 格式。
 
+
+
+# VideoRenderMirrorType
+```java
+public enum com.ss.bytertc.engine.video.VideoRenderMirrorType
+```
+
+是否将视频帧镜像。
+
+
+## 枚举值
+
+| 类型 | 说明 |
+| --- | --- |
+| **ON(1)** | 开启镜像。 |
+| **OFF(2)** | （默认值）不开启镜像。 |
 
 
 # CpuBufferVideoFrameBuilder

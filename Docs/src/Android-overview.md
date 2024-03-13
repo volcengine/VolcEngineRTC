@@ -3,15 +3,15 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [createRTCVideo](Android-api.md#RTCVideo-creatertcvideo) | 创建引擎对象  <br><br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br><br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
+| [createRTCVideo](Android-api.md#RTCVideo-creatertcvideo) | 创建引擎对象。<br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。 <br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
 | [destroyRTCVideo](Android-api.md#RTCVideo-destroyrtcvideo) | 销毁由 [createRTCVideo](Android-api.md#RTCVideo-creatertcvideo) 所创建的引擎实例，并释放所有相关资源。<br> |
 | [getSDKVersion](Android-api.md#RTCVideo-getsdkversion) | 获取 SDK 当前的版本号。 |
-| [feedback](Android-api.md#RTCVideo-feedback) | 将用户反馈的问题上报到 RTC |
+| [feedback](Android-api.md#RTCVideo-feedback) | 将用户反馈的问题上报到 RTC。 |
 | [getErrorDescription](Android-api.md#RTCVideo-geterrordescription) | 获取 SDK 内各种错误码、警告码的描述文字。 |
 | [setRtcVideoEventHandler](Android-api#RTCVideo-setrtcvideoeventhandler) | 设置引擎事件回调的接收类，必须继承自 [IRTCVideoEventHandler](Android-callback.md#irtcvideoeventhandler) 。 |
 | [setBusinessId](Android-api.md#RTCVideo-setbusinessid) | 设置业务标识参数  <br><br/>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
 | [setRuntimeParameters](Android-api.md#RTCVideo-setruntimeparameters) | 设置运行时的参数 |
-| [setLogConfig](Android-api.md#RTCVideo-setlogconfig) | 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。 |
+| [setLogConfig](Android-api.md#RTCVideo-setlogconfig) | 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间、日志文件名前缀。 |
 
 ## 房间管理
 
@@ -20,10 +20,10 @@
 | [createRTCRoom](Android-api.md#RTCVideo-creatertcroom) | 创建房间实例。<br/>调用此方法仅返回一个房间实例，你仍需调用 [joinRoom](Android-api.md#RTCRoom-joinroom) 才能真正地创建/加入房间。<br/>多次调用此方法以创建多个 [RTCRoom](Android-api.md#rtcroom) 实例。分别调用各 RTCRoom 实例中的 [joinRoom](Android-api.md#RTCRoom-joinroom) 方法，同时加入多个房间。<br/>多房间模式下，用户可以同时订阅各房间的音视频流。 |
 | [destroy](Android-api.md#RTCRoom-destroy) | 退出并销毁调用 [createRTCRoom](Android-api.md#RTCVideo-creatertcroom) 所创建的房间实例。 |
 | [setRTCRoomEventHandler](Android-api.md#RTCRoom-setrtcroomeventhandler) | 通过设置 [RTCRoom](Android-api.md#rtcroom) 对象的事件句柄，监听此对象对应的回调事件。 |
-| [joinRoom](Android-api.md#RTCRoom-joinroom) | 加入房间。<br><br/>多房间场景下，调用 [createRTCRoom](Android-api.md#RTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
+| [joinRoom](Android-api.md#RTCRoom-joinroom) | 加入房间。<br><br/>调用 [createRTCRoom](Android-api.md#RTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
 | [setRoomExtraInfo](Android-api.md#RTCRoom-setroomextrainfo) | 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。 |
 | [leaveRoom](Android-api#RTCRoom-leaveroom) | 离开房间。  <br><br/>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br><br/>此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Android-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br> |
-| [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
+| [setUserVisibility](Android-api.md#RTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br/>默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。 |
 | [updateToken](Android-api#RTCRoom-updatetoken) | 更新 Token。<br/>收到 [onTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire)， 或 [onSubscribePrivilegeTokenWillExpire](Android-callback.md#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。 |
 
 ## 音频管理
@@ -33,18 +33,21 @@
 | [setDefaultAudioRoute](Android-api.md#RTCVideo-setdefaultaudioroute) | 将默认的音频播放设备设置为听筒或扬声器。 |
 | [getAudioRoute](Android-api.md#RTCVideo-getaudioroute) | 获取当前使用的音频播放路由。  <br> |
 | [setCaptureVolume](Android-api.md#RTCVideo-setcapturevolume) | 调节音频采集音量 |
-| [setPlaybackVolume](Android-api.md#RTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户混音后的音量。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
+| [setPlaybackVolume](Android-api.md#RTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户音频混音后的音量，混音内容包括远端人声、音乐、音效等。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
 | [setRemoteAudioPlaybackVolume](Android-api.md#RTCVideo-setremoteaudioplaybackvolume) | 调节来自指定远端用户的音频播放音量。 |
 | [setRemoteRoomAudioPlaybackVolume](Android-api.md#RTCRoom-setremoteroomaudioplaybackvolume) | 调节某个房间内所有远端用户的音频播放音量。 |
 | [enableAudioPropertiesReport](Android-api#RTCVideo-enableaudiopropertiesreport) | 启用音频信息提示。开启提示后，你可以收到 [onLocalAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onlocalaudiopropertiesreport)，[onRemoteAudioPropertiesReport](Android-callback.md#IRTCVideoEventHandler-onremoteaudiopropertiesreport) 和 [onActiveSpeaker](Android-callback.md#IRTCVideoEventHandler-onactivespeaker)。 |
 | [startAudioCapture](Android-api#RTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。 |
 | [stopAudioCapture](Android-api#RTCVideo-stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopAudioCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopaudiocapture) 的回调。 |
-| [setAudioScenario](Android-api.md#RTCVideo-setaudioscenario) | 设置音频场景类型。<br/>你可以根据你的应用所在场景，选择合适的音频场景类型。<br/>选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量。 |
+| [setAudioScenario](Android-api.md#RTCVideo-setaudioscenario) | 设置音频场景类型。<br/>你可以根据你的应用所在场景，选择合适的音频场景类型。<br/>选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量，并同步变更对应音频相关的算法配置和采集配置。 |
 | [setAudioProfile](Android-api#RTCVideo-setaudioprofile) | 设置音质档位。<br><br/>当所选的 [ChannelProfile](Android-keytype.md#channelprofile) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。 |
 | [enableExternalSoundCard](Android-api.md#RTCVideo-enableexternalsoundcard) | 启用匹配外置声卡的音频处理模式 |
 | [getAudioDeviceManager](Android-api.md#RTCVideo-getaudiodevicemanager) | 获取音频设备管理接口 |
 | [startAudioPlaybackDeviceTest](Android-api.md#IRTCAudioDeviceManager-startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 `onAudioPlaybackDeviceTestVolume` 回调播放时的音量信息。 |
 | [stopAudioPlaybackDeviceTest](Android-api.md#IRTCAudioDeviceManager-stopaudioplaybackdevicetest) | 停止音频播放测试。 |
+| [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br> |
+| [stopAudioDeviceRecordAndPlayTest](Android-api.md#IRTCAudioDeviceManager-stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br><br/>调用 [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
+| [stopAudioDevicePlayTest](Android-api.md#IRTCAudioDeviceManager-stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Android-api.md#IRTCAudioDeviceManager-startaudiodevicerecordtest) 开始的音频播放设备测试。<br/>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
 | [startHardwareEchoDetection](Android-api.md#RTCVideo-starthardwareechodetection) | 开启通话前回声检测 |
 | [stopHardwareEchoDetection](Android-api.md#RTCVideo-stophardwareechodetection) | 停止通话前回声检测 |
 
@@ -52,6 +55,9 @@
 
 | 方法 | 描述 |
 | --- | --- |
+| [getVideoDeviceManager](Android-api.md#RTCVideo-getvideodevicemanager) | 创建视频设备管理实例 |
+| [enumerateVideoCaptureDevices](Android-api.md#IVideoDeviceManager-enumeratevideocapturedevices) | 获取当前系统内视频采集设备列表。 |
+| [setVideoCaptureDevice](Android-api.md#IVideoDeviceManager-setvideocapturedevice) | 设置当前视频采集设备 |
 | [startVideoCapture](Android-api#RTCVideo-startvideocapture) | 立即开启内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br><br/>调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br><br/>本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstartvideocapture) 的回调。 |
 | [stopVideoCapture](Android-api#RTCVideo-stopvideocapture) | 立即关闭内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br/>调用该方法，本地用户会收到 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Android-callback.md#IRTCVideoEventHandler-onuserstopvideocapture) 的回调。 |
 | [setVideoCaptureConfig](Android-api.md#RTCVideo-setvideocaptureconfig) | 设置 RTC SDK 内部采集时的视频采集参数。<br><br/>如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数包括模式、分辨率、帧率。 |
@@ -59,7 +65,7 @@
 | [setLocalVideoCanvas](Android-api.md#RTCVideo-setlocalvideocanvas) | 设置本地视频渲染时使用的视图，并设置渲染模式。 |
 | [updateLocalVideoCanvas](Android-api.md#RTCVideo-updatelocalvideocanvas) | 修改本地视频渲染模式和背景色。 |
 | [setRemoteVideoCanvas](Android-api.md#RTCVideo-setremotevideocanvas) | 渲染来自指定远端用户的视频流时，设置使用的视图和渲染模式。<br><br/>要解除绑定，将 `videoCanvas` 设置为空。 |
-| [updateRemoteStreamVideoCanvas](Android-api.md#RTCVideo-updateremotestreamvideocanvas) | 修改远端视频渲染模式和背景色。 |
+| [updateRemoteStreamVideoCanvas](Android-api.md#RTCVideo-updateremotestreamvideocanvas) | 使用 SDK 内部渲染时，修改远端视频帧的渲染设置，包括渲染模式、背景颜色和旋转角度。 |
 | [switchCamera](Android-api#RTCVideo-switchcamera) | 切换视频内部采集时使用的前置/后置摄像头 <br><br/>调用此接口后，在本地会触发 [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) 回调。 |
 | [isCameraZoomSupported](Android-api.md#RTCVideo-iscamerazoomsupported) | 检测当前使用的摄像头（前置/后置），是否支持变焦（数码/光学变焦）。 |
 | [getCameraZoomMaxRatio](Android-api.md#RTCVideo-getcamerazoommaxratio) | 获取当前使用的摄像头（前置/后置）的最大变焦倍数 |
@@ -110,10 +116,11 @@
 | [setVideoDenoiser](Android-api.md#RTCVideo-setvideodenoiser) | 设置视频降噪模式。 |
 | [setRemoteVideoSuperResolution](Android-api.md#RTCVideo-setremotevideosuperresolution) | 设置远端视频超分模式。 |
 | [setLocalVideoMirrorType](Android-api.md#RTCVideo-setlocalvideomirrortype) | 为采集到的视频流开启镜像 |
+| [setRemoteVideoMirrorType](Android-api.md#RTCVideo-setremotevideomirrortype) | 使用内部渲染时，为远端流开启镜像。 |
 | [setVideoOrientation](Android-api.md#RTCVideo-setvideoorientation) | 在自定义视频前处理及编码前，设置 RTC 链路中的视频帧朝向，默认为 Adaptive 模式。<br/>移动端开启视频特效贴纸，或使用自定义视频前处理时，建议固定视频帧朝向为 Portrait 模式。单流转推场景下，建议根据业务需要固定视频帧朝向为 Portrait 或 Landscape 模式。不同模式的具体显示效果参看[视频帧朝向](https://www.volcengine.com/docs/6348/128787)。 |
 | [setVideoWatermark](Android-api.md#RTCVideo-setvideowatermark) | 在指定视频流上添加水印。 |
 | [clearVideoWatermark](Android-api.md#RTCVideo-clearvideowatermark) | 移除指定视频流的水印。 |
-| [enableEffectBeauty](Android-api.md#RTCVideo-enableeffectbeauty) | 开启/关闭基础美颜 |
+| [enableEffectBeauty](Android-api.md#RTCVideo-enableeffectbeauty) | 开启/关闭基础美颜。 |
 | [setBeautyIntensity](Android-api.md#RTCVideo-setbeautyintensity) | 调整基础美颜强度 |
 | [getVideoEffectInterface](Android-api.md#RTCVideo-getvideoeffectinterface) | 获取视频特效接口。 |
 | [initCVResource](Android-api.md#IVideoEffect-initcvresource) | 检查视频特效证书，设置算法模型路径，并初始化特效模块。 |
@@ -149,19 +156,19 @@
 | --- | --- |
 | [setVideoSourceType](Android-api.md#RTCVideo-setvideosourcetype) | 设置向 SDK 输入的视频源，包括屏幕流<br/>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br> |
 | [pushExternalVideoFrame](Android-api.md#RTCVideo-pushexternalvideoframe) | 推送外部视频帧。 |
-| [setLocalVideoSink](Android-api.md#RTCVideo-setlocalvideosink) | 将本地视频流与自定义渲染器绑定。 |
-| [setRemoteVideoSink](Android-api.md#RTCVideo-setremotevideosink) | 将远端视频流与自定义渲染器绑定。 |
-| [registerRemoteEncodedVideoFrameObserver](Android-api#RTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回調。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Android-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调 |
+| [setLocalVideoRender](Android-api.md#RTCVideo-setlocalvideorender) | 将本地视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [setRemoteVideoRender](Android-api.md#RTCVideo-setremotevideorender) | 将远端视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [registerRemoteEncodedVideoFrameObserver](Android-api#RTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回调。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Android-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调 |
 | [setVideoDecoderConfig](Android-api.md#RTCVideo-setvideodecoderconfig) | 在订阅远端视频流之前，设置远端视频数据解码方式 |
 | [setAudioSourceType](Android-api.md#RTCVideo-setaudiosourcetype) | 切换音频采集方式 |
 | [setAudioRenderType](Android-api.md#RTCVideo-setaudiorendertype) | 切换音频渲染方式 |
 | [pushExternalAudioFrame](Android-api.md#RTCVideo-pushexternalaudioframe) | 推送自定义采集的音频数据到 RTC SDK。 |
-| [pullExternalAudioFrame](Android-api.md#RTCVideo-pullexternalaudioframe) | 拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
+| [pullExternalAudioFrame](Android-api.md#RTCVideo-pullexternalaudioframe) | 拉取下行音频数据用于自定义音频渲染。<br/>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
 | [registerLocalVideoProcessor](Android-api.md#RTCVideo-registerlocalvideoprocessor) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你能够调用 [processVideoFrame](Android-api.md#IVideoProcessor-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
 | [processVideoFrame](Android-api.md#IVideoProcessor-processvideoframe) | 获取 RTC SDK 采集得到的视频帧，根据 [registerLocalVideoProcessor](Android-api.md#RTCVideo-registerlocalvideoprocessor) 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。 |
 | [onGLEnvInitiated](Android-api.md#IVideoProcessor-onglenvinitiated) | OpenGL 环境创建完成时，收到此回调。 |
 | [onGLEnvRelease](Android-api.md#IVideoProcessor-onglenvrelease) | OpenGL 环境即将销毁时，收到此回调。此时，你可以释放纹理等资源。 |
-| [registerAudioProcessor](Android-api.md#RTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor](Android-api.md#RTCVideo-enableaudioprocessor)，对本地采集或接收到的远端音频进行处理。 |
+| [registerAudioProcessor](Android-api.md#RTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor](Android-api.md#RTCVideo-enableaudioprocessor)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。 |
 | [enableAudioProcessor](Android-api.md#RTCVideo-enableaudioprocessor) | 设置并开启指定的音频帧回调，进行自定义处理。 |
 | [disableAudioProcessor](Android-api.md#RTCVideo-disableaudioprocessor) | 关闭自定义音频处理。 |
 | [registerAudioFrameObserver](Android-api.md#RTCVideo-registeraudioframeobserver) | 注册音频数据回调观察者。  <br> |
@@ -195,8 +202,8 @@
 | [sendRoomBinaryMessage](Android-api.md#RTCRoom-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。 |
 | [sendUserMessage](Android-api.md#RTCRoom-sendusermessage) | 给房间内指定的用户发送点对点文本消息（P2P）。 |
 | [sendUserBinaryMessage](Android-api.md#RTCRoom-senduserbinarymessage) | 给房间内指定的用户发送点对点二进制消息（P2P）。 |
-| [login](Android-api.md#RTCVideo-login) | 必须先登录，才能调用 [sendUserMessageOutsideRoom](Android-api.md#RTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](Android-api.md#RTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](Android-api.md#RTCVideo-logout)。  <br> |
-| [logout](Android-api.md#RTCVideo-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
+| [login](Android-api.md#RTCVideo-login) | 登录 RTS 服务器。<br> 必须先登录，才能调用 [sendUserMessageOutsideRoom](Android-api.md#RTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](Android-api.md#RTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](Android-api.md#RTCVideo-logout)。  <br> |
+| [logout](Android-api.md#RTCVideo-logout) | 登出 RTS 服务器。<br> 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](Android-api#RTCVideo-updatelogintoken) | 更新用户用于登录的 Token  <br><br/>Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br><br/>调用 [login](Android-api#RTCVideo-login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](Android-callback.md#IRTCVideoEventHandler-onloginresult) 回调通知，错误码为 `LOGIN_ERROR_CODE_INVALID_TOKEN`。此时需要重新获取 Token，并调用此方法更新 Token。 |
 | [setServerParams](Android-api.md#RTCVideo-setserverparams) | 设置应用服务器参数  <br><br/>客户端调用 [sendServerMessage](Android-api.md#RTCVideo-sendservermessage) 或 [sendServerBinaryMessage](Android-api.md#RTCVideo-sendserverbinarymessage) 发送消息给应用服务器之前，必须需要设置有效签名和应用服务器地址。 |
 | [getPeerOnlineStatus](Android-api.md#RTCVideo-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态 |
@@ -322,7 +329,7 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [startSubtitle](Android-api#RTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Android-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br><br/>调用该方法后，你会收到 [onSubtitleStateChanged](Android-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
+| [startSubtitle](Android-api#RTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>调用该方法时，可以在 [SubtitleMode](Android-keytype#subtitlemode) 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 [onSubtitleMessageReceived](Android-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你；<br><br/>如果选择翻译模式，你会同时收到两个 [onSubtitleMessageReceived](Android-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 回调，分别包含字幕原文及字幕译文。<br><br/>调用该方法后，你会收到 [onSubtitleStateChanged](Android-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
 | [stopSubtitle](Android-api#RTCRoom-stopsubtitle) | 关闭字幕。 <br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Android-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
 
 ## 在线 KTV
@@ -404,16 +411,18 @@
 | [onAudioStreamBanned](Android-callback.md#IRTCRoomEventHandler-onaudiostreambanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。 |
 | [onAudioPlaybackDeviceTestVolume](Android-callback.md#IRTCVideoEventHandler-onaudioplaybackdevicetestvolume) | 回调音频设备测试时的播放音量 |
 | [onHardwareEchoDetectionResult](Android-callback.md#IRTCVideoEventHandler-onhardwareechodetectionresult) | 通话前回声检测结果回调。 |
+| [onLocalAudioStateChanged](Android-callback.md#IRTCVideoEventHandler-onlocalaudiostatechanged) | 本地音频流的状态发生改变时，收到此回调。 |
 
 ## 视频管理
 
 | 回调 | 描述 |
 | --- | --- |
 | [onUserStartVideoCapture](Android-callback#IRTCVideoEventHandler-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Android-api.md#RTCVideo-startvideocapture) 开启内部视频采集时，房间内其他用户会收到此回调。 |
-| [onUserStopVideoCapture](Android-callback#IRTCVideoEventHandler-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Android-api.md#RTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。 |
+| [onUserStopVideoCapture](Android-callback#IRTCVideoEventHandler-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Android-api.md#RTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。<br><br/>若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。 |
 | [onVideoDeviceStateChanged](Android-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) | 视频设备状态回调。提示摄像头视频采集、屏幕视频采集等媒体设备的状态。 |
 | [onVideoDeviceWarning](Android-callback.md#IRTCVideoEventHandler-onvideodevicewarning) | 视频设备警告回调，包括视频采集等设备。 |
 | [onFaceDetectResult](Android-callback.md#IFaceDetectionObserver-onfacedetectresult) | 特效 SDK 进行人脸检测结果的回调。 <br><br/>调用 [enableFaceDetection](Android-api#IVideoEffect-enablefacedetection) 注册了 [IFaceDetectionObserver](Android-callback.md#ifacedetectionobserver)，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
+| [onLocalVideoStateChanged](Android-callback.md#IRTCVideoEventHandler-onlocalvideostatechanged) | 本地视频流的状态发生改变时，收到该事件。 |
 
 ## 音视频传输
 
@@ -432,6 +441,7 @@
 | [onLocalStreamStats](Android-callback#IRTCRoomEventHandler-onlocalstreamstats) | 本地流数据统计以及网络质量回调。  <br><br/>本地用户发布流成功后，SDK 会周期性（2s）的通过此回调事件通知用户发布的流在此次统计周期内的质量统计信息。  <br><br/>统计信息通过 [LocalStreamStats](Android-keytype.md#localstreamstats) 类型的回调参数传递给用户，其中包括发送音视频比特率、发送帧率、编码帧率，网络质量等。 |
 | [onRemoteStreamStats](Android-callback.md#IRTCRoomEventHandler-onremotestreamstats) | 本地订阅的远端音/视频流数据统计以及网络质量回调。  <br><br/>本地用户订阅流成功后，SDK 会周期性（2s）的通过此回调事件通知用户订阅的流在此次统计周期内的质量统计信息，包括：发送音视频比特率、发送帧率、编码帧率，网络质量等。 |
 | [onNetworkQuality](Android-callback.md#IRTCRoomEventHandler-onnetworkquality) | 加入房间并发布或订阅流后， 以每 2 秒一次的频率，报告本地用户和已订阅的远端用户的上下行网络质量信息。 |
+| [onStreamSubscribed](Android-callback.md#IRTCRoomEventHandler-onstreamsubscribed) | 关于订阅媒体流状态改变的回调 |
 | [onStreamSubscribed](Android-callback.md#IRTCRoomEventHandler-onstreamsubscribed) | 关于订阅媒体流状态改变的回调 |
 | [onRemoteAudioStateChanged](Android-callback.md#IRTCVideoEventHandler-onremoteaudiostatechanged) | 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。 |
 | [onFirstLocalAudioFrame](Android-callback.md#IRTCVideoEventHandler-onfirstlocalaudioframe) | 发布音频流时，采集到第一帧音频帧，收到该回调。 |
@@ -464,6 +474,7 @@
 | [onStop](Android-callback.md#IExternalVideoEncoderEventHandler-onstop) | 当收到该回调时，你需停止向 SDK 推送自定义编码视频帧 |
 | [onRateUpdate](Android-callback.md#IExternalVideoEncoderEventHandler-onrateupdate) | 当自定义编码流的帧率或码率发生变化时，触发该回调 |
 | [onRequestKeyFrame](Android-callback.md#IExternalVideoEncoderEventHandler-onrequestkeyframe) | 提示流发布端需重新生成关键帧的回调 |
+| [onActiveVideoLayer](Android-callback.md#IExternalVideoEncoderEventHandler-onactivevideolayer) | 作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。<br/>你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。 |
 | [onLocalEncodedVideoFrame](Android-callback#ILocalEncodedVideoFrameObserver-onlocalencodedvideoframe) | 调用 [registerLocalEncodedVideoFrameObserver](Android-api.md#RTCVideo-registerlocalencodedvideoframeobserver) 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。 |
 | [onRemoteEncodedVideoFrame](Android-callback#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) | 调用 [registerRemoteEncodedVideoFrameObserver](Android-api.md#RTCVideo-registerremoteencodedvideoframeobserver) 后，SDK 监测到远端编码后视频数据时，触发该回调 |
 | [onProcessEarMonitorAudioFrame](Android-callback.md#IAudioFrameProcessor-onprocessearmonitoraudioframe) | 软件耳返音频数据的回调。你可根据此回调自定义处理音频。<br/>软件耳返音频中包含通过调用 `setVoiceReverbType` 和 `setVoiceChangerType` 设置的音频特效。 |
@@ -568,7 +579,7 @@
 | [onSubtitleStateChanged](Android-callback#IRTCRoomEventHandler-onsubtitlestatechanged) | 字幕状态发生改变回调。 <br><br/>当用户调用 [startSubtitle](Android-api.md#RTCRoom-startsubtitle) 和 [stopSubtitle](Android-api.md#RTCRoom-stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。 |
 | [onSubtitleMessageReceived](Android-callback#IRTCRoomEventHandler-onsubtitlemessagereceived) | 字幕相关内容回调。 <br><br/>当用户成功调用 [startSubtitle](Android-api.md#RTCRoom-startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
 
-## 音乐及打分
+## 在线 KTV
 
 | 回调 | 描述 |
 | --- | --- |

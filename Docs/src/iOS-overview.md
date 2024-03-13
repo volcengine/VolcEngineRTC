@@ -3,14 +3,14 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [createRTCVideo:delegate:parameters:](iOS-api.md#ByteRTCVideo-creatertcvideo-delegate-parameters) | 创建引擎对象。<br><br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br><br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
+| [createRTCVideo:delegate:parameters:](iOS-api.md#ByteRTCVideo-creatertcvideo-delegate-parameters) | 创建引擎对象。<br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。 <br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
 | [destroyRTCVideo](iOS-api.md#ByteRTCVideo-destroyrtcvideo) | 销毁由 [createRTCVideo:delegate:parameters:](iOS-api.md#ByteRTCVideo-creatertcvideo-delegate-parameters) 所创建的引擎实例，并释放所有相关资源。<br> |
 | [getSDKVersion](iOS-api.md#ByteRTCVideo-getsdkversion) | 获取 SDK 当前的版本号。 |
-| [feedback:info:](iOS-api.md#ByteRTCVideo-feedback-info) | 通话结束，将用户反馈的问题上报到 RTC <br> |
+| [feedback:info:](iOS-api.md#ByteRTCVideo-feedback-info) | 通话结束，将用户反馈的问题上报到 RTC。 <br> |
 | [getErrorDescription:](iOS-api.md#ByteRTCVideo-geterrordescription) | 获取 SDK 内各种错误码、警告码的描述文字。 |
 | [setBusinessId:](iOS-api.md#ByteRTCVideo-setbusinessid) | 设置业务标识参数  <br><br/>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
 | [setRuntimeParameters:](iOS-api.md#ByteRTCVideo-setruntimeparameters) | 设置运行时的参数 |
-| [setLogConfig:](iOS-api.md#ByteRTCVideo-setlogconfig) | 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间。 |
+| [setLogConfig:](iOS-api.md#ByteRTCVideo-setlogconfig) | 配置 SDK 本地日志参数，包括日志级别、存储路径、日志文件最大占用的总空间、日志文件名前缀。 |
 
 ## 房间管理
 
@@ -22,7 +22,7 @@
 | [joinRoom:userInfo:roomConfig:](iOS-api.md#ByteRTCRoom-joinroom-userinfo-roomconfig) | 加入房间。<br><br/>调用 [createRTCRoom:](iOS-api.md#ByteRTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
 | [setRoomExtraInfo:value:](iOS-api.md#ByteRTCRoom-setroomextrainfo-value) | 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。 |
 | [leaveRoom](iOS-api.md#ByteRTCRoom-leaveroom) | 离开房间。  <br><br/>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。 |
-| [setUserVisibility:](iOS-api.md#ByteRTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
+| [setUserVisibility:](iOS-api.md#ByteRTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br/>默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。 |
 | [updateToken:](iOS-api#ByteRTCRoom-updatetoken) | 更新 Token。<br/>收到 [onTokenWillExpire:](iOS-callback.md#ByteRTCRoomDelegate-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire:](iOS-callback.md#ByteRTCRoomDelegate-onpublishprivilegetokenwillexpire)，或 [onSubscribePrivilegeTokenWillExpire:](iOS-callback.md#ByteRTCRoomDelegate-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。 |
 
 ## 音频管理
@@ -33,16 +33,16 @@
 | [getAudioRoute](iOS-api.md#ByteRTCVideo-getaudioroute) | 获取当前使用的音频播放路由。  <br> |
 | [setBluetoothMode:](iOS-api.md#ByteRTCVideo-setbluetoothmode) | 在纯媒体音频场景下,切换 iOS 设备与耳机之间的蓝牙传输协议。 |
 | [setCaptureVolume:volume:](iOS-api.md#ByteRTCVideo-setcapturevolume-volume) | 调节音频采集音量 |
-| [setPlaybackVolume:](iOS-api.md#ByteRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户混音后的音量。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
+| [setPlaybackVolume:](iOS-api.md#ByteRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户音频混音后的音量，混音内容包括远端人声、音乐、音效等。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
 | [setRemoteAudioPlaybackVolume:remoteUid:playVolume:](iOS-api.md#ByteRTCVideo-setremoteaudioplaybackvolume-remoteuid-playvolume) | 调节来自指定远端用户的音频播放音量。 |
 | [setRemoteRoomAudioPlaybackVolume:](iOS-api.md#ByteRTCRoom-setremoteroomaudioplaybackvolume) | 调节某个房间内所有远端用户的音频播放音量。 |
 | [enableAudioPropertiesReport:](iOS-api#ByteRTCVideo-enableaudiopropertiesreport) | 启用音频信息提示。启用后，你可以收到 [rtcEngine:onLocalAudioPropertiesReport:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport)，[rtcEngine:onRemoteAudioPropertiesReport:totalRemoteVolume:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onremoteaudiopropertiesreport-totalremotevolume)，和 [rtcEngine:onActiveSpeaker:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onactivespeaker-uid)。 |
 | [startAudioCapture](iOS-api#ByteRTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法开启后，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartAudioCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartaudiocapture-uid) 的回调。 |
 | [stopAudioCapture](iOS-api#ByteRTCVideo-stopaudiocapture) | 关闭内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopAudioCapture:uid:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopaudiocapture-uid) 的回调。 |
-| [setAudioScenario:](iOS-api.md#ByteRTCVideo-setaudioscenario) | 设置音频场景类型。<br/>你可以根据你的应用所在场景，选择合适的音频场景类型。<br/>选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量。 |
+| [setAudioScenario:](iOS-api.md#ByteRTCVideo-setaudioscenario) | 设置音频场景类型。<br/>你可以根据你的应用所在场景，选择合适的音频场景类型。<br/>选择音频场景后，SDK 会自动根据客户端音频采集播放设备和状态，适用通话音量/媒体音量，并同步变更对应音频相关的算法配置和采集配置。 |
 | [setAudioProfile:](iOS-api#ByteRTCVideo-setaudioprofile) | 设置音质档位。<br><br/>当所选的 [ByteRTCRoomProfile](iOS-keytype.md#bytertcroomprofile) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。 |
 | [enableExternalSoundCard:](iOS-api.md#ByteRTCVideo-enableexternalsoundcard) | 启用匹配外置声卡的音频处理模式 |
-| [startHardwareEchoDetection:](iOS-api.md#ByteRTCVideo-starthardwareechodetection) |  |
+| [startHardwareEchoDetection:](iOS-api.md#ByteRTCVideo-starthardwareechodetection) | 开启通话前回声检测 |
 | [stopHardwareEchoDetection](iOS-api.md#ByteRTCVideo-stophardwareechodetection) | 停止通话前回声检测 |
 
 ## 视频管理
@@ -56,7 +56,7 @@
 | [setLocalVideoCanvas:withCanvas:](iOS-api.md#ByteRTCVideo-setlocalvideocanvas-withcanvas) | 设置本地视频渲染时使用的视图，并设置渲染模式。 |
 | [updateLocalVideoCanvas:withRenderMode:withBackgroundColor:](iOS-api.md#ByteRTCVideo-updatelocalvideocanvas-withrendermode-withbackgroundcolor) | 修改本地视频渲染模式和背景色。 |
 | [setRemoteVideoCanvas:withCanvas:](iOS-api.md#ByteRTCVideo-setremotevideocanvas-withcanvas) | 渲染来自指定远端用户 uid 的视频流时，设置使用的视图和渲染模式。  <br><br/>如果需要解除视频的绑定视图，把 `canvas.view` 设置为空。(`canvas` 中其他参数不能为空。) |
-| [updateRemoteStreamVideoCanvas:withRenderMode:withBackgroundColor:](iOS-api.md#ByteRTCVideo-updateremotestreamvideocanvas-withrendermode-withbackgroundcolor) | 修改远端视频渲染模式和背景色。 |
+| [updateRemoteStreamVideoCanvas:withRemoteVideoRenderConfig:](iOS-api.md#ByteRTCVideo-updateremotestreamvideocanvas-withremotevideorenderconfig) | 使用 SDK 内部渲染时，修改远端视频帧的渲染设置，包括渲染模式、背景颜色和旋转角度。 |
 | [switchCamera:](iOS-api#ByteRTCVideo-switchcamera) | 切换视频内部采集时使用的前置/后置摄像头 <br><br/>调用此接口后，在本地会触发 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 回调。 |
 | [isCameraZoomSupported](iOS-api.md#ByteRTCVideo-iscamerazoomsupported) | 检测当前使用的摄像头（前置/后置），是否支持变焦（数码/光学变焦）。 |
 | [getCameraZoomMaxRatio](iOS-api.md#ByteRTCVideo-getcamerazoommaxratio) | 获取当前使用的摄像头（前置/后置）的最大变焦倍数 |
@@ -107,6 +107,7 @@
 | [setVideoDenoiser:](iOS-api.md#ByteRTCVideo-setvideodenoiser) | 设置视频降噪模式。 |
 | [setRemoteVideoSuperResolution:withMode:](iOS-api.md#ByteRTCVideo-setremotevideosuperresolution-withmode) | 设置远端视频超分模式。 |
 | [setLocalVideoMirrorType:](iOS-api.md#ByteRTCVideo-setlocalvideomirrortype) | 为采集到的视频流开启镜像 |
+| [setRemoteVideoMirrorType:withMirrorType:](iOS-api.md#ByteRTCVideo-setremotevideomirrortype-withmirrortype) | 使用内部渲染时，为远端流开启镜像。 |
 | [setVideoOrientation:](iOS-api.md#ByteRTCVideo-setvideoorientation) | 在自定义视频前处理及编码前，设置 RTC 链路中的视频帧朝向，默认为 Adaptive 模式。<br/>移动端开启视频特效贴纸，或使用自定义视频前处理时，建议固定视频帧朝向为 Portrait 模式。单流转推场景下，建议根据业务需要固定视频帧朝向为 Portrait 或 Landscape 模式。不同模式的具体显示效果参看[视频帧朝向](https://www.volcengine.com/docs/6348/128787)。 |
 | [setVideoWatermark:withImagePath:withRtcWatermarkConfig:](iOS-api.md#ByteRTCVideo-setvideowatermark-withimagepath-withrtcwatermarkconfig) | 在指定视频流上添加水印。 |
 | [clearVideoWatermark:](iOS-api.md#ByteRTCVideo-clearvideowatermark) | 移除指定视频流的水印。 |
@@ -146,16 +147,16 @@
 | --- | --- |
 | [setVideoSourceType:WithStreamIndex:](iOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) | 设置向 SDK 输入的视频源，包括屏幕流<br/>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br> |
 | [pushExternalVideoFrame:](iOS-api.md#ByteRTCVideo-pushexternalvideoframe) | 推送外部视频帧。 |
-| [setLocalVideoSink:withSink:withPixelFormat:](iOS-api.md#ByteRTCVideo-setlocalvideosink-withsink-withpixelformat) | 将本地视频流与自定义渲染器绑定。 |
-| [setRemoteVideoSink:withSink:withPixelFormat:](iOS-api.md#ByteRTCVideo-setremotevideosink-withsink-withpixelformat) | 将远端视频流与自定义渲染器绑定。 |
-| [registerRemoteEncodedVideoFrameObserver:](iOS-api#ByteRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回調。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](iOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe) 回调 |
+| [setLocalVideoRender:withSink:withLocalRenderConfig:](iOS-api.md#ByteRTCVideo-setlocalvideorender-withsink-withlocalrenderconfig) | 将本地视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [setRemoteVideoRender:withSink:withRemoteRenderConfig:](iOS-api.md#ByteRTCVideo-setremotevideorender-withsink-withremoterenderconfig) | 将远端视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [registerRemoteEncodedVideoFrameObserver:](iOS-api#ByteRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回调。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](iOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe) 回调 |
 | [setVideoDecoderConfig:withVideoDecoderConfig:](iOS-api.md#ByteRTCVideo-setvideodecoderconfig-withvideodecoderconfig) | 在订阅远端视频流之前，设置远端视频数据解码方式 |
 | [setAudioSourceType:](iOS-api.md#ByteRTCVideo-setaudiosourcetype) | 切换音频采集方式 |
 | [setAudioRenderType:](iOS-api.md#ByteRTCVideo-setaudiorendertype) | 切换音频渲染方式 |
 | [pushExternalAudioFrame:](iOS-api.md#ByteRTCVideo-pushexternalaudioframe) | 推送自定义采集的音频数据到 RTC SDK。 |
-| [pullExternalAudioFrame:](iOS-api.md#ByteRTCVideo-pullexternalaudioframe) |  拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
+| [pullExternalAudioFrame:](iOS-api.md#ByteRTCVideo-pullexternalaudioframe) | 拉取下行音频数据用于自定义音频渲染。<br/>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
 | [registerLocalVideoProcessor:withConfig:](iOS-api#ByteRTCVideo-registerlocalvideoprocessor-withconfig) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你能够调用 [processVideoFrame:](iOS-callback.md#ByteRTCVideoProcessorDelegate-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
-| [registerAudioProcessor:](iOS-api.md#ByteRTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor:audioFormat:](iOS-api.md#ByteRTCVideo-enableaudioprocessor-audioformat)，对本地采集或接收到的远端音频进行处理。 |
+| [registerAudioProcessor:](iOS-api.md#ByteRTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor:audioFormat:](iOS-api.md#ByteRTCVideo-enableaudioprocessor-audioformat)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。 |
 | [enableAudioProcessor:audioFormat:](iOS-api.md#ByteRTCVideo-enableaudioprocessor-audioformat) | 设置并开启指定的音频帧回调，进行自定义处理。 |
 | [disableAudioProcessor:](iOS-api.md#ByteRTCVideo-disableaudioprocessor) | 关闭自定义音频处理。 |
 | [registerAudioFrameObserver:](iOS-api.md#ByteRTCVideo-registeraudioframeobserver) | 注册音频数据回调观察者。  <br> |
@@ -188,8 +189,8 @@
 | [sendRoomBinaryMessage:](iOS-api.md#ByteRTCRoom-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。 |
 | [sendUserMessage:message:config:](iOS-api.md#ByteRTCRoom-sendusermessage-message-config) | 给房间内指定的用户发送点对点文本消息（P2P）。 |
 | [sendUserBinaryMessage:message:config:](iOS-api.md#ByteRTCRoom-senduserbinarymessage-message-config) | 给房间内指定的用户发送点对点二进制消息（P2P）。 |
-| [login:uid:](iOS-api.md#ByteRTCVideo-login-uid) | 必须先登录，才能调用 [sendUserMessageOutsideRoom:message:config:](iOS-api.md#ByteRTCVideo-sendusermessageoutsideroom-message-config) 和 [sendServerMessage:](iOS-api.md#ByteRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](iOS-api.md#ByteRTCVideo-logout) |
-| [logout](iOS-api.md#ByteRTCVideo-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
+| [login:uid:](iOS-api.md#ByteRTCVideo-login-uid) | 登录 RTS 服务器。<br>必须先登录，才能调用 [sendUserMessageOutsideRoom:message:config:](iOS-api.md#ByteRTCVideo-sendusermessageoutsideroom-message-config) 和 [sendServerMessage:](iOS-api.md#ByteRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](iOS-api.md#ByteRTCVideo-logout) |
+| [logout](iOS-api.md#ByteRTCVideo-logout) | 登出 RTS 服务器。<br>调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken:](iOS-api#ByteRTCVideo-updatelogintoken) | 更新用户用于登录的 Token  <br><br/>Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br><br/>调用 [login:uid:](iOS-api#ByteRTCVideo-login-uid) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [rtcEngine:onLoginResult:errorCode:elapsed:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed) 回调通知，错误码为 ByteRTCLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。 |
 | [setServerParams:url:](iOS-api.md#ByteRTCVideo-setserverparams-url) | 设置应用服务器参数  <br><br/>客户端调用 [sendServerMessage:](iOS-api.md#ByteRTCVideo-sendservermessage) 或 [sendServerBinaryMessage:](iOS-api.md#ByteRTCVideo-sendserverbinarymessage) 发送消息给应用服务器之前，必须需要设置有效签名和应用服务器地址。 |
 | [getPeerOnlineStatus:](iOS-api.md#ByteRTCVideo-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态 |
@@ -277,7 +278,7 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [startSubtitle:](iOS-api#ByteRTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>语音识别或翻译的结果会通过 [rtcRoom:onSubtitleMessageReceived:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlemessagereceived) 事件回调给你。<br><br/>调用该方法后，用户会收到 [rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlestatechanged-errorcode-errormessage) 回调，通知字幕是否开启。 |
+| [startSubtitle:](iOS-api#ByteRTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>调用该方法时，可以在 [ByteRTCSubtitleMode](iOS-keytype#bytertcsubtitlemode) 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 [rtcRoom:onSubtitleMessageReceived:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlemessagereceived) 事件回调给你；<br><br/>如果选择翻译模式，你会同时收到两个 [rtcRoom:onSubtitleMessageReceived:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlemessagereceived) 回调，分别包含字幕原文及字幕译文。<br><br/>调用该方法后，用户会收到 [rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlestatechanged-errorcode-errormessage) 回调，通知字幕是否开启。 |
 | [stopSubtitle](iOS-api#ByteRTCRoom-stopsubtitle) | 关闭字幕。 <br><br/>调用该方法后，用户会收到 [rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onsubtitlestatechanged-errorcode-errormessage)  回调，通知字幕是否关闭。 |
 
 ## 在线 KTV
@@ -326,7 +327,6 @@
 | [onPublishPrivilegeTokenWillExpire:](iOS-callback#ByteRTCRoomDelegate-onpublishprivilegetokenwillexpire) | Token 发布权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken:](iOS-api.md#ByteRTCRoom-updatetoken) 更新 Token 发布权限。 |
 | [onSubscribePrivilegeTokenWillExpire:](iOS-callback#ByteRTCRoomDelegate-onsubscribeprivilegetokenwillexpire) | Token 订阅权限过期前 30 秒将触发该回调。<br><br/>收到该回调后，你需调用 [updateToken:](iOS-api.md#ByteRTCRoom-updatetoken) 更新 Token 订阅权限有效期。 |
 
-
 ## 房间管理
 
 | 回调 | 描述 |
@@ -356,16 +356,18 @@
 | [rtcEngine:onStreamSyncInfoReceived:streamType:data:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onstreamsyncinforeceived-streamtype-data) | 音频流同步信息回调。可以通过此回调，在远端用户调用 [sendStreamSyncInfo:config:](iOS-api.md#ByteRTCVideo-sendstreamsyncinfo-config) 发送音频流同步消息后，收到远端发送的音频流同步信息。  <br> |
 | [rtcRoom:onAudioStreamBanned:isBanned:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onaudiostreambanned-isbanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。 |
 | [rtcEngine:onHardwareEchoDetectionResult:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onhardwareechodetectionresult) | 通话前回声检测结果回调。 |
+| [rtcEngine:onLocalAudioStateChanged:error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiostatechanged-error) | 本地音频流的状态发生改变时，收到此回调。 |
 
 ## 视频管理
 
 | 回调 | 描述 |
 | --- | --- |
 | [rtcEngine:onUserStartVideoCapture:uid:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onuserstartvideocapture-uid) | 房间内的可见用户调用 [startVideoCapture](iOS-api.md#ByteRTCVideo-startvideocapture) 开启内部视频采集时，房间中其他用户会收到此回调。 |
-| [rtcEngine:onUserStopVideoCapture:uid:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) | 房间内的可见用户调用 [stopVideoCapture](iOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。 |
+| [rtcEngine:onUserStopVideoCapture:uid:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) | 房间内的可见用户调用 [stopVideoCapture](iOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。<br><br/>若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。 |
 | [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) | 视频设备状态发生改变回调。当设备的视频状态发生改变时，SDK 会触发该回调，提示摄像头视频采集、屏幕视频采集等设备的状态。 |
 | [rtcEngine:onVideoDeviceWarning:deviceType:deviceWarning:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicewarning-devicetype-devicewarning) | 视频设备警告回调。视频设备包括视频采集设备。 |
 | [onFaceDetectResult:](iOS-callback.md#ByteRTCFaceDetectionObserver-onfacedetectresult) | 特效 SDK 进行人脸检测结果的回调。 <br><br/>调用 [enableFaceDetection:withInterval:withModelPath:](iOS-api#ByteRTCVideoEffect-enablefacedetection-withinterval-withmodelpath) 注册了 [ByteRTCFaceDetectionObserver](iOS-callback.md#bytertcfacedetectionobserver) ，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
+| [rtcEngine:onLocalVideoStateChanged:withStreamState:withStreamError:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalvideostatechanged-withstreamstate-withstreamerror) | 本地视频流的状态发生改变时，收到该事件。 |
 
 ## 音视频传输
 
@@ -417,6 +419,7 @@
 | [onStop:](iOS-callback.md#ByteRTCExternalVideoEncoderEventHandler-onstop) | 当收到该回调时，你需停止向 SDK 推送自定义编码视频帧 |
 | [onRateUpdate:withVideoIndex:withFps:withBitRate:](iOS-callback.md#ByteRTCExternalVideoEncoderEventHandler-onrateupdate-withvideoindex-withfps-withbitrate) | 当自定义编码流的帧率或码率发生变化时，触发该回调 |
 | [onRequestKeyFrame:withVideoIndex:](iOS-callback.md#ByteRTCExternalVideoEncoderEventHandler-onrequestkeyframe-withvideoindex) | 提示流发布端需重新生成关键帧的回调 |
+| [onActiveVideoLayer:withVideoIndex:withActive:](iOS-callback.md#ByteRTCExternalVideoEncoderEventHandler-onactivevideolayer-withvideoindex-withactive) | 作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。<br/>你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。 |
 | [onLocalEncodedVideoFrame:Frame:](iOS-callback#ByteRTCLocalEncodedVideoFrameObserver-onlocalencodedvideoframe-frame) | 调用 [registerLocalEncodedVideoFrameObserver:](iOS-api.md#ByteRTCVideo-registerlocalencodedvideoframeobserver) 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。 |
 | [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](iOS-callback#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe) | 调用 [registerRemoteEncodedVideoFrameObserver:](iOS-api.md#ByteRTCVideo-registerremoteencodedvideoframeobserver) 后，SDK 监测到远端编码后视频数据时，触发该回调 |
 | [onProcessEarMonitorAudioFrame:](iOS-callback.md#ByteRTCAudioFrameProcessor-onprocessearmonitoraudioframe) | 软件耳返音频数据的回调。你可根据此回调自定义处理音频。<br/>软件耳返音频中包含通过调用 `setVoiceReverbType:` 和 `setVoiceChangerType:` 设置的音频特效。 |
@@ -455,7 +458,7 @@
 | [rtcRoom:onUserMessageSendResult:error:](iOS-callback.md#ByteRTCRoomDelegate-rtcroom-onusermessagesendresult-error) | 向房间内单个用户发送文本或二进制消息后（P2P），消息发送方会收到该消息发送结果回调。 |
 | [rtcRoom:onRoomMessageSendResult:error:](iOS-callback#ByteRTCRoomDelegate-rtcroom-onroommessagesendresult-error) | 调用 [sendRoomMessage:](iOS-api.md#ByteRTCRoom-sendroommessage) 或 [sendRoomBinaryMessage:](iOS-api.md#ByteRTCRoom-sendroombinarymessage) 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。 |
 | [rtcEngine:onLoginResult:errorCode:elapsed:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed) | 登录结果回调 |
-| [rtcEngineOnLogout:](iOS-callback.md#ByteRTCVideoDelegate-rtcengineonlogout) | 登出结果回调 |
+| [rtcEngine:onLogout:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlogout) | 登出结果回调 |
 | [rtcEngine:onServerParamsSetResult:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-onserverparamssetresult) | 设置应用服务器参数的返回结果 |
 | [rtcEngine:onGetPeerOnlineStatus:status:](iOS-callback.md#ByteRTCVideoDelegate-rtcengine-ongetpeeronlinestatus-status) | 查询对端或本端用户登录状态的返回结果 |
 | [rtcEngine:onUserMessageReceivedOutsideRoom:message:](iOS-callback#ByteRTCVideoDelegate-rtcengine-onusermessagereceivedoutsideroom-message) | 收到房间外用户调用 [sendUserMessageOutsideRoom:message:config:](iOS-api.md#ByteRTCVideo-sendusermessageoutsideroom-message-config) 发来的文本消息时，会收到此回调 |
@@ -515,7 +518,7 @@
 | [rtcRoom:onSubtitleStateChanged:errorCode:errorMessage:](iOS-callback#ByteRTCRoomDelegate-rtcroom-onsubtitlestatechanged-errorcode-errormessage) | 字幕状态发生改变回调。 <br><br/>当用户调用 [startSubtitle:](iOS-api.md#ByteRTCRoom-startsubtitle) 和 [stopSubtitle](iOS-api.md#ByteRTCRoom-stopsubtitle) 使字幕状态发生改变或出现错误时，触发该回调。 |
 | [rtcRoom:onSubtitleMessageReceived:](iOS-callback#ByteRTCRoomDelegate-rtcroom-onsubtitlemessagereceived) | 字幕相关内容回调。 <br><br/>当用户调用 [startSubtitle:](iOS-api.md#ByteRTCRoom-startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
 
-## 音乐及打分
+## 在线 KTV
 
 | 回调 | 描述 |
 | --- | --- |

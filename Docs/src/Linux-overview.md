@@ -3,10 +3,10 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [createRTCVideo](Linux-api.md#creatertcvideo) | 创建 IRTCVideo 实例。  <br><br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。  <br><br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
+| [createRTCVideo](Linux-api.md#creatertcvideo) | 创建 IRTCVideo 实例。  <br><br/>如果当前进程中未创建引擎实例，那么你必须先使用此方法，以使用 RTC 提供的各种音视频能力。 <br/>如果当前进程中已创建了引擎实例，再次调用此方法时，会返回已创建的引擎实例。 |
 | [destroyRTCVideo](Linux-api.md#destroyrtcvideo) | 销毁由 [createRTCVideo](Linux-api.md#creatertcvideo) 所创建的引擎实例，并释放所有相关资源。<br> |
 | [getSDKVersion](Linux-api.md#getsdkversion) | 获取当前 SDK 版本信息。 |
-| [feedback](Linux-api.md#IRTCVideo-feedback) | 将用户反馈的问题上报到 RTC |
+| [feedback](Linux-api.md#IRTCVideo-feedback) | 将用户反馈的问题上报到 RTC。 |
 | [getErrorDescription](Linux-api.md#geterrordescription) | 获取 SDK 内各种错误码、警告码的描述文字。 |
 | [setBusinessId](Linux-api.md#IRTCVideo-setbusinessid) | 设置业务标识参数  <br><br/>可通过 businessId 区分不同的业务场景。businessId 由客户自定义，相当于一个“标签”，可以分担和细化现在 AppId 的逻辑划分的功能，但不需要鉴权。 |
 | [setRuntimeParameters](Linux-api.md#IRTCVideo-setruntimeparameters) | 设置运行时的参数 |
@@ -18,10 +18,10 @@
 | [createRTCRoom](Linux-api.md#IRTCVideo-creatertcroom) | 创建房间实例。<br><br/>调用此方法仅返回一个房间实例，你仍需调用 [joinRoom](Linux-api.md#IRTCRoom-joinroom) 才能真正地创建/加入房间。<br><br/>多次调用此方法以创建多个 [IRTCRoom](Linux-api.md#irtcroom) 实例。分别调用各 IRTCRoom 实例中的 [joinRoom](Linux-api.md#IRTCRoom-joinroom) 方法，同时加入多个房间。<br><br/>多房间模式下，用户可以同时订阅各房间的音视频流。 |
 | [destroy](Linux-api.md#IRTCRoom-destroy) | 退出并销毁调用 [createRTCRoom](Linux-api.md#IRTCVideo-creatertcroom) 所创建的房间实例。 |
 | [setRTCRoomEventHandler](Linux-api.md#IRTCRoom-setrtcroomeventhandler) | 通过设置 [IRTCRoom](Linux-api.md#irtcroom) 对象的事件句柄，监听此对象对应的回调事件。 |
-| [joinRoom](Linux-api.md#IRTCRoom-joinroom) | 创建/加入房间：房间不存在时即创建房间；房间存在时，未加入房间的用户可加入这个房间。  <br><br/>同一房间内的用户间可以相互通话。  <br> |
+| [joinRoom](Linux-api.md#IRTCRoom-joinroom) | 加入房间。<br><br/>调用 [createRTCRoom](Linux-api.md#IRTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
 | [setRoomExtraInfo](Linux-api.md#IRTCRoom-setroomextrainfo) | 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。 |
 | [leaveRoom](Linux-api#IRTCRoom-leaveroom) | 离开房间。  <br><br/>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br><br/>加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。  <br><br/>此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [onLeaveRoom](Linux-callback.md#IRTCRoomEventHandler-onleaveroom) 回调通知。  <br> |
-| [setUserVisibility](Linux-api.md#IRTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。 |
+| [setUserVisibility](Linux-api.md#IRTCRoom-setuservisibility) | 设置用户可见性。未调用该接口前，本地用户默认对他人可见。<br/>默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。 |
 | [updateToken](Linux-api#IRTCRoom-updatetoken) | 更新 Token。<br/>收到 [onTokenWillExpire](Linux-callback.md#IRTCRoomEventHandler-ontokenwillexpire)，[onPublishPrivilegeTokenWillExpire](Linux-callback.md#IRTCRoomEventHandler-onpublishprivilegetokenwillexpire)， 或 [onSubscribePrivilegeTokenWillExpire](Linux-callback.md#IRTCRoomEventHandler-onsubscribeprivilegetokenwillexpire) 时，你必须重新获取 Token，并调用此方法更新 Token，以保证通话的正常进行。 |
 
 ## 音频管理
@@ -50,7 +50,7 @@
 | [initAudioPlaybackDeviceForTest](Linux-api.md#IAudioDeviceManager-initaudioplaybackdevicefortest) | 尝试初始化音频播放设备，可检测出设备不存在、权限被拒绝/禁用等异常问题。 |
 | [initAudioCaptureDeviceForTest](Linux-api.md#IAudioDeviceManager-initaudiocapturedevicefortest) | 尝试初始化音频采集设备，可检测设备不存在、权限被拒绝/禁用等异常问题。 |
 | [setCaptureVolume](Linux-api.md#IRTCVideo-setcapturevolume) | 调节音频采集音量 |
-| [setPlaybackVolume](Linux-api.md#IRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户混音后的音量。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
+| [setPlaybackVolume](Linux-api.md#IRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户音频混音后的音量，混音内容包括远端人声、音乐、音效等。<br><br/>播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
 | [setRemoteAudioPlaybackVolume](Linux-api.md#IRTCVideo-setremoteaudioplaybackvolume) | 调节来自指定远端用户的音频播放音量。 |
 | [setRemoteRoomAudioPlaybackVolume](Linux-api.md#IRTCRoom-setremoteroomaudioplaybackvolume) | 调节某个房间内所有远端用户的音频播放音量。 |
 | [startAudioCapture](Linux-api#IRTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行音频采集。<br/>调用该方法开启后，本地用户会收到 [onAudioDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicestatechanged) 的回调。 <br><br/>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Linux-callback.md#IRTCVideoEventHandler-onuserstartaudiocapture) 的回调。 |
@@ -73,7 +73,6 @@
 | [setLocalVideoCanvas](Linux-api.md#IRTCVideo-setlocalvideocanvas) | 设置本地视频渲染时使用的视图，并设置渲染模式。 |
 | [updateLocalVideoCanvas](Linux-api.md#IRTCVideo-updatelocalvideocanvas) | 修改本地视频渲染模式和背景色。 |
 | [setRemoteVideoCanvas](Linux-api.md#IRTCVideo-setremotevideocanvas) | 设置渲染指定视频流 `stream_key` 时，使用的视图和渲染模式。 <br><br/>如果需要解除某个用户的绑定视图，你可以把 `canvas` 设置为空。 |
-| [updateRemoteStreamVideoCanvas](Linux-api.md#IRTCVideo-updateremotestreamvideocanvas) | 修改远端视频渲染模式和背景色。 |
 | [enumerateVideoCaptureDevices](Linux-api.md#IVideoDeviceManager-enumeratevideocapturedevices) | 获取当前系统内视频采集设备列表。 |
 | [getVideoCaptureDevice](Linux-api.md#IVideoDeviceManager-getvideocapturedevice) | 获取当前 SDK 正在使用的视频采集设备信息 |
 | [setVideoCaptureDevice](Linux-api.md#IVideoDeviceManager-setvideocapturedevice) | 设置当前视频采集设备 |
@@ -116,7 +115,8 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [setVideoCaptureRotation](Linux-api.md#IRTCVideo-setvideocapturerotation) | 设置本端采集的视频帧的旋转角度。<br/>当外接摄像头倒置或者倾斜安装时，调用本接口进行调整。 |
+| [setRemoteVideoMirrorType](Linux-api.md#IRTCVideo-setremotevideomirrortype) | 使用内部渲染时，为远端流开启镜像。 |
+| [setVideoCaptureRotation](Linux-api.md#IRTCVideo-setvideocapturerotation) | 设置本端采集的视频帧的旋转角度。<br/>当摄像头倒置或者倾斜安装时，可调用本接口进行调整。 |
 | [setVideoWatermark](Linux-api.md#IRTCVideo-setvideowatermark) | 在指定视频流上添加水印。 |
 | [clearVideoWatermark](Linux-api.md#IRTCVideo-clearvideowatermark) | 移除指定视频流的水印。 |
 | [getVideoEffectInterface](Linux-api.md#IRTCVideo-getvideoeffectinterface) | 获取视频特效接口。 |
@@ -148,16 +148,15 @@
 | --- | --- |
 | [setVideoSourceType](Linux-api.md#IRTCVideo-setvideosourcetype) | 设置向 SDK 输入的视频源，包括屏幕流<br/>默认使用内部采集。内部采集指：使用 RTC SDK 内置的视频采集机制进行视频采集。 <br> |
 | [pushExternalVideoFrame](Linux-api.md#IRTCVideo-pushexternalvideoframe) | 推送外部视频帧。 |
-| [setLocalVideoSink](Linux-api.md#IRTCVideo-setlocalvideosink) | 将本地视频流与自定义渲染器绑定。 |
-| [setRemoteVideoSink](Linux-api.md#IRTCVideo-setremotevideosink) | 将远端视频流与自定义渲染器绑定。 |
-| [registerRemoteEncodedVideoFrameObserver](Linux-api#IRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回調。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Linux-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调 |
+| [setLocalVideoRender](Linux-api.md#IRTCVideo-setlocalvideorender) | 将本地视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [setRemoteVideoRender](Linux-api.md#IRTCVideo-setremotevideorender) | 将远端视频流与自定义渲染器绑定。你可以通过参数设置返回指定位置和格式的视频帧数据。 |
+| [registerRemoteEncodedVideoFrameObserver](Linux-api#IRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回调。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame](Linux-callback.md#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) 回调 |
 | [setVideoDecoderConfig](Linux-api.md#IRTCVideo-setvideodecoderconfig) | 在订阅远端视频流之前，设置远端视频数据解码方式 |
-| [setAudioSourceType](Linux-api.md#IRTCVideo-setaudiosourcetype) | 切换音频采集方式 |
-| [setAudioRenderType](Linux-api.md#IRTCVideo-setaudiorendertype) | 切换音频渲染方式 |
-| [pushExternalAudioFrame](Linux-api.md#IRTCVideo-pushexternalaudioframe) | 推送自定义采集的音频数据到 RTC SDK。 |
-| [pullExternalAudioFrame](Linux-api.md#IRTCVideo-pullexternalaudioframe) |  拉取下行音频数据用于自定义音频渲染。<br>调用该方法后，SDK 会主动拉取待播放的音频数据，包括远端已解码和混音后的音频数据，用于外部播放。 |
 | [registerLocalVideoProcessor](Linux-api.md#IRTCVideo-registerlocalvideoprocessor) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你可以调用 [processVideoFrame](Linux-api.md#IVideoProcessor-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
 | [processVideoFrame](Linux-api.md#IVideoProcessor-processvideoframe) | 获取 RTC SDK 采集得到的视频帧，根据 [registerLocalVideoProcessor](Linux-api.md#IRTCVideo-registerlocalvideoprocessor) 设置的视频前处理器，进行视频前处理，最终将处理后的视频帧给到 RTC SDK 用于编码传输。 |
+| [registerAudioProcessor](Linux-api.md#IRTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor](Linux-api.md#IRTCVideo-enableaudioprocessor)，对本地采集到的音频进行处理，RTC SDK 将对处理后的音频进行编码和发送。也可以对接收到的远端音频进行自定义处理，RTC SDK 将对处理后的音频进行渲染。 |
+| [enableAudioProcessor](Linux-api.md#IRTCVideo-enableaudioprocessor) | 设置并开启指定的音频帧回调，进行自定义处理。 |
+| [disableAudioProcessor](Linux-api.md#IRTCVideo-disableaudioprocessor) | 关闭自定义音频处理。 |
 | [registerAudioFrameObserver](Linux-api.md#IRTCVideo-registeraudioframeobserver) | 注册音频数据回调观察者。  <br> |
 | [enableAudioFrameCallback](Linux-api.md#IRTCVideo-enableaudioframecallback) | 设置并开启指定的音频数据帧回调 |
 | [disableAudioFrameCallback](Linux-api.md#IRTCVideo-disableaudioframecallback) | 关闭音频回调 |
@@ -183,8 +182,8 @@
 | --- | --- |
 | [sendRoomMessage](Linux-api.md#IRTCRoom-sendroommessage) | 给房间内的所有其他用户群发文本消息。 |
 | [sendRoomBinaryMessage](Linux-api.md#IRTCRoom-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。 |
-| [login](Linux-api.md#IRTCVideo-login) | 必须先登录，才能调用 [sendUserMessageOutsideRoom](Linux-api.md#IRTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](Linux-api.md#IRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](Linux-api.md#IRTCVideo-logout)。 |
-| [logout](Linux-api.md#IRTCVideo-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
+| [login](Linux-api.md#IRTCVideo-login) | 登录 RTS 服务器。<br>必须先登录，才能调用 [sendUserMessageOutsideRoom](Linux-api.md#IRTCVideo-sendusermessageoutsideroom) 和 [sendServerMessage](Linux-api.md#IRTCVideo-sendservermessage) 发送房间外点对点消息和向应用服务器发送消息 <br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](Linux-api.md#IRTCVideo-logout)。 |
+| [logout](Linux-api.md#IRTCVideo-logout) | 登出 RTS 服务器。<br>调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](Linux-api#IRTCVideo-updatelogintoken) | 更新用户用于登录的 Token  <br><br/>Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br><br/>调用 [login](Linux-api#IRTCVideo-login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](Linux-callback.md#IRTCVideoEventHandler-onloginresult) 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。 |
 | [setServerParams](Linux-api.md#IRTCVideo-setserverparams) | 设置应用服务器参数  <br><br/>客户端调用 [sendServerMessage](Linux-api.md#IRTCVideo-sendservermessage) 或 [sendServerBinaryMessage](Linux-api.md#IRTCVideo-sendserverbinarymessage) 发送消息给应用服务器之前，必须设置有效签名和应用服务器地址。 |
 | [getPeerOnlineStatus](Linux-api.md#IRTCVideo-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态 |
@@ -196,7 +195,6 @@
 | [sendServerBinaryMessage](Linux-api.md#IRTCVideo-sendserverbinarymessage) | 客户端给应用服务器发送二进制消息（P2Server） |
 | [sendStreamSyncInfo](Linux-api#IRTCVideo-sendstreamsyncinfo) | 发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 [onStreamSyncInfoReceived](Linux-callback.md#IRTCVideoEventHandler-onstreamsyncinforeceived) 回调。 |
 | [sendSEIMessage](Linux-api.md#IRTCVideo-sendseimessage) | <span id="IRTCVideo-sendseimessage-2"></span> 通过视频帧发送 SEI 数据。<br/>在视频通话场景下，SEI 数据会随视频帧发送；在语音通话场景下，SDK 会自动生成一路 16px × 16px 的黑帧视频流用来发送 SEI 数据。 |
-
 
 ## 混音
 
@@ -274,14 +272,19 @@
 | [startAudioRecording](Linux-api.md#IRTCVideo-startaudiorecording) | 开启录制语音通话，生成本地文件。<br><br/>在进房前后开启录制，如果未打开麦克风采集，录制任务正常进行，只是不会将数据写入生成的本地文件；只有调用 [startAudioCapture](Linux-api.md#IRTCVideo-startaudiocapture) 接口打开麦克风采集后，才会将录制数据写入本地文件。 |
 | [stopAudioRecording](Linux-api.md#IRTCVideo-stopaudiorecording) | 停止音频文件录制 |
 | [setAnsMode](Linux-api.md#IRTCVideo-setansmode) | 支持根据业务场景，设置通话中的音频降噪模式。 |
-| [setAudioAlignmentProperty](Linux-api.md#IRTCVideo-setaudioalignmentproperty) | 在听众端，设置订阅的所有远端音频流精准对齐后播放。 |
 
 ## 字幕翻译服务
 
 | 方法 | 描述 |
 | --- | --- |
-| [startSubtitle](Linux-api#IRTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你。<br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Linux-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
+| [startSubtitle](Linux-api#IRTCRoom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br><br/>调用该方法时，可以在 [SubtitleMode](Linux-keytype#subtitlemode) 中选择语音识别或翻译模式。如果选择识别模式，语音识别文本会通过 [onSubtitleMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 事件回调给你；<br><br/>如果选择翻译模式，你会同时收到两个 [onSubtitleMessageReceived](Linux-callback.md#IRTCRoomEventHandler-onsubtitlemessagereceived) 回调，分别包含字幕原文及字幕译文。<br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Linux-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否开启。 |
 | [stopSubtitle](Linux-api#IRTCRoom-stopsubtitle) | 关闭字幕。 <br><br/>调用该方法后，用户会收到 [onSubtitleStateChanged](Linux-callback.md#IRTCRoomEventHandler-onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
+
+## 在线 KTV
+
+| 方法 | 描述 |
+| --- | --- |
+| [setAudioAlignmentProperty](Linux-api.md#IRTCVideo-setaudioalignmentproperty) | 在听众端，设置订阅的所有远端音频流精准对齐后播放。 |
 
 # 回调
 ## 引擎管理
@@ -325,16 +328,18 @@
 | [onAudioStreamBanned](Linux-callback.md#IRTCRoomEventHandler-onaudiostreambanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。 |
 | [onAudioPlaybackDeviceTestVolume](Linux-callback.md#IRTCVideoEventHandler-onaudioplaybackdevicetestvolume) | 回调音频设备测试时的播放音量 |
 | [onAudioDeviceVolumeChanged](Linux-callback.md#IRTCVideoEventHandler-onaudiodevicevolumechanged) | 音频设备音量改变回调。当通过系统设置，改变音频设备音量或静音状态时，触发本回调。本回调无需手动开启。 |
+| [onLocalAudioStateChanged](Linux-callback.md#IRTCVideoEventHandler-onlocalaudiostatechanged) | 本地音频流的状态发生改变时，收到此回调。 |
 
 ## 视频管理
 
 | 回调 | 描述 |
 | --- | --- |
 | [onUserStartVideoCapture](Linux-callback#IRTCVideoEventHandler-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Linux-api.md#IRTCVideo-startvideocapture) 开启内部视频采集时，房间内其他用户会收到此回调。 |
-| [onUserStopVideoCapture](Linux-callback#IRTCVideoEventHandler-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Linux-api.md#IRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。 |
+| [onUserStopVideoCapture](Linux-callback#IRTCVideoEventHandler-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Linux-api.md#IRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。<br/>若发布视频数据前未开启采集，房间内所有可见用户会收到此回调。 |
 | [onVideoDeviceStateChanged](Linux-callback.md#IRTCVideoEventHandler-onvideodevicestatechanged) | 视频频设备状态回调。提示摄像头视频采集、屏幕视频采集等设备的状态。 |
 | [onVideoDeviceWarning](Linux-callback.md#IRTCVideoEventHandler-onvideodevicewarning) | 视频设备警告回调，包括视频采集设备等。 |
 | [onFaceDetectResult](Linux-callback.md#IFaceDetectionObserver-onfacedetectresult) | 特效 SDK 进行人脸检测结果的回调。 <br><br/>调用 [enableFaceDetection](Linux-api#IVideoEffect-enablefacedetection) 注册了 [IFaceDetectionObserver](Linux-callback.md#ifacedetectionobserver)，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
+| [onLocalVideoStateChanged](Linux-callback.md#IRTCVideoEventHandler-onlocalvideostatechanged) | 本地视频流的状态发生改变时，收到该事件。 |
 
 ## 音视频传输
 
@@ -377,8 +382,13 @@
 | [onStop](Linux-callback.md#IExternalVideoEncoderEventHandler-onstop) | 当收到该回调时，你需停止向 SDK 推送自定义编码视频帧 |
 | [onRateUpdate](Linux-callback.md#IExternalVideoEncoderEventHandler-onrateupdate) | 当自定义编码流的帧率或码率发生变化时，触发该回调 |
 | [onRequestKeyFrame](Linux-callback.md#IExternalVideoEncoderEventHandler-onrequestkeyframe) | 提示流发布端需重新生成关键帧的回调 |
+| [onActiveVideoLayer](Linux-callback.md#IExternalVideoEncoderEventHandler-onactivevideolayer) | 作为自定义编码视频流的发送端，你会在视频流可发送状态发生变化时，收到此回调。<br/>你可以根据此回调的提示，仅对可发送的视频流进行编码，以降低本端视频编码性能消耗。此回调会根据多个因素综合判断触发，包括：本端设备性能和本端网络性能，以及按需订阅场景下，远端用户是否订阅。 |
 | [onLocalEncodedVideoFrame](Linux-callback#ILocalEncodedVideoFrameObserver-onlocalencodedvideoframe) | 调用 [registerLocalEncodedVideoFrameObserver](Linux-api.md#IRTCVideo-registerlocalencodedvideoframeobserver) 后，SDK 每次使用内部采集，采集到一帧视频帧，或收到一帧外部视频帧时，都会回调该事件。 |
 | [onRemoteEncodedVideoFrame](Linux-callback#IRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe) | 调用 [registerRemoteEncodedVideoFrameObserver](Linux-api.md#IRTCVideo-registerremoteencodedvideoframeobserver) 后，SDK 监测到远端编码后视频数据时，触发该回调 |
+| [onProcessPlayBackAudioFrame](Linux-callback.md#IAudioFrameProcessor-onprocessplaybackaudioframe) | 回调远端音频混音的音频帧地址，供自定义音频处理。 |
+| [onProcessRecordAudioFrame](Linux-callback.md#IAudioFrameProcessor-onprocessrecordaudioframe) | 回调本地采集的音频帧地址，供自定义音频处理。 |
+| [onProcessRemoteUserAudioFrame](Linux-callback.md#IAudioFrameProcessor-onprocessremoteuseraudioframe) | 回调单个远端用户的音频帧地址，供自定义音频处理。 |
+| [onProcessScreenAudioFrame](Linux-callback.md#IAudioFrameProcessor-onprocessscreenaudioframe) | 屏幕共享的音频帧地址回调。你可根据此回调自定义处理音频。 |
 | [onRecordAudioFrame](Linux-callback.md#IAudioFrameObserver-onrecordaudioframe) | 返回麦克风录制的音频数据 |
 | [onPlaybackAudioFrame](Linux-callback.md#IAudioFrameObserver-onplaybackaudioframe) | 返回订阅的所有远端用户混音后的音频数据。 |
 | [onRemoteUserAudioFrame](Linux-callback.md#IAudioFrameObserver-onremoteuseraudioframe) | 返回远端单个用户的音频数据 |
