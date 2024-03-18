@@ -21,7 +21,7 @@
 ```bash
 git clone https://github.com/volcengine/VolcEngineRTC.git
 cd VolcEngineRTC
-git checkout ApiExample_Demo
+git checkout main
 ```
 
 `Android/APIExample/app/src/main/java/rtc/volcengine/apiexample` 目录结构如下：
@@ -42,13 +42,17 @@ git checkout ApiExample_Demo
     ├── CrossRoomPKActivity.java             // 跨房 PK https://www.volcengine.com/docs/6348/104398
     ├── MultiRoomActivity.java               // 多房间 https://www.volcengine.com/docs/6348/196844
     ├── PictureInPicture                     // 画中画 https://www.volcengine.com/docs/6348/1178325
+    ├── PullStreamActivity.java              // 本地拉流 RTMP https://www.volcengine.com/docs/6348/70140
     ├── RawAudioDataActivity.java            // 原始音频数据 https://www.volcengine.com/docs/6348/1178324
+    ├── SEIMessageActivity.java              // 发送和接收媒体补充增强信息(SEI) https://www.volcengine.com/docs/6348/70140
+    ├── StreamSyncInfoActivity.java          // 音频随帧 https://www.volcengine.com/docs/6348/70140
     ├── ThirdBeauty
     │   ├── Fubeauty                         // 自定义视频处理（相芯美颜） https://www.volcengine.com/docs/6348/79888
     │   ├── ThirdBeautyActivity.java
     │   └── byteBeauty                       // 智能美化特效（付费版） https://www.volcengine.com/docs/6348/114717
     ├── VideoConfigActivity.java             // 视频参数配置 https://www.volcengine.com/docs/6348/70122
-    └── VoiceEffectActivity.java             // 变声、混响、降噪 https://www.volcengine.com/docs/6348/1178327
+    ├── VoiceEffectActivity.java             // 变声、混响、降噪 https://www.volcengine.com/docs/6348/1178327
+    └── mediaplayer
 ```
 
 ## 配置示例项目

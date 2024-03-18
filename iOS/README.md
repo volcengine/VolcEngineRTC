@@ -17,7 +17,7 @@
 ```bash
 git clone https://github.com/volcengine/VolcEngineRTC.git
 cd VolcEngineRTC
-git checkout ApiExample_Demo
+git checkout main
 ```
 
 iOS 示例项目的目录结构如下：
@@ -39,13 +39,15 @@ iOS 示例项目的目录结构如下：
 │   │   │   └── CrossRoomPK            // 跨房 PK https://www.volcengine.com/docs/6348/104398
 │   │   ├── ImportantComponents
 │   │   │   └── Beauty
-│   │   │       ├── BeautyViewController.swift
-│   │   │       ├── FaceUnityBeauty    // 自定义视频处理（相芯美颜） https://www.volcengine.com/docs/6348/79888
-│   │   │       └── VolcBeauty         // 智能美化特效（付费版） https://www.volcengine.com/docs/6348/114717
+│   │   │   │   ├── BeautyViewController.swift
+│   │   │   │   ├── FaceUnityBeauty    // 自定义视频处理（相芯美颜） https://www.volcengine.com/docs/6348/79888
+│   │   │   │   └── VolcBeauty         // 智能美化特效（付费版） https://www.volcengine.com/docs/6348/114717
+│   │   │   └── PullRTMP 			   // 本地拉流 RTMP https://www.volcengine.com/docs/6348/70140
 │   │   ├── LiveManager
 │   │   │   └── PushCDN                // 推流到 CDN https://www.volcengine.com/docs/6348/69817
 │   │   ├── RoomManager
 │   │   │   └── MutiRoom               // 多房间 https://www.volcengine.com/docs/6348/196844
+│   │   ├── SEI						   // 发送和接收媒体补充增强信息(SEI) https://www.volcengine.com/docs/6348/70140
 │   │   ├── VideoManager
 │   │   │   ├── CommonConfig           // 视频参数配置 https://www.volcengine.com/docs/6348/70122
 │   │   │   ├── PictureInPicture       // 画中画 https://www.volcengine.com/docs/6348/1178325

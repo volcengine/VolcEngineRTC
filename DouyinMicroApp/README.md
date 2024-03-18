@@ -16,7 +16,7 @@
 ```bash
 git clone https://github.com/volcengine/VolcEngineRTC.git
 cd VolcEngineRTC
-git checkout ApiExample_Demo
+git checkout main
 cd DouyinMicroApp
 ```
 
