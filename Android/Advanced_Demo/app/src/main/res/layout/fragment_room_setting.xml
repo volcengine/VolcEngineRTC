@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_11"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/room_title_bar_layout"
+        layout="@layout/layout_title_bar" />
+
+    <!--视频参数-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="@dimen/layout_item_margin"
+        android:gravity="center"
+        android:text="@string/video_setting"
+        android:textColor="@color/gray_1"
+        android:textSize="@dimen/txt_H3_14sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/settings_video_resolution"
+        layout="@layout/layout_item_arrow" />
+
+    <include
+        android:id="@+id/settings_video_frame_rate"
+        layout="@layout/layout_item_arrow" />
+
+    <include
+        android:id="@+id/settings_video_bit_rate"
+        layout="@layout/layout_item_seekbar" />
+
+    <!--渲染设定-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="@dimen/layout_item_margin"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/render_setting"
+        android:textColor="@color/gray_1"
+        android:textSize="@dimen/txt_H3_14sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/settings_local_video_type"
+        layout="@layout/layout_item_arrow" />
+
+    <!--消息-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginLeft="@dimen/layout_item_margin"
+        android:gravity="center"
+        android:text="@string/message_setting"
+        android:textColor="@color/gray_1"
+        android:textSize="@dimen/txt_H3_14sp"
+        android:textStyle="bold" />
+
+    <include
+        android:id="@+id/settings_sei_message"
+        layout="@layout/layout_item_arrow" />
+
+    <include
+        android:id="@+id/settings_room_message"
+        layout="@layout/layout_item_arrow" />
+</LinearLayout>
+

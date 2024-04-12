@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="video_resolution">
+        <item>1080 * 1920</item>
+        <item>720 * 1280</item>
+        <item>540 * 960</item>
+        <item>480 * 640</item>
+        <item>480 * 480</item>
+        <item>360 * 640</item>
+        <item>240 * 320</item>
+        <item>180 * 320</item>
+        <item>160 * 160</item>
+    </string-array>
+
+    <string-array name="video_frame_rate">
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+        <item>15 / 20 / 24</item>
+    </string-array>
+
+    <string-array name="video_bit_rate">
+        <item>800 - 3000</item>
+        <item>500 - 2000</item>
+        <item>400 - 1600</item>
+        <item>250 - 1000</item>
+        <item>200 - 1000</item>
+        <item>200 - 1000</item>
+        <item>100 - 400</item>
+        <item>80 - 350</item>
+        <item>40 - 150</item>
+    </string-array>
+
+    <string-array name="video_fill_mode">
+        <item>填充(Hidden)-1</item>
+        <item>适应(Fit)-2</item>
+        <item>拉伸(Fill)-3</item>
+    </string-array>
+
+    <string-array name="local_video_mirror_types">
+        <item>无镜像</item>
+        <item>渲染镜像</item>
+        <item>渲染与编码镜像</item>
+    </string-array>
+</resources>

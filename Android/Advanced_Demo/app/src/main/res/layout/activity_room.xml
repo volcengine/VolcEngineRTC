@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    tools:context="com.ss.video.rtc.demo.advanced.RTCRoomActivity"
+    tools:ignore="ContentDescription,RtlHardcoded,SpUsage">
+
+    <FrameLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/switch_camera"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/switch_camera"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/self_video_container" />
+
+        <TextView
+            android:id="@+id/room_id_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            tools:text="ID:userid" />
+
+        <ImageView
+            android:id="@+id/switch_audio_router"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/speaker_on"
+            app:layout_constraintLeft_toRightOf="@id/switch_camera"
+            app:layout_constraintTop_toBottomOf="@id/self_video_container" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/switch_local_audio"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:src="@drawable/normal_audio" />
+
+        <ImageView
+            android:id="@+id/switch_local_video"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_weight="1.5"
+            android:src="@drawable/normal_video" />
+        <ImageView
+            android:id="@+id/hang_up"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_weight="1.5"
+            android:src="@drawable/hang_up" />
+
+        <ImageView
+            android:id="@+id/beauty"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/beauty_icon"
+            android:layout_gravity="center_vertical|right"
+            android:layout_weight="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/switch_local_video"
+            app:layout_constraintRight_toLeftOf="@id/hang_up" />
+
+        <ImageView
+            android:id="@+id/setting_btn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_weight="1"
+            android:src="@drawable/settings" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/self_video_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/remote_video_1_container"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/remote_video_0_container"
+        app:layout_constraintTop_toBottomOf="@id/title_bar"/>
+
+    <TextView
+        android:id="@+id/self_video_user_id_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_700"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@id/self_video_container"
+        app:layout_constraintRight_toRightOf="@id/self_video_container" />
+
+    <FrameLayout
+        android:id="@+id/remote_video_0_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/remote_video_2_container"
+        app:layout_constraintLeft_toRightOf="@id/self_video_container"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar" />
+
+    <TextView
+        android:id="@+id/remote_video_0_user_id_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_700"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@id/remote_video_0_container"
+        app:layout_constraintRight_toRightOf="@id/remote_video_0_container" />
+
+    <FrameLayout
+        android:id="@+id/remote_video_1_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/remote_video_2_container"
+        app:layout_constraintTop_toBottomOf="@id/self_video_container" />
+
+    <TextView
+        android:id="@+id/remote_video_1_user_id_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_700"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@id/remote_video_1_container"
+        app:layout_constraintRight_toRightOf="@id/remote_video_1_container" />
+
+    <FrameLayout
+        android:id="@+id/remote_video_2_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintLeft_toRightOf="@id/remote_video_1_container"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/remote_video_0_container" />
+
+    <TextView
+        android:id="@+id/remote_video_2_user_id_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/purple_700"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@id/remote_video_2_container"
+        app:layout_constraintRight_toRightOf="@id/remote_video_2_container" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

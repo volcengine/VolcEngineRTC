@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_item_height">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/LayoutItemLeftText"
+            android:textSize="@dimen/txt_H1_18sp"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+</LinearLayout>

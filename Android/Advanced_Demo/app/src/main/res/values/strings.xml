@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Advanced</string>
+    <string name="login_activity_setting_btn">进房前设置</string>
+    <string name="login_activity_permission_deny_hint_for_camera">请授予相机权限，否则无法正常拿到视频数据</string>
+    <string name="login_activity_permission_deny_hint_for_audio">请授予麦克风权限，否则无法正常获取声音数据</string>
+    <string name="pre_join_setting_external_video_source">外部源采集</string>
+    <string name="external_video_source_switch_on">外部视频源采集已开启</string>
+    <string name="pre_join_setting_external_render">外部源渲染</string>
+    <string name="external_render_switch_on">外部渲染已开启</string>
+    <string name="login">登录</string>
+    <string name="setting">设置</string>
+    <string name="video_setting">视频参数</string>
+    <string name="video_resolution">分辨率</string>
+    <string name="video_frame_rate">帧率</string>
+    <string name="video_bit_rate">码率</string>
+    <string name="frame_rate">%dFPS</string>
+    <string name="bit_rate">%dKbps</string>
+    <string name="render_setting">渲染设定</string>
+    <string name="local_render_switch">本地渲染镜像</string>
+    <string name="local_view_fit_mode">本地视图填充模式</string>
+    <string name="remote_view_fit_mode">远端视图填充模式</string>
+    <string name="sub_title_cap">采集渲染设定</string>
+    <string name="sub_title_beauty">美颜</string>
+    <string name="sub_title_network_quality">进房前检测</string>
+    <string name="network_quality_test">网络监测</string>
+    <string name="message_setting">消息</string>
+    <string name="message_sei">发送SEI消息</string>
+    <string name="message_room">发送实时消息</string>
+    <string name="message_setting_p2p">点对点消息</string>
+    <string name="message_setting_room">广播消息</string>
+    <string name="video_source">视频源</string>
+    <string name="video_source_camera">摄像头</string>
+    <string name="video_source_screen">屏幕共享</string>
+
+    <string name="beauty_vendor_text">美颜方案</string>
+    <string name="beauty_vendor_huoshan">火山美颜</string>
+    <string name="beauty_vendor_third">通用第三方</string>
+
+    <string name="local_video_mirror_type">镜像模式</string>
+
+    <string name="effect_dialog_title">特效</string>
+</resources>

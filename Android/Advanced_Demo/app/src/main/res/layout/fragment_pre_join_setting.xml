@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/title_bar_layout"
+        layout="@layout/layout_title_bar" />
+
+    <include
+        android:id="@+id/sub_title_cap_layout"
+        layout="@layout/layout_subtitle" />
+
+    <include
+        android:id="@+id/video_source"
+        layout="@layout/layout_item_video_source" />
+
+    <include
+        android:id="@+id/custom_capture"
+        layout="@layout/layout_tip_item_switch" />
+
+    <include
+        android:id="@+id/custom_render"
+        layout="@layout/layout_tip_item_switch" />
+
+    <include
+        android:id="@+id/local_fit_mode"
+        layout="@layout/layout_item_arrow" />
+
+    <include
+        android:id="@+id/remote_fit_mode"
+        layout="@layout/layout_item_arrow" />
+
+    <include
+        android:id="@+id/sub_title_network_quality_layout"
+        layout="@layout/layout_subtitle" />
+
+    <include
+        android:id="@+id/network_quality"
+        layout="@layout/layout_item_arrow" />
+
+    <common.SubTitleLayout
+        android:id="@+id/subtitle_rtm_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <common.ValueLayout
+        android:id="@+id/rtm_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
