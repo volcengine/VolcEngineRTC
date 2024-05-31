@@ -1538,7 +1538,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 
 **注意**
-调用 [setAudioMixingProgressInterval:interval:](macOS-api#ByteRTCAudioMixingManager-setaudiomixingprogressinterval-interval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing:filePath:config:](macOS-api#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 将 [ByteRTCAudioMixingConfig](macOS-keytype.md#bytertcaudiomixingconfig) 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 
+调用 [setAudioMixingProgressInterval:interval:](macOS-api.md#ByteRTCAudioMixingManager-setaudiomixingprogressinterval-interval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing:filePath:config:](macOS-api.md#ByteRTCAudioMixingManager-startaudiomixing-filepath-config) 将 [ByteRTCAudioMixingConfig](macOS-keytype.md#bytertcaudiomixingconfig) 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 
 
 <span id="ByteRTCVideoDelegate-rtcengine-onperformancealarmswithmode-roomid-reason-sourcewanteddata"></span>
 ### rtcEngine:onPerformanceAlarmsWithMode:roomId:reason:sourceWantedData:

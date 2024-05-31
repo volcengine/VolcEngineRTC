@@ -77,7 +77,7 @@
   | [setRemoteUserPriority()](#setremoteuserpriority) | 设置用户优先级。<br>该方法与 [setSubscribeFallbackOption](Web-api.md#setsubscribefallbackoption) 搭配使用。<br>开启回退后，会优先保证收到的高优先级用户的流的质量。 |
   | [startAudioPlaybackDeviceTest()](#startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。 |
   | [stopAudioPlaybackDeviceTest()](#stopaudioplaybackdevicetest) | 停止音频播放设备测试。 |
-  | [startAudioDeviceRecordTest()](#startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br>建议提前调用 [enableAudioPropertiesReport](Web-api#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。 |
+  | [startAudioDeviceRecordTest()](#startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br>建议提前调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。 |
   | [stopAudioDeviceRecordAndPlayTest()](#stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
   | [stopAudioDevicePlayTest()](#stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 开始的音频播放设备测试。<br>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
   | [setAudioProfile()](#setaudioprofile) | 设置音质档位 |
@@ -2050,7 +2050,7 @@
 ### startAudioDeviceRecordTest()
 
 开始音频采集设备和音频播放设备测试。
-建议提前调用 [enableAudioPropertiesReport](Web-api#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。
+建议提前调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。
 
 - **类型**
 

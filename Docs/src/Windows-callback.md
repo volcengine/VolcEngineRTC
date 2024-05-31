@@ -718,7 +718,7 @@ virtual void bytertc::IRTCVideoEventHandler::onAudioMixingPlayingProgress(
 
 
 **注意**
-调用 [setAudioMixingProgressInterval](Windows-api#IAudioMixingManager-setaudiomixingprogressinterval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing](Windows-api#IAudioMixingManager-startaudiomixing) 将 [AudioMixingConfig](Windows-keytype.md#audiomixingconfig) 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 
+调用 [setAudioMixingProgressInterval](Windows-api.md#IAudioMixingManager-setaudiomixingprogressinterval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing](Windows-api.md#IAudioMixingManager-startaudiomixing) 将 [AudioMixingConfig](Windows-keytype.md#audiomixingconfig) 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。 
 
 <span id="IRTCVideoEventHandler-onlogreport"></span>
 ### onLogReport

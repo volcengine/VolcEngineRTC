@@ -13,29 +13,29 @@
 | [unsubscribeStream()](Web-api.md#unsubscribestream) | 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。<br>该方法对自动订阅和手动订阅模式均适用。 |
 | [subscribeScreen()](Web-api.md#subscribescreen) | 订阅房间内指定的远端屏幕共享音视频流。<br>该方法对自动订阅和手动订阅模式均适用。 |
 | [unsubscribeScreen()](Web-api.md#unsubscribescreen) | 取消订阅房间内指定的远端屏幕共享音视频流。<br>该方法对自动订阅和手动订阅模式均适用。 |
-| [updateToken()](Web-api#updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
+| [updateToken()](Web-api.md#updatetoken) | 更新 Token。<br>用于加入房间的 Token 有一定的有效期。Token 过期前 30 秒将收到 [onTokenWillExpire](Web-event.md#ontokenwillexpire) 回调，需要调用此方法更新房间的 Token 信息。 |
 | [setAudioCaptureDevice()](Web-api.md#setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
 | [setVideoCaptureDevice()](Web-api.md#setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
-| [startVideoCapture()](Web-api#startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
-| [stopVideoCapture()](Web-api#stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
-| [startAudioCapture()](Web-api#startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
-| [stopAudioCapture()](Web-api#stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
+| [startVideoCapture()](Web-api.md#startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
+| [stopVideoCapture()](Web-api.md#stopvideocapture) | 关闭内部视频采集。默认为关闭状态。<br>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
+| [startAudioCapture()](Web-api.md#startaudiocapture) | 立即开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
+| [stopAudioCapture()](Web-api.md#stopaudiocapture) | 立即关闭内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>调用该方法，房间内的其他用户会收到 [onUserStopAudioCapture](Web-event.md#onuserstopaudiocapture) 的回调。 |
 | [startScreenCapture()](Web-api.md#startscreencapture) | 使用内部采集模块，采集当前屏幕视频流，用于共享。 |
 | [stopScreenCapture()](Web-api.md#stopscreencapture) | 停止屏幕共享流内部采集。 |
 | [setLocalVideoPlayer()](Web-api.md#setlocalvideoplayer) | 设置本地视频渲染时，使用的视图，并设置渲染模式。<br>调用本方法绑定视图以后，你可以通过 `onPlayerEvent` 来监听播放状态。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
-| [setRemoteVideoPlayer()](Web-api#setremotevideoplayer) | 设置远端视频渲染时使用的视图，并设置渲染模式。<br>建议在收到 [onUserPublishStream](Web-event.md#onuserpublishstream)/[onUserPublishScreen](Web-event.md#onuserpublishscreen) 事件后，调用本方法对远端视频视图进行设置。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
+| [setRemoteVideoPlayer()](Web-api.md#setremotevideoplayer) | 设置远端视频渲染时使用的视图，并设置渲染模式。<br>建议在收到 [onUserPublishStream](Web-event.md#onuserpublishstream)/[onUserPublishScreen](Web-event.md#onuserpublishscreen) 事件后，调用本方法对远端视频视图进行设置。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。 |
 | [setLocalVideoMirrorType()](Web-api.md#setlocalvideomirrortype) | 是否开启本地视频流镜像模式。 |
 | [setAudioPlaybackDevice()](Web-api.md#setaudioplaybackdevice) | 设置音频播放设备，例如扬声器或者耳机，默认使用扬声器。 |
 | [play()](Web-api.md#play) | 手动开启音视频流播放 |
 | [pauseAllSubscribedStream()](Web-api.md#pauseallsubscribedstream) | 暂停接收来自远端的媒体流。 |
 | [resumeAllSubscribedStream()](Web-api.md#resumeallsubscribedstream) | 恢复接收来自远端的媒体流 |
-| [sendUserMessage()](Web-api#sendusermessage) | 给房间内指定的用户发送点对点文本消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](Web-event.md#onusermessagereceived) 回调。 |
-| [sendUserBinaryMessage()](Web-api#senduserbinarymessage) | 给房间内指定的用户发送点对点二进制消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](Web-event.md#onuserbinarymessagereceived) 回调。 |
-| [sendRoomMessage()](Web-api#sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。 |
-| [sendRoomBinaryMessage()](Web-api#sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息 |
+| [sendUserMessage()](Web-api.md#sendusermessage) | 给房间内指定的用户发送点对点文本消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](Web-event.md#onusermessagereceived) 回调。 |
+| [sendUserBinaryMessage()](Web-api.md#senduserbinarymessage) | 给房间内指定的用户发送点对点二进制消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](Web-event.md#onuserbinarymessagereceived) 回调。 |
+| [sendRoomMessage()](Web-api.md#sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。 |
+| [sendRoomBinaryMessage()](Web-api.md#sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息 |
 | [sendSEIMessage()](Web-api.md#sendseimessage) | 在视频通信时，通过视频帧发送 SEI 数据。 |
 | [setVideoEncoderConfig()](Web-api.md#setvideoencoderconfig) | 在视频发布端设置发布的视频流参数。 |
-| [setScreenEncoderConfig()](Web-api#setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
+| [setScreenEncoderConfig()](Web-api.md#setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
 | [setRemoteVideoConfig()](Web-api.md#setremotevideoconfig) | 设置期望订阅的远端视频流的参数。 |
 | [enableSimulcastMode()](Web-api.md#enablesimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式 |
 | [enableAudioPropertiesReport()](Web-api.md#enableaudiopropertiesreport) | 启用音频信息提示。 |
@@ -71,9 +71,9 @@
 | [defaultTranscoding()](Web-api.md#defaulttranscoding) | 获取合流转推默认参数。 |
 | [setSubscribeFallbackOption()](Web-api.md#setsubscribefallbackoption) | 设置订阅的音视频流的回退选项。<br>回退指：设置网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。 |
 | [setRemoteUserPriority()](Web-api.md#setremoteuserpriority) | 设置用户优先级。<br>该方法与 [setSubscribeFallbackOption](Web-api.md#setsubscribefallbackoption) 搭配使用。<br>开启回退后，会优先保证收到的高优先级用户的流的质量。 |
-| [startAudioPlaybackDeviceTest()](Web-api#startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。 |
+| [startAudioPlaybackDeviceTest()](Web-api.md#startaudioplaybackdevicetest) | 启动音频播放设备检测。测试启动后，循环播放指定的音频文件，同时将通过 [onAudioPlaybackDeviceTestVolume](Web-event.md#onaudioplaybackdevicetestvolume) 回调播放时的音量信息。 |
 | [stopAudioPlaybackDeviceTest()](Web-api.md#stopaudioplaybackdevicetest) | 停止音频播放设备测试。 |
-| [startAudioDeviceRecordTest()](Web-api#startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br>建议提前调用 [enableAudioPropertiesReport](Web-api#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。 |
+| [startAudioDeviceRecordTest()](Web-api.md#startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br>建议提前调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [onLocalAudioPropertiesReport](Web-event.md#onlocalaudiopropertiesreport) 获取采集音量。 |
 | [stopAudioDeviceRecordAndPlayTest()](Web-api.md#stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
 | [stopAudioDevicePlayTest()](Web-api.md#stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 开始的音频播放设备测试。<br>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
 | [setAudioProfile()](Web-api.md#setaudioprofile) | 设置音质档位 |
@@ -83,8 +83,8 @@
 | [takeLocalSnapshot()](Web-api.md#takelocalsnapshot) | 截取本地视频画面 |
 | [takeRemoteSnapshot()](Web-api.md#takeremotesnapshot) | 截取远端视频画面 |
 | [registerExtension()](Web-api.md#registerextension) | 注册插件。 |
-| [startSubtitle()](Web-api#startsubtitle) | 开启字幕。<br>调用该方法后，你可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Web-event.md#onsubtitlemessagereceived) 事件回调给你。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否开启。 |
-| [stopSubtitle()](Web-api#stopsubtitle) | 关闭字幕。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
+| [startSubtitle()](Web-api.md#startsubtitle) | 开启字幕。<br>调用该方法后，你可以根据需要选择识别和翻译两种模式。开启识别模式，会将识别后的用户语音转化成文字；开启翻译模式，会在语音识别后进行翻译。语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Web-event.md#onsubtitlemessagereceived) 事件回调给你。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否开启。 |
+| [stopSubtitle()](Web-api.md#stopsubtitle) | 关闭字幕。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Web-event.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
 | [setRemoteStreamRenderSync()](Web-api.md#setremotestreamrendersync) | 设置远端音视频流是否同步渲染。<br>你可以通过关闭音视频同步，达到超低端到端延时的效果。 |
 
 

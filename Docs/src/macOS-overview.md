@@ -17,11 +17,11 @@
 | --- | --- |
 | [createRTCRoom:](macOS-api.md#ByteRTCVideo-creatertcroom) | 创建房间实例。<br/>调用此方法仅返回一个房间实例，你仍需调用 [joinRoomByToken:userInfo:roomConfig:](macOS-api.md#ByteRTCRoom-joinroombytoken-userinfo-roomconfig) 才能真正地创建/加入房间。<br/>多次调用此方法以创建多个 [ByteRTCRoom](macOS-api.md#bytertcroom) 实例。分别调用各 ByteRTCRoom 实例中的 [joinRoomByToken:userInfo:roomConfig:](macOS-api.md#ByteRTCRoom-joinroombytoken-userinfo-roomconfig) 方法，同时加入多个房间。<br/>多房间模式下，用户可以同时订阅各房间的音视频流。 |
 | [destroy](macOS-api.md#ByteRTCRoom-destroy) | 退出并销毁调用 [createRTCRoom:](macOS-api.md#ByteRTCVideo-creatertcroom) 所创建的房间实例。 |
-| [setRtcRoomDelegate:](macOS-api#ByteRTCRoom-setrtcroomdelegate) | 通过设置 [ByteRTCRoomDelegate](macOS-callback.md#bytertcroomdelegate) 代理，可以监听此 `ByteRTCRoom` 对象对应的回调事件。 |
+| [setRtcRoomDelegate:](macOS-api.md#ByteRTCRoom-setrtcroomdelegate) | 通过设置 [ByteRTCRoomDelegate](macOS-callback.md#bytertcroomdelegate) 代理，可以监听此 `ByteRTCRoom` 对象对应的回调事件。 |
 | [joinRoomByToken:userInfo:roomConfig:](macOS-api.md#ByteRTCRoom-joinroombytoken-userinfo-roomconfig) | 加入房间。<br><br/>调用 [createRTCRoom:](macOS-api.md#ByteRTCVideo-creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。  <br> |
 | [leaveRoom](macOS-api.md#ByteRTCRoom-leaveroom) | 离开房间。  <br><br/>用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。  <br> |
 | [setUserVisibility:](macOS-api.md#ByteRTCRoom-setuservisibility) | 设置用户可见性。默认可见。  <br> |
-| [renewToken:](macOS-api#ByteRTCRoom-renewtoken) | 更新 Token。<br>在 Token 进房权限过期前 30 秒，会收到 [onTokenWillExpire:](macOS-callback.md#ByteRTCRoomDelegate-ontokenwillexpire) 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 |
+| [renewToken:](macOS-api.md#ByteRTCRoom-renewtoken) | 更新 Token。<br>在 Token 进房权限过期前 30 秒，会收到 [onTokenWillExpire:](macOS-callback.md#ByteRTCRoomDelegate-ontokenwillexpire) 回调，此时需要重新获取 Token，并调用此方法更新 Token，否则用户将因为 Token 过期被移出房间。 |
 
 ## 音频管理
 
@@ -31,12 +31,12 @@
 | [setPlaybackVolume:](macOS-api.md#ByteRTCVideo-setplaybackvolume) | 调节本地播放的所有远端用户混音后的音量。播放音频前或播放音频时，你都可以使用此接口设定播放音量。 |
 | [setRemoteAudioPlaybackVolume:remoteUid:playVolume:](macOS-api.md#ByteRTCVideo-setremoteaudioplaybackvolume-remoteuid-playvolume) | 调节来自远端用户的音频播放音量 |
 | [enableAudioPropertiesReport:](macOS-api.md#ByteRTCVideo-enableaudiopropertiesreport) | 启用音频信息提示。  <br> |
-| [startAudioCapture](macOS-api#ByteRTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。<br/>调用该方法开启后，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartAudioCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartaudiocapture-uid) 的回调。 |
-| [stopAudioCapture](macOS-api#ByteRTCVideo-stopaudiocapture) | 关闭内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。<br/>调用该方法，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopAudioCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopaudiocapture-uid) 的回调。 |
-| [setAudioProfile:](macOS-api#ByteRTCVideo-setaudioprofile) | 设置音质档位。当所选的 [ByteRTCRoomProfile](macOS-keytype.md#bytertcroomprofile) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。 |
+| [startAudioCapture](macOS-api.md#ByteRTCVideo-startaudiocapture) | 开启内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。<br/>调用该方法开启后，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartAudioCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartaudiocapture-uid) 的回调。 |
+| [stopAudioCapture](macOS-api.md#ByteRTCVideo-stopaudiocapture) | 关闭内部音频采集。默认为关闭状态。  <br><br/>内部采集是指：使用 RTC SDK 内置的音频采集机制进行视频采集。<br/>调用该方法，本地用户会收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopAudioCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopaudiocapture-uid) 的回调。 |
+| [setAudioProfile:](macOS-api.md#ByteRTCVideo-setaudioprofile) | 设置音质档位。当所选的 [ByteRTCRoomProfile](macOS-keytype.md#bytertcroomprofile) 中的音频参数无法满足你的场景需求时，调用本接口切换的音质档位。 |
 | [enableExternalSoundCard:](macOS-api.md#ByteRTCVideo-enableexternalsoundcard) | 启用匹配外置声卡的音频处理模式 |
 | [enumerateAudioCaptureDevices](macOS-api.md#ByteRTCAudioDeviceManager-enumerateaudiocapturedevices) | 获取音频采集设备列表。如果后续设备有变更，你需要重新调用本接口以获得新的设备列表。 |
-| [enumerateAudioPlaybackDevices](macOS-api#ByteRTCAudioDeviceManager-enumerateaudioplaybackdevices) | 获取当前系统内音频播放设备列表。你可以在收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 了解设备变更后，重新调用本接口以获得新的设备列表。 |
+| [enumerateAudioPlaybackDevices](macOS-api.md#ByteRTCAudioDeviceManager-enumerateaudioplaybackdevices) | 获取当前系统内音频播放设备列表。你可以在收到 [rtcEngine:onAudioDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onaudiodevicestatechanged-device_type-device_state-device_error) 了解设备变更后，重新调用本接口以获得新的设备列表。 |
 | [followSystemCaptureDevice:](macOS-api.md#ByteRTCAudioDeviceManager-followsystemcapturedevice) | 设置音频采集路由是否跟随系统。 |
 | [followSystemPlaybackDevice:](macOS-api.md#ByteRTCAudioDeviceManager-followsystemplaybackdevice) | 设置音频播放路由是否跟随系统。 |
 | [getAudioCaptureDevice:](macOS-api.md#ByteRTCAudioDeviceManager-getaudiocapturedevice) | 获取当前音频采集设备。 |
@@ -53,9 +53,9 @@
 | [setAudioPlaybackDevice:](macOS-api.md#ByteRTCAudioDeviceManager-setaudioplaybackdevice) | 设置音频播放设备。 |
 | [setAudioPlaybackDeviceMute:](macOS-api.md#ByteRTCAudioDeviceManager-setaudioplaybackdevicemute) | 设置当前音频播放设备静音状态，默认为非静音。 |
 | [setAudioPlaybackDeviceVolume:](macOS-api.md#ByteRTCAudioDeviceManager-setaudioplaybackdevicevolume) | 设置当前音频播放设备音量 |
-| [startAudioDeviceLoopbackTest:](macOS-api#ByteRTCAudioDeviceManager-startaudiodeviceloopbacktest) | 开始音频设备回路测试。  <br><br/>该方法测试音频采集设备和音频播放设备是否能正常工作。一旦测试开始，音频采集设备会采集本地声音并通过音频播放设备播放出来，同时会收到 [rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport)。 |
-| [startAudioDeviceRecordTest:](macOS-api#ByteRTCAudioDeviceManager-startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br><br/>建议提前调用 [enableAudioPropertiesReport:](macOS-api#ByteRTCVideo-enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 获取采集音量。<br> |
-| [startAudioRecordingDeviceTest:](macOS-api#ByteRTCAudioDeviceManager-startaudiorecordingdevicetest) | 启动音频采集设备测试。  <br><br/>该方法测试音频采集设备是否能正常工作。启动测试后，会收到 [rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 回调上报的音量信息。 |
+| [startAudioDeviceLoopbackTest:](macOS-api.md#ByteRTCAudioDeviceManager-startaudiodeviceloopbacktest) | 开始音频设备回路测试。  <br><br/>该方法测试音频采集设备和音频播放设备是否能正常工作。一旦测试开始，音频采集设备会采集本地声音并通过音频播放设备播放出来，同时会收到 [rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport)。 |
+| [startAudioDeviceRecordTest:](macOS-api.md#ByteRTCAudioDeviceManager-startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。<br><br/>建议提前调用 [enableAudioPropertiesReport:](macOS-api.md#ByteRTCVideo-enableaudiopropertiesreport) 注册音量提示回调，测试开始后，音频设备开始采集本地声音，可以通过 [rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 获取采集音量。<br> |
+| [startAudioRecordingDeviceTest:](macOS-api.md#ByteRTCAudioDeviceManager-startaudiorecordingdevicetest) | 启动音频采集设备测试。  <br><br/>该方法测试音频采集设备是否能正常工作。启动测试后，会收到 [rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 回调上报的音量信息。 |
 | [startPlaybackDeviceTest:interval:](macOS-api.md#ByteRTCAudioDeviceManager-startplaybackdevicetest-interval) | 启动音频播放设备测试。  <br><br/>该方法测试播放设备是否能正常工作。SDK 播放指定的音频文件，测试者如果能听到声音，说明播放设备能正常工作。 |
 | [stopAudioDeviceLoopbackTest](macOS-api.md#ByteRTCAudioDeviceManager-stopaudiodeviceloopbacktest) | 停止音频设备回路测试。 |
 | [stopAudioDevicePlayTest](macOS-api.md#ByteRTCAudioDeviceManager-stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest:](macOS-api.md#ByteRTCAudioDeviceManager-startaudiodevicerecordtest) 开始的音频播放设备测试。<br><br/>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
@@ -70,14 +70,14 @@
 
 | 方法 | 描述 |
 | --- | --- |
-| [startVideoCapture](macOS-api#ByteRTCVideo-startvideocapture) | 立即开启内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br><br/>调用该方法后，本地用户会收到 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartVideoCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartvideocapture-uid) 的回调。 |
-| [stopVideoCapture](macOS-api#ByteRTCVideo-stopvideocapture) | 立即关闭内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br><br/>调用该方法后，本地用户会收到 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopVideoCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) 的回调。 |
+| [startVideoCapture](macOS-api.md#ByteRTCVideo-startvideocapture) | 立即开启内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br><br/>调用该方法后，本地用户会收到 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStartVideoCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstartvideocapture-uid) 的回调。 |
+| [stopVideoCapture](macOS-api.md#ByteRTCVideo-stopvideocapture) | 立即关闭内部视频采集。默认为关闭状态。  <br><br/>内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。<br><br/>调用该方法后，本地用户会收到 [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) 的回调。  <br><br/>非隐身用户进房后调用该方法，房间中的其他用户会收到 [rtcEngine:onUserStopVideoCapture:uid:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) 的回调。 |
 | [setVideoCaptureConfig:](macOS-api.md#ByteRTCVideo-setvideocaptureconfig) | 设置 RTC SDK 内部采集时的视频采集参数。<br><br/>如果你的项目使用了 SDK 内部采集模块，可以通过本接口指定视频采集参数包括模式、分辨率、帧率。 |
 | [setLocalVideoCanvas:withCanvas:](macOS-api.md#ByteRTCVideo-setlocalvideocanvas-withcanvas) | 设置本地视频渲染时，使用的视图，并设置渲染模式。 |
 | [updateLocalVideoCanvas:withRenderMode:withBackgroundColor:](macOS-api.md#ByteRTCVideo-updatelocalvideocanvas-withrendermode-withbackgroundcolor) | 修改本地视频渲染模式和背景色。 |
 | [setRemoteVideoCanvas:withIndex:withCanvas:](macOS-api.md#ByteRTCVideo-setremotevideocanvas-withindex-withcanvas) | 渲染来自指定远端用户 uid 的视频流时，设置使用的视图和渲染模式。  <br><br/>如果需要解除视频的绑定视图，把 `canvas.view` 设置为空。(`canvas` 中其他参数不能为空。) |
 | [updateRemoteStreamVideoCanvas:withUserId:withIndex:withRenderMode:withBackgroundColor:](macOS-api.md#ByteRTCVideo-updateremotestreamvideocanvas-withuserid-withindex-withrendermode-withbackgroundcolor) | 修改远端视频渲染模式和背景色。 |
-| [registerFaceDetectionObserver:withInterval:](macOS-api#ByteRTCVideo-registerfacedetectionobserver-withinterval) | 注册人脸检测结果回调观察者 <br><br/>注册此观察者后，你会周期性收到 [onFaceDetectionResult:](macOS-callback.md#ByteRTCFaceDetectionObserver-onfacedetectionresult) 回调。 |
+| [registerFaceDetectionObserver:withInterval:](macOS-api.md#ByteRTCVideo-registerfacedetectionobserver-withinterval) | 注册人脸检测结果回调观察者 <br><br/>注册此观察者后，你会周期性收到 [onFaceDetectionResult:](macOS-callback.md#ByteRTCFaceDetectionObserver-onfacedetectionresult) 回调。 |
 | [SetVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setvideoencoderconfig) | 视频发布端设置推送多路流时各路流的参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。 |
 | [SetMaxVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setmaxvideoencoderconfig) | 视频发布端设置期望发布的最大分辨率视频流参数，包括分辨率、帧率、码率、网络不佳时的回退策略等。  <br><br/>该接口支持设置一路视频流参数，设置多路参数请使用 [SetVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setvideoencoderconfig)。 |
 | [getVideoDeviceManager](macOS-api.md#ByteRTCVideo-getvideodevicemanager) | 创建视频设备管理实例 |
@@ -94,7 +94,7 @@
 | [unSubscribeStream:mediaStreamType:](macOS-api.md#ByteRTCRoom-unsubscribestream-mediastreamtype) | 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。  <br><br/>该方法对自动订阅和手动订阅模式均适用。 |
 | [requestRemoteVideoKeyFrame:](macOS-api.md#ByteRTCVideo-requestremotevideokeyframe) | 在订阅远端视频流之后，向远端请求关键帧 |
 | [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) | 开始跨房间转发媒体流。<br/>在用户进入房间后调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。<br> |
-| [updateForwardStreamToRooms:](macOS-api#ByteRTCRoom-updateforwardstreamtorooms) | 更新跨房间媒体流转发信息。<br><br/>通过 [startForwardStreamToRooms:](macOS-api#ByteRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法增加或者减少目标房间，或更新房间密钥。<br/>调用本方法增加或删减房间后，将在本端触发 [rtcRoom:onForwardStreamStateChanged:](macOS-callback.md#ByteRTCRoomDelegate-rtcroom-onforwardstreamstatechanged) 回调，包含发生了变动的目标房间中媒体流转发状态。 |
+| [updateForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-updateforwardstreamtorooms) | 更新跨房间媒体流转发信息。<br><br/>通过 [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法增加或者减少目标房间，或更新房间密钥。<br/>调用本方法增加或删减房间后，将在本端触发 [rtcRoom:onForwardStreamStateChanged:](macOS-callback.md#ByteRTCRoomDelegate-rtcroom-onforwardstreamstatechanged) 回调，包含发生了变动的目标房间中媒体流转发状态。 |
 | [stopForwardStreamToRooms](macOS-api.md#ByteRTCRoom-stopforwardstreamtorooms) | 停止跨房间媒体流转发。<br/>通过 [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。 |
 | [pauseForwardStreamToAllRooms](macOS-api.md#ByteRTCRoom-pauseforwardstreamtoallrooms) | 暂停跨房间媒体流转发。<br/>通过 [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。<br/>调用本方法暂停向所有目标房间转发后，你可以随时调用 [resumeForwardStreamToAllRooms](macOS-api.md#ByteRTCRoom-resumeforwardstreamtoallrooms) 快速恢复转发。 |
 | [resumeForwardStreamToAllRooms](macOS-api.md#ByteRTCRoom-resumeforwardstreamtoallrooms) | 恢复跨房间媒体流转发。<br/>调用 [pauseForwardStreamToAllRooms](macOS-api.md#ByteRTCRoom-pauseforwardstreamtoallrooms) 暂停转发之后，调用本方法恢复向所有目标房间转发媒体流。 |
@@ -140,20 +140,20 @@
 | [pushExternalByteVideoFrame:](macOS-api.md#ByteRTCVideo-pushexternalbytevideoframe) | 推送外部视频帧，使用 ByteRTCVideoFrame 进行封装。 |
 | [setLocalVideoSink:withSink:withPixelFormat:](macOS-api.md#ByteRTCVideo-setlocalvideosink-withsink-withpixelformat) | 将本地视频流与自定义渲染器绑定。 |
 | [setRemoteVideoSink:withSink:withPixelFormat:](macOS-api.md#ByteRTCVideo-setremotevideosink-withsink-withpixelformat) | 将远端视频流与自定义渲染器绑定。 |
-| [registerRemoteEncodedVideoFrameObserver:](macOS-api#ByteRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回調。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](macOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe) 回调 |
+| [registerRemoteEncodedVideoFrameObserver:](macOS-api.md#ByteRTCVideo-registerremoteencodedvideoframeobserver) | 注册远端编码后视频数据回調。  <br><br/>完成注册后，当 SDK 监测到远端编码后视频帧时，会触发 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](macOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe) 回调 |
 | [setVideoDecoderConfig:withVideoDecoderConfig:](macOS-api.md#ByteRTCVideo-setvideodecoderconfig-withvideodecoderconfig) | 在订阅远端视频流之前，设置远端视频数据解码方式 |
 | [setAudioSourceType:](macOS-api.md#ByteRTCVideo-setaudiosourcetype) | 切换音频采集方式 |
 | [setAudioRenderType:](macOS-api.md#ByteRTCVideo-setaudiorendertype) | 切换音频渲染方式 |
 | [pushExternalAudioFrame:](macOS-api.md#ByteRTCVideo-pushexternalaudioframe) | 推送自定义采集的音频数据到 RTC SDK。 |
 | [pullExternalAudioFrame:](macOS-api.md#ByteRTCVideo-pullexternalaudioframe) | 拉取音频数据，用于自定义渲染。 |
-| [registerLocalVideoProcessor:withConfig:](macOS-api#ByteRTCVideo-registerlocalvideoprocessor-withconfig) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你能够调用 [processVideoFrame:](macOS-callback.md#ByteRTCVideoProcessorDelegate-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
+| [registerLocalVideoProcessor:withConfig:](macOS-api.md#ByteRTCVideo-registerlocalvideoprocessor-withconfig) | 设置自定义视频前处理器。<br><br/>使用这个视频前处理器，你能够调用 [processVideoFrame:](macOS-callback.md#ByteRTCVideoProcessorDelegate-processvideoframe) 对 RTC SDK 采集得到的视频帧进行前处理，并将处理后的视频帧用于 RTC 音视频通信。 |
 | [registerAudioProcessor:](macOS-api.md#ByteRTCVideo-registeraudioprocessor) | 注册自定义音频处理器。<br><br/>注册完成后，你可以调用 [enableAudioProcessor:audioFormat:](macOS-api.md#ByteRTCVideo-enableaudioprocessor-audioformat)，对本地采集或接收到的远端音频进行处理。 |
 | [enableAudioProcessor:audioFormat:](macOS-api.md#ByteRTCVideo-enableaudioprocessor-audioformat) | 设置并开启指定的音频帧回调，进行自定义处理。 |
 | [disableAudioProcessor:](macOS-api.md#ByteRTCVideo-disableaudioprocessor) | 关闭自定义音频处理。 |
 | [setAudioFrameObserver:](macOS-api.md#ByteRTCVideo-setaudioframeobserver) | 注册音频数据回调观察者。  <br> |
 | [enableAudioFrameCallback:format:](macOS-api.md#ByteRTCVideo-enableaudioframecallback-format) | 设置并开启指定的音频数据帧回调 |
 | [disableAudioFrameCallback:](macOS-api.md#ByteRTCVideo-disableaudioframecallback) | 关闭音频回调 |
-| [registerLocalEncodedVideoFrameObserver:](macOS-api#ByteRTCVideo-registerlocalencodedvideoframeobserver) | 注册本地视频帧监测器。  <br><br/>无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 [onLocalEncodedVideoFrame:Frame:](macOS-callback.md#ByteRTCLocalEncodedVideoFrameObserver-onlocalencodedvideoframe-frame) 回调给用户 |
+| [registerLocalEncodedVideoFrameObserver:](macOS-api.md#ByteRTCVideo-registerlocalencodedvideoframeobserver) | 注册本地视频帧监测器。  <br><br/>无论使用内部采集还是自定义采集，调用该方法后，SDK 每监测到一帧本地视频帧时，都会将视频帧信息通过 [onLocalEncodedVideoFrame:Frame:](macOS-callback.md#ByteRTCLocalEncodedVideoFrameObserver-onlocalencodedvideoframe-frame) 回调给用户 |
 | [setExternalVideoEncoderEventHandler:](macOS-api.md#ByteRTCVideo-setexternalvideoencodereventhandler) | 注册自定义编码帧推送事件回调 |
 | [pushExternalEncodedVideoFrame:withVideoIndex:withEncodedVideoFrame:](macOS-api.md#ByteRTCVideo-pushexternalencodedvideoframe-withvideoindex-withencodedvideoframe) | 推送自定义编码后的视频流 |
 
@@ -181,14 +181,14 @@
 | [sendUserBinaryMessage:message:config:](macOS-api.md#ByteRTCRoom-senduserbinarymessage-message-config) | 给房间内指定的用户发送二进制消息（P2P）。 |
 | [login:uid:](macOS-api.md#ByteRTCVideo-login-uid) | 必须先登录，才能发送房间外点对点消息和向应用服务器发送消息<br><br/>在调用本接口登录后，如果想要登出，需要调用 [logout](macOS-api.md#ByteRTCVideo-logout) |
 | [logout](macOS-api.md#ByteRTCVideo-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
-| [updateLoginToken:](macOS-api#ByteRTCVideo-updatelogintoken) | 更新用户用于登录的 Token  <br><br/>Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br><br/>调用 [login:uid:](macOS-api#ByteRTCVideo-login-uid) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [rtcEngine:onLoginResult:errorCode:elapsed:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed) 回调通知，错误码为 ByteRTCLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。 |
+| [updateLoginToken:](macOS-api.md#ByteRTCVideo-updatelogintoken) | 更新用户用于登录的 Token  <br><br/>Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。  <br><br/>调用 [login:uid:](macOS-api.md#ByteRTCVideo-login-uid) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [rtcEngine:onLoginResult:errorCode:elapsed:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onloginresult-errorcode-elapsed) 回调通知，错误码为 ByteRTCLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。 |
 | [setServerParams:url:](macOS-api.md#ByteRTCVideo-setserverparams-url) | 设置应用服务器参数  <br><br/>客户端调用 [sendServerMessage:](macOS-api.md#ByteRTCVideo-sendservermessage) 或 [sendServerBinaryMessage:](macOS-api.md#ByteRTCVideo-sendserverbinarymessage) 发送消息给应用服务器之前，必须需要设置有效签名和应用服务器地址。 |
 | [getPeerOnlineStatus:](macOS-api.md#ByteRTCVideo-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态 |
 | [sendUserMessageOutsideRoom:message:config:](macOS-api.md#ByteRTCVideo-sendusermessageoutsideroom-message-config) | 给房间外指定的用户发送文本消息（P2P） |
 | [sendUserBinaryMessageOutsideRoom:message:config:](macOS-api.md#ByteRTCVideo-senduserbinarymessageoutsideroom-message-config) | 给房间外指定的用户发送二进制消息（P2P） |
 | [sendServerMessage:](macOS-api.md#ByteRTCVideo-sendservermessage) | 客户端给应用服务器发送文本消息（P2Server） |
 | [sendServerBinaryMessage:](macOS-api.md#ByteRTCVideo-sendserverbinarymessage) | 客户端给应用服务器发送二进制消息（P2Server） |
-| [sendStreamSyncInfo:config:](macOS-api#ByteRTCVideo-sendstreamsyncinfo-config) | 发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 [rtcEngine:onStreamSyncInfoReceived:streamType:data:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onstreamsyncinforeceived-streamtype-data) 回调。 |
+| [sendStreamSyncInfo:config:](macOS-api.md#ByteRTCVideo-sendstreamsyncinfo-config) | 发送音频流同步信息。将消息通过音频流发送到远端，并实现与音频流同步，该接口调用成功后，远端用户会收到 [rtcEngine:onStreamSyncInfoReceived:streamType:data:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onstreamsyncinforeceived-streamtype-data) 回调。 |
 | [sendSEIMessage:andMessage:andRepeatCount:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount) | 通过视频帧发送 SEI 数据。  <br><br/>在视频通话场景下，SEI 数据会随视频帧发送；在语音通话场景下，SDK 会自动生成一路 16px × 16px 的黑帧视频流用来发送 SEI 数据。 |
 
 ## CDN 推流
@@ -197,7 +197,7 @@
 | --- | --- |
 | [startLiveTranscoding:transcoding:observer:](macOS-api.md#ByteRTCVideo-startlivetranscoding-transcoding-observer) | 新增转推直播任务，并设置合流的图片、视频视图布局和音频属性。  <br><br/>同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。 |
 | [stopLiveTranscoding:](macOS-api.md#ByteRTCVideo-stoplivetranscoding) | 停止转推直播，会收到 [onStreamMixingEvent:taskId:error:mixType:](macOS-callback#LiveTranscodingDelegate-onstreammixingevent-taskid-error-mixtype) 回调。  <br><br/>关于启动转推直播，参看 [startLiveTranscoding:transcoding:observer:](macOS-api.md#ByteRTCVideo-startlivetranscoding-transcoding-observer)。 |
-| [updateLiveTranscoding:transcoding:](macOS-api#ByteRTCVideo-updatelivetranscoding-transcoding) | 更新转推直播参数，会收到 [onStreamMixingEvent:taskId:error:mixType:](macOS-callback.md#LiveTranscodingDelegate-onstreammixingevent-taskid-error-mixtype) 回调。  <br><br/>开启转推直播功能后，你可以使用此方法更新合流转推功能配置参数。 |
+| [updateLiveTranscoding:transcoding:](macOS-api.md#ByteRTCVideo-updatelivetranscoding-transcoding) | 更新转推直播参数，会收到 [onStreamMixingEvent:taskId:error:mixType:](macOS-callback.md#LiveTranscodingDelegate-onstreammixingevent-taskid-error-mixtype) 回调。  <br><br/>开启转推直播功能后，你可以使用此方法更新合流转推功能配置参数。 |
 
 ## 混音
 
@@ -246,7 +246,7 @@
 | 方法 | 描述 |
 | --- | --- |
 | [startCloudProxy:](macOS-api.md#ByteRTCVideo-startcloudproxy) | 开启云代理 |
-| [setCustomizeEncryptHandler:](macOS-api#ByteRTCVideo-setcustomizeencrypthandler) | 设置自定义加密和解密方式<br/>需要实现对应的加密和解密方法。详情参考 [ByteRTCEncryptHandler](macOS-callback.md#bytertcencrypthandler)  <br> |
+| [setCustomizeEncryptHandler:](macOS-api.md#ByteRTCVideo-setcustomizeencrypthandler) | 设置自定义加密和解密方式<br/>需要实现对应的加密和解密方法。详情参考 [ByteRTCEncryptHandler](macOS-callback.md#bytertcencrypthandler)  <br> |
 | [setEncryptType:key:](macOS-api.md#ByteRTCVideo-setencrypttype-key) | 设置传输时使用内置加密的方式 <br> |
 
 ## 高级功能
@@ -257,7 +257,7 @@
 | [stopFileRecording:](macOS-api.md#ByteRTCVideo-stopfilerecording) | 停止本地录制 |
 | [getSpatialAudio](macOS-api.md#ByteRTCRoom-getspatialaudio) | 获取空间音频接口实例。  <br> |
 | [getRangeAudio](macOS-api.md#ByteRTCRoom-getrangeaudio) | 获取范围语音接口实例。 |
-| [startASR:handler:](macOS-api#ByteRTCVideo-startasr-handler) | 开启自动语音识别服务。该方法将识别后的用户语音转化成文字，并通过 [onMessage:](macOS-keytype.md#ByteRTCASREngineEventHandler-onmessage) 事件回调给用户。 |
+| [startASR:handler:](macOS-api.md#ByteRTCVideo-startasr-handler) | 开启自动语音识别服务。该方法将识别后的用户语音转化成文字，并通过 [onMessage:](macOS-keytype.md#ByteRTCASREngineEventHandler-onmessage) 事件回调给用户。 |
 | [stopASR](macOS-api.md#ByteRTCVideo-stopasr) | 关闭语音识别服务 |
 | [enableCloudRending:](macOS-api.md#ByteRTCRoom-enablecloudrending) | 按照传入的布局信息开启云端渲染。 <br> |
 | [updateCloudRending:](macOS-api.md#ByteRTCRoom-updatecloudrending) | 按照传入的布局信息更新云端渲染。 <br> |
@@ -335,7 +335,7 @@
 | [rtcEngine:onUserStopVideoCapture:uid:](macOS-callback#ByteRTCVideoDelegate-rtcengine-onuserstopvideocapture-uid) | 房间内的可见用户调用 [stopVideoCapture](macOS-api.md#ByteRTCVideo-stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此回调。 |
 | [rtcEngine:onVideoDeviceStateChanged:device_type:device_state:device_error:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicestatechanged-device_type-device_state-device_error) | 视频设备状态回调。提示摄像头视频采集、屏幕视频采集等设备的状态。 |
 | [rtcEngine:onVideoDeviceWarning:deviceType:deviceWarning:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onvideodevicewarning-devicetype-devicewarning) | 视频设备警告回调。视频设备包括视频采集设备。 |
-| [onFaceDetectionResult:](macOS-callback.md#ByteRTCFaceDetectionObserver-onfacedetectionresult) | 特效 SDK 进行人脸检测结果的回调。 <br><br/>调用 [registerFaceDetectionObserver:withInterval:](macOS-api#ByteRTCVideo-registerfacedetectionobserver-withinterval) 注册了 [ByteRTCFaceDetectionObserver](macOS-callback.md#bytertcfacedetectionobserver) ，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
+| [onFaceDetectionResult:](macOS-callback.md#ByteRTCFaceDetectionObserver-onfacedetectionresult) | 特效 SDK 进行人脸检测结果的回调。 <br><br/>调用 [registerFaceDetectionObserver:withInterval:](macOS-api.md#ByteRTCVideo-registerfacedetectionobserver-withinterval) 注册了 [ByteRTCFaceDetectionObserver](macOS-callback.md#bytertcfacedetectionobserver) ，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
 
 ## 音视频传输
 
