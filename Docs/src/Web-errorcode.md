@@ -21,6 +21,8 @@
   | KICKED_OUT | `'KICKED_OUT'` | 服务端调用 OpenAPI 将当前用户踢出房间。通过 `onError` 回调。 |
   | ROOM_DISMISS | `'ROOM_DISMISS'` | 服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 `onError` 回调。 |
   | TOKEN_EXPIRED | `'TOKEN_EXPIRED'` | 加入房间后，Token 过期。通过 `onError` 回调。请获取新的 Token 后，调用 `joinRoom` 重新加入房间。 |
+  | TOKEN_NO_PUBLISH_PERMISSION | `'TOKEN_NO_PUBLISH_PERMISSION'` | Token 发布权限过期，通过 `onTokenPublishPrivilegeDidExpired` 回调。调用 `updateToken` 更新 Token 发布权限。 |
+  | TOKEN_NO_SUBSCRIBE_PERMISSION | `'TOKEN_NO_SUBSCRIBE_PERMISSION'` | Token 订阅权限过期，通过 `onTokenSubscribePrivilegeDidExpired` 回调。调用 `updateToken` 更新 Token 订阅权限。 |
   | DUPLICATE_LOGIN | `'DUPLICATE_LOGIN'` | 有相同用户 ID 的用户加入本房间，当前用户被踢出房间。通过 `onError` 回调。 |
   | INVOKED_BEFORE_CAPTURE | `'INVOKED_BEFORE_CAPTURE'` | 调用 `takeLocalSnapshot` 截取本地画面时指定的视频流不存在。请确保指定的流已发布。 |
   | REPEAT_CAPTURE | `'REPEAT_CAPTURE'` | 重复采集。调用 `startAudioCapture`、`startVideoCapture` 或 `startAudioAndVideoCapture` 重复采集同一条音频/视频流时触发。 |

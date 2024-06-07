@@ -37,7 +37,7 @@
 | [sendUserBinaryMessage](#rtcengine-senduserbinarymessage) | 给房间内指定的用户发送点对点二进制消息。<br>若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](Web-event.md#onuserbinarymessagereceived) 回调。 |
 | [sendRoomMessage](#rtcengine-sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。 |
 | [sendRoomBinaryMessage](#rtcengine-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息 |
-| [sendSEIMessage](#rtcengine-sendseimessage) | 在视频通信时，通过视频帧发送 SEI 数据。 |
+| [sendSEIMessage](#rtcengine-sendseimessage) | 通过视频帧发送 SEI 数据。<br>在视频通话场景下，SEI 数据会随视频帧发送；在语音通话场景下，SDK 会自动生成一路 16px × 16px 的黑帧视频流用来发送 SEI 数据。 |
 | [setVideoEncoderConfig](#rtcengine-setvideoencoderconfig) | 在视频发布端设置发布的视频流参数。 |
 | [setScreenEncoderConfig](#rtcengine-setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
 | [setRemoteVideoConfig](#rtcengine-setremotevideoconfig) | 设置期望订阅的远端视频流的参数。 |
@@ -55,7 +55,7 @@
 | [getAudioMixingManager](#rtcengine-getaudiomixingmanager) | 混音管理接口创建 |
 | [setAudioCaptureConfig](#rtcengine-setaudiocaptureconfig) | 设置 RTC SDK 内部采集时的音频采集参数。默认参数由浏览器决定。 |
 | [login](#rtcengine-login) | 登录即时消息服务器。<br>调用此方法登录后，可以向同 `appID` 下其他已登录用户发送文本或二进制消息。 |
-| [logout](#rtcengine-logout) | 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
+| [logout](#rtcengine-logout) | 登录 RTS 服务器。<br>调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。 |
 | [updateLoginToken](#rtcengine-updatelogintoken) | 更新用户用于登录的 Token。Token 有一定的有效期，当 Token 过期时，需调用此方法更新登录的 Token 信息。 |
 | [getPeerOnlineStatus](#rtcengine-getpeeronlinestatus) | 查询对端用户或本端用户的登录状态。在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。 |
 | [sendUserMessageOutsideRoom](#rtcengine-sendusermessageoutsideroom) | 给房间外指定的用户发送文本消息（P2P） |
@@ -98,6 +98,7 @@
 | [stopForwardStreamToRooms](#rtcengine-stopforwardstreamtorooms) | 停止向所有目标房间转发媒体流。 |
 | [pauseForwardStreamToAllRooms](#rtcengine-pauseforwardstreamtoallrooms) | 暂停向所有目标房间转发媒体流。<br>调用本方法暂停向所有目标房间转发后，你可以调用 [resumeForwardStreamToAllRooms](Web-api.md#rtcengine-resumeforwardstreamtoallrooms) 恢复转发。 |
 | [resumeForwardStreamToAllRooms](#rtcengine-resumeforwardstreamtoallrooms) | 恢复向所有目标房间转发媒体流。 |
+| [setAudioSelectionConfig](#rtcengine-setaudioselectionconfig) | 设置本端发布流在音频选路中的优先级。 |
 
 
 ### joinRoom <span id="rtcengine-joinroom"></span> 
@@ -179,6 +180,8 @@
 
     类型: <code>boolean | undefined</code>
 
+    保留参数，无实际意义。
+
 - **返回值**
 
   类型: <code>Promise<void\></code>
@@ -213,6 +216,7 @@
   类型: <code>Promise<void\></code>
 
   + `NO_PUBLISH_PERMISSION`: 无发布权限，请先调用 [setUserVisibility](#setuservisibility) 将自身切换至可见后再发布流。
+  + `TOKEN_NO_PUBLISH_PERMISSION`: Token 无发布权限或发布权限过期，调用 [updateToke](#updatetoken) 更新 Token 发布权限。
   + `PUBLISH_FAILED`: 发布流失败，具体原因查看 message。
 
 ### unpublishStream <span id="rtcengine-unpublishstream"></span> 
@@ -271,6 +275,7 @@
   类型: <code>Promise<void\></code>
 
   + `NO_PUBLISH_PERMISSION`: 无发布权限，请先调用 [setUserVisibility](#setuservisibility) 将自身切换至可见后再发布流。
+  + `TOKEN_NO_PUBLISH_PERMISSION`: Token 无发布权限或发布权限过期，调用 [updateToke](#updatetoken) 更新 Token 发布权限。
   + `PUBLISH_FAILED`: 发布流失败，具体原因查看 message。
 
 ### unpublishScreen <span id="rtcengine-unpublishscreen"></span> 
@@ -333,7 +338,8 @@
 
   类型: <code>Promise<void\></code>
 
-  `STREAM_NOT_EXIST`: 目标流不存在。请输入正确的 ID，或确认目标流在房间内。
+  + `STREAM_NOT_EXIST`: 目标流不存在。请输入正确的 ID，或确认目标流在房间内。
+  + `TOKEN_NO_SUBSCRIBE_PERMISSION`: Token 无订阅权限或订阅权限过期，调用 [updateToke](#updatetoken) 更新 Token 订阅权限。
 
 ### unsubscribeStream <span id="rtcengine-unsubscribestream"></span> 
 
@@ -398,6 +404,9 @@
 - **返回值**
 
   类型: <code>Promise<void\></code>
+
+  + `STREAM_NOT_EXIST`: 目标流不存在。请输入正确的 ID，或确认目标流在房间内。
+  + `TOKEN_NO_SUBSCRIBE_PERMISSION`: Token 无订阅权限或订阅权限过期，调用 [updateToke](#updatetoken) 更新 Token 订阅权限。
 
 ### unsubscribeScreen <span id="rtcengine-unsubscribescreen"></span> 
 
@@ -698,6 +707,7 @@
   + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 [publishScreen](#publishscreen)。
   + 要关闭屏幕视频源采集，调用 [stopScreenCapture](#stopscreencapture)。
   + 调用此接口前，你可以调用 [setScreenEncoderConfig](#setscreenencoderconfig) 设置屏幕视频流的采集帧率和编码分辨率。
+  + 屏幕共享功能限制参看 [Web SDK 屏幕共享功能已知限制](111854.md#屏幕共享)。
 
 - **参数**
 
@@ -825,7 +835,8 @@
 
 - **注意**
 
-  进房前和进房后，均可调用此方法设置音频播放设备。
+  + 该方法仅在桌面端 Chrome 浏览器可用。
+  + 进房前和进房后，均可调用此方法设置音频播放设备。
 
 - **参数**
 
@@ -865,7 +876,7 @@
 
     类型: <code>[MediaType](Web-keytype.md#mediatype) | undefined</code>
 
-    媒体流类型，用于指定发布音频/视频。
+    媒体流类型，用于指定发布音频/视频。本方法对本地音频流不生效。
 
   - **streamIndex**
 
@@ -928,7 +939,7 @@
 
     类型: <code>[MediaType](Web-keytype.md#mediatype)</code>
 
-    媒体流类型，指定需要暂停接收音频还是视频流
+    媒体流类型，指定需要恢复接收音频还是视频流
 
 - **返回值**
 
@@ -1060,7 +1071,8 @@
 
 ### sendSEIMessage <span id="rtcengine-sendseimessage"></span> 
 
-在视频通信时，通过视频帧发送 SEI 数据。
+通过视频帧发送 SEI 数据。
+在视频通话场景下，SEI 数据会随视频帧发送；在语音通话场景下，SDK 会自动生成一路 16px × 16px 的黑帧视频流用来发送 SEI 数据。
 
 - **类型**
 
@@ -1070,10 +1082,14 @@
 
 - **注意**
 
-  + 收发 SEI 消息依赖浏览器 Chrome 86 及以上版本、H.264 编解码。
-  + 你可以通过此接口对 RTC SDK 内部采集的视频帧添加 SEI。
-  + 如果调用此接口之后的 2s 内，没有可带 SEI 的视频帧（比如没有开启视频采集和传输），那么，SEI 数据不会被加进视频帧中。
+  + 功能兼容性说明：<br/>
+     - SEI 消息仅支持在 H.264 编码，且使用 Chromium 86+ 内核的浏览器上使用。
+     - Android 设备无法在语音通话场景下自动生成黑帧视频流发送 SEI 数据。
+     - iOS 设备不支持使用 SEI 功能。
+  + 语音通话场景下收发 SEI 消息，仍然需要订阅视频流，而非音频流。可以在订阅端进房时设置自动订阅视频流，或调用 [subscribeStream](#subscribestream)，媒体流类型选择 `AUDIO_AND_VIDEO`。
+  + 语音通话场景下，若调用此接口后 1 分钟内未有 SEI 数据发送，则 SDK 会自动取消发布视频黑帧。
   + 消息发送成功后，远端会收到 [onSEIMessageReceived](Web-event.md#onseimessagereceived) 事件。
+  + 语音通话场景下，黑帧视频流的发送状态会通过 [onSEIStreamUpdate](Web-event.md#onseistreamupdate) 事件回调远端用户。
 
 - **参数**
 
@@ -1081,7 +1097,7 @@
 
     类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
 
-    指定携带 SEI 信息的媒体流类型。此处仅支持视频流，不支持纯音频流。
+    指定携带 SEI 信息的媒体流类型。语音通话场景下，建议将该值设为 `STREAM_INDEX_MAIN`。
 
   - **message**
 
@@ -1206,7 +1222,7 @@
 
   + 仅可以在发布之前进行大小流模式的设置。
   + 开启大小流模式后，SDK 会自动设置各路视频的编码参数。如果你需要手动设置，可以调用 [setVideoEncoderConfig](#setvideoencoderconfig)。
-  + 由于浏览器限制，Firefox 80 版本开启大小流后，对端仅可以订阅到小流。
+  + Firefox 浏览器不支持大小流功能。
 
 - **参数**
 
@@ -1260,6 +1276,7 @@
 
 - **注意**
 
+  + 在调用该接口前，你需要在[控制台](https://console.volcengine.com/rtc/workplaceRTC)开启转推直播功能。
   + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onStreamMixingEvent](Web-event.md#onstreammixingevent) 回调。
   + 如果你在[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=callback)配置了转推直播的服务端回调，调用本接口会收到 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted)。重复调用该接口时，第二次调用会同时触发 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 和 [TranscodeUpdated](https://www.volcengine.com/docs/6348/75125#transcodeupdated)。
   + 调用 [stopLiveTranscoding](#stoplivetranscoding) 停止转推直播。
@@ -1582,6 +1599,7 @@
 
 ### logout <span id="rtcengine-logout"></span> 
 
+登录 RTS 服务器。
 调用本接口登出后，无法调用房间外消息以及端到服务器消息相关的方法或收到相关回调。
 
 - **类型**
@@ -2405,7 +2423,7 @@
 
 - **注意**
 
-  + 调用时机，调用 [`stopPlayPublicStream`](#stopplaypublicstream) 订阅公共流后。
+  + 调用时机，调用 [`startPlayPublicStream`](#rtcengine-startplaypublicstream) 订阅公共流后。
   + 调用 [`stopPlayPublicStream`](#stopplaypublicstream) 停止订阅公共流时，将触发该 MediaStreamTrack 回调的 `ended` 事件， MediaStreamTrack 随即被关闭。
 
 - **参数**
@@ -2440,7 +2458,7 @@
 
 - **注意**
 
-  + 对截取的画面，包含本地视频处理的全部效果，包含旋转，镜像，美颜等。
+  + 本地视频处理的效果，镜像、美颜和虚拟背景均包含在截取的画面中。
   + 不管采用 SDK 内部采集，还是自定义采集，都可以进行截图。
 
 - **参数**
@@ -2523,13 +2541,13 @@
 
 - **注意**
 
-  + 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。
-     + 如果你需要使用流式语音识别模式，你应在 [语音技术控制台](https://console.volcengine.com/speech/service/16) 创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
-     + 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考 [开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
+  + 使用字幕功能前，你需要在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 开启实时字幕功能。</br>
+     - 如果你需要使用流式语音识别模式，你应在[语音技术控制台](https://console.volcengine.com/speech/service/16)创建流式语音识别应用。创建时，服务类型应选择 `流式语音识别`，而非 `音视频字幕生成`。创建后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启动流式语音识别，并填写创建语音技术应用时获取的相关信息，包括：APP ID，Access Token，和 Cluster ID。
+     - 如果你需要使用实时语音翻译模式，你应开通机器翻译服务，参考[开通服务](https://www.volcengine.com/docs/4640/130262)。完成开通后，在 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle) 上启用实时语音翻译模式。
   + 此方法需要在进房后调用。
-  + 如需指定源语言，你需要在调用 [joinRoom](#joinroom) 接口进房时，通过 `extraInfo` 参数传入格式为 `"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将浏览器语种设定为源语言。如果你的浏览器语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。
-    + 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880#%E5%9C%BA%E6%99%AF-%E8%AF%AD%E7%A7%8D%E6%94%AF%E6%8C%81)。
-    + 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
+  + 如需指定源语言，你需要在调用 [joinRoom](Web-api.md#rtcengine-joinroom) 接口进房时，通过 `extraInfo` 参数传入格式为 `"语种英文名": "语种代号"` JSON 字符串，例如设置源语言为英文时，传入 `"source_language": "en"`。如未指定源语言，SDK 会将浏览器语种设定为源语言。如果你的浏览器语种不是中文、英文和日文，此时 SDK 会自动将中文设为源语言。</br>
+     - 识别模式下，你可以传入 [RTC 控制台](https://console.volcengine.com/rtc/cloudRTC?tab=subtitle)上预设或自定义的语种英文名和语种代号。识别模式下支持的语言参看[识别模式语种支持](https://www.volcengine.com/docs/6561/109880)。
+     - 翻译模式下，你需要传入机器翻译规定的语种英文名和语种代号。翻译模式下支持的语言及对应的代号参看[翻译模式语言支持](https://www.volcengine.com/docs/4640/35107)。
 
 - **参数**
 
@@ -2716,6 +2734,7 @@
   类型: <code>Promise<[ForwardStreamStateInfo](Web-keytype.md#forwardstreamstateinfo)[]\></code>
 
   跨房间转发媒体流状态信息。
+  还可能返回错误码 `UNEXPECTED_INVOKE_FORWARD_STREAM`: 跨房间转发媒体流相关 API 的调用时机不正确，请参考各接口说明确认调用的先后顺序。
 
 ### updateForwardStreamToRooms <span id="rtcengine-updateforwardstreamtorooms"></span> 
 
@@ -2746,6 +2765,7 @@
   类型: <code>Promise<[ForwardStreamStateInfo](Web-keytype.md#forwardstreamstateinfo)[]\></code>
 
   跨房间转发媒体流状态信息。
+  还可能返回错误码 `UNEXPECTED_INVOKE_FORWARD_STREAM`: 跨房间转发媒体流相关 API 的调用时机不正确，请参考各接口说明确认调用的先后顺序。
 
 ### stopForwardStreamToRooms <span id="rtcengine-stopforwardstreamtorooms"></span> 
 
@@ -2768,6 +2788,7 @@
   类型: <code>Promise<[ForwardStreamStateInfo](Web-keytype.md#forwardstreamstateinfo)[]\></code>
 
   跨房间转发媒体流状态信息。
+  还可能返回错误码 `UNEXPECTED_INVOKE_FORWARD_STREAM`: 跨房间转发媒体流相关 API 的调用时机不正确，请参考各接口说明确认调用的先后顺序。
 
 ### pauseForwardStreamToAllRooms <span id="rtcengine-pauseforwardstreamtoallrooms"></span> 
 
@@ -2789,6 +2810,7 @@
   类型: <code>Promise<[ForwardStreamStateInfo](Web-keytype.md#forwardstreamstateinfo)[]\></code>
 
   跨房间转发媒体流状态信息。
+  还可能返回错误码 `UNEXPECTED_INVOKE_FORWARD_STREAM`: 跨房间转发媒体流相关 API 的调用时机不正确，请参考各接口说明确认调用的先后顺序。
 
 ### resumeForwardStreamToAllRooms <span id="rtcengine-resumeforwardstreamtoallrooms"></span> 
 
@@ -2809,6 +2831,29 @@
   类型: <code>Promise<[ForwardStreamStateInfo](Web-keytype.md#forwardstreamstateinfo)[]\></code>
 
   跨房间转发媒体流状态信息。
+  还可能返回错误码 `UNEXPECTED_INVOKE_FORWARD_STREAM`: 跨房间转发媒体流相关 API 的调用时机不正确，请参考各接口说明确认调用的先后顺序。
+
+### setAudioSelectionConfig <span id="rtcengine-setaudioselectionconfig"></span> 
+
+设置本端发布流在音频选路中的优先级。
+
+- **类型**
+
+  ```ts
+  (audioSelectionPriority: AudioSelectionPriority) => Promise<void>
+  ```
+
+- **参数**
+
+  - **audio_selection_priority**
+
+    类型: <code>[AudioSelectionPriority](Web-keytype.md#audioselectionpriority)</code>
+
+    本端发布流在音频选路中的优先级，默认正常参与音频选路。
+
+- **返回值**
+
+  类型: <code>Promise<void\></code>
 
 
 ## VERTC <span id="vertc"></span>
@@ -2819,7 +2864,7 @@
 
 | 方法 | 描述 |
 | :-- | :-- |
-| [createEngine](#vertc-createengine) | 创建引擎对象。<br>你必须先使用此方法，以使用 RTC 提供的各种音视频能力。<br>再次调用此方法时，会创建另一个独立的引擎实例。 |
+| [createEngine](#vertc-createengine) | 创建引擎对象。你必须先使用此方法，以使用 RTC 提供的各种音视频能力。<br>再次调用此方法时，会创建另一个独立的引擎实例。 |
 | [destroyEngine](#vertc-destroyengine) | 手动销毁通过 [createEngine](Web-api.md#createengine) 所创建的引擎对象。 |
 | [getSdkVersion](#vertc-getsdkversion) | 获取 SDK 当前的版本号。 |
 | [enumerateDevices](#vertc-enumeratedevices) | 枚举可用的媒体输入和输出设备，比如麦克风、摄像头、耳机等。<br>可以通过该方法获取设备的 deviceId, 用于在 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice)、[startVideoCapture](Web-api.md#startvideocapture)、[startAudioCapture](Web-api.md#startaudiocapture) 方法中指定采集/播放设备。 |
@@ -2922,7 +2967,7 @@
 
 - **注意**
 
-  浏览器只有在已经获得设备权限时，才能准确获取设备信息。建议授权访问后调用本接口。
+  浏览器只有在已经获得设备权限时，才能准确获取设备信息。建议通过 [enableDevices](Web-api.md#enabledevices) 访问授权后调用本接口。
 
 - **返回值**
 
@@ -2937,7 +2982,7 @@
 - **类型**
 
   ```ts
-  (options?: { video: boolean; audio: boolean;}) => Promise<{ video: boolean; audio: boolean;}>
+  (options?: { video: boolean; audio: boolean;}) => Promise<{ video: boolean; audio: boolean; videoExceptionError?: DOMException; audioExceptionError?: DOMException;}>
   ```
 
 - **参数**
@@ -2958,10 +3003,12 @@
 
 - **返回值**
 
-  类型: <code>Promise<{ video: boolean; audio: boolean; }\></code>
+  类型: <code>Promise<{ video: boolean; audio: boolean; videoExceptionError?: DOMException; audioExceptionError?: DOMException; }\></code>
 
-  + `video: boolean` 视频设备
-  + `audio:boolean` 音频设备
+  + `video: boolean` 是否获得视频设备权限
+  + `audio: boolean` 是否获得音频设备权限
+  + `videoExceptionError?: DOMException` 获取视频设备权限报错信息
+  + `audioExceptionError?: DOMException` 获取音频设备权限报错信息
 
 ### enumerateAudioCaptureDevices <span id="vertc-enumerateaudiocapturedevices"></span> 
 
@@ -2976,7 +3023,8 @@
 
 - **注意**
 
-  浏览器只有在已经获得设备权限时，才能准确获取设备信息。建议授权访问后调用本接口。
+  + 该方法仅在桌面端 Chrome 浏览器可用，其他浏览器调用会返回空列表。
+  + 浏览器只有在已经获得设备权限时，才能准确获取设备信息。建议通过 [enableDevices](Web-api.md#enabledevices) 访问授权后调用本接口。
 
 - **返回值**
 
@@ -2997,7 +3045,7 @@
 
 - **注意**
 
-  浏览器只有在已经获得设备权限时，才能准确获取设备信息。建议授权访问后调用本接口。
+  浏览器只有在已经获得设备权限时，才能准确获取设备信息。建议通过 [enableDevices](Web-api.md#enabledevices) 访问授权后调用本接口。
 
 - **返回值**
 

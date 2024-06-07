@@ -234,6 +234,7 @@ SDK 与信令服务器连接状态。
   | STREAM_REMOVE_REASON_CLIENT_DISCONNECTED | `3` | 远端用户断网。 |
   | STREAM_REMOVE_REASON_REPUBLISH | `4` | 远端用户重新发布流。 |
   | STREAM_REMOVE_REASON_OTHER | `5` | 其他原因。 |
+  | STREAM_REMOVE_REASON_TOKEN_PRIVILEGE_EXPIRED | `6` | Token 发布权限过期。 |
 
 
 
@@ -278,7 +279,7 @@ SDK 与信令服务器连接状态。
 
 类型: <code>string</code>
 
-发布视频用户的 userId
+发布音频用户的 userId
 
 <p style="font-size: 16px;font-weight: bolder;"> isScreen <span id="onaudiofirstframedecodedevent-isscreen"></span></p> 
 
@@ -865,6 +866,46 @@ inactive：设备已断开连接。
 类型: <code>[StreamIndex](#streamindex)</code>
 
 流属性，包括主流、屏幕流。
+
+
+## onSEIStreamUpdateEvent <span id="onseistreamupdateevent"></span>
+
+类型: `interface`
+
+包含 SEI 信息的流更新事件。
+
+<p style="font-size: 16px;font-weight: bolder;"> userId <span id="onseistreamupdateevent-userid"></span></p> 
+
+类型: <code>string</code>
+
+用户 ID。
+
+<p style="font-size: 16px;font-weight: bolder;"> isScreen <span id="onseistreamupdateevent-isscreen"></span></p> 
+
+类型: <code>boolean</code>
+
+是否为屏幕流。
+
+<p style="font-size: 16px;font-weight: bolder;"> type <span id="onseistreamupdateevent-type"></span></p> 
+
+类型: <code>[SEIStreamEventType](#seistreameventtype)</code>
+
+包含 SEI 信息的流类型。
+
+
+## SEIStreamEventType <span id="seistreameventtype"></span>
+
+类型: `enum`
+
+包含 SEI 信息的流类型。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | BLACK | `0` | 远端用户发布黑帧视频流。<br>语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+  | NORMAL | `1` | 远端黑帧视频流移除。该回调的触发时机包括：<br><ul><li> 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；</li><li> 远端用户调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布；</li><li> 远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 后 1 分钟内未有 SEI 数据发送，黑帧视频流停止发布。</li></ul> |
+
 
 
 ## SubscribeState <span id="subscribestate"></span>
@@ -1576,7 +1617,7 @@ DOM
 类型: <code>ConstrainDouble</code>
 
 视频帧率，单位为 FPS。默认值为 15 FPS。
-支持传入 `number` 或一个浮点形约束对象，参看 [ConstrainDouble](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#constraindouble)。
+支持传入 `number` 或一个整形约束对象，参看 [ConstrainULong](https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints#constrainulong)。
 
 <p style="font-size: 16px;font-weight: bolder;"> maxKbps <span id="videoencoderconfig-maxkbps"></span></p> 
 
@@ -2235,6 +2276,21 @@ RTC 配置下发的代理地址
 
 使用目标房间 roomId 和 userId 生成的 Token。
 测试时可使用[控制台](https://console.volcengine.com/rtc/listRTC)生成的临时 Token，正式上线需要使用密钥 SDK 在你的服务端生成并下发 Token。
+
+
+## AudioSelectionPriority <span id="audioselectionpriority"></span>
+
+类型: `enum`
+
+音频选路优先级设置。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | DEFAULT | `0` | 正常，参加音频选路。 |
+  | HIGH | `1` | 高优先级，跳过音频选路 |
+
 
 
 ## EngineConfig <span id="engineconfig"></span>

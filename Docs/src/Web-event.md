@@ -35,6 +35,7 @@
 | [onUserStartVideoCapture](#engineevents-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。 |
 | [onUserStopVideoCapture](#engineevents-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Web-api.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。 |
 | [onSEIMessageReceived](#engineevents-onseimessagereceived) | 接收到包含 SEI 数据的视频帧事件 |
+| [onSEIStreamUpdate](#engineevents-onseistreamupdate) | 包含 SEI 信息的流更新事件。<br>在语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过此事件回调本地用户。<br>你可以通过此事件判断携带 SEI 数据的视频帧为黑帧，从而不对该视频帧进行渲染。 |
 | [onAutoSubscribeResult](#engineevents-onautosubscriberesult) | 如果开启了自动订阅，订阅成功或者失败后可以收到此事件 |
 | [onAutoPublishResult](#engineevents-onautopublishresult) | 如果开启了自动发布，发布成功或者失败后可以收到此事件 |
 | [onAutoplayFailed](#engineevents-onautoplayfailed) | 自动播放失败 |
@@ -43,6 +44,10 @@
 | [onUserMessageReceivedOutsideRoom](#engineevents-onusermessagereceivedoutsideroom) | 接收到房间外消息的事件。 |
 | [onUserBinaryMessageReceivedOutsideRoom](#engineevents-onuserbinarymessagereceivedoutsideroom) | 接收到房间外二进制消息的事件。 |
 | [onTokenWillExpire](#engineevents-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。<br>调用 [updateToken](Web-api.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。 |
+| [onTokenPublishPrivilegeWillExpire](#engineevents-ontokenpublishprivilegewillexpire) | Token 发布权限过期前 30 秒将触发该回调。<br>收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
+| [onTokenPublishPrivilegeDidExpired](#engineevents-ontokenpublishprivilegedidexpired) | Token 发布权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
+| [onTokenSubscribePrivilegeWillExpire](#engineevents-ontokensubscribeprivilegewillexpire) | Token 订阅权限过期前 30 秒将触发该回调。<br>收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
+| [onTokenSubscribePrivilegeDidExpired](#engineevents-ontokensubscribeprivilegedidexpired) | Token 订阅权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。 |
 | [onCloudProxyConnected](#engineevents-oncloudproxyconnected) | 调用 [startCloudProxy](Web-api.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。 |
 | [onPushPublicStreamResult](#engineevents-onpushpublicstreamresult) | 公共流发布结果回调。<br>调用 [startPushPublicStream](Web-api.md#startpushpublicstream) 发布公共流后，结果通过此回调通知用户。 |
 | [onPublicStreamSEIMessageReceived](#engineevents-onpublicstreamseimessagereceived) | 回调公共流中包含的 SEI 信息。<br>调用 [startPlayPublicStream](Web-api.md#startplaypublicstream) 接口启动拉公共流功能后，通过此回调收到公共流中的 SEI 消息。 |
@@ -329,7 +334,7 @@
 
       | 名称 | 类型 | 描述 |
       | :-- | :-- | :-- |
-      | kind | `string` | 类型 |
+      | kind | `string` | 媒体流类型，参看 [kind](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/kind)。 |
       | isScreen | `boolean` | 是否屏幕流 |
 
 
@@ -630,7 +635,6 @@
 ### onSEIMessageReceived <span id="engineevents-onseimessagereceived"></span> 
 
 接收到包含 SEI 数据的视频帧事件
-收发 SEI 消息依赖浏览器 Chrome 86 及以上版本、H.264 编解码。
 
 - **类型**
 
@@ -645,6 +649,26 @@
     类型: <code>[onSEIMessageEvent](Web-keytype.md#onseimessageevent)</code>
 
     SEI 数据事件
+
+### onSEIStreamUpdate <span id="engineevents-onseistreamupdate"></span> 
+
+包含 SEI 信息的流更新事件。
+在语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过此事件回调本地用户。
+你可以通过此事件判断携带 SEI 数据的视频帧为黑帧，从而不对该视频帧进行渲染。
+
+- **类型**
+
+  ```ts
+  (event: onSEIStreamUpdateEvent) => void
+  ```
+
+- **参数**
+
+  - **event**
+
+    类型: <code>[onSEIStreamUpdateEvent](Web-keytype.md#onseistreamupdateevent)</code>
+
+    包含 SEI 信息的流更新事件。
 
 ### onAutoSubscribeResult <span id="engineevents-onautosubscriberesult"></span> 
 
@@ -795,6 +819,85 @@ Token 过期前 30 秒将触发该回调。
   ```ts
   () => void
   ```
+
+### onTokenPublishPrivilegeWillExpire <span id="engineevents-ontokenpublishprivilegewillexpire"></span> 
+
+Token 发布权限过期前 30 秒将触发该回调。
+收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  若未及时更新 Token，发布权限过期后，已在发布中的流会停止发布，发布端会收到 [onTokenPublishPrivilegeDidExpired](Web-event.md#ontokenpublishprivilegedidexpired) 回调；同时远端用户会收到 [onUserUnpublishStream](Web-event.md#onuserunpublishstream)/[onUserUnpublishScreen](Web-event.md#onuserunpublishscreen) 回调，移除原因为 `STREAM_REMOVE_REASON_TOKEN_PRIVILEGE_EXPIRED`。
+
+### onTokenPublishPrivilegeDidExpired <span id="engineevents-ontokenpublishprivilegedidexpired"></span> 
+
+Token 发布权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  (e: { errorCode?: ErrorCode; message?: String;}) => void
+  ```
+
+- **参数**
+
+  - **e**
+
+    类型: <code>{ errorCode?: [ErrorCode](Web-errorcode.md#errorcode) | undefined; message?: String | undefined; }</code>
+
+    - **成员**
+
+      | 名称 | 类型 | 描述 |
+      | :-- | :-- | :-- |
+      | errorCode | `ErrorCode | undefined` | 错误码，`TOKEN_NO_PUBLISH_PERMISSION` 代表 Token 发布权限过期。 |
+      | message | `String | undefined` | 错误信息。 |
+
+
+### onTokenSubscribePrivilegeWillExpire <span id="engineevents-ontokensubscribeprivilegewillexpire"></span> 
+
+Token 订阅权限过期前 30 秒将触发该回调。
+收到该回调后，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  若收到该回调后未及时更新 Token，Token 订阅权限过期后，已订阅的流会取消订阅，订阅端会收到 [onTokenSubscribePrivilegeDidExpired](Web-event.md#ontokensubscribeprivilegedidexpired) 回调。
+  此时尝试新订阅流会失败，并返回错误码 `TOKEN_NO_SUBSCRIBE_PERMISSION` 提示 Token 订阅权限过期。
+
+### onTokenSubscribePrivilegeDidExpired <span id="engineevents-ontokensubscribeprivilegedidexpired"></span> 
+
+Token 订阅权限过期时触发该回调，调用 [updateToken](Web-api.md#updatetoken) 更新 Token。
+
+- **类型**
+
+  ```ts
+  (e: { errorCode?: ErrorCode; message?: String;}) => void
+  ```
+
+- **参数**
+
+  - **e**
+
+    类型: <code>{ errorCode?: [ErrorCode](Web-errorcode.md#errorcode) | undefined; message?: String | undefined; }</code>
+
+    - **成员**
+
+      | 名称 | 类型 | 描述 |
+      | :-- | :-- | :-- |
+      | errorCode | `ErrorCode | undefined` | 错误码，`TOKEN_NO_SUBSCRIBE_PERMISSION` 代表 Token 订阅权限过期。 |
+      | message | `String | undefined` | 错误信息。 |
+
 
 ### onCloudProxyConnected <span id="engineevents-oncloudproxyconnected"></span> 
 
