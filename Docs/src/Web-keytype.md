@@ -1,9 +1,3 @@
----
-is_dir: False    # True for dir; False for doc
-status: 1    # 0 for offline; 1 for online; 2 for whitelist; 4 for online but hidden in TOC
-keywords: 实时音视频    # use ',' as separator
----
-
 ## MixOption <span id="mixoption"></span>
 
 类型: `interface`
@@ -15,6 +9,7 @@ keywords: 实时音视频    # use ',' as separator
 类型: <code>number</code>
 
 混音播放次数
+
 + play_count <= 0: 无限循环
 + play_count == 1: 播放一次（默认）
 + play_count > 1: 播放 play_count 次
@@ -39,6 +34,7 @@ keywords: 实时音视频    # use ',' as separator
   | PLAYOUT | `0` | 仅本地播放 |
   | PUBLISH | `1` | 仅发送到远端 |
   | PLAYOUT_AND_PUBLISH | `2` | 在本地播放并发送到远端 |
+
 
 
 ## AudioFrameData <span id="audioframedata"></span>
@@ -162,11 +158,12 @@ keywords: 实时音视频    # use ',' as separator
 
 类型: <code>string | undefined</code>
 
-用户传递的额外信息，最大长度为 200 字节。会在 [onUserJoined](Web-event#onuserjoined) 中回调给远端用户。
+用户传递的额外信息，最大长度为 200 字节。会在 [onUserJoined](Web-event.md#onuserjoined) 中回调给远端用户。
 
 - **注意**
 
   支持以下字符集范围:
+
   + 26 个大写字母: A ~ Z
   + 26 个小写字母: a ~ z
   + 10 个数字: 0 ~ 9
@@ -239,6 +236,7 @@ keywords: 实时音视频    # use ',' as separator
   | KICKED_BY_ADMIN | `3` | 服务端调用 OpenAPI 将远端用户踢出房间。 |
 
 
+
 ## ConnectionStateChangeEvent <span id="connectionstatechangeevent"></span>
 
 类型: `interface`
@@ -271,6 +269,7 @@ SDK 与信令服务器连接状态。
   | CONNECTION_STATE_LOST | `6` | 处于 `CONNECTION_STATE_DISCONNECTED` 状态超过 10 秒，且期间重连未成功。SDK将继续尝试重连。 |
 
 
+
 ## MediaType <span id="mediatype"></span>
 
 类型: `enum`
@@ -284,6 +283,7 @@ SDK 与信令服务器连接状态。
   | AUDIO | `1` | 只控制音频 |
   | VIDEO | `2` | 只控制视频 |
   | AUDIO_AND_VIDEO | `3` | 同时控制音频和视频 |
+
 
 
 ## StreamRemoveReason <span id="streamremovereason"></span>
@@ -303,6 +303,7 @@ SDK 与信令服务器连接状态。
   | STREAM_REMOVE_REASON_REPUBLISH | `4` | 远端用户重新发布流。 |
   | STREAM_REMOVE_REASON_OTHER | `5` | 其他原因。 |
   | STREAM_REMOVE_REASON_TOKEN_PRIVILEGE_EXPIRED | `6` | Token 发布权限过期。 |
+
 
 
 ## onVideoFirstFrameRenderedEvent <span id="onvideofirstframerenderedevent"></span>
@@ -790,6 +791,7 @@ inactive：设备已断开连接。
   | RemoteStreamStats | <code>[RemoteStreamStats](#remotestreamstats)</code> | 远端媒体流统计信息 |
 
 
+
 ## LocalAudioPropertiesInfo <span id="localaudiopropertiesinfo"></span>
 
 类型: `interface`
@@ -823,6 +825,7 @@ inactive：设备已断开连接。
   | STREAM_INDEX_SCREEN | `1` | 屏幕流。共享的视频流，或来自声卡的本地播放音频流。 |
 
 
+
 ## AudioPropertiesInfo <span id="audiopropertiesinfo"></span>
 
 类型: `interface`
@@ -834,6 +837,7 @@ inactive：设备已断开连接。
 类型: <code>number</code>
 
 线性音量，与原始音量呈线性关系，数值越大，音量越大。取值范围是：[0,255]。<br>
+
 - [0, 25]: 无声 <br>
 - [26, 75]: 低音量 <br>
 - [76, 204]: 中音量 <br>
@@ -844,6 +848,7 @@ inactive：设备已断开连接。
 类型: <code>number</code>
 
 非线性音量。由原始音量的对数值转化而来，因此在中低音量时更灵敏，可以用作 Active Speaker（房间内最活跃用户）的识别。取值范围是：[-127，0]，单位 dB。 <br>
+
 - [-127, -60]: 无声 <br>
 - [-59, -40]: 低音量 <br>
 - [-39, -20]: 中音量 <br>
@@ -973,8 +978,9 @@ inactive：设备已断开连接。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | BLACK | `0` | 远端用户发布黑帧视频流。<br>语音通话场景下，远端用户调用 [sendSEIMessage](Web-api#sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-  | NORMAL | `1` | 远端黑帧视频流移除。该回调的触发时机包括：<br><ul><li> 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；</li><li> 远端用户调用 [setVideoSourceType](Web-api#setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布；</li><li> 远端用户调用 [sendSEIMessage](Web-api#sendseimessage) 后 1 分钟内未有 SEI 数据发送，黑帧视频流停止发布。</li></ul> |
+  | BLACK | `0` | 远端用户发布黑帧视频流。<br>语音通话场景下，远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+  | NORMAL | `1` | 远端黑帧视频流移除。该回调的触发时机包括：<br><ul><li> 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；</li><li> 远端用户调用 [setVideoSourceType](Web-api.md#setvideosourcetype) 切换至自定义视频采集时，黑帧视频流停止发布；</li><li> 远端用户调用 [sendSEIMessage](Web-api.md#sendseimessage) 后 1 分钟内未有 SEI 数据发送，黑帧视频流停止发布。</li></ul> |
+
 
 
 ## SubscribeState <span id="subscribestate"></span>
@@ -991,6 +997,7 @@ inactive：设备已断开连接。
   | SUBSCRIBE_FAIL | `1` | 更新订阅状态失败 |
 
 
+
 ## PublishState <span id="publishstate"></span>
 
 类型: `enum`
@@ -1003,6 +1010,7 @@ inactive：设备已断开连接。
   | :-- | :-- | :-- |
   | PUBLISH_SUCC | `0` | 发布成功 |
   | PUBLISH_FAIL | `1` | 发布失败 |
+
 
 
 ## AutoPlayFailedEvent <span id="autoplayfailedevent"></span>
@@ -1063,7 +1071,7 @@ inactive：设备已断开连接。
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="audiomixingstatechangedevent-error"></span></p> 
 
-类型: <code>[AudioMixingError](Web-errorcode#audiomixingerror)</code>
+类型: <code>[AudioMixingError](Web-errorcode.md#audiomixingerror)</code>
 
 混音错误
 
@@ -1086,6 +1094,7 @@ inactive：设备已断开连接。
   | AUDIO_MIXING_STATE_FINISHED | `5` | 混音播放结束 |
   | AUDIO_MIXING_STATE_PCM_ENABLED | `6` | 准备 PCM 混音 |
   | AUDIO_MIXING_STATE_PCM_DISABLED | `7` | PCM 混音播放结束 |
+
 
 
 ## CloudProxyConnectedEvent <span id="cloudproxyconnectedevent"></span>
@@ -1118,6 +1127,7 @@ SDK 开启云代理后，加入频道的耗时。
 类型: <code>string</code>
 
 公共流发布事件详情
+
 + `200`: 发布或订阅成功
 + `1191`: 公共流的参数异常，请修改参数后重试
 + `1192`: 服务端状态异常，将自动重试
@@ -1166,6 +1176,7 @@ SDK 开启云代理后，加入频道的耗时。
   | :-- | :-- | :-- |
   | publicStreamId | <code>string</code> | 公共流 ID。 |
   | onVideoFirstFrameDecodedEvent | <code>[onVideoFirstFrameDecodedEvent](#onvideofirstframedecodedevent)</code> | 视频首帧解码事件。 |
+
 
 
 ## onVideoFirstFrameDecodedEvent <span id="onvideofirstframedecodedevent"></span>
@@ -1223,6 +1234,7 @@ SDK 开启云代理后，加入频道的耗时。
   | BAD | `4` | 勉强能沟通但不顺畅。建议降低采样率、码率或通过 UI 提示用户是否切换为纯语音通话。 |
   | VBAD | `5` | 网络质量非常差，基本不能沟通。建议通过 UI 给出弱网提示。 |
   | DOWN | `6` | 网络连接断开，无法通话。 |
+
 
 
 ## RemoteStreamSwitch <span id="remotestreamswitch"></span>
@@ -1289,6 +1301,7 @@ SDK 开启云代理后，加入频道的耗时。
   | SubscribeRecoverByBandwidth | `2` | 由带宽恢复导致的流恢复。 |
 
 
+
 ## StreamMixingEvent <span id="streammixingevent"></span>
 
 类型: `interface`
@@ -1303,7 +1316,7 @@ SDK 开启云代理后，加入频道的耗时。
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="streammixingevent-error"></span></p> 
 
-类型: <code>[StreamMixingEventErrorCode](Web-errorcode#streammixingeventerrorcode)</code>
+类型: <code>[StreamMixingEventErrorCode](Web-errorcode.md#streammixingeventerrorcode)</code>
 
 转推直播事件错误码。
 
@@ -1333,6 +1346,7 @@ SDK 开启云代理后，加入频道的耗时。
   | STOP | `7` | 已发起停止转推请求。 |
   | STOP_SUCCESS | `8` | 成功停止推流至CDN。 |
   | STOP_FAILED | `9` | 停止推流失败。 |
+
 
 
 ## VideoStreamBannedEvent <span id="videostreambannedevent"></span>
@@ -1391,9 +1405,10 @@ false: 音频流发布被解禁
 
 <p style="font-size: 16px;font-weight: bolder;"> errorCode <span id="subtitleevent-errorcode"></span></p> 
 
-类型: <code>[ErrorCode](Web-errorcode#errorcode) | undefined</code>
+类型: <code>[ErrorCode](Web-errorcode.md#errorcode) | undefined</code>
 
 字幕任务错误码。
+
 + `SUBTITLE_ERR_POSTPROCESS`: 云端媒体处理内部出现错误。
 + `SUBTITLE_ERR_CONNECTION_ERROR`: 第三方服务连接失败。
 + `SUBTITLE_ERR_PROCESS_ERROR`: 云端媒体处理超时未响应。
@@ -1420,6 +1435,7 @@ false: 音频流发布被解禁
   | STOPPED | `1` | 字幕已关闭。 |
   | ERROR | `2` | 字幕任务出现错误。 |
   | UPDATED | `3` | 字幕翻译配置已更新。 |
+
 
 
 ## SubtitleMessage <span id="subtitlemessage"></span>
@@ -1479,6 +1495,7 @@ false: 音频流发布被解禁
   | ASR_AND_TRANSLATION | `1` | 翻译模式。在此模式下，房间内用户语音会先被转为文字，再被翻译为目标语言。 |
 
 
+
 ## ForwardStreamStateInfo <span id="forwardstreamstateinfo"></span>
 
 类型: `interface`
@@ -1499,7 +1516,7 @@ false: 音频流发布被解禁
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="forwardstreamstateinfo-error"></span></p> 
 
-类型: <code>[ForwardStreamError](Web-errorcode#forwardstreamerror)</code>
+类型: <code>[ForwardStreamError](Web-errorcode.md#forwardstreamerror)</code>
 
 跨房间转发媒体流错误码。
 
@@ -1518,6 +1535,7 @@ false: 音频流发布被解禁
   | FORWARD_STREAM_STATE_FAILURE | `1` | 失败。 |
 
 
+
 ## RoomConfig <span id="roomconfig"></span>
 
 类型: `interface`
@@ -1529,7 +1547,7 @@ false: 音频流发布被解禁
 类型: <code>boolean | undefined</code>
 
 是否自动发布音视频流，默认为自动发布。
-取消自动发布后，通过调用 [publishStream](Web-api#publishstream) 进行音视频流发布。
+取消自动发布后，通过调用 [publishStream](Web-api.md#publishstream) 进行音视频流发布。
 
 <p style="font-size: 16px;font-weight: bolder;"> isAutoSubscribeAudio <span id="roomconfig-isautosubscribeaudio"></span></p> 
 
@@ -1537,7 +1555,7 @@ false: 音频流发布被解禁
 
 是否自动订阅音频流，默认为自动订阅。
 不包含屏幕流。
-进房后，你可以调用 [subscribeStream](Web-api#subscribestream)、[unsubscribeStream](Web-api#unsubscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](Web-api.md#subscribestream)、[unsubscribeStream](Web-api.md#unsubscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> isAutoSubscribeVideo <span id="roomconfig-isautosubscribevideo"></span></p> 
 
@@ -1545,7 +1563,7 @@ false: 音频流发布被解禁
 
 是否自动订阅视频流，默认为自动订阅。
 不包含屏幕流。
-进房后，你可以调用 [subscribeStream](Web-api#subscribestream)、[unsubscribeStream](Web-api#unsubscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](Web-api.md#subscribestream)、[unsubscribeStream](Web-api.md#unsubscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> remoteVideoConfig <span id="roomconfig-remotevideoconfig"></span></p> 
 
@@ -1649,6 +1667,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 类型: <code>string</code>
 
 用户 ID，支持以下字符集范围
+
 + 26 个大写字母 A ~ Z
 + 26 个小写字母 a ~ z
 + 10 个数字 0 ~ 9
@@ -1660,7 +1679,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 类型: <code>number | undefined</code>
 
 视频帧顺时针的旋转角度。可选值为 0，90，180，270。默认值是 0，即不做旋转处理。
-该设置仅对远端视频有效，调用 [setLocalVideoPlayer](Web-api#rtcengine-setlocalvideoplayer) 设置本参数不生效。
+该设置仅对远端视频有效，调用 [setLocalVideoPlayer](Web-api.md#rtcengine-setlocalvideoplayer) 设置本参数不生效。
 
 <p style="font-size: 16px;font-weight: bolder;"> playerId <span id="videoplayeroption-playerid"></span></p> 
 
@@ -1685,6 +1704,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
   | RENDER_MODE_FILL | `2` | 视窗填满并显示视频全部内容。<br>视频帧非等比缩放，拉伸至填满视窗区域。 |
 
 
+
 ## MirrorType <span id="mirrortype"></span>
 
 类型: `enum`
@@ -1698,6 +1718,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
   | :-- | :-- | :-- |
   | MIRROR_TYPE_NONE | `0` | 无镜像效果 |
   | MIRROR_TYPE_RENDER | `1` | 开启镜像效果 |
+
 
 
 ## VideoEncoderConfig <span id="videoencoderconfig"></span>
@@ -1805,6 +1826,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 类型: <code>number | undefined</code>
 
 信息提示间隔，单位：ms，默认为 100ms </br>
+
    + `≤0`: 关闭信息提示
    + `(0,100)`: 不合法的interval 值，SDK 自动设置为 100ms
    + `≥100`: 开启信息提示，并将信息提示间隔设置为此值
@@ -1814,6 +1836,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 类型: <code>boolean | undefined</code>
 
 是否在页面隐藏时保持开启获取音量回调，默认保持开启。
+
 + true: 保持开启
 + false：关闭
 
@@ -1835,7 +1858,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 类型: `enum`
 
 本地主流音量回调模式。
-该功能影响 [onActiveSpeaker](Web-event#onactivespeaker) 回调。例如，进入房间但未发布主流音频，[LocalMainReportMode](#localmainreportmode) 为 `RESET`，则该回调永远不会包含本端用户主流音频。
+该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，进入房间但未发布主流音频，[LocalMainReportMode](#localmainreportmode) 为 `RESET`，则该回调永远不会包含本端用户主流音频。
 
 - **成员**
 
@@ -1846,12 +1869,13 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
   | RESET | `2` | 未发布时，始终回调 0。发布时正常回调真实音量。 |
 
 
+
 ## AudioReportMode <span id="audioreportmode"></span>
 
 类型: `enum`
 
 本地主流音量回调的数据范围，控制回调中是否包含混音。
-该功能影响 [onActiveSpeaker](Web-event#onactivespeaker) 回调。例如，[AudioReportMode](#audioreportmode) 为 `AUDIOMIXING`，即使麦克风音量为 0，该回调中也可能回调本端用户主流音频。
+该功能影响 [onActiveSpeaker](Web-event.md#onactivespeaker) 回调。例如，[AudioReportMode](#audioreportmode) 为 `AUDIOMIXING`，即使麦克风音量为 0，该回调中也可能回调本端用户主流音频。
 
 - **成员**
 
@@ -1859,6 +1883,7 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
   | :-- | :-- | :-- |
   | MICROPHONE | `0` | （默认值）麦克风音量，即混音前的音量。 |
   | AUDIOMIXING | `1` | 混音后的音量。 |
+
 
 
 ## LiveTranscodeConfig <span id="livetranscodeconfig"></span>
@@ -1947,6 +1972,7 @@ AAC 编码规格。
   | HEv2 | `'HEv2'` | HE-AAC v2 规格。 |
 
 
+
 ## LiveTranscodeVideoConfig <span id="livetranscodevideoconfig"></span>
 
 类型: `interface`
@@ -2001,6 +2027,7 @@ AAC 编码规格。
   | :-- | :-- | :-- |
   | H264 | `'H264'` | H.264 格式，默认值。 |
   | H265 | `'H265'` | ByteVC1 格式。 |
+
 
 
 ## LiveTranscodeLayoutConfig <span id="livetranscodelayoutconfig"></span>
@@ -2117,6 +2144,7 @@ AAC 编码规格。
   | VIDEO_SOURCE_TYPE_INTERNAL | `1` | 内部采集，使用由 SDK 提供的视频采集模块（默认） |
 
 
+
 ## AudioSourceType <span id="audiosourcetype"></span>
 
 类型: `enum`
@@ -2129,6 +2157,7 @@ AAC 编码规格。
   | :-- | :-- | :-- |
   | AUDIO_SOURCE_TYPE_EXTERNAL | `0` | 自定义采集模块 |
   | AUDIO_SOURCE_TYPE_INTERNAL | `1` | 内部采集，使用由 SDK 提供的音频采集模块 |
+
 
 
 ## TrackCaptureConfig <span id="trackcaptureconfig"></span>
@@ -2156,6 +2185,7 @@ AAC 编码规格。
   | OFFLINE | `0` | 离线。无法收发点对点消息。 |
   | ONLINE | `1` | 在线 |
   | UNREACHABLE | `2` | 未知。无法收发点对点消息。 |
+
 
 
 ## CloudProxyInfo <span id="cloudproxyinfo"></span>
@@ -2204,6 +2234,7 @@ RTC 配置下发的代理地址
     | fps | `number | undefined` | 帧率，单位：fps |
     | kBitRate | `number` | 码率，单位：kbps |
 
+
 <p style="font-size: 16px;font-weight: bolder;"> layout <span id="publicstreamconfig-layout"></span></p> 
 
 类型: <code>{ interpolationMode?: [PublicInterpolationMode](#publicinterpolationmode) | undefined; backgroundColor?: string | undefined; backgroundImage?: string | undefined; regions?: [PublicStreamLayoutRegion](#publicstreamlayoutregion)[] | undefined; } | undefined</code>
@@ -2220,6 +2251,7 @@ RTC 配置下发的代理地址
     | regions | `PublicStreamLayoutRegion[] | undefined` | 多路媒体流布局设置。 |
 
 
+
 ## PublicInterpolationMode <span id="publicinterpolationmode"></span>
 
 类型: `enum`
@@ -2232,6 +2264,7 @@ RTC 配置下发的代理地址
   | :-- | :-- | :-- |
   | PREV_FRAME | `0` | 补最后一帧。 |
   | OTHER_FRAME | `1` | 补背景图片或者黑帧。 |
+
 
 
 ## PublicStreamLayoutRegion <span id="publicstreamlayoutregion"></span>
@@ -2266,6 +2299,7 @@ RTC 配置下发的代理地址
   | h | <code>number</code> | 裁剪后得到的视频帧高度相对于裁剪前整体画面的归一化比例，取值范围(0.0, 1.0]。 |
 
 
+
 ## PublicStreamType <span id="publicstreamtype"></span>
 
 类型: `enum`
@@ -2281,6 +2315,7 @@ RTC 配置下发的代理地址
   | VIDEO_ONLY | `2` | 仅包含视频 |
 
 
+
 ## SubscribeFallbackOption <span id="subscribefallbackoption"></span>
 
 类型: `enum`
@@ -2292,8 +2327,9 @@ RTC 配置下发的代理地址
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
   | DISABLE | `0` | 不开启回退功能。默认设置。 |
-  | VIDEO_STREAM_LOW | `1` | 下行网络不佳时，对视频流做降级处理。具体降级规则参看[音视频流回退](https://www.volcengine.com/docs/6348/70137)文档。<br>该设置仅对发布端调用 [EnableSimulcastMode](Web-api#enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+  | VIDEO_STREAM_LOW | `1` | 下行网络不佳时，对视频流做降级处理。具体降级规则参看[音视频流回退](https://www.volcengine.com/docs/6348/70137)文档。<br>该设置仅对发布端调用 [EnableSimulcastMode](Web-api.md#enablesimulcastmode) 开启发送多路流功能的情况生效。 |
   | AUDIO_ONLY | `2` | 下行网络不佳时，取消接收视频，仅接收音频。<br>当发布端开启发送多路流功能时，设置此选项不利于提升用户体验，因此不建议设置此选项。 |
+
 
 
 ## RemoteUserPriority <span id="remoteuserpriority"></span>
@@ -2311,12 +2347,13 @@ RTC 配置下发的代理地址
   | HIGH | `200` | 用户优先级为高 |
 
 
+
 ## AudioProfileType <span id="audioprofiletype"></span>
 
 类型: `enum`
 
 音质档位
-调用 [setAudioProfile](Web-api#setaudioprofile) 设置的音质档位
+调用 [setAudioProfile](Web-api.md#setaudioprofile) 设置的音质档位
 
 - **成员**
 
@@ -2328,6 +2365,7 @@ RTC 配置下发的代理地址
   | hd | `3` | 双声道音乐音质<br>采样率为 48kHz，编码码率为 128kbps。<br>超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。<br>游戏场景不建议使用。 |
   | standardStereo | `4` | 双声道标准音质。采样率为 48 KHz，编码码率最大值为 80 Kbps |
   | hdMono | `5` | 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 128 Kbps |
+
 
 
 ## RTCSubtitleConfig <span id="rtcsubtitleconfig"></span>
@@ -2360,6 +2398,7 @@ RTC 配置下发的代理地址
 类型: <code>string</code>
 
 源语言的语种代号。支持：
+
 + zh：中文
 + ja：日语
 + en：英语
@@ -2398,6 +2437,7 @@ RTC 配置下发的代理地址
   | :-- | :-- | :-- |
   | DEFAULT | `0` | 正常，参加音频选路。 |
   | HIGH | `1` | 高优先级，跳过音频选路 |
+
 
 
 ## RemoteUserVideoStats <span id="remoteuservideostats"></span>

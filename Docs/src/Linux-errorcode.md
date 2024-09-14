@@ -1,9 +1,3 @@
----
-is_dir: False    # True for dir; False for doc
-status: 1    # 0 for offline; 1 for online; 2 for whitelist; 4 for online but hidden in TOC
-keywords: 实时音视频    # use ',' as separator
----
-
 <span id="UserMessageSendResult"></span>
 # UserMessageSendResult
 ```cpp
@@ -13,6 +7,7 @@ enum bytertc::UserMessageSendResult
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kUserMessageSendResultSuccess | 0 | 发送消息成功 |
@@ -32,6 +27,7 @@ enum bytertc::UserMessageSendResult
 | kUserMessageSendResultServerParamsNotSet | 106 | 发送消息给业务方服务器之前没有设置参数 |
 | kUserMessageSendResultUnknown | 1000 | 未知错误 |
 
+
 <span id="SingleStreamPushEvent"></span>
 # SingleStreamPushEvent
 ```cpp
@@ -41,6 +37,7 @@ enum bytertc::SingleStreamPushEvent
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kSingleStreamPushEventStart | 1 | 开始推流。 |
@@ -49,6 +46,7 @@ enum bytertc::SingleStreamPushEvent
 | kSingleStreamPushEventStop | 4 | 停止推流。 |
 | kSingleStreamPushEventTimeout | 5 | 单流转推直播任务处理超时，请检查网络状态并重试。 |
 | kSingleStreamPushEventParamError | 6 | 参数错误。 |
+
 
 <span id="SubtitleErrorCode"></span>
 # SubtitleErrorCode
@@ -59,6 +57,7 @@ enum bytertc::SubtitleErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kSubtitleErrorCodeUnknow | -1 | 客户端无法识别云端媒体处理发送的错误码。请联系技术支持。 |
@@ -71,6 +70,7 @@ enum bytertc::SubtitleErrorCode
 | kSubtitleErrorCodeUnsupportedLanguage | 6 | 用户选择的目标语言目前暂不支持。 |
 | kSubtitleErrorCodePostProcessTimeout | 7 | 云端媒体处理超时未响应，请联系技术支持。 |
 
+
 <span id="StreamMixingErrorCode"></span>
 # StreamMixingErrorCode
 ```cpp
@@ -80,6 +80,7 @@ enum bytertc::StreamMixingErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kStreamMixingErrorCodeOK | 0 | 推流成功。 |
@@ -96,6 +97,7 @@ enum bytertc::StreamMixingErrorCode
 | kStreamMixingErrorCodeMixImageFail | 1100 | 图片合流失败。 |
 | kStreamMixingErrorCodeUnKnownByServer | 1101 | 服务端未知错误。 |
 
+
 <span id="LocalVideoStreamError"></span>
 # LocalVideoStreamError
 ```cpp
@@ -105,6 +107,7 @@ enum bytertc::LocalVideoStreamError
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kLocalVideoStreamErrorOk | 0 | 状态正常 |
@@ -115,6 +118,7 @@ enum bytertc::LocalVideoStreamError
 | kLocalVideoStreamErrorCaptureFailure | 5 | 本地视频采集失败，建议检查采集设备是否正常工作 |
 | kLocalVideoStreamErrorEncodeFailure | 6 | 本地视频编码失败 |
 | kLocalVideoStreamErrorDeviceDisconnected | 7 | 通话过程中本地视频采集设备被其他程序抢占，导致设备连接中断 |
+
 
 <span id="WarningCode"></span>
 # WarningCode
@@ -127,40 +131,42 @@ enum bytertc::WarningCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| kWarningCodeJoinRoomFailed | -2001 | 进房失败。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>当你调用初次加入房间或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。 |
-| kWarningCodePublishStreamFailed | -2002 | 发布音视频流失败。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。 |
-| kWarningCodeSubscribeStreamFailed404 | -2003 | 订阅音视频流失败。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。 |
-| kWarningCodeSubscribeStreamFailed5xx | -2004 | 订阅音视频流失败。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当你订阅所在房间中的音视频流时，由于服务器错误导致订阅失败。SDK 会自动重试订阅。 |
-| kWarningCodePublishStreamForbiden | -2009 | 当调用 `setUserVisibility` 将自身可见性设置为 false 后，再尝试发布流会触发此警告。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。 |
+| kWarningCodeJoinRoomFailed | -2001 | 进房失败。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>当你调用初次加入房间或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。 |
+| kWarningCodePublishStreamFailed | -2002 | 发布音视频流失败。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。 |
+| kWarningCodeSubscribeStreamFailed404 | -2003 | 订阅音视频流失败。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。 |
+| kWarningCodeSubscribeStreamFailed5xx | -2004 | 订阅音视频流失败。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当你订阅所在房间中的音视频流时，由于服务器错误导致订阅失败。SDK 会自动重试订阅。 |
+| kWarningCodePublishStreamForbiden | -2009 | 当调用 `setUserVisibility` 将自身可见性设置为 false 后，再尝试发布流会触发此警告。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。 |
 | kWarningCodeSendCustomMessage | -2011 | 发送自定义广播消息失败，当前你未在房间中。 |
-| kWarningCodeUserNotifyStop | -2013 | 当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kWarningCodeUserInPublish | -2014 | 用户已经在其他房间发布过流，或者用户正在发布公共流。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。 |
-| kWarningCodeOldRoomBeenReplaced | -2016 | 已存在相同 roomId 的房间，新创建的房间实例已替换旧房间实例。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kWarningCodeUserNotifyStop | -2013 | 当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kWarningCodeUserInPublish | -2014 | 用户已经在其他房间发布过流，或者用户正在发布公共流。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。 |
+| kWarningCodeOldRoomBeenReplaced | -2016 | 已存在相同 roomId 的房间，新创建的房间实例已替换旧房间实例。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
 | kWarningCodeInEchoTestMode | -2017 | 当前正在进行回路测试，该接口调用无效 |
 | kWarningCodeNoCameraPermission | -5001 | 摄像头权限异常，当前应用没有获取摄像头权限。 |
-| kWarningCodeNoMicrophonePermission | -5002 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype#MediaDeviceError).kMediaDeviceErrorDeviceNoPermission 代替。<br>麦克风权限异常，当前应用没有获取麦克风权限。 |
-| kWarningCodeRecodingDeviceStartFailed | -5003 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype#MediaDeviceError).kMediaDeviceErrorDeviceFailure 代替。<br>音频采集设备启动失败，当前设备可能被其他应用占用。 |
-| kWarningCodePlayoutDeviceStartFailed | -5004 | 已在 3.33 版本中废弃，使用 use [MediaDeviceError](Linux-keytype#MediaDeviceError).kMediaDeviceErrorDeviceFailure 代替。<br>音频播放设备启动失败警告，可能由于系统资源不足，或参数错误。 |
-| kWarningCodeNoRecordingDevice | -5005 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype#MediaDeviceError).kMediaDeviceErrorDeviceNotFound 代替。<br>无可用音频采集设备，请插入可用的音频采集设备。 |
-| kWarningCodeNoPlayoutDevice | -5006 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype#MediaDeviceError).kMediaDeviceErrorDeviceNotFound 代替。<br>无可用音频播放设备，请插入可用的音频播放设备。 |
-| kWarningCodeRecordingSilence | -5007 | 已在 3.33 版本中废弃，使用 [MediaDeviceWarning](Linux-keytype#MediaDeviceWarning).kMediaDeviceWarningCaptureSilence 代替。<br>当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。 |
-| kWarningCodeMediaDeviceOperationDenied | -5008 | 已在 3.33 版本中废弃，使用 [MediaDeviceWarning](Linux-keytype#MediaDeviceWarning).kMediaDeviceWarningOperationDenied 代替。<br>媒体设备误操作警告。<br>使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。 |
+| kWarningCodeNoMicrophonePermission | -5002 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype.md#MediaDeviceError).kMediaDeviceErrorDeviceNoPermission 代替。<br>麦克风权限异常，当前应用没有获取麦克风权限。 |
+| kWarningCodeRecodingDeviceStartFailed | -5003 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype.md#MediaDeviceError).kMediaDeviceErrorDeviceFailure 代替。<br>音频采集设备启动失败，当前设备可能被其他应用占用。 |
+| kWarningCodePlayoutDeviceStartFailed | -5004 | 已在 3.33 版本中废弃，使用 use [MediaDeviceError](Linux-keytype.md#MediaDeviceError).kMediaDeviceErrorDeviceFailure 代替。<br>音频播放设备启动失败警告，可能由于系统资源不足，或参数错误。 |
+| kWarningCodeNoRecordingDevice | -5005 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype.md#MediaDeviceError).kMediaDeviceErrorDeviceNotFound 代替。<br>无可用音频采集设备，请插入可用的音频采集设备。 |
+| kWarningCodeNoPlayoutDevice | -5006 | 已在 3.33 版本中废弃，使用 [MediaDeviceError](Linux-keytype.md#MediaDeviceError).kMediaDeviceErrorDeviceNotFound 代替。<br>无可用音频播放设备，请插入可用的音频播放设备。 |
+| kWarningCodeRecordingSilence | -5007 | 已在 3.33 版本中废弃，使用 [MediaDeviceWarning](Linux-keytype.md#MediaDeviceWarning).kMediaDeviceWarningCaptureSilence 代替。<br>当前音频设备没有采集到有效的声音数据，请检查更换音频采集设备。 |
+| kWarningCodeMediaDeviceOperationDenied | -5008 | 已在 3.33 版本中废弃，使用 [MediaDeviceWarning](Linux-keytype.md#MediaDeviceWarning).kMediaDeviceWarningOperationDenied 代替。<br>媒体设备误操作警告。<br>使用自定义采集时，不可调用内部采集开关，调用时将触发此警告。 |
 | kWarningCodeSetScreenAudioSourceTypeFailed | -5009 | 不支持在 `publishScreen` 之后调用 `setScreenAudioSourceType` 设置屏幕音频采集类型，请在 publishScreen 之前设置 |
 | kWarningCodeSetScreenAudioStreamIndexFailed | -5010 | 不支持在 `publishScreen` 之后， 通过 `setScreenAudioStreamIndex` 设置屏幕共享时的音频采集方式。 |
 | kWarningCodeInvalidVoicePitch | -5011 | 设置语音音高不合法 |
 | kWarningCodeInvalidAudioFormat | -5012 | 设置音频格式不合法 |
 | kWarningCodeInvalidCallForExtAudio | -5013 | 外部音频源新旧接口混用 |
 | kWarningCodeInvalidRemoteStreamKey | -5014 | 非法的远端流索引 |
-| kWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。<br>当你调用 [setLocalVideoCanvas](Linux-api#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
-| kWarningLicenseFileExpired | -7001 | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kWarningCodeInvalidCanvasHandle | -6001 | 指定的内部渲染画布句柄无效。<br>当你调用 [setLocalVideoCanvas](Linux-api.md#IRTCVideo-setlocalvideocanvas) 时指定了无效的画布句柄，触发此回调。 |
+| kWarningLicenseFileExpired | -7001 | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
 | kWarningInvaildSamiAppkeyORToken | -7002 | [音频技术](https://www.volcengine.com/docs/6489/71986) SDK 鉴权失效。联系技术支持人员。 |
 | kWarningInvaildSamiResourcePath | -7003 | [音频技术](https://www.volcengine.com/docs/6489/71986) 资源加载失败。传入正确的 DAT 路径，或联系技术支持人员。 |
 | kWarningLoadSamiLibraryFailed | -7004 | [音频技术](https://www.volcengine.com/docs/6489/71986) 库加载失败。使用正确的库，或联系技术支持人员。 |
 | kWarningInvaildSamiEffectType | -7005 | [音频技术](https://www.volcengine.com/docs/6489/71986) 不支持此音效。联系技术支持人员。 |
 | [deprecated] kWarningCodeGetRoomFailed | -2000 | `Deprecated since 3.45 and will be deleted in 3.51.` |
-| [deprecated] kWarningCodeSubscribeStreamForbiden | -2010 | `Deprecated since 3.45 and will be deleted in 3.51.`<br/>自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。<br>你需在进房前关闭自动订阅模式，再调用 [subscribeStream](Linux-api#IRTCRoom-subscribestream) 方法手动订阅音视频流。 |
+| [deprecated] kWarningCodeSubscribeStreamForbiden | -2010 | `Deprecated since 3.45 and will be deleted in 3.51.`<br/>自动订阅模式未关闭时，尝试开启手动订阅模式会触发此警告。<br>你需在进房前关闭自动订阅模式，再调用 [subscribeStream](Linux-api.md#IRTCRoom-subscribestream) 方法手动订阅音视频流。 |
+
 
 <span id="LoginErrorCode"></span>
 # LoginErrorCode
@@ -173,6 +179,7 @@ enum bytertc::LoginErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kLoginErrorCodeSuccess | 0 | 调用 `login` 方法登录成功 |
@@ -180,6 +187,7 @@ enum bytertc::LoginErrorCode
 | kLoginErrorCodeLoginFailed | -1001 | 登录错误<br>调用 `login` 方法时发生未知错误导致登录失败，需要重新登录。 |
 | kLoginErrorCodeInvalidUserId | -1002 | 调用 `login` 方法时传入的用户 ID 有问题。 |
 | kLoginErrorCodeServerError | -1003 | 调用 `login` 登录时服务端出错。 |
+
 
 <span id="RtsWarningCode"></span>
 # RtsWarningCode
@@ -192,6 +200,7 @@ enum bytertc::RtsWarningCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kRtsWarningCodeJoinRoomFailed | -2001 | 进房失败。<br>当你调用初次加入房间或者由于网络状况不佳断网重连时，由于服务器错误导致进房失败。SDK 会自动重试进房。 |
@@ -199,6 +208,7 @@ enum bytertc::RtsWarningCode
 | kRtsWarningCodeSendCustomMessage | -2011 | 发送自定义广播消息失败，当前你未在房间中。 |
 | kRtsWarningCodeUserNotifyStop | -2013 | 当房间内人数超过 500 人时，停止向房间内已有用户发送 `onUserJoined` 和 `onUserLeave` 回调，并通过广播提示房间内所有用户。 |
 | kRtsWarningCodeOldRoomBeenReplaced | -2016 | 新生成的房间已经替换了同样 roomId 的旧房间 |
+
 
 <span id="ErrorCode"></span>
 # ErrorCode
@@ -209,28 +219,30 @@ enum bytertc::ErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| kErrorCodeInvalidToken | -1000 | Token 无效。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>调用 [joinRoom](Linux-api#IRTCRoom-joinroom) 进房时使用的 Token 参数有误或过期失效。需要重新获取 Token，并调用 [updateToken](Linux-api#IRTCRoom-updatetoken) 方法更新 Token。 |
-| kErrorCodeJoinRoom | -1001 | 加入房间错误。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>进房时发生未知错误导致加入房间失败。需要用户重新加入房间。 |
-| kErrorCodeNoPublishPermission | -1002 | 没有发布音视频流权限。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>用户在所在房间中发布音视频流失败，失败原因为用户没有发布流的权限。 |
-| kErrorCodeNoSubscribePermission | -1003 | 没有订阅音视频流权限。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>用户订阅所在房间中的音视频流失败，失败原因为用户没有订阅流的权限。 |
-| kErrorCodeDuplicateLogin | -1004 | 相同用户 ID 的用户加入本房间，当前用户被踢出房间。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kErrorCodeKickedOut | -1006 | 服务端调用 OpenAPI 将当前用户踢出房间。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kRoomErrorCodeRoomIdIllegal | -1007 | 当调用 `createRTCRoom` ，如果 roomid 非法，会返回 null，并抛出该 error。通过 [onCreateRoomStateChanged](Linux-callback#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。 |
-| kRoomErrorTokenExpired | -1009 | Token 过期。加入房间后 Token 过期时，返回此错误码。需使用新的 Token 重新加入房间。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kRoomErrorUpdateTokenWithInvalidToken | -1010 | 调用 `updateToken` 传入的 Token 无效。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kErrorCodeRoomDismiss | -1011 | 服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kErrorCodeRoomAlreadyExist | -1013 | 通话回路检测已经存在同样 roomId 的房间了。通过 [onCreateRoomStateChanged](Linux-callback#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。 |
-| kErrorCodeUserIDDifferent | -1014 | 加入多个房间时使用了不同的 uid。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。 |
-| kErrorCodeJoinRoomRoomForbidden | -1025 | 房间被封禁。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kErrorCodeJoinRoomUserForbidden | -1026 | 用户被封禁。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
-| kErrorCodeOverStreamSubscribeLimit | -1070 | 订阅音视频流失败，订阅音视频流总数超过上限。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。 |
-| kErrorCodeOverStreamPublishLimit | -1080 | 发布流失败，发布流总数超过上限。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。 |
-| kErrorCodeInvalidAudioSyncUidRepeated | -1083 | 音视频同步失败。通过 [onStreamStateChanged](Linux-callback#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当前音频源已与其他视频源关联同步关系。<br>单个音频源不支持与多个视频源同时同步。 |
-| kErrorCodeAbnormalServerStatus | -1084 | 服务端异常状态导致退出房间。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>SDK 与信令服务器断开，并不再自动重连，可联系技术支持。 |
-| [deprecated] kErrorCodeOverScreenPublishLimit | -1081 | `Deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead`<br/>发布屏幕流失败，发布流总数超过上限。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。 |
-| [deprecated] kErrorCodeOverVideoPublishLimit | -1082 | `Deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead`<br/>发布视频流总数超过上限。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。 |
+| kErrorCodeInvalidToken | -1000 | Token 无效。通过 [onRoomStateChanged](Linux-callback#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>调用 [joinRoom](Linux-api.md#IRTCRoom-joinroom) 进房时使用的 Token 参数有误或过期失效。需要重新获取 Token，并调用 [updateToken](Linux-api.md#IRTCRoom-updatetoken) 方法更新 Token。 |
+| kErrorCodeJoinRoom | -1001 | 加入房间错误。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>进房时发生未知错误导致加入房间失败。需要用户重新加入房间。 |
+| kErrorCodeNoPublishPermission | -1002 | 没有发布音视频流权限。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>用户在所在房间中发布音视频流失败，失败原因为用户没有发布流的权限。 |
+| kErrorCodeNoSubscribePermission | -1003 | 没有订阅音视频流权限。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>用户订阅所在房间中的音视频流失败，失败原因为用户没有订阅流的权限。 |
+| kErrorCodeDuplicateLogin | -1004 | 相同用户 ID 的用户加入本房间，当前用户被踢出房间。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kErrorCodeKickedOut | -1006 | 服务端调用 OpenAPI 将当前用户踢出房间。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kRoomErrorCodeRoomIdIllegal | -1007 | 当调用 `createRTCRoom` ，如果 roomid 非法，会返回 null，并抛出该 error。通过 [onCreateRoomStateChanged](Linux-callback.md#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。 |
+| kRoomErrorTokenExpired | -1009 | Token 过期。加入房间后 Token 过期时，返回此错误码。需使用新的 Token 重新加入房间。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kRoomErrorUpdateTokenWithInvalidToken | -1010 | 调用 `updateToken` 传入的 Token 无效。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kErrorCodeRoomDismiss | -1011 | 服务端调用 OpenAPI 解散房间，所有用户被移出房间。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kErrorCodeRoomAlreadyExist | -1013 | 通话回路检测已经存在同样 roomId 的房间了。通过 [onCreateRoomStateChanged](Linux-callback.md#IRTCVideoEventHandler-oncreateroomstatechanged) 回调。 |
+| kErrorCodeUserIDDifferent | -1014 | 加入多个房间时使用了不同的 uid。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>同一个引擎实例中，用户需使用同一个 uid 加入不同的房间。 |
+| kErrorCodeJoinRoomRoomForbidden | -1025 | 房间被封禁。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kErrorCodeJoinRoomUserForbidden | -1026 | 用户被封禁。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。 |
+| kErrorCodeOverStreamSubscribeLimit | -1070 | 订阅音视频流失败，订阅音视频流总数超过上限。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>游戏场景下，为了保证音视频通话的性能和质量，服务器会限制用户订阅的音视频流总数。当用户订阅的音视频流总数已达上限时，继续订阅更多流时会失败，同时用户会收到此错误通知。 |
+| kErrorCodeOverStreamPublishLimit | -1080 | 发布流失败，发布流总数超过上限。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。 |
+| kErrorCodeInvalidAudioSyncUidRepeated | -1083 | 音视频同步失败。通过 [onStreamStateChanged](Linux-callback.md#IRTCRoomEventHandler-onstreamstatechanged) 回调。<br>当前音频源已与其他视频源关联同步关系。<br>单个音频源不支持与多个视频源同时同步。 |
+| kErrorCodeAbnormalServerStatus | -1084 | 服务端异常状态导致退出房间。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>SDK 与信令服务器断开，并不再自动重连，可联系技术支持。 |
+| [deprecated] kErrorCodeOverScreenPublishLimit | -1081 | `Deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead`<br/>发布屏幕流失败，发布流总数超过上限。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。 |
+| [deprecated] kErrorCodeOverVideoPublishLimit | -1082 | `Deprecated since 3.52, use kErrorCodeOverStreamPublishLimit（-1080）instead`<br/>发布视频流总数超过上限。通过 [onRoomStateChanged](Linux-callback.md#IRTCRoomEventHandler-onroomstatechanged) 回调。<br>RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。 |
+
 
 <span id="PublicStreamErrorCode"></span>
 # PublicStreamErrorCode
@@ -241,6 +253,7 @@ enum bytertc::PublicStreamErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kPublicStreamErrorCodeOK | 0 | 发布或订阅成功。 |
@@ -251,6 +264,7 @@ enum bytertc::PublicStreamErrorCode
 | kPublicStreamErrorCodePushTimeout | 1196 | 发布失败，10 s 后会重试，重试 3 次后自动停止。 |
 | kPublicStreamErrorCodePullNoPushStream | 1300 | 订阅失败，发布端未开始发布流。 |
 
+
 <span id="AudioRecordingErrorCode"></span>
 # AudioRecordingErrorCode
 ```cpp
@@ -260,6 +274,7 @@ enum bytertc::AudioRecordingErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kAudioRecordingErrorCodeOk | 0 | 录制正常 |
@@ -270,6 +285,7 @@ enum bytertc::AudioRecordingErrorCode
 | kAudioRecordingErrorCodeNotSupport | -5 | 录制失败。文件格式不支持。 |
 | kAudioRecordingErrorCodeOther | -6 | 其他异常 |
 
+
 <span id="RtsErrorCode"></span>
 # RtsErrorCode
 ```cpp
@@ -279,6 +295,7 @@ enum bytertc::RtsErrorCode
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | kRtsErrorCodeInvalidToken | -1000 | Token 无效。<br>进房时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 `updateToken` 方法更新 Token。 |

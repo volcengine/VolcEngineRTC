@@ -1,9 +1,3 @@
----
-is_dir: False    # True for dir; False for doc
-status: 1    # 0 for offline; 1 for online; 2 for whitelist; 4 for online but hidden in TOC
-keywords: 实时音视频    # use ',' as separator
----
-
 <span id="ByteRTCASRAuthorizationType"></span>
 # ByteRTCASRAuthorizationType
 ```objectivec
@@ -16,10 +10,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCASRAuthorizationTypeToken | 0 | 使用 token 不设置加密形式。 |
 | ByteRTCASRAuthorizationTypeSignature | 1 | 带有 token 额外使用 signature 加密，此种加密形式需要额外传递 secret token 。 |
+
 
 <span id="ByteRTCLiveTranscoding"></span>
 # ByteRTCLiveTranscoding
@@ -32,6 +28,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCStreamMixingType | [expectedMixingType](#ByteRTCLiveTranscoding-expectedmixingtype) |
@@ -43,10 +40,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 | NSString*  | [roomId](#ByteRTCLiveTranscoding-roomid) |
 | NSString*  | [userId](#ByteRTCLiveTranscoding-userid) |
 
+
 ## 静态函数
+
 | 返回 | 名称 |
 | --- | --- |
 | instancetype   | [defaultTranscoding](#ByteRTCLiveTranscoding-defaulttranscoding) |
+
 
 ## 变量说明
 <span id="ByteRTCLiveTranscoding-expectedmixingtype"></span>
@@ -127,6 +127,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLiveTranscoding : NSObject
 <span id="ByteRTCLiveTranscoding-defaulttranscoding"></span>
 ### defaultTranscoding
 ```objectivec
+
 + (instancetype _Nonnull)defaultTranscoding;
 ```
 获取默认转推直播配置参数。
@@ -146,12 +147,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayerConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCAudioMixingType | [type](#ByteRTCAudioEffectPlayerConfig-type) |
 | NSInteger | [pitch](#ByteRTCAudioEffectPlayerConfig-pitch) |
 | NSInteger | [playCount](#ByteRTCAudioEffectPlayerConfig-playcount) |
 | NSInteger | [startPos](#ByteRTCAudioEffectPlayerConfig-startpos) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioEffectPlayerConfig-type"></span>
@@ -176,6 +179,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEffectPlayerConfig : NSObject
 @property(assign, nonatomic) NSInteger playCount;
 ```
 混音播放次数
+
 - play_count <= 0: 无限循环
 - play_count == 1: 播放一次（默认）
 - play_count \> 1: 播放 play_count 次
@@ -198,12 +202,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*_Nullable | [filePath](#ByteRTCRecordingInfo-filepath) |
 | ByteRTCVideoCodecType | [codecType](#ByteRTCRecordingInfo-codectype) |
 | NSInteger | [width](#ByteRTCRecordingInfo-width) |
 | NSInteger | [height](#ByteRTCRecordingInfo-height) |
+
 
 ## 变量说明
 <span id="ByteRTCRecordingInfo-filepath"></span>
@@ -249,6 +255,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [isScreen](#ByteRTCSubscribeConfig-isscreen) |
@@ -259,6 +266,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
 | NSInteger | [width](#ByteRTCSubscribeConfig-width) |
 | NSInteger | [height](#ByteRTCSubscribeConfig-height) |
 | NSInteger | [framerate](#ByteRTCSubscribeConfig-framerate) |
+
 
 ## 变量说明
 <span id="ByteRTCSubscribeConfig-isscreen"></span>
@@ -298,7 +306,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeConfig: NSObject
 ```
 订阅的视频流分辨率下标。
 
-用户可以通过调用 [setVideoEncoderConfig:](macOS-api#ByteRTCVideo-setvideoencoderconfig) 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。
+用户可以通过调用 [setVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。
 
 
 <span id="ByteRTCSubscribeConfig-svclayer"></span>
@@ -346,10 +354,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCUserInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [userId](#ByteRTCUserInfo-userid) |
 | NSString*  | [extraInfo](#ByteRTCUserInfo-extrainfo) |
+
 
 ## 变量说明
 <span id="ByteRTCUserInfo-userid"></span>
@@ -382,6 +392,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioPlaybackDeviceHeadset | 1 | 有线耳机 |
@@ -389,6 +400,7 @@ typedef NS_ENUM(
 | ByteRTCAudioPlaybackDeviceSpeakerphone | 3 | 扬声器 |
 | ByteRTCAudioPlaybackDeviceHeadsetBluetooth | 4 | 蓝牙耳机 |
 | ByteRTCAudioPlaybackDeviceHeadsetUSB | 5 | USB 设备 |
+
 
 <span id="ByteRTCMessageConfig"></span>
 # ByteRTCMessageConfig
@@ -402,11 +414,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMessageConfigReliableOrdered | 0 | 低延时可靠有序消息 |
 | ByteRTCMessageConfigUnreliableOrdered | 1 | 超低延时有序消息 |
 | ByteRTCMessageConfigUnreliableUnordered | 2 | 超低延时无序消息 |
+
 
 <span id="ByteRTCVideoSinkDelegate"></span>
 # ByteRTCVideoSinkDelegate
@@ -417,15 +431,18 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
 
 
 ## 成员函数
+
 | 返回 | 名称 |
 | --- | --- |
 | void | [onFrame:](#ByteRTCVideoSinkDelegate-onframe) |
 | void | [deprecated] [renderPixelBuffer:rotation:contentType:extendedData:](#ByteRTCVideoSinkDelegate-renderpixelbuffer-rotation-contenttype-extendeddata) |
 
+
 ## 函数说明
 <span id="ByteRTCVideoSinkDelegate-onframe"></span>
 ### onFrame:
 ```objectivec
+
 - (void)onFrame:(ByteRTCVideoFrame * _Nonnull)videoFrame;
 ```
 输出视频的 PixelBuffer
@@ -438,9 +455,11 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
 | videoFrame | ByteRTCVideoFrame * | 视频帧 |
 
 
+
 <span id="ByteRTCVideoSinkDelegate-renderpixelbuffer-rotation-contenttype-extendeddata"></span>
 ### renderPixelBuffer:rotation:contentType:extendedData:
 ```objectivec
+
 - (void)renderPixelBuffer:(CVPixelBufferRef _Nonnull)pixelBuffer
                  rotation:(ByteRTCVideoRotation)rotation
               contentType:(ByteRTCVideoContentType)contentType
@@ -461,6 +480,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCVideoSinkDelegate <NSObject>
 | extendedData | NSData *_Nullable | 视频解码后获得的附加数据 |
 
 
+
 <span id="ByteRTCMixedStreamConfig"></span>
 # ByteRTCMixedStreamConfig
 ```objectivec
@@ -470,6 +490,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCMixedStreamType | [expectedMixingType](#ByteRTCMixedStreamConfig-expectedmixingtype) |
@@ -482,10 +503,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
 | NSString*  | [roomID](#ByteRTCMixedStreamConfig-roomid) |
 | NSString*  | [userID](#ByteRTCMixedStreamConfig-userid) |
 
+
 ## 静态函数
+
 | 返回 | 名称 |
 | --- | --- |
 | instancetype   | [defaultMixedStreamConfig](#ByteRTCMixedStreamConfig-defaultmixedstreamconfig) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamConfig-expectedmixingtype"></span>
@@ -572,6 +596,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamConfig : NSObject
 <span id="ByteRTCMixedStreamConfig-defaultmixedstreamconfig"></span>
 ### defaultMixedStreamConfig
 ```objectivec
+
 + (instancetype _Nonnull)defaultMixedStreamConfig;
 ```
 获取默认转推直播配置参数。
@@ -596,10 +621,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCNetworkDetectionLinkTypeUp | 0 | 上行网络探测。 |
 | ByteRTCNetworkDetectionLinkTypeDown | 1 | 下行网络探测。 |
+
 
 <span id="ByteRTCVirtualBackgroundSource"></span>
 # ByteRTCVirtualBackgroundSource
@@ -610,11 +637,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVirtualBackgroundSource: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCVirtualBackgroundSourceType | [sourceType](#ByteRTCVirtualBackgroundSource-sourcetype) |
 | int | [sourceColor](#ByteRTCVirtualBackgroundSource-sourcecolor) |
 | NSString*_Nullable | [sourcePath](#ByteRTCVirtualBackgroundSource-sourcepath) |
+
 
 ## 变量说明
 <span id="ByteRTCVirtualBackgroundSource-sourcetype"></span>
@@ -641,6 +670,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVirtualBackgroundSource: NSObject
 @property(nonatomic) NSString* _Nullable sourcePath;
 ```
 自定义背景图片的绝对路径。
+
 - 支持的格式为 jpg、jpeg、png。
 - 图片分辨率超过 1080P 时，图片会被等比缩放至和视频一致。
 - 图片和视频宽高比一致时，图片会被直接缩放至和视频一致。
@@ -657,10 +687,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoSinkConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCLocalVideoRenderPosition | [position](#ByteRTCLocalVideoSinkConfig-position) |
 | ByteRTCVideoSinkPixelFormat | [requiredPixelFormat](#ByteRTCLocalVideoSinkConfig-requiredpixelformat) |
+
 
 ## 变量说明
 <span id="ByteRTCLocalVideoSinkConfig-position"></span>
@@ -691,10 +723,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCDataMessageSourceTypeDefault | 0 | 通过客户端或服务端的插入的自定义消息。 |
 | ByteRTCDataMessageSourceTypeSystem | 1 | 系统数据，包含音量指示信息。 |
+
 
 <span id="ByteRTCVideoCapturePreference"></span>
 # ByteRTCVideoCapturePreference
@@ -708,11 +742,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoCapturePreferenceAuto | 0 | （默认）自动设置采集参数。<br>SDK 在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
 | ByteRTCVideoCapturePreferenceMannal | 1 | 手动设置采集参数，包括采集分辨率、帧率。 |
 | ByteRTCVideoCapturePreferenceAutoPerformance | 2 | 采集参数与编码参数一致 |
+
 
 <span id="ByteRTCProblemFeedbackOption"></span>
 # ByteRTCProblemFeedbackOption
@@ -726,6 +762,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCProblemFeedbackOptionNone | 0 | 没有问题 |
@@ -751,6 +788,7 @@ typedef NS_ENUM(
 | ByteRTCProblemFeedbackOptionRemoteVideoLagging | 1ULL << 53 | 远端视频卡顿 |
 | ByteRTCProblemFeedbackOptionRemoteNoVideo | 1ULL << 54 | 远端无画面 |
 
+
 <span id="ByteRTCAudioFormat"></span>
 # ByteRTCAudioFormat
 ```objectivec
@@ -760,11 +798,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFormat : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCAudioSampleRate | [sampleRate](#ByteRTCAudioFormat-samplerate) |
 | ByteRTCAudioChannel | [channel](#ByteRTCAudioFormat-channel) |
 | int | [samplesPerCall](#ByteRTCAudioFormat-samplespercall) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioFormat-samplerate"></span>
@@ -794,7 +834,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioFormat : NSObject
 
 最大值是 `2048`。超出取值范围时，采样点数取默认值。
 
-该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback:format:](macOS-api#ByteRTCVideo-enableaudioframecallback-format) 开启只读模式回调时设置该参数不生效。
+该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback:format:](macOS-api.md#ByteRTCVideo-enableaudioframecallback-format) 开启只读模式回调时设置该参数不生效。
 
 
 <span id="ByteRTCNetworkType"></span>
@@ -809,6 +849,7 @@ SDK 网络连接类型。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCNetworkTypeUnknown | -1 | 网络连接类型未知。 |
@@ -820,6 +861,7 @@ SDK 网络连接类型。
 | ByteRTCNetworkTypeMobile4G | 5 | 网络连接类型为 4G 移动网络。 |
 | ByteRTCNetworkTypeMobile5G | 6 | 网络连接类型为 5G 移动网络。 |
 
+
 <span id="ByteRTCVideoFrame"></span>
 # ByteRTCVideoFrame
 ```objectivec
@@ -829,6 +871,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrame : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [format](#ByteRTCVideoFrame-format) |
@@ -848,6 +891,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrame : NSObject
 | NSArray*_Nullable | [planeDatas](#ByteRTCVideoFrame-planedatas) |
 | NSArray*_Nullable | [planeStrides](#ByteRTCVideoFrame-planestrides) |
 | int | [deprecated] [stride](#ByteRTCVideoFrame-stride) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoFrame-format"></span>
@@ -1000,6 +1044,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCPlayerErrorOK | 0 | 正常 |
@@ -1013,6 +1058,7 @@ typedef NS_ENUM(
 | ByteRTCPlayerErrorInvalidPlaybackSpeed | 8 | 播放速度参数设置不合法 |
 | ByteRTCPlayerErrorInvalidEffectId | 9 | 音效 ID 异常。还未加载或播放文件，就调用其他 API。 |
 
+
 <span id="ByteRTCAudioEnhancementConfig"></span>
 # ByteRTCAudioEnhancementConfig
 ```objectivec
@@ -1022,10 +1068,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioEnhancementConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [enhanceSignaling](#ByteRTCAudioEnhancementConfig-enhancesignaling) |
 | BOOL | [enhanceAudio](#ByteRTCAudioEnhancementConfig-enhanceaudio) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioEnhancementConfig-enhancesignaling"></span>
@@ -1056,12 +1104,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalAudioStreamStateStopped | 0 | 本地音频默认初始状态。<br>麦克风停止工作时回调该状态，对应错误码 [ByteRTCLocalAudioStreamError](#ByteRTCLocalAudioStreamError) 中的 ByteRTCLocalAudioStreamErrorOk |
 | ByteRTCLocalAudioStreamStateRecording | 1 | 本地音频录制设备启动成功。<br>采集到音频首帧时回调该状态，对应错误码 [ByteRTCLocalAudioStreamError](#ByteRTCLocalAudioStreamError) 中的 ByteRTCLocalAudioStreamErrorOk |
 | ByteRTCLocalAudioStreamStateEncoding | 2 | 本地音频首帧编码成功。<br>音频首帧编码成功时回调该状态，对应错误码 [ByteRTCLocalAudioStreamError](#ByteRTCLocalAudioStreamError) 中的 ByteRTCLocalAudioStreamErrorOk |
 | ByteRTCLocalAudioStreamStateFailed | 3 | 本地音频启动失败，在以下时机回调该状态：<br><ul><li>本地录音设备启动失败，对应错误码 [ByteRTCLocalAudioStreamError](#ByteRTCLocalAudioStreamError) 中的 ByteRTCLocalAudioStreamErrorRecordFailure</li></ul><ul><li>检测到没有录音设备权限，对应错误码 [ByteRTCLocalAudioStreamError](#ByteRTCLocalAudioStreamError) 中的 ByteRTCLocalAudioStreamErrorDeviceNoPermission</li></ul><ul><li>音频编码失败，对应错误码 [ByteRTCLocalAudioStreamError](#ByteRTCLocalAudioStreamError) 中的 ByteRTCLocalAudioStreamError</li></ul> |
+
 
 <span id="ByteRTCMixedStreamVideoType"></span>
 # ByteRTCMixedStreamVideoType
@@ -1075,10 +1125,12 @@ region 中流的类型属性
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamVideoTypeMain | 0 | 主流。包括：<br><ul><li>由摄像头/麦克风通过内部采集机制，采集到的流</li></ul><ul><li>通过自定义采集，采集到的流。</li></ul> |
 | ByteRTCMixedStreamVideoTypeScreen | 1 | 屏幕流。 |
+
 
 <span id="ByteRTCVoiceReverbType"></span>
 # ByteRTCVoiceReverbType
@@ -1092,6 +1144,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVoiceReverbOriginal | 0 | 原声，不含特效 |
@@ -1103,6 +1156,7 @@ typedef NS_ENUM(
 | ByteRTCVoiceReverbVirtualStereo | 6 | 虚拟立体声 |
 | ByteRTCVoiceReverbSpacious | 7 | 空旷 |
 | ByteRTCVoiceReverb3D | 8 | 3D 人声 |
+
 
 <span id="ByteRTCAudioFrameSource"></span>
 # ByteRTCAudioFrameSource
@@ -1116,11 +1170,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioFrameSourceTypeMic | 0 | 本地麦克风采集的音频数据。 |
 | ByteRTCAudioFrameSourceTypePlayback | 1 | 远端所有用户混音后的数据{en} |
 | ByteRTCAudioFrameSourceTypeMixed | 2 | 本地麦克风和所有远端用户音频流的混音后的数据 |
+
 
 <span id="ByteRTCLocalAudioStreamError"></span>
 # ByteRTCLocalAudioStreamError
@@ -1134,6 +1190,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalAudioStreamErrorOk | 0 | 本地音频状态正常 |
@@ -1142,6 +1199,7 @@ typedef NS_ENUM(
 | ByteRTCLocalAudioStreamErrorRecordFailure | 4 | 本地音频录制失败，建议你检查录制设备是否正常工作 |
 | ByteRTCLocalAudioStreamErrorEncodeFailure | 5 | 本地音频编码失败 |
 | ByteRTCLocalAudioStreamErrorNoRecordingDevice | 6 | 没有可用的音频录制设备 |
+
 
 <span id="ByteRTCUserOfflineReason"></span>
 # ByteRTCUserOfflineReason
@@ -1155,12 +1213,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCUserOfflineReasonQuit | 0 | 远端用户调用 `leaveRoom` 方法主动退出房间。 |
 | ByteRTCUserOfflineReasonDropped | 1 | 远端用户因网络等原因掉线。 |
 | ByteRTCUserOfflineReasonSwitchToInvisible | 2 | 远端用户切换至隐身状态。 |
 | ByteRTCUserOfflineReasonKickedByAdmin | 3 | 远端用户被踢出出房间。<br>因调用踢出用户的 OpenAPI，远端用户被踢出房间。 |
+
 
 <span id="ByteRTCExpressionDetectInfo"></span>
 # ByteRTCExpressionDetectInfo
@@ -1171,6 +1231,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [age](#ByteRTCExpressionDetectInfo-age) |
@@ -1182,6 +1243,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectInfo : NSObject
 | float | [surpriseScore](#ByteRTCExpressionDetectInfo-surprisescore) |
 | float | [arousal](#ByteRTCExpressionDetectInfo-arousal) |
 | float | [valence](#ByteRTCExpressionDetectInfo-valence) |
+
 
 ## 变量说明
 <span id="ByteRTCExpressionDetectInfo-age"></span>
@@ -1265,10 +1327,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCForwardStreamConfiguration: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*_Nullable | [roomId](#ByteRTCForwardStreamConfiguration-roomid) |
 | NSString*_Nullable | [token](#ByteRTCForwardStreamConfiguration-token) |
+
 
 ## 变量说明
 <span id="ByteRTCForwardStreamConfiguration-roomid"></span>
@@ -1300,6 +1364,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCVideoEncoderConfig-width) |
@@ -1308,6 +1373,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
 | NSInteger | [maxBitrate](#ByteRTCVideoEncoderConfig-maxbitrate) |
 | NSInteger | [minBitrate](#ByteRTCVideoEncoderConfig-minbitrate) |
 | ByteRTCVideoEncoderPreference | [encoderPreference](#ByteRTCVideoEncoderConfig-encoderpreference) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoEncoderConfig-width"></span>
@@ -1360,6 +1426,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoEncoderConfig: NSObject
 范围：[0, maxBitrate)，当 `maxBitrate` < `minBitrate` 时，为适配码率模式。
 
 以下情况，设置本参数无效：
+
 - 当 `maxBitrate` 为 `0` 时，不对视频流进行编码发送。
 - 当 `maxBitrate` < `0` 时，适配码率模式。
 
@@ -1384,11 +1451,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCUserVisibilityChangeErrorOk | 0 | 成功。 |
 | ByteRTCUserVisibilityChangeErrorUnknown | 1 | 未知错误。 |
 | ByteRTCUserVisibilityChangeErrorTooManyVisibleUser | 2 | 房间内可见用户达到上限。 |
+
 
 <span id="ByteRTCLocalProxyType"></span>
 # ByteRTCLocalProxyType
@@ -1402,10 +1471,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalProxyTypeSocks5 | 1 | Socks5 代理。选用此代理服务器，需满足 Socks5 协议标准文档的要求。 |
 | ByteRTCLocalProxyTypeHttpTunnel | 2 | Http 隧道代理。 |
+
 
 <span id="ByteRTCForwardStreamEventInfo"></span>
 # ByteRTCForwardStreamEventInfo
@@ -1416,10 +1487,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCForwardStreamEventInfo: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*_Nullable | [roomId](#ByteRTCForwardStreamEventInfo-roomid) |
 | ByteRTCForwardStreamEvent | [event](#ByteRTCForwardStreamEventInfo-event) |
+
 
 ## 变量说明
 <span id="ByteRTCForwardStreamEventInfo-roomid"></span>
@@ -1454,12 +1527,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamClientMixVideoFormatI420 | 0 | YUV I420。Android、Windows 默认回调格式。支持系统：Android、Windows。 |
 | ByteRTCMixedStreamClientMixVideoFormatTexture2D | 1 | OpenGL GL_TEXTURE_2D 格式纹理。支持系统：安卓。 |
 | ByteRTCMixedStreamClientMixVideoFormatCVPixelBufferBGRA | 2 | CVPixelBuffer BGRA。iOS 默认回调格式。支持系统: iOS。 |
 | ByteRTCMixedStreamClientMixVideoFormatNV12 | 3 | YUV NV12。macOS 默认回调格式。支持系统: macOS。{en} |
+
 
 <span id="ByteRTCLocalLogLevel"></span>
 # ByteRTCLocalLogLevel
@@ -1473,12 +1548,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalLogLevelInfo | 0 | 信息级别。 |
 | ByteRTCLocalLogLevelWarning | 1 | （默认值）警告级别。 |
 | ByteRTCLocalLogLevelError | 2 | 错误级别。 |
 | ByteRTCLocalLogLevelNone | 3 | 关闭日志。 |
+
 
 <span id="ByteRTCLocalProxyState"></span>
 # ByteRTCLocalProxyState
@@ -1492,11 +1569,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalProxyStateInited | 0 | TCP 代理服务器连接成功。 |
 | ByteRTCLocalProxyStateConnected | 1 | 本地代理连接成功。 |
 | ByteRTCLocalProxyStateError | 2 | 本地代理连接出现错误。 |
+
 
 <span id="ByteRTCStreamIndex"></span>
 # ByteRTCStreamIndex
@@ -1510,10 +1589,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCStreamIndexMain | 0 | 主流。包括：<br><ul><li>由摄像头/麦克风通过内部采集机制，采集到的视频/音频;</li></ul><ul><li>通过自定义采集，采集到的视频/音频。</li></ul> |
 | ByteRTCStreamIndexScreen | 1 | 屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。 |
+
 
 <span id="ByteRTCScreenVideoEncoderConfig"></span>
 # ByteRTCScreenVideoEncoderConfig
@@ -1524,6 +1605,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenVideoEncoderConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCScreenVideoEncoderConfig-width) |
@@ -1532,6 +1614,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenVideoEncoderConfig: NSObject
 | NSInteger | [maxBitrate](#ByteRTCScreenVideoEncoderConfig-maxbitrate) |
 | NSInteger | [minBitrate](#ByteRTCScreenVideoEncoderConfig-minbitrate) |
 | ByteRTCScreenVideoEncoderPreference | [encoderPreference](#ByteRTCScreenVideoEncoderConfig-encoderpreference) |
+
 
 ## 变量说明
 <span id="ByteRTCScreenVideoEncoderConfig-width"></span>
@@ -1601,6 +1684,7 @@ App 使用的 cpu 和 memory 信息
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | unsignedint | [cpuCores](#ByteRTCSysStats-cpucores) |
@@ -1611,6 +1695,7 @@ App 使用的 cpu 和 memory 信息
 | unsignedlonglong | [freeMemory](#ByteRTCSysStats-freememory) |
 | double | [memoryRatio](#ByteRTCSysStats-memoryratio) |
 | double | [totalMemoryRatio](#ByteRTCSysStats-totalmemoryratio) |
+
 
 ## 变量说明
 <span id="ByteRTCSysStats-cpucores"></span>
@@ -1689,10 +1774,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoStreamStateSuccess | 0 | 设置本地视频属性成功 |
 | ByteRTCVideoStreamStateInvalid | -2 | 本地视频属性参数不合法 |
+
 
 <span id="ByteRTCMixedStreamVideoConfig"></span>
 # ByteRTCMixedStreamVideoConfig
@@ -1705,6 +1792,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamVideoConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCMixedStreamVideoCodecType | [videoCodec](#ByteRTCMixedStreamVideoConfig-videocodec) |
@@ -1714,6 +1802,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamVideoConfig : NSObject
 | NSInteger | [gop](#ByteRTCMixedStreamVideoConfig-gop) |
 | NSInteger | [bitrate](#ByteRTCMixedStreamVideoConfig-bitrate) |
 | BOOL | [enableBFrame](#ByteRTCMixedStreamVideoConfig-enablebframe) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamVideoConfig-videocodec"></span>
@@ -1792,10 +1881,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoRenderMirrorTypeOn | 1 | 开启镜像。 |
 | ByteRTCVideoRenderMirrorTypeOff | 2 | （默认值）不开启镜像。 |
+
 
 <span id="ByteRTCVideoSourceType"></span>
 # ByteRTCVideoSourceType
@@ -1809,12 +1900,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoSourceTypeExternal | 0 | 自定义采集视频源 |
 | ByteRTCVideoSourceTypeInternal | 1 | 内部采集视频源 |
 | ByteRTCVideoSourceTypeEncodedAutoSimulcast | 2 | 自定义编码视频源。<br>你仅需推送分辨率最大的一路编码后视频流，SDK 将自动转码生成多路小流 |
 | ByteRTCVideoSourceTypeEncodedManualSimulcast | 3 | 自定义编码视频源。<br>SDK 不会自动生成多路流，你需要自行生成并推送多路流 |
+
 
 <span id="ByteRTCUserOnlineStatus"></span>
 # ByteRTCUserOnlineStatus
@@ -1828,11 +1921,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCUserOnlineStatusOffline | 0 | 对端用户离线<br>对端用户已经调用 `logout`，或者没有调用 `login:uid:` 进行登录 |
 | ByteRTCUserOnlineStatusOnline | 1 | 对端用户在线<br>对端用户调用 `login:uid:` 登录，并且连接状态正常 |
 | ByteRTCUserOnlineStatusUnreachable | 2 | 无法获取对端用户在线状态<br>发生级联错误、对端用户在线状态异常时返回 |
+
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig"></span>
 # ByteRTCMixedStreamLayoutRegionConfig
@@ -1845,6 +1940,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [userID](#ByteRTCMixedStreamLayoutRegionConfig-userid) |
@@ -1868,6 +1964,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
 | ByteRTCMixedStreamAlternateImageFillMode | [alternateImageFillMode](#ByteRTCMixedStreamLayoutRegionConfig-alternateimagefillmode) |
 | NSString* | [alternateImageUrl](#ByteRTCMixedStreamLayoutRegionConfig-alternateimageurl) |
 
+
 ## 变量说明
 <span id="ByteRTCMixedStreamLayoutRegionConfig-userid"></span>
 ### userID
@@ -1884,7 +1981,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
 ```
 图片或视频流所在房间的房间 ID。建议设置。
 
-如果此图片或视频流是通过 [startForwardStreamToRooms:](macOS-api#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 
 <span id="ByteRTCMixedStreamLayoutRegionConfig-locationx"></span>
@@ -2019,6 +2116,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionConfig : NSObject
 @property(assign, nonatomic) BOOL applySpatialAudio;
 ```
 设置某用户是否应用空间音频效果：
+
 - Yes：启用（默认值）
 - No：禁用
 
@@ -2056,6 +2154,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [duration](#ByteRTCRoomStats-duration) |
@@ -2075,6 +2174,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomStats : NSObject
 | NSInteger | [rtt](#ByteRTCRoomStats-rtt) |
 | NSInteger | [txCellularKBitrate](#ByteRTCRoomStats-txcellularkbitrate) |
 | NSInteger | [rxCellularKBitrate](#ByteRTCRoomStats-rxcellularkbitrate) |
+
 
 ## 变量说明
 <span id="ByteRTCRoomStats-duration"></span>
@@ -2229,11 +2329,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioRecordingStateError | 0 | 录制异常 |
 | ByteRTCAudioRecordingStateProcessing | 1 | 录制进行中 |
 | ByteRTCAudioRecordingStateSuccess | 2 | 已结束录制，并且录制文件保存成功。 |
+
 
 <span id="ByteRTCMediaDeviceState"></span>
 # ByteRTCMediaDeviceState
@@ -2249,6 +2351,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaDeviceStateStarted | 1 | 设备已开启 |
@@ -2259,6 +2362,7 @@ typedef NS_ENUM(
 | ByteRTCMediaDeviceStateInterruptionBegan | 12 | 系统通话，锁屏或第三方应用打断了音视频通话。将在通话结束或第三方应用结束占用后自动恢复。 |
 | ByteRTCMediaDeviceStateInterruptionEnded | 13 | 音视频通话已从系统电话或第三方应用打断中恢复 |
 | ByteRTCMediaDeviceListUpdated | 16 | 获取设备列表超时后，收到设备列表通知。<br>再次调用获取设备接口更新设备列表。 |
+
 
 <span id="ByteRTCAudioRoute"></span>
 # ByteRTCAudioRoute
@@ -2272,6 +2376,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioRouteDefault | -1 | 通过 `setDefaultAudioRoute:` 设置的音频路由 |
@@ -2280,6 +2385,7 @@ typedef NS_ENUM(
 | ByteRTCAudioRouteSpeakerphone | 3 | 扬声器。设备自带的，一般用于免提播放的硬件。 |
 | ByteRTCAudioRouteHeadsetBluetooth | 4 | 蓝牙耳机 |
 | ByteRTCAudioRouteHeadsetUSB | 5 | USB 设备 |
+
 
 <span id="ByteRtcScreenCapturerExt"></span>
 # ByteRtcScreenCapturerExt
@@ -2292,17 +2398,21 @@ BYTE_RTC_EXPORT @interface ByteRtcScreenCapturerExt : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRtcScreenCapturerExt* | [shared](#ByteRtcScreenCapturerExt-shared) |
 | NSObject<ByteRtcScreenCapturerExtDelegate\>* | [delegate](#ByteRtcScreenCapturerExt-delegate) |
 
+
 ## 成员函数
+
 | 返回 | 名称 |
 | --- | --- |
 | void | [startWithDelegate:groupId:](#ByteRtcScreenCapturerExt-startwithdelegate-groupid) |
 | void | [stop](#ByteRtcScreenCapturerExt-stop) |
 | void | [processSampleBuffer:withType:](#ByteRtcScreenCapturerExt-processsamplebuffer-withtype) |
+
 
 ## 变量说明
 <span id="ByteRtcScreenCapturerExt-shared"></span>
@@ -2321,6 +2431,7 @@ NSObject<ByteRtcScreenCapturerExtDelegate>* ByteRtcScreenCapturerExt::delegate
 <span id="ByteRtcScreenCapturerExt-startwithdelegate-groupid"></span>
 ### startWithDelegate:groupId:
 ```objectivec
+
 - (void)startWithDelegate:(NSObject<ByteRtcScreenCapturerExtDelegate> *)delegate groupId:(NSString *)groupId;
 ```
 开始屏幕采集
@@ -2332,13 +2443,15 @@ Extension 启动后，系统将自动调用该方法开启屏幕采集。
 
 | 参数名 | 类型 | 说明 |
 | --- | --- | --- |
-| delegate | NSObject<ByteRtcScreenCapturerExtDelegate\> * | 回调代理，参看 [ByteRtcScreenCapturerExtDelegate](macOS-callback#ByteRtcScreenCapturerExtDelegate) |
+| delegate | NSObject<ByteRtcScreenCapturerExtDelegate\> * | 回调代理，参看 [ByteRtcScreenCapturerExtDelegate](macOS-callback.md#ByteRtcScreenCapturerExtDelegate) |
 | groupId | NSString * | App groups 中配置的 group ID |
+
 
 
 <span id="ByteRtcScreenCapturerExt-stop"></span>
 ### stop
 ```objectivec
+
 - (void)stop;
 ```
 结束屏幕采集
@@ -2349,6 +2462,7 @@ Extension 关闭后，系统将自动调用该方法停止屏幕采集。
 <span id="ByteRtcScreenCapturerExt-processsamplebuffer-withtype"></span>
 ### processSampleBuffer:withType:
 ```objectivec
+
 - (void)processSampleBuffer:(CMSampleBufferRef)sampleBuffer withType:(RPSampleBufferType)sampleBufferType API_AVAILABLE(ios(10));
 ```
 推送 Extension 采集的数据
@@ -2360,6 +2474,7 @@ Extension 关闭后，系统将自动调用该方法停止屏幕采集。
 | --- | --- | --- |
 | sampleBuffer | CMSampleBufferRef | 采集到的数据 |
 | sampleBufferType | RPSampleBufferType | 数据类型 |
+
 
 
 <span id="ByteRTCVideoDecoderConfig"></span>
@@ -2374,11 +2489,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoDecoderConfigRaw | 0 | 开启 SDK 内部解码，只回调解码后的数据。回调为 [renderPixelBuffer:rotation:contentType:extendedData:](#ByteRTCVideoSinkDelegate-renderpixelbuffer-rotation-contenttype-extendeddata) |
-| ByteRTCVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](macOS-callback#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe)。 |
+| ByteRTCVideoDecoderConfigEncode | 1 | 开启自定义解码，只回调解码前数据。回调为 [onRemoteEncodedVideoFrame:withEncodedVideoFrame:](macOS-callback.md#ByteRTCRemoteEncodedVideoFrameObserver-onremoteencodedvideoframe-withencodedvideoframe)。 |
 | ByteRTCVideoDecoderConfigBoth | 2 | 开启 SDK 内部解码，同时回调解码前和解码后的数据 |
+
 
 <span id="ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig"></span>
 # ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig
@@ -2389,10 +2506,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutRegionImageWaterMarkConf
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [imageWidth](#ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig-imagewidth) |
 | NSInteger | [imageHeight](#ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig-imageheight) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamLayoutRegionImageWaterMarkConfig-imagewidth"></span>
@@ -2423,6 +2542,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoPixelFormatUnknown | 0 | 未知格式 |
@@ -2437,6 +2557,7 @@ typedef NS_ENUM(
 | ByteRTCVideoPixelFormatGLTextureOES | 11 | Opengl OES 纹理 |
 | ByteRTCVideoPixelFormatCVPixelBuffer | 12 | CVPixelBuffer |
 
+
 <span id="ByteRTCEncryptType"></span>
 # ByteRTCEncryptType
 ```objectivec
@@ -2449,6 +2570,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCEncryptTypeCustomize | 0 | 不使用内置加密。默认值。 |
@@ -2456,6 +2578,7 @@ typedef NS_ENUM(
 | ByteRTCEncryptTypeAES256CBC | 2 | AES-256-CBC 加密算法 |
 | ByteRTCEncryptTypeAES128ECB | 3 | AES-128-ECB 加密算法 |
 | ByteRTCEncryptTypeAES256ECB | 4 | AES-256-ECB 加密算法 |
+
 
 <span id="ByteRTCMixedStreamSyncStrategy"></span>
 # ByteRTCMixedStreamSyncStrategy
@@ -2469,11 +2592,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamSyncStrategyNoSync | 0 | 不使用同步策略 |
 | ByteRTCMixedStreamSyncStrategyAudioPreciseSync | 1 | 使用音频精准同步策略 |
 | ByteRTCMixedStreamSyncStrategySimplexModeSync | 2 | 使用单通模式同步策略 |
+
 
 <span id="ByteRTCVideoCompositingRegion"></span>
 # ByteRTCVideoCompositingRegion
@@ -2493,6 +2618,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 - 视频流对应区域宽度和高度的像素值是通过画面尺寸和归一化比例相乘，四舍五入取整，并向上转换为偶数得到的。假如：Canvas.Width = 1920, Region.WidthProportion = 0.21，那么该画布横向宽度为 404px（1920x0.21=403.2，四舍五入取整后，再向上转换为偶数）。
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [uid](#ByteRTCVideoCompositingRegion-uid) |
@@ -2514,6 +2640,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 | ByteRTCPosition*_Nullable | [spatialPosition](#ByteRTCVideoCompositingRegion-spatialposition) |
 | BOOL | [applySpatialAudio](#ByteRTCVideoCompositingRegion-applyspatialaudio) |
 
+
 ## 变量说明
 <span id="ByteRTCVideoCompositingRegion-uid"></span>
 ### uid
@@ -2530,7 +2657,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 ```
 图片或视频流所在房间的房间 ID。必填。
 
-如果此图片或视频流是通过 [startForwardStreamToRooms:](macOS-api#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms:](macOS-api.md#ByteRTCRoom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 
 <span id="ByteRTCVideoCompositingRegion-x"></span>
@@ -2661,6 +2788,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingRegion : NSObject
 @property(assign, nonatomic) BOOL applySpatialAudio;
 ```
 设置某用户是否应用空间音频效果：
+
 - Yes：启用（默认值）
 - No：禁用
 
@@ -2677,6 +2805,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalProxyErrorOK | 0 | 本地代理服务器无错误。 |
@@ -2686,6 +2815,7 @@ typedef NS_ENUM(
 | ByteRTCLocalProxyErrorSocks5UserPassNotGiven | 4 | 未提供代理服务器的用户名及密码，导致 Socks5 代理连接失败。请重新调用 `setLocalProxy`，在设置本地代理时填入用户名和密码。 |
 | ByteRTCLocalProxyErrorSocks5TcpClosed | 5 | TCP 关闭，导致 Socks5 代理连接失败。请检查网络或者代理服务器是否存在异常。 |
 | ByteRTCLocalProxyErrorHttpTunnelFailed | 6 | Http 隧道代理错误。请检查 Http 隧道代理服务器或者网络是否存在异常。 |
+
 
 <span id="ByteRTCBluetoothMode"></span>
 # ByteRTCBluetoothMode
@@ -2699,11 +2829,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCBluetoothModeAuto | 0 | 默认采用 auto 模式，具体如下：<br><table><tr><th>场景</th><th>HFP</th><th>A2DP</th></tr><tr><th>纯通话场景</th><th>蓝牙设备支持 HFP</th><th>蓝牙设备不支持 HFP</th></tr><tr><th>纯媒体场景</th><th>使用蓝牙设备采集播放音频</th><th>使用 iOS 设备采集音频，蓝牙设备播放音频</th></tr></table> |
 | ByteRTCBluetoothModeA2DP | 1 | 高级音频分配配置文件（A2DP）。立体声、高音质。采用 iOS 设备进行音频采集，蓝牙设备进行播放。 |
 | ByteRTCBluetoothModeHFP | 2 | 免提配置文件（HFP）。单声道、普通音质。音频采集和播放设备都使用蓝牙设备。 |
+
 
 <span id="ByteRTCVideoContentType"></span>
 # ByteRTCVideoContentType
@@ -2717,10 +2849,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoContentTypeNormalFrame | 0 | 普通视频 |
 | ByteRTCVideoContentTypeBlackFrame | 1 | 黑帧视频 |
+
 
 <span id="ByteRTCRemoteVideoStats"></span>
 # ByteRTCRemoteVideoStats
@@ -2735,6 +2869,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCRemoteVideoStats-width) |
@@ -2754,6 +2889,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoStats : NSObject
 | ByteRTCVideoCodecType | [codecType](#ByteRTCRemoteVideoStats-codectype) |
 | NSInteger | [videoIndex](#ByteRTCRemoteVideoStats-videoindex) |
 | NSInteger | [jitter](#ByteRTCRemoteVideoStats-jitter) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteVideoStats-width"></span>
@@ -2903,11 +3039,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFrameExtendedData : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCDataFrameType | [frameType](#ByteRTCFrameExtendedData-frametype) |
 | NSData*_Nullable | [extendedData](#ByteRTCFrameExtendedData-extendeddata) |
 | NSInteger | [extendedDataLen](#ByteRTCFrameExtendedData-extendeddatalen) |
+
 
 ## 变量说明
 <span id="ByteRTCFrameExtendedData-frametype"></span>
@@ -2943,6 +3081,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCRoomProfile | [profile](#ByteRTCRoomConfig-profile) |
@@ -2950,6 +3089,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
 | BOOL | [isAutoSubscribeAudio](#ByteRTCRoomConfig-isautosubscribeaudio) |
 | BOOL | [isAutoSubscribeVideo](#ByteRTCRoomConfig-isautosubscribevideo) |
 | ByteRTCRemoteVideoConfig*  | [remoteVideoConfig](#ByteRTCRoomConfig-remotevideoconfig) |
+
 
 ## 变量说明
 <span id="ByteRTCRoomConfig-profile"></span>
@@ -2969,7 +3109,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRoomConfig : NSObject
 
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。
 
-若调用 [setUserVisibility:](macOS-api#ByteRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility:](macOS-api.md#ByteRTCRoom-setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 
 <span id="ByteRTCRoomConfig-isautosubscribeaudio"></span>
@@ -3009,6 +3149,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureSourceInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCScreenCaptureSourceType | [sourceType](#ByteRTCScreenCaptureSourceInfo-sourcetype) |
@@ -3018,6 +3159,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureSourceInfo : NSObject
 | int | [pid](#ByteRTCScreenCaptureSourceInfo-pid) |
 | BOOL | [primaryMonitor](#ByteRTCScreenCaptureSourceInfo-primarymonitor) |
 | CGRect | [regionRect](#ByteRTCScreenCaptureSourceInfo-regionrect) |
+
 
 ## 变量说明
 <span id="ByteRTCScreenCaptureSourceInfo-sourcetype"></span>
@@ -3095,11 +3237,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCompositingLayout : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [backgroundColor](#ByteRTCVideoCompositingLayout-backgroundcolor) |
 | NSArray<ByteRTCVideoCompositingRegion*\>*  | [regions](#ByteRTCVideoCompositingLayout-regions) |
 | NSString*  | [appData](#ByteRTCVideoCompositingLayout-appdata) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoCompositingLayout-backgroundcolor"></span>
@@ -3142,6 +3286,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCBandFrequency31 | 0 | 中心频率为 31Hz 的频带。 |
@@ -3155,6 +3300,7 @@ typedef NS_ENUM(
 | ByteRTCBandFrequency8k | 8 | 中心频率为 8kHz 的频带。 |
 | ByteRTCBandFrequency16k | 9 | 中心频率为 16kHz 的频带。 |
 
+
 <span id="ByteRTCAudioDumpStatus"></span>
 # ByteRTCAudioDumpStatus
 ```objectivec
@@ -3167,6 +3313,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioDumpStartFailure | 0 | 音频 dump 启动失败 |
@@ -3175,6 +3322,7 @@ typedef NS_ENUM(
 | ByteRTCAudioDumpStopSuccess | 3 | 音频 dump 停止成功 |
 | ByteRTCAudioDumpRunningFailure | 4 | 音频 dump 运行失败 |
 | ByteRTCAudioDumpRunningSuccess | 5 | 音频 dump 运行成功 |
+
 
 <span id="ByteRTCAudioProfileType"></span>
 # ByteRTCAudioProfileType
@@ -3188,6 +3336,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioProfileDefault | 0 | 默认音质<br>服务器下发或客户端已设置的 [ByteRTCRoomProfile](#ByteRTCRoomProfile) 的音质配置 |
@@ -3196,6 +3345,7 @@ typedef NS_ENUM(
 | ByteRTCAudioProfileHD | 3 | 双声道音乐音质<br>采样率为 48 kHz，编码码率为 128 kbps。<br>超高音质，同时延时、功耗和流量消耗相对较大，适用于连麦 PK 等音乐场景。<br>游戏场景不建议使用。 |
 | ByteRTCAudioProfileStandardStereo | 4 | 双声道标准音质。采样率为 48 KHz，编码码率最大值为 80 Kbps |
 | ByteRTCAudioProfileHDMono | 5 | 单声道音乐音质。采样率为 48 kHz，编码码率最大值为 64 Kbps |
+
 
 <span id="ByteRTCAggregationOption"></span>
 # ByteRTCAggregationOption
@@ -3211,11 +3361,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAggregationOptionMin | 0 | 流聚合向下取值 （默认策略） |
 | ByteRTCAggregationOptionMax | 1 | 流聚合向上取值 |
 | ByteRTCAggregationOptionMajority | 2 | 流聚合按比例取值，比例相同时，向下取值 |
+
 
 <span id="ByteRTCMediaStreamType"></span>
 # ByteRTCMediaStreamType
@@ -3229,11 +3381,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaStreamTypeAudio | 1 << 0 | 只控制音频 |
 | ByteRTCMediaStreamTypeVideo | 1 << 1 | 只控制视频 |
 | ByteRTCMediaStreamTypeBoth | ByteRTCMediaStreamTypeAudio \| ByteRTCMediaStreamTypeVideo | 同时控制音频和视频 |
+
 
 <span id="ByteRTCEchoTestResult"></span>
 # ByteRTCEchoTestResult
@@ -3247,6 +3401,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCEchoTestResultSuccess | 0 | 接收到采集的音视频的回放，通话回路检测成功 |
@@ -3257,6 +3412,7 @@ typedef NS_ENUM(
 | ByteRTCEchoTestResultAudioReceiveError | 5 | 音频接收异常 |
 | ByteRTCEchoTestResultVideoReceiveError | 6 | 视频接收异常 |
 | ByteRTCEchoTestResultInternalError | 7 | 内部错误，不可恢复 |
+
 
 <span id="ByteRTCRoomProfile"></span>
 # ByteRTCRoomProfile
@@ -3274,6 +3430,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRoomProfileCommunication | 0 | 默认场景，通用模式<br>与 `ByteRTCRoomProfileMeeting = 16` 配置相同。<br>你可以联系技术支持更换默认配置参数。 |
@@ -3296,6 +3453,7 @@ typedef NS_ENUM(
 | ByteRTCRoomProfileClassroom | 18 | 适用于课堂互动，房间内所有成员都可以进行音视频互动<br>当你的场景中需要同时互动的成员超过 10 人时使用此模式 |
 | [deprecated] ByteRTCRoomProfileLiveBroadcasting | 1 | `Deprecated since 3.42 and will be deleted in 3.51, use ByteRTCRoomProfileInteractivePodcast instead.`<br/>直播模式。<br>当你对音视频通话的音质和画质要求较高时，应使用此设置。<br>此设置下，当用户使用蓝牙耳机收听时，蓝牙耳机使用媒体模式。 |
 
+
 <span id="ByteRTCPositionInfo"></span>
 # ByteRTCPositionInfo
 ```objectivec
@@ -3305,10 +3463,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPositionInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCPosition*  | [position](#ByteRTCPositionInfo-position) |
 | ByteRTCHumanOrientation*  | [orientation](#ByteRTCPositionInfo-orientation) |
+
 
 ## 变量说明
 <span id="ByteRTCPositionInfo-position"></span>
@@ -3336,10 +3496,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenParam : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [frameRate](#ByteRTCScreenParam-framerate) |
 | NSInteger | [bitrate](#ByteRTCScreenParam-bitrate) |
+
 
 ## 变量说明
 <span id="ByteRTCScreenParam-framerate"></span>
@@ -3370,11 +3532,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCScreenCaptureSourceTypeUnknown | 0 | 类型未知 |
 | ByteRTCScreenCaptureSourceTypeWindow | 1 | 应用程序的窗口 |
 | ByteRTCScreenCaptureSourceTypeScreen | 2 | 桌面 |
+
 
 <span id="ByteRTCTranscoderContentControlType"></span>
 # ByteRTCTranscoderContentControlType
@@ -3390,11 +3554,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCTranscoderContentControlTypeHasAudioAndVideo | 0 | 输出的混流包含音频和视频 |
 | ByteRTCTranscoderContentControlTypeHasAudioOnly | 1 | 输出的混流只包含音频 |
 | ByteRTCTranscoderContentControlTypeHasVideoOnly | 2 | 输出的混流只包含视频 |
+
 
 <span id="ByteRTCClientMixVideoFormat"></span>
 # ByteRTCClientMixVideoFormat
@@ -3410,12 +3576,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCClientMixVideoFormatI420 | 0 | YUV I420。Android、Windows 默认回调格式。支持系统：Android、Windows。 |
 | ByteRTCClientMixVideoFormatTexture2D | 1 | OpenGL GL_TEXTURE_2D 格式纹理。支持系统：安卓。 |
 | ByteRTCClientMixVideoFormatCVPixelBufferBGRA | 2 | CVPixelBuffer BGRA。iOS 默认回调格式。支持系统: iOS。 |
 | ByteRTCClientMixVideoFormatNV12 | 3 | YUV NV12。macOS 默认回调格式。支持系统: macOS。 |
+
 
 <span id="ByteRTCForwardStreamState"></span>
 # ByteRTCForwardStreamState
@@ -3429,11 +3597,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCForwardStreamStateIdle | 0 | 空闲状态<br><ul><li>成功调用 `stopForwardStreamToRooms` 后，所有目标房间为空闲状态。</li></ul><ul><li>成功调用 `updateForwardStreamToRooms` 减少目标房间后，本次减少的目标房间为空闲状态。</li></ul> |
 | ByteRTCForwardStreamStateSuccess | 1 | 开始转发<br><ul><li>调用 `startForwardStreamToRooms` 成功向所有房间开始转发媒体流后，返回此状态。</li></ul><ul><li>调用 `updateForwardStreamToRooms` 后，成功向新增目标房间开始转发媒体流后，返回此状态。</li></ul> |
 | ByteRTCForwardStreamStateFailure | 2 | 转发失败，失败详情参考 [ByteRTCForwardStreamError](#ByteRTCForwardStreamError)<br>调用 `startForwardStreamToRooms` 或 `updateForwardStreamToRooms` 后，如遇转发失败，返回此状态。 |
+
 
 <span id="ByteRTCMediaPlayerCustomSourceSeekWhence"></span>
 # ByteRTCMediaPlayerCustomSourceSeekWhence
@@ -3447,12 +3617,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaPlayerCustomSourceSeekWhenceSet | 0 | 从音频数据的头开始读取，读取后的位置为参数 offset 的值。 |
 | ByteRTCMediaPlayerCustomSourceSeekWhenceCur | 1 | 从音频数据的某一位置开始读取，读取后的位置为音频数据当前的读取位置加上参数 offset 的值。 |
 | ByteRTCMediaPlayerCustomSourceSeekWhenceEnd | 2 | 从音频数据的尾开始读取，读取后的位置为用户传入的音频数据大小加上参数 offset 的值。 |
 | ByteRTCMediaPlayerCustomSourceSeekWhenceSize | 3 | 返回音频数据的大小。 |
+
 
 <span id="ByteRTCAudioMixingDualMonoMode"></span>
 # ByteRTCAudioMixingDualMonoMode
@@ -3466,12 +3638,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioMixingDualMonoModeAuto | 0 | 和音频文件一致 |
 | ByteRTCAudioMixingDualMonoModeL | 1 | 只能听到音频文件中左声道的音频 |
 | ByteRTCAudioMixingDualMonoModeR | 2 | 只能听到音频文件中右声道的音频 |
 | ByteRTCAudioMixingDualMonoModeMix | 3 | 能同时听到音频文件中左右声道的音频 |
+
 
 <span id="ByteRTCRecordingType"></span>
 # ByteRTCRecordingType
@@ -3485,11 +3659,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRecordingTypeAudioOnly | 0 | 只录制音频 |
 | ByteRTCRecordingTypeVideoOnly | 1 | 只录制视频 |
 | ByteRTCRecordingTypeVideoAndAudio | 2 | 同时录制音频和视频 |
+
 
 <span id="ByteRTCZoomDirectionType"></span>
 # ByteRTCZoomDirectionType
@@ -3503,6 +3679,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCZoomDirectionTypeMoveLeft | 0 | 相机向左移动 |
@@ -3512,6 +3689,7 @@ typedef NS_ENUM(
 | ByteRTCZoomDirectionTypeZoomOut | 4 | 相机缩小焦距 |
 | ByteRTCZoomDirectionTypeZoomIn | 5 | 相机放大焦距 |
 | ByteRTCZoomDirectionTypeReset | 6 | 恢复到原始画面 |
+
 
 <span id="ByteRTCNetworkDetectionStopReason"></span>
 # ByteRTCNetworkDetectionStopReason
@@ -3527,6 +3705,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCNetworkDetectionStopReasonUser | 0 | 用户主动停止。 |
@@ -3534,6 +3713,7 @@ typedef NS_ENUM(
 | ByteRTCNetworkDetectionStopReasonConnectionLost | 2 | 探测网络连接断开。<br>当超过 12s 没有收到回复，SDK 将断开网络连接，并且不再尝试重连。 |
 | ByteRTCNetworkDetectionStopReasonStreaming | 3 | 本地开始推拉流，停止探测。 |
 | ByteRTCNetworkDetectionStopReasonInnerErr | 4 | 网络探测失败，内部异常 |
+
 
 <span id="ByteRTCAudioQuality"></span>
 # ByteRTCAudioQuality
@@ -3547,12 +3727,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioQualityLow | 0 | 低音质 |
 | ByteRTCAudioQualityMedium | 1 | 中音质 |
 | ByteRTCAudioQualityHigh | 2 | 高音质 |
 | ByteRTCAudioQualityUltraHigh | 3 | 超高音质 |
+
 
 <span id="ByteRTCMediaPlayerCustomSourceMode"></span>
 # ByteRTCMediaPlayerCustomSourceMode
@@ -3566,10 +3748,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaPlayerCustomSourceModePush | 0 | 当播放来自本地的 PCM 数据时，使用此选项。 |
 | ByteRTCMediaPlayerCustomSourceModePull | 1 | 当播放来自内存的音频数据时，使用此选项。 |
+
 
 <span id="ByteRTCRenderMode"></span>
 # ByteRTCRenderMode
@@ -3585,11 +3769,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRenderModeHidden | 1 | 视窗填满优先，默认值。<br>视频尺寸等比缩放，直至视窗被填满。当视频尺寸与显示窗口尺寸不一致时，多出的视频将被截掉。 |
 | ByteRTCRenderModeFit | 2 | 视频帧内容全部显示优先。<br>视频尺寸等比缩放，优先保证视频内容全部显示。当视频尺寸与显示窗口尺寸不一致时，会把窗口未被填满的区域填充成背景颜色。 |
 | ByteRTCRenderModeFill | 3 | 视频帧自适应画布。<br>视频尺寸非等比例缩放，把窗口充满。在此过程中，视频帧的长宽比例可能会发生变化。 |
+
 
 <span id="ByteRTCSEIStreamEventType"></span>
 # ByteRTCSEIStreamEventType
@@ -3603,10 +3789,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
-| ByteRTCSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。<br>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](macOS-api#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-| ByteRTCSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：<br><ul><li>远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；</li></ul><ul><li>远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](macOS-api#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；</li></ul><ul><li>远端用户调用 [setVideoSourceType:WithStreamIndex:](macOS-api#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。</li></ul> |
+| ByteRTCSEIStreamEventTypeStreamAdd | 0 | 远端用户发布黑帧视频流。<br>纯语音通话场景下，远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+| ByteRTCSEIStreamEventTypeStreamRemove | 1 | 远端黑帧视频流移除。该回调的触发时机包括：<br><ul><li>远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布；</li></ul><ul><li>远端用户调用 [sendSEIMessage:andMessage:andRepeatCount:andCountPerFrame:](macOS-api.md#ByteRTCVideo-sendseimessage-andmessage-andrepeatcount-andcountperframe) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布；</li></ul><ul><li>远端用户调用 [setVideoSourceType:WithStreamIndex:](macOS-api.md#ByteRTCVideo-setvideosourcetype-withstreamindex) 切换至自定义视频采集时，黑帧视频流停止发布。</li></ul> |
+
 
 <span id="ByteRTCRecordingConfig"></span>
 # ByteRTCRecordingConfig
@@ -3617,10 +3805,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*_Nullable | [dirPath](#ByteRTCRecordingConfig-dirpath) |
 | ByteRTCRecordingFileType | [recordingFileType](#ByteRTCRecordingConfig-recordingfiletype) |
+
 
 ## 变量说明
 <span id="ByteRTCRecordingConfig-dirpath"></span>
@@ -3648,12 +3838,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoSinkConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCRemoteVideoRenderPosition | [position](#ByteRTCRemoteVideoSinkConfig-position) |
 | ByteRTCVideoSinkPixelFormat | [requiredPixelFormat](#ByteRTCRemoteVideoSinkConfig-requiredpixelformat) |
 | ByteRTCVideoApplyRotation | [applyRotation](#ByteRTCRemoteVideoSinkConfig-applyrotation) |
 | ByteRTCVideoRenderMirrorType | [mirrorType](#ByteRTCRemoteVideoSinkConfig-mirrortype) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteVideoSinkConfig-position"></span>
@@ -3687,7 +3879,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoSinkConfig : NSObject
 ```
 是否将视频帧镜像。参看 [ByteRTCVideoRenderMirrorType](#ByteRTCVideoRenderMirrorType)，默认为不镜像。
 
-本设置与 [setRemoteVideoMirrorType:withMirrorType:](macOS-api#ByteRTCVideo-setremotevideomirrortype-withmirrortype)（适用于内部渲染）相互独立。
+本设置与 [setRemoteVideoMirrorType:withMirrorType:](macOS-api.md#ByteRTCVideo-setremotevideomirrortype-withmirrortype)（适用于内部渲染）相互独立。
 
 
 <span id="ByteRTCVideoOutputOrientationMode"></span>
@@ -3702,11 +3894,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoOutputOrientationModeAdaptative | 0 | 自适应布局 |
 | ByteRTCVideoOutputOrientationModeFixedLandscape | 1 | 横屏布局 |
 | ByteRTCVideoOutputOrientationModeFixedPortrait | 2 | 竖屏布局 |
+
 
 <span id="ByteRTCLocalVideoRenderPosition"></span>
 # ByteRTCLocalVideoRenderPosition
@@ -3720,10 +3914,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalVideoRenderPositionAfterCapture | 0 | 采集后。 |
 | ByteRTCLocalVideoRenderPositionAfterPreprocess | 1 | （默认值）前处理后。 |
+
 
 <span id="ByteRTCRemoteVideoStateChangeReason"></span>
 # ByteRTCRemoteVideoStateChangeReason
@@ -3737,6 +3933,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteVideoStateChangeReasonInternal | 0 | 内部原因 |
@@ -3747,6 +3944,7 @@ typedef NS_ENUM(
 | ByteRTCRemoteVideoStateChangeReasonRemoteMuted | 5 | 远端用户停止发送视频流或远端用户禁用视频模块 |
 | ByteRTCRemoteVideoStateChangeReasonRemoteUnmuted | 6 | 远端用户恢复发送视频流或远端用户启用视频模块 |
 | ByteRTCRemoteVideoStateChangeReasonRemoteOffline | 7 | 远端用户离开房间 |
+
 
 <span id="ByteRTCVideoStreamType"></span>
 # ByteRTCVideoStreamType
@@ -3762,10 +3960,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoStreamTypeHigh | 0 | 高分辨率视频流 |
 | ByteRTCVideoStreamTypeLow | 1 | 低分辨率视频 |
+
 
 <span id="ByteRTCMixedStreamVideoCodecType"></span>
 # ByteRTCMixedStreamVideoCodecType
@@ -3779,10 +3979,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamVideoCodecTypeH264 | 0 | H.264 格式，默认值。 |
 | ByteRTCMixedStreamVideoCodecTypeByteVC1 | 1 | ByteVC1 格式。 |
+
 
 <span id="ByteRTCFirstFramePlayState"></span>
 # ByteRTCFirstFramePlayState
@@ -3796,11 +3998,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCFirstFramePlayStatePlaying | 0 | 播放中 |
 | ByteRTCFirstFramePlayStatePlay | 1 | 播放成功 |
 | ByteRTCFirstFramePlayStateEnd | 2 | 播放失败 |
+
 
 <span id="ByteRTCAVSyncState"></span>
 # ByteRTCAVSyncState
@@ -3814,11 +4018,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAVSyncStateAVStreamSyncBegin | 0 | 音视频开始同步 |
 | ByteRTCAVSyncStateAudioStreamRemove | 1 | 音视频同步过程中音频移除，但不影响当前的同步关系 |
 | ByteRTCAVSyncStateVideoStreamRemove | 2 | 音视频同步过程中视频移除，但不影响当前的同步关系 |
+
 
 <span id="ByteRTCPauseResumControlMediaType"></span>
 # ByteRTCPauseResumControlMediaType
@@ -3832,11 +4038,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCControlMediaTypeAudio | 0 | 只控制音频，不影响视频 |
 | ByteRtcControlMediaTypeVideo | 1 | 只控制视频，不影响音频 |
 | ByteRtcControlMediaTypeAudioAndVideo | 2 | 同时控制音频和视频 |
+
 
 <span id="ByteRTCVideoCaptureConfig"></span>
 # ByteRTCVideoCaptureConfig
@@ -3847,11 +4055,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCaptureConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCVideoCapturePreference | [preference](#ByteRTCVideoCaptureConfig-preference) |
 | CGSize | [videoSize](#ByteRTCVideoCaptureConfig-videosize) |
 | NSInteger | [frameRate](#ByteRTCVideoCaptureConfig-framerate) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoCaptureConfig-preference"></span>
@@ -3887,10 +4097,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCUser : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString* | [userId](#ByteRTCUser-userid) |
 | NSString* | [metaData](#ByteRTCUser-metadata) |
+
 
 ## 变量说明
 <span id="ByteRTCUser-userid"></span>
@@ -3921,10 +4133,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCPerformanceAlarmModeNormal | 0 | 未开启发布性能回退 |
 | ByteRTCPerformanceAlarmModeSimulcast | 1 | 已开启发布性能回退 |
+
 
 <span id="ByteRTCRemoteStreamSwitchEvent"></span>
 # ByteRTCRemoteStreamSwitchEvent
@@ -3935,6 +4149,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamSwitchEvent : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [uid](#ByteRTCRemoteStreamSwitchEvent-uid) |
@@ -3944,6 +4159,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamSwitchEvent : NSObject
 | BOOL | [beforeVideoEnabled](#ByteRTCRemoteStreamSwitchEvent-beforevideoenabled) |
 | BOOL | [afterVideoEnabled](#ByteRTCRemoteStreamSwitchEvent-aftervideoenabled) |
 | ByteRTCFallbackOrRecoverReason | [reason](#ByteRTCRemoteStreamSwitchEvent-reason) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteStreamSwitchEvent-uid"></span>
@@ -4015,6 +4231,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [audioLossRate](#ByteRTCLocalAudioStats-audiolossrate) |
@@ -4025,6 +4242,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioStats : NSObject
 | NSInteger | [numChannels](#ByteRTCLocalAudioStats-numchannels) |
 | NSInteger | [sentSampleRate](#ByteRTCLocalAudioStats-sentsamplerate) |
 | NSInteger | [jitter](#ByteRTCLocalAudioStats-jitter) |
+
 
 ## 变量说明
 <span id="ByteRTCLocalAudioStats-audiolossrate"></span>
@@ -4105,10 +4323,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioAlignmentModeOff | 0 | 不对齐 |
 | ByteRTCAudioAlignmentModeAudioMixing | 1 | 远端音频流都对齐伴奏进度同步播放 |
+
 
 <span id="ByteRTCReceiveRange"></span>
 # ByteRTCReceiveRange
@@ -4119,10 +4339,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCReceiveRange : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [min](#ByteRTCReceiveRange-min) |
 | int | [max](#ByteRTCReceiveRange-max) |
+
 
 ## 变量说明
 <span id="ByteRTCReceiveRange-min"></span>
@@ -4159,11 +4381,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRecordingStateError | 0 | 录制异常 |
 | ByteRTCRecordingStateProcessing | 1 | 录制进行中 |
 | ByteRTCRecordingStateSuccess | 2 | 录制文件保存成功，调用 `stopFileRecording:` 结束录制之后才会收到该状态码。 |
+
 
 <span id="ByteRTCFaceDetectionResult"></span>
 # ByteRTCFaceDetectionResult
@@ -4174,6 +4398,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [detectResult](#ByteRTCFaceDetectionResult-detectresult) |
@@ -4182,6 +4407,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
 | NSArray<ByteRTCRectangle*\>*_Nullable | [faces](#ByteRTCFaceDetectionResult-faces) |
 | CMTime | [frameTimestamp](#ByteRTCFaceDetectionResult-frametimestamp) |
 
+
 ## 变量说明
 <span id="ByteRTCFaceDetectionResult-detectresult"></span>
 ### detectResult
@@ -4189,6 +4415,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCFaceDetectionResult : NSObject
 @property(assign, nonatomic) int detectResult;
 ```
 人脸检测结果
+
 - 0：检测成功
 - !0：检测失败。详见[错误码](https://www.volcengine.com/docs/6705/102042)。
 
@@ -4234,12 +4461,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoByteWatermark: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [x](#ByteRTCVideoByteWatermark-x) |
 | float | [y](#ByteRTCVideoByteWatermark-y) |
 | float | [width](#ByteRTCVideoByteWatermark-width) |
 | float | [height](#ByteRTCVideoByteWatermark-height) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoByteWatermark-x"></span>
@@ -4283,11 +4512,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCStreamSycnInfoConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCStreamIndex | [streamIndex](#ByteRTCStreamSycnInfoConfig-streamindex) |
 | int | [repeatCount](#ByteRTCStreamSycnInfoConfig-repeatcount) |
 | ByteRTCSyncInfoStreamType | [streamType](#ByteRTCStreamSycnInfoConfig-streamtype) |
+
 
 ## 变量说明
 <span id="ByteRTCStreamSycnInfoConfig-streamindex"></span>
@@ -4323,6 +4554,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCView*_Nullable | [view](#ByteRTCEchoTestConfig-view) |
@@ -4332,6 +4564,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
 | BOOL | [enableAudio](#ByteRTCEchoTestConfig-enableaudio) |
 | BOOL | [enableVideo](#ByteRTCEchoTestConfig-enablevideo) |
 | NSInteger | [audioReportInterval](#ByteRTCEchoTestConfig-audioreportinterval) |
+
 
 ## 变量说明
 <span id="ByteRTCEchoTestConfig-view"></span>
@@ -4372,9 +4605,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
 @property(assign, nonatomic) BOOL enableAudio;
 ```
 是否检测音频。检测设备为系统默认音频设备。
+
 - true：是
   - 若使用 SDK 内部采集，此时设备麦克风会自动开启，并在 audioReportInterval 值大于 0 时触发 `onLocalAudioPropertiesReport` 回调，你可以根据该回调判断麦克风的工作状态
-  - 若使用自定义采集，此时你需调用 [pushExternalAudioFrame:](macOS-api#ByteRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK
+  - 若使用自定义采集，此时你需调用 [pushExternalAudioFrame:](macOS-api.md#ByteRTCVideo-pushexternalaudioframe) 将采集到的音频推送给 SDK
 - false：否
 
 
@@ -4384,9 +4618,10 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
 @property(assign, nonatomic) BOOL enableVideo;
 ```
 是否检测视频。PC 端默认检测列表中第一个视频设备。
+
 - true：是
   - 若使用 SDK 内部采集，此时设备摄像头会自动开启
-  - 若使用自定义采集，此时你需调用 [pushExternalVideoFrame:](macOS-api#ByteRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK
+  - 若使用自定义采集，此时你需调用 [pushExternalVideoFrame:](macOS-api.md#ByteRTCVideo-pushexternalvideoframe) 将采集到的视频推送给 SDK
 - false：否 视频的发布参数固定为：分辨率 640px × 360px，帧率 15fps。
 
 
@@ -4396,6 +4631,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEchoTestConfig : NSObject
 @property(assign, nonatomic) NSInteger audioReportInterval;
 ```
 音量信息提示间隔，单位：ms，默认为 100ms
+
 - `<= 0`: 关闭信息提示
 - `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms
 - `> 100`: 开启信息提示，并将信息提示间隔设置为此值
@@ -4413,11 +4649,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCFrameRateRatioOrigin | 0 | 100% |
 | ByteRTCFrameRateRatioHalf | 1 | 50% |
 | ByteRTCFrameRateRatioQuater | 2 | 25% |
+
 
 <span id="ByteRTCMixedStreamRenderMode"></span>
 # ByteRTCMixedStreamRenderMode
@@ -4431,11 +4669,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamRenderModeHidden | 1 | 视窗填满优先，默认值。<br>视频尺寸等比缩放，直至视窗被填满。当视频尺寸与显示窗口尺寸不一致时，多出的视频将被截掉。 |
 | ByteRTCMixedStreamRenderModeFit | 2 | 视频帧内容全部显示优先。<br>视频尺寸等比缩放，优先保证视频内容全部显示。当视频尺寸与显示窗口尺寸不一致时，会把窗口未被填满的区域填充成背景颜色。 |
 | ByteRTCMixedStreamRenderModeAdaptive | 3 | 视频帧自适应画布。<br>视频尺寸非等比例缩放，把窗口充满。在此过程中，视频帧的长宽比例可能会发生变化。 |
+
 
 <span id="ByteRTCMirrorType"></span>
 # ByteRTCMirrorType
@@ -4449,11 +4689,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMirrorTypeNone | 0 | 本地预览和编码传输时均无镜像效果 |
 | ByteRTCMirrorTypeRender | 1 | 本地预览时有镜像效果，编码传输时无镜像效果 |
 | ByteRTCMirrorTypeRenderAndEncoder | 3 | 本地预览和编码传输时均有镜像效果 |
+
 
 <span id="ByteRTCForwardStreamError"></span>
 # ByteRTCForwardStreamError
@@ -4467,6 +4709,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCForwardStreamErrorOK | 0 | 正常 |
@@ -4475,6 +4718,7 @@ typedef NS_ENUM(
 | ByteRTCForwardStreamErrorResponse | 1203 | 服务端异常 |
 | ByteRTCForwardStreamErrorRemoteKicked | 1204 | 目标房间有相同 user id 的用户加入，转发中断 |
 | ByteRTCForwardStreamErrorNotSupport | 1205 | 服务端不支持转发功能 |
+
 
 <span id="ByteRTCReturnStatus"></span>
 # ByteRTCReturnStatus
@@ -4488,6 +4732,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCReturnStatusSuccess | 0 | 成功。 |
@@ -4513,6 +4758,7 @@ typedef NS_ENUM(
 | ByteRTCReturnStatusAudioDeviceStartFailed | -109 | 系统错误，设备开启失败。 |
 | ByteRTCReturnStatusNativeInValid | -201 | 失败。底层未初始化，engine 无效。 |
 
+
 <span id="ByteRTCAudioMixingType"></span>
 # ByteRTCAudioMixingType
 ```objectivec
@@ -4525,11 +4771,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioMixingTypePlayout | 0 | 仅本地播放 |
 | ByteRTCAudioMixingTypePublish | 1 | 仅远端播放 |
 | ByteRTCAudioMixingTypePlayoutAndPublish | 2 | 本地和远端同时播放 |
+
 
 <span id="ByteRTCVideoEnhancementMode"></span>
 # ByteRTCVideoEnhancementMode
@@ -4543,10 +4791,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoEnhancementModeDisabled | 0 | 关闭弱光适应 |
 | ByteRTCVideoEnhancementModeAuto | 1 | 开启弱光适应 |
+
 
 <span id="ByteRTCSubscribeMediaType"></span>
 # ByteRTCSubscribeMediaType
@@ -4560,12 +4810,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSubscribeMediaTypeNone | 0 | 既不订阅音频，也不订阅视频 |
 | ByteRTCSubscribeMediaTypeAudioOnly | 1 | 只订阅音频，不订阅视频 |
 | ByteRTCSubscribeMediaTypeVideoOnly | 2 | 只订阅视频，不订阅音频 |
 | ByteRTCSubscribeMediaTypeAudioAndVideo | 3 | 同时订阅音频和视频 |
+
 
 <span id="ByteRTCPushSingleStreamParam"></span>
 # ByteRTCPushSingleStreamParam
@@ -4576,12 +4828,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPushSingleStreamParam : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*_Nullable | [url](#ByteRTCPushSingleStreamParam-url) |
 | NSString*  | [roomId](#ByteRTCPushSingleStreamParam-roomid) |
 | NSString*_Nullable | [userId](#ByteRTCPushSingleStreamParam-userid) |
 | BOOL | [isScreen](#ByteRTCPushSingleStreamParam-isscreen) |
+
 
 ## 变量说明
 <span id="ByteRTCPushSingleStreamParam-url"></span>
@@ -4630,6 +4884,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaDeviceWarningOK | 0 | 无警告 |
@@ -4637,6 +4892,7 @@ typedef NS_ENUM(
 | ByteRTCMediaDeviceWarningCaptureSilence | 2 | 采集到的数据为静音帧。 |
 | ByteRTCMediaDeviceWarningDetectLeakEcho | 11 | 通话中出现回声现象。<br>当 [ByteRTCRoomProfile](#ByteRTCRoomProfile) 为 `ByteRTCRoomProfileMeeting` 和 `ByteRTCRoomProfileMeetingRoom` ，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过 `rtcEngine:onAudioDeviceWarning:deviceType:deviceWarning:` 返回本枚举值。 |
 | ByteRTCMediaDeviceWarningCaptureDetectHowling | 16 | 啸叫。触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。<br>仅 ByteRTCRoomProfileCommunication、ByteRTCRoomProfileMeeting、ByteRTCRoomProfileMeetingRoom 三种房间模式支持啸叫抑制。<br>建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。 |
+
 
 <span id="ByteRTCExpressionDetectConfig"></span>
 # ByteRTCExpressionDetectConfig
@@ -4647,6 +4903,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [enableAgeDetect](#ByteRTCExpressionDetectConfig-enableagedetect) |
@@ -4654,6 +4911,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectConfig : NSObject
 | BOOL | [enableEmotionDetect](#ByteRTCExpressionDetectConfig-enableemotiondetect) |
 | BOOL | [enableAttractivenessDetect](#ByteRTCExpressionDetectConfig-enableattractivenessdetect) |
 | BOOL | [enableHappinessDetect](#ByteRTCExpressionDetectConfig-enablehappinessdetect) |
+
 
 ## 变量说明
 <span id="ByteRTCExpressionDetectConfig-enableagedetect"></span>
@@ -4708,11 +4966,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioReportModeNormal | 0 | 默认始终开启音量回调。 |
 | ByteRTCAudioReportModeDisconnect | 1 | 可见用户进房并停止推流后，关闭音量回调。 |
 | ByteRTCAudioReportModeReset | 2 | 可见用户进房并停止推流后，开启音量回调，回调值重置为 0。 |
+
 
 <span id="ByteRTCTranscodingClientMixParam"></span>
 # ByteRTCTranscodingClientMixParam
@@ -4725,11 +4985,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingClientMixParam : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [clientMixUseOriginalFrame](#ByteRTCTranscodingClientMixParam-clientmixuseoriginalframe) |
 | BOOL | [clientMixUseAudioMixer](#ByteRTCTranscodingClientMixParam-clientmixuseaudiomixer) |
 | ByteRTCClientMixVideoFormat | [clientMixVideoFormat](#ByteRTCTranscodingClientMixParam-clientmixvideoformat) |
+
 
 ## 变量说明
 <span id="ByteRTCTranscodingClientMixParam-clientmixuseoriginalframe"></span>
@@ -4765,11 +5027,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSourceWantedData : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCSourceWantedData-width) |
 | NSInteger | [height](#ByteRTCSourceWantedData-height) |
 | NSInteger | [frameRate](#ByteRTCSourceWantedData-framerate) |
+
 
 ## 变量说明
 <span id="ByteRTCSourceWantedData-width"></span>
@@ -4805,12 +5069,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLogConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [logPath](#ByteRTCLogConfig-logpath) |
 | ByteRTCLocalLogLevel | [logLevel](#ByteRTCLogConfig-loglevel) |
 | int | [logFileSize](#ByteRTCLogConfig-logfilesize) |
 | NSString*  | [logFilenamePrefix](#ByteRTCLogConfig-logfilenameprefix) |
+
 
 ## 变量说明
 <span id="ByteRTCLogConfig-logpath"></span>
@@ -4839,6 +5105,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLogConfig : NSObject
 若 `logFileSize` < 1，取 1 MB。若 `logFileSize` \> 100，取 100 MB。
 
 其中，单个日志文件最大为 2 MB：
+
 - 若 1 ≤ `logFileSize` ≤ 2，则会生成一个日志文件。
 - 若 `logFileSize` \> 2，假设 `logFileSize/2` 的整数部分为 N，则前 N 个文件，每个文件会写满 2 MB，第 N+1 个文件大小不超过 `logFileSize mod 2` ，否则会删除最老的文件，以此类推。
 
@@ -4862,6 +5129,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamRegion : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [userId](#ByteRTCPublicStreamRegion-userid) |
@@ -4877,6 +5145,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamRegion : NSObject
 | NSInteger | [streamType](#ByteRTCPublicStreamRegion-streamtype) |
 | ByteRTCRenderMode | [renderMode](#ByteRTCPublicStreamRegion-rendermode) |
 | ByteRTCSourceCropInfo*  | [sourceCrop](#ByteRTCPublicStreamRegion-sourcecrop) |
+
 
 ## 变量说明
 <span id="ByteRTCPublicStreamRegion-userid"></span>
@@ -5006,10 +5275,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [videoIndex](#ByteRTCSubscribeVideoConfig-videoindex) |
 | NSInteger | [priority](#ByteRTCSubscribeVideoConfig-priority) |
+
 
 ## 变量说明
 <span id="ByteRTCSubscribeVideoConfig-videoindex"></span>
@@ -5019,7 +5290,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoConfig : NSObject
 ```
 订阅的视频流分辨率下标。
 
-当远端用户通过调用 [enableSimulcastMode:](macOS-api#ByteRTCVideo-enablesimulcastmode) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。
+当远端用户通过调用 [enableSimulcastMode:](macOS-api.md#ByteRTCVideo-enablesimulcastmode) 方法启动发布多路不同分辨率的视频流时，本地用户需通过此参数指定希望订阅的流。
 
 默认值为 0，即订阅第一路流。
 
@@ -5043,9 +5314,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCNetworkTimeInfo: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int64_t | [timestamp](#ByteRTCNetworkTimeInfo-timestamp) |
+
 
 ## 变量说明
 <span id="ByteRTCNetworkTimeInfo-timestamp"></span>
@@ -5065,10 +5338,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioPropertiesInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCRemoteStreamKey*  | [streamKey](#ByteRTCRemoteAudioPropertiesInfo-streamkey) |
 | ByteRTCAudioPropertiesInfo*  | [audioPropertiesInfo](#ByteRTCRemoteAudioPropertiesInfo-audiopropertiesinfo) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteAudioPropertiesInfo-streamkey"></span>
@@ -5101,9 +5376,11 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCTranscodingAudioCodecAAC | 0 | AAC 格式。 |
+
 
 <span id="ByteRTCSubtitleMessage"></span>
 # ByteRTCSubtitleMessage
@@ -5114,6 +5391,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleMessage : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [userId](#ByteRTCSubtitleMessage-userid) |
@@ -5122,6 +5400,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleMessage : NSObject
 | NSInteger | [mode](#ByteRTCSubtitleMessage-mode) |
 | NSInteger | [sequence](#ByteRTCSubtitleMessage-sequence) |
 | BOOL | [definite](#ByteRTCSubtitleMessage-definite) |
+
 
 ## 变量说明
 <span id="ByteRTCSubtitleMessage-userid"></span>
@@ -5184,10 +5463,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVirtualBackgroundSourceTypeColor | 0 | 使用纯色背景替换视频原有背景。 |
 | ByteRTCVirtualBackgroundSourceTypeImage | 1 | 使用自定义图片替换视频原有背景。 |
+
 
 <span id="ByteRTCAudioPropertiesInfo"></span>
 # ByteRTCAudioPropertiesInfo
@@ -5198,6 +5479,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [linearVolume](#ByteRTCAudioPropertiesInfo-linearvolume) |
@@ -5206,6 +5488,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 | NSArray<NSNumber*\>*  | [spectrum](#ByteRTCAudioPropertiesInfo-spectrum) |
 | NSInteger | [voicePitch](#ByteRTCAudioPropertiesInfo-voicepitch) |
 
+
 ## 变量说明
 <span id="ByteRTCAudioPropertiesInfo-linearvolume"></span>
 ### linearVolume
@@ -5213,6 +5496,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 @property(assign, nonatomic) NSInteger linearVolume;
 ```
 线性音量，与原始音量呈线性关系，数值越大，音量越大。取值范围是：[0,255]。
+
 - \[0, 25]: 无声
 - \[26, 75]: 低音量
 - \[76, 204]: 中音量
@@ -5225,6 +5509,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 @property(assign, nonatomic) NSInteger nonlinearVolume;
 ```
 非线性音量。由原始音量的对数值转化而来，因此在中低音量时更灵敏，可以用作 Active Speaker（房间内最活跃用户）的识别。取值范围是：[-127，0]，单位 dB。
+
 - \[-127, -60]: 无声
 - \[-59, -40]: 低音量
 - \[-39, -20]: 中音量
@@ -5237,6 +5522,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 @property(assign, nonatomic) NSInteger vad;
 ```
 人声检测（VAD）结果
+
 - 1: 检测到人声。
 - 0: 未检测到人声。
 - -1: 未开启 VAD。
@@ -5258,7 +5544,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesInfo : NSObject
 本地用户的人声基频，单位为赫兹。
 
 同时满足以下两个条件时，返回的值为本地用户的人声基频：
-- 调用 [enableAudioPropertiesReport:](macOS-api#ByteRTCVideo-enableaudiopropertiesreport)，并设置参数 enableVoicePitch 的值为 `true`。
+
+- 调用 [enableAudioPropertiesReport:](macOS-api.md#ByteRTCVideo-enableaudiopropertiesreport)，并设置参数 enableVoicePitch 的值为 `true`。
 - 本地采集的音频中包含本地用户的人声。 其他情况下返回 `0`。
 
 
@@ -5274,10 +5561,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLogoutReasonLogout | 0 | 用户主动退出<br>用户调用 `logout` 接口登出，或者销毁引擎登出。 |
 | ByteRTCLogoutReasonDuplicateLogin | 1 | 用户被动退出<br>另一个用户以相同 UserId 进行了 `login`，导致本端用户被踢出。 |
+
 
 <span id="ByteRTCMixedStreamLayoutConfig"></span>
 # ByteRTCMixedStreamLayoutConfig
@@ -5288,12 +5577,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamLayoutConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [backgroundColor](#ByteRTCMixedStreamLayoutConfig-backgroundcolor) |
 | NSArray<ByteRTCMixedStreamLayoutRegionConfig*\>*  | [regions](#ByteRTCMixedStreamLayoutConfig-regions) |
 | NSString*  | [userConfigExtraInfo](#ByteRTCMixedStreamLayoutConfig-userconfigextrainfo) |
 | NSString*  | [backgroundImageUrl](#ByteRTCMixedStreamLayoutConfig-backgroundimageurl) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamLayoutConfig-backgroundcolor"></span>
@@ -5345,11 +5636,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoWatermarkConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [visibleInPreview](#ByteRTCVideoWatermarkConfig-visibleinpreview) |
 | ByteRTCVideoByteWatermark*  | [positionInLandscapeMode](#ByteRTCVideoWatermarkConfig-positioninlandscapemode) |
 | ByteRTCVideoByteWatermark*  | [positionInPortraitMode](#ByteRTCVideoWatermarkConfig-positioninportraitmode) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoWatermarkConfig-visibleinpreview"></span>
@@ -5388,10 +5681,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamPushModeOnStream | 0 | 无用户发布媒体流时，发起合流任务无效。默认设置。<br>当有用户发布媒体流时，才能发起合流任务。 |
 | ByteRTCMixedStreamPushModeOnStartRequest | 1 | 无用户发布媒体流时，可以使用占位图发起合流任务。<br>占位图设置参看 [alternateImageUrl](#ByteRTCMixedStreamLayoutRegionConfig-alternateimageurl) 和 [alternateImageFillMode](#ByteRTCMixedStreamLayoutRegionConfig-alternateimagefillmode) |
+
 
 <span id="ByteRTCLocalVideoStats"></span>
 # ByteRTCLocalVideoStats
@@ -5406,6 +5701,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [sentKBitrate](#ByteRTCLocalVideoStats-sentkbitrate) |
@@ -5423,6 +5719,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalVideoStats : NSObject
 | ByteRTCVideoCodecType | [codecType](#ByteRTCLocalVideoStats-codectype) |
 | BOOL | [isScreen](#ByteRTCLocalVideoStats-isscreen) |
 | NSInteger | [jitter](#ByteRTCLocalVideoStats-jitter) |
+
 
 ## 变量说明
 <span id="ByteRTCLocalVideoStats-sentkbitrate"></span>
@@ -5556,6 +5853,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString* | [userId](#ByteRTCStream-userid) |
@@ -5565,6 +5863,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 | NSArray<ByteRTCVideoSolution*\>* | [videoStreamDescriptions](#ByteRTCStream-videostreamdescriptions) |
 | ByteRTCVideoSolution* | [maxVideoStreamDescription](#ByteRTCStream-maxvideostreamdescription) |
 | ByteRTCStreamIndex | [index](#ByteRTCStream-index) |
+
 
 ## 变量说明
 <span id="ByteRTCStream-userid"></span>
@@ -5606,7 +5905,7 @@ BYTERTC_APPLE_EXPORT @protocol ByteRTCStream <NSObject>
 ```
 视频流的分辨率信息。
 
-当远端用户调用 [setVideoEncoderConfig:](macOS-api#ByteRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
+当远端用户调用 [setVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法发布多个配置的视频流时，此处会包含该用户发布的所有视频流的属性信息。
 
 参看 [ByteRTCVideoSolution](#ByteRTCVideoSolution)。
 
@@ -5634,15 +5933,19 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreaming : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCPublicStreamLayout*  | [layout](#ByteRTCPublicStreaming-layout) |
 | ByteRTCPublicStreamVideoConfig*  | [video](#ByteRTCPublicStreaming-video) |
 
+
 ## 静态函数
+
 | 返回 | 名称 |
 | --- | --- |
 | instancetype   | [defaultPublicStreaming](#ByteRTCPublicStreaming-defaultpublicstreaming) |
+
 
 ## 变量说明
 <span id="ByteRTCPublicStreaming-layout"></span>
@@ -5665,6 +5968,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreaming : NSObject
 <span id="ByteRTCPublicStreaming-defaultpublicstreaming"></span>
 ### defaultPublicStreaming
 ```objectivec
+
 + (instancetype _Nonnull)defaultPublicStreaming;
 ```
 获取默认的公共流转码配置属性。
@@ -5687,11 +5991,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCScreenMediaTypeVideoOnly | 0 | 只采集视频数据 |
 | ByteRTCScreenMediaTypeAudioOnly | 1 | 只采集音频数据 |
 | ByteRTCScreenMediaTypeVideoAndAudio | 2 | 音视频数据都采集 |
+
 
 <span id="ByteRTCAudioRecordingConfig"></span>
 # ByteRTCAudioRecordingConfig
@@ -5702,6 +6008,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [absoluteFileName](#ByteRTCAudioRecordingConfig-absolutefilename) |
@@ -5709,6 +6016,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
 | ByteRTCAudioSampleRate | [sampleRate](#ByteRTCAudioRecordingConfig-samplerate) |
 | ByteRTCAudioChannel | [channel](#ByteRTCAudioRecordingConfig-channel) |
 | ByteRTCAudioQuality | [quality](#ByteRTCAudioRecordingConfig-quality) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioRecordingConfig-absolutefilename"></span>
@@ -5749,6 +6057,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
 录音音频声道。参看 [ByteRTCAudioChannel](#ByteRTCAudioChannel)。
 
 如果录制时设置的的音频声道数与采集时的音频声道数不同：
+
 - 如果采集的声道数为 1，录制的声道数为 2，那么，录制的音频为经过单声道数据拷贝后的双声道数据，而不是立体声。
 - 如果采集的声道数为 2，录制的声道数为 1，那么，录制的音频为经过双声道数据混合后的单声道数据。
 
@@ -5761,6 +6070,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioRecordingConfig : NSObject
 录音音质。仅在录制文件格式为 .aac 时可以设置。参看 [ByteRTCAudioQuality](#ByteRTCAudioQuality)。
 
 采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是：
+
 - 低音质：1.2MB；
 - 【默认】中音质：2MB；
 - 高音质：3.75MB；
@@ -5779,12 +6089,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioFrameCallbackRecord | 0 | 本地麦克风录制的音频数据回调 |
 | ByteRTCAudioFrameCallbackPlayback | 1 | 订阅的远端所有用户混音后的音频数据回调 |
 | ByteRTCAudioFrameCallbackMixed | 2 | 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调 |
 | ByteRTCAudioFrameCallbackRemoteUser | 3 | 订阅的远端每个用户混音前的音频数据回调 |
+
 
 <span id="ByteRTCMixedStreamAlternateImageFillMode"></span>
 # ByteRTCMixedStreamAlternateImageFillMode
@@ -5798,10 +6110,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamAlternateImageFillModeFit | 0 | 占位图跟随用户原始视频帧相同的比例缩放。默认设置。 |
 | ByteRTCMixedStreamAlternateImageFillModeFill | 1 | 占位图不跟随用户原始视频帧相同的比例缩放，保持图片原有比例。 |
+
 
 <span id="ByteRTCTranscoderLayoutRegionType"></span>
 # ByteRTCTranscoderLayoutRegionType
@@ -5817,10 +6131,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCTranscoderLayoutRegionTypeVideoStream | 0 | 合流布局区域类型为视频。 |
 | ByteRTCTranscoderLayoutRegionTypeImage | 1 | 合流布局区域类型为图片。 |
+
 
 <span id="ByteRTCNetworkQuality"></span>
 # ByteRTCNetworkQuality
@@ -5834,6 +6150,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCNetworkQualityUnknown | 0 | 网络质量未知。 |
@@ -5843,6 +6160,7 @@ typedef NS_ENUM(
 | ByteRTCNetworkQualityBad | 4 | 勉强能沟通但不顺畅。 |
 | ByteRTCNetworkQualityVeryBad | 5 | 网络质量非常差，基本不能沟通。 |
 | ByteRTCNetworkQualityDown | 6 | 网络连接断开，无法通话。网络可能由于 12s 内无应答、开启飞行模式、拔掉网线等原因断开。<br>更多网络状态信息参见 [连接状态提示](https://www.volcengine.com/docs/6348/95376)。 |
+
 
 <span id="ByteRTCStreamRemoveReason"></span>
 # ByteRTCStreamRemoveReason
@@ -5856,6 +6174,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCStreamRemoveReasonUnpublish | 0 | 远端用户停止发布流。 |
@@ -5866,6 +6185,7 @@ typedef NS_ENUM(
 | ByteRTCStreamRemoveReasonOther | 5 | 其他原因。 |
 | ByteRTCStreamRemoveReasonPublishPrivilegeExpired | 6 | 远端用户 Token 发布权限过期。 |
 
+
 <span id="ByteRTCForwardStreamStateInfo"></span>
 # ByteRTCForwardStreamStateInfo
 ```objectivec
@@ -5875,11 +6195,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCForwardStreamStateInfo: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*_Nullable | [roomId](#ByteRTCForwardStreamStateInfo-roomid) |
 | ByteRTCForwardStreamState | [state](#ByteRTCForwardStreamStateInfo-state) |
 | ByteRTCForwardStreamError | [error](#ByteRTCForwardStreamStateInfo-error) |
+
 
 ## 变量说明
 <span id="ByteRTCForwardStreamStateInfo-roomid"></span>
@@ -5917,12 +6239,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSourceCropInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | CGFloat | [locationX](#ByteRTCSourceCropInfo-locationx) |
 | CGFloat | [locationY](#ByteRTCSourceCropInfo-locationy) |
 | CGFloat | [widthProportion](#ByteRTCSourceCropInfo-widthproportion) |
 | CGFloat | [heightProportion](#ByteRTCSourceCropInfo-heightproportion) |
+
 
 ## 变量说明
 <span id="ByteRTCSourceCropInfo-locationx"></span>
@@ -5969,9 +6293,11 @@ K 歌打分维度。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMulDimSingScoringModeNote | 0 | 按照音高进行评分。 |
+
 
 <span id="ByteRTCAttenuationType"></span>
 # ByteRTCAttenuationType
@@ -5985,11 +6311,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAttenuationTypeNone | 0 | 不随距离衰减 |
 | ByteRTCAttenuationTypeLinear | 1 | 线性衰减，音量随距离增大而线性减小 |
 | ByteRTCAttenuationTypeExponential | 2 | 指数型衰减，音量随距离增大进行指数衰减 |
+
 
 <span id="ByteRTCASRErrorCode"></span>
 # ByteRTCASRErrorCode
@@ -6005,6 +6333,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCASRErrorNetworkInterrupted | -1 | 网络连接中断，服务不可用，内部会进行重连 |
@@ -6015,6 +6344,7 @@ typedef NS_ENUM(
 | ByteRTCASRErrorAPPIDNull | -6 | 应用 ID 为空 |
 | ByteRTCASRErrorClusterNull | -7 | 语音识别服务 cluster 为空 |
 | ByteRTCASRErrorOperationDenied | -8 | 语音识别服务连接失败，该版本没有语音识别功能，请联系 RTC 技术支持。 |
+
 
 <span id="ByteRTCLogLevel"></span>
 # ByteRTCLogLevel
@@ -6028,6 +6358,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLogLevelTrace | 0 | 打印 trace 级别及以上级别信息。 |
@@ -6035,6 +6366,7 @@ typedef NS_ENUM(
 | ByteRTCLogLevelInfo | 2 | 打印 info 级别及以上级别信息。 |
 | ByteRTCLogLevelWarning | 3 | 打印 warning 级别及以上级别信息。 |
 | ByteRTCLogLevelError | 4 | 打印 error 级别信息。 |
+
 
 <span id="ByteRTCRemoteVideoRenderConfig"></span>
 # ByteRTCRemoteVideoRenderConfig
@@ -6045,11 +6377,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoRenderConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCRenderMode | [renderMode](#ByteRTCRemoteVideoRenderConfig-rendermode) |
 | NSInteger | [backgroundColor](#ByteRTCRemoteVideoRenderConfig-backgroundcolor) |
 | ByteRTCVideoRotation | [renderRotation](#ByteRTCRemoteVideoRenderConfig-renderrotation) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteVideoRenderConfig-rendermode"></span>
@@ -6088,10 +6422,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioRenderTypeExternal | 0 | 自定义渲染音频 |
 | ByteRTCAudioRenderTypeInternal | 1 | RTC SDK 内部渲染音频 |
+
 
 <span id="ByteRTCVideoDeviceType"></span>
 # ByteRTCVideoDeviceType
@@ -6105,12 +6441,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoDeviceTypeUnknown | -1 | 未知视频设备 |
 | ByteRTCVideoDeviceTypeRenderDevice | 0 | 视频渲染设备类型 |
 | ByteRTCVideoDeviceTypeCaptureDevice | 1 | 视频采集设备类型 |
 | ByteRTCVideoDeviceTypeScreenCaptureDevice | 2 | 屏幕流视频设备 |
+
 
 <span id="ByteRTCVideoOrientation"></span>
 # ByteRTCVideoOrientation
@@ -6124,11 +6462,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoOrientationAdaptive | 0 | （默认）使用相机输出的原始视频帧的角度，不对视频帧进行额外旋转。 |
 | ByteRTCVideoOrientationPortrait | 1 | 固定为竖屏，将相机采集到的视频帧转换为竖屏，在整个 RTC 链路中传递竖屏帧。 |
 | ByteRTCVideoOrientationLandscape | 2 | 固定为横屏，将相机采集到的视频帧转换为横屏，在整个 RTC 链路中传递横屏帧。 |
+
 
 <span id="ByteRTCSingScoringRealtimeInfo"></span>
 # ByteRTCSingScoringRealtimeInfo
@@ -6139,6 +6479,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringRealtimeInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [currentPosition](#ByteRTCSingScoringRealtimeInfo-currentposition) |
@@ -6148,6 +6489,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSingScoringRealtimeInfo : NSObject
 | int | [sentenceScore](#ByteRTCSingScoringRealtimeInfo-sentencescore) |
 | int | [totalScore](#ByteRTCSingScoringRealtimeInfo-totalscore) |
 | int | [averageScore](#ByteRTCSingScoringRealtimeInfo-averagescore) |
+
 
 ## 变量说明
 <span id="ByteRTCSingScoringRealtimeInfo-currentposition"></span>
@@ -6218,9 +6560,11 @@ Alpha 通道相对于 RGB 通道数据的排列位置。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAlphaLayoutTop | 0 | Alpha 数据置于 RGB 数据上方。 |
+
 
 <span id="ByteRTCVideoFrameInfo"></span>
 # ByteRTCVideoFrameInfo
@@ -6231,11 +6575,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoFrameInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCVideoFrameInfo-width) |
 | NSInteger | [height](#ByteRTCVideoFrameInfo-height) |
 | ByteRTCVideoRotation | [rotation](#ByteRTCVideoFrameInfo-rotation) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoFrameInfo-width"></span>
@@ -6271,6 +6617,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureParam : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCScreenCaptureParam-width) |
@@ -6282,6 +6629,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureParam : NSObject
 | ByteRTCMouseCursorCaptureState | [mouseCursorCaptureState](#ByteRTCScreenCaptureParam-mousecursorcapturestate) |
 | NSArray<NSNumber*\>*_Nullable | [excludedWindowList](#ByteRTCScreenCaptureParam-excludedwindowlist) |
 | ByteRTCHighlightConfig*  | [highlightConfig](#ByteRTCScreenCaptureParam-highlightconfig) |
+
 
 ## 变量说明
 <span id="ByteRTCScreenCaptureParam-width"></span>
@@ -6328,6 +6676,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCScreenCaptureParam : NSObject
 范围：[0, bitrate)，当 `bitrate` < `minBitrate` 时，为适配码率模式。
 
 以下情况，设置本参数无效：
+
 - 当 `bitrate` 为 `0` 时，不对视频流进行编码发送。
 - 当 `bitrate` < `0` 时，适配码率模式。
 
@@ -6373,10 +6722,12 @@ BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemFeedbackRoomInfo: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [roomId](#ByteRTCProblemFeedbackRoomInfo-roomid) |
 | NSString*  | [userId](#ByteRTCProblemFeedbackRoomInfo-userid) |
+
 
 ## 变量说明
 <span id="ByteRTCProblemFeedbackRoomInfo-roomid"></span>
@@ -6407,6 +6758,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSetRoomExtraInfoResultSuccess | 0 | 设置房间附加信息成功 |
@@ -6421,6 +6773,7 @@ typedef NS_ENUM(
 | ByteRTCSetRoomExtraInfoResultValueTooLong | -414 | 设置失败，value 长度超过 128 字节 |
 | ByteRTCSetRoomExtraInfoResultServerError | -500 | 设置失败，服务器错误 |
 
+
 <span id="ByteRTCAudioVolumeInfo"></span>
 # ByteRTCAudioVolumeInfo
 ```objectivec
@@ -6430,11 +6783,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioVolumeInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [uid](#ByteRTCAudioVolumeInfo-uid) |
 | NSUInteger | [linearVolume](#ByteRTCAudioVolumeInfo-linearvolume) |
 | NSUInteger | [nonlinearVolume](#ByteRTCAudioVolumeInfo-nonlinearvolume) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioVolumeInfo-uid"></span>
@@ -6470,6 +6825,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalProxyInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCLocalProxyType | [localProxyType](#ByteRTCLocalProxyInfo-localproxytype) |
@@ -6477,6 +6833,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalProxyInfo : NSObject
 | int | [localProxyPort](#ByteRTCLocalProxyInfo-localproxyport) |
 | NSString*_Nullable | [localProxyUsername](#ByteRTCLocalProxyInfo-localproxyusername) |
 | NSString*_Nullable | [localProxyPassword](#ByteRTCLocalProxyInfo-localproxypassword) |
+
 
 ## 变量说明
 <span id="ByteRTCLocalProxyInfo-localproxytype"></span>
@@ -6528,6 +6885,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [appId](#ByteRTCASRConfig-appid) |
@@ -6536,6 +6894,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCASRConfig : NSObject
 | NSString*  | [secretKey](#ByteRTCASRConfig-secretkey) |
 | NSString*  | [cluster](#ByteRTCASRConfig-cluster) |
 | ByteRTCASRAuthorizationType | [authorizationType](#ByteRTCASRConfig-authorizationtype) |
+
 
 ## 变量说明
 <span id="ByteRTCASRConfig-appid"></span>
@@ -6598,11 +6957,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamMediaTypeAudioAndVideo | 0 | 输出的混流包含音频和视频 |
 | ByteRTCMixedStreamMediaTypeAudioOnly | 1 | 输出的混流只包含音频 |
 | ByteRTCMixedStreamMediaTypeVideoOnly | 2 | 输出的混流只包含视频 |
+
 
 <span id="ByteRTCTranscodingAudioConfig"></span>
 # ByteRTCTranscodingAudioConfig
@@ -6617,6 +6978,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCTranscodingAudioCodec | [codec](#ByteRTCTranscodingAudioConfig-codec) |
@@ -6624,6 +6986,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingAudioConfig : NSObject
 | NSInteger | [channels](#ByteRTCTranscodingAudioConfig-channels) |
 | NSInteger | [kBitRate](#ByteRTCTranscodingAudioConfig-kbitrate) |
 | ByteRTCAACProfile | [profile](#ByteRTCTranscodingAudioConfig-profile) |
+
 
 ## 变量说明
 <span id="ByteRTCTranscodingAudioConfig-codec"></span>
@@ -6675,10 +7038,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRecordingProgress : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | unsignedlonglong | [duration](#ByteRTCRecordingProgress-duration) |
 | unsignedlonglong | [fileSize](#ByteRTCRecordingProgress-filesize) |
+
 
 ## 变量说明
 <span id="ByteRTCRecordingProgress-duration"></span>
@@ -6709,10 +7074,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioSelectionPriorityNormal | 0 | 正常，参加音频选路 |
 | ByteRTCAudioSelectionPriorityHigh | 1 | 高优先级，跳过音频选路 |
+
 
 <span id="ByteRTCStreamMixingEvent"></span>
 # ByteRTCStreamMixingEvent
@@ -6726,6 +7093,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCStreamMixingEventStart | 1 | 请求发起转推直播任务 |
@@ -6745,6 +7113,7 @@ typedef NS_ENUM(
 | ByteRTCStreamMixingEventRequestParamError | 15 | 合流布局参数错误 |
 | ByteRTCStreamMixingEventMixImage | 16 | 合流加图片 |
 
+
 <span id="ByteRTCAudioSampleRate"></span>
 # ByteRTCAudioSampleRate
 ```objectivec
@@ -6757,6 +7126,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioSampleRateAuto | -1 | 默认设置。48000Hz。 |
@@ -6765,6 +7135,7 @@ typedef NS_ENUM(
 | ByteRTCAudioSampleRate32000 | 32000 | 32000Hz |
 | ByteRTCAudioSampleRate44100 | 44100 | 44100Hz |
 | ByteRTCAudioSampleRate48000 | 48000 | 48000Hz |
+
 
 <span id="ByteRTCAudioChannel"></span>
 # ByteRTCAudioChannel
@@ -6778,11 +7149,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioChannelAuto | -1 | 默认设置。默认值为 `2`。 |
 | ByteRTCAudioChannelMono | 1 | 单声道 |
 | ByteRTCAudioChannelStereo | 2 | 双声道 |
+
 
 <span id="ByteRTCHardwareEchoDetectionResult"></span>
 # ByteRTCHardwareEchoDetectionResult
@@ -6796,12 +7169,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCHardwareEchoDetectionCanceled | 0 | 主动调用 `stopHardwareEchoDetection` 结束流程时，未有回声检测结果。 |
 | ByteRTCHardwareEchoDetectionUnknown | 1 | 未检测出结果。建议重试，如果仍然失败请联系技术支持协助排查。 |
 | ByteRTCHardwareEchoDetectionNormal | 2 | 无回声 |
 | ByteRTCHardwareEchoDetectionPoor | 3 | 有回声。可通过 UI 建议用户使用耳机设备入会。 |
+
 
 <span id="ByteRTCEffectBeautyMode"></span>
 # ByteRTCEffectBeautyMode
@@ -6815,12 +7190,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCEffectBeautyModeWhite | 0 | 美白。 |
 | ByteRTCEffectBeautyModeSmooth | 1 | 磨皮。 |
 | ByteRTCEffectBeautyModeSharpen | 2 | 锐化。 |
 | ByteRTCEffectBeautyModeClear | 3 | 清晰，需集成 v4.4.2+ 版本的特效 SDK。 |
+
 
 <span id="ByteRTCVideoCanvas"></span>
 # ByteRTCVideoCanvas
@@ -6831,12 +7208,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoCanvas : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCView*_Nullable | [view](#ByteRTCVideoCanvas-view) |
 | ByteRTCRenderMode | [renderMode](#ByteRTCVideoCanvas-rendermode) |
 | NSInteger | [backgroundColor](#ByteRTCVideoCanvas-backgroundcolor) |
 | ByteRTCVideoRotation | [renderRotation](#ByteRTCVideoCanvas-renderrotation) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoCanvas-view"></span>
@@ -6885,12 +7264,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteAudioStateStopped | 0 | 远端音频流默认初始状态，在以下时机回调该状态：<br><ul><li>本地用户停止接收远端音频流，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonLocalMuted`</li></ul><ul><li>远端用户停止发送音频流，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonRemoteMuted`</li></ul><ul><li>远端用户离开房间，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonRemoteOffline`</li></ul> |
 | ByteRTCRemoteAudioStateStarting | 1 | 开始接收远端音频流首包。 |
 | ByteRTCRemoteAudioStateDecoding | 2 | 远端音频流正在解码，正常播放，在以下时机回调该状态：<br><ul><li>成功解码远端音频首帧，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonLocalUnmuted`</li></ul><ul><li>网络由阻塞恢复正常，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonNetworkRecovery`</li></ul><ul><li>本地用户恢复接收远端音频流，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonLocalUnmuted`</li></ul><ul><li>远端用户恢复发送音频流，对应原因是 [ByteRTCRemoteAudioStateChangeReason](#ByteRTCRemoteAudioStateChangeReason) 中的 `ByteRTCRemoteAudioStateChangeReasonRemoteUnmuted`</li></ul> |
 | ByteRTCRemoteAudioStateFrozen | 3 | 远端音频流卡顿。 |
+
 
 <span id="ByteRTCMuteState"></span>
 # ByteRTCMuteState
@@ -6904,10 +7285,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMuteStateOff | 0 | 发送 |
 | ByteRTCMuteStateOn | 1 | 停止发送 |
+
 
 <span id="ByteRTCTranscodingVideoConfig"></span>
 # ByteRTCTranscodingVideoConfig
@@ -6920,6 +7303,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingVideoConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCTranscodingVideoCodec | [codec](#ByteRTCTranscodingVideoConfig-codec) |
@@ -6930,6 +7314,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingVideoConfig : NSObject
 | NSInteger | [kBitRate](#ByteRTCTranscodingVideoConfig-kbitrate) |
 | BOOL | [bFrame](#ByteRTCTranscodingVideoConfig-bframe) |
 | BOOL | [deprecated] [lowLatency](#ByteRTCTranscodingVideoConfig-lowlatency) |
+
 
 ## 变量说明
 <span id="ByteRTCTranscodingVideoConfig-codec"></span>
@@ -7015,9 +7400,11 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoPreprocessorConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCVideoPixelFormat | [requiredPixelFormat](#ByteRTCVideoPreprocessorConfig-requiredpixelformat) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoPreprocessorConfig-requiredpixelformat"></span>
@@ -7042,6 +7429,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteAudioStateChangeReasonInternal | 0 | 内部原因 |
@@ -7053,6 +7441,7 @@ typedef NS_ENUM(
 | ByteRTCRemoteAudioStateChangeReasonRemoteUnmuted | 6 | 远端用户恢复发送音频流 |
 | ByteRTCRemoteAudioStateChangeReasonRemoteOffline | 7 | 远端用户离开房间 |
 
+
 <span id="ByteRTCPublicStreamLayout"></span>
 # ByteRTCPublicStreamLayout
 ```objectivec
@@ -7062,6 +7451,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamLayout : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [layoutMode](#ByteRTCPublicStreamLayout-layoutmode) |
@@ -7070,6 +7460,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamLayout : NSObject
 | NSString*  | [backgroundImage](#ByteRTCPublicStreamLayout-backgroundimage) |
 | NSArray<ByteRTCPublicStreamRegion*\>*  | [regions](#ByteRTCPublicStreamLayout-regions) |
 
+
 ## 变量说明
 <span id="ByteRTCPublicStreamLayout-layoutmode"></span>
 ### layoutMode
@@ -7077,6 +7468,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamLayout : NSObject
 @property(assign, nonatomic) NSInteger layoutMode;
 ```
 布局模式。可选：
+
 - `0`: 自动布局。默认值
 - `2`: 自定义布局。
 
@@ -7087,6 +7479,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamLayout : NSObject
 @property(assign, nonatomic) NSInteger interpolationMode;
 ```
 插帧模式。
+
 - `0`: 补最后一帧
 - `1`: 补背景图片，如果没有设置背景图片则补黑帧
 
@@ -7127,12 +7520,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalVideoStreamStateStopped | 0 | 本地视频默认初始状态<br>摄像头停止工作时回调该状态，对应错误码 [ByteRTCLocalVideoStreamError](#ByteRTCLocalVideoStreamError) 中的 ByteRTCLocalVideoStreamErrorOk |
 | ByteRTCLocalVideoStreamStateRecording | 1 | 本地视频录制设备启动成功<br>采集到视频首帧时回调该状态，对应错误码 [ByteRTCLocalVideoStreamError](#ByteRTCLocalVideoStreamError) 中的 ByteRTCLocalVideoStreamErrorOk |
 | ByteRTCLocalVideoStreamStateEncoding | 2 | 本地视频首帧编码成功<br>本地视频首帧编码成功时回调该状态，对应错误码 [ByteRTCLocalVideoStreamError](#ByteRTCLocalVideoStreamError) 中的 ByteRTCLocalVideoStreamErrorOk |
 | ByteRTCLocalVideoStreamStateFailed | 3 | 本地视频启动失败, 在以下时机回调该状态：<br><ul><li>本地采集设备启动失败，对应错误码 [ByteRTCLocalVideoStreamError](#ByteRTCLocalVideoStreamError) 中的 ByteRTCLocalVideoStreamErrorCaptureFailure</li></ul><ul><li>检测到没有摄像头权限，对应错误码 [ByteRTCLocalVideoStreamError](#ByteRTCLocalVideoStreamError) 中的 ByteRTCLocalVideoStreamErrorDeviceNoPermission</li></ul><ul><li>视频编码失败，对应错误码 [ByteRTCLocalVideoStreamError](#ByteRTCLocalVideoStreamError) 中的 ByteRTCLocalVideoStreamErrorEncodeFailure</li></ul> |
+
 
 <span id="ByteRTCSingScoringConfig"></span>
 # ByteRTCSingScoringConfig
@@ -7143,12 +7538,14 @@ K 歌评分配置。
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCMulDimSingScoringMode | [mode](#ByteRTCSingScoringConfig-mode) |
 | ByteRTCAudioSampleRate | [sampleRate](#ByteRTCSingScoringConfig-samplerate) |
 | NSString*  | [lyricsFilepath](#ByteRTCSingScoringConfig-lyricsfilepath) |
 | NSString*  | [midiFilepath](#ByteRTCSingScoringConfig-midifilepath) |
+
 
 ## 变量说明
 <span id="ByteRTCSingScoringConfig-mode"></span>
@@ -7195,11 +7592,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCFirstFrameSendStateSending | 0 | 发送中 |
 | ByteRTCFirstFrameSendStateSent | 1 | 发送成功 |
 | ByteRTCFirstFrameSendStateEnd | 2 | 发送失败 |
+
 
 <span id="ByteRTCRemoteMirrorType"></span>
 # ByteRTCRemoteMirrorType
@@ -7213,10 +7612,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteMirrorTypeNone | 0 | （默认值）远端视频渲染无镜像效果。 |
 | ByteRTCRemoteMirrorTypeRender | 1 | 远端视频渲染有镜像效果。 |
+
 
 <span id="ByteRTCVoiceEqualizationConfig"></span>
 # ByteRTCVoiceEqualizationConfig
@@ -7227,10 +7628,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVoiceEqualizationConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCBandFrequency | [frequency](#ByteRTCVoiceEqualizationConfig-frequency) |
 | int | [gain](#ByteRTCVoiceEqualizationConfig-gain) |
+
 
 ## 变量说明
 <span id="ByteRTCVoiceEqualizationConfig-frequency"></span>
@@ -7261,6 +7664,7 @@ SDK 与信令服务器连接状态。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCConnectionStateDisconnected | 1 | 连接断开超过 12s，此时 SDK 会尝试自动重连。 |
@@ -7270,6 +7674,7 @@ SDK 与信令服务器连接状态。
 | ByteRTCConnectionStateReconnected | 5 | 连接断开后，重连成功。 |
 | ByteRTCConnectionStateLost | 6 | 处于 `ByteRTCConnectionStateDisconnected` 状态超过 10 秒，且期间重连未成功。SDK 仍将继续尝试重连。 |
 | ByteRTCConnectionStateFailed | 7 | 连接失败，服务端状态异常。SDK 不会自动重连，请重新进房，或联系技术支持。 |
+
 
 <span id="ByteRTCFallbackOrRecoverReason"></span>
 # ByteRTCFallbackOrRecoverReason
@@ -7283,6 +7688,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCFallbackOrRecoverReasonUnknown | -1 | 其他原因，非带宽和性能原因引起的回退或恢复。默认值 |
@@ -7294,6 +7700,7 @@ typedef NS_ENUM(
 | ByteRTCFallbackOrRecoverReasonPublishFallbackByPerformance | 5 | 由性能不足导致的发布端音视频流回退。 |
 | ByteRTCFallbackOrRecoverReasonPublishRecoverByBandwidth | 6 | 由带宽恢复导致的发布端音视频流恢复。 |
 | ByteRTCFallbackOrRecoverReasonPublishRecoverByPerformance | 7 | 由性能恢复导致的发布端音视频流恢复。 |
+
 
 <span id="ByteRTCRecordingFileType"></span>
 # ByteRTCRecordingFileType
@@ -7307,10 +7714,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRecordingFileTypeAAC | 0 | aac 格式文件 |
 | ByteRTCRecordingFileTypeMP4 | 1 | mp4 格式文件 |
+
 
 <span id="ByteRTCVideoPictureType"></span>
 # ByteRTCVideoPictureType
@@ -7324,12 +7733,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoPictureTypeUnknown | 0 | 未知类型 |
 | ByteRTCVideoPictureTypeI | 1 | I 帧，关键帧，编解码不需要参考其他视频帧 |
 | ByteRTCVideoPictureTypeP | 2 | P 帧，向前参考帧，编解码需要参考前一帧视频帧 |
 | ByteRTCVideoPictureTypeB | 3 | B 帧，前后参考帧，编解码需要参考前后两帧视频帧 |
+
 
 <span id="ByteRTCVideoStreamScaleMode"></span>
 # ByteRTCVideoStreamScaleMode
@@ -7343,12 +7754,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoStreamScaleModeAuto | 0 | 自动缩放模式，默认设置为 ByteRTCVideoStreamScaleModeFitWithCropping。 |
 | ByteRTCVideoStreamScaleModeStretch | 1 | 对视频帧进行缩放，直至充满和视窗分辨率一致为止。这一过程不保证等比缩放。 |
 | ByteRTCVideoStreamScaleModeFitWithCropping | 2 | 视窗填满优先。<br>视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。 |
 | ByteRTCVideoStreamScaleModeFitWithFilling | 3 | 视频帧内容全部显示优先。<br>视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。保持纵横比来缩放图像，填充短边 |
+
 
 <span id="ByteRTCSubtitleConfig"></span>
 # ByteRTCSubtitleConfig
@@ -7359,10 +7772,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubtitleConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCSubtitleMode | [mode](#ByteRTCSubtitleConfig-mode) |
 | NSString*  | [targetLanguage](#ByteRTCSubtitleConfig-targetlanguage) |
+
 
 ## 变量说明
 <span id="ByteRTCSubtitleConfig-mode"></span>
@@ -7390,6 +7805,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCAudioMixingType | [type](#ByteRTCAudioMixingConfig-type) |
@@ -7397,6 +7813,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 | NSInteger | [position](#ByteRTCAudioMixingConfig-position) |
 | NSInteger | [callbackOnProgressInterval](#ByteRTCAudioMixingConfig-callbackonprogressinterval) |
 | BOOL | [syncProgressToRecordFrame](#ByteRTCAudioMixingConfig-syncprogresstorecordframe) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioMixingConfig-type"></span>
@@ -7413,6 +7830,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 @property(assign, nonatomic) NSInteger playCount;
 ```
 混音播放次数
+
 - play_count <= 0: 无限循环
 - play_count == 1: 播放一次（默认）
 - play_count \> 1: 播放 play_count 次
@@ -7432,6 +7850,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 @property(assign, nonatomic) NSInteger callbackOnProgressInterval;
 ```
 设置音频文件播放进度回调的时间间隔，参数为为大于 0 的 10 的倍数，单位为毫秒，设置后 SDK 将按照设置的值触发 `rtcEngine:onAudioMixingPlayingProgress:progress:` 回调，默认不回调。
+
 - 当传入的值不能被 10 整除时，则默认向上取整 10，如设为 52ms 时会默认调整为 60ms。
 - 当传入的值小于等于 0 时，不会触发进度回调。
 
@@ -7442,6 +7861,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioMixingConfig : NSObject
 @property(assign, nonatomic) BOOL syncProgressToRecordFrame;
 ```
 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+
 - 仅在单个音频文件混音时使用有效。
 - `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
 
@@ -7458,6 +7878,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoSinkPixelFormatOriginal | 0 | 原始视频帧格式 |
@@ -7465,6 +7886,7 @@ typedef NS_ENUM(
 | ByteRTCVideoSinkPixelFormatBGRA | 2 | BGRA 格式 |
 | ByteRTCVideoSinkPixelFormatRGBA | 5 | RGBA 格式, 字节序为 R8 G8 B8 A8 |
 | ByteRTCVideoSinkPixelFormatNV12 | 8 | YUV NV21 格式 |
+
 
 <span id="ByteRTCAudioMixingError"></span>
 # ByteRTCAudioMixingError
@@ -7478,6 +7900,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioMixingErrorOk | 0 | 正常 |
@@ -7486,12 +7909,13 @@ typedef NS_ENUM(
 | ByteRTCAudioMixingErrorIdNotFound | 3 | 混音 ID 异常 |
 | ByteRTCAudioMixingErrorSetPositionFailed | 4 | 设置混音文件的播放位置出错 |
 | ByteRTCAudioMixingErrorInValidVolume | 5 | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-| ByteRTCAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing:](macOS-api#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
+| ByteRTCAudioMixingErrorLoadConflict | 6 | 播放的文件与预加载的文件不一致。请先使用 [unloadAudioMixing:](macOS-api.md#ByteRTCAudioMixingManager-unloadaudiomixing) 卸载此前的文件。 |
 | ByteRTCAudioMixingErrorIdTypeNotMatch | 7 | 不支持此混音类型。 |
 | ByteRTCAudioMixingErrorInValidPitch | 8 | 设置混音文件的音调不合法 |
 | ByteRTCAudioMixingErrorInValidAudioTrack | 9 | 设置混音文件的音轨不合法 |
 | ByteRTCAudioMixingErrorIsStarting | 10 | 混音文件正在启动中 |
 | ByteRTCAudioMixingErrorInValidPlaybackSpeed | 11 | 设置混音文件的播放速度不合法 |
+
 
 <span id="ByteRTCMixedStreamSpatialAudioConfig"></span>
 # ByteRTCMixedStreamSpatialAudioConfig
@@ -7502,11 +7926,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamSpatialAudioConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [enableSpatialRender](#ByteRTCMixedStreamSpatialAudioConfig-enablespatialrender) |
 | ByteRTCPosition*_Nullable | [audienceSpatialPosition](#ByteRTCMixedStreamSpatialAudioConfig-audiencespatialposition) |
 | ByteRTCHumanOrientation*_Nullable | [audienceSpatialOrientation](#ByteRTCMixedStreamSpatialAudioConfig-audiencespatialorientation) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamSpatialAudioConfig-enablespatialrender"></span>
@@ -7550,11 +7976,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscodingSpatialConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [enableSpatialRender](#ByteRTCTranscodingSpatialConfig-enablespatialrender) |
 | ByteRTCPosition*_Nullable | [audienceSpatialPosition](#ByteRTCTranscodingSpatialConfig-audiencespatialposition) |
 | ByteRTCHumanOrientation*_Nullable | [audienceSpatialOrientation](#ByteRTCTranscodingSpatialConfig-audiencespatialorientation) |
+
 
 ## 变量说明
 <span id="ByteRTCTranscodingSpatialConfig-enablespatialrender"></span>
@@ -7596,10 +8024,12 @@ BYTERTC_APPLE_EXPORT  @interface ByteRTCProblemFeedbackInfo: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [problemDesc](#ByteRTCProblemFeedbackInfo-problemdesc) |
 | NSArray<ByteRTCProblemFeedbackRoomInfo*\>*_Nullable | [roomInfo](#ByteRTCProblemFeedbackInfo-roominfo) |
+
 
 ## 变量说明
 <span id="ByteRTCProblemFeedbackInfo-problemdesc"></span>
@@ -7627,12 +8057,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRectangle : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [x](#ByteRTCRectangle-x) |
 | int | [y](#ByteRTCRectangle-y) |
 | int | [width](#ByteRTCRectangle-width) |
 | int | [height](#ByteRTCRectangle-height) |
+
 
 ## 变量说明
 <span id="ByteRTCRectangle-x"></span>
@@ -7679,6 +8111,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCColorSpaceUnknown | 0 | - |
@@ -7686,6 +8119,7 @@ typedef NS_ENUM(
 | ByteRTCColorSpaceYCbCrBT601FullRange | 2 | BT.601 数字编码标准，颜色空间[0-255] |
 | ByteRTCColorSpaceYCbCrBT709LimitedRange | 3 | BT.7091 数字编码标准，颜色空间[16-235] |
 | ByteRTCColorSpaceYCbCrBT709FullRange | 4 | BT.7091 数字编码标准，颜色空间[0-255] |
+
 
 <span id="ByteRTCExpressionDetectResult"></span>
 # ByteRTCExpressionDetectResult
@@ -7696,11 +8130,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectResult : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [detectResult](#ByteRTCExpressionDetectResult-detectresult) |
 | int | [faceCount](#ByteRTCExpressionDetectResult-facecount) |
 | NSArray<ByteRTCExpressionDetectInfo*\>*  | [detectInfo](#ByteRTCExpressionDetectResult-detectinfo) |
+
 
 ## 变量说明
 <span id="ByteRTCExpressionDetectResult-detectresult"></span>
@@ -7709,6 +8145,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCExpressionDetectResult : NSObject
 @property (assign, nonatomic) int detectResult;
 ```
 特征识别结果
+
 - 0：识别成功
 - !0：识别失败
 
@@ -7738,6 +8175,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEncodedVideoFrame : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCVideoCodecType | [codecType](#ByteRTCEncodedVideoFrame-codectype) |
@@ -7748,6 +8186,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCEncodedVideoFrame : NSObject
 | int | [height](#ByteRTCEncodedVideoFrame-height) |
 | ByteRTCVideoRotation | [rotation](#ByteRTCEncodedVideoFrame-rotation) |
 | NSData*  | [data](#ByteRTCEncodedVideoFrame-data) |
+
 
 ## 变量说明
 <span id="ByteRTCEncodedVideoFrame-codectype"></span>
@@ -7826,6 +8265,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaDeviceTypeAudioUnknown | -1 | 未知音频设备 |
@@ -7834,6 +8274,7 @@ typedef NS_ENUM(
 | ByteRTCMediaDeviceTypeVideoCaptureDevice | 3 | 视频采集设备类型 |
 | ByteRTCMediaDeviceTypeScreenVideoCaptureDevice | 4 | 屏幕流视频设备 |
 | ByteRTCMediaDeviceTypeScreenAudioCaptureDevice | 5 | 屏幕流音频设备 |
+
 
 <span id="ByteRTCFrameUpdateInfo"></span>
 # ByteRTCFrameUpdateInfo
@@ -7844,10 +8285,12 @@ RTC 智能决策后得到的帧率和分辨率积（宽*高）。
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [pixel](#ByteRTCFrameUpdateInfo-pixel) |
 | int | [framerate](#ByteRTCFrameUpdateInfo-framerate) |
+
 
 ## 变量说明
 <span id="ByteRTCFrameUpdateInfo-pixel"></span>
@@ -7874,10 +8317,11 @@ typedef NS_ENUM(
     ByteRTCAnsMode
 )
 ```
-降噪模式。降噪算法受调用 [joinRoom:userInfo:roomConfig:](macOS-api#ByteRTCRoom-joinroom-userinfo-roomconfig) 时设置的房间模式影响。
+降噪模式。降噪算法受调用 [joinRoom:userInfo:roomConfig:](macOS-api.md#ByteRTCRoom-joinroom-userinfo-roomconfig) 时设置的房间模式影响。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAnsModeDisable | 0 | 关闭所有音频降噪能力。 |
@@ -7885,6 +8329,7 @@ typedef NS_ENUM(
 | ByteRTCAnsModeMedium | 2 | 适用于抑制中度平稳噪声，如空调声和风扇声。 |
 | ByteRTCAnsModeHigh | 3 | 适用于抑制嘈杂非平稳噪声，如键盘声、敲击声、碰撞声、动物叫声。 |
 | ByteRTCAnsModeAutomatic | 4 | 启用音频降噪能力。具体的降噪算法由 RTC 智能决策。 |
+
 
 <span id="ByteRTCMixedStreamClientMixConfig"></span>
 # ByteRTCMixedStreamClientMixConfig
@@ -7895,10 +8340,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamClientMixConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [useAudioMixer](#ByteRTCMixedStreamClientMixConfig-useaudiomixer) |
 | ByteRTCMixedStreamClientMixVideoFormat | [videoFormat](#ByteRTCMixedStreamClientMixConfig-videoformat) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamClientMixConfig-useaudiomixer"></span>
@@ -7929,11 +8376,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteUserPriorityLow | 0 | 用户优先级为低，默认值 |
 | ByteRTCRemoteUserPriorityMedium | 100 | 用户优先级为正常 |
 | ByteRTCRemoteUserPriorityHigh | 200 | 用户优先级为高 |
+
 
 <span id="ByteRTCHumanOrientation"></span>
 # ByteRTCHumanOrientation
@@ -7944,11 +8393,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCHumanOrientation : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCOrientation*  | [forward](#ByteRTCHumanOrientation-forward) |
 | ByteRTCOrientation*  | [right](#ByteRTCHumanOrientation-right) |
 | ByteRTCOrientation*  | [up](#ByteRTCHumanOrientation-up) |
+
 
 ## 变量说明
 <span id="ByteRTCHumanOrientation-forward"></span>
@@ -7987,12 +8438,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRecordingErrorCodeOk | 0 | 录制正常 |
 | ByteRTCRecordingErrorCodeNoPermission | -1 | 没有文件写权限 |
 | ByteRTCRecordingErrorCodeNotSupport | -2 | 当前版本 SDK 不支持本地录制功能，请联系技术支持人员 |
 | ByteRTCRecordingErrorCodeOther | -3 | 其他异常 |
+
 
 <span id="ByteRTCTorchState"></span>
 # ByteRTCTorchState
@@ -8006,10 +8459,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCTorchStateOff | 0 | 相机补光灯关闭 |
 | ByteRTCTorchStateOn | 1 | 相机补光灯打开 |
+
 
 <span id="ByteRTCAudioFrame"></span>
 # ByteRTCAudioFrame
@@ -8020,12 +8475,14 @@ PCM 音频帧
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSData*  | [buffer](#ByteRTCAudioFrame-buffer) |
 | int | [samples](#ByteRTCAudioFrame-samples) |
 | ByteRTCAudioChannel | [channel](#ByteRTCAudioFrame-channel) |
 | ByteRTCAudioSampleRate | [sampleRate](#ByteRTCAudioFrame-samplerate) |
+
 
 ## 变量说明
 <span id="ByteRTCAudioFrame-buffer"></span>
@@ -8075,6 +8532,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [audioLossRate](#ByteRTCRemoteAudioStats-audiolossrate) |
@@ -8096,6 +8554,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteAudioStats : NSObject
 | NSInteger | [decSampleRate](#ByteRTCRemoteAudioStats-decsamplerate) |
 | NSInteger | [decDuration](#ByteRTCRemoteAudioStats-decduration) |
 | NSInteger | [jitter](#ByteRTCRemoteAudioStats-jitter) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteAudioStats-audiolossrate"></span>
@@ -8259,11 +8718,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCOrientation : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [x](#ByteRTCOrientation-x) |
 | float | [y](#ByteRTCOrientation-y) |
 | float | [z](#ByteRTCOrientation-z) |
+
 
 ## 变量说明
 <span id="ByteRTCOrientation-x"></span>
@@ -8302,12 +8763,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCPerformanceAlarmReasonBandwidthFallback | 0 | 网络原因差，造成了发送性能回退。仅在开启发送性能回退时，会收到此原因。 |
 | ByteRTCPerformanceAlarmReasonBandwidthResumed | 1 | 网络性能恢复，发送性能回退恢复。仅在开启发送性能回退时，会收到此原因。 |
 | ByteRTCPerformanceAlarmReasonFallback | 2 | 如果未开启发送性能回退，收到此告警时，意味着性能不足；<br>如果开启了发送性能回退，收到此告警时，意味着性能不足，且已发生发送性能回退。 |
 | ByteRTCPerformanceAlarmReasonResumed | 3 | 如果未开启发送性能回退，收到此告警时，意味着性能不足已恢复；<br>如果开启了发送性能回退，收到此告警时，意味着性能不足已恢复，且已发生发送性能回退恢复。 |
+
 
 <span id="ByteRTCVideoApplyRotation"></span>
 # ByteRTCVideoApplyRotation
@@ -8321,10 +8784,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoApplyRotationDefault | -1 | （默认值）不旋转。 |
 | ByteRTCVideoApplyRotation0 | 0 | 自动转正视频，即根据视频帧的旋转角信息将视频帧旋转到 0 度。 |
+
 
 <span id="ByteRTCAACProfile"></span>
 # ByteRTCAACProfile
@@ -8340,11 +8805,13 @@ AAC 编码规格。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAACProfileLC | 0 | AAC-LC 规格，默认值。 |
 | ByteRTCAACProfileHEv1 | 1 | HE-AAC v1 规格。 |
 | ByteRTCAACProfileHEv2 | 2 | HE-AAC v2 规格。 |
+
 
 <span id="ByteRTCStreamEx"></span>
 # ByteRTCStreamEx
@@ -8355,6 +8822,7 @@ AAC 编码规格。
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString* | [userId](#ByteRTCStreamEx-userid) |
@@ -8364,6 +8832,7 @@ AAC 编码规格。
 | NSArray<ByteRTCVideoSolution*\>* | [videoStreamDescriptions](#ByteRTCStreamEx-videostreamdescriptions) |
 | ByteRTCVideoSolution* | [maxVideoStreamDescription](#ByteRTCStreamEx-maxvideostreamdescription) |
 | ByteRTCStreamIndex | [index](#ByteRTCStreamEx-index) |
+
 
 ## 变量说明
 <span id="ByteRTCStreamEx-userid"></span>
@@ -8405,7 +8874,7 @@ AAC 编码规格。
 ```
 视频流的分辨率信息，详见 [ByteRTCVideoSolution](#ByteRTCVideoSolution) 类。
 
-用户可以通过调用 [setVideoEncoderConfig:](macOS-api#ByteRTCVideo-setvideoencoderconfig) 方法在一路流中发布多个不同的视频分辨率。此参数即为流中所有分辨率的相关信息。
+用户可以通过调用 [setVideoEncoderConfig:](macOS-api.md#ByteRTCVideo-setvideoencoderconfig) 方法在一路流中发布多个不同的视频分辨率。此参数即为流中所有分辨率的相关信息。
 
 
 <span id="ByteRTCStreamEx-maxvideostreamdescription"></span>
@@ -8434,9 +8903,11 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSyncInfoStreamTypeAudio | 0 | 音频流 |
+
 
 <span id="ByteRTCMixedStreamType"></span>
 # ByteRTCMixedStreamType
@@ -8450,10 +8921,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamByServer | 0 | 通过服务端合流 |
 | ByteRTCMixedStreamByClient | 1 | 端云一体合流。SDK 智能决策在客户端或服务端完成合流。<br>使用前，请联系技术支持同学开通，否则不生效。 |
+
 
 <span id="ByteRTCPublicStreamVideoConfig"></span>
 # ByteRTCPublicStreamVideoConfig
@@ -8464,12 +8937,14 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPublicStreamVideoConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [width](#ByteRTCPublicStreamVideoConfig-width) |
 | NSInteger | [height](#ByteRTCPublicStreamVideoConfig-height) |
 | NSInteger | [fps](#ByteRTCPublicStreamVideoConfig-fps) |
 | NSInteger | [bitrate](#ByteRTCPublicStreamVideoConfig-bitrate) |
+
 
 ## 变量说明
 <span id="ByteRTCPublicStreamVideoConfig-width"></span>
@@ -8522,6 +8997,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVoiceChangerOriginal | 0 | 原声，不含特效 |
@@ -8530,6 +9006,7 @@ typedef NS_ENUM(
 | ByteRTCVoiceChangerMinionst | 3 | 小黄人 |
 | ByteRTCVoiceChangerVibrato | 4 | 颤音 |
 | ByteRTCVoiceChangerRobot | 5 | 机器人 |
+
 
 <span id="ByteRTCStandardPitchInfo"></span>
 # ByteRTCStandardPitchInfo
@@ -8540,11 +9017,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCStandardPitchInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [startTime](#ByteRTCStandardPitchInfo-starttime) |
 | int | [duration](#ByteRTCStandardPitchInfo-duration) |
 | int | [pitch](#ByteRTCStandardPitchInfo-pitch) |
+
 
 ## 变量说明
 <span id="ByteRTCStandardPitchInfo-starttime"></span>
@@ -8583,11 +9062,13 @@ AAC 编码规格。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamAudioProfileLC | 0 | AAC-LC 规格，默认值。 |
 | ByteRTCMixedStreamAudioProfileHEv1 | 1 | HE-AAC v1 规格。 |
 | ByteRTCMixedStreamAudioProfileHEv2 | 2 | HE-AAC v2 规格。 |
+
 
 <span id="ByteRTCVoiceReverbConfig"></span>
 # ByteRTCVoiceReverbConfig
@@ -8598,6 +9079,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVoiceReverbConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [roomSize](#ByteRTCVoiceReverbConfig-roomsize) |
@@ -8606,6 +9088,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVoiceReverbConfig : NSObject
 | float | [wetGain](#ByteRTCVoiceReverbConfig-wetgain) |
 | float | [dryGain](#ByteRTCVoiceReverbConfig-drygain) |
 | float | [preDelay](#ByteRTCVoiceReverbConfig-predelay) |
+
 
 ## 变量说明
 <span id="ByteRTCVoiceReverbConfig-roomsize"></span>
@@ -8668,10 +9151,12 @@ SEI 发送模式。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSEICountPerFrameSingle | 0 | 单发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 按队列逐帧发送。 |
 | ByteRTCSEICountPerFrameMulti | 1 | 多发模式。即在 1 帧间隔内多次发送 SEI 数据时，多个 SEI 随下个视频帧同时发送。 |
+
 
 <span id="ByteRTCSubtitleMode"></span>
 # ByteRTCSubtitleMode
@@ -8685,10 +9170,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSubtitleModeRecognition | 0 | 识别模式。在此模式下，房间内用户语音会被转为文字。 |
 | ByteRTCSubtitleModeTranslation | 1 | 翻译模式。在此模式下，房间内用户语音会先被转为文字，再被翻译为目标语言。 |
+
 
 <span id="ByteRTCPublishFallbackOption"></span>
 # ByteRTCPublishFallbackOption
@@ -8702,10 +9189,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCPublishFallbackOptionDisabled | 0 | 上行网络不佳或设备性能不足时，不对音视频流作回退处理。默认设置。 |
 | ByteRTCPublishFallbackOptionSimulcast | 1 | 上行网络不佳或设备性能不足时，发布的视频流会从大流到小流依次降级，直到与当前网络性能匹配，具体降级规则参看[性能回退](https://www.volcengine.com/docs/6348/70137)文档。 |
+
 
 <span id="ByteRTCPosition"></span>
 # ByteRTCPosition
@@ -8716,11 +9205,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCPosition : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | float | [x](#ByteRTCPosition-x) |
 | float | [y](#ByteRTCPosition-y) |
 | float | [z](#ByteRTCPosition-z) |
+
 
 ## 变量说明
 <span id="ByteRTCPosition-x"></span>
@@ -8756,6 +9247,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoSolution: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | CGSize | [videoSize](#ByteRTCVideoSolution-videosize) |
@@ -8763,6 +9255,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCVideoSolution: NSObject
 | NSInteger | [maxKbps](#ByteRTCVideoSolution-maxkbps) |
 | NSInteger | [minKbps](#ByteRTCVideoSolution-minkbps) |
 | ByteRTCVideoEncoderPreference | [encoderPreference](#ByteRTCVideoSolution-encoderpreference) |
+
 
 ## 变量说明
 <span id="ByteRTCVideoSolution-videosize"></span>
@@ -8814,11 +9307,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteVideoConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | int | [framerate](#ByteRTCRemoteVideoConfig-framerate) |
 | int | [width](#ByteRTCRemoteVideoConfig-width) |
 | int | [height](#ByteRTCRemoteVideoConfig-height) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteVideoConfig-framerate"></span>
@@ -8861,6 +9356,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCLocalVideoStreamErrorOk | 0 | 本地视频状态正常（本地视频状态改变正常时默认返回值） |
@@ -8871,6 +9367,7 @@ typedef NS_ENUM(
 | ByteRTCLocalVideoStreamErrorCaptureFailure | 5 | 本地视频采集失败，建议检查采集设备是否正常工作 |
 | ByteRTCLocalVideoStreamErrorEncodeFailure | 6 | 本地视频编码失败 |
 | ByteRTCLocalVideoStreamErrorDeviceDisconnected | 7 | 通话过程中本地视频采集设备被其他程序抢占，导致设备连接中断 |
+
 
 <span id="ByteRTCRemoteVideoRenderPosition"></span>
 # ByteRTCRemoteVideoRenderPosition
@@ -8884,9 +9381,11 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteVideoRenderPositionAfterPostprocess | 1 | （默认值）后处理后。 |
+
 
 <span id="ByteRTCZoomConfigType"></span>
 # ByteRTCZoomConfigType
@@ -8900,10 +9399,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCZoomConfigTypeFocusOffset | 0 | 设置缩放系数 |
 | ByteRTCZoomConfigTypeMoveOffset | 1 | 设置移动步长 |
+
 
 <span id="ByteRTCMediaPlayerCustomSource"></span>
 # ByteRTCMediaPlayerCustomSource
@@ -8914,11 +9415,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerCustomSource : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | id<ByteRTCMediaPlayerCustomSourceProvider\>_Nullable | [provider](#ByteRTCMediaPlayerCustomSource-provider) |
 | ByteRTCMediaPlayerCustomSourceMode | [mode](#ByteRTCMediaPlayerCustomSource-mode) |
 | ByteRTCMediaPlayerCustomSourceStreamType | [type](#ByteRTCMediaPlayerCustomSource-type) |
+
 
 ## 变量说明
 <span id="ByteRTCMediaPlayerCustomSource-provider"></span>
@@ -8926,7 +9429,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerCustomSource : NSObject
 ```objectivec
 @property(weak, nonatomic) id<ByteRTCMediaPlayerCustomSourceProvider> _Nullable provider;
 ```
-仅使用内存播放时，传入对应的 [ByteRTCMediaPlayerCustomSourceProvider](macOS-callback#ByteRTCMediaPlayerCustomSourceProvider) 实例。
+仅使用内存播放时，传入对应的 [ByteRTCMediaPlayerCustomSourceProvider](macOS-callback.md#ByteRTCMediaPlayerCustomSourceProvider) 实例。
 
 
 <span id="ByteRTCMediaPlayerCustomSource-mode"></span>
@@ -8954,6 +9457,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCNetworkQualityStats: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [uid](#ByteRTCNetworkQualityStats-uid) |
@@ -8962,6 +9466,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCNetworkQualityStats: NSObject
 | int | [totalBandwidth](#ByteRTCNetworkQualityStats-totalbandwidth) |
 | ByteRTCNetworkQuality | [txQuality](#ByteRTCNetworkQualityStats-txquality) |
 | ByteRTCNetworkQuality | [rxQuality](#ByteRTCNetworkQualityStats-rxquality) |
+
 
 ## 变量说明
 <span id="ByteRTCNetworkQualityStats-uid"></span>
@@ -9034,10 +9539,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCStreamMixingTypeByServer | 0 | 服务端合流 |
 | ByteRTCStreamMixingTypeByClient | 1 | 端云一体合流。SDK 智能决策在客户端或服务端完成合流。 |
+
 
 <span id="ByteRTCMixedStreamLayoutRegionType"></span>
 # ByteRTCMixedStreamLayoutRegionType
@@ -9051,10 +9558,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamLayoutRegionTypeVideoStream | 0 | 合流布局区域类型为视频。 |
 | ByteRTCMixedStreamLayoutRegionTypeImage | 1 | 合流布局区域类型为图片。 |
+
 
 <span id="ByteRTCAudioFrameMethod"></span>
 # ByteRTCAudioFrameMethod
@@ -9068,12 +9577,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioFrameProcessorRecord | 0 | 本地采集的音频。 |
 | ByteRTCAudioFrameProcessorPlayback | 1 | 远端音频流的混音音频。 |
 | ByteRTCAudioFrameProcessorRemoteUser | 2 | 各个远端音频流。 |
 | ByteRTCAudioFrameProcessorScreen | 4 | 屏幕共享音频。 |
+
 
 <span id="ByteRTCEarMonitorMode"></span>
 # ByteRTCEarMonitorMode
@@ -9087,10 +9598,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCEarMonitorModeOff | 0 | 关闭耳返功能。 |
 | ByteRTCEarMonitorModeOn | 1 | 开启耳返功能。 |
+
 
 <span id="ByteRTCVideoCodecType"></span>
 # ByteRTCVideoCodecType
@@ -9104,11 +9617,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoCodecTypeUnknown | 0 | 未知类型 |
 | ByteRTCVideoCodecTypeH264 | 1 | 标准 H264 编码格式 |
 | ByteRTCVideoCodecTypeByteVC1 | 2 | ByteVC1 编码器 |
+
 
 <span id="ByteRTCLocalStreamStats"></span>
 # ByteRTCLocalStreamStats
@@ -9123,6 +9638,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCLocalAudioStats*  | [audioStats](#ByteRTCLocalStreamStats-audiostats) |
@@ -9130,6 +9646,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
 | BOOL | [isScreen](#ByteRTCLocalStreamStats-isscreen) |
 | ByteRTCNetworkQuality | [deprecated] [txQuality](#ByteRTCLocalStreamStats-txquality) |
 | ByteRTCNetworkQuality | [deprecated] [rxQuality](#ByteRTCLocalStreamStats-rxquality) |
+
 
 ## 变量说明
 <span id="ByteRTCLocalStreamStats-audiostats"></span>
@@ -9161,7 +9678,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
 ```objectivec
 @property(assign, nonatomic) ByteRTCNetworkQuality txQuality;
 ```
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 
 所属用户的媒体流上行网络质量，详见 [ByteRTCNetworkQuality](#ByteRTCNetworkQuality)
 
@@ -9171,7 +9688,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalStreamStats : NSObject
 ```objectivec
 @property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 ```
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 
 所属用户的媒体流下行网络质量，详见 [ByteRTCNetworkQuality](#ByteRTCNetworkQuality)
 
@@ -9188,12 +9705,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoRotation0 | 0 | 不旋转 |
 | ByteRTCVideoRotation90 | 90 | 顺时针旋转 90 度 |
 | ByteRTCVideoRotation180 | 180 | 顺时针旋转 180 度 |
 | ByteRTCVideoRotation270 | 270 | 顺时针旋转 270 度 |
+
 
 <span id="ByteRTCDataFrameType"></span>
 # ByteRTCDataFrameType
@@ -9207,11 +9726,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCDataFrameTypeSei | 0 | SEI 数据 |
 | ByteRTCDataFrameTypeRoi | 1 | 人脸识别数据 |
 | ByteRTCDataFrameTypeOther | 2 | 其他数据帧类型 |
+
 
 <span id="ByteRTCTranscodingVideoCodec"></span>
 # ByteRTCTranscodingVideoCodec
@@ -9227,10 +9748,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCTranscodingVideoCodecH264 | 0 | H.264 格式，默认值。 |
 | ByteRTCTranscodingVideoCodecH265 | 1 | ByteVC1 格式。 |
+
 
 <span id="ByteRTCMouseCursorCaptureState"></span>
 # ByteRTCMouseCursorCaptureState
@@ -9244,10 +9767,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMouseCursorCaptureStateOn | 0 | 采集鼠标信息。 |
 | ByteRTCMouseCursorCaptureStateOff | 1 | 不采集鼠标信息。 |
+
 
 <span id="ByteRTCSubscribeFallbackOption"></span>
 # ByteRTCSubscribeFallbackOption
@@ -9261,11 +9786,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSubscribeFallbackOptionDisabled | 0 | 下行网络不佳或设备性能不足时，不对音视频流作回退处理。默认设置。 |
 | ByteRTCSubscribeFallbackOptionVideoStreamLow | 1 | 下行网络不佳或设备性能不足时，对视频流做降级处理，具体降级规则参看[音视频流回退](70137)。<br>该设置仅对发布端调用 `enableSimulcastMode:` 开启发送多路流功能的情况生效。 |
 | ByteRTCSubscribeFallbackOptionAudioOnly | 2 | 下行网络不佳或设备性能不足时，先对视频流做回退处理。当网络状况不满足接收弱流时，则自动取消接收视频，仅接收音频。<br>该设置仅对发布端调用 `enableSimulcastMode:` 开启发送多路流功能的情况生效。 |
+
 
 <span id="ByteRTCAudioSourceType"></span>
 # ByteRTCAudioSourceType
@@ -9279,10 +9806,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioSourceTypeExternal | 0 | 自定义采集音频源 |
 | ByteRTCAudioSourceTypeInternal | 1 | RTC SDK 内部采集音频源 |
+
 
 <span id="ByteRTCRemoteStreamKey"></span>
 # ByteRTCRemoteStreamKey
@@ -9293,11 +9822,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamKey : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString* | [userId](#ByteRTCRemoteStreamKey-userid) |
 | NSString* | [roomId](#ByteRTCRemoteStreamKey-roomid) |
 | ByteRTCStreamIndex | [streamIndex](#ByteRTCRemoteStreamKey-streamindex) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteStreamKey-userid"></span>
@@ -9336,6 +9867,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCPlayerStateIdle | 0 | 播放未启动 |
@@ -9347,6 +9879,7 @@ typedef NS_ENUM(
 | ByteRTCPlayerStateFailed | 6 | 播放失败 |
 | ByteRTCPlayerStateFinished | 7 | 播放已结束 |
 
+
 <span id="ByteRTCMediaPlayerConfig"></span>
 # ByteRTCMediaPlayerConfig
 ```objectivec
@@ -9356,6 +9889,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCAudioMixingType | [type](#ByteRTCMediaPlayerConfig-type) |
@@ -9364,6 +9898,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 | NSInteger | [callbackOnProgressInterval](#ByteRTCMediaPlayerConfig-callbackonprogressinterval) |
 | BOOL | [syncProgressToRecordFrame](#ByteRTCMediaPlayerConfig-syncprogresstorecordframe) |
 | BOOL | [autoPlay](#ByteRTCMediaPlayerConfig-autoplay) |
+
 
 ## 变量说明
 <span id="ByteRTCMediaPlayerConfig-type"></span>
@@ -9380,6 +9915,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 @property(assign, nonatomic) NSInteger playCount;
 ```
 混音播放次数
+
 - play_count <= 0: 无限循环
 - play_count == 1: 播放一次（默认）
 - play_count \> 1: 播放 play_count 次
@@ -9398,7 +9934,8 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 ```objectivec
 @property(assign, nonatomic) NSInteger callbackOnProgressInterval;
 ```
-设置音频文件混音时，收到 [onMediaPlayerPlayingProgress:progress:](macOS-callback#ByteRTCMediaPlayerEventHandler-onmediaplayerplayingprogress-progress) 的间隔。单位毫秒。
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress:progress:](macOS-callback.md#ByteRTCMediaPlayerEventHandler-onmediaplayerplayingprogress-progress) 的间隔。单位毫秒。
+
 - interval \> 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。
 - interval <= 0 时，不会触发回调。
 
@@ -9409,6 +9946,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 @property(assign, nonatomic) BOOL syncProgressToRecordFrame;
 ```
 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+
 - 仅在单个音频文件混音时使用有效。
 - `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
 
@@ -9418,7 +9956,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMediaPlayerConfig : NSObject
 ```objectivec
 @property(assign, nonatomic) BOOL autoPlay;
 ```
-是否自动播放。如果不自动播放，调用 [start](macOS-api#ByteRTCMediaPlayer-start) 播放音乐文件。默认为 True。
+是否自动播放。如果不自动播放，调用 [start](macOS-api.md#ByteRTCMediaPlayer-start) 播放音乐文件。默认为 True。
 
 
 <span id="ByteRTCVideoRotationMode"></span>
@@ -9433,10 +9971,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoRotationModeFollowApp | 0 | App 方向 |
 | ByteRTCVideoRotationModeFollowGSensor | 1 | 重力方向 |
+
 
 <span id="ByteRTCForwardStreamEvent"></span>
 # ByteRTCForwardStreamEvent
@@ -9450,6 +9990,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCForwardStreamEventDisconnected | 0 | 本端与服务器网络连接断开，暂停转发。 |
@@ -9457,6 +9998,7 @@ typedef NS_ENUM(
 | ByteRTCForwardStreamEventInterrupt | 2 | 转发中断。转发过程中，如果相同 user_id 的用户进入目标房间，转发中断。 |
 | ByteRTCForwardStreamEventDstRoomUpdated | 3 | 目标房间已更新，由 `updateForwardStreamToRooms` 触发。 |
 | ByteRTCForwardStreamEventUnExpectAPICall | 4 | API 调用时序错误。例如，在调用 `startForwardStreamToRooms` 之前调用 `updateForwardStreamToRooms` 。 |
+
 
 <span id="ByteRTCVideoFrameType"></span>
 # ByteRTCVideoFrameType
@@ -9470,10 +10012,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoFrameTypeRawMemory | 0 | 视频帧类型：内存数据 |
 | ByteRTCVideoFrameTypePixelBuffer | 1 | 视频帧类型：CVPixelBuffer |
+
 
 <span id="ByteRTCLocalAudioPropertiesInfo"></span>
 # ByteRTCLocalAudioPropertiesInfo
@@ -9484,10 +10028,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCLocalAudioPropertiesInfo : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCStreamIndex | [streamIndex](#ByteRTCLocalAudioPropertiesInfo-streamindex) |
 | ByteRTCAudioPropertiesInfo*  | [audioPropertiesInfo](#ByteRTCLocalAudioPropertiesInfo-audiopropertiesinfo) |
+
 
 ## 变量说明
 <span id="ByteRTCLocalAudioPropertiesInfo-streamindex"></span>
@@ -9518,11 +10064,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCCameraIDFront | 0 | 前置摄像头 |
 | ByteRTCCameraIDBack | 1 | 后置摄像头 |
 | ByteRTCCameraIDInvalid | 3 | 无效值 |
+
 
 <span id="ByteRTCCloudProxyInfo"></span>
 # ByteRTCCloudProxyInfo
@@ -9533,10 +10081,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCCloudProxyInfo: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [cloudProxyIp](#ByteRTCCloudProxyInfo-cloudproxyip) |
 | int | [cloudProxyPort](#ByteRTCCloudProxyInfo-cloudproxyport) |
+
 
 ## 变量说明
 <span id="ByteRTCCloudProxyInfo-cloudproxyip"></span>
@@ -9568,6 +10118,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamAudioConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | ByteRTCMixedStreamAudioCodecType | [audioCodec](#ByteRTCMixedStreamAudioConfig-audiocodec) |
@@ -9575,6 +10126,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamAudioConfig : NSObject
 | NSInteger | [channels](#ByteRTCMixedStreamAudioConfig-channels) |
 | NSInteger | [bitrate](#ByteRTCMixedStreamAudioConfig-bitrate) |
 | ByteRTCMixedStreamAudioProfile | [audioProfile](#ByteRTCMixedStreamAudioConfig-audioprofile) |
+
 
 ## 变量说明
 <span id="ByteRTCMixedStreamAudioConfig-audiocodec"></span>
@@ -9629,12 +10181,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSubscribeStateSuccess | 0 | 订阅/取消订阅流成功 |
 | ByteRTCSubscribeStateFailedNotInRoom | 1 | 订阅/取消订阅流失败，本地用户未在房间中 |
 | ByteRTCSubscribeStateFailedStreamNotFound | 2 | 订阅/取消订阅流失败，房间内未找到指定的音视频流 |
 | ByteRTCSubscribeStateFailedOverLimit | 3 | 超过订阅流数上限 |
+
 
 <span id="ByteRTCVideoEncoderPreference"></span>
 # ByteRTCVideoEncoderPreference
@@ -9648,12 +10202,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCVideoEncoderPreferenceDisabled | 0 | 无偏好。不降低帧率和分辨率。 |
 | ByteRTCVideoEncoderPreferenceMaintainFramerate | 1 | （默认值）帧率优先。分辨率不变。 |
 | ByteRTCVideoEncoderPreferenceMaintainQuality | 2 | 分辨率优先。 |
 | ByteRTCVideoEncoderPreferenceBalance | 3 | 平衡帧率与分辨率。 |
+
 
 <span id="ByteRTCAudioMixingState"></span>
 # ByteRTCAudioMixingState
@@ -9667,6 +10223,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioMixingStatePreloaded | 0 | 混音已加载 |
@@ -9677,6 +10234,7 @@ typedef NS_ENUM(
 | ByteRTCAudioMixingStateFinished | 5 | 混音播放结束 |
 | ByteRTCAudioMixingStatePCMEnabled | 6 | 准备 PCM 混音 |
 | ByteRTCAudioMixingStatePCMDisabled | 7 | PCM 混音播放结束 |
+
 
 <span id="ByteRTCMixedStreamAudioCodecType"></span>
 # ByteRTCMixedStreamAudioCodecType
@@ -9690,9 +10248,11 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamAudioCodecTypeAAC | 0 | AAC 格式。 |
+
 
 <span id="ByteRTCSubtitleState"></span>
 # ByteRTCSubtitleState
@@ -9706,11 +10266,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCSubtitleStateStarted | 0 | 开启字幕。 |
 | ByteRTCSubtitleStateStoped | 1 | 关闭字幕。 |
 | ByteRTCSubtitleStateError | 2 | 字幕任务出现错误。 |
+
 
 <span id="ByteRTCMixedStreamServerControlConfig"></span>
 # ByteRTCMixedStreamServerControlConfig
@@ -9721,6 +10283,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamServerControlConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [enableVolumeIndication](#ByteRTCMixedStreamServerControlConfig-enablevolumeindication) |
@@ -9733,6 +10296,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamServerControlConfig : NSObject
 | ByteRTCMixedStreamMediaType | [mediaType](#ByteRTCMixedStreamServerControlConfig-mediatype) |
 | ByteRTCMixedStreamPushMode | [pushStreamMode](#ByteRTCMixedStreamServerControlConfig-pushstreammode) |
 
+
 ## 变量说明
 <span id="ByteRTCMixedStreamServerControlConfig-enablevolumeindication"></span>
 ### enableVolumeIndication
@@ -9742,6 +10306,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamServerControlConfig : NSObject
 > Available since 3.56
 
 是否开启单独发送声音提示 SEI 的功能：
+
 - True：开启；
 - False：关闭。（默认值） 开启后，你可以通过 `ByteRTCMixedStreamServerControlConfig.seiContentMode` 控制 SEI 的内容是否只携带声音信息。
 
@@ -9778,6 +10343,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCMixedStreamServerControlConfig : NSObject
 > Available since 3.56
 
 声音信息 SEI 是否包含音量值：
+
 - True：是；
 - False：否，默认值。
 
@@ -9866,11 +10432,13 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCScreenVideoEncodePreferenceAuto | 0 | 智能模式。根据屏幕内容智能决策选择流畅模式或清晰模式。 |
 | ByteRTCScreenVideoEncodePreferenceFramerate | 1 | 流畅模式，优先保障帧率。适用于共享游戏、视频等动态画面。 |
 | ByteRTCScreenVideoEncodePreferenceQuality | 2 | 清晰模式，优先保障分辨率。适用于共享 PPT、文档、图片等静态画面。 |
+
 
 <span id="ByteRTCRemoteStreamStats"></span>
 # ByteRTCRemoteStreamStats
@@ -9885,6 +10453,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSString*  | [uid](#ByteRTCRemoteStreamStats-uid) |
@@ -9893,6 +10462,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
 | BOOL | [isScreen](#ByteRTCRemoteStreamStats-isscreen) |
 | ByteRTCNetworkQuality | [deprecated] [txQuality](#ByteRTCRemoteStreamStats-txquality) |
 | ByteRTCNetworkQuality | [deprecated] [rxQuality](#ByteRTCRemoteStreamStats-rxquality) |
+
 
 ## 变量说明
 <span id="ByteRTCRemoteStreamStats-uid"></span>
@@ -9932,7 +10502,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
 ```objectivec
 @property(assign, nonatomic) ByteRTCNetworkQuality txQuality;
 ```
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 
 所属用户的媒体流上行网络质量，详见 [ByteRTCNetworkQuality](#ByteRTCNetworkQuality)
 
@@ -9942,7 +10512,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCRemoteStreamStats : NSObject
 ```objectivec
 @property(assign, nonatomic) ByteRTCNetworkQuality rxQuality;
 ```
-> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
+> Deprecated since 3.36 and will be deleted in 3.51, use [rtcRoom:onNetworkQuality:remoteQualities:](macOS-callback.md#ByteRTCRoomDelegate-rtcroom-onnetworkquality-remotequalities) instead
 
 所属用户的媒体流下行网络质量，详见 [ByteRTCNetworkQuality](#ByteRTCNetworkQuality)
 
@@ -9956,11 +10526,13 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCHighlightConfig: NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | BOOL | [enableHighlight](#ByteRTCHighlightConfig-enablehighlight) |
 | uint32_t | [borderColor](#ByteRTCHighlightConfig-bordercolor) |
 | int | [borderWidth](#ByteRTCHighlightConfig-borderwidth) |
+
 
 ## 变量说明
 <span id="ByteRTCHighlightConfig-enablehighlight"></span>
@@ -9999,6 +10571,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCRemoteVideoStateStopped | 0 | 远端视频流默认初始状态, 在以下时机回调该状态：<br><ul><li>本地用户停止接收远端视频流，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonLocalMuted</li></ul><ul><li>远端用户停止发送视频流，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonRemoteMuted</li></ul><ul><li>远端用户离开房间，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonRemoteOffline</li></ul> |
@@ -10006,6 +10579,7 @@ typedef NS_ENUM(
 | ByteRTCRemoteVideoStateDecoding | 2 | 远端视频流正在解码，正常播放, 在以下时机回调该状态：<br><ul><li>成功解码远端视频首帧，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonLocalUnmuted</li></ul><ul><li>网络由阻塞恢复正常，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonNetworkRecovery</li></ul><ul><li>本地用户恢复接收远端视频流，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonLocalUnmuted</li></ul><ul><li>远端用户恢复发送视频流，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonRemoteUnmuted</li></ul> |
 | ByteRTCRemoteVideoStateFrozen | 3 | 远端视频流卡顿<br>网络阻塞、丢包率等原因造成视频卡顿流时会回报该状态，对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonNetworkCongestion |
 | ByteRTCRemoteVideoStateFailed | 4 | 远端视频流播放失败<br>如果内部处理远端视频流失败，则会回调该方法， 对应错误码 [ByteRTCRemoteVideoStateChangeReason](#ByteRTCRemoteVideoStateChangeReason) 中的 ByteRTCRemoteVideoStateChangeReasonInternal |
+
 
 <span id="ByteRTCMediaDeviceError"></span>
 # ByteRTCMediaDeviceError
@@ -10019,6 +10593,7 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaDeviceErrorOK | 0 | 媒体设备正常 |
@@ -10029,6 +10604,7 @@ typedef NS_ENUM(
 | ByteRTCMediaDeviceErrorDeviceDisconnected | 5 | 媒体设备被移除 |
 | ByteRTCMediaDeviceErrorDeviceNoCallback | 6 | 无采集数据。当媒体设备的预期行为是正常采集，但没有收到采集数据时，将收到该错误。 |
 | ByteRTCMediaDeviceErrorUNSupportFormat | 7 | 设备采样率不支持 |
+
 
 <span id="ByteRTCMixedStreamSEIContentMode"></span>
 # ByteRTCMixedStreamSEIContentMode
@@ -10042,10 +10618,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMixedStreamSEIContentModeDefault | 0 | 视频流中包含全部的 SEI 信息。默认设置。 |
 | ByteRTCMixedStreamSEIContentModeEnableVolumeIndication | 1 | 随非关键帧传输的 SEI 数据中仅包含音量信息。<br>当设置 `ByteRTCMixedStreamServerControlConfig.enableVolumeIndication` 为 True 时，此参数设置生效。 |
+
 
 <span id="ByteRTCAudioPropertiesMode"></span>
 # ByteRTCAudioPropertiesMode
@@ -10055,14 +10633,16 @@ typedef NS_ENUM(
     ByteRTCAudioPropertiesMode
 )
 ```
-[rtcEngine:onLocalAudioPropertiesReport:](macOS-callback#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含的音频信息的范围。
+[rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含的音频信息的范围。
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioPropertiesModeMicrohone | 0 | 仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。 |
 | ByteRTCAudioPropertiesModeAudioMixing | 1 | 包含以下信息：<br><ul><li>本地麦克风采集的音频数据和本地屏幕音频采集数据；</li></ul><ul><li>本地混音的音频数据。</li></ul> |
+
 
 <span id="ByteRTCTranscoderLayoutRegionDataParam"></span>
 # ByteRTCTranscoderLayoutRegionDataParam
@@ -10075,10 +10655,12 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCTranscoderLayoutRegionDataParam : NSObjec
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [imageWidth](#ByteRTCTranscoderLayoutRegionDataParam-imagewidth) |
 | NSInteger | [imageHeight](#ByteRTCTranscoderLayoutRegionDataParam-imageheight) |
+
 
 ## 变量说明
 <span id="ByteRTCTranscoderLayoutRegionDataParam-imagewidth"></span>
@@ -10109,12 +10691,14 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCAudioDeviceTypeUnknown | -1 | 未知音频设备 |
 | ByteRTCAudioDeviceTypeRenderDevice | 0 | 音频渲染设备 |
 | ByteRTCAudioDeviceTypeCaptureDevice | 1 | 音频采集设备 |
 | ByteRTCAudioDeviceTypeScreenCaptureDevice | 2 | 屏幕流音频设备 |
+
 
 <span id="ByteRTCMediaPlayerCustomSourceStreamType"></span>
 # ByteRTCMediaPlayerCustomSourceStreamType
@@ -10128,10 +10712,12 @@ typedef NS_ENUM(
 
 
 ## 枚举值
+
 | 类型 | 值 | 说明 |
 | --- | --- | --- |
 | ByteRTCMediaPlayerCustomSourceStreamTypeRaw | 0 | 当播放来自本地的 PCM 数据时，使用此选项。 |
 | ByteRTCMediaPlayerCustomSourceStreamTypeEncoded | 1 | 当播放来自内存的音频数据时，使用此选项。 |
+
 
 <span id="ByteRTCAudioPropertiesConfig"></span>
 # ByteRTCAudioPropertiesConfig
@@ -10142,6 +10728,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 
 
 ## 成员变量
+
 | 类型 | 名称 |
 | --- | --- |
 | NSInteger | [interval](#ByteRTCAudioPropertiesConfig-interval) |
@@ -10152,6 +10739,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 | ByteRTCAudioPropertiesMode | [audioReportMode](#ByteRTCAudioPropertiesConfig-audioreportmode) |
 | BOOL | [enableVoicePitch](#ByteRTCAudioPropertiesConfig-enablevoicepitch) |
 
+
 ## 变量说明
 <span id="ByteRTCAudioPropertiesConfig-interval"></span>
 ### interval
@@ -10159,6 +10747,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 @property(assign, nonatomic) NSInteger interval;
 ```
 信息提示间隔，单位：ms
+
 - `<= 0`: 关闭信息提示
 - `(0,100]`: 开启信息提示，不合法的 interval 值，SDK 自动设置为 100ms
 - `> 100`: 开启信息提示，并将信息提示间隔设置为此值
@@ -10203,7 +10792,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCAudioPropertiesConfig : NSObject
 ```objectivec
 @property(assign, nonatomic) ByteRTCAudioPropertiesMode audioReportMode;
 ```
-[rtcEngine:onLocalAudioPropertiesReport:](macOS-callback#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [ByteRTCAudioPropertiesMode](#ByteRTCAudioPropertiesMode)。
+[rtcEngine:onLocalAudioPropertiesReport:](macOS-callback.md#ByteRTCVideoDelegate-rtcengine-onlocalaudiopropertiesreport) 中包含音频数据的范围。参看 [ByteRTCAudioPropertiesMode](#ByteRTCAudioPropertiesMode)。
 
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
 

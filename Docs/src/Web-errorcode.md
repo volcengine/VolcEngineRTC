@@ -1,9 +1,3 @@
----
-is_dir: False    # True for dir; False for doc
-status: 1    # 1 for online; 0 for offline; 4 for online but hidden in TOC
-keywords: 实时音视频    # use ',' as separator
----
-
 ## ErrorCode <span id="errorcode"></span>
 
 类型: `enum`
@@ -75,11 +69,12 @@ keywords: 实时音视频    # use ',' as separator
   | USER_FORBIDDEN | `'USER_FORBIDDEN'` | 调用 `joinRoom` 进房失败，原因是本地用户被封禁。 |
 
 
+
 ## AudioMixingError <span id="audiomixingerror"></span>
 
 类型: `enum`
 
-混音错误码，通过 [onAudioMixingStateChanged](Web-event#onaudiomixingstatechanged) 回调。
+混音错误码，通过 [onAudioMixingStateChanged](Web-event.md#onaudiomixingstatechanged) 回调。
 
 - **成员**
 
@@ -97,11 +92,12 @@ keywords: 实时音视频    # use ',' as separator
   | AUDIO_MIXING_ERROR_INVALID_AUDIO_TRACK | `9` | 设置混音文件的音轨不合法。 |
 
 
+
 ## StreamMixingEventErrorCode <span id="streammixingeventerrorcode"></span>
 
 类型: `enum`
 
-转推直播错误码，通过 [onStreamMixingEvent](Web-event#onstreammixingevent) 回调。
+转推直播错误码，通过 [onStreamMixingEvent](Web-event.md#onstreammixingevent) 回调。
 
 - **成员**
 
@@ -115,11 +111,12 @@ keywords: 实时音视频    # use ',' as separator
   | ERR_UNKNOWN | `9999` | 其他异常。 |
 
 
+
 ## ForwardStreamError <span id="forwardstreamerror"></span>
 
 类型: `enum`
 
-跨房间转发媒体流错误码，通过 [onForwardStreamError](Web-event#onforwardstreamerror) 回调。
+跨房间转发媒体流错误码，通过 [onForwardStreamError](Web-event.md#onforwardstreamerror) 回调。
 
 - **成员**
 
