@@ -69,11 +69,12 @@
   | USER_FORBIDDEN | `'USER_FORBIDDEN'` | 调用 `joinRoom` 进房失败，原因是本地用户被封禁。 |
 
 
+
 ## AudioMixingError <span id="audiomixingerror"></span>
 
 类型: `enum`
 
-混音错误码，通过 [onAudioMixingStateChanged](104479#onaudiomixingstatechanged) 回调。
+混音错误码，通过 [onAudioMixingStateChanged](Web-event.md#onaudiomixingstatechanged) 回调。
 
 - **成员**
 
@@ -91,11 +92,12 @@
   | AUDIO_MIXING_ERROR_INVALID_AUDIO_TRACK | `9` | 设置混音文件的音轨不合法。 |
 
 
+
 ## StreamMixingEventErrorCode <span id="streammixingeventerrorcode"></span>
 
 类型: `enum`
 
-转推直播错误码，通过 [onStreamMixingEvent](104479#onstreammixingevent) 回调。
+转推直播错误码，通过 [onStreamMixingEvent](Web-event.md#onstreammixingevent) 回调。
 
 - **成员**
 
@@ -109,11 +111,12 @@
   | ERR_UNKNOWN | `9999` | 其他异常。 |
 
 
+
 ## ForwardStreamError <span id="forwardstreamerror"></span>
 
 类型: `enum`
 
-跨房间转发媒体流错误码，通过 [onForwardStreamError](104479#onforwardstreamerror) 回调。
+跨房间转发媒体流错误码，通过 [onForwardStreamError](Web-event.md#onforwardstreamerror) 回调。
 
 - **成员**
 
@@ -123,4 +126,3 @@
   | FORWARD_STREAM_ERROR_INVALID_TOKEN | `1202` | 目标房间 Token 错误。 |
   | FORWARD_STREAM_ERROR_RESPONSE | `1203` | 服务端未知错误。 |
   | FORWARD_STREAM_ERROR_REMOTE_KICKED | `1204` | 将源房间设置为目标房间时返回该错误。 |
-
