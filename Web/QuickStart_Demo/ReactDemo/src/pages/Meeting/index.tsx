@@ -1,3 +1,8 @@
+/**
+ * Copyright 2024 Beijing Volcano Engine Technology Co., Ltd. All Rights Reserved.
+ * SPDX-license-identifier: BSD-3-Clause
+ */
+
 import React, { useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { message } from 'antd';
 import styled from 'styled-components';
@@ -187,9 +192,11 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
         .join((token as any) || null, roomId, userId)
         .then(() =>
           rtc?.current?.createLocalStream(userId, (res: any) => {
-            const { code, msg, devicesStatus } = res;
+            const { code, msg } = res;
             if (code === -1) {
-              alert(msg);
+              if (window.confirm(`${msg}, 是否跳转排查文档?`)) {
+                window.location.href = 'https://www.volcengine.com/docs/6348/1356355';
+              } 
               setMicOn(false);
               setVideoOn(false);
             }

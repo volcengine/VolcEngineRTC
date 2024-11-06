@@ -1,3 +1,8 @@
+/**
+ * Copyright 2024 Beijing Volcano Engine Technology Co., Ltd. All Rights Reserved.
+ * SPDX-license-identifier: BSD-3-Clause
+ */
+
 import React, { FC, useContext } from 'react';
 import styled from 'styled-components';
 import { StoreValue } from 'rc-field-form/lib/interface';
@@ -73,7 +78,7 @@ const getLoginFieldRules = (
 const JoinRoom: FC<{ joinRoom: () => void }> = ({ joinRoom }) => {
   const [form] = Form.useForm<IForm>();
 
-    const { setRoomId, setUserId, userId, roomId, joinFailReason} = useContext(Context);
+  const { setRoomId, setUserId, userId, roomId, joinFailReason } = useContext(Context);
 
   const onFinish = (value: IForm) => {
     const { roomId, userId } = value;

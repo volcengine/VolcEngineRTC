@@ -1,3 +1,8 @@
+/**
+ * Copyright 2024 Beijing Volcano Engine Technology Co., Ltd. All Rights Reserved.
+ * SPDX-license-identifier: BSD-3-Clause
+ */
+
 import React, { useMemo, useState } from 'react';
 import 'antd/dist/antd.min.css';
 import styled from 'styled-components';

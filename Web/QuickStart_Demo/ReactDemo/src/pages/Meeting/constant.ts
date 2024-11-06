@@ -1,3 +1,8 @@
+/**
+ * Copyright 2024 Beijing Volcano Engine Technology Co., Ltd. All Rights Reserved.
+ * SPDX-license-identifier: BSD-3-Clause
+ */
+
 export const TEXTMAP = {
   'room-id': '房间ID',
   'user-id': '用户ID',

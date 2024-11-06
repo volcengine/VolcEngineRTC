@@ -1,3 +1,8 @@
+/**
+ * Copyright 2024 Beijing Volcano Engine Technology Co., Ltd. All Rights Reserved.
+ * SPDX-license-identifier: BSD-3-Clause
+ */
+
 class RtcClient {
   constructor(props) {
     this.config = props.config;
@@ -97,7 +102,9 @@ class RtcClient {
       devices.videoInputs.length === 0 &&
       devices.audioInputs.length === 0
     ) {
-      alert('设备获取失败');
+      if (window.confirm('设备权限获取失败, 是否跳转排查文档?')) {
+        window.location.href = 'https://www.volcengine.com/docs/6348/1356355';
+      } 
       isMicOn = false;
       changeMicOrVideoIconUrl('mic', isMicOn, OFFMICICON, ONMICICON);
       isVideoOn = false;
@@ -132,7 +139,7 @@ class RtcClient {
     callback &&
       callback({
         code: 0,
-        msg: '设备获取失败',
+        msg: '设备权限获取成功',
         devicesStatus,
       });
   }

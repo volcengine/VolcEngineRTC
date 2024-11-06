@@ -1,3 +1,8 @@
+/**
+ * Copyright 2024 Beijing Volcano Engine Technology Co., Ltd. All Rights Reserved.
+ * SPDX-license-identifier: BSD-3-Clause
+ */
+
 import VERTC, { MediaType, StreamIndex } from '@volcengine/rtc';
 
 export default class RtcClient {
@@ -100,7 +105,7 @@ export default class RtcClient {
     if (!devices.audioInputs.length && !devices.videoInputs.length) {
       callback({
         code: -1,
-        msg: '设备获取失败',
+        msg: '设备权限获取失败',
         devicesStatus: {
           video: 0,
           audio: 0,
@@ -132,7 +137,7 @@ export default class RtcClient {
     callback &&
       callback({
         code: 0,
-        msg: '设备获取失败',
+        msg: '设备获取成功',
         devicesStatus,
       });
   }
