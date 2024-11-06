@@ -27,9 +27,8 @@ const config = {
 
 ### 编译运行
 
-1. 在命令行里输入 yarn
-2. 运行项目 yarn start
+1. 在命令行里输入  ```yarn```
+2. 运行项目 ```yarn start```
 
-```
-
-```
+### 注意
+如遇到设备权限获取失败问题，可参考 [Web 排查设备权限获取失败问题](https://www.volcengine.com/docs/6348/1356355)。
