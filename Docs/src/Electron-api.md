@@ -220,8 +220,8 @@
 | [startAudioDeviceRecordTest](#rtcvideo-startaudiodevicerecordtest) | 开始音频采集设备和音频播放设备测试。 |
 
 | [stopAudioDeviceRecordAndPlayTest](#rtcvideo-stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。
-<br>调用 [startAudioDeviceRecordTest](85532.md#rtcvideo-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
-| [stopAudioDevicePlayTest](#rtcvideo-stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](85532.md#rtcvideo-startaudiodevicerecordtest) 开始的音频播放设备测试。
+<br>调用 [startAudioDeviceRecordTest](Electron-api.md#rtcvideo-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
+| [stopAudioDevicePlayTest](#rtcvideo-stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Electron-api.md#rtcvideo-startaudiodevicerecordtest) 开始的音频播放设备测试。
 <br>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
 
 | `static` [getSDKVersion](#rtcvideo-static-getsdkversion) | 获取当前 SDK 版本信息 |
@@ -347,13 +347,13 @@
 
   - **type**
 
-    类型: [ProblemFeedbackOption](85535.md#problemfeedbackoption)
+    类型: [ProblemFeedbackOption](Electron-keytype.md#problemfeedbackoption)
 
     反馈问题类型。
 
   - **info**
 
-    类型: [ProblemFeedbackInfo](85535.md#problemfeedbackinfo)
+    类型: [ProblemFeedbackInfo](Electron-keytype.md#problemfeedbackinfo)
 
     预设问题以外的其他问题的具体描述，房间信息。
 
@@ -492,7 +492,7 @@
 
   - **info**
 
-    类型: [RTCPluginInfo](85535.md#rtcplugininfo)
+    类型: [RTCPluginInfo](Electron-keytype.md#rtcplugininfo)
 
     #RTCPluginInfo类型：id是插件的唯一标识，path是插件库的路径
 
@@ -527,7 +527,7 @@
 
 - **返回值**
 
-  类型: [RTCPlugin](85535.md#rtcplugin) | undefined
+  类型: [RTCPlugin](Electron-keytype.md#rtcplugin) | undefined
 
   #RTCPlugin类型，如果插件不存在返回undefined
 
@@ -572,8 +572,8 @@
 
 - **注意**
 
-  + 进房前调用该方法，本地用户会收到 [onAudioDeviceStateChanged](85533.md#onaudiodevicestatechanged) 的回调。
-  + 若未取得当前设备的麦克风权限，调用该方法后会触发 [onAudioDeviceStateChanged](85533.md#onaudiodevicestatechanged) 回调，对应的 `device_error` 为 1。
+  + 进房前调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Electron-event.md#onaudiodevicestatechanged) 的回调。
+  + 若未取得当前设备的麦克风权限，调用该方法后会触发 [onAudioDeviceStateChanged](Electron-event.md#onaudiodevicestatechanged) 回调，对应的 `device_error` 为 1。
   + 调用 stopAudioCapture 可以关闭音频采集设备，否则，SDK 只会在销毁引擎的时候自动关闭设备。
   + 由于不同硬件设备初始化响应时间不同，频繁调用 stopAudioCapture 和本接口闭麦/开麦可能出现短暂无声问题，建议使用 publishStream/unpublishStream 实现临时闭麦和重新开麦。
   + 创建引擎后，无论是否发布音频数据，你都可以调用该方法开启音频采集，并且调用后方可发布音频。
@@ -597,9 +597,9 @@
 
 - **注意**
 
-  + 进房前调用该方法，本地用户会收到 [onAudioDeviceStateChanged](85533.md#onaudiodevicestatechanged) 的回调。
-  + 可见用户进房后调用该方法后，房间中的其他用户会收到 [onUserStopAudioCapture](85533.md#onuserstopaudiocapture) 的回调。
-  + 调用 [startAudioCapture](85532.md#startaudiocapture) 可以开启音频采集设备。
+  + 进房前调用该方法，本地用户会收到 [onAudioDeviceStateChanged](Electron-event.md#onaudiodevicestatechanged) 的回调。
+  + 可见用户进房后调用该方法后，房间中的其他用户会收到 [onUserStopAudioCapture](Electron-event.md#onuserstopaudiocapture) 的回调。
+  + 调用 [startAudioCapture](Electron-api.md#startaudiocapture) 可以开启音频采集设备。
   + 如果不调用本方法停止内部视频采集，则只有当销毁引擎实例时，内部音频采集才会停止。
 
 - **返回值**
@@ -1233,14 +1233,14 @@
   + 开始检测后，SDK 会录制你声音或视频。如果你在设置的延时范围内收到了回放，则视为音视频回路测试正常。
   + 调用该方法开始音视频回路检测后，你可以调用 [stopEchoTest](#stopechotest) 立即结束测试，也可等待测试 60s 后自动结束，以更换设备进行下一次测试，或进房。
   + 在该方法之前调用的所有跟设备控制、流控制相关的方法均在开始检测时失效，在结束检测后恢复生效。
-  + 在调用 [startEchoTest](#startechotest) 和 [stopEchoTest](#stopechotest) 之间调用的所有跟设备采集、流控制、进房相关的方法均不生效，并会收到 [onWarning](85533.md#onwarning) 回调，提示警告码为 `kWarningCodeInEchoTestMode`。
-  + 音视频回路检测的结果会通过 [onEchoTestResult](85533.md#onechotestresult) 回调通知。
+  + 在调用 [startEchoTest](#startechotest) 和 [stopEchoTest](#stopechotest) 之间调用的所有跟设备采集、流控制、进房相关的方法均不生效，并会收到 [onWarning](Electron-event.md#onwarning) 回调，提示警告码为 `kWarningCodeInEchoTestMode`。
+  + 音视频回路检测的结果会通过 [onEchoTestResult](Electron-event.md#onechotestresult) 回调通知。
 
 - **参数**
 
   - **echo_test_config**
 
-    类型: [EchoTestConfig](85535.md#echotestconfig)
+    类型: [EchoTestConfig](Electron-keytype.md#echotestconfig)
 
     回路测试参数设置
 
@@ -1373,15 +1373,15 @@
 
   开启提示后，你可以：
 
-  + 通过 [onLocalAudioPropertiesReport](85533.md#onlocalaudiopropertiesreport) 回调获取本地麦克风和屏幕音频流采集的音频信息。
-  + 通过 [onRemoteAudioPropertiesReport](85533.md#onremoteaudiopropertiesreport) 回调获取订阅的远端用户的音频信息。
-  + 通过 [onActiveSpeaker](85533.md#onactivespeaker) 回调获取房间内的最活跃用户信息。
+  + 通过 [onLocalAudioPropertiesReport](Electron-event.md#onlocalaudiopropertiesreport) 回调获取本地麦克风和屏幕音频流采集的音频信息。
+  + 通过 [onRemoteAudioPropertiesReport](Electron-event.md#onremoteaudiopropertiesreport) 回调获取订阅的远端用户的音频信息。
+  + 通过 [onActiveSpeaker](Electron-event.md#onactivespeaker) 回调获取房间内的最活跃用户信息。
 
 - **参数**
 
   - **config**
 
-    类型: [AudioPropertiesConfig](85535.md#audiopropertiesconfig)
+    类型: [AudioPropertiesConfig](Electron-keytype.md#audiopropertiesconfig)
 
     音频属性信息提示的相关配置。
 
@@ -1468,8 +1468,8 @@
 - **注意**
 
   + 内部视频采集指：使用 RTC SDK 内置视频采集模块，进行采集。
-  + 调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](85533.md#onvideodevicestatechanged) 的回调。
-  + 本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](85533.md#onuserstartvideocapture) 的回调。
+  + 调用该方法后，本地用户会收到 [onVideoDeviceStateChanged](Electron-event.md#onvideodevicestatechanged) 的回调。
+  + 本地用户在非隐身状态下调用该方法后，房间中的其他用户会收到 [onUserStartVideoCapture](Electron-event.md#onuserstartvideocapture) 的回调。
   + 调用 stopVideoCapture 可以停止内部视频采集。否则，只有当销毁引擎实例时，内部视频采集才会停止。
   + 创建引擎后，无论是否发布视频数据，你都可以调用该方法开启内部视频采集。
 
@@ -1639,7 +1639,7 @@
 
   - **solutions**
 
-    类型: [VideoEncoderConfig](85535.md#videoencoderconfig)[]
+    类型: [VideoEncoderConfig](Electron-keytype.md#videoencoderconfig)[]
 
     视频参数数组首地址。要推送的多路视频流的参数需注意，所设置的分辨率是各路流的最大分辨率。 最多支持 3 路参数。当设置了多路参数时，分辨率和帧率必须是依次减小，从大到小排列的。 最大分辨率没有限制。但是如果设置的分辨率无法编码，就会导致编码推流失败。
 
@@ -1670,7 +1670,7 @@
 
   - **max_solution**
 
-    类型: [VideoEncoderConfig](85535.md#videoencoderconfig)
+    类型: [VideoEncoderConfig](Electron-keytype.md#videoencoderconfig)
 
     期望发布的最大分辨率视频流参数。
 
@@ -1690,7 +1690,7 @@
   ```
 
 - **注意**
-  + 必须先调用 [setupLocalVideo](85532.md#rtcvideo-setuplocalvideo) 设置本地视图后再调用本接口。
+  + 必须先调用 [setupLocalVideo](Electron-api.md#rtcvideo-setuplocalvideo) 设置本地视图后再调用本接口。
   + 切换视频源不影响镜像设置。
   + 屏幕视频流始终不受镜像设置影响。
   + 该接口调用前，各视频源的初始状态如下：
@@ -1704,7 +1704,7 @@
 
   - **mirror_type**
 
-    类型: [MirrorType](85535.md#mirrortype)
+    类型: [MirrorType](Electron-keytype.md#mirrortype)
 
     镜像类型
 
@@ -1915,7 +1915,7 @@
 
   - **beauty_mode**
 
-    类型: [EffectBeautyMode](85535.md#effectbeautymode)
+    类型: [EffectBeautyMode](Electron-keytype.md#effectbeautymode)
 
     基础美颜模式
 
@@ -2067,8 +2067,8 @@
 
 - **注意**
 
-  + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [`onStreamPushEvent`](85533.md#onstreampushevent) 回调。
-  + 调用 [`stopPushStreamToCDN`](85532.md#stoppushstreamtocdn) 停止任务。
+  + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [`onStreamPushEvent`](Electron-event.md#onstreampushevent) 回调。
+  + 调用 [`stopPushStreamToCDN`](Electron-api.md#stoppushstreamtocdn) 停止任务。
 
 - **参数**
 
@@ -2080,7 +2080,7 @@
 
   - **param**
 
-    类型: [PushSingleStreamParam](85535.md#pushsinglestreamparam)
+    类型: [PushSingleStreamParam](Electron-keytype.md#pushsinglestreamparam)
 
     转推直播配置参数
 
@@ -2103,7 +2103,7 @@
 
 - **注意**
 
-  关于启动转推直播，参看 [`startPushStreamToCDN`](85532.md#rtcvideo-startpushsinglestreamtocdn) 和 [`startPushSingleStreamToCDN`](85532.md#rtcvideo-startpushsinglestreamtocdn)。
+  关于启动转推直播，参看 [`startPushStreamToCDN`](Electron-api.md#rtcvideo-startpushsinglestreamtocdn) 和 [`startPushSingleStreamToCDN`](Electron-api.md#rtcvideo-startpushsinglestreamtocdn)。
 
 - **参数**
 
@@ -2134,7 +2134,7 @@
 
   + 该接口可重复调用，仅最后一次调用生效。
   + 降噪算法包含传统降噪和 AI 降噪。传统降噪主要是抑制平稳噪声，比如空调声、风扇声等。而 AI 降噪主要是抑制非平稳噪声，比如键盘敲击声、桌椅碰撞声等。
-  + 只有在以下 [RoomProfileType](85535.md#roomprofiletype) 场景下，调用本接口可以开启 AI 降噪。其余场景的 AI 降噪不会生效。
+  + 只有在以下 [RoomProfileType](Electron-keytype.md#roomprofiletype) 场景下，调用本接口可以开启 AI 降噪。其余场景的 AI 降噪不会生效。
       + 游戏语音模式：kRoomProfileTypeGame
       + 高音质游戏模式：kRoomProfileTypeGameHD
       + 云游戏模式：kRoomProfileTypeCloudGame
@@ -2148,7 +2148,7 @@
 
   - **ans_Mode**
 
-    类型: [AnsMode](85535.md#ansmode)
+    类型: [AnsMode](Electron-keytype.md#ansmode)
 
     降噪模式。
 
@@ -2176,13 +2176,13 @@
 
   - **stream_key**
 
-    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
 
     远端流信息，用于指定需要设置超分的视频流来源及属性。
 
   - **mode**
 
-    类型: [VideoSuperResolutionMode](85535.md#videosuperresolutionmode)
+    类型: [VideoSuperResolutionMode](Electron-keytype.md#videosuperresolutionmode)
 
     超分模式。
 
@@ -2190,7 +2190,7 @@
 
   类型: number
 
-  + `0`: RETURN_STATUS_SUCCESS，SDK 调用成功，并不代表超分模式实际状态，需要根据回调 [onRemoteVideoSuperResolutionModeChanged](85533.md#onremotevideosuperresolutionmodechanged) 判断实际状态。
+  + `0`: RETURN_STATUS_SUCCESS，SDK 调用成功，并不代表超分模式实际状态，需要根据回调 [onRemoteVideoSuperResolutionModeChanged](Electron-event.md#onremotevideosuperresolutionmodechanged) 判断实际状态。
   + `-1`: RETURN_STATUS_NATIVE_IN_VALID，native library 未加载。
   + `-2`: RETURN_STATUS_PARAMETER_ERR，参数非法，指针为空或字符串为空。
   + `-9`: RETURN_STATUS_SCREEN_NOT_SUPPORT，不支持对屏幕流开启超分。
@@ -2214,7 +2214,7 @@
 
   - **stream_index**
 
-    类型: [StreamIndex](85535.md#streamindex)
+    类型: [StreamIndex](Electron-keytype.md#streamindex)
 
     截图的视频流的属性，为主流还是屏幕流。
 
@@ -2222,7 +2222,7 @@
 
   类型: number
 
-  本地截图任务的编号，从 `1` 开始递增。 调用成功后通过 [onTakeLocalSnapshotResult](85533.md#ontakelocalsnapshotresult) 回调快照文件。
+  本地截图任务的编号，从 `1` 开始递增。 调用成功后通过 [onTakeLocalSnapshotResult](Electron-event.md#ontakelocalsnapshotresult) 回调快照文件。
 
 ### takeRemoteSnapshot <span id="rtcvideo-takeremotesnapshot"></span> 
 
@@ -2243,7 +2243,7 @@
 
   - **stream_key**
 
-    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
 
     截图的视频流
 
@@ -2251,7 +2251,7 @@
 
   类型: number
 
-  本地截图任务的编号，从 `1` 开始递增。 调用成功后通过 [onTakeLocalSnapshotResult](85533.md#ontakelocalsnapshotresult) 回调快照文件。
+  本地截图任务的编号，从 `1` 开始递增。 调用成功后通过 [onTakeLocalSnapshotResult](Electron-event.md#ontakelocalsnapshotresult) 回调快照文件。
 
 ### getNetworkTimeInfo <span id="rtcvideo-getnetworktimeinfo"></span> 
 
@@ -2265,7 +2265,7 @@
 
 - **注意**
 
-  + 第一次调用此接口会启动网络时间同步功能，并返回 `0`。同步完成后，会收到 [onNetworkTimeSynchronized](85533.md#onnetworktimesynchronized)，此后，再次调用此 API，即可获取准确的网络时间。
+  + 第一次调用此接口会启动网络时间同步功能，并返回 `0`。同步完成后，会收到 [onNetworkTimeSynchronized](Electron-event.md#onnetworktimesynchronized)，此后，再次调用此 API，即可获取准确的网络时间。
   + 在合唱场景下，合唱参与者应在相同的网络时间播放背景音乐。
 
 - **返回值**
@@ -2286,7 +2286,7 @@
 
   + 调用本接口的频率建议不超过 50 次每秒。
   + 如果本地用户未说话，此消息不一定会送达。
-  + 该接口调用成功后，远端用户会收到 [onStreamSyncInfoReceived](85533.md#onstreamsyncinforeceived) 回调。
+  + 该接口调用成功后，远端用户会收到 [onStreamSyncInfoReceived](Electron-event.md#onstreamsyncinforeceived) 回调。
 
 - **参数**
 
@@ -2298,7 +2298,7 @@
 
   - **config**
 
-    类型: [StreamSycnInfoConfig](85535.md#streamsycninfoconfig)
+    类型: [StreamSycnInfoConfig](Electron-keytype.md#streamsycninfoconfig)
 
     音频流同步信息的相关配置。
 
@@ -2326,14 +2326,14 @@
 
   + 在加入房间前调用此接口
   + 在开启云代理后，进行通话前网络探测
-  + 开启云代理后，并成功链接云代理服务器后，会收到 [onCloudProxyConnected](85533.md#oncloudproxyconnected)。
+  + 开启云代理后，并成功链接云代理服务器后，会收到 [onCloudProxyConnected](Electron-event.md#oncloudproxyconnected)。
   + 要关闭云代理，调用 [stopCloudProxy](#stopcloudproxy)。
 
 - **参数**
 
   - **cloud_proxies**
 
-    类型: [CloudProxyInfo](85535.md#cloudproxyinfo)[]
+    类型: [CloudProxyInfo](Electron-keytype.md#cloudproxyinfo)[]
 
     默认值: `' []'`
 
@@ -2390,7 +2390,7 @@
 
   - **param**
 
-    类型: [IPublicStreamParam](85535.md#ipublicstreamparam)
+    类型: [IPublicStreamParam](Electron-keytype.md#ipublicstreamparam)
 
     公共流参数。
 一路公共流可以包含多路房间内的媒体流，按照指定的布局方式进行聚合。
@@ -2400,7 +2400,7 @@
 
   类型: number
 
-  + 0: 成功。同时将收到 [`onPushPublicStreamResult`](85533.md#onpushpublicstreamresult) 回调。
+  + 0: 成功。同时将收到 [`onPushPublicStreamResult`](Electron-event.md#onpushpublicstreamresult) 回调。
   + !0: 失败。当参数不合法或参数为空，调用失败。
 
 ### stopPushPublicStream <span id="rtcvideo-stoppushpublicstream"></span> 
@@ -2457,7 +2457,7 @@
 
   - **param**
 
-    类型: [IPublicStreamParam](85535.md#ipublicstreamparam)
+    类型: [IPublicStreamParam](Electron-keytype.md#ipublicstreamparam)
 
     公共流参数。
 指定的流必须为当前用户所发布的。
@@ -2484,8 +2484,8 @@
   + 在调用本接口之前，建议先绑定渲染视图。
         - 调用 [`setupPublicStreamVideo`](#setuppublicstreamvideo) 绑定内部渲染视图：
         - 调用 [`setPublicStreamVideoSink`](#setpublicstreamvideosink) 绑定自定义渲染视图：
-  + 调用本接口后，可以通过 [`onFirstPublicStreamVideoFrameDecoded`](85533.md#onfirstpublicstreamvideoframedecoded) 和 [`onFirstPublicStreamAudioFrame`](85533.md#onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
-  + 调用本接口后，可以通过 [`onPublicStreamSEIMessageReceived`](85533.md#onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
+  + 调用本接口后，可以通过 [`onFirstPublicStreamVideoFrameDecoded`](Electron-event.md#onfirstpublicstreamvideoframedecoded) 和 [`onFirstPublicStreamAudioFrame`](Electron-event.md#onfirstpublicstreamaudioframe) 回调公共流的视频和音频首帧解码情况。
+  + 调用本接口后，可以通过 [`onPublicStreamSEIMessageReceived`](Electron-event.md#onpublicstreamseimessagereceived) 回调公共流中包含的 SEI 信息。
 
 - **参数**
 
@@ -2499,7 +2499,7 @@
 
   类型: number
 
-  + 0: 成功。同时将收到 [`onPlayPublicStreamResult`](85533.md#onplaypublicstreamresult) 回调。
+  + 0: 成功。同时将收到 [`onPlayPublicStreamResult`](Electron-event.md#onplaypublicstreamresult) 回调。
   + !0: 失败。当参数不合法或参数为空，调用失败。
 
 ### stopPlayPublicStream <span id="rtcvideo-stopplaypublicstream"></span> 
@@ -2543,7 +2543,7 @@
 
 - **注意**
 
-  + 监听到 [onFirstPublicStreamVideoFrameDecoded](85533.md#onfirstpublicstreamvideoframedecoded) 后，调用本 API 绑定公共流。
+  + 监听到 [onFirstPublicStreamVideoFrameDecoded](Electron-event.md#onfirstpublicstreamvideoframedecoded) 后，调用本 API 绑定公共流。
   + 如果需要解除绑定，调用 [`removePublicStreamVideo`](#removepublicstreamvideo)。
 
 - **参数**
@@ -2562,7 +2562,7 @@
 
   - **renderOptions**
 
-    类型: [RenderOptions](85535.md#renderoptions)
+    类型: [RenderOptions](Electron-keytype.md#renderoptions)
 
     默认值: `' {
       render_mode: RenderMode.FIT,
@@ -2631,7 +2631,7 @@
 
   - **required_format**
 
-    类型: [PixelFormat](85535.md#pixelformat)
+    类型: [PixelFormat](Electron-keytype.md#pixelformat)
 
     适用的视频帧编码格式
 
@@ -2715,22 +2715,22 @@
 
   + 调用此方法仅开启屏幕流视频采集，不会发布采集到的视频。发布屏幕流视频需要调用 [publishScreen](#publishscreen) 。
   + 要关闭屏幕视频源采集，调用 [stopScreenVideoCapture](#stopscreenvideocapture)。
-  + 本地用户通过 [onVideoDeviceStateChanged](85533.md#onvideodevicestatechanged) 的回调获取屏幕采集状态，包括开始、暂停、恢复、错误等。
-  + 调用成功后，本端会收到 [onFirstLocalVideoFrameCaptured](85533.md#onfirstlocalvideoframecaptured) 回调。然后通过调用 [setupLocalScreen](#setuplocalscreen) 设置本地屏幕共享视图。
+  + 本地用户通过 [onVideoDeviceStateChanged](Electron-event.md#onvideodevicestatechanged) 的回调获取屏幕采集状态，包括开始、暂停、恢复、错误等。
+  + 调用成功后，本端会收到 [onFirstLocalVideoFrameCaptured](Electron-event.md#onfirstlocalvideoframecaptured) 回调。然后通过调用 [setupLocalScreen](#setuplocalscreen) 设置本地屏幕共享视图。
   + 调用此接口前，你可以调用 [setVideoEncoderConfig](#setvideoencoderconfig) 设置屏幕视频流的采集帧率和编码分辨率。
-  + 监听 [`onLocalScreenFrame`](85533.md#onlocalscreenframe) 本地屏幕视频回调事件。
+  + 监听 [`onLocalScreenFrame`](Electron-event.md#onlocalscreenframe) 本地屏幕视频回调事件。
 
 - **参数**
 
   - **source_info**
 
-    类型: [ScreenCaptureSourceInfo](85535.md#screencapturesourceinfo)
+    类型: [ScreenCaptureSourceInfo](Electron-keytype.md#screencapturesourceinfo)
 
     待共享的屏幕源，你可以调用 [getScreenCaptureSourceList](#getscreencapturesourcelist) 获得所有可以共享的屏幕源。
 
   - **capture_params**
 
-    类型: [ScreenCaptureParameters](85535.md#screencaptureparameters)
+    类型: [ScreenCaptureParameters](Electron-keytype.md#screencaptureparameters)
 
     共享参数
 
@@ -2775,7 +2775,7 @@
 - **注意**
 
   + 要开始屏幕音频内部采集，调用 [startScreenAudioCapture](#startscreenaudiocapture)。
-  + 调用后，本地用户会收到 [onVideoDeviceStateChanged](85533.md#onvideodevicestatechanged) 的回调。
+  + 调用后，本地用户会收到 [onVideoDeviceStateChanged](Electron-event.md#onvideodevicestatechanged) 的回调。
   + 调用此接口不影响屏幕视频流发布。
 
 - **返回值**
@@ -2803,7 +2803,7 @@
 
   - **region_rect**
 
-    类型: [Rectangle](85535.md#rectangle)
+    类型: [Rectangle](Electron-keytype.md#rectangle)
 
     默认值: `' { x: 0, y: 0, width: 0, height: 0 }'`
 
@@ -2835,7 +2835,7 @@
 
   - **highlight_config**
 
-    类型: [HighlightConfig](85535.md#highlightconfig)
+    类型: [HighlightConfig](Electron-keytype.md#highlightconfig)
 
     默认值: `' {
       enable_highlight: true,
@@ -2870,7 +2870,7 @@
 
   - **capture_mouse_cursor**
 
-    类型: [MouseCursorCaptureState](85535.md#mousecursorcapturestate)
+    类型: [MouseCursorCaptureState](Electron-keytype.md#mousecursorcapturestate)
 
     默认值: `' MouseCursorCaptureState.kMouseCursorCaptureStateOn'`
 
@@ -2933,7 +2933,7 @@
 
   - **channel**
 
-    类型: [AudioChannel](85535.md#audiochannel)
+    类型: [AudioChannel](Electron-keytype.md#audiochannel)
 
     声道数
 
@@ -2957,7 +2957,7 @@
 
 - **返回值**
 
-  类型: [ScreenCaptureSourceInfo](85535.md#screencapturesourceinfo)[]
+  类型: [ScreenCaptureSourceInfo](Electron-keytype.md#screencapturesourceinfo)[]
 
   屏幕采集对象列表，包括应用窗口和屏幕。由用户选择其中一个共享对象，并在调用 [startScreenVideoCapture](#startscreenvideocapture) 时作为参数传给 RTC SDK。
 
@@ -2975,7 +2975,7 @@
 
   - **type**
 
-    类型: [ScreenCaptureSourceType](85535.md#screencapturesourcetype)
+    类型: [ScreenCaptureSourceType](Electron-keytype.md#screencapturesourcetype)
 
     屏幕采集对象的类型
 
@@ -2999,7 +2999,7 @@
 
 - **返回值**
 
-  类型: [ThumbnailInfo](85535.md#thumbnailinfo)
+  类型: [ThumbnailInfo](Electron-keytype.md#thumbnailinfo)
 
   共享对象缩略图
 
@@ -3035,7 +3035,7 @@
 
 - **返回值**
 
-  类型: [AppIconInfo](85535.md#appiconinfo)
+  类型: [AppIconInfo](Electron-keytype.md#appiconinfo)
 
   应用窗体所属应用的图标。当屏幕共享对象为应用窗体时有效，否则返回 nullptr。
 
@@ -3051,7 +3051,7 @@
 
 - **注意**
 
-  你应该在 [publishScreen](#publishscreen) 之前，调用此方法。否则，你将收到 [onWarning](85533.md#onwarning) 的报错：kWarningCodeSetScreenAudioStreamIndexFailed`
+  你应该在 [publishScreen](#publishscreen) 之前，调用此方法。否则，你将收到 [onWarning](Electron-event.md#onwarning) 的报错：kWarningCodeSetScreenAudioStreamIndexFailed`
 
 - **参数**
 
@@ -3086,7 +3086,7 @@
 
   - **screen_solution**
 
-    类型: [ScreenVideoEncoderConfig](85535.md#screenvideoencoderconfig)
+    类型: [ScreenVideoEncoderConfig](Electron-keytype.md#screenvideoencoderconfig)
 
     屏幕共享视频流参数。
 
@@ -3110,7 +3110,7 @@
 - **注意**
 
   + 在调用本接口登录后，如果想要登出，需要调用 [Logout](#logout)。
-  + 本地用户调用此方法登录后，会收到 [onLoginResult](85533.md#onloginresult) 回调通知登录结果，远端用户不会收到通知。
+  + 本地用户调用此方法登录后，会收到 [onLoginResult](Electron-event.md#onloginresult) 回调通知登录结果，远端用户不会收到通知。
 
 - **参数**
 
@@ -3146,8 +3146,8 @@
 
 - **注意**
 
-  + 调用本接口登出前，必须先调用 [login](85532.md#login) 登录。
-  + 本地用户调用此方法登出后，会收到 [onLogout](85533.md#onlogout) 回调通知结果，远端用户不会收到通知。
+  + 调用本接口登出前，必须先调用 [login](Electron-api.md#login) 登录。
+  + 本地用户调用此方法登出后，会收到 [onLogout](Electron-event.md#onlogout) 回调通知结果，远端用户不会收到通知。
 
 - **返回值**
 
@@ -3168,8 +3168,8 @@
 
 - **注意**
 
-  + 调用 [login](85532#login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](85533.md#onloginresult) 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。
-  + 如果 Token 无效导致登录失败，则调用此方法更新 Token 后，SDK 会自动重新登录，而用户不需要自己调用 [login](85532.md#login) 方法。
+  + 调用 [login](Electron-api#login) 方法登录时，如果使用了过期的 Token 将导致登录失败，并会收到 [onLoginResult](Electron-event.md#onloginresult) 回调通知，错误码为 kLoginErrorCodeInvalidToken。此时需要重新获取 Token，并调用此方法更新 Token。
+  + 如果 Token 无效导致登录失败，则调用此方法更新 Token 后，SDK 会自动重新登录，而用户不需要自己调用 [login](Electron-api.md#login) 方法。
   + Token 过期时，如果已经成功登录，则不会受到影响。Token 过期的错误会在下一次使用过期 Token 登录时，或因本地网络状况不佳导致断网重新登录时通知给用户。
 
 - **参数**
@@ -3200,8 +3200,8 @@
 - **注意**
 
   + 客户端调用 [sendServerMessage](#sendservermessage) 或 [sendServerBinaryMessage](#sendserverbinarymessage) 发送消息给业务服务器之前，必须设置有效签名和业务服务器地址。
-  + 用户必须调用 [login](85532.md#login) 登录后，才能调用本接口。
-  + 调用本接口后，SDK 会使用 [onServerParamsSetResult](85533.md#onserverparamssetresult) 返回相应结果。
+  + 用户必须调用 [login](Electron-api.md#login) 登录后，才能调用本接口。
+  + 调用本接口后，SDK 会使用 [onServerParamsSetResult](Electron-event.md#onserverparamssetresult) 返回相应结果。
 
 - **参数**
 
@@ -3236,8 +3236,8 @@
 
 - **注意**
 
-  + 必须调用 [login](85532.md#login) 登录后，才能调用本接口。
-  + 调用本接口后，SDK 会使用 [onGetPeerOnlineStatus](85533.md#ongetpeeronlinestatus) 回调通知查询结果。
+  + 必须调用 [login](Electron-api.md#login) 登录后，才能调用本接口。
+  + 调用本接口后，SDK 会使用 [onGetPeerOnlineStatus](Electron-event.md#ongetpeeronlinestatus) 回调通知查询结果。
   + 在发送房间外消息之前，用户可以通过本接口了解对端用户是否登录，从而决定是否发送消息。也可以通过本接口查询自己查看自己的登录状态。
 
 - **参数**
@@ -3267,9 +3267,9 @@
 
 - **注意**
 
-  + 在发送房间外文本消息前，必须先调用 [login](85532.md#login) 完成登录。
-  + 用户调用本接口发送文本信息后，会收到一次 [onUserMessageSendResultOutsideRoom](85533.md#onusermessagesendresultoutsideroom) 回调，得知消息是否成功发送。
-  + 若文本消息发送成功，则 uid 所指定的用户会通过 [onUserMessageReceivedOutsideRoom](85533.md#onusermessagereceivedoutsideroom) 回调收到该消息。
+  + 在发送房间外文本消息前，必须先调用 [login](Electron-api.md#login) 完成登录。
+  + 用户调用本接口发送文本信息后，会收到一次 [onUserMessageSendResultOutsideRoom](Electron-event.md#onusermessagesendresultoutsideroom) 回调，得知消息是否成功发送。
+  + 若文本消息发送成功，则 uid 所指定的用户会通过 [onUserMessageReceivedOutsideRoom](Electron-event.md#onusermessagereceivedoutsideroom) 回调收到该消息。
 
 - **参数**
 
@@ -3287,7 +3287,7 @@
 
   - **config**
 
-    类型: [MessageConfig](85535.md#messageconfig)
+    类型: [MessageConfig](Electron-keytype.md#messageconfig)
 
     消息类型
 
@@ -3311,9 +3311,9 @@
 
 - **注意**
 
-  + 在发送房间外二进制消息前，必须先调用 [login](85532.md#login) 完成登录。
-  + 用户调用本接口发送二进制消息后，会收到一次 [onUserMessageSendResultOutsideRoom](85533.md#onusermessagesendresultoutsideroom) 回调，通知消息是否发送成功。
-  + 若二进制消息发送成功，则 uid 所指定的用户会通过 [onUserMessageReceivedOutsideRoom](85533.md#onusermessagereceivedoutsideroom) 回调收到该条消息。
+  + 在发送房间外二进制消息前，必须先调用 [login](Electron-api.md#login) 完成登录。
+  + 用户调用本接口发送二进制消息后，会收到一次 [onUserMessageSendResultOutsideRoom](Electron-event.md#onusermessagesendresultoutsideroom) 回调，通知消息是否发送成功。
+  + 若二进制消息发送成功，则 uid 所指定的用户会通过 [onUserMessageReceivedOutsideRoom](Electron-event.md#onusermessagereceivedoutsideroom) 回调收到该条消息。
 
 - **参数**
 
@@ -3337,7 +3337,7 @@
 
   - **config**
 
-    类型: [MessageConfig](85535.md#messageconfig)
+    类型: [MessageConfig](Electron-keytype.md#messageconfig)
 
     消息类型
 
@@ -3361,9 +3361,9 @@
 
 - **注意**
 
-  + 在向业务服务器发送文本消息前，必须先调用 [login](85532.md#login) 完成登录，随后调用 [setServerParams](85532.md#setserverparams) 设置业务服务器。
-  + 调用本接口后，会收到一次 [onServerMessageSendResult](85533.md#onservermessagesendresult) 回调，通知消息发送方是否发送成功。
-  + 若文本消息发送成功，则之前调用 [setServerParams](85532.md#setserverparams) 设置的业务服务器会收到该条消息。
+  + 在向业务服务器发送文本消息前，必须先调用 [login](Electron-api.md#login) 完成登录，随后调用 [setServerParams](Electron-api.md#setserverparams) 设置业务服务器。
+  + 调用本接口后，会收到一次 [onServerMessageSendResult](Electron-event.md#onservermessagesendresult) 回调，通知消息发送方是否发送成功。
+  + 若文本消息发送成功，则之前调用 [setServerParams](Electron-api.md#setserverparams) 设置的业务服务器会收到该条消息。
 
 - **参数**
 
@@ -3392,9 +3392,9 @@
 
 - **注意**
 
-  + 在向业务服务器发送二进制消息前，必须先调用 [login](85532.md#login) 完成登录，随后调用 [setServerParams](85532.md#setserverparams) 设置业务服务器。
-  + 调用本接口后，会收到一次 [onServerMessageSendResult](85533.md#onservermessagesendresult) 回调，通知消息发送方发送成功或失败。
-  + 若二进制消息发送成功，则之前调用 [setServerParams](85532.md#setserverparams) 设置的业务服务器会收到该条消息。
+  + 在向业务服务器发送二进制消息前，必须先调用 [login](Electron-api.md#login) 完成登录，随后调用 [setServerParams](Electron-api.md#setserverparams) 设置业务服务器。
+  + 调用本接口后，会收到一次 [onServerMessageSendResult](Electron-event.md#onservermessagesendresult) 回调，通知消息发送方发送成功或失败。
+  + 若二进制消息发送成功，则之前调用 [setServerParams](Electron-api.md#setserverparams) 设置的业务服务器会收到该条消息。
 
 - **参数**
 
@@ -3431,7 +3431,7 @@
 
   + SEI 数据会随视频帧发送。每秒发送的 SEI 消息数量建议不超过当前的视频帧率。在语音通话场景下，SDK 会自动生成一路 16px × 16px 的黑帧视频流用来发送 SEI 数据，帧率为 15 fps。
   + 如果调用此接口之后的 2s 内，没有可带 SEI 的视频帧（比如没有开启视频采集和传输），那么，SEI 数据不会被加进视频帧中。
-  + 消息发送成功后，远端会收到 [onSEIMessageReceived](85533.md#onseimessagereceived) 回调。
+  + 消息发送成功后，远端会收到 [onSEIMessageReceived](Electron-event.md#onseimessagereceived) 回调。
   + 语音通话切换至视频通话时，会停止 SEI 数据发送，你需再次调用该接口方可恢复发送。
 
 - **参数**
@@ -3457,7 +3457,7 @@
 
   - **mode**
 
-    类型: [SEICountPerFrame](85535.md#seicountperframe)
+    类型: [SEICountPerFrame](Electron-keytype.md#seicountperframe)
 
 - **返回值**
 
@@ -3478,7 +3478,7 @@
 
 - **注意**
 
-  + 本接口在引擎创建后即可调用，建议在调用 [startVideoCapture](85532.md#startvideocapture) 前调用本接口。
+  + 本接口在引擎创建后即可调用，建议在调用 [startVideoCapture](Electron-api.md#startvideocapture) 前调用本接口。
   + 建议同一设备上的不同 Engine 使用相同的视频采集参数。
   + 如果调用本接口前使用内部模块开始视频采集，采集参数默认为 Auto 模式。
 
@@ -3486,7 +3486,7 @@
 
   - **config**
 
-    类型: [VideoCaptureConfig](85535.md#videocaptureconfig) | undefined
+    类型: [VideoCaptureConfig](Electron-keytype.md#videocaptureconfig) | undefined
 
     视频采集参数
 
@@ -3510,7 +3510,7 @@
 
 - **注意**
 
-  + 调用本方法成功播放音乐文件后，SDK 会向本地回调当前的混音状态，见 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)。
+  + 调用本方法成功播放音乐文件后，SDK 会向本地回调当前的混音状态，见 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)。
   + 开始播放音乐文件及混音后，可以调用 [stopAudioMixing](#stopaudiomixing) 方法停止播放音乐文件。
   + 可以通过传入不同的 ID 和 file_path 多次调用本方法，以实现同时播放多个音乐文件，实现混音叠加。
 
@@ -3520,7 +3520,7 @@
 
     类型: number
 
-    混音 ID，用于标识混音，请保证混音 ID 唯一性。  如果已经通过 [preloadAudioMixing](#preloadaudiomixing) 将音效加载至内存，确保此处的 ID 与 [preloadAudioMixing](#preloadaudiomixing) 设置的 ID 相同。  如果使用相同的 ID 重复调用本方法，前一次混音会停止，后一次混音开始，且 SDK 会使用 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged) 回调通知前一次混音已停止。
+    混音 ID，用于标识混音，请保证混音 ID 唯一性。  如果已经通过 [preloadAudioMixing](#preloadaudiomixing) 将音效加载至内存，确保此处的 ID 与 [preloadAudioMixing](#preloadaudiomixing) 设置的 ID 相同。  如果使用相同的 ID 重复调用本方法，前一次混音会停止，后一次混音开始，且 SDK 会使用 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged) 回调通知前一次混音已停止。
 
   - **file_path**
 
@@ -3545,7 +3545,7 @@
 
   - **config**
 
-    类型: [AudioMixingConfig](85535.md#audiomixingconfig)
+    类型: [AudioMixingConfig](Electron-keytype.md#audiomixingconfig)
 
     混音配置，设置混音的播放次数、是否本地播放混音、以及是否将混音发送至远端
 
@@ -3569,7 +3569,7 @@
 - **注意**
 
   + 调用 [startAudioMixing](#startaudiomixing) 方法开始播放音乐文件及混音后，可以调用本方法停止播放音乐文件及混音。
-  + 调用本方法停止播放音乐文件后，SDK 会向本地回调通知已停止混音，见 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)。
+  + 调用本方法停止播放音乐文件后，SDK 会向本地回调通知已停止混音，见 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)。
   + 调用本方法停止播放音乐文件后，该音乐文件会被自动卸载。
 
 - **参数**
@@ -3601,7 +3601,7 @@
 
   + 调用 [startAudioMixing](#startaudiomixing) 方法开始播放音乐文件及混音后，可以通过调用本方法暂停播放音乐文件及混音。
   + 调用本方法暂停播放音乐文件及混音后，可调用 [resumeAudioMixing](#resumeaudiomixing) 方法恢复播放及混音。
-  + 调用本方法暂停播放音乐文件后，SDK 会向本地回调通知已暂停混音，见 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)。
+  + 调用本方法暂停播放音乐文件后，SDK 会向本地回调通知已暂停混音，见 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)。
 
 - **参数**
 
@@ -3631,7 +3631,7 @@
 - **注意**
 
   + 调用 [pauseAudioMixing](#pauseaudiomixing) 方法暂停播放音乐文件及混音后，可以通过调用本方法恢复播放及混音。
-  + 调用本方法恢复播放音乐文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)。
+  + 调用本方法恢复播放音乐文件及混音后，SDK 会向本地回调通知音乐文件正在播放中，见 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)。
 
 - **参数**
 
@@ -3662,7 +3662,7 @@
 
   + 需要频繁播放某个音乐文件的时候，调用本方法预加载该文件，在播放的时候可以只加载一次该文件，减少 CPU 占用。
   + 本方法只是预加载指定音乐文件，只有调用 [startAudioMixing](#startaudiomixing) 方法才开始播放指定音乐文件。
-  + 调用本方法预加载音乐文件后，SDK 会回调通知音乐文件已加载，见 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)。
+  + 调用本方法预加载音乐文件后，SDK 会回调通知音乐文件已加载，见 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)。
   + 调用本方法预加载的指定音乐文件可以通过 [unloadAudioMixing](#unloadaudiomixing) 卸载。
 
 - **参数**
@@ -3671,7 +3671,7 @@
 
     类型: number
 
-    混音 ID  应用调用者维护，请保证唯一性。  如果使用相同的 ID 调用本方法，后一次会覆盖前一次。 如果先调用 [startAudioMixing](#startaudiomixing) ，再使用相同的 ID 调用本方法 ，会先回调 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged) 上一个混音停止，然后加载后一个混音。  使用一个 ID 调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing](#startaudiomixing) 播放 B.mp3，请先调用 [unloadAudioMixing](#unloadaudiomixing) 卸载 A.mp3 ，否则会报错 kAudioMixingErrorLoadConflict。
+    混音 ID  应用调用者维护，请保证唯一性。  如果使用相同的 ID 调用本方法，后一次会覆盖前一次。 如果先调用 [startAudioMixing](#startaudiomixing) ，再使用相同的 ID 调用本方法 ，会先回调 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged) 上一个混音停止，然后加载后一个混音。  使用一个 ID 调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [startAudioMixing](#startaudiomixing) 播放 B.mp3，请先调用 [unloadAudioMixing](#unloadaudiomixing) 卸载 A.mp3 ，否则会报错 kAudioMixingErrorLoadConflict。
 
   - **file_path**
 
@@ -3698,7 +3698,7 @@
 
 - **注意**
 
-  不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)。
+  不论音乐文件是否播放，调用本方法卸载该文件后，SDK 会回调通知混音已停止，见 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)。
 
 - **参数**
 
@@ -3907,7 +3907,7 @@
 
   - **mode**
 
-    类型: [AudioMixingDualMonoMode](85535.md#audiomixingdualmonomode)
+    类型: [AudioMixingDualMonoMode](Electron-keytype.md#audiomixingdualmonomode)
 
     声道模式。默认的声道模式和源文件一致，详见 AudioMixingDualMonoMode。
 
@@ -3930,7 +3930,7 @@
 
 - **注意**
 
-  本方法需要在调用 [`startAudioMixing`](#startaudiomixing) 开始播放音频文件后、调用 [`stopAudioMixing`](#stopaudiomixing) 停止播放音频文件前使用，否则会触发 [`onAudioMixingStateChanged`](85533.md#onaudiomixingstatechanged) 回调报错
+  本方法需要在调用 [`startAudioMixing`](#startaudiomixing) 开始播放音频文件后、调用 [`stopAudioMixing`](#stopaudiomixing) 停止播放音频文件前使用，否则会触发 [`onAudioMixingStateChanged`](Electron-event.md#onaudiomixingstatechanged) 回调报错
 
 - **参数**
 
@@ -4148,7 +4148,7 @@
 
     相对于语音原始音调的升高/降低值，取值范围[-12，12]，默认值为 0，即不做调整。
 取值范围内每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调，设置的绝对值越大表示音调升高或降低越多。
-超出取值范围则设置失败，并且会触发 [onWarning](85533.md#onwarning) 回调，提示码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法
+超出取值范围则设置失败，并且会触发 [onWarning](Electron-event.md#onwarning) 回调，提示码为 `WARNING_CODE_SET_SCREEN_STREAM_INVALID_VOICE_PITCH` 设置语音音调不合法
 
 - **返回值**
 
@@ -4169,26 +4169,26 @@
 
 - **注意**
 
-  + 调用该方法后，你会收到 [onRecordingStateUpdate](85533.md#onrecordingstateupdate) 回调。
-  + 如果录制正常，系统每秒钟会通过 [onRecordingProgressUpdate](85533.md#onrecordingprogressupdate) 回调通知录制进度。
+  + 调用该方法后，你会收到 [onRecordingStateUpdate](Electron-event.md#onrecordingstateupdate) 回调。
+  + 如果录制正常，系统每秒钟会通过 [onRecordingProgressUpdate](Electron-event.md#onrecordingprogressupdate) 回调通知录制进度。
 
 - **参数**
 
   - **type**
 
-    类型: [StreamIndex](85535.md#streamindex)
+    类型: [StreamIndex](Electron-keytype.md#streamindex)
 
     流属性，指定录制主流还是屏幕流<li>主流。包括：由摄像头/麦克风通过内部采集机制，采集到的视频/音频。</li><li>屏幕流。屏幕共享时共享的视频流，或来自声卡的本地播放音频流。</li>
 
   - **config**
 
-    类型: [RecordingConfig](85535.md#recordingconfig)
+    类型: [RecordingConfig](Electron-keytype.md#recordingconfig)
 
     本地录制参数配置
 
   - **recording_type**
 
-    类型: [RecordingType](85535.md#recordingtype)
+    类型: [RecordingType](Electron-keytype.md#recordingtype)
 
     录制存储文件格式
 
@@ -4213,7 +4213,7 @@
 - **注意**
 
   + 调用 [startFileRecording](#startfilerecording) 开启本地录制后，你必须调用该方法停止录制。
-  + 调用该方法后，你会收到 [onRecordingStateUpdate](85533.md#onrecordingstateupdate) 回调提示录制结果。
+  + 调用该方法后，你会收到 [onRecordingStateUpdate](Electron-event.md#onrecordingstateupdate) 回调提示录制结果。
 
 - **参数**
 
@@ -4244,8 +4244,8 @@
 
   + 该方法仅在调用 [enableSimulcastMode](#enablesimulcastmode) 开启了发送多路视频流的情况下生效。
   + 你必须在进房前设置，进房后设置或更改设置无效。
-  + 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [onPerformanceAlarms](85533.md#rtcvideocallback-onperformancealarms) 回调发出的告警，以便采集设备配合调整。
-  + 设置回退选项后，本端发布的音视频流发生回退或从回退中恢复时，订阅该音视频流的客户端会收到 [onSimulcastSubscribeFallback](85533.md#onsimulcastsubscribefallback) 回调，通知该情况。
+  + 调用该方法后，如因性能或网络不佳产生发布性能回退或恢复，本端会提前收到 [onPerformanceAlarms](Electron-event.md#rtcvideocallback-onperformancealarms) 回调发出的告警，以便采集设备配合调整。
+  + 设置回退选项后，本端发布的音视频流发生回退或从回退中恢复时，订阅该音视频流的客户端会收到 [onSimulcastSubscribeFallback](Electron-event.md#onsimulcastsubscribefallback) 回调，通知该情况。
   + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 - **参数**
@@ -4276,8 +4276,8 @@
 - **注意**
 
   + 你必须在进房前设置，进房后设置或更改设置无效。
-  + 设置回退选项后，本端订阅的音视频流发生回退或从回退中恢复时,会收到 [onSimulcastSubscribeFallback](85533.md#onsimulcastsubscribefallback) 回调通知。
-  + 设置回退选项后，本端订阅的视频流因为回退分辨率发生变化时,会收到 [onRemoteVideoSizeChanged](85533.md#onremotevideosizechanged) 回调通知。
+  + 设置回退选项后，本端订阅的音视频流发生回退或从回退中恢复时,会收到 [onSimulcastSubscribeFallback](Electron-event.md#onsimulcastsubscribefallback) 回调通知。
+  + 设置回退选项后，本端订阅的视频流因为回退分辨率发生变化时,会收到 [onRemoteVideoSizeChanged](Electron-event.md#onremotevideosizechanged) 回调通知。
   + 你可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
 - **参数**
@@ -4329,7 +4329,7 @@
 
   - **priority**
 
-    类型: [RemoteUserPriority](85535.md#remoteuserpriority)
+    类型: [RemoteUserPriority](Electron-keytype.md#remoteuserpriority)
 
     远端用户的需求优先级
 
@@ -4352,8 +4352,8 @@
 
 - **注意**
 
-  + 成功调用本接口后，会在 3s 内收到一次 [onNetworkDetectionResult](85533.md#onnetworkdetectionresult) 回调，此后每 2s 会收到一次该回调，通知探测结果；
-  + 若探测停止，则会收到一次 [onNetworkDetectionStopped](85533.md#onnetworkdetectionstopped)  通知探测停止。
+  + 成功调用本接口后，会在 3s 内收到一次 [onNetworkDetectionResult](Electron-event.md#onnetworkdetectionresult) 回调，此后每 2s 会收到一次该回调，通知探测结果；
+  + 若探测停止，则会收到一次 [onNetworkDetectionStopped](Electron-event.md#onnetworkdetectionstopped)  通知探测停止。
 
 - **参数**
 
@@ -4403,7 +4403,7 @@
 
 - **注意**
 
-  调用本接口后，会收到一次 [onNetworkDetectionStopped](85533.md#onnetworkdetectionstopped) 回调通知探测停止。
+  调用本接口后，会收到一次 [onNetworkDetectionStopped](Electron-event.md#onnetworkdetectionstopped) 回调通知探测停止。
 
 - **返回值**
 
@@ -4437,7 +4437,7 @@
 
   - **source**
 
-    类型: [VirtualBackgroundSource](85535.md#virtualbackgroundsource)
+    类型: [VirtualBackgroundSource](Electron-keytype.md#virtualbackgroundsource)
 
     背景贴纸对象。
 
@@ -4487,7 +4487,7 @@
 
 - **注意**
 
-  此观察者后，你会周期性收到 [onFaceDetectResult](85533.md#onfacedetectresult) 回调。
+  此观察者后，你会周期性收到 [onFaceDetectResult](Electron-event.md#onfacedetectresult) 回调。
 
 - **参数**
 
@@ -4569,7 +4569,7 @@
 
   - **config**
 
-    类型: [RTCWatermarkConfig](85535.md#rtcwatermarkconfig)
+    类型: [RTCWatermarkConfig](Electron-keytype.md#rtcwatermarkconfig)
 
     水印参数
 
@@ -4631,7 +4631,7 @@
 
   - **render_options**
 
-    类型: [RenderOptions](85535.md#renderoptions)
+    类型: [RenderOptions](Electron-keytype.md#renderoptions)
 
     默认值: `' {
       render_mode: RenderMode.FIT,
@@ -4676,7 +4676,7 @@
 
 - **注意**
 
-  + 监听到 [onUserPublishStream](85533.md#onuserpublishstream) 后，调用本 API 绑定远端流。
+  + 监听到 [onUserPublishStream](Electron-event.md#onuserpublishstream) 后，调用本 API 绑定远端流。
   + 如果需要解除绑定，调用 [`removeRemoteVideo`](#removeremotevideo) 或 [`removeAllRemoteVideo`](#removeallremotevideo)。
   + 本地用户离开房间时，会解除调用此 API 建立的绑定关系；远端用户离开房间则不会影响。
 
@@ -4702,7 +4702,7 @@
 
   - **render_options**
 
-    类型: [RenderOptions](85535.md#renderoptions)
+    类型: [RenderOptions](Electron-keytype.md#renderoptions)
 
     默认值: `' {
       render_mode: RenderMode.FIT,
@@ -4807,7 +4807,7 @@
 
   - **render_options**
 
-    类型: [RenderOptions](85535.md#renderoptions)
+    类型: [RenderOptions](Electron-keytype.md#renderoptions)
 
     默认值: `' {
       render_mode: RenderMode.FIT,
@@ -4856,7 +4856,7 @@
 
 - **注意**
 
-  + 监听到 [onUserPublishScreen](85533.md#onuserpublishscreen) 后，调用本 API 绑定远端屏幕共享流。
+  + 监听到 [onUserPublishScreen](Electron-event.md#onuserpublishscreen) 后，调用本 API 绑定远端屏幕共享流。
   + 如果需要解除绑定，调用 [`removeRemoteScreen`](#removeremotescreen)。
 
 - **参数**
@@ -4881,7 +4881,7 @@
 
   - **render_options**
 
-    类型: [RenderOptions](85535.md#renderoptions)
+    类型: [RenderOptions](Electron-keytype.md#renderoptions)
 
     默认值: `' {
       render_mode: RenderMode.FIT,
@@ -4946,13 +4946,13 @@
 
   - **index**
 
-    类型: [StreamIndex](85535.md#streamindex)
+    类型: [StreamIndex](Electron-keytype.md#streamindex)
 
     视频流属性。采集的视频流/屏幕视频流
 
   - **required_format**
 
-    类型: [PixelFormat](85535.md#pixelformat)
+    类型: [PixelFormat](Electron-keytype.md#pixelformat)
 
     适用的视频帧编码格式
 
@@ -4977,7 +4977,7 @@
 
   - **index**
 
-    类型: [StreamIndex](85535.md#streamindex)
+    类型: [StreamIndex](Electron-keytype.md#streamindex)
 
     视频流属性。采集的视频流/屏幕视频流
 
@@ -5002,13 +5002,13 @@
 
   - **stream_key**
 
-    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
 
     远端流信息，用于指定需要设置超分的视频流来源及属性。
 
   - **required_format**
 
-    类型: [PixelFormat](85535.md#pixelformat)
+    类型: [PixelFormat](Electron-keytype.md#pixelformat)
 
     适用的视频帧编码格式
 
@@ -5033,7 +5033,7 @@
 
   - **stream_key**
 
-    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
 
     远端流信息，用于指定需要设置超分的视频流来源及属性。
 
@@ -5056,10 +5056,10 @@
 
 - **注意**
 
-  + 调用接口后，你会收到 [onPlayStateChanged](85533.md#onplaystatechanged) 回调歌曲播放状态。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
-  + 若音乐文件不存在，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3020，play_state 为 4。
+  + 调用接口后，你会收到 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调歌曲播放状态。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 若音乐文件不存在，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3020，play_state 为 4。
 
 - **参数**
 
@@ -5072,13 +5072,13 @@
 
   - **track_type**
 
-    类型: [AudioTrackType](85535.md#audiotracktype)
+    类型: [AudioTrackType](Electron-keytype.md#audiotracktype)
 
     原唱伴唱类型。
 
   - **play_type**
 
-    类型: [AudioPlayType](85535.md#audioplaytype)
+    类型: [AudioPlayType](Electron-keytype.md#audioplaytype)
 
     音乐播放类型。
 
@@ -5101,9 +5101,9 @@
 
 - **注意**
 
-  + 调用接口后，你会收到 [onPlayStateChanged](85533.md#onplaystatechanged) 回调歌曲播放状态。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 调用接口后，你会收到 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调歌曲播放状态。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
 
 - **参数**
 
@@ -5132,9 +5132,9 @@
 
 - **注意**
 
-  + 调用接口后，你会收到 [onPlayStateChanged](85533.md#onplaystatechanged) 回调歌曲播放状态。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 调用接口后，你会收到 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调歌曲播放状态。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
 
 - **参数**
 
@@ -5163,9 +5163,9 @@
 
 - **注意**
 
-  + 调用接口后，你会收到 [onPlayStateChanged](85533.md#onplaystatechanged) 回调歌曲播放状态。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 调用接口后，你会收到 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调歌曲播放状态。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
 
 - **参数**
 
@@ -5195,9 +5195,9 @@
 - **注意**
 
   + 调用本接口时音乐必须处于播放中状态。
-  + 调用接口后，你会收到 [onPlayStateChanged](85533.md#onplaystatechanged) 回调歌曲播放状态。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 调用接口后，你会收到 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调歌曲播放状态。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
 
 - **参数**
 
@@ -5234,8 +5234,8 @@
 
   + 调用本接口时音乐必须处于播放中状态。
   + 若设置的音量大于 400，则按最大值 400 进行调整；若设置的音量小于 0，则按最小值 0 进行调整。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
 
 - **参数**
 
@@ -5305,8 +5305,8 @@
 
   + 调用本接口时音乐必须处于播放中状态。
   + 若设置的 pitch 大于 12，则按最大值 12 进行调整；若设置的 pitch 小于 –12，，则按最小值 –12 进行调整。
-  + 若音乐 ID 错误，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
-  + 若未进房，会触发 [onPlayStateChanged](85533.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
+  + 若音乐 ID 错误，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3023，play_state 为 4。
+  + 若未进房，会触发 [onPlayStateChanged](Electron-event.md#onplaystatechanged) 回调，error_code 为 –3022，play_state 为 4。
 
 - **参数**
 
@@ -5368,7 +5368,7 @@
 
 - **注意**
 
-  调用接口后，你会收到 [onMusicListResult](85533.md#onmusiclistresult) 回调歌曲列表。
+  调用接口后，你会收到 [onMusicListResult](Electron-event.md#onmusiclistresult) 回调歌曲列表。
 
 - **参数**
 
@@ -5415,7 +5415,7 @@
 
 - **注意**
 
-  调用接口后，你会收到 [onSearchMusicResult](85533.md#onsearchmusicresult) 回调歌曲列表。
+  调用接口后，你会收到 [onSearchMusicResult](Electron-event.md#onsearchmusicresult) 回调歌曲列表。
 
 - **参数**
 
@@ -5468,7 +5468,7 @@
 
 - **注意**
 
-  调用接口后，你会收到 [onHotMusicResult](85533.md#onhotmusicresult) 回调歌曲列表。
+  调用接口后，你会收到 [onHotMusicResult](Electron-event.md#onhotmusicresult) 回调歌曲列表。
 
 - **参数**
 
@@ -5512,7 +5512,7 @@
 
 - **注意**
 
-  调用接口后，你会收到 [onMusicDetailResult](85533.md#onmusicdetailresult) 回调。
+  调用接口后，你会收到 [onMusicDetailResult](Electron-event.md#onmusicdetailresult) 回调。
 
 - **参数**
 
@@ -5541,9 +5541,9 @@
 
 - **注意**
 
-  + 若音乐下载成功，你会收到 [onDownloadSuccess](85533.md#ondownloadsuccess) 回调。
-  + 若音乐下载失败，你会收到 [onDownloadFailed](85533.md#ondownloadfailed) 回调。
-  + 音乐下载进度更新时，你会收到 onDownloadMusicProgress(85533#onDownloadMusicProgress) 回调。
+  + 若音乐下载成功，你会收到 [onDownloadSuccess](Electron-event.md#ondownloadsuccess) 回调。
+  + 若音乐下载失败，你会收到 [onDownloadFailed](Electron-event.md#ondownloadfailed) 回调。
+  + 音乐下载进度更新时，你会收到 onDownloadMusicProgress(Electron-event#onDownloadMusicProgress) 回调。
 
 - **参数**
 
@@ -5571,8 +5571,8 @@
 
 - **注意**
 
-  + 若歌词下载成功，你会收到 [onDownloadSuccess](85533.md#ondownloadsuccess) 回调。
-  + 若歌词下载失败，你会收到 [onDownloadFailed](85533.md#ondownloadfailed) 回调。
+  + 若歌词下载成功，你会收到 [onDownloadSuccess](Electron-event.md#ondownloadsuccess) 回调。
+  + 若歌词下载失败，你会收到 [onDownloadFailed](Electron-event.md#ondownloadfailed) 回调。
 
 - **参数**
 
@@ -5584,7 +5584,7 @@
 
   - **type**
 
-    类型: [DownloadLyricType](85535.md#downloadlyrictype)
+    类型: [DownloadLyricType](Electron-keytype.md#downloadlyrictype)
 
     歌词文件类型。
 
@@ -5606,8 +5606,8 @@
 
 - **注意**
 
-  + 若文件下载成功，你会收到 [onDownloadSuccess](85533.md#ondownloadsuccess) 回调。
-  + 若文件下载失败，你会收到 [onDownloadFailed](85533.md#ondownloadfailed) 回调。
+  + 若文件下载成功，你会收到 [onDownloadSuccess](Electron-event.md#ondownloadsuccess) 回调。
+  + 若文件下载失败，你会收到 [onDownloadFailed](Electron-event.md#ondownloadfailed) 回调。
 
 - **参数**
 
@@ -5714,7 +5714,7 @@
 
   - **config**
 
-    类型: [SingScoringConfig](85535.md#singscoringconfig)
+    类型: [SingScoringConfig](Electron-keytype.md#singscoringconfig)
 
     K 歌评分的各项参数
 
@@ -5756,11 +5756,11 @@
 
     类型: number
 
-    歌词句子数，取值范围为 0 到调用 [getStandardPitchCount](85532.md#rtcvideo-getstandardpitchcount) 获取到的句子总数减 1。
+    歌词句子数，取值范围为 0 到调用 [getStandardPitchCount](Electron-api.md#rtcvideo-getstandardpitchcount) 获取到的句子总数减 1。
 
 - **返回值**
 
-  类型: [StandardPitchInfo](85535.md#standardpitchinfo)
+  类型: [StandardPitchInfo](Electron-keytype.md#standardpitchinfo)
 
   标准音高数据
 
@@ -5777,8 +5777,8 @@
 - **注意**
 
   + 在调用 [initSingScoring](#initsingscoring) 初始化 K 歌评分功能后调用该接口。
-  + 调用该接口后，将会根据设置的回调时间间隔，收到评分结果 [onCurrentScoringInfo](85533.md#oncurrentscoringinfo) 回调。
-  + 如果调用 [startAudioMixing](#startaudiomixing) 接口播放音频文件，请在收到 [onAudioMixingStateChanged](85533.md#onaudiomixingstatechanged)(AUDIO_MIXING_STATE_PLAYING(1)) 之后调用此接口。
+  + 调用该接口后，将会根据设置的回调时间间隔，收到评分结果 [onCurrentScoringInfo](Electron-event.md#oncurrentscoringinfo) 回调。
+  + 如果调用 [startAudioMixing](#startaudiomixing) 接口播放音频文件，请在收到 [onAudioMixingStateChanged](Electron-event.md#onaudiomixingstatechanged)(AUDIO_MIXING_STATE_PLAYING(1)) 之后调用此接口。
 
 - **参数**
 
@@ -5893,7 +5893,7 @@
 
   - **config**
 
-    类型: [VoiceEqualizationConfig](85535.md#voiceequalizationconfig)
+    类型: [VoiceEqualizationConfig](Electron-keytype.md#voiceequalizationconfig)
 
     语音均衡效果
 
@@ -5922,7 +5922,7 @@
 
   - **param**
 
-    类型: [VoiceReverbConfig](85535.md#voicereverbconfig) | undefined
+    类型: [VoiceReverbConfig](Electron-keytype.md#voicereverbconfig) | undefined
 
     语音均衡效果
 
@@ -5977,13 +5977,13 @@
   + 录制包含各种音频效果。但不包含背景音乐。
   + 调用 [stopAudioRecording](#stopaudiorecording) 关闭录制。
   + 加入房间后才可调用。如果加入了多个房间，录制的文件中会包含各个房间的音频。离开最后一个房间后，录制任务自动停止。
-  + 调用该方法后，你会收到 onAudioRecordingStateUpdate(85533#onaudiorecordingstateupdate) 回调。
+  + 调用该方法后，你会收到 onAudioRecordingStateUpdate(Electron-event#onaudiorecordingstateupdate) 回调。
 
 - **参数**
 
   - **config**
 
-    类型: [AudioRecordingConfig](85535.md#audiorecordingconfig)
+    类型: [AudioRecordingConfig](Electron-keytype.md#audiorecordingconfig)
 
     录制参数
 
@@ -6118,9 +6118,9 @@
 
 - **注意**
 
-  + 该方法在进房前后均可调用。如果你需要在进房前使用 AGC 功能，请联系技术支持获得私有参数，传入对应 [RoomProfileType](85535.md#roomprofiletype)。 
-  + 要想在进房后开启 AGC 功能，你需要把 [RoomProfileType](85535.md#roomprofiletype) 设置为 `kRoomProfileTypeMeeting` 、`kRoomProfileTypeMeetingRoom` 或 `kRoomProfileTypeClassroom` 。
-  + AGC 功能生效后，不建议再调用 [setAudioCaptureDeviceVolume](85532.md#rtcvideo-setaudiocapturedevicevolume) 来调节设备麦克风的采集音量。
+  + 该方法在进房前后均可调用。如果你需要在进房前使用 AGC 功能，请联系技术支持获得私有参数，传入对应 [RoomProfileType](Electron-keytype.md#roomprofiletype)。 
+  + 要想在进房后开启 AGC 功能，你需要把 [RoomProfileType](Electron-keytype.md#roomprofiletype) 设置为 `kRoomProfileTypeMeeting` 、`kRoomProfileTypeMeetingRoom` 或 `kRoomProfileTypeClassroom` 。
+  + AGC 功能生效后，不建议再调用 [setAudioCaptureDeviceVolume](Electron-api.md#rtcvideo-setaudiocapturedevicevolume) 来调节设备麦克风的采集音量。
 
 - **参数**
 
@@ -6153,14 +6153,14 @@
 - **注意**
 
   + 调用本接口也将对自定义采集视频画面生效，在原有的旋转角度基础上叠加本次设置。
-  + 通过 [enableVirtualBackground](85532.md#rtcvideo-enablevirtualbackground) 增加的虚拟背景，不会跟随本接口的设置进行旋转。
+  + 通过 [enableVirtualBackground](Electron-api.md#rtcvideo-enablevirtualbackground) 增加的虚拟背景，不会跟随本接口的设置进行旋转。
   + 通过本接口设置的旋转角度不会应用到转推直播中。
 
 - **参数**
 
   - **rotation**
 
-    类型: [VideoRotation](85535.md#videorotation)
+    类型: [VideoRotation](Electron-keytype.md#videorotation)
 
     相机朝向角度，默认为 `VIDEO_ROTATION_0(0)`，无旋转角度。
 
@@ -6181,13 +6181,13 @@
 - **注意**
 
   + 每次调用本接口只能设置一种参数。如果缩放系数和移动步长都需要设置，分别调用本接口传入相应参数。
-  + 由于移动步长的默认值为 `0` ，在调用 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol) 或 [startVideoDigitalZoomControl](85532.md#rtcvideo-startvideodigitalzoomcontrol) 进行数码变焦操作前，应先调用本接口。
+  + 由于移动步长的默认值为 `0` ，在调用 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol) 或 [startVideoDigitalZoomControl](Electron-api.md#rtcvideo-startvideodigitalzoomcontrol) 进行数码变焦操作前，应先调用本接口。
 
 - **参数**
 
   - **type**
 
-    类型: [ZoomConfigType](85535.md#zoomconfigtype)
+    类型: [ZoomConfigType](Electron-keytype.md#zoomconfigtype)
 
     数码变焦参数类型，缩放系数或移动步长。必填。
 
@@ -6198,8 +6198,8 @@
     缩放系数或移动步长，保留到小数点后三位。默认值为 0。必填。
      选择不同 `type` 时有不同的取值范围。当计算后的结果超过缩放和移动边界时，取临界值。
 
-     + `kZoomFocusOffset`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。
-     + `kZoomMoveOffset`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。
+     + `kZoomFocusOffset`：缩放系数增量，范围为 [0, 7]。例如，设置为 0.5 时，如果调用 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol) 选择 Zoom in，则缩放系数增加 0.5。缩放系数范围 [1，8]，默认为 `1`，原始大小。
+     + `kZoomMoveOffset`：移动百分比，范围为 [0, 0.5]，默认为 0，不移动。如果调用 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol) 选择的是左右移动，则移动距离为 size x 原始视频宽度；如果选择的是上下移动，则移动距离为 size x 原始视频高度。例如，视频帧边长为 1080 px，设置为 0.5 时，实际移动距离为 0.5 x 1080 px = 540 px。
 
 - **返回值**
 
@@ -6217,16 +6217,16 @@
 
 - **注意**
 
-  + 由于默认步长为 `0`，调用该方法前需通过 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol) 设置参数。
-  + 调用该方法进行移动前，应先使用本方法或 [startVideoDigitalZoomControl](85532.md#rtcvideo-startvideodigitalzoomcontrol) 进行放大，否则无法移动。
+  + 由于默认步长为 `0`，调用该方法前需通过 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol) 设置参数。
+  + 调用该方法进行移动前，应先使用本方法或 [startVideoDigitalZoomControl](Electron-api.md#rtcvideo-startvideodigitalzoomcontrol) 进行放大，否则无法移动。
   + 当数码变焦操作超出范围时，将置为临界值。例如，移动到了图片边界、放大到了 8 倍、缩小到原图大小。
-  + 如果你希望实现持续数码变焦操作，调用 [startVideoDigitalZoomControl](85532.md#rtcvideo-startvideodigitalzoomcontrol)。
+  + 如果你希望实现持续数码变焦操作，调用 [startVideoDigitalZoomControl](Electron-api.md#rtcvideo-startvideodigitalzoomcontrol)。
 
 - **参数**
 
   - **direction**
 
-    类型: [ZoomDirectionType](85535.md#zoomdirectiontype)
+    类型: [ZoomDirectionType](Electron-keytype.md#zoomdirectiontype)
 
     数码变焦操作类型。
 
@@ -6246,17 +6246,17 @@
 
 - **注意**
 
-  + 由于默认步长为 `0`，调用该方法前需通过 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol) 设置参数。
-  + 调用该方法进行移动前，应先使用本方法或 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol) 进行放大，否则无法移动。
+  + 由于默认步长为 `0`，调用该方法前需通过 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol) 设置参数。
+  + 调用该方法进行移动前，应先使用本方法或 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol) 进行放大，否则无法移动。
   + 当数码变焦操作超出范围时，将置为临界值并停止操作。例如，移动到了图片边界、放大到了 8 倍、缩小到原图大小。
-  + 你也可以调用 [stopVideoDigitalZoomControl](85532.md#rtcvideo-stopvideodigitalzoomcontrol) 手动停止控制。
-  + 如果你希望实现单次数码变焦操作，调用 [setVideoDigitalZoomControl](85532.md#rtcvideo-setvideodigitalzoomcontrol)。
+  + 你也可以调用 [stopVideoDigitalZoomControl](Electron-api.md#rtcvideo-stopvideodigitalzoomcontrol) 手动停止控制。
+  + 如果你希望实现单次数码变焦操作，调用 [setVideoDigitalZoomControl](Electron-api.md#rtcvideo-setvideodigitalzoomcontrol)。
 
 - **参数**
 
   - **direction**
 
-    类型: [ZoomDirectionType](85535.md#zoomdirectiontype)
+    类型: [ZoomDirectionType](Electron-keytype.md#zoomdirectiontype)
 
     数码变焦操作类型。
 
@@ -6276,7 +6276,7 @@
 
 - **注意**
 
-  关于开始数码变焦，参看 [startVideoDigitalZoomControl](85532.md#rtcvideo-startvideodigitalzoomcontrol)。
+  关于开始数码变焦，参看 [startVideoDigitalZoomControl](Electron-api.md#rtcvideo-startvideodigitalzoomcontrol)。
 
 - **返回值**
 
@@ -6295,9 +6295,9 @@
 - **注意**
 
   + 同一个任务中转推多路直播流时，SDK 会先将多路流合成一路流，然后再进行转推。 
-  + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onSetRoomExtraInfoResult](85533.md#rtcroomcallback-onsetroomextrainforesult) 回调。
+  + 调用该方法后，关于启动结果和推流过程中的错误，会收到 [onSetRoomExtraInfoResult](Electron-event.md#rtcroomcallback-onsetroomextrainforesult) 回调。
   + 如果你在[控制台](https://console.volcengine.com/rtc/cloudRTC?tab=callback)配置了转推直播回调，调用本接口会收到 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 服务端的回调通知。重复调用该接口时，第二次调用会同时触发 [TranscodeStarted](https://www.volcengine.com/docs/6348/75125#transcodestarted) 和 [TranscodeUpdated](https://www.volcengine.com/docs/6348/75125#transcodeupdated) ，如果第二次调用的参数不同，还会触发 [TranscodeStateChanged](https://www.volcengine.com/docs/6348/75125#transcodestatechanged)。
-  + 调用 [stopPushStreamToCDN](85532.md#rtcvideo-stoppushstreamtocdn) 停止转推直播。
+  + 调用 [stopPushStreamToCDN](Electron-api.md#rtcvideo-stoppushstreamtocdn) 停止转推直播。
 
 - **参数**
 
@@ -6310,7 +6310,7 @@
 
   - **config**
 
-    类型: [IMixedStreamConfig](85535.md#imixedstreamconfig)
+    类型: [IMixedStreamConfig](Electron-keytype.md#imixedstreamconfig)
 
     转推直播配置参数。
 
@@ -6333,8 +6333,8 @@
 
 - **注意**
 
-  + 会收到 [onSetRoomExtraInfoResult](85533.md#rtcroomcallback-onsetroomextrainforesult) 回调。  
-  + 使用 [startPushMixedStreamToCDN](85532.md#rtcvideo-startpushmixedstreamtocdn) 启用转推直播功能后，使用此方法更新功能配置参数。
+  + 会收到 [onSetRoomExtraInfoResult](Electron-event.md#rtcroomcallback-onsetroomextrainforesult) 回调。  
+  + 使用 [startPushMixedStreamToCDN](Electron-api.md#rtcvideo-startpushmixedstreamtocdn) 启用转推直播功能后，使用此方法更新功能配置参数。
 
 - **参数**
 
@@ -6346,7 +6346,7 @@
 
   - **config**
 
-    类型: [IMixedStreamConfig](85535.md#imixedstreamconfig)
+    类型: [IMixedStreamConfig](Electron-keytype.md#imixedstreamconfig)
 
     转推直播配置参数。除特殊说明外，均支持过程中更新。
 
@@ -6388,7 +6388,7 @@
 
   - **renderOptions**
 
-    类型: [RenderOptions](85535.md#renderoptions)
+    类型: [RenderOptions](Electron-keytype.md#renderoptions)
 
     默认值: `' {
       render_mode: RenderMode.FIT,
@@ -6479,9 +6479,9 @@
   + 只有当 `RoomProfileType` 为 `kRoomProfileTypeMeeting` 和 `kRoomProfileTypeMeetingRoom` 时支持开启本功能。
   + 开启检测前，你需要向用户获取音频设备的使用权限。
   + 开启检测前，请确保音频设备没有被静音，采集和播放音量正常。
-  + 调用本接口后监听 [onHardwareEchoDetectionResult](85533.md#rtcvideocallback-onhardwareechodetectionresult) 获取检测结果。
-  + 检测期间，进程将独占音频设备，无法使用其他音频设备测试接口： [startEchoTest](85532.md#rtcvideo-startechotest) 或 [startAudioPlaybackDeviceTest](85532.md#rtcvideo-startaudioplaybackdevicetest)。 
-  + 调用 [stopHardwareEchoDetection](85532.md#rtcvideo-stophardwareechodetection) 停止检测，释放对音频设备的占用。
+  + 调用本接口后监听 [onHardwareEchoDetectionResult](Electron-event.md#rtcvideocallback-onhardwareechodetectionresult) 获取检测结果。
+  + 检测期间，进程将独占音频设备，无法使用其他音频设备测试接口： [startEchoTest](Electron-api.md#rtcvideo-startechotest) 或 [startAudioPlaybackDeviceTest](Electron-api.md#rtcvideo-startaudioplaybackdevicetest)。 
+  + 调用 [stopHardwareEchoDetection](Electron-api.md#rtcvideo-stophardwareechodetection) 停止检测，释放对音频设备的占用。
 
 - **参数**
 
@@ -6499,7 +6499,7 @@
   方法调用结果：  
 
   + 0: 成功。
-  + -1：失败。上一次检测未结束，请先调用 [stopHardwareEchoDetection](85532.md#rtcvideo-stophardwareechodetection) 停止检测 后重新调用本接口。
+  + -1：失败。上一次检测未结束，请先调用 [stopHardwareEchoDetection](Electron-api.md#rtcvideo-stophardwareechodetection) 停止检测 后重新调用本接口。
   + -2：失败。路径不合法或音频文件格式不支持。
 
 ### stopHardwareEchoDetection <span id="rtcvideo-stophardwareechodetection"></span> 
@@ -6514,8 +6514,8 @@
 
 - **注意**
 
-  + 关于开启通话前回声检测，参看 [startHardwareEchoDetection](85532.md#rtcvideo-starthardwareechodetection) 。
-  + 建议在收到 [onHardwareEchoDetectionResult](85533.md#rtcvideocallback-onhardwareechodetectionresult) 通知的检测结果后，调用本接口停止检测。
+  + 关于开启通话前回声检测，参看 [startHardwareEchoDetection](Electron-api.md#rtcvideo-starthardwareechodetection) 。
+  + 建议在收到 [onHardwareEchoDetectionResult](Electron-event.md#rtcvideocallback-onhardwareechodetectionresult) 通知的检测结果后，调用本接口停止检测。
   + 在用户进入房间前结束回声检测，释放对音频设备的占用，以免影响正常通话。
 
 - **返回值**
@@ -6540,13 +6540,13 @@
 - **注意**
 
   + 该方法需要在进房前调用。
-  + 调用该方法设置本地代理后，SDK 会触发 [onLocalProxyStateChanged](85533.md#rtcvideocallback-onlocalproxystatechanged) ，返回代理连接的状态。
+  + 调用该方法设置本地代理后，SDK 会触发 [onLocalProxyStateChanged](Electron-event.md#rtcvideocallback-onlocalproxystatechanged) ，返回代理连接的状态。
 
 - **参数**
 
   - **configurations**
 
-    类型: [LocalProxyConfiguration](85535.md#localproxyconfiguration)[]
+    类型: [LocalProxyConfiguration](Electron-keytype.md#localproxyconfiguration)[]
 
     本地代理配置参数。
 你可以根据自己的需要选择同时设置 Http 隧道 和 Socks5 两类代理，或者单独设置其中一类代理。如果你同时设置了 Http 隧道 和 Socks5 两类代理，此时，媒体和信令采用 Socks5 代理， Http 请求采用 Http 隧道代理；如果只设置 Http 隧道 或 Socks5 一类代理，媒体、信令和 Http 请求均采用已设置的代理。
@@ -6574,7 +6574,7 @@
 
   - **mode**
 
-    类型: [EarMonitorMode](85535.md#earmonitormode)
+    类型: [EarMonitorMode](Electron-keytype.md#earmonitormode)
 
     是否开启耳返功能
 
@@ -6597,7 +6597,7 @@
 
 - **注意**
 
-  设置耳返音量前，你必须先调用 [setEarMonitorMode](85532.md#rtcvideo-setearmonitormode)  打开耳返功能。
+  设置耳返音量前，你必须先调用 [setEarMonitorMode](Electron-api.md#rtcvideo-setearmonitormode)  打开耳返功能。
 
 - **参数**
 
@@ -6699,7 +6699,7 @@
 
   - **method**
 
-    类型: [AudioFrameCallbackMethod](85535.md#audioframecallbackmethod)
+    类型: [AudioFrameCallbackMethod](Electron-keytype.md#audioframecallbackmethod)
 
     音频回调方法。方法对应的回调名称参见类型说明。每次调用本接口设置一种回调。
     当音频回调方法设置为 `kAudioFrameCallbackRecord`、`kAudioFrameCallbackPlayback`、`kAudioFrameCallbackMixed`、`kAudioFrameCallbackRecordScreen`时，你需要在参数 `format` 中指定准确的采样率和声道，暂不支持设置为自动。
@@ -6707,7 +6707,7 @@
 
   - **format**
 
-    类型: [AudioFormat](85535.md#audioformat)
+    类型: [AudioFormat](Electron-keytype.md#audioformat)
 
     音频参数格式
 
@@ -6730,13 +6730,13 @@
 
 - **注意**
 
-  该方法需要在调用 [enableAudioFrameCallback](85532.md#rtcvideo-enableaudioframecallback) 之后调用。
+  该方法需要在调用 [enableAudioFrameCallback](Electron-api.md#rtcvideo-enableaudioframecallback) 之后调用。
 
 - **参数**
 
   - **method**
 
-    类型: [AudioFrameCallbackMethod](85535.md#audioframecallbackmethod)
+    类型: [AudioFrameCallbackMethod](Electron-keytype.md#audioframecallbackmethod)
 
     音频回调方法
 
@@ -6759,8 +6759,8 @@
 
 - **注意**
 
-  + 你必须在实时合唱场景下使用此功能。在加入房间时，所有人应设置 [RoomProfileType](85535.md#roomprofiletype) 为 `kRoomProfileTypeChorus`。
-  + 订阅的所有远端流必须通过 [startAudioMixing](85532#rtcvideo-startaudiomixing) 开启了背景音乐混音，并将 [AudioMixingConfig](85535.md#audiomixingconfig) 中的 `sync_progress_to_record_frame` 设置为 `true`。
+  + 你必须在实时合唱场景下使用此功能。在加入房间时，所有人应设置 [RoomProfileType](Electron-keytype.md#roomprofiletype) 为 `kRoomProfileTypeChorus`。
+  + 订阅的所有远端流必须通过 [startAudioMixing](Electron-api#rtcvideo-startaudiomixing) 开启了背景音乐混音，并将 [AudioMixingConfig](Electron-keytype.md#audiomixingconfig) 中的 `sync_progress_to_record_frame` 设置为 `true`。
   + 如果订阅的某个音频流延迟过大，可能无法实现精准对齐。
   + 合唱的参与者不应调用此 API，因为调用此 API 会增加延迟。如果希望从听众变为合唱参与者，应关闭对齐功能。
 
@@ -6768,15 +6768,15 @@
 
   - **streamKey**
 
-    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
 
     作为对齐基准的远端音频流。
 一般选择主唱的音频流。
-你必须在收到 [onUserPublishStream](85533.md#rtcroomcallback-onuserpublishstream)，确认此音频流已发布后，调用此 API。
+你必须在收到 [onUserPublishStream](Electron-event.md#rtcroomcallback-onuserpublishstream)，确认此音频流已发布后，调用此 API。
 
   - **mode**
 
-    类型: [AudioAlignmentMode](85535.md#audioalignmentmode)
+    类型: [AudioAlignmentMode](Electron-keytype.md#audioalignmentmode)
 
     是否对齐，默认不对齐。
 
@@ -6829,8 +6829,8 @@
 - **注意**
 
   + 该方法在进房前后均可调用。且不可与其它音频设备测试功能同时应用。 
-        + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 [stopAudioDeviceRecordAndPlayTest](85532.md#rtcvideo-stopaudiodevicerecordandplaytest) 来停止采集并开始播放此前采集到的声音。
-        + 调用 [stopAudioDevicePlayTest](85532.md#rtcvideo-stopaudiodeviceplaytest) 可以停止音频设备采集和播放测试。
+        + 调用本接口 30 s 后，采集自动停止，并开始播放采集到的声音。录音播放完毕后，设备测试流程自动结束。你也可以在 30 s 内调用 [stopAudioDeviceRecordAndPlayTest](Electron-api.md#rtcvideo-stopaudiodevicerecordandplaytest) 来停止采集并开始播放此前采集到的声音。
+        + 调用 [stopAudioDevicePlayTest](Electron-api.md#rtcvideo-stopaudiodeviceplaytest) 可以停止音频设备采集和播放测试。
         + 你不应在测试过程中，调用 `enableAudioPropertiesReport` 注册音量提示回调。
         + 该方法仅在本地进行音频设备测试，不涉及网络连接。
 
@@ -6854,7 +6854,7 @@
 ### stopAudioDeviceRecordAndPlayTest <span id="rtcvideo-stopaudiodevicerecordandplaytest"></span> 
 
 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。
-调用 [startAudioDeviceRecordTest](85532.md#rtcvideo-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
+调用 [startAudioDeviceRecordTest](Electron-api.md#rtcvideo-startaudiodevicerecordtest) 30 s 内调用本接口来停止采集并开始播放此前采集到的声音。
 
 - **类型**
 
@@ -6864,7 +6864,7 @@
 
 - **注意**
 
-  调用本接口开始播放录音后，可以在播放过程中调用 [stopAudioDevicePlayTest](85532.md#rtcvideo-stopaudiodeviceplaytest) 停止播放。
+  调用本接口开始播放录音后，可以在播放过程中调用 [stopAudioDevicePlayTest](Electron-api.md#rtcvideo-stopaudiodeviceplaytest) 停止播放。
 
 - **返回值**
 
@@ -6877,7 +6877,7 @@
 
 ### stopAudioDevicePlayTest <span id="rtcvideo-stopaudiodeviceplaytest"></span> 
 
-停止由调用 [startAudioDeviceRecordTest](85532.md#rtcvideo-startaudiodevicerecordtest) 开始的音频播放设备测试。
+停止由调用 [startAudioDeviceRecordTest](Electron-api.md#rtcvideo-startaudiodevicerecordtest) 开始的音频播放设备测试。
 在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。
 
 - **类型**
@@ -6925,7 +6925,7 @@
 
   - **log_config**
 
-    类型: [LogConfig](85535.md#logconfig)
+    类型: [LogConfig](Electron-keytype.md#logconfig)
 
     日志文件配置
 
@@ -7000,7 +7000,7 @@
 
   - **type**
 
-    类型: [RenderType](85535.md#rendertype)
+    类型: [RenderType](Electron-keytype.md#rendertype)
 
     渲染类型
 
@@ -7057,12 +7057,12 @@
 | [setRemoteRoomAudioPlaybackVolume](#rtcroom-setremoteroomaudioplaybackvolume) | 调节某个房间内所有远端用户的音频播放音量。 |
 | [setAudioSelectionConfig](#rtcroom-setaudioselectionconfig) | 设置本端发布流在音频选路中的优先级。 |
 | [setRoomExtraInfo](#rtcroom-setroomextrainfo) | 设置/更新房间附加信息，可用于标识房间状态或属性，或灵活实现各种业务逻辑。 |
-| [startSubtitle](#rtcroom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br>语音识别或翻译的结果会通过 [onSubtitleMessageReceived](85533.md#onsubtitlemessagereceived) 事件回调给你。<br>调用该方法后，你会收到 [onSubtitleStateChanged](85533.md#onsubtitlestatechanged) 回调，通知字幕是否开启。 |
-| [stopSubtitle](#rtcroom-stopsubtitle) | 关闭字幕。<br>调用该方法后，用户会收到 [onSubtitleStateChanged](85533.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
+| [startSubtitle](#rtcroom-startsubtitle) | 识别或翻译房间内所有用户的语音，形成字幕。<br>语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Electron-event.md#onsubtitlemessagereceived) 事件回调给你。<br>调用该方法后，你会收到 [onSubtitleStateChanged](Electron-event.md#onsubtitlestatechanged) 回调，通知字幕是否开启。 |
+| [stopSubtitle](#rtcroom-stopsubtitle) | 关闭字幕。<br>调用该方法后，用户会收到 [onSubtitleStateChanged](Electron-event.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。 |
 | [updateSelfPosition](#rtcroom-updateselfposition) | 设置本地用户在自建空间直角坐标系中的收听坐标和收听朝向，以实现本地用户预期的空间音频收听效果。 |
 | [updateRemotePosition](#rtcroom-updateremoteposition) | 设置房间内某一远端用户在本地用户自建的空间音频坐标系中的发声位置和发声朝向，以实现本地用户预期的空间音频收听效果。 |
-| [removeRemotePosition](#rtcroom-removeremoteposition) | 移除调用 [updateRemotePosition](85532.md#updateremoteposition) 为某一远端用户设置的空间音频效果。 |
-| [removeAllRemotePosition](#rtcroom-removeallremoteposition) | 移除调用 [updateRemotePosition](85532.md#updateremoteposition) 为所有远端用户设置的空间音频效果。 |
+| [removeRemotePosition](#rtcroom-removeremoteposition) | 移除调用 [updateRemotePosition](Electron-api.md#updateremoteposition) 为某一远端用户设置的空间音频效果。 |
+| [removeAllRemotePosition](#rtcroom-removeallremoteposition) | 移除调用 [updateRemotePosition](Electron-api.md#updateremoteposition) 为所有远端用户设置的空间音频效果。 |
 
 
 ### new RTCRoom()
@@ -7154,10 +7154,10 @@
 - **注意**
 
   + 调用 [createRTCRoom](#creatertcroom) 创建房间后，调用此方法加入房间，同房间内其他用户进行音视频通话。
-  + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onError](85533#rtcvideocallback-onerror) 回调通知，错误类型详见 [ErrorCode](85534.md#errorcode) 中的 kErrorCodeDuplicateLogin。
-  + 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](85533.md#onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](85533.md#rtcroomcallback-onuserjoined) 回调通知。
+  + 同一个 App ID 的同一个房间内，每个用户的用户 ID 必须是唯一的。如果两个用户的用户 ID 相同，则后进房的用户会将先进房的用户踢出房间，并且先进房的用户会收到 [onError](Electron-event#rtcvideocallback-onerror) 回调通知，错误类型详见 [ErrorCode](Electron-errorcode.md#errorcode) 中的 kErrorCodeDuplicateLogin。
+  + 本地用户调用此方法加入房间成功后，会收到 [onRoomStateChanged](Electron-event.md#onroomstatechanged) 回调通知。若本地用户同时为可见用户，加入房间时远端用户会收到 [onUserJoined](Electron-event.md#rtcroomcallback-onuserjoined) 回调通知。
   + 房间内不可见用户的容量远远大于可见用户，而且用户默认可见，因此对于不参与互动的用户，你需要调用 [setUserVisibility](#setuservisibility)。更改为不可见用户。从而避免因房间内用户达到数量上限所导致的进房失败。默认情况下，一个 RTC 房间最多同时容纳 50 名可见用户，最多 30 人可同时上麦。更多信息参看[用户和媒体流上限](https://www.volcengine.com/docs/6348/257549)。
-  + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](85533.md#onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](85533.md#rtcroomcallback-onroomstatechanged) 回调通知。
+  + 用户加入房间成功后，在本地网络状况不佳的情况下，SDK 可能会与服务器失去连接，并触发 [onConnectionStateChanged](Electron-event.md#onconnectionstatechanged) 回调。此时 SDK 会自动重试，直到成功重连。重连成功后，本地会收到 [onRoomStateChanged](Electron-event.md#rtcroomcallback-onroomstatechanged) 回调通知。
 
 - **参数**
 
@@ -7172,13 +7172,13 @@
 
   - **user_info**
 
-    类型: [UserInfo](85535.md#userinfo)
+    类型: [UserInfo](Electron-keytype.md#userinfo)
 
     用户信息
 
   - **config**
 
-    类型: [RTCRoomConfig](85535.md#rtcroomconfig) | undefined
+    类型: [RTCRoomConfig](Electron-keytype.md#rtcroomconfig) | undefined
 
     房间参数配置，设置房间模式以及是否自动发布或订阅流。
 
@@ -7189,7 +7189,7 @@
   + 0：方法调用成功。
   + -1：roomID / userInfo.uid 包含了无效的参数。
   + -2：已经在房间内。接口调用成功后，只要收到返回值为 0 ，且未调用 [leaveRoom](#leaveroom) 成功，则再次调用进房接口时，无论填写的房间 ID 和用户 ID 是否重复，均触发此返回值。
-具体失败原因会通过 [onRoomStateChanged](85533.md#onroomstatechanged) 回调告知。
+具体失败原因会通过 [onRoomStateChanged](Electron-event.md#onroomstatechanged) 回调告知。
 
 ### leaveRoom <span id="rtcroom-leaveroom"></span> 
 
@@ -7205,8 +7205,8 @@
 
   + 用户调用此方法离开房间，结束通话过程，释放所有通话相关的资源。
   + 调用 [joinRoom](#joinroom) 方法加入房间后，必须调用此方法结束通话，否则无法开始下一次通话。无论当前是否在房间内，都可以调用此方法。重复调用此方法没有负面影响。
-  + 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [`onLeaveRoom`](85533.md#onleaveroom) 回调通知。+ 调用 [`setUserVisibility`](#setuservisibility) 将自身设为可见的用户离开房间后，房间内其他用户会收到 [`onUserLeave`](85533.md#onuserleave) 回调通知。
-  + 如果调用此方法后立即销毁引擎，SDK 将无法触发 [`onLeaveRoom`](85533.md#onleaveroom) 回调。
+  + 此方法是异步操作，调用返回时并没有真正退出房间。真正退出房间后，本地会收到 [`onLeaveRoom`](Electron-event.md#onleaveroom) 回调通知。+ 调用 [`setUserVisibility`](#setuservisibility) 将自身设为可见的用户离开房间后，房间内其他用户会收到 [`onUserLeave`](Electron-event.md#onuserleave) 回调通知。
+  + 如果调用此方法后立即销毁引擎，SDK 将无法触发 [`onLeaveRoom`](Electron-event.md#onleaveroom) 回调。
 
 - **返回值**
 
@@ -7230,8 +7230,8 @@
 
   + 在加入房间前后，用户均可调用此方法设置用户可见性。
   + 在房间内，调用此方法成功切换用户可见性后，房间内其他用户会收到相应的回调通知：
-      - 从不可见换至可见时，房间内其他用户会收到 [onUserJoined](85533.md#onuserjoined)；
-      - 从可见切换至不可见时，房间内其他用户会收到 [onLeaveRoom](85533.md#onleaveroom) 。
+      - 从不可见换至可见时，房间内其他用户会收到 [onUserJoined](Electron-event.md#onuserjoined)；
+      - 从可见切换至不可见时，房间内其他用户会收到 [onLeaveRoom](Electron-event.md#onleaveroom) 。
   + 若调用该方法将可见性设为 false，此时尝试发布流会收到 `WARNING_CODE_PUBLISH_STREAM_FORBIDEN` 警告。
 
 - **参数**
@@ -7267,7 +7267,7 @@
   + 当同一用户同时使用两个通话设备分别采集发送音频和视频时，有可能会因两个设备所处的网络环境不一致而导致发布的流不同步，此时你可以在视频发送端调用该接口，SDK 会根据音频流的时间戳自动校准视频流，以保证接收端听到音频和看到视频在时间上的同步性。
   + 该方法在进房前后均可调用。
   + 进行音画同步的音频发布用户 ID 和视频发布用户 ID 须在同一个 RTC 房间内。
-  + 调用该接口后音画同步状态发生改变时，你会收到 [onAVSyncStateChange](85533.md#onavsyncstatechange) 回调。
+  + 调用该接口后音画同步状态发生改变时，你会收到 [onAVSyncStateChange](Electron-event.md#onavsyncstatechange) 回调。
   + 同一 RTC 房间内允许存在多个音视频同步关系，但需注意单个音频源不支持与多个视频源同时同步。
   + 如需更换同步音频源，再次调用该接口传入新的 `audioUserId` 即可；如需更换同步视频源，需先解除当前的同步关系，后在新视频源端开启同步。
 
@@ -7305,7 +7305,7 @@
     类型: string
 
     重新获取的有效 Token。
-如果传入的 Token 无效，回调错误码为 [ErrorCode](85534) 中的 `-1010` 提示传入的 Token 无效。
+如果传入的 Token 无效，回调错误码为 [ErrorCode](Electron-errorcode) 中的 `-1010` 提示传入的 Token 无效。
 
 - **返回值**
 
@@ -7339,7 +7339,7 @@
 
   - **remote_video_config**
 
-    类型: [RemoteVideoConfig](85535.md#remotevideoconfig) | undefined
+    类型: [RemoteVideoConfig](Electron-keytype.md#remotevideoconfig) | undefined
 
     期望配置的远端视频流参数。
 
@@ -7366,14 +7366,14 @@
   + 调用 [setUserVisibility](#setuservisibility) 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。
   + 如果你需要发布屏幕共享流，调用 [publishScreen](#publishscreen)。
   + 如果你需要向多个房间发布流，调用 [startForwardStreamToRooms](#startforwardstreamtorooms)。
-  + 调用此方法后，房间中的所有远端用户会收到 [onUserPublishStream](85533.md#onuserpublishstream) 回调通知，其中成功收到了音频流的远端用户会收到 [onFirstRemoteAudioFrame](85533.md#onfirstremoteaudioframe) 回调，订阅了视频流的远端用户会收到 [onFirstRemoteVideoFrameDecoded](85533.md#onfirstremotevideoframedecoded) 回调。
+  + 调用此方法后，房间中的所有远端用户会收到 [onUserPublishStream](Electron-event.md#onuserpublishstream) 回调通知，其中成功收到了音频流的远端用户会收到 [onFirstRemoteAudioFrame](Electron-event.md#onfirstremoteaudioframe) 回调，订阅了视频流的远端用户会收到 [onFirstRemoteVideoFrameDecoded](Electron-event.md#onfirstremotevideoframedecoded) 回调。
   + 调用 [unpublishStream](#unpublishstream) 取消发布。
 
 - **参数**
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定发布音频/视频
 
@@ -7397,13 +7397,13 @@
 - **注意**
 
   + 调用 [publishStream](#publishstream) 手动发布摄像头音视频流后，你需调用此接口停止发布。
-  + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 [onUserUnpublishStream](85533.md#onuserunpublishstream) 回调通知。
+  + 调用此方法停止发布音视频流后，房间中的其他用户将会收到 [onUserUnpublishStream](Electron-event.md#onuserunpublishstream) 回调通知。
 
 - **参数**
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定停止发布音频/视频
 
@@ -7428,8 +7428,8 @@
 
   + 即使你已经在用户进房时通过调用 [joinRoom](#joinroom) 成功选择了自动发布，也需要调用本接口发布屏幕流。
   + 调用 [setUserVisibility](#setuservisibility) 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布屏幕流。
-  + 调用该方法后，房间中的所有远端用户会收到 [onUserPublishScreen](85533.md#onuserpublishscreen) 回调，其中成功收到音频流的远端用户会收到 [onFirstRemoteAudioFrame](85533.md#onfirstremoteaudioframe) 回调，订阅了视频流的远端用户会收到 [onFirstRemoteVideoFrameDecoded](85533.md#onfirstremotevideoframedecoded) 回调。
-  + 调用该方法后，本端用户会收到 [onScreenVideoFrameSendStateChanged](85533.md#onscreenvideoframesendstatechanged) 回调。
+  + 调用该方法后，房间中的所有远端用户会收到 [onUserPublishScreen](Electron-event.md#onuserpublishscreen) 回调，其中成功收到音频流的远端用户会收到 [onFirstRemoteAudioFrame](Electron-event.md#onfirstremoteaudioframe) 回调，订阅了视频流的远端用户会收到 [onFirstRemoteVideoFrameDecoded](Electron-event.md#onfirstremotevideoframedecoded) 回调。
+  + 调用该方法后，本端用户会收到 [onScreenVideoFrameSendStateChanged](Electron-event.md#onscreenvideoframesendstatechanged) 回调。
   + 如果你需要向多个房间发布流，调用 [startForwardStreamToRooms](#startforwardstreamtorooms)。
   + 调用 [unpublishScreen](#unpublishscreen) 取消发布。
 
@@ -7437,7 +7437,7 @@
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定发布屏幕音频/视频
 
@@ -7461,13 +7461,13 @@
 - **注意**
 
   + 调用 [publishScreen](#publishscreen) 发布屏幕流后，你需调用此接口停止发布。
-  + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 [onUserUnpublishScreen](85533.md#onuserunpublishscreen) 回调。
+  + 调用此方法停止发布屏幕音视频流后，房间中的其他用户将会收到 [onUserUnpublishScreen](Electron-event.md#onuserunpublishscreen) 回调。
 
 - **参数**
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定停止发布屏幕音频/视频
 
@@ -7491,10 +7491,10 @@
 - **注意**
 
   + 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
-  + 你必须先通过 [onUserPublishStream](85533.md#onuserpublishstream) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。
-  + 调用该方法后，你会收到 [onStreamSubscribed](85533.md#onstreamsubscribed) 通知方法调用结果。
+  + 你必须先通过 [onUserPublishStream](Electron-event.md#onuserpublishstream) 回调获取当前房间里的远端摄像头音视频流信息，然后调用本方法按需订阅。
+  + 调用该方法后，你会收到 [onStreamSubscribed](Electron-event.md#onstreamsubscribed) 通知方法调用结果。
   + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream](#unsubscribestream) 取消订阅或本端用户退房。
-  + 关于其他调用异常，你会收到 [onStreamStateChanged](85533#onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](85534.md#errorcode)。
+  + 关于其他调用异常，你会收到 [onStreamStateChanged](Electron-event#onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Electron-errorcode.md#errorcode)。
 
 - **参数**
 
@@ -7506,7 +7506,7 @@
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定订阅音频/视频。
 
@@ -7529,8 +7529,8 @@
 
 - **注意**
 
-  + 调用该方法后，你会收到 [onStreamSubscribed](85533.md#onstreamsubscribed) 通知流的退订结果。
-  + 关于其他调用异常，你会收到 [onStreamStateChanged](85533#onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](85534.md#errorcode)。
+  + 调用该方法后，你会收到 [onStreamSubscribed](Electron-event.md#onstreamsubscribed) 通知流的退订结果。
+  + 关于其他调用异常，你会收到 [onStreamStateChanged](Electron-event#onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](Electron-errorcode.md#errorcode)。
 
 - **参数**
 
@@ -7542,7 +7542,7 @@
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定取消订阅音频/视频。
 
@@ -7567,15 +7567,15 @@
 
   + 多次调用订阅接口时，将根据末次调用接口和传入的参数，更新订阅配置。
   + 大会模式下，如果房间内的媒体流超过上限，建议通过调用 [subscribeStream](#subscribestream) 逐一指定需要订阅的媒体流。
-  + 调用该方法后，你会收到 [onStreamSubscribed](85533.md#onstreamsubscribed) 通知方法调用结果。
+  + 调用该方法后，你会收到 [onStreamSubscribed](Electron-event.md#onstreamsubscribed) 通知方法调用结果。
   + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeStream](#unsubscribestream) 取消订阅或本端用户退房。
-  + 关于其他调用异常，你会收到 onStreamStateChanged(85533#onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](85534)。
+  + 关于其他调用异常，你会收到 onStreamStateChanged(Electron-event#onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Electron-errorcode)。
 
 - **参数**
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定订阅音频/视频。
 
@@ -7599,14 +7599,14 @@
 - **注意**
 
   + 自动订阅和手动订阅的流都可以通过本方法取消订阅。
-  + 调用该方法后，你会收到 [onStreamSubscribed](85533.md#onstreamsubscribed) 通知方法调用结果。
-  + 关于其他调用异常，你会收到 onStreamStateChanged(85533#onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](85534)。
+  + 调用该方法后，你会收到 [onStreamSubscribed](Electron-event.md#onstreamsubscribed) 通知方法调用结果。
+  + 关于其他调用异常，你会收到 onStreamStateChanged(Electron-event#onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](Electron-errorcode)。
 
 - **参数**
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定取消订阅音频/视频。
 
@@ -7630,10 +7630,10 @@
 - **注意**
 
   + 若当前用户在调用本接口时已经订阅该远端用户（手动订阅或自动订阅），则将根据本次传入的参数，更新订阅配置。
-  + 你必须先通过 [onUserPublishScreen](85533.md#onuserpublishscreen) 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。
-  + 调用该方法后，你会收到 [onStreamSubscribed](85533.md#onstreamsubscribed) 通知流的订阅结果。
+  + 你必须先通过 [onUserPublishScreen](Electron-event.md#onuserpublishscreen) 回调获取当前房间里的远端屏幕流信息，然后调用本方法按需订阅。
+  + 调用该方法后，你会收到 [onStreamSubscribed](Electron-event.md#onstreamsubscribed) 通知流的订阅结果。
   + 成功订阅远端用户的媒体流后，订阅关系将持续到调用 [unsubscribeScreen](#unsubscribescreen) 取消订阅或本端用户退房。
-  + 关于其他调用异常，你会收到 [onStreamStateChanged](85533#onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](85534.md#errorcode)。
+  + 关于其他调用异常，你会收到 [onStreamStateChanged](Electron-event#onstreamstatechanged) 回调通知，具体异常原因参看 [ErrorCode](Electron-errorcode.md#errorcode)。
 
 - **参数**
 
@@ -7645,7 +7645,7 @@
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定订阅音频/视频。
 
@@ -7669,8 +7669,8 @@
 - **注意**
 
   + 该方法对自动订阅和手动订阅模式均适用。
-  + 调用该方法后，你会收到 [onStreamSubscribed](85533.md#onstreamsubscribed) 通知流的退订结果。
-  + 关于其他调用异常，你会收到 [onStreamStateChanged](85533#onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](85534.md#errorcode)。
+  + 调用该方法后，你会收到 [onStreamSubscribed](Electron-event.md#onstreamsubscribed) 通知流的退订结果。
+  + 关于其他调用异常，你会收到 [onStreamStateChanged](Electron-event#onstreamstatechanged) 回调通知，具体失败原因参看 [ErrorCode](Electron-errorcode.md#errorcode)。
 
 - **参数**
 
@@ -7682,7 +7682,7 @@
 
   - **type**
 
-    类型: [MediaStreamType](85535.md#mediastreamtype)
+    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
 
     媒体流类型，用于指定取消订阅音频/视频。
 
@@ -7714,7 +7714,7 @@
 
   - **media_type**
 
-    类型: [PauseResumeControlMediaType](85535.md#pauseresumecontrolmediatype)
+    类型: [PauseResumeControlMediaType](Electron-keytype.md#pauseresumecontrolmediatype)
 
     媒体流类型，指定需要暂停接收音频还是视频流
 
@@ -7744,7 +7744,7 @@
 
   - **media_type**
 
-    类型: [PauseResumeControlMediaType](85535.md#pauseresumecontrolmediatype)
+    类型: [PauseResumeControlMediaType](Electron-keytype.md#pauseresumecontrolmediatype)
 
     媒体流类型，指定需要暂停接收音频还是视频流
 
@@ -7768,8 +7768,8 @@
 - **注意**
 
   + 在发送房间内文本消息前，必须先调用 [joinRoom](#joinroom) 加入房间。
-  + 调用后，会收到 [onUserMessageSendResult](85533.md#onusermessagesendresult) 回调，通知消息发送成功或失败；
-  + 若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](85533.md#onusermessagereceived) 回调。
+  + 调用后，会收到 [onUserMessageSendResult](Electron-event.md#onusermessagesendresult) 回调，通知消息发送成功或失败；
+  + 若消息发送成功，则 userId 所指定的用户会收到 [onUserMessageReceived](Electron-event.md#onusermessagereceived) 回调。
 
 - **参数**
 
@@ -7788,7 +7788,7 @@
 
   - **config**
 
-    类型: [MessageConfig](85535.md#messageconfig)
+    类型: [MessageConfig](Electron-keytype.md#messageconfig)
 
     消息发送的可靠/有序类型
 
@@ -7812,8 +7812,8 @@
 - **注意**
 
   + 在发送房间内二进制消息前，必须先调用 [joinRoom](#joinroom) 加入房间。
-  + 调用后，会收到 [onUserMessageSendResult](85533.md#onusermessagesendresult) 回调，通知消息发送成功或失败；
-  + 若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](85533.md#onuserbinarymessagereceived) 回调。
+  + 调用后，会收到 [onUserMessageSendResult](Electron-event.md#onusermessagesendresult) 回调，通知消息发送成功或失败；
+  + 若消息发送成功，则 userId 所指定的用户会收到 [onUserBinaryMessageReceived](Electron-event.md#onuserbinarymessagereceived) 回调。
 
 - **参数**
 
@@ -7838,7 +7838,7 @@
 
   - **config**
 
-    类型: [MessageConfig](85535.md#messageconfig)
+    类型: [MessageConfig](Electron-keytype.md#messageconfig)
 
     消息类型
 
@@ -7862,8 +7862,8 @@
 - **注意**
 
   + 在房间内广播文本消息前，必须先调用 [joinRoom](#joinroom) 加入房间。
-  + 调用后，会收到 [onRoomMessageSendResult](85533.md#onroommessagesendresult) 回调；
-  + 同一房间内的其他用户会收到 [onRoomMessageReceived](85533.md#onroommessagereceived) 回调。
+  + 调用后，会收到 [onRoomMessageSendResult](Electron-event.md#onroommessagesendresult) 回调；
+  + 同一房间内的其他用户会收到 [onRoomMessageReceived](Electron-event.md#onroommessagereceived) 回调。
 
 - **参数**
 
@@ -7894,8 +7894,8 @@
 - **注意**
 
   + 在房间内广播二进制消息前，必须先调用 [joinRoom](#joinroom) 加入房间。
-  + 调用后，会收到 [onRoomMessageSendResult](85533.md#onroommessagesendresult) 回调；
-  + 同一房间内的其他用户会收到 [onRoomBinaryMessageReceived](85533.md#onroombinarymessagereceived) 回调。
+  + 调用后，会收到 [onRoomMessageSendResult](Electron-event.md#onroommessagesendresult) 回调；
+  + 同一房间内的其他用户会收到 [onRoomBinaryMessageReceived](Electron-event.md#onroombinarymessagereceived) 回调。
 
 - **参数**
 
@@ -7931,9 +7931,9 @@
 - **注意**
 
   + 在调用 [joinRoom](#joinroom) 后，调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。
-  + 调用本方法后，将在本端触发 [onForwardStreamStateChanged](85533.md#onforwardstreamstatechanged) 回调。
-  + 调用本方法后，你可以通过监听 [onForwardStreamEvent](85533.md#onforwardstreamevent) 回调来获取各个目标房间在转发媒体流过程中的相关事件。
-  + 开始转发后，目标房间中的用户将接收到本地用户进房 [onUserJoined](85533.md#onuserjoined) 和发流 [onUserPublishStream](85533.md#onuserpublishstream) / [onUserPublishScreen](85533.md#onuserpublishscreen) 的回调。
+  + 调用本方法后，将在本端触发 [onForwardStreamStateChanged](Electron-event.md#onforwardstreamstatechanged) 回调。
+  + 调用本方法后，你可以通过监听 [onForwardStreamEvent](Electron-event.md#onforwardstreamevent) 回调来获取各个目标房间在转发媒体流过程中的相关事件。
+  + 开始转发后，目标房间中的用户将接收到本地用户进房 [onUserJoined](Electron-event.md#onuserjoined) 和发流 [onUserPublishStream](Electron-event.md#onuserpublishstream) / [onUserPublishScreen](Electron-event.md#onuserpublishscreen) 的回调。
   + 调用本方法后，可以调用 [updateForwardStreamToRooms](#updateforwardstreamtorooms) 更新目标房间信息，例如，增加或减少目标房间等。
   + 调用本方法后，可以调用 [stopForwardStreamToRooms](#stopforwardstreamtorooms) 停止向所有房间转发媒体流。
   + 调用本方法后，可以调用 [pauseForwardStreamToAllRooms](#pauseforwardstreamtoallrooms) 暂停向所有房间转发媒体流。
@@ -7942,7 +7942,7 @@
 
   - **configuration**
 
-    类型: [ForwardStreamConfiguration](85535.md#forwardstreamconfiguration)
+    类型: [ForwardStreamConfiguration](Electron-keytype.md#forwardstreamconfiguration)
 
     跨房间媒体流转发指定房间的信息。
 
@@ -7966,15 +7966,15 @@
 - **注意**
 
   + 通过 [startForwardStreamToRooms](#startforwardstreamtorooms) 发起媒体流转发后，可调用本方法增加或者减少目标房间，或更新房间密钥。
-  + 调用本方法增加或删减房间后，将在本端触发 [onForwardStreamStateChanged](85533.md#onforwardstreamstatechanged) 回调，包含发生了变动的目标房间中媒体流转发状态。
-  + 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 [onUserJoined](85533.md#onuserjoined) 和发布 [onUserPublishStream](85533.md#onuserpublishstream)/ [onUserPublishScreen](85533.md#onuserpublishscreen) 的回调。
-  + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](85533.md#onuserunpublishstream) / [onUserUnpublishScreen](85533.md#onuserunpublishscreen) 和退房 [onUserLeave](85533.md#onuserleave) 的回调。
+  + 调用本方法增加或删减房间后，将在本端触发 [onForwardStreamStateChanged](Electron-event.md#onforwardstreamstatechanged) 回调，包含发生了变动的目标房间中媒体流转发状态。
+  + 增加目标房间后，新增目标房间中的用户将接收到本地用户进房 [onUserJoined](Electron-event.md#onuserjoined) 和发布 [onUserPublishStream](Electron-event.md#onuserpublishstream)/ [onUserPublishScreen](Electron-event.md#onuserpublishscreen) 的回调。
+  + 删减目标房间后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](Electron-event.md#onuserunpublishstream) / [onUserUnpublishScreen](Electron-event.md#onuserunpublishscreen) 和退房 [onUserLeave](Electron-event.md#onuserleave) 的回调。
 
 - **参数**
 
   - **configuration**
 
-    类型: [ForwardStreamConfiguration](85535.md#forwardstreamconfiguration)
+    类型: [ForwardStreamConfiguration](Electron-keytype.md#forwardstreamconfiguration)
 
     跨房间媒体流转发目标房间信息。
 
@@ -7998,8 +7998,8 @@
 - **注意**
 
   + 通过 [startForwardStreamToRooms](#startforwardstreamtorooms) 发起媒体流转发后，可调用本方法停止向所有目标房间转发媒体流。
-  + 调用本方法后，将在本端触发 [onForwardStreamStateChanged](85533.md#onforwardstreamstatechanged) 回调。
-  + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](85533.md#onuserunpublishstream) / [onUserUnpublishScreen](85533.md#onuserunpublishscreen) 和退房 [onUserLeave](85533.md#onuserleave) 的回调。
+  + 调用本方法后，将在本端触发 [onForwardStreamStateChanged](Electron-event.md#onforwardstreamstatechanged) 回调。
+  + 调用本方法后，原目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](Electron-event.md#onuserunpublishstream) / [onUserUnpublishScreen](Electron-event.md#onuserunpublishscreen) 和退房 [onUserLeave](Electron-event.md#onuserleave) 的回调。
   + 如果需要停止向指定的房间转发媒体流，请调用 [updateForwardStreamToRooms](#updateforwardstreamtorooms) 更新房间信息。
   + 如果需要暂停转发，请调用 [pauseForwardStreamToAllRooms](#pauseforwardstreamtoallrooms)，并在之后随时调用 resumeForwardStreamToAllRooms(#resumeforwardstreamtoallrooms) 快速恢复转发。
 
@@ -8024,7 +8024,7 @@
 
   + 通过 [startForwardStreamToRooms](#startforwardstreamtorooms) 发起媒体流转发后，可调用本方法暂停向所有目标房间转发媒体流。
   + 调用本方法暂停向所有目标房间转发后，你可以随时调用 resumeForwardStreamToAllRooms(#resumeforwardstreamtoallrooms) 快速恢复转发。
-  + 调用本方法后，目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](85533.md#onuserunpublishstream)/[onUserUnpublishScreen](85533.md#onuserunpublishscreen) 和退房 [onUserLeave](85533.md#onuserleave) 的回调。
+  + 调用本方法后，目标房间中的用户将接收到本地用户停止发布 [onUserUnpublishStream](Electron-event.md#onuserunpublishstream)/[onUserUnpublishScreen](Electron-event.md#onuserunpublishscreen) 和退房 [onUserLeave](Electron-event.md#onuserleave) 的回调。
 
 - **返回值**
 
@@ -8045,7 +8045,7 @@
 
 - **注意**
 
-  目标房间中的用户将接收到本地用户进房 [onUserJoined](85533.md#onuserjoined) 和发布 [onUserPublishStream](85533.md#onuserpublishstream)/[onUserPublishScreen](85533.md#onuserpublishscreen) 的回调。
+  目标房间中的用户将接收到本地用户进房 [onUserJoined](Electron-event.md#onuserjoined) 和发布 [onUserPublishStream](Electron-event.md#onuserpublishstream)/[onUserPublishScreen](Electron-event.md#onuserpublishscreen) 的回调。
 
 - **返回值**
 
@@ -8102,7 +8102,7 @@
 
   - **range**
 
-    类型: [ReceiveRange](85535.md#receiverange)
+    类型: [ReceiveRange](Electron-keytype.md#receiverange)
 
     音频收听范围
 
@@ -8133,7 +8133,7 @@
 
   - **pos**
 
-    类型: [Position](85535.md#position)
+    类型: [Position](Electron-keytype.md#position)
 
     三维坐标的值，默认为 [0, 0, 0]
 
@@ -8164,7 +8164,7 @@
 
   - **type**
 
-    类型: [AttenuationType](85535.md#attenuationtype)
+    类型: [AttenuationType](Electron-keytype.md#attenuationtype)
 
     音量衰减模式。默认为线性衰减。
 
@@ -8254,7 +8254,7 @@
 
   - **pos**
 
-    类型: [Position](85535.md#position)
+    类型: [Position](Electron-keytype.md#position)
 
     三维坐标的值，默认为 [0, 0, 0]。
 
@@ -8284,7 +8284,7 @@
 
   - **orientation**
 
-    类型: [HumanOrientation](85535.md#humanorientation)
+    类型: [HumanOrientation](Electron-keytype.md#humanorientation)
 
     自身朝向信息
 
@@ -8338,7 +8338,7 @@
 
   - **pos**
 
-    类型: [Position](85535.md#position)
+    类型: [Position](Electron-keytype.md#position)
 
     空间直角坐标系下的坐标值。
 如果未调用此接口设定收听位置，那么默认值为通过 [updateSpatialPosition](#updatespatialposition) 设定的值。
@@ -8369,7 +8369,7 @@
 
   - **orientation**
 
-    类型: [HumanOrientation](85535.md#humanorientation)
+    类型: [HumanOrientation](Electron-keytype.md#humanorientation)
 
     自身朝向信息
 如果未调用此接口设定收听朝向，那么默认值为通过 [updateSelfOrientation](#updateselforientation) 设定的值。
@@ -8434,7 +8434,7 @@
 
   - **audio_selection_priority**
 
-    类型: [AudioSelectionPriority](85535.md#audioselectionpriority)
+    类型: [AudioSelectionPriority](Electron-keytype.md#audioselectionpriority)
 
     本端发布流在音频选路中的优先级，默认正常参与音频选路。
 
@@ -8454,8 +8454,8 @@
 
 - **注意**
 
-  + 在设置房间附加信息前，必须先调用 [joinRoom](85532.md#rtcroom-joinroom) 加入房间。  
-  + 调用该方法成功设置附加信息后，同一房间内的其他用户会收到关于该信息的回调 [onRoomExtraInfoUpdate](85533.md#rtcroomcallback-onroomextrainfoupdate)。
+  + 在设置房间附加信息前，必须先调用 [joinRoom](Electron-api.md#rtcroom-joinroom) 加入房间。  
+  + 调用该方法成功设置附加信息后，同一房间内的其他用户会收到关于该信息的回调 [onRoomExtraInfoUpdate](Electron-event.md#rtcroomcallback-onroomextrainfoupdate)。
   + 新进房的用户会收到进房前房间内已有的全部附加信息通知。
 
 - **参数**
@@ -8476,13 +8476,13 @@
 - **返回值**
 
   + 0: 方法调用成功，返回本次调用的任务编号； 
-  + <0: 方法调用失败。你可以在 [onSetRoomExtraInfoResult](85533.md#rtcroomcallback-onsetroomextrainforesult) 回调中查看失败原因。调用该方法后，会收到一次上述回调。
+  + <0: 方法调用失败。你可以在 [onSetRoomExtraInfoResult](Electron-event.md#rtcroomcallback-onsetroomextrainforesult) 回调中查看失败原因。调用该方法后，会收到一次上述回调。
 
 ### startSubtitle <span id="rtcroom-startsubtitle"></span> 
 
 识别或翻译房间内所有用户的语音，形成字幕。
-语音识别或翻译的结果会通过 [onSubtitleMessageReceived](85533.md#onsubtitlemessagereceived) 事件回调给你。
-调用该方法后，你会收到 [onSubtitleStateChanged](85533.md#onsubtitlestatechanged) 回调，通知字幕是否开启。
+语音识别或翻译的结果会通过 [onSubtitleMessageReceived](Electron-event.md#onsubtitlemessagereceived) 事件回调给你。
+调用该方法后，你会收到 [onSubtitleStateChanged](Electron-event.md#onsubtitlestatechanged) 回调，通知字幕是否开启。
 
 - **类型**
 
@@ -8500,7 +8500,7 @@
 
   - **subtitle_config**
 
-    类型: [SubtitleConfig](85535.md#subtitleconfig)
+    类型: [SubtitleConfig](Electron-keytype.md#subtitleconfig)
 
     字幕配置信息。
 
@@ -8514,7 +8514,7 @@
 ### stopSubtitle <span id="rtcroom-stopsubtitle"></span> 
 
 关闭字幕。
-调用该方法后，用户会收到 [onSubtitleStateChanged](85533.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。
+调用该方法后，用户会收到 [onSubtitleStateChanged](Electron-event.md#onsubtitlestatechanged) 回调，通知字幕是否关闭。
 
 - **类型**
 
@@ -8548,7 +8548,7 @@
 
   - **position_info**
 
-    类型: [PositionInfo](85535.md#positioninfo)
+    类型: [PositionInfo](Electron-keytype.md#positioninfo)
 
     空间音频位置信息。
 
@@ -8585,7 +8585,7 @@
 
   - **position_info**
 
-    类型: [PositionInfo](85535.md#positioninfo)
+    类型: [PositionInfo](Electron-keytype.md#positioninfo)
 
     远端用户的空间音频位置信息。
 
@@ -8599,7 +8599,7 @@
 
 ### removeRemotePosition <span id="rtcroom-removeremoteposition"></span> 
 
-移除调用 [updateRemotePosition](85532.md#updateremoteposition) 为某一远端用户设置的空间音频效果。
+移除调用 [updateRemotePosition](Electron-api.md#updateremoteposition) 为某一远端用户设置的空间音频效果。
 
 - **类型**
 
@@ -8624,7 +8624,7 @@
 
 ### removeAllRemotePosition <span id="rtcroom-removeallremoteposition"></span> 
 
-移除调用 [updateRemotePosition](85532.md#updateremoteposition) 为所有远端用户设置的空间音频效果。
+移除调用 [updateRemotePosition](Electron-api.md#updateremoteposition) 为所有远端用户设置的空间音频效果。
 
 - **类型**
 
@@ -8682,8 +8682,8 @@
 
 - **注意**
 
-  + 如果已经通过 [preload](85532.md#rtcaudioeffectplayer-preload) 将文件加载至内存，确保此处的 ID 与 [preload](85532.md#rtcaudioeffectplayer-preload) 设置的 ID 相同。
-  + 开始播放音效文件后，可以调用 [stop](85532.md#rtcaudioeffectplayer-stop) 方法停止播放音效文件。
+  + 如果已经通过 [preload](Electron-api.md#rtcaudioeffectplayer-preload) 将文件加载至内存，确保此处的 ID 与 [preload](Electron-api.md#rtcaudioeffectplayer-preload) 设置的 ID 相同。
+  + 开始播放音效文件后，可以调用 [stop](Electron-api.md#rtcaudioeffectplayer-stop) 方法停止播放音效文件。
 
 - **参数**
 
@@ -8692,7 +8692,7 @@
     类型: number
 
     音效 ID。用于标识音效，请保证音效 ID 唯一性。  
-如果使用相同的 ID 重复调用本方法后，上一个音效会停止，下一个音效开始，并收到 [onAudioEffectPlayerStateChanged](85533.md#rtcaudioeffectplayercallback-onaudioeffectplayerstatechanged)。
+如果使用相同的 ID 重复调用本方法后，上一个音效会停止，下一个音效开始，并收到 [onAudioEffectPlayerStateChanged](Electron-event.md#rtcaudioeffectplayercallback-onaudioeffectplayerstatechanged)。
 
   - **file_path**
 
@@ -8718,7 +8718,7 @@
 
   - **config**
 
-    类型: [AudioEffectPlayerConfig](85535.md#audioeffectplayerconfig)
+    类型: [AudioEffectPlayerConfig](Electron-keytype.md#audioeffectplayerconfig)
 
     音效配置
 
@@ -8741,7 +8741,7 @@
 
 - **注意**
 
-  + 调用 [start](85532.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以调用本方法停止播放音效文件。
+  + 调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以调用本方法停止播放音效文件。
   + 调用本方法停止播放音效文件后，该音效文件会被自动卸载。
 
 - **参数**
@@ -8771,7 +8771,7 @@
 
 - **注意**
 
-  + 调用 [start](85532.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以调用本方法停止播放所有音效文件。
+  + 调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以调用本方法停止播放所有音效文件。
   + 调用本方法停止播放所有音效文件后，该音效文件会被自动卸载。
 
 - **返回值**
@@ -8793,8 +8793,8 @@
 
 - **注意**
 
-  + 本方法只是预加载指定音效文件，只有调用 [start](85532.md#rtcaudioeffectplayer-start) 方法才开始播放指定音效文件。
-  + 调用本方法预加载的指定音效文件可以通过 [unload](85532.md#rtcaudioeffectplayer-unload) 卸载。
+  + 本方法只是预加载指定音效文件，只有调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 方法才开始播放指定音效文件。
+  + 调用本方法预加载的指定音效文件可以通过 [unload](Electron-api.md#rtcaudioeffectplayer-unload) 卸载。
 
 - **参数**
 
@@ -8804,8 +8804,8 @@
 
     音效 ID。用于标识音效，请保证音效 ID 唯一性。  
 如果使用相同的 ID 重复调用本方法，后一次会覆盖前一次。  
-如果先调用 [start](85532#rtcaudioeffectplayer-start)，再使用相同的 ID 调用本方法 ，会收到回调 [onAudioEffectPlayerStateChanged](85533.md#rtcaudioeffectplayercallback-onaudioeffectplayerstatechanged) ，通知前一个音效停止，然后加载下一个音效。  
-调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [start](85532.md#rtcaudioeffectplayer-start) 播放 B.mp3，请先调用 [unload](85532.md#rtcaudioeffectplayer-unload) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。
+如果先调用 [start](Electron-api#rtcaudioeffectplayer-start)，再使用相同的 ID 调用本方法 ，会收到回调 [onAudioEffectPlayerStateChanged](Electron-event.md#rtcaudioeffectplayercallback-onaudioeffectplayerstatechanged) ，通知前一个音效停止，然后加载下一个音效。  
+调用本方法预加载 A.mp3 后，如果需要使用相同的 ID 调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 播放 B.mp3，请先调用 [unload](Electron-api.md#rtcaudioeffectplayer-unload) 卸载 A.mp3 ，否则会报错 AUDIO_MIXING_ERROR_LOAD_CONFLICT。
 
   - **file_path**
 
@@ -8813,7 +8813,7 @@
 
     音效文件路径。支持本地文件的 URI。
 预加载的文件长度不得超过 20s。
-不同平台支持的音效文件格式和 [start](85532.md#rtcaudioeffectplayer-start) 一致。
+不同平台支持的音效文件格式和 [start](Electron-api.md#rtcaudioeffectplayer-start) 一致。
 
 - **返回值**
 
@@ -8834,7 +8834,7 @@
 
 - **注意**
 
-  仅在调用 [start](85532.md#rtcaudioeffectplayer-start) 或 [preload](85532.md#rtcaudioeffectplayer-preload) 后调用此接口。
+  仅在调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 或 [preload](Electron-api.md#rtcaudioeffectplayer-preload) 后调用此接口。
 
 - **参数**
 
@@ -8880,8 +8880,8 @@
 
 - **注意**
 
-  + 调用 [start](85532.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放音效文件。
-  + 调用本方法暂停播放音效文件后，可调用 [resume](85532.md#rtcaudioeffectplayer-resume) 方法恢复播放。
+  + 调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放音效文件。
+  + 调用本方法暂停播放音效文件后，可调用 [resume](Electron-api.md#rtcaudioeffectplayer-resume) 方法恢复播放。
 
 - **参数**
 
@@ -8910,8 +8910,8 @@
 
 - **注意**
 
-  + 调用 [start](85532.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放所有音效文件。
-  + 调用本方法暂停播放所有音效文件后，可调用 [resumeAll](85532.md#rtcaudioeffectplayer-resumeall) 方法恢复所有播放。
+  + 调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 方法开始播放音效文件后，可以通过调用本方法暂停播放所有音效文件。
+  + 调用本方法暂停播放所有音效文件后，可调用 [resumeAll](Electron-api.md#rtcaudioeffectplayer-resumeall) 方法恢复所有播放。
 
 - **返回值**
 
@@ -8932,7 +8932,7 @@
 
 - **注意**
 
-  调用 [pause](85532.md#rtcaudioeffectplayer-pause) 方法暂停播放音效文件后，可以通过调用本方法恢复播放。
+  调用 [pause](Electron-api.md#rtcaudioeffectplayer-pause) 方法暂停播放音效文件后，可以通过调用本方法恢复播放。
 
 - **参数**
 
@@ -8961,7 +8961,7 @@
 
 - **注意**
 
-  调用 [pauseAll](85532.md#rtcaudioeffectplayer-pauseall) 方法暂停所有正在播放音效文件后，可以通过调用本方法恢复播放。
+  调用 [pauseAll](Electron-api.md#rtcaudioeffectplayer-pauseall) 方法暂停所有正在播放音效文件后，可以通过调用本方法恢复播放。
 
 - **返回值**
 
@@ -8983,7 +8983,7 @@
 - **注意**
 
   + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
-  + 仅在调用 [start](85532.md#rtcaudioeffectplayer-start) 后调用此接口。
+  + 仅在调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 后调用此接口。
 
 - **参数**
 
@@ -8998,7 +8998,7 @@
     类型: number
 
     音效文件起始播放位置，单位为毫秒。
-你可以通过 [getDuration](85532.md#rtcaudioeffectplayer-getduration) 获取音效文件总时长，pos 的值应小于音效文件总时长。
+你可以通过 [getDuration](Electron-api.md#rtcaudioeffectplayer-getduration) 获取音效文件总时长，pos 的值应小于音效文件总时长。
 
 - **返回值**
 
@@ -9020,7 +9020,7 @@
 - **注意**
 
   + 在播放在线文件时，调用此接口可能造成播放延迟的现象。
-  + 仅在调用 [start](85532.md#rtcaudioeffectplayer-start) 后调用此接口。
+  + 仅在调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 后调用此接口。
 
 - **参数**
 
@@ -9049,7 +9049,7 @@
 
 - **注意**
 
-  仅在调用 [start](85532.md#rtcaudioeffectplayer-start) 后调用此接口。
+  仅在调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 后调用此接口。
 
 - **参数**
 
@@ -9081,7 +9081,7 @@
 
 - **注意**
 
-  该接口的优先级低于 [setVolume](85532.md#rtcaudioeffectplayer-setvolume)，即通过 [setVolume](85532.md#rtcaudioeffectplayer-setvolume) 单独设置了音量的音效 ID，不受该接口设置的影响。
+  该接口的优先级低于 [setVolume](Electron-api.md#rtcaudioeffectplayer-setvolume)，即通过 [setVolume](Electron-api.md#rtcaudioeffectplayer-setvolume) 单独设置了音量的音效 ID，不受该接口设置的影响。
 
 - **参数**
 
@@ -9110,7 +9110,7 @@
 
 - **注意**
 
-  仅在调用 [start](85532.md#rtcaudioeffectplayer-start) 后调用此接口。
+  仅在调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 后调用此接口。
 
 - **参数**
 
@@ -9139,7 +9139,7 @@
 
 - **注意**
 
-  仅在调用 [start](85532.md#rtcaudioeffectplayer-start) 后调用此接口。
+  仅在调用 [start](Electron-api.md#rtcaudioeffectplayer-start) 后调用此接口。
 
 - **参数**
 
@@ -9183,10 +9183,10 @@
 | 方法 | 描述 |
 | :-- | :-- |
 | [open](#rtcmediaplayer-open) | 打开音乐文件。<br>一个播放器实例仅能够同时打开一个音乐文件。如果需要同时打开多个音乐文件，请创建多个音乐播放器实例。 |
-| [start](#rtcmediaplayer-start) | 播放音乐。你仅需要在调用 [open](85532.md#rtcmediaplayer-open)，且未开启自动播放时，调用此方法。 |
-| [stop](#rtcmediaplayer-stop) | 调用 [open](85532.md#rtcmediaplayer-open) 或 [start](85532.md#rtcmediaplayer-start) 开始播放后，可以调用本方法停止。 |
-| [pause](#rtcmediaplayer-pause) | 调用 [open](85532.md#rtcmediaplayer-open)，或 [start](85532.md#rtcmediaplayer-start) 开始播放音频文件后，调用本方法暂停播放。 |
-| [resume](#rtcmediaplayer-resume) | 调用 [pause](85532.md#rtcmediaplayer-pause) 暂停音频播放后，调用本方法恢复播放。 |
+| [start](#rtcmediaplayer-start) | 播放音乐。你仅需要在调用 [open](Electron-api.md#rtcmediaplayer-open)，且未开启自动播放时，调用此方法。 |
+| [stop](#rtcmediaplayer-stop) | 调用 [open](Electron-api.md#rtcmediaplayer-open) 或 [start](Electron-api.md#rtcmediaplayer-start) 开始播放后，可以调用本方法停止。 |
+| [pause](#rtcmediaplayer-pause) | 调用 [open](Electron-api.md#rtcmediaplayer-open)，或 [start](Electron-api.md#rtcmediaplayer-start) 开始播放音频文件后，调用本方法暂停播放。 |
+| [resume](#rtcmediaplayer-resume) | 调用 [pause](Electron-api.md#rtcmediaplayer-pause) 暂停音频播放后，调用本方法恢复播放。 |
 | [setVolume](#rtcmediaplayer-setvolume) | 调节指定混音的音量大小，包括音乐文件混音和 PCM 混音。 |
 | [getVolume](#rtcmediaplayer-getvolume) | 获取当前音量 |
 | [getTotalDuration](#rtcmediaplayer-gettotalduration) | 获取音乐文件时长。 |
@@ -9198,7 +9198,7 @@
 | [getAudioTrackCount](#rtcmediaplayer-getaudiotrackcount) | 获取当前音乐文件的音轨数 |
 | [selectAudioTrack](#rtcmediaplayer-selectaudiotrack) | 指定当前音乐文件的播放音轨 |
 | [setPlaybackSpeed](#rtcmediaplayer-setplaybackspeed) | 设置播放速度 |
-| [setProgressInterval](#rtcmediaplayer-setprogressinterval) | 设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。 |
+| [setProgressInterval](#rtcmediaplayer-setprogressinterval) | 设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Electron-event.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。 |
 | [setLoudness](#rtcmediaplayer-setloudness) | 如果你需要使用 enableVocalInstrumentBalance#IRTCVideo#enableVocalInstrumentBalance 对音频文件/PCM 音频数据设置音量均衡，你必须通过此接口传入其原始响度。 |
 | [setEventHandler](#rtcmediaplayer-seteventhandler) | 注册回调句柄以在本地音乐文件混音时，收到相关回调。 |
 
@@ -9248,7 +9248,7 @@
 
   - **config**
 
-    类型: [MediaPlayerConfig](85535.md#mediaplayerconfig)
+    类型: [MediaPlayerConfig](Electron-keytype.md#mediaplayerconfig)
 
 - **返回值**
 
@@ -9259,7 +9259,7 @@
 
 ### start <span id="rtcmediaplayer-start"></span> 
 
-播放音乐。你仅需要在调用 [open](85532.md#rtcmediaplayer-open)，且未开启自动播放时，调用此方法。
+播放音乐。你仅需要在调用 [open](Electron-api.md#rtcmediaplayer-open)，且未开启自动播放时，调用此方法。
 
 - **类型**
 
@@ -9269,7 +9269,7 @@
 
 - **注意**
 
-  调用本方法播放音频文件后，可调用 [stop](85532.md#rtcmediaplayer-stop) 方法暂停播放。
+  调用本方法播放音频文件后，可调用 [stop](Electron-api.md#rtcmediaplayer-stop) 方法暂停播放。
 
 - **返回值**
 
@@ -9280,7 +9280,7 @@
 
 ### stop <span id="rtcmediaplayer-stop"></span> 
 
-调用 [open](85532.md#rtcmediaplayer-open) 或 [start](85532.md#rtcmediaplayer-start) 开始播放后，可以调用本方法停止。
+调用 [open](Electron-api.md#rtcmediaplayer-open) 或 [start](Electron-api.md#rtcmediaplayer-start) 开始播放后，可以调用本方法停止。
 
 - **类型**
 
@@ -9297,7 +9297,7 @@
 
 ### pause <span id="rtcmediaplayer-pause"></span> 
 
-调用 [open](85532.md#rtcmediaplayer-open)，或 [start](85532.md#rtcmediaplayer-start) 开始播放音频文件后，调用本方法暂停播放。
+调用 [open](Electron-api.md#rtcmediaplayer-open)，或 [start](Electron-api.md#rtcmediaplayer-start) 开始播放音频文件后，调用本方法暂停播放。
 
 - **类型**
 
@@ -9307,7 +9307,7 @@
 
 - **注意**
 
-  调用本方法暂停播放后，可调用 [resume](85532.md#rtcmediaplayer-resume) 恢复播放。
+  调用本方法暂停播放后，可调用 [resume](Electron-api.md#rtcmediaplayer-resume) 恢复播放。
 
 - **返回值**
 
@@ -9318,7 +9318,7 @@
 
 ### resume <span id="rtcmediaplayer-resume"></span> 
 
-调用 [pause](85532.md#rtcmediaplayer-pause) 暂停音频播放后，调用本方法恢复播放。
+调用 [pause](Electron-api.md#rtcmediaplayer-pause) 暂停音频播放后，调用本方法恢复播放。
 
 - **类型**
 
@@ -9357,7 +9357,7 @@
 
   - **type**
 
-    类型: [AudioMixingType](85535.md#audiomixingtype)
+    类型: [AudioMixingType](Electron-keytype.md#audiomixingtype)
 
 - **返回值**
 
@@ -9384,7 +9384,7 @@
 
   - **type**
 
-    类型: [AudioMixingType](85535.md#audiomixingtype)
+    类型: [AudioMixingType](Electron-keytype.md#audiomixingtype)
 
 - **返回值**
 
@@ -9481,7 +9481,7 @@
     类型: number
 
     音乐文件起始播放位置，单位为毫秒。  
-你可以通过 [getTotalDuration](85532.md#rtcmediaplayer-gettotalduration) 获取音乐文件总时长，position 的值应小于音乐文件总时长。
+你可以通过 [getTotalDuration](Electron-api.md#rtcmediaplayer-gettotalduration) 获取音乐文件总时长，position 的值应小于音乐文件总时长。
 
 - **返回值**
 
@@ -9539,7 +9539,7 @@
 
   - **mode**
 
-    类型: [AudioMixingDualMonoMode](85535.md#audiomixingdualmonomode)
+    类型: [AudioMixingDualMonoMode](Electron-keytype.md#audiomixingdualmonomode)
 
     声道模式。默认的声道模式和源文件一致
 
@@ -9594,7 +9594,7 @@
     类型: number
 
     指定的播放音轨，从 0 开始，取值范围为 `[0, getAudioTrackCount()-1]`。
-设置的参数值需要小于 [getAudioTrackCount](85532.md#rtcmediaplayer-getaudiotrackcount) 的返回值
+设置的参数值需要小于 [getAudioTrackCount](Electron-api.md#rtcmediaplayer-getaudiotrackcount) 的返回值
 
 - **返回值**
 
@@ -9635,7 +9635,7 @@
 
 ### setProgressInterval <span id="rtcmediaplayer-setprogressinterval"></span> 
 
-设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Electron-event.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。
 
 - **类型**
 
@@ -9709,7 +9709,7 @@
 
 - **注意**
 
-  触发回调 [onMediaPlayerStateChanged](85533.md#rtcmediaplayercallback-onmediaplayerstatechanged) 和 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress)。
+  触发回调 [onMediaPlayerStateChanged](Electron-event.md#rtcmediaplayercallback-onmediaplayerstatechanged) 和 [onMediaPlayerPlayingProgress](Electron-event.md#rtcmediaplayercallback-onmediaplayerplayingprogress)。
 
 - **返回值**
 

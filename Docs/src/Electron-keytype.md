@@ -71,9 +71,9 @@
 | :-- | :-- |
 | [play_count](#mediaplayerconfig-play_count) | 混音播放次数<br>+ play_count <= 0: 无限循环  <br>+ play_count == 1: 播放一次（默认）  <br>+ play_count > 1: 播放 play_count 次 |
 | [start_pos](#mediaplayerconfig-start_pos) | 混音起始位置。默认值为 0，单位为毫秒。 |
-| [callback_on_progress_interval](#mediaplayerconfig-callback_on_progress_interval) | 设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。单位毫秒。<br>+ interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。<br>+ interval <= 0 时，不会触发回调。 |
+| [callback_on_progress_interval](#mediaplayerconfig-callback_on_progress_interval) | 设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Electron-event.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。单位毫秒。<br>+ interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。<br>+ interval <= 0 时，不会触发回调。 |
 | [sync_progress_to_record_frame](#mediaplayerconfig-sync_progress_to_record_frame) | 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。 |
-| [auto_play](#mediaplayerconfig-auto_play) | 是否自动播放。如果不自动播放，调用 [startAudioMixing](85532.md#rtcvideo-startaudiomixing) 播放音乐文件。 |
+| [auto_play](#mediaplayerconfig-auto_play) | 是否自动播放。如果不自动播放，调用 [startAudioMixing](Electron-api.md#rtcvideo-startaudiomixing) 播放音乐文件。 |
 | [type](#mediaplayerconfig-type) | 混音播放类型 |
 
 
@@ -97,7 +97,7 @@
 
 类型: string
 
-设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。单位毫秒。
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](Electron-event.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。单位毫秒。
 
 + interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。
 + interval <= 0 时，不会触发回调。
@@ -117,7 +117,7 @@
 
 类型: boolean
 
-是否自动播放。如果不自动播放，调用 [startAudioMixing](85532.md#rtcvideo-startaudiomixing) 播放音乐文件。
+是否自动播放。如果不自动播放，调用 [startAudioMixing](Electron-api.md#rtcvideo-startaudiomixing) 播放音乐文件。
 
 <p style="font-size: 16px;font-weight: bolder;"> type <span id="mediaplayerconfig-type"></span></p> 
 
@@ -161,7 +161,7 @@
   | 名称 | 类型 | 描述 |
   | :-- | :-- | :-- |
   | uid | string | 用户 ID。该字符串符合正则表达式：`[a-zA-Z0-9_@\-\.]{1,128}`。  你需要自行设置或管理 uid，并保证同一房间内每个 uid 的唯一性。 |
-  | extra_info | string \| undefined | 用户的额外信息，最大长度为 200 字节。会在 [onUserJoined](85533.md#onuserjoined) 中回调给远端用户。 |
+  | extra_info | string \| undefined | 用户的额外信息，最大长度为 200 字节。会在 [onUserJoined](Electron-event.md#onuserjoined) 中回调给远端用户。 |
 
 
 
@@ -176,9 +176,9 @@
 | 方法 | 描述 |
 | :-- | :-- |
 | [room_profile_type](#rtcroomconfig-room_profile_type) | 房间模式，默认为普通音视频通话模式，进房后不可更改。 |
-| [is_auto_publish](#rtcroomconfig-is_auto_publish) | 是否自动发布音视频流，默认为自动发布。<br>创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>若调用 [setUserVisibility](85532.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。 |
-| [is_auto_subscribe_audio](#rtcroomconfig-is_auto_subscribe_audio) | 是否自动订阅音频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。 |
-| [is_auto_subscribe_video](#rtcroomconfig-is_auto_subscribe_video) | 是否自动订阅主视频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。 |
+| [is_auto_publish](#rtcroomconfig-is_auto_publish) | 是否自动发布音视频流，默认为自动发布。<br>创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>若调用 [setUserVisibility](Electron-api.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。 |
+| [is_auto_subscribe_audio](#rtcroomconfig-is_auto_subscribe_audio) | 是否自动订阅音频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。 |
+| [is_auto_subscribe_video](#rtcroomconfig-is_auto_subscribe_video) | 是否自动订阅主视频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。 |
 | [remote_video_config](#rtcroomconfig-remote_video_config) | 远端视频流参数 |
 
 
@@ -194,21 +194,21 @@
 
 是否自动发布音视频流，默认为自动发布。
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。
-若调用 [setUserVisibility](85532.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility](Electron-api.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 <p style="font-size: 16px;font-weight: bolder;"> is_auto_subscribe_audio <span id="rtcroomconfig-is_auto_subscribe_audio"></span></p> 
 
 类型: boolean | undefined
 
 是否自动订阅音频流，默认为自动订阅。包含主流和屏幕流。
-进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> is_auto_subscribe_video <span id="rtcroomconfig-is_auto_subscribe_video"></span></p> 
 
 类型: boolean | undefined
 
 是否自动订阅主视频流，默认为自动订阅。包含主流和屏幕流。
-进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> remote_video_config <span id="rtcroomconfig-remote_video_config"></span></p> 
 
@@ -846,7 +846,7 @@ z 方向向量
 | [enable_spectrum](#audiopropertiesconfig-enable_spectrum) | 是否开启音频频谱检测。 |
 | [enable_vad](#audiopropertiesconfig-enable_vad) | 是否开启人声检测 (VAD)。 |
 | [local_main_report_mode](#audiopropertiesconfig-local_main_report_mode) | 音量回调配置模式。 |
-| [audio_report_mode](#audiopropertiesconfig-audio_report_mode) | 设置 [`onLocalAudioPropertiesReport`](85533.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。<br>默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。 |
+| [audio_report_mode](#audiopropertiesconfig-audio_report_mode) | 设置 [`onLocalAudioPropertiesReport`](Electron-event.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。<br>默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。 |
 | [smooth](#audiopropertiesconfig-smooth) | 适用于音频属性信息提示的平滑系数。取值范围是 `(0.0, 1.0]`。<br>默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。 |
 
 
@@ -882,7 +882,7 @@ z 方向向量
 
 类型: [AudioPropertiesMode](#audiopropertiesmode) | undefined
 
-设置 [`onLocalAudioPropertiesReport`](85533.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。
+设置 [`onLocalAudioPropertiesReport`](Electron-event.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
 
 <p style="font-size: 16px;font-weight: bolder;"> smooth <span id="audiopropertiesconfig-smooth"></span></p> 
@@ -1587,7 +1587,7 @@ z 方向向量
 类型: `interface`
 
 屏幕共享对象信息
-[startScreenVideoCapture](85532.md#startscreenvideocapture) 接口的中的参数类型
+[startScreenVideoCapture](Electron-api.md#startscreenvideocapture) 接口的中的参数类型
 
 - **API**
 
@@ -1824,7 +1824,7 @@ z 方向向量
 类型: `interface`
 
 屏幕共享对象缩略图
-调用 [getThumbnail](85532.md#rtcvideo-getthumbnail) 后返回本对象
+调用 [getThumbnail](Electron-api.md#rtcvideo-getthumbnail) 后返回本对象
 
 - **API**
 
@@ -1859,7 +1859,7 @@ z 方向向量
 类型: `interface`
 
 共享窗体的图标信息
-调用 [getWindowAppIcon](85532.md#rtcvideo-getwindowappicon) 后返回本对象
+调用 [getWindowAppIcon](Electron-api.md#rtcvideo-getwindowappicon) 后返回本对象
 
 - **API**
 
@@ -2017,7 +2017,7 @@ SEI 发送模式。
   | :-- | :-- | :-- |
   | KAuto | `0` | （默认）自动设置采集参数。<br>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
   | KManual | `1` | 手动设置采集参数，包括采集分辨率、帧率。 |
-  | KAutoPerformance | `2` | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](85532.md#setvideoencoderconfig) 中设置的参数。 |
+  | KAutoPerformance | `2` | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](Electron-api.md#setvideoencoderconfig) 中设置的参数。 |
 
 
 
@@ -2982,7 +2982,7 @@ AAC 编码规格(新)。
 | 方法 | 描述 |
 | :-- | :-- |
 | [region_id](#mixedstreamlayoutregionconfig-region_id) | 合流用户的 ID。必填。 |
-| [room_id](#mixedstreamlayoutregionconfig-room_id) | 图片或视频流所在房间的房间 ID。必填。<br>如果此图片或视频流是通过 [startForwardStreamToRooms](85532.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。 |
+| [room_id](#mixedstreamlayoutregionconfig-room_id) | 图片或视频流所在房间的房间 ID。必填。<br>如果此图片或视频流是通过 [startForwardStreamToRooms](Electron-api.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。 |
 | [location_x](#mixedstreamlayoutregionconfig-location_x) | 视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。 |
 | [location_y](#mixedstreamlayoutregionconfig-location_y) | 视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。 |
 | [width_proportion](#mixedstreamlayoutregionconfig-width_proportion) | 视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。 |
@@ -3012,7 +3012,7 @@ AAC 编码规格(新)。
 类型: string
 
 图片或视频流所在房间的房间 ID。建议设置。
-如果此图片或视频流是通过 [startForwardStreamToRooms](85532.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+如果此图片或视频流是通过 [startForwardStreamToRooms](Electron-api.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 <p style="font-size: 16px;font-weight: bolder;"> location_x <span id="mixedstreamlayoutregionconfig-location_x"></span></p> 
 
@@ -3295,11 +3295,11 @@ region中流的类型属性
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kAudioFrameCallbackRecord | `0` | 本地麦克风录制的音频数据回调 [onRecordAudioFrame](85533.md#rtcvideocallback-onrecordaudioframe)|
-  | kAudioFrameCallbackPlayback | `1` | 订阅的远端所有用户混音后的音频数据回调 [onPlaybackAudioFrame](85533.md#rtcvideocallback-onplaybackaudioframe)|
-  | kAudioFrameCallbackMixed | `2` | 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调 [onMixedAudioFrame](85533.md#rtcvideocallback-onmixedaudioframe) |
-  | kAudioFrameCallbackRemoteUser | `3` | 订阅的远端每个用户混音前的音频数据回调 [onRemoteUserAudioFrame](85533.md#rtcvideocallback-onremoteuseraudioframe) |
-  | kAudioFrameCallbackRecordScreen | `4` | 本地屏幕录制的音频数据回调 [onRecordScreenAudioFrame](85533.md#rtcvideocallback-onrecordscreenaudioframe) |
+  | kAudioFrameCallbackRecord | `0` | 本地麦克风录制的音频数据回调 [onRecordAudioFrame](Electron-event.md#rtcvideocallback-onrecordaudioframe)|
+  | kAudioFrameCallbackPlayback | `1` | 订阅的远端所有用户混音后的音频数据回调 [onPlaybackAudioFrame](Electron-event.md#rtcvideocallback-onplaybackaudioframe)|
+  | kAudioFrameCallbackMixed | `2` | 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调 [onMixedAudioFrame](Electron-event.md#rtcvideocallback-onmixedaudioframe) |
+  | kAudioFrameCallbackRemoteUser | `3` | 订阅的远端每个用户混音前的音频数据回调 [onRemoteUserAudioFrame](Electron-event.md#rtcvideocallback-onremoteuseraudioframe) |
+  | kAudioFrameCallbackRecordScreen | `4` | 本地屏幕录制的音频数据回调 [onRecordScreenAudioFrame](Electron-event.md#rtcvideocallback-onrecordscreenaudioframe) |
 
 
 
@@ -3337,7 +3337,7 @@ region中流的类型属性
 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
 最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
 最大值是 `2048`。超出取值范围时，采样点数取默认值。
-该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback](85532.md#rtcvideo-enableaudioframecallback) 开启只读模式回调时设置该参数不生效。
+该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback](Electron-api.md#rtcvideo-enableaudioframecallback) 开启只读模式回调时设置该参数不生效。
 
 
 ## AudioAlignmentMode <span id="audioalignmentmode"></span>
@@ -3551,13 +3551,13 @@ region中流的类型属性
 类型: `enum`
 
 用户离线原因。
-房间内的远端用户离开房间时，本端用户会收到 [`onUserLeave`](85533.md#onuserleave) 回调通知，此枚举类型为回调的用户离线原因。
+房间内的远端用户离开房间时，本端用户会收到 [`onUserLeave`](Electron-event.md#onuserleave) 回调通知，此枚举类型为回调的用户离线原因。
 
 - **成员**
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kUserOfflineReasonQuit | `0` | 远端用户调用 [leaveRoom](85532.md#leaveroom) 方法退出房间。 |
+  | kUserOfflineReasonQuit | `0` | 远端用户调用 [leaveRoom](Electron-api.md#leaveroom) 方法退出房间。 |
   | kUserOfflineReasonDropped | `1` | 远端用户因网络等原因掉线。 |
   | kUserOfflineReasonSwitchToInvisible | `2` | 远端用户切换至隐身状态。 |
   | kUserOfflineReasonKickedByAdmin | `3` | 远端用户被踢出出房间。<br>因调用踢出用户的 OpenAPI，远端用户被踢出房间。 |
@@ -3619,7 +3619,7 @@ region中流的类型属性
 
 类型: `interface`
 
-本地音频流统计信息，统计周期为 2s 。  本地用户发布音频流成功后，SDK 会周期性地通过 [onLocalStreamStats](85533.md#onlocalstreamstats) 通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
+本地音频流统计信息，统计周期为 2s 。  本地用户发布音频流成功后，SDK 会周期性地通过 [onLocalStreamStats](Electron-event.md#onlocalstreamstats) 通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
 
 - **API**
 
@@ -3690,7 +3690,7 @@ region中流的类型属性
 类型: `interface`
 
 本地视频流统计信息，统计周期为 2s 。
-本地用户发布视频流成功后，SDK 会周期性地通过 [onLocalStreamStats](85533.md#onlocalstreamstats)  通知用户发布的视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
+本地用户发布视频流成功后，SDK 会周期性地通过 [onLocalStreamStats](Electron-event.md#onlocalstreamstats)  通知用户发布的视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
 
 - **API**
 
@@ -3832,7 +3832,7 @@ region中流的类型属性
 类型: `interface`
 
 用户订阅的远端音/视频流统计信息以及网络状况，统计周期为 2s 。
-订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](85533.md#onremotestreamstats)
+订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](Electron-event.md#onremotestreamstats)
 通知本地用户订阅的远端音/视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
 
 - **API**
@@ -3875,7 +3875,7 @@ region中流的类型属性
 类型: `interface`
 
 远端音频流统计信息，统计周期为 2s。
-本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](85533.md#onremotestreamstats) 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
+本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](Electron-event.md#onremotestreamstats) 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
 
 - **API**
 
@@ -4029,7 +4029,7 @@ PLC 累计次数。
 类型: `interface`
 
 远端音频流统计信息，统计周期为 2s 。
-本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](85533.md#onremotestreamstats)
+本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](Electron-event.md#onremotestreamstats)
 通知本地用户订阅的远端视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
 
 - **API**
@@ -4211,8 +4211,8 @@ PLC 累计次数。
 | [is_screen](#subscribeconfig-is_screen) | 是否是屏幕流，默认为否。 |
 | [sub_video](#subscribeconfig-sub_video) | 是否订阅视频。 |
 | [sub_audio](#subscribeconfig-sub_audio) | 是否订阅音频。 |
-| [video_index](#subscribeconfig-video_index) | 订阅的视频流分辨率下标。<br>用户可以通过调用 [setVideoEncoderConfig](85532.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。 |
-| [priority](#subscribeconfig-priority) | 远端用户的需求优先级，0 为默认值。<br>+ `0`: 默认，用户优先级为低<br>+ `100`: 用户优先级为正常<br>+ `200`: 用户优先级为高<br>当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](85532.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。 |
+| [video_index](#subscribeconfig-video_index) | 订阅的视频流分辨率下标。<br>用户可以通过调用 [setVideoEncoderConfig](Electron-api.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。 |
+| [priority](#subscribeconfig-priority) | 远端用户的需求优先级，0 为默认值。<br>+ `0`: 默认，用户优先级为低<br>+ `100`: 用户优先级为正常<br>+ `200`: 用户优先级为高<br>当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](Electron-api.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。 |
 | [svc_layer](#subscribeconfig-svc_layer) | 远端用户的时域分层，0 为默认值。<br>仅码流支持 SVC 特性时可以生效。 |
 | [framerate](#subscribeconfig-framerate) | 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。<br>当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。<br>仅码流支持 SVC 分级编码特性时方可生效。 |
 | [sub_width](#subscribeconfig-sub_width) | 用户通过指定 UI 对应的最合适的流的宽度，单位：px |
@@ -4242,7 +4242,7 @@ PLC 累计次数。
 类型: number
 
 订阅的视频流分辨率下标。
-用户可以通过调用 [setVideoEncoderConfig](85532.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。
+用户可以通过调用 [setVideoEncoderConfig](Electron-api.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。
 
 <p style="font-size: 16px;font-weight: bolder;"> priority <span id="subscribeconfig-priority"></span></p> 
 
@@ -4253,7 +4253,7 @@ PLC 累计次数。
 + `0`: 默认，用户优先级为低
 + `100`: 用户优先级为正常
 + `200`: 用户优先级为高
-当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](85532.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。
+当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](Electron-api.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。
 
 <p style="font-size: 16px;font-weight: bolder;"> svc_layer <span id="subscribeconfig-svc_layer"></span></p> 
 
@@ -4313,7 +4313,7 @@ PLC 累计次数。
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="forwardstreamstateinfo-error"></span></p> 
 
-类型: [ForwardStreamError](85534.md#forwardstreamerror)
+类型: [ForwardStreamError](Electron-errorcode.md#forwardstreamerror)
 
 跨房间转发媒体流过程中该目标房间抛出的错误码
 
@@ -4330,7 +4330,7 @@ PLC 累计次数。
   | :-- | :-- | :-- |
   | kForwardStreamStateIdle | `0` | 空闲状态<br>+ 成功调用 `stopForwardStreamToRooms` 后，所有目标房间为空闲状态。<br>+ 成功调用 `updateForwardStreamToRooms` 减少目标房间后，本次减少的目标房间为空闲状态。 |
   | kForwardStreamStateSuccess | `1` | 开始转发<br>+ 调用 `startForwardStreamToRooms` 成功向所有房间开始转发媒体流后，返回此状态。<br>+ 调用 `updateForwardStreamToRooms` 后，成功向新增目标房间开始转发媒体流后，返回此状态。 |
-  | kForwardStreamStateFailure | `2` | 转发失败，失败详情参考 [ForwardStreamError](85534.md#forwardstreamerror)<br>调用 `startForwardStreamToRooms` 或 `updateForwardStreamToRooms` 后，如遇转发失败，返回此状态。 |
+  | kForwardStreamStateFailure | `2` | 转发失败，失败详情参考 [ForwardStreamError](Electron-errorcode.md#forwardstreamerror)<br>调用 `startForwardStreamToRooms` 或 `updateForwardStreamToRooms` 后，如遇转发失败，返回此状态。 |
 
 
 
@@ -4781,8 +4781,8 @@ PLC 累计次数。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kVideoSuperResolutionModeChangedReasonAPIOff | `0` | 调用 [setRemoteVideoSuperResolution](85532.md#setremotevideosuperresolution) 成功关闭超分。 |
-  | kVideoSuperResolutionModeChangedReasonAPIOn | `1` | 调用 [setRemoteVideoSuperResolution](85532.md#setremotevideosuperresolution) 成功开启超分。 |
+  | kVideoSuperResolutionModeChangedReasonAPIOff | `0` | 调用 [setRemoteVideoSuperResolution](Electron-api.md#setremotevideosuperresolution) 成功关闭超分。 |
+  | kVideoSuperResolutionModeChangedReasonAPIOn | `1` | 调用 [setRemoteVideoSuperResolution](Electron-api.md#setremotevideosuperresolution) 成功开启超分。 |
   | kVideoSuperResolutionModeChangedReasonResolutionExceed | `2` | 开启超分失败，远端视频流的原始视频分辨率超过 640 × 360 px。 |
   | kVideoSuperResolutionModeChangedReasonOverUse | `3` | 开启超分失败，已对一路远端流开启超分。 |
   | kVideoSuperResolutionModeChangedReasonDeviceNotSupport | `4` | 设备不支持使用超分辨率。 |
@@ -5435,7 +5435,7 @@ SDK 网络连接类型。
 
 类型: `enum`
 
-[onPerformanceAlarms](85533.md#onperformancealarms) 告警的原因
+[onPerformanceAlarms](Electron-event.md#onperformancealarms) 告警的原因
 
 - **成员**
 
@@ -5491,7 +5491,7 @@ SDK 网络连接类型。
 类型: `interface`
 
 App 使用的 cpu 和内存信息。
-信息由 SDK 周期性（2s）地通过 [onSysStats](85533.md#onsysstats) 回调通知给用户。
+信息由 SDK 周期性（2s）地通过 [onSysStats](Electron-event.md#onsysstats) 回调通知给用户。
 
 - **API**
 
@@ -5754,7 +5754,7 @@ App 使用的 cpu 和内存信息。
   | kRemoteVideoStateChangeReasonLocalUnmuted | `4` | 本地用户恢复接收远端视频流或本地用户启用视频模块 |
   | kRemoteVideoStateChangeReasonRemoteMuted | `5` | 远端用户停止发送视频流或远端用户禁用视频模块 |
   | kRemoteVideoStateChangeReasonRemoteUnmuted | `6` | 远端用户恢复发送视频流或远端用户启用视频模块 |
-  | kRemoteVideoStateChangeReasonRemoteOffline | `7` | 远端用户离开频道。<br>状态转换参考 onStreamRemove(85533#onstreamremove) |
+  | kRemoteVideoStateChangeReasonRemoteOffline | `7` | 远端用户离开频道。<br>状态转换参考 onStreamRemove(Electron-event#onstreamremove) |
 
 
 
@@ -5988,7 +5988,7 @@ App 使用的 cpu 和内存信息。
   | kMediaDeviceWarningOK | `0` | 无警告 |
   | kMediaDeviceWarningOperationDenied | `1` | 非法设备操作。在使用外部设备时，调用了 SDK 内部设备 API。 |
   | kMediaDeviceWarningCaptureSilence | `2` | 采集静音。 |
-  | kMediaDeviceWarningDetectLeakEcho | `11` | 通话中出现回声现象。<br>当 [RoomProfileType](85535.md#roomprofiletype) 为 `kRoomProfileTypeMeeting` 和<br>`kRoomProfileTypeMeetingRoom`，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过<br>`onAudioDeviceWarning` 返回本枚举值。 |
+  | kMediaDeviceWarningDetectLeakEcho | `11` | 通话中出现回声现象。<br>当 [RoomProfileType](Electron-keytype.md#roomprofiletype) 为 `kRoomProfileTypeMeeting` 和<br>`kRoomProfileTypeMeetingRoom`，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过<br>`onAudioDeviceWarning` 返回本枚举值。 |
   | kMediaDeviceWarningCaptureDetectHowling | `16` | 啸叫。触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。<br>仅 kRoomProfileTypeCommunication、kRoomProfileTypeMeeting、kRoomProfileTypeMeetingRoom<br>三种房间模式支持啸叫抑制。 建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。 |
 
 
@@ -6003,8 +6003,8 @@ App 使用的 cpu 和内存信息。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kSEIStreamEventTypeStreamAdd | `0` | 远端用户发布黑帧视频流。 <br>纯语音通话场景下，远端用户调用 [sendSEIMessage](85532.md#rtcvideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
-  | kSEIStreamEventTypeStreamRemove | `1` | 远端黑帧视频流移除。该回调的触发时机包括： <br>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布； <br>+ 远端用户调用 [sendSEIMessage](85532.md#rtcvideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布； <br>+ 远端用户切换至自定义视频采集时，黑帧视频流停止发布。 |
+  | kSEIStreamEventTypeStreamAdd | `0` | 远端用户发布黑帧视频流。 <br>纯语音通话场景下，远端用户调用 [sendSEIMessage](Electron-api.md#rtcvideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+  | kSEIStreamEventTypeStreamRemove | `1` | 远端黑帧视频流移除。该回调的触发时机包括： <br>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布； <br>+ 远端用户调用 [sendSEIMessage](Electron-api.md#rtcvideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布； <br>+ 远端用户切换至自定义视频采集时，黑帧视频流停止发布。 |
 
 
 
