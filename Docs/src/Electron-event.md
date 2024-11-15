@@ -1,911 +1,3 @@
-## RTCROOMCALLBACK <span id="rtcroomcallback"></span>
-
-类型: `interface`
-
-- **API**
-
-| 方法 | 描述 |
-| :-- | :-- |
-| [onRoomStateChanged](#rtcroomcallback-onroomstatechanged) | 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。 |
-| [onStreamStateChanged](#rtcroomcallback-onstreamstatechanged) | 流状态改变回调，发生流相关的警告或错误时会收到此回调。 |
-| [onLeaveRoom](#rtcroomcallback-onleaveroom) | 离开房间成功回调。 |
-| [onUserJoined](#rtcroomcallback-onuserjoined) | 可见用户加入房间，或房内隐身用户切换为可见的回调。<br>1.远端可见用户调用 `setUserVisibility` 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。<br>2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。<br>3.房间内隐身远端用户调用 `setUserVisibility` 方法切换至可见时，房间内其他用户将收到该事件。<br>4.新进房用户也会收到进房前已在房内的可见角色用户的进房回调通知。 |
-| [onUserLeave](#rtcroomcallback-onuserleave) | 远端用户离开房间，或切至不可见时，本地用户会收到此事件 |
-| [onTokenWillExpire](#rtcroomcallback-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。 |
-| [onAVSyncStateChange](#rtcroomcallback-onavsyncstatechange) | 发布端调用 `setMultiDeviceAVSync` 后音视频同步状态发生改变时，会收到此回调。 |
-| [onRoomStats](#rtcroomcallback-onroomstats) | 房间通话统计信息回调。<br>用户进房开始通话后，每 2s 收到一次本回调。 |
-| [onLocalStreamStats](#rtcroomcallback-onlocalstreamstats) | 反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调。<br>本地用户发布音视频流成功后，每隔 2s 收到此回调。 |
-| [onRemoteStreamStats](#rtcroomcallback-onremotestreamstats) | 反映通话中本地设备接收订阅的远端音/视频流的统计信息以及网络状况的回调。每隔 2s 收到此回调。 |
-| [onUserPublishStream](#rtcroomcallback-onuserpublishstream) | 房间内新增远端麦克风采集的音频流的回调。 |
-| [onUserUnpublishStream](#rtcroomcallback-onuserunpublishstream) | 房间内远端麦克风采集的音频流移除的回调。 |
-| [onUserPublishScreen](#rtcroomcallback-onuserpublishscreen) | 房间内新增远端屏幕共享音视频流的回调。 |
-| [onUserUnpublishScreen](#rtcroomcallback-onuserunpublishscreen) | 房间内远端屏幕共享音视频流移除的回调。 |
-| [onStreamSubscribed](#rtcroomcallback-onstreamsubscribed) | 关于订阅媒体流状态改变的回调 |
-| [onVideoStreamBanned](#rtcroomcallback-onvideostreambanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。 |
-| [onAudioStreamBanned](#rtcroomcallback-onaudiostreambanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。 |
-| [onRoomMessageReceived](#rtcroomcallback-onroommessagereceived) | 接收到房间内广播消息的回调。 |
-| [onRoomBinaryMessageReceived](#rtcroomcallback-onroombinarymessagereceived) | 接收到房间内广播二进制消息的回调。 |
-| [onUserMessageReceived](#rtcroomcallback-onusermessagereceived) | 收到来自房间中其他用户通过 `sendUserMessage` 发来的点对点文本消息时，会收到此回调。 |
-| [onUserBinaryMessageReceived](#rtcroomcallback-onuserbinarymessagereceived) | 收到来自房间中其他用户通过 `sendUserBinaryMessage` 发来的点对点二进制消息时，会收到此回调。 |
-| [onUserMessageSendResult](#rtcroomcallback-onusermessagesendresult) | 向房间内单个用户发送点对点文本或点对点二进制消息后，消息发送方会收到该消息发送结果回调。 |
-| [onRoomMessageSendResult](#rtcroomcallback-onroommessagesendresult) | 调用 `sendRoomMessage` 或 `sendRoomBinaryMessage` 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。 |
-| [onForwardStreamStateChanged](#rtcroomcallback-onforwardstreamstatechanged) | 跨房间媒体流转发状态和错误回调 |
-| [onForwardStreamEvent](#rtcroomcallback-onforwardstreamevent) | 跨房间媒体流转发事件回调 |
-| [onNetworkQuality](#rtcroomcallback-onnetworkquality) | 加入房间后， 以 2 秒 1 次的频率，报告用户的网络质量信息 |
-| [onPublishPrivilegeTokenWillExpire](#rtcroomcallback-onpublishprivilegetokenwillexpire) | Token 发布权限过期前 30 秒将触发该回调。 |
-| [onSubscribePrivilegeTokenWillExpire](#rtcroomcallback-onsubscribeprivilegetokenwillexpire) | Token 订阅权限过期前 30 秒将触发该回调。 |
-| [onSetRoomExtraInfoResult](#rtcroomcallback-onsetroomextrainforesult) | 调用 [setRoomExtraInfo](Electron-api.md#rtcroom-setroomextrainfo) 设置房间附加信息结果的回调。 |
-| [onRoomExtraInfoUpdate](#rtcroomcallback-onroomextrainfoupdate) | 接收同一房间内，其他用户调用 [setRoomExtraInfo](Electron-api.md#rtcroom-setroomextrainfo) 设置的房间附加信息的回调。 |
-| [onSubtitleStateChanged](#rtcroomcallback-onsubtitlestatechanged) | 字幕状态发生改变回调。<br>当用户调用 [startSubtitle](Electron-api.md#startsubtitle) 和 [stopSubtitle](Electron-api.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。 |
-| [onSubtitleMessageReceived](#rtcroomcallback-onsubtitlemessagereceived) | 字幕相关内容回调。<br>当用户成功调用 [startSubtitle](Electron-api.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
-
-
-### onRoomStateChanged <span id="rtcroomcallback-onroomstatechanged"></span> 
-
-房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
-
-- **类型**
-
-  ```ts
-  (room_id: string, uid: string, state: number, extra_info: string) => void
-  ```
-
-- **参数**
-
-  - **room_id**
-
-    类型: string
-
-    房间 ID。
-
-  - **uid**
-
-    类型: string
-
-    用户 ID。
-
-  - **state**
-
-    类型: number
-
-    房间状态码。
-
-+ 0: 成功。
-+ !0: 失败，参看 [ErrorCode](Electron-errorcode.md#errorcode) 及 [WarningCode](Electron-errorcode.md#warningcode)。
-
-  - **extra_info**
-
-    类型: string
-
-    额外信息。
-`joinType`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
-`elapsed`表示加入房间耗时，即本地用户从调用 [joinRoom](Electron-api.md#joinroom) 到加入房间成功所经历的时间间隔，单位为 ms。
-
-### onStreamStateChanged <span id="rtcroomcallback-onstreamstatechanged"></span> 
-
-流状态改变回调，发生流相关的警告或错误时会收到此回调。
-
-- **类型**
-
-  ```ts
-  (room_id: string, uid: string, state: number, extra_info: string) => void
-  ```
-
-- **参数**
-
-  - **room_id**
-
-    类型: string
-
-    房间 ID。
-
-  - **uid**
-
-    类型: string
-
-    用户 ID。
-
-  - **state**
-
-    类型: number
-
-    流状态码，参看 [ErrorCode](Electron-errorcode.md#errorcode) 及 [WarningCode](Electron-errorcode.md#warningcode)。
-
-  - **extra_info**
-
-    类型: string
-
-    附加信息，目前为空。
-
-### onLeaveRoom <span id="rtcroomcallback-onleaveroom"></span> 
-
-离开房间成功回调。
-
-- **类型**
-
-  ```ts
-  (stats: RtcRoomStats) => void
-  ```
-
-- **注意**
-
-  + 用户调用 [leaveRoom](Electron-api.md#leaveroom) 方法后，SDK 会停止所有的发布订阅流，并在释放所有通话相关的音视频资源后，通过此回调通知用户离开房间成功。
-  + 用户调用 [leaveRoom](Electron-api.md#leaveroom) 方法离开房间后，如果立即调用 [destroy](Electron-api.md#destroy) 方法销毁 RTC 引擎，则将无法收到此回调事件。
-  + 离开房间后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备导致初始化失败。
-
-- **参数**
-
-  - **stats**
-
-    类型: [RtcRoomStats](Electron-keytype.md#rtcroomstats)
-
-    本次通话的统计数据。
-
-### onUserJoined <span id="rtcroomcallback-onuserjoined"></span> 
-
-可见用户加入房间，或房内隐身用户切换为可见的回调。
-1.远端可见用户调用 `setUserVisibility` 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。
-2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。
-3.房间内隐身远端用户调用 `setUserVisibility` 方法切换至可见时，房间内其他用户将收到该事件。
-4.新进房用户也会收到进房前已在房内的可见角色用户的进房回调通知。
-
-- **类型**
-
-  ```ts
-  (user_info: UserInfo, elapsed: number) => void
-  ```
-
-- **参数**
-
-  - **user_info**
-
-    类型: [UserInfo](Electron-keytype.md#userinfo)
-
-    用户信息。
-
-  - **elapsed**
-
-    类型: number
-
-    可见角色用户调用 [joinRoom](Electron-api.md#joinroom) 加入房间到房间内其他用户收到该事件经历的时间，单位为 ms。
-
-### onUserLeave <span id="rtcroomcallback-onuserleave"></span> 
-
-远端用户离开房间，或切至不可见时，本地用户会收到此事件
-
-- **类型**
-
-  ```ts
-  (uid: string, reason: UserOfflineReasonType) => void
-  ```
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    离开房间，或切至不可见的的远端用户 ID。
-
-  - **reason**
-
-    类型: [UserOfflineReasonType](Electron-keytype.md#userofflinereasontype)
-
-    用户离开房间的原因
-
-### onTokenWillExpire <span id="rtcroomcallback-ontokenwillexpire"></span> 
-
-Token 过期前 30 秒将触发该回调。
-
-- **类型**
-
-  ```ts
-  () => void
-  ```
-
-- **注意**
-
-  调用 [updateToken](Electron-api.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
-
-### onAVSyncStateChange <span id="rtcroomcallback-onavsyncstatechange"></span> 
-
-发布端调用 `setMultiDeviceAVSync` 后音视频同步状态发生改变时，会收到此回调。
-
-- **类型**
-
-  ```ts
-  (state: AVSyncState) => void
-  ```
-
-- **参数**
-
-  - **state**
-
-    类型: [AVSyncState](Electron-keytype.md#avsyncstate)
-
-    音视频同步状态
-
-### onRoomStats <span id="rtcroomcallback-onroomstats"></span> 
-
-房间通话统计信息回调。
-用户进房开始通话后，每 2s 收到一次本回调。
-
-- **类型**
-
-  ```ts
-  (stats: RtcRoomStats) => void
-  ```
-
-- **参数**
-
-  - **stats**
-
-    类型: [RtcRoomStats](Electron-keytype.md#rtcroomstats)
-
-    房间内的汇总统计数据。
-
-### onLocalStreamStats <span id="rtcroomcallback-onlocalstreamstats"></span> 
-
-反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调。
-本地用户发布音视频流成功后，每隔 2s 收到此回调。
-
-- **类型**
-
-  ```ts
-  (stats: LocalStreamStats) => void
-  ```
-
-- **参数**
-
-  - **stats**
-
-    类型: [LocalStreamStats](Electron-keytype.md#localstreamstats)
-
-    音视频流以及网络状况统计信息。
-
-### onRemoteStreamStats <span id="rtcroomcallback-onremotestreamstats"></span> 
-
-反映通话中本地设备接收订阅的远端音/视频流的统计信息以及网络状况的回调。每隔 2s 收到此回调。
-
-- **类型**
-
-  ```ts
-  (stats: RemoteStreamStats) => void
-  ```
-
-- **参数**
-
-  - **stats**
-
-    类型: [RemoteStreamStats](Electron-keytype.md#remotestreamstats)
-
-    音视频流以及网络状况统计信息。
-
-### onUserPublishStream <span id="rtcroomcallback-onuserpublishstream"></span> 
-
-房间内新增远端麦克风采集的音频流的回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, type: MediaStreamType) => void
-  ```
-
-- **注意**
-
-  当房间内的远端用户调用 [publishStream](Electron-api.md#publishstream) 成功发布由麦克风采集的音频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeStream](Electron-api.md#subscribestream) 订阅此流。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    远端流发布用户的用户 ID。
-
-  - **type**
-
-    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
-
-    远端媒体流的类型。
-
-### onUserUnpublishStream <span id="rtcroomcallback-onuserunpublishstream"></span> 
-
-房间内远端麦克风采集的音频流移除的回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, type: MediaStreamType, reason: StreamRemoveReason) => void
-  ```
-
-- **注意**
-
-  收到该回调通知后，你可以自行选择是否调用 [unsubscribeStream](Electron-api.md#unsubscribestream) 取消订阅此流。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    移除的远端流发布用户的用户 ID。
-
-  - **type**
-
-    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
-
-    远端媒体流的类型。
-
-  - **reason**
-
-    类型: [StreamRemoveReason](Electron-keytype.md#streamremovereason)
-
-    远端流移除的原因
-
-### onUserPublishScreen <span id="rtcroomcallback-onuserpublishscreen"></span> 
-
-房间内新增远端屏幕共享音视频流的回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, type: MediaStreamType) => void
-  ```
-
-- **注意**
-
-  当房间内的远端用户调用 [publishScreen](Electron-api.md#publishscreen) 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeScreen](Electron-api.md#subscribescreen) 订阅此流。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    远端流发布用户的用户 ID。
-
-  - **type**
-
-    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
-
-    远端媒体流的类型
-
-### onUserUnpublishScreen <span id="rtcroomcallback-onuserunpublishscreen"></span> 
-
-房间内远端屏幕共享音视频流移除的回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, type: MediaStreamType, reason: StreamRemoveReason) => void
-  ```
-
-- **注意**
-
-  收到该回调通知后，你可以自行选择是否调用 [unsubscribeScreen](Electron-api.md#unsubscribescreen) 取消订阅此流。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    移除的远端流发布用户的用户 ID。
-
-  - **type**
-
-    类型: [MediaStreamType](Electron-keytype.md#mediastreamtype)
-
-    移除的远端流类型
-
-  - **reason**
-
-    类型: [StreamRemoveReason](Electron-keytype.md#streamremovereason)
-
-    远端流移除的原因
-
-### onStreamSubscribed <span id="rtcroomcallback-onstreamsubscribed"></span> 
-
-关于订阅媒体流状态改变的回调
-
-- **类型**
-
-  ```ts
-  (state_code: SubscribeState, user_id: string, info: SubscribeConfig) => void
-  ```
-
-- **注意**
-
-  本地用户收到该回调的时机包括：
-
-  + 调用 [subscribeStream](Electron-api.md#subscribestream) 或 [unsubscribeStream](Electron-api.md#unsubscribestream) 订阅/取消订阅指定远端摄像头音视频流后；
-  + 调用 [subscribeScreen](Electron-api.md#subscribescreen) 或 [unsubscribeScreen](Electron-api.md#unsubscribescreen) 订阅/取消订阅指定远端屏幕共享流后。
-
-- **参数**
-
-  - **state_code**
-
-    类型: [SubscribeState](Electron-keytype.md#subscribestate)
-
-    订阅媒体流状态
-
-  - **user_id**
-
-    类型: string
-
-    流发布用户的用户 ID
-
-  - **info**
-
-    类型: [SubscribeConfig](Electron-keytype.md#subscribeconfig)
-
-    流的属性
-
-### onVideoStreamBanned <span id="rtcroomcallback-onvideostreambanned"></span> 
-
-通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, banned: boolean) => void
-  ```
-
-- **注意**
-
-  + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。
-  + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。
-  + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。
-  + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。
-  + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    被禁用/解禁的视频流用户 ID
-
-  - **banned**
-
-    类型: boolean
-
-    视频流发送状态
-
-+ true: 视频流发送被禁用
-+ false: 视频流发送被解禁
-
-### onAudioStreamBanned <span id="rtcroomcallback-onaudiostreambanned"></span> 
-
-通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, banned: boolean) => void
-  ```
-
-- **注意**
-
-  + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。
-  + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。
-  + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。
-  + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。
-  + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    被禁用/解禁的音频流用户 ID
-
-  - **banned**
-
-    类型: boolean
-
-    音频流发送状态
-
-+ true: 音频流发送被禁用
-+ false: 音频流发送被解禁
-
-### onRoomMessageReceived <span id="rtcroomcallback-onroommessagereceived"></span> 
-
-接收到房间内广播消息的回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, message: string) => void
-  ```
-
-- **注意**
-
-  房间内其他用户调用 [`sendRoomMessage`](Electron-api.md#sendroommessage) 发送广播消息时，收到此回调。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    消息发送者 ID
-
-  - **message**
-
-    类型: string
-
-    收到的消息内容
-
-### onRoomBinaryMessageReceived <span id="rtcroomcallback-onroombinarymessagereceived"></span> 
-
-接收到房间内广播二进制消息的回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, message: string) => void
-  ```
-
-- **注意**
-
-  房间内其他用户调用 [`sendRoomBinaryMessage`](Electron-api.md#sendroombinarymessage) 发送广播二进制消息时，收到此回调。
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    消息发送者 ID
-
-  - **message**
-
-    类型: string
-
-    收到的二进制消息内容
-
-### onUserMessageReceived <span id="rtcroomcallback-onusermessagereceived"></span> 
-
-收到来自房间中其他用户通过 `sendUserMessage` 发来的点对点文本消息时，会收到此回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, message: string) => void
-  ```
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    消息发送者的用户 ID 。
-
-  - **message**
-
-    类型: string
-
-    收到的文本消息内容。
-
-### onUserBinaryMessageReceived <span id="rtcroomcallback-onuserbinarymessagereceived"></span> 
-
-收到来自房间中其他用户通过 `sendUserBinaryMessage` 发来的点对点二进制消息时，会收到此回调。
-
-- **类型**
-
-  ```ts
-  (uid: string, message: string) => void
-  ```
-
-- **参数**
-
-  - **uid**
-
-    类型: string
-
-    消息发送者的用户 ID 。
-
-  - **message**
-
-    类型: string
-
-    收到的二进制消息内容。
-
-### onUserMessageSendResult <span id="rtcroomcallback-onusermessagesendresult"></span> 
-
-向房间内单个用户发送点对点文本或点对点二进制消息后，消息发送方会收到该消息发送结果回调。
-
-- **类型**
-
-  ```ts
-  (msgid: number, error: number) => void
-  ```
-
-- **注意**
-
-  调用 [sendUserMessage](Electron-api.md#sendusermessage) 或 [sendUserBinaryMessage](Electron-api.md#senduserbinarymessage) 接口，才能收到此回调。
-
-- **参数**
-
-  - **msgid**
-
-    类型: number
-
-    本条消息的 ID。
-
-  - **error**
-
-    类型: number
-
-    文本或二进制消息发送结果
-
-+ `200`: 消息发送成功
-+ `100`: 失败，发送方未加入房间
-+ `102`: 失败，没有可用的数据传输通道连接
-+ `103`: 失败，消息超过最大长度，当前为 64 KB
-+ `1000`: 失败，未知错误
-
-### onRoomMessageSendResult <span id="rtcroomcallback-onroommessagesendresult"></span> 
-
-调用 `sendRoomMessage` 或 `sendRoomBinaryMessage` 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。
-
-- **类型**
-
-  ```ts
-  (msgid: number, error: number) => void
-  ```
-
-- **参数**
-
-  - **msgid**
-
-    类型: number
-
-    本条消息的 ID。
-
-  - **error**
-
-    类型: number
-
-    消息发送结果
-
-+ `200`: 消息发送成功
-+ `100`: 失败，发送方未加入房间
-+ `102`: 失败，没有可用的数据传输通道连接
-+ `103`: 失败，消息超过最大长度，当前为 64 KB
-+ `1000`: 失败，未知错误
-
-### onForwardStreamStateChanged <span id="rtcroomcallback-onforwardstreamstatechanged"></span> 
-
-跨房间媒体流转发状态和错误回调
-
-- **类型**
-
-  ```ts
-  (infos: ForwardStreamStateInfo[], info_count: number) => void
-  ```
-
-- **参数**
-
-  - **infos**
-
-    类型: [ForwardStreamStateInfo](Electron-keytype.md#forwardstreamstateinfo)[]
-
-    跨房间媒体流转发目标房间信息数组
-
-  - **info_count**
-
-    类型: number
-
-    数量
-
-### onForwardStreamEvent <span id="rtcroomcallback-onforwardstreamevent"></span> 
-
-跨房间媒体流转发事件回调
-
-- **类型**
-
-  ```ts
-  (infos: ForwardStreamEventInfo[], info_count: number) => void
-  ```
-
-- **参数**
-
-  - **infos**
-
-    类型: [ForwardStreamEventInfo](Electron-keytype.md#forwardstreameventinfo)[]
-
-    跨房间媒体流转发目标房间事件数组
-
-  - **info_count**
-
-    类型: number
-
-    数量
-
-### onNetworkQuality <span id="rtcroomcallback-onnetworkquality"></span> 
-
-加入房间后， 以 2 秒 1 次的频率，报告用户的网络质量信息
-
-- **类型**
-
-  ```ts
-  (localQuality: NetworkQualityStats, remoteQualities: NetworkQualityStats[]) => void
-  ```
-
-- **注意**
-
-  更多通话中的监测接口，详见[通话中质量监测](106866)
-
-- **参数**
-
-  - **localQuality**
-
-    类型: [NetworkQualityStats](Electron-keytype.md#networkqualitystats)
-
-    本地网络质量。
-
-  - **remoteQualities**
-
-    类型: [NetworkQualityStats](Electron-keytype.md#networkqualitystats)[]
-
-    已订阅用户的网络质量。
-
-### onPublishPrivilegeTokenWillExpire <span id="rtcroomcallback-onpublishprivilegetokenwillexpire"></span> 
-
-Token 发布权限过期前 30 秒将触发该回调。
-
-- **类型**
-
-  ```ts
-  () => void
-  ```
-
-- **注意**
-
-  收到该回调后，你需调用 [updateToken](Electron-api.md#updatetoken) 更新 Token 发布权限。若收到该回调后未及时更新 Token，Token 发布权限过期后：
-
-  + 此时尝试发布流会收到 [onStreamStateChanged](#onstreamstatechanged) 回调，提示错误码为 `-1002` 没有发布权限；
-  + 已在发布中的流会停止发布，发布端会收到 [onStreamStateChanged](#onstreamstatechanged) 回调，提示错误码为 `-1002` 没有发布权限，同时远端用户会收到 [onUserUnPublishStream](#onuserunpublishstream) 回调，提示原因为 `6` 发流端发布权限过期。
-
-### onSubscribePrivilegeTokenWillExpire <span id="rtcroomcallback-onsubscribeprivilegetokenwillexpire"></span> 
-
-Token 订阅权限过期前 30 秒将触发该回调。
-
-- **类型**
-
-  ```ts
-  () => void
-  ```
-
-- **注意**
-
-  收到该回调后，你需调用 [updateToken](Electron-api.md#updatetoken) 更新 Token 订阅权限有效期。若收到该回调后未及时更新 Token，Token 订阅权限过期后，尝试新订阅流会失败，已订阅的流会取消订阅，并且会收到 [onStreamStateChanged](#onstreamstatechanged) 回调，提示错误码为 `-1003` 没有订阅权限。
-
-### onSetRoomExtraInfoResult <span id="rtcroomcallback-onsetroomextrainforesult"></span> 
-
-调用 [setRoomExtraInfo](Electron-api.md#rtcroom-setroomextrainfo) 设置房间附加信息结果的回调。
-
-- **类型**
-
-  ```ts
-  (task_id: number, err_code: SetRoomExtraInfoResult) => void
-  ```
-
-- **参数**
-
-  - **task_id**
-
-    类型: number
-
-    调用 setRoomExtraInfo 的任务编号。
-
-  - **err_code**
-
-    类型: [SetRoomExtraInfoResult](Electron-keytype.md#setroomextrainforesult)
-
-    errCode 设置房间附加信息的结果。
-
-### onRoomExtraInfoUpdate <span id="rtcroomcallback-onroomextrainfoupdate"></span> 
-
-接收同一房间内，其他用户调用 [setRoomExtraInfo](Electron-api.md#rtcroom-setroomextrainfo) 设置的房间附加信息的回调。
-
-- **类型**
-
-  ```ts
-  (key: string, value: string, last_update_user_id: string, last_update_time_ms: number) => void
-  ```
-
-- **注意**
-
-  新进房的用户会收到进房前房间内已有的全部附加信息通知。
-
-- **参数**
-
-  - **key**
-
-    类型: string
-
-    房间附加信息的键值
-
-  - **value**
-
-    类型: string
-
-    房间附加信息的内容
-
-  - **last_update_user_id**
-
-    类型: string
-
-    最后更新本条信息的用户 ID。
-
-  - **last_update_time_ms**
-
-    类型: number
-
-    最后更新本条信息的 Unix 时间，单位：毫秒。
-
-### onSubtitleStateChanged <span id="rtcroomcallback-onsubtitlestatechanged"></span> 
-
-字幕状态发生改变回调。
-当用户调用 [startSubtitle](Electron-api.md#startsubtitle) 和 [stopSubtitle](Electron-api.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。
-
-- **类型**
-
-  ```ts
-  (state: SubtitleState, error_code: SubtitleErrorCode, error_message: string) => void
-  ```
-
-- **参数**
-
-  - **state**
-
-    类型: [SubtitleState](Electron-keytype.md#subtitlestate)
-
-    字幕状态。
-
-  - **error_code**
-
-    类型: [SubtitleErrorCode](Electron-errorcode.md#subtitleerrorcode)
-
-    字幕任务错误码。
-
-  - **error_message**
-
-    类型: string
-
-    与第三方服务有关的错误信息。
-
-### onSubtitleMessageReceived <span id="rtcroomcallback-onsubtitlemessagereceived"></span> 
-
-字幕相关内容回调。
-当用户成功调用 [startSubtitle](Electron-api.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。
-
-- **类型**
-
-  ```ts
-  (subtitles: SubtitleMessage[], cnt: number) => void
-  ```
-
-- **参数**
-
-  - **subtitles**
-
-    类型: [SubtitleMessage](Electron-keytype.md#subtitlemessage)[]
-
-    字幕消息内容。
-
-  - **cnt**
-
-    类型: number
-
-
 ## RTCVIDEOCALLBACK <span id="rtcvideocallback"></span>
 
 类型: `interface`
@@ -940,20 +32,21 @@ Token 订阅权限过期前 30 秒将触发该回调。
 | [onFaceDetectResult](#rtcvideocallback-onfacedetectresult) | 特效 SDK 进行人脸检测结果的回调。<br>调用 `enableFaceDetection` 注册了回调，并使用 RTC SDK 中包含的特效 SDK 进行视频特效处理时，你会收到此回调。 |
 | [onAudioDeviceVolumeChanged](#rtcvideocallback-onaudiodevicevolumechanged) | 音频设备音量改变回调。当通过系统设置，改变音频设备音量或静音状态时，触发本回调。本回调无需手动开启。 |
 | [onCurrentScoringInfo](#rtcvideocallback-oncurrentscoringinfo) | 实时评分信息回调。 |
-| [onAudioRecordingStateUpdate](#rtcvideocallback-onaudiorecordingstateupdate) | 调用 [startAudioRecording](Electron-api.md#startaudiorecording) 或 [stopAudioRecording](Electron-api.md#stopaudiorecording) 改变音频文件录制状态时，收到此回调。 |
+| [onAudioRecordingStateUpdate](#rtcvideocallback-onaudiorecordingstateupdate) | 调用 [startAudioRecording](85532.md#startaudiorecording) 或 [stopAudioRecording](85532.md#stopaudiorecording) 改变音频文件录制状态时，收到此回调。 |
 | [onExtensionAccessError](#rtcvideocallback-onextensionaccesserror) | 当访问插件失败时，收到此回调。<br>RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件不存在，功能将无法使用。 |
-| [onPublicStreamDataMessageReceived](#rtcvideocallback-onpublicstreamdatamessagereceived) | 回调公共流中包含的数据信息。<br>通过 [startPlayPublicStream](Electron-api.md#rtcvideo-startplaypublicstream) 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。 |
+| [onPublicStreamDataMessageReceived](#rtcvideocallback-onpublicstreamdatamessagereceived) | 回调公共流中包含的数据信息。<br>通过 [startPlayPublicStream](85532.md#rtcvideo-startplaypublicstream) 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。 |
 | [onHardwareEchoDetectionResult](#rtcvideocallback-onhardwareechodetectionresult) | 通话前回声检测结果回调。 |
-| [onLocalProxyStateChanged](#rtcvideocallback-onlocalproxystatechanged) | 本地代理状态发生改变回调。调用 [setLocalProxy](Electron-api.md#rtcvideo-setlocalproxy) 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。 |
+| [onLocalProxyStateChanged](#rtcvideocallback-onlocalproxystatechanged) | 本地代理状态发生改变回调。调用 [setLocalProxy](85532.md#rtcvideo-setlocalproxy) 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。 |
 | [onMixingEvent](#rtcvideocallback-onmixingevent) | 转推直播状态回调 |
 | [onMixingVideoFrame](#rtcvideocallback-onmixingvideoframe) | 合流视频回调，运行在视频回调线程 |
 | [onMixingAudioFrame](#rtcvideocallback-onmixingaudioframe) | 合流音频回调，运行在音频回调线程 |
 | [onMixingDataFrame](#rtcvideocallback-onmixingdataframe) | 视频 SEI 帧回调，运行在视频回调线程 |
+| [onClearCacheResult](#rtcvideocallback-onclearcacheresult) | 清理文件缓存结果回调。 |
 | [onFirstPublicStreamAudioFrame](#rtcvideocallback-onfirstpublicstreamaudioframe) | 公共流的音频首帧解码成功 |
 | [onPushPublicStreamResult](#rtcvideocallback-onpushpublicstreamresult) | 公共流发布结果回调。<br>调用 `startPushPublicStream` 接口发布公共流后，启动结果通过此回调方法通知用户。 |
 | [onFirstPublicStreamVideoFrameDecoded](#rtcvideocallback-onfirstpublicstreamvideoframedecoded) | 公共流的首帧视频解码成功 |
 | [onPublicStreamSEIMessageReceived](#rtcvideocallback-onpublicstreamseimessagereceived) | 回调公共流中包含的 SEI 信息 |
-| [onPlayPublicStreamResult](#rtcvideocallback-onplaypublicstreamresult) | 订阅公共流的结果回调<br>通过 [`startPlayPublicStream`](Electron-api.md#startplaypublicstream) 订阅公共流后，可以通过本回调获取订阅结果。 |
+| [onPlayPublicStreamResult](#rtcvideocallback-onplaypublicstreamresult) | 订阅公共流的结果回调<br>通过 [`startPlayPublicStream`](85532.md#rtcvideo-startplaypublicstream)  订阅公共流后，可以通过本回调获取订阅结果。 |
 | [onLocalScreenFrame](#rtcvideocallback-onlocalscreenframe) | 获取采集成功的本地屏幕视频帧，用于自定义处理或渲染。 |
 | [onLocalVideoFrame](#rtcvideocallback-onlocalvideoframe) | 获取采集成功的本地摄像头流视频帧，用于自定义处理或渲染。 |
 | [onRemoteScreenFrame](#rtcvideocallback-onremotescreenframe) | 视频管理获取采集成功的远端屏幕视频帧，用于自定义处理或渲染。 |
@@ -966,7 +59,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 | [onAudioMixingPlayingProgress](#rtcvideocallback-onaudiomixingplayingprogress) | 混音音频文件播放进度回调 |
 | [onConnectionStateChanged](#rtcvideocallback-onconnectionstatechanged) | SDK 与信令服务器连接状态改变回调。连接状态改变时触发。 |
 | [onNetworkTypeChanged](#rtcvideocallback-onnetworktypechanged) | SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型发生改变时回调该事件。 |
-| [onPerformanceAlarms](#rtcvideocallback-onperformancealarms) | 本地未开启发布性能回退，检测到设备性能不足时，收到此回调。本地开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。 |
+| [onPerformanceAlarms](#rtcvideocallback-onperformancealarms) | 本地未通过 [setPublishFallbackOption](85532.md#rtcvideo-setpublishfallbackoption) 开启发布性能回退，检测到设备性能不足时，收到此回调。本地通过 [setPublishFallbackOption](85532.md#rtcvideo-setpublishfallbackoption) 开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。 |
 | [onSysStats](#rtcvideocallback-onsysstats) | 周期性地发出回调，报告当前cpu与memory使用率 |
 | [onUserStartAudioCapture](#rtcvideocallback-onuserstartaudiocapture) | 房间内的用户调用 `startAudioCapture` 开启音频采集时，房间内其他用户会收到此回调。 |
 | [onUserStopAudioCapture](#rtcvideocallback-onuserstopaudiocapture) | 房间内的用户调用 `stopAudioCapture` 关闭音频采集时，房间内其他用户会收到此回调。 |
@@ -981,8 +74,10 @@ Token 订阅权限过期前 30 秒将触发该回调。
 | [onUserStartVideoCapture](#rtcvideocallback-onuserstartvideocapture) | 房间内的用户调用 `startVideoCapture` 开启视频采集时，房间内其他用户会收到此回调。 |
 | [onUserStopVideoCapture](#rtcvideocallback-onuserstopvideocapture) | 房间内的用户调用 `stopVideoCapture` 关闭视频采集时，房间内其他用户会收到此回调。 |
 | [onLocalAudioStateChanged](#rtcvideocallback-onlocalaudiostatechanged) | 本地音频的状态发生改变时，该回调通知当前的本地音频状态。 |
+| [onRemoteAudioStateChanged](#rtcvideocallback-onremoteaudiostatechanged) | 用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。 |
 | [onActiveSpeaker](#rtcvideocallback-onactivespeaker) | 调用 `enableAudioPropertiesReport` 后，根据设置的 config.interval，你会周期性地收到此回调，获取房间内的最活跃用户信息。 |
 | [onLocalVideoStateChanged](#rtcvideocallback-onlocalvideostatechanged) | 本地视频流的状态发生改变时，收到该事件。 |
+| [onRemoteVideoStateChanged](#rtcvideocallback-onremotevideostatechanged) | 远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。 |
 | [onAudioFrameSendStateChanged](#rtcvideocallback-onaudioframesendstatechanged) | 音频首帧发送状态改变回调 |
 | [onVideoFrameSendStateChanged](#rtcvideocallback-onvideoframesendstatechanged) | 视频首帧发送状态改变回调 |
 | [onScreenVideoFrameSendStateChanged](#rtcvideocallback-onscreenvideoframesendstatechanged) | 屏幕共享流视频首帧发送状态改变回调 |
@@ -1018,6 +113,11 @@ Token 订阅权限过期前 30 秒将触发该回调。
 | [onVideoDeviceStateChanged](#rtcvideocallback-onvideodevicestatechanged) | 视频频设备状态回调。提示摄像头视频采集、屏幕视频采集等设备的状态。 |
 | [onAudioDeviceStateChanged](#rtcvideocallback-onaudiodevicestatechanged) | 音频设备状态回调。提示音频采集、音频播放等设备设备的状态。 |
 | [onAudioPlaybackDeviceTestVolume](#rtcvideocallback-onaudioplaybackdevicetestvolume) | 回调音频设备测试时的播放音量 |
+| [onRemoteUserAudioFrame](#rtcvideocallback-onremoteuseraudioframe) | 返回远端单个用户的音频数据 |
+| [onRecordScreenAudioFrame](#rtcvideocallback-onrecordscreenaudioframe) | 返回本地屏幕录制的音频数据 |
+| [onAudioDeviceWarning](#rtcvideocallback-onaudiodevicewarning) | 音频设备警告回调。音频设备包括音频采集设备和音频渲染设备。 |
+| [onVideoDeviceWarning](#rtcvideocallback-onvideodevicewarning) | 视频设备警告回调，包括视频采集设备等。 |
+| [onSEIStreamUpdate](#rtcvideocallback-onseistreamupdate) | 黑帧视频流发布状态回调。  <br>在语音通话场景下，本地用户调用 [sendSEIMessage](85532.md#rtcvideo-sendseimessage) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过该回调通知远端用户。  <br>你可以通过此回调判断携带 SEI 数据的视频帧为黑帧，从而不对该视频帧进行渲染。 |
 
 
 ### onLogReport <span id="rtcvideocallback-onlogreport"></span> 
@@ -1058,7 +158,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **error_code**
 
-    类型: [MusicInfo](Electron-keytype.md#musicinfo)[]
+    类型: [MusicInfo](85535.md#musicinfo)[]
 
     错误码，成功时返回 0。
 
@@ -1070,7 +170,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **music_infos**
 
-    类型: [KTVErrorCode](Electron-errorcode.md#ktverrorcode)
+    类型: [KTVErrorCode](85534.md#ktverrorcode)
 
     歌曲数据数组。
 
@@ -1088,7 +188,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **error_code**
 
-    类型: [MusicInfo](Electron-keytype.md#musicinfo)[]
+    类型: [MusicInfo](85535.md#musicinfo)[]
 
     错误码，成功时返回 0。
 
@@ -1100,7 +200,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **music_infos**
 
-    类型: [KTVErrorCode](Electron-errorcode.md#ktverrorcode)
+    类型: [KTVErrorCode](85534.md#ktverrorcode)
 
     歌曲数据数组。
 
@@ -1118,13 +218,13 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **error_code**
 
-    类型: [HotMusicInfo](Electron-keytype.md#hotmusicinfo)[]
+    类型: [HotMusicInfo](85535.md#hotmusicinfo)[]
 
     错误码，成功时返回 0。
 
   - **hot_infos**
 
-    类型: [KTVErrorCode](Electron-errorcode.md#ktverrorcode)
+    类型: [KTVErrorCode](85534.md#ktverrorcode)
 
     热榜歌曲数据数组。
 
@@ -1142,13 +242,13 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **error_code**
 
-    类型: [MusicInfo](Electron-keytype.md#musicinfo)
+    类型: [MusicInfo](85535.md#musicinfo)
 
     错误码，成功时返回 0。
 
   - **music_info**
 
-    类型: [KTVErrorCode](Electron-errorcode.md#ktverrorcode)
+    类型: [KTVErrorCode](85534.md#ktverrorcode)
 
     歌曲数据。
 
@@ -1172,7 +272,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **download_info**
 
-    类型: [DownloadResult](Electron-keytype.md#downloadresult)
+    类型: [DownloadResult](85535.md#downloadresult)
 
     下载信息。
 
@@ -1196,7 +296,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **download_id**
 
-    类型: [KTVErrorCode](Electron-errorcode.md#ktverrorcode)
+    类型: [KTVErrorCode](85534.md#ktverrorcode)
 
     下载任务 ID。
 
@@ -1262,32 +362,32 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   此回调被触发的时机汇总如下：
 
-  + 调用 [playMusic](Electron-api.md#playmusic) 成功后，会触发 playState 值为 PlayStatePlaying 的回调；否则会触发 playState 值为 PlayStateFailed 的回调。
-  + 使用相同的音乐 ID 重复调用 [playMusic](Electron-api.md#playmusic) 后，后一次播放会覆盖前一次，且会触发 playState 值为 PlayStatePlaying 的回调，表示后一次音乐播放已开始。
-  + 调用 pauseMusic(Electron-api#pausemusic) 方法暂停播放成功后，会触发 playState 值为 PlayStatePaused 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
-  + 调用 resumeMusic(Electron-api#resumeMusic) 方法恢复播放成功后，会触发 playState 值为 PlayStatePlaying 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
-  + 调用 [stopMusic](Electron-api.md#stopmusic) 方法停止播放成功后，会触发 playState 值为 PlayStateStoped 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
+  + 调用 [playMusic](85532.md#playmusic) 成功后，会触发 playState 值为 PlayStatePlaying 的回调；否则会触发 playState 值为 PlayStateFailed 的回调。
+  + 使用相同的音乐 ID 重复调用 [playMusic](85532.md#playmusic) 后，后一次播放会覆盖前一次，且会触发 playState 值为 PlayStatePlaying 的回调，表示后一次音乐播放已开始。
+  + 调用 pauseMusic(85532#pausemusic) 方法暂停播放成功后，会触发 playState 值为 PlayStatePaused 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
+  + 调用 resumeMusic(85532#resumeMusic) 方法恢复播放成功后，会触发 playState 值为 PlayStatePlaying 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
+  + 调用 [stopMusic](85532.md#stopmusic) 方法停止播放成功后，会触发 playState 值为 PlayStateStoped 的回调；否则触发 playState 值为 PlayStateFailed 的回调。
   + 音乐播放结束会触发 playState 值为 PlayStateFinished 的回调。
 
 - **参数**
 
-  - **error_code**
-
-    类型: string
-
-    错误码。
-
   - **music_id**
 
-    类型: [PlayState](Electron-keytype.md#playstate)
+    类型: string
 
     音乐 ID。
 
   - **play_state**
 
-    类型: [KTVPlayerErrorCode](Electron-keytype.md#ktvplayererrorcode)
+    类型: [PlayState](85535.md#playstate)
 
     音乐播放状态。
+
+  - **error_code**
+
+    类型: [KTVPlayerErrorCode](85534.md#ktvplayererrorcode)
+
+    错误码。
 
 ### onRemoteVideoSuperResolutionModeChanged <span id="rtcvideocallback-onremotevideosuperresolutionmodechanged"></span> 
 
@@ -1303,19 +403,19 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
   - **streamKey**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     远端流信息，包括房间 ID、用户 ID、流属性。
 
   - **mode**
 
-    类型: [VideoSuperResolutionMode](Electron-keytype.md#videosuperresolutionmode)
+    类型: [VideoSuperResolutionMode](85535.md#videosuperresolutionmode)
 
     超分模式。
 
   - **reason**
 
-    类型: [VideoSuperResolutionModeChangedReason](Electron-keytype.md#videosuperresolutionmodechangedreason)
+    类型: [VideoSuperResolutionModeChangedReason](85535.md#videosuperresolutionmodechangedreason)
 
     超分模式改变原因。
 
@@ -1335,7 +435,7 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
     类型: number
 
-    本地截图任务的编号。和 [takeLocalSnapshot](Electron-api.md#takelocalsnapshot) 的返回值一致。
+    本地截图任务的编号。和 [takeLocalSnapshot](85532.md#takelocalsnapshot) 的返回值一致。
 
   - **streamIndex**
 
@@ -1375,11 +475,11 @@ Token 订阅权限过期前 30 秒将触发该回调。
 
     类型: number
 
-    远端截图任务的编号。和 [takeRemoteSnapshot](Electron-api.md#takeremotesnapshot) 的返回值一致。
+    远端截图任务的编号。和 [takeRemoteSnapshot](85532.md#takeremotesnapshot) 的返回值一致。
 
   - **streamKey**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     截图的视频流。
 
@@ -1515,7 +615,7 @@ SOCKS5 代理状态改变时，收到该回调。
 
   - **stream_key**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     远端流信息
 
@@ -1551,13 +651,13 @@ SOCKS5 代理状态改变时，收到该回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     本地用户信息
 
   - **state**
 
-    类型: [FirstFrameSendState](Electron-keytype.md#firstframesendstate)
+    类型: [FirstFrameSendState](85535.md#firstframesendstate)
 
     首帧发送状态
 
@@ -1581,13 +681,13 @@ SOCKS5 代理状态改变时，收到该回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     远端用户信息
 
   - **state**
 
-    类型: [FirstFramePlayState](Electron-keytype.md#firstframeplaystate)
+    类型: [FirstFramePlayState](85535.md#firstframeplaystate)
 
     首帧播放状态
 
@@ -1652,7 +752,7 @@ license过期时间提醒
 
   - **result**
 
-    类型: [FaceDetectResult](Electron-keytype.md#facedetectresult)
+    类型: [FaceDetectResult](85535.md#facedetectresult)
 
     人脸检测结果
 
@@ -1674,7 +774,7 @@ license过期时间提醒
 
   - **device_type**
 
-    类型: [RTCAudioDeviceType](Electron-keytype.md#rtcaudiodevicetype)
+    类型: [RTCAudioDeviceType](85535.md#rtcaudiodevicetype)
 
     设备类型，包括麦克风和扬声器。
 
@@ -1682,13 +782,13 @@ license过期时间提醒
 
     类型: number
 
-    音量值，[0, 255]。当 volume 变为 0 时，muted 会变为 True。注意：在 Windows 端，当麦克风 volume 变为 0 时，muted 值不变。
+    音量值，[0, 255]。当 volume 变为 0 时，muted 会变为 true。注意：在 Windows 端，当麦克风 volume 变为 0 时，muted 值不变。
 
   - **muted**
 
     类型: boolean
 
-    是否禁音状态。扬声器被设置为禁音时，muted 为 True，但 volume 保持不变。
+    是否禁音状态。扬声器被设置为禁音时，muted 为 true，但 volume 保持不变。
 
 ### onCurrentScoringInfo <span id="rtcvideocallback-oncurrentscoringinfo"></span> 
 
@@ -1702,19 +802,19 @@ license过期时间提醒
 
 - **注意**
 
-  调用 [startSingScoring](Electron-api.md#startsingscoring) 后，会收到该回调。
+  调用 [startSingScoring](85532.md#startsingscoring) 后，会收到该回调。
 
 - **参数**
 
   - **info**
 
-    类型: [SingScoringRealtimeInfo](Electron-keytype.md#singscoringrealtimeinfo)
+    类型: [SingScoringRealtimeInfo](85535.md#singscoringrealtimeinfo)
 
     实时评分信息。
 
 ### onAudioRecordingStateUpdate <span id="rtcvideocallback-onaudiorecordingstateupdate"></span> 
 
-调用 [startAudioRecording](Electron-api.md#startaudiorecording) 或 [stopAudioRecording](Electron-api.md#stopaudiorecording) 改变音频文件录制状态时，收到此回调。
+调用 [startAudioRecording](85532.md#startaudiorecording) 或 [stopAudioRecording](85532.md#stopaudiorecording) 改变音频文件录制状态时，收到此回调。
 
 - **类型**
 
@@ -1726,13 +826,13 @@ license过期时间提醒
 
   - **state**
 
-    类型: [AudioRecordingState](Electron-keytype.md#audiorecordingstate)
+    类型: [AudioRecordingState](85535.md#audiorecordingstate)
 
     录制状态
 
   - **errorCode**
 
-    类型: [AudioRecordingErrorCode](Electron-errorcode.md#audiorecordingerrorcode)
+    类型: [AudioRecordingErrorCode](85534.md#audiorecordingerrorcode)
 
     录制错误码
 
@@ -1764,7 +864,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 ### onPublicStreamDataMessageReceived <span id="rtcvideocallback-onpublicstreamdatamessagereceived"></span> 
 
 回调公共流中包含的数据信息。
-通过 [startPlayPublicStream](Electron-api.md#rtcvideo-startplaypublicstream) 开始播放公共流后，可以通过本回调获取发送端发送的非SEI消息。
+通过 [startPlayPublicStream](85532.md#rtcvideo-startplaypublicstream) 开始播放公共流后，通过此回调收到公共流中的数据消息。
 
 - **类型**
 
@@ -1774,7 +874,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  通过调用客户端 API 插入的 SEI 信息，应通过回调 [onPublicStreamSEIMessageReceived](Electron-event.md#rtcvideocallback-onpublicstreamseimessagereceived) 获取。
+  通过调用客户端 API 插入的 SEI 信息，应通过回调 [onPublicStreamSEIMessageReceived](85533.md#rtcvideocallback-onpublicstreamseimessagereceived) 获取。
 
 - **参数**
 
@@ -1790,12 +890,13 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
     收到的数据消息内容，如下：
 
-+ 调用公共流 OpenAPI 发送的 SEI 消息。当公共流中的多路视频流均包含有 SEI 信息：SEI 不互相冲突时，将通过多次回调分别发送；SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
-+ 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。
++ 调用公共流 OpenAPI 发送的自定义消息。
++ 媒体流音量变化，需要通过公共流 OpenAPI 开启回调。JSON 格式说明如下：
+{<br/>&nbsp;&nbsp;&nbsp;&nbsp;"Type"&nbsp;:&nbsp;"VolumeIndication", //具体业务类型<br/>&nbsp;&nbsp;&nbsp;&nbsp;"VolumeInfos"[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 业务类型对应信息<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"RoomId":"1000001", // 房间ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"UserId":"1000001", // 用户ID<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"StreamType":0, // 0:摄像头流；1:屏幕流<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LinearVolume":1 // 线性音量大小<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br/>&nbsp;&nbsp;&nbsp;&nbsp;]<br/>}
 
   - **source_type**
 
-    类型: [DataMessageSourceType](Electron-keytype.md#datamessagesourcetype)
+    类型: [DataMessageSourceType](85535.md#datamessagesourcetype)
 
     数据消息来源。
 
@@ -1811,20 +912,22 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  + 通话前调用 [startHardwareEchoDetection](Electron-api.md#rtcvideo-starthardwareechodetection) 后，将触发本回调返回检测结果。
-  + 建议在收到检测结果后，调用 [stopHardwareEchoDetection](Electron-api.md#rtcvideo-stophardwareechodetection) 停止检测，释放对音频设备的占用。
+  * + 通话前调用 [startHardwareEchoDetection](85532.md#rtcvideo-starthardwareechodetection) 后，将触发本回调返回检测结果。
+
+  + 建议在收到检测结果后，调用 [stopHardwareEchoDetection](85532.md#rtcvideo-stophardwareechodetection) 停止检测，释放对音频设备的占用。
+  + 如果 SDK 在通话中检测到回声，将通过 [onAudioDeviceWarning](85533.md#rtcvideocallback-onaudiodevicewarning) 回调 `kMediaDeviceWarningLeakEchoDetected`。
 
 - **参数**
 
   - **hardwareEchoDetectionResult**
 
-    类型: [HardwareEchoDetectionResult](Electron-keytype.md#hardwareechodetectionresult)
+    类型: [HardwareEchoDetectionResult](85535.md#hardwareechodetectionresult)
 
     通话前回声检测结果
 
 ### onLocalProxyStateChanged <span id="rtcvideocallback-onlocalproxystatechanged"></span> 
 
-本地代理状态发生改变回调。调用 [setLocalProxy](Electron-api.md#rtcvideo-setlocalproxy) 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。
+本地代理状态发生改变回调。调用 [setLocalProxy](85532.md#rtcvideo-setlocalproxy) 设置本地代理后，SDK 会触发此回调，返回代理连接的状态。
 
 - **类型**
 
@@ -1836,19 +939,19 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **localProxyType**
 
-    类型: [LocalProxyType](Electron-keytype.md#localproxytype)
+    类型: [LocalProxyType](85535.md#localproxytype)
 
     本地代理类型。
 
   - **localProxyState**
 
-    类型: [LocalProxyState](Electron-keytype.md#localproxystate)
+    类型: [LocalProxyState](85535.md#localproxystate)
 
     本地代理状态。
 
   - **localProxyError**
 
-    类型: [LocalProxyError](Electron-keytype.md#localproxyerror)
+    类型: [LocalProxyError](85534.md#localproxyerror)
 
     本地代理错误。
 
@@ -1866,7 +969,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **event**
 
-    类型: [StreamMixingEvent](Electron-keytype.md#streammixingevent)
+    类型: [StreamMixingEvent](85535.md#streammixingevent)
 
     转推直播任务状态
 
@@ -1878,13 +981,13 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **error**
 
-    类型: [StreamMixingErrorCode](Electron-errorcode.md#streammixingerrorcode)
+    类型: [StreamMixingErrorCode](85534.md#streammixingerrorcode)
 
     转推直播错误码
 
   - **mix_type**
 
-    类型: [MixedStreamType](Electron-keytype.md#mixedstreamtype)
+    类型: [MixedStreamType](85535.md#mixedstreamtype)
 
     转推直播类型
 
@@ -1906,7 +1009,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **video_frame**
 
-    类型: [IVideoFrame](Electron-keytype.md#ivideoframe)
+    类型: [IVideoFrame](85535.md#ivideoframe)
 
     视频帧
 
@@ -1934,7 +1037,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **audio_frame**
 
-    类型: [IAudioFrame](Electron-keytype.md#iaudioframe)
+    类型: [IAudioFrame](85535.md#iaudioframe)
 
     音频帧
 
@@ -1958,9 +1061,27 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **data_frame**
 
-    类型: [IDataFrame](Electron-keytype.md#idataframe)
+    类型: [IDataFrame](85535.md#idataframe)
 
     SEI 数据
+
+### onClearCacheResult <span id="rtcvideocallback-onclearcacheresult"></span> 
+
+清理文件缓存结果回调。
+
+- **类型**
+
+  ```ts
+  (error_code: KTVErrorCode) => void
+  ```
+
+- **参数**
+
+  - **error_code**
+
+    类型: [KTVErrorCode](85534.md#ktverrorcode)
+
+    错误码，非0为失败
 
 ### onFirstPublicStreamAudioFrame <span id="rtcvideocallback-onfirstpublicstreamaudioframe"></span> 
 
@@ -1974,7 +1095,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  关于订阅公共流，详见 [`startPlayPublicStream`](Electron-api.md#startplaypublicstream)。
+  关于订阅公共流，详见 [`startPlayPublicStream`](85532.md#startplaypublicstream)。
 
 - **参数**
 
@@ -1997,7 +1118,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  关于订阅公共流，详见 [`startPlayPublicStream`](Electron-api.md#startplaypublicstream)。
+  关于订阅公共流，详见 [`startPlayPublicStream`](85532.md#startplaypublicstream)。
 
 - **参数**
 
@@ -2015,7 +1136,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **error_code**
 
-    类型: [PublicStreamErrorCode](Electron-errorcode.md#publicstreamerrorcode)
+    类型: [PublicStreamErrorCode](85534.md#publicstreamerrorcode)
 
     公共流发布结果状态码。
 
@@ -2033,12 +1154,12 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 - **类型**
 
   ```ts
-  (public_stream_id: string, video_frame_info: VideoFrameInfo) => void
+  (public_stream_id: string, info: VideoFrameInfo) => void
   ```
 
 - **注意**
 
-  关于订阅公共流，详见 [`startPlayPublicStream`](Electron-api.md#startplaypublicstream)。
+  关于订阅公共流，详见 [`startPlayPublicStream`](85532.md#startplaypublicstream)。
 
 - **参数**
 
@@ -2048,9 +1169,9 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
     公共流 ID
 
-  - **video_frame_info**
+  - **info**
 
-    类型: [VideoFrameInfo](Electron-keytype.md#videoframeinfo)
+    类型: [VideoFrameInfo](85535.md#videoframeinfo)
 
     视频帧信息。
 
@@ -2066,7 +1187,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  通过 [`startPlayPublicStream`](Electron-api.md#startplaypublicstream) 开始播放公共流后，可以通过本回调获取公共流中包含的 SEI 信息。当公共流中的多路视频流均包含有 SEI 信息时：
+  通过 [`startPlayPublicStream`](85532.md#startplaypublicstream) 开始播放公共流后，可以通过本回调获取公共流中包含的 SEI 信息。当公共流中的多路视频流均包含有 SEI 信息时：
   SEI 不互相冲突时，将通过多次回调分别发送；
   SEI 在同一帧有冲突时，则只有一条流中的 SEI 信息被透传并融合到公共流中。
 
@@ -2086,12 +1207,12 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **source_type**
 
-    类型: [DataMessageSourceType](Electron-keytype.md#datamessagesourcetype)
+    类型: [DataMessageSourceType](85535.md#datamessagesourcetype)
 
 ### onPlayPublicStreamResult <span id="rtcvideocallback-onplaypublicstreamresult"></span> 
 
 订阅公共流的结果回调
-通过 [`startPlayPublicStream`](Electron-api.md#startplaypublicstream) 订阅公共流后，可以通过本回调获取订阅结果。
+通过 [`startPlayPublicStream`](85532.md#rtcvideo-startplaypublicstream)  订阅公共流后，可以通过本回调获取订阅结果。
 
 - **类型**
 
@@ -2109,7 +1230,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **error_code**
 
-    类型: [PublicStreamErrorCode](Electron-errorcode.md#publicstreamerrorcode)
+    类型: [PublicStreamErrorCode](85534.md#publicstreamerrorcode)
 
     公共流订阅结果状态码。
 
@@ -2127,7 +1248,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **frame**
 
-    类型: [IVideoFrame](Electron-keytype.md#ivideoframe)
+    类型: [IVideoFrame](85535.md#ivideoframe)
 
     视频数据
 
@@ -2145,7 +1266,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **frame**
 
-    类型: [IVideoFrame](Electron-keytype.md#ivideoframe)
+    类型: [IVideoFrame](85535.md#ivideoframe)
 
     视频数据
 
@@ -2163,7 +1284,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **frame**
 
-    类型: [IVideoFrame](Electron-keytype.md#ivideoframe)
+    类型: [IVideoFrame](85535.md#ivideoframe)
 
     视频数据
 
@@ -2185,7 +1306,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **frame**
 
-    类型: [IVideoFrame](Electron-keytype.md#ivideoframe)
+    类型: [IVideoFrame](85535.md#ivideoframe)
 
     视频数据
 
@@ -2203,7 +1324,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **frame**
 
-    类型: [IVideoFrame](Electron-keytype.md#ivideoframe)
+    类型: [IVideoFrame](85535.md#ivideoframe)
 
     视频数据
 
@@ -2221,7 +1342,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **warn**
 
-    类型: [WarningCode](Electron-errorcode.md#warningcode)
+    类型: [WarningCode](85534.md#warningcode)
 
     警告标识码
 
@@ -2232,22 +1353,16 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 - **类型**
 
   ```ts
-  (error_code: ErrorCode, error_message: string) => void
+  (err: ErrorCode) => void
   ```
 
 - **参数**
 
-  - **error_code**
+  - **err**
 
-    类型: [ErrorCode](Electron-errorcode.md#errorcode)
+    类型: [ErrorCode](85534.md#errorcode)
 
     错误标识码
-
-  - **error_message**
-
-    类型: string
-
-    错误详情
 
 ### onAudioMixingFinished <span id="rtcvideocallback-onaudiomixingfinished"></span> 
 
@@ -2261,7 +1376,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  当调用 [startAudioMixing](Electron-api.md#startaudiomixing) 启动的混音文件播放结束后，会触发该回调。
+  当调用 [startAudioMixing](85532.md#startaudiomixing) 启动的混音文件播放结束后，会触发该回调。
 
 ### onAudioMixingStateChanged <span id="rtcvideocallback-onaudiomixingstatechanged"></span> 
 
@@ -2275,11 +1390,11 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  + 当调用 [startAudioMixing](Electron-api.md#startaudiomixing) 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
-  + 当使用相同的 ID 重复调用 [startAudioMixing](Electron-api.md#startaudiomixing) 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。
-  + 当调用 [pauseAudioMixing](Electron-api.md#pauseaudiomixing) 方法暂停播放成功后，会触发 state 值为 kAudioMixingStatePaused 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
-  + 当调用 [resumeAudioMixing](Electron-api.md#resumeaudiomixing) 方法恢复播放成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
-  + 当调用 [stopAudioMixing](Electron-api.md#stopaudiomixing) 方法暂停止播放成功后，会触发 state 值为 kAudioMixingStateStopped 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
+  + 当调用 [startAudioMixing](85532.md#startaudiomixing) 方法成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
+  + 当使用相同的 ID 重复调用 [startAudioMixing](85532.md#startaudiomixing) 后，后一次会覆盖前一次，且本回调会以 kAudioMixingStateStopped 通知前一次混音已停止。
+  + 当调用 [pauseAudioMixing](85532.md#pauseaudiomixing) 方法暂停播放成功后，会触发 state 值为 kAudioMixingStatePaused 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
+  + 当调用 [resumeAudioMixing](85532.md#resumeaudiomixing) 方法恢复播放成功后，会触发 state 值为 kAudioMixingStatePlaying 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
+  + 当调用 [stopAudioMixing](85532.md#stopaudiomixing) 方法暂停止播放成功后，会触发 state 值为 kAudioMixingStateStopped 回调；否则触发 state 值为 kAudioMixingStateFailed 的回调。
   + 播放结束会触发 state 值为 kAudioMixingStateFinished 回调。
 
 - **参数**
@@ -2292,13 +1407,13 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
   - **state**
 
-    类型: [AudioMixingState](Electron-keytype.md#audiomixingstate)
+    类型: [AudioMixingState](85535.md#audiomixingstate)
 
     混音状态
 
   - **error**
 
-    类型: [AudioMixingError](Electron-errorcode.md#audiomixingerror)
+    类型: [AudioMixingError](85534.md#audiomixingerror)
 
     错误码
 
@@ -2314,7 +1429,7 @@ RTC SDK 将一些功能封装成插件。当使用这些功能时，如果插件
 
 - **注意**
 
-  调用 [setAudioMixingProgressInterval](Electron-api.md#setaudiomixingprogressinterval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing](Electron-api.md#startaudiomixing) 将 AudioMixingConfig 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。
+  调用 [setAudioMixingProgressInterval](85532.md#setaudiomixingprogressinterval) 将时间间隔设为大于 0 的值后，或调用 [startAudioMixing](85532.md#startaudiomixing) 将 AudioMixingConfig 中的时间间隔设为大于 0 的值后，SDK 会按照设置的时间间隔回调该事件。
 
 - **参数**
 
@@ -2344,7 +1459,7 @@ SDK 与信令服务器连接状态改变回调。连接状态改变时触发。
 
   - **state**
 
-    类型: [ConnectionState](Electron-keytype.md#connectionstate)
+    类型: [ConnectionState](85535.md#connectionstate)
 
     当前 SDK 与信令服务器的连接状态
 
@@ -2366,13 +1481,13 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **type**
 
-    类型: [NetworkType](Electron-keytype.md#networktype)
+    类型: [NetworkType](85535.md#networktype)
 
     SDK 当前的网络连接类型
 
 ### onPerformanceAlarms <span id="rtcvideocallback-onperformancealarms"></span> 
 
-本地未开启发布性能回退，检测到设备性能不足时，收到此回调。本地开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。
+ 本地未通过 [setPublishFallbackOption](85532.md#rtcvideo-setpublishfallbackoption) 开启发布性能回退，检测到设备性能不足时，收到此回调。本地通过 [setPublishFallbackOption](85532.md#rtcvideo-setpublishfallbackoption) 开启发布性能回退，因设备性能/网络原因，造成发布性能回退/恢复时，收到此回调。
 
 - **类型**
 
@@ -2384,7 +1499,7 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **mode**
 
-    类型: [PerformanceAlarmMode](Electron-keytype.md#performancealarmmode)
+    类型: [PerformanceAlarmMode](85535.md#performancealarmmode)
 
     指示本地是否开启发布回退功能 <li> 当发布端未开启发布性能回退时，mode 值为 kPerformanceAlarmModeNormal。  </li><li>当发布端开启发布性能回退时，mode 值为 kPerformanceAlarmModeSimulcast。</li>
 
@@ -2396,13 +1511,13 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **reason**
 
-    类型: [PerformanceAlarmReason](Electron-keytype.md#performancealarmreason)
+    类型: [PerformanceAlarmReason](85535.md#performancealarmreason)
 
     告警原因
 
   - **data**
 
-    类型: [SourceWantedData](Electron-keytype.md#sourcewanteddata)
+    类型: [SourceWantedData](85535.md#sourcewanteddata)
 
     性能回退相关数据
 
@@ -2420,7 +1535,7 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **stats**
 
-    类型: [SysStats](Electron-keytype.md#sysstats)
+    类型: [SysStats](85535.md#sysstats)
 
     返回包含当前系统状态信息的结构体
 
@@ -2486,7 +1601,7 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **index**
 
-    类型: [StreamIndex](Electron-keytype.md#streamindex)
+    类型: [StreamIndex](85535.md#streamindex)
 
     音频流属性
 
@@ -2504,7 +1619,7 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **key**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     远端音频流信息
 
@@ -2515,7 +1630,7 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 - **类型**
 
   ```ts
-  (stream: RemoteStreamSwitch) => void
+  (event: RemoteStreamSwitch) => void
   ```
 
 - **注意**
@@ -2524,9 +1639,9 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
 - **参数**
 
-  - **stream**
+  - **event**
 
-    类型: [RemoteStreamSwitch](Electron-keytype.md#remotestreamswitch)
+    类型: [RemoteStreamSwitch](85535.md#remotestreamswitch)
 
     流切换信息
 
@@ -2544,13 +1659,13 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **index**
 
-    类型: [StreamIndex](Electron-keytype.md#streamindex)
+    类型: [StreamIndex](85535.md#streamindex)
 
     流属性
 
   - **info**
 
-    类型: [VideoFrameInfo](Electron-keytype.md#videoframeinfo)
+    类型: [VideoFrameInfo](85535.md#videoframeinfo)
 
     视频信息
 
@@ -2568,13 +1683,13 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **index**
 
-    类型: [StreamIndex](Electron-keytype.md#streamindex)
+    类型: [StreamIndex](85535.md#streamindex)
 
     流属性
 
   - **info**
 
-    类型: [VideoFrameInfo](Electron-keytype.md#videoframeinfo)
+    类型: [VideoFrameInfo](85535.md#videoframeinfo)
 
     视频帧信息
 
@@ -2592,13 +1707,13 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 
   - **key**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     远端流信息
 
   - **stream**
 
-    类型: [VideoFrameInfo](Electron-keytype.md#videoframeinfo)
+    类型: [VideoFrameInfo](85535.md#videoframeinfo)
 
     视频帧信息
 
@@ -2609,20 +1724,20 @@ SDK 当前网络连接类型改变回调。当 SDK 的当前网络连接类型�
 - **类型**
 
   ```ts
-  (key: RemoteStreamKey, stream: VideoFrameInfo) => void
+  (key: RemoteStreamKey, info: VideoFrameInfo) => void
   ```
 
 - **参数**
 
   - **key**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     远端流信息
 
-  - **stream**
+  - **info**
 
-    类型: [VideoFrameInfo](Electron-keytype.md#videoframeinfo)
+    类型: [VideoFrameInfo](85535.md#videoframeinfo)
 
     视频帧信息
 
@@ -2633,20 +1748,20 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 - **类型**
 
   ```ts
-  (key: RemoteStreamKey, stream: VideoFrameInfo) => void
+  (key: RemoteStreamKey, info: VideoFrameInfo) => void
   ```
 
 - **参数**
 
   - **key**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     远端流信息。
 
-  - **stream**
+  - **info**
 
-    类型: [VideoFrameInfo](Electron-keytype.md#videoframeinfo)
+    类型: [VideoFrameInfo](85535.md#videoframeinfo)
 
     视频帧信息。
 
@@ -2702,9 +1817,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 本地音频的状态发生改变时，该回调通知当前的本地音频状态。
 
-- **已弃用**
-
-  since 3.50. Use `onAudioDeviceStateChanged` instead.
 
 - **类型**
 
@@ -2716,15 +1828,45 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **state**
 
-    类型: [LocalAudioStreamState](Electron-keytype.md#localaudiostreamstate)
+    类型: [LocalAudioStreamState](85535.md#localaudiostreamstate)
 
     本地音频设备的状态
 
   - **error**
 
-    类型: [LocalAudioStreamError](Electron-errorcode.md#localaudiostreamerror)
+    类型: [LocalAudioStreamError](85534.md#localaudiostreamerror)
 
     本地音频状态改变时的错误码
+
+### onRemoteAudioStateChanged <span id="rtcvideocallback-onremoteaudiostatechanged"></span> 
+
+用户订阅来自远端的音频流状态发生改变时，会收到此回调，了解当前的远端音频流状态。
+
+- **类型**
+
+  ```ts
+  (key: RemoteStreamKey, state: RemoteAudioState, reason: RemoteAudioStateChangeReason) => void
+  ```
+
+- **参数**
+
+  - **key**
+
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+
+    远端流信息
+
+  - **state**
+
+    类型: [RemoteAudioState](85535.md#remoteaudiostate)
+
+    远端音频流状态
+
+  - **reason**
+
+    类型: [RemoteAudioStateChangeReason](85535.md#remoteaudiostatechangereason)
+
+    远端音频流状态改变的原因
 
 ### onActiveSpeaker <span id="rtcvideocallback-onactivespeaker"></span> 
 
@@ -2754,10 +1896,6 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 本地视频流的状态发生改变时，收到该事件。
 
-- **已弃用**
-
-  since 3.50. Use `onVideoDeviceStateChanged` instead.
-
 - **类型**
 
   ```ts
@@ -2768,21 +1906,52 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **index**
 
-    类型: [StreamIndex](Electron-keytype.md#streamindex)
+    类型: [StreamIndex](85535.md#streamindex)
 
     音/视频属性
 
   - **state**
 
-    类型: [LocalVideoStreamState](Electron-keytype.md#localvideostreamstate)
+    类型: [LocalVideoStreamState](85535.md#localvideostreamstate)
 
     本地视频流状态
 
   - **error**
 
-    类型: [LocalVideoStreamError](Electron-errorcode.md#localvideostreamerror)
+    类型: [LocalVideoStreamError](85534.md#localvideostreamerror)
 
     本地视频状态改变时的错误码
+
+### onRemoteVideoStateChanged <span id="rtcvideocallback-onremotevideostatechanged"></span> 
+
+远端视频流的状态发生改变时，房间内订阅此流的用户会收到该事件。
+本回调仅适用于主流，不适用于屏幕流。
+
+- **类型**
+
+  ```ts
+  (key: RemoteStreamKey, state: RemoteVideoState, reason: RemoteVideoStateChangeReason) => void
+  ```
+
+- **参数**
+
+  - **key**
+
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+
+    远端视频流的信息，房间、用户 ID、流属性等。
+
+  - **state**
+
+    类型: [RemoteVideoState](85535.md#remotevideostate)
+
+    远端视频流状态
+
+  - **reason**
+
+    类型: [RemoteVideoStateChangeReason](85535.md#remotevideostatechangereason)
+
+    远端视频流状态改变的原因
 
 ### onAudioFrameSendStateChanged <span id="rtcvideocallback-onaudioframesendstatechanged"></span> 
 
@@ -2804,13 +1973,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     本地用户信息
 
   - **state**
 
-    类型: [FirstFrameSendState](Electron-keytype.md#firstframesendstate)
+    类型: [FirstFrameSendState](85535.md#firstframesendstate)
 
     首帧发送状态
 
@@ -2834,13 +2003,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     本地用户信息
 
   - **state**
 
-    类型: [FirstFrameSendState](Electron-keytype.md#firstframesendstate)
+    类型: [FirstFrameSendState](85535.md#firstframesendstate)
 
     首帧发送状态
 
@@ -2864,13 +2033,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     本地用户信息
 
   - **state**
 
-    类型: [FirstFrameSendState](Electron-keytype.md#firstframesendstate)
+    类型: [FirstFrameSendState](85535.md#firstframesendstate)
 
     首帧发送状态
 
@@ -2894,13 +2063,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     远端用户信息
 
   - **state**
 
-    类型: [FirstFramePlayState](Electron-keytype.md#firstframeplaystate)
+    类型: [FirstFramePlayState](85535.md#firstframeplaystate)
 
     首帧播放状态
 
@@ -2924,13 +2093,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     远端用户信息
 
   - **state**
 
-    类型: [FirstFramePlayState](Electron-keytype.md#firstframeplaystate)
+    类型: [FirstFramePlayState](85535.md#firstframeplaystate)
 
     首帧播放状态
 
@@ -2954,13 +2123,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **user**
 
-    类型: [RtcUser](Electron-keytype.md#rtcuser)
+    类型: [RtcUser](85535.md#rtcuser)
 
     远端用户信息
 
   - **state**
 
-    类型: [FirstFramePlayState](Electron-keytype.md#firstframeplaystate)
+    类型: [FirstFramePlayState](85535.md#firstframeplaystate)
 
     首帧播放状态
 
@@ -2984,7 +2153,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **error**
 
-    类型: [MessageSendResultCode](Electron-errorcode.md#messagesendresultcode)
+    类型: [MessageSendResultCode](85534.md#messagesendresultcode)
 
     消息发送结果
 
@@ -3000,7 +2169,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  同一房间内其他用户调用 [sendUserBinaryMessage](Electron-api.md#senduserbinarymessage) 发送二进制消息给本地用户时，本地用户会收到该回调。
+  同一房间内其他用户调用 [sendUserBinaryMessage](85532.md#senduserbinarymessage) 发送二进制消息给本地用户时，本地用户会收到该回调。
 
 - **参数**
 
@@ -3034,7 +2203,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **state_code**
 
-    类型: [SubscribeState](Electron-keytype.md#subscribestate)
+    类型: [SubscribeState](85535.md#subscribestate)
 
     订阅流的结果
 
@@ -3046,7 +2215,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **info**
 
-    类型: [SubscribeConfig](Electron-keytype.md#subscribeconfig)
+    类型: [SubscribeConfig](85535.md#subscribeconfig)
 
     流的属性
 
@@ -3064,7 +2233,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **stream_key**
 
-    类型: [RemoteStreamKey](Electron-keytype.md#remotestreamkey)
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
 
     包含 SEI 发送者的用户名，所在的房间名和媒体流
 
@@ -3088,7 +2257,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **event**
 
-    类型: [SingleStreamPushEvent](Electron-keytype.md#singlestreampushevent)
+    类型: [SingleStreamPushEvent](85535.md#singlestreampushevent)
 
     事件类型
 
@@ -3130,13 +2299,13 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  该回调由 [`startFileRecording`](Electron-api.md#startfilerecording) 或 [`stopFileRecording`](Electron-api.md#stopfilerecording) 触发。
+  该回调由 [`startFileRecording`](85532.md#startfilerecording) 或 [`stopFileRecording`](85532.md#stopfilerecording) 触发。
 
 - **参数**
 
   - **type**
 
-    类型: [StreamIndex](Electron-keytype.md#streamindex)
+    类型: [StreamIndex](85535.md#streamindex)
 
     录制流的流属性
 
@@ -3154,7 +2323,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **info**
 
-    类型: [RecordingInfo](Electron-keytype.md#recordinginfo)
+    类型: [RecordingInfo](85535.md#recordinginfo)
 
     录制文件的详细信息
 
@@ -3170,25 +2339,25 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  该回调由 [`startFileRecording`](Electron-api.md#startfilerecording) 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
+  该回调由 [`startFileRecording`](85532.md#startfilerecording) 触发，录制状态正常时，系统每秒钟都会通过该回调提示录制进度。
 
 - **参数**
 
   - **type**
 
-    类型: [StreamIndex](Electron-keytype.md#streamindex)
+    类型: [StreamIndex](85535.md#streamindex)
 
     录制流的流属性
 
   - **process**
 
-    类型: [RecordingProgress](Electron-keytype.md#recordingprogress)
+    类型: [RecordingProgress](85535.md#recordingprogress)
 
     录制进度
 
   - **info**
 
-    类型: [RecordingInfo](Electron-keytype.md#recordinginfo)
+    类型: [RecordingInfo](85535.md#recordinginfo)
 
     录制文件的详细信息
 
@@ -3220,7 +2389,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
     类型: number
 
-    从调用 [login](Electron-api.md#login) 接口开始到返回结果所用时长，单位为 ms。
+    从调用 [login](85532.md#login) 接口开始到返回结果所用时长，单位为 ms。
 
 ### onLogout <span id="rtcvideocallback-onlogout"></span> 
 
@@ -3234,7 +2403,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  调用 [logout](Electron-api.md#logout) 后，会收到此回调。
+  调用 [logout](85532.md#logout) 后，会收到此回调。
 
 ### onServerParamsSetResult <span id="rtcvideocallback-onserverparamssetresult"></span> 
 
@@ -3248,7 +2417,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  调用 [setServerParams](Electron-api.md#setserverparams) 后，会收到此回调。
+  调用 [setServerParams](85532.md#setserverparams) 后，会收到此回调。
 
 - **参数**
 
@@ -3270,7 +2439,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  必须先调用 [getPeeronlineStatus](Electron-api.md#getpeeronlinestatus)，才能收到此回调。
+  必须先调用 [getPeeronlineStatus](85532.md#getpeeronlinestatus)，才能收到此回调。
 
 - **参数**
 
@@ -3346,7 +2515,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  当调用 [sendUserMessageOutsideRoom](Electron-api.md#sendusermessageoutsideroom) 或 [sendUserBinaryMessageOutsideRoom](Electron-api.md#senduserbinarymessageoutsideroom) 发送消息后，会收到此回调。
+  当调用 [sendUserMessageOutsideRoom](85532.md#sendusermessageoutsideroom) 或 [sendUserBinaryMessageOutsideRoom](85532.md#senduserbinarymessageoutsideroom) 发送消息后，会收到此回调。
 
 - **参数**
 
@@ -3369,12 +2538,12 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 - **类型**
 
   ```ts
-  (msgid: number, error: number, message: string) => void
+  (msgid: number, error: number, msg: string) => void
   ```
 
 - **注意**
 
-  当调用 [sendServerMessage](Electron-api.md#sendservermessage) 或 [sendServerBinaryMessage](Electron-api.md#sendserverbinarymessage) 接口发送消息后，会收到此回调。
+  当调用 [sendServerMessage](85532.md#sendservermessage) 或 [sendServerBinaryMessage](85532.md#sendserverbinarymessage) 接口发送消息后，会收到此回调。
 
 - **参数**
 
@@ -3390,7 +2559,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
     消息发送结果
 
-  - **message**
+  - **msg**
 
     类型: string
 
@@ -3410,7 +2579,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **audio_frame**
 
-    类型: [IAudioFrame](Electron-keytype.md#iaudioframe)
+    类型: [IAudioFrame](85535.md#iaudioframe)
 
     麦克风录制的音频数据
 
@@ -3428,7 +2597,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **audio_frame**
 
-    类型: [IAudioFrame](Electron-keytype.md#iaudioframe)
+    类型: [IAudioFrame](85535.md#iaudioframe)
 
     远端所有用户混音后的音频数据
 
@@ -3446,7 +2615,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **audio_frame**
 
-    类型: [IAudioFrame](Electron-keytype.md#iaudioframe)
+    类型: [IAudioFrame](85535.md#iaudioframe)
 
     本地麦克风录制和远端所有用户混音后的音频数据
 
@@ -3584,7 +2753,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   以下情况将停止探测并收到本一次本回调：
 
-  + 当调用 [`stopNetworkDetection`](Electron-api.md#stopnetworkdetection) 接口停止探测后，会收到一次该回调；
+  + 当调用 [`stopNetworkDetection`](85532.md#stopnetworkdetection) 接口停止探测后，会收到一次该回调；
   + 当收到远端/本端音频首帧后，停止探测；
   + 当探测超过3分钟后，停止探测；
   + 当探测链路断开一定时间之后，停止探测。
@@ -3617,7 +2786,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **audio_properties_infos**
 
-    类型: [LocalAudioPropertiesInfo](Electron-keytype.md#localaudiopropertiesinfo)[]
+    类型: [LocalAudioPropertiesInfo](85535.md#localaudiopropertiesinfo)[]
 
     本地音频信息。本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。
 
@@ -3641,7 +2810,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **audio_properties_infos**
 
-    类型: [RemoteAudioPropertiesInfo](Electron-keytype.md#remoteaudiopropertiesinfo)[]
+    类型: [RemoteAudioPropertiesInfo](85535.md#remoteaudiopropertiesinfo)[]
 
     远端音频信息，其中包含音频流属性、房间 ID、用户 ID。远端用户的音频包括使用 RTC SDK 采集的麦克风音频和屏幕音频。
 
@@ -3679,7 +2848,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
   - **result**
 
-    类型: [EchoTestResult](Electron-keytype.md#echotestresult)
+    类型: [EchoTestResult](85535.md#echotestresult)
 
     + kTestSuccess	0:	接收到采集的音视频的回放，通话回路检测成功
 + kTestTimeout 1:	测试超过 60s 仍未完成，已自动停止
@@ -3740,6 +2909,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 + `13`: 视频通话已从合盖打断中恢复
 + `14`: 设备成为系统默认
 + `15`: 设备不再是系统默认
++ `16`:  获取设备列表超时后，收到设备列表通知。再次调用获取设备接口更新设备列表。
 
   - **device_error**
 
@@ -3834,7 +3004,7 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
 
 - **注意**
 
-  调用 [`startAudioPlaybackDeviceTest`](Electron-api.md#startaudioplaybackdevicetest) 开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
+  调用 [`startAudioPlaybackDeviceTest`](85532.md#startaudioplaybackdevicetest) 开始播放音频文件或录音时，将开启该回调。本回调为周期性回调，回调周期由上述接口的 `interval` 参数指定。
 
 - **参数**
 
@@ -3843,3 +3013,1176 @@ SDK 接收并解码远端视频流首帧后，收到此回调。
     类型: number
 
     音频设备测试播放音量。单位：毫秒。推荐设置为 200 ms。范围：[0,255]
+
+### onRemoteUserAudioFrame <span id="rtcvideocallback-onremoteuseraudioframe"></span> 
+
+返回远端单个用户的音频数据
+
+- **类型**
+
+  ```ts
+  (stream_info: RemoteStreamKey, audio_frame: IAudioFrame) => void
+  ```
+
+- **注意**
+
+  此回调在播放线程调用。不要在此回调中做任何耗时的事情，否则可能会影响整个音频播放链路。
+
+- **参数**
+
+  - **stream_info**
+
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+
+    远端流信息
+
+  - **audio_frame**
+
+    类型: [IAudioFrame](85535.md#iaudioframe)
+
+    音频数据
+
+### onRecordScreenAudioFrame <span id="rtcvideocallback-onrecordscreenaudioframe"></span> 
+
+返回本地屏幕录制的音频数据
+
+- **类型**
+
+  ```ts
+  (audio_frame: IAudioFrame) => void
+  ```
+
+- **参数**
+
+  - **audio_frame**
+
+    类型: [IAudioFrame](85535.md#iaudioframe)
+
+    音频数据
+
+### onAudioDeviceWarning <span id="rtcvideocallback-onaudiodevicewarning"></span> 
+
+音频设备警告回调。音频设备包括音频采集设备和音频渲染设备。
+
+- **类型**
+
+  ```ts
+  (device_id: string, device_type: RTCAudioDeviceType, device_warning: MediaDeviceWarning) => void
+  ```
+
+- **参数**
+
+  - **device_id**
+
+    类型: string
+
+    设备 ID
+
+  - **device_type**
+
+    类型: [RTCAudioDeviceType](85535.md#rtcaudiodevicetype)
+
+    设备类型
+
+  - **device_warning**
+
+    类型: [MediaDeviceWarning](85535.md#mediadevicewarning)
+
+    告警信息
+
+### onVideoDeviceWarning <span id="rtcvideocallback-onvideodevicewarning"></span> 
+
+视频设备警告回调，包括视频采集设备等。
+
+- **类型**
+
+  ```ts
+  (device_id: string, device_type: RTCAudioDeviceType, device_warning: MediaDeviceWarning) => void
+  ```
+
+- **参数**
+
+  - **device_id**
+
+    类型: string
+
+    设备 ID
+
+  - **device_type**
+
+    类型: [RTCAudioDeviceType](85535.md#rtcaudiodevicetype)
+
+    设备类型
+
+  - **device_warning**
+
+    类型: [MediaDeviceWarning](85535.md#mediadevicewarning)
+
+    告警信息
+
+### onSEIStreamUpdate <span id="rtcvideocallback-onseistreamupdate"></span> 
+
+黑帧视频流发布状态回调。  
+在语音通话场景下，本地用户调用 [sendSEIMessage](85532.md#rtcvideo-sendseimessage) 通过黑帧视频流发送 SEI 数据时，流的发送状态会通过该回调通知远端用户。  
+你可以通过此回调判断携带 SEI 数据的视频帧为黑帧，从而不对该视频帧进行渲染。
+
+- **类型**
+
+  ```ts
+  (key: RemoteStreamKey, type: SEIStreamEventType) => void
+  ```
+
+- **参数**
+
+  - **key**
+
+    类型: [RemoteStreamKey](85535.md#remotestreamkey)
+
+    远端流信息
+
+  - **type**
+
+    类型: [SEIStreamEventType](85535.md#seistreameventtype)
+
+    黑帧视频流状态
+
+
+## RTCROOMCALLBACK <span id="rtcroomcallback"></span>
+
+类型: `interface`
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [onUserVisibilityChanged](#rtcroomcallback-onuservisibilitychanged) | 用户调用 [setUserVisibility](85532.md#rtcroom-setuservisibility) 设置用户可见性的回调。 |
+| [onRoomStateChanged](#rtcroomcallback-onroomstatechanged) | 房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。 |
+| [onStreamStateChanged](#rtcroomcallback-onstreamstatechanged) | 流状态改变回调，发生流相关的警告或错误时会收到此回调。 |
+| [onLeaveRoom](#rtcroomcallback-onleaveroom) | 离开房间成功回调。 |
+| [onUserJoined](#rtcroomcallback-onuserjoined) | 可见用户加入房间，或房内不可见用户切换为可见的回调。<br>1.远端可见用户调用 `setUserVisibility` 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。<br>2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。<br>3.房间内隐身远端用户调用 `setUserVisibility` 方法切换至可见时，房间内其他用户将收到该事件。<br>4.新进房用户也会收到进房前已在房内的可见角色用户的进房回调通知。 |
+| [onUserLeave](#rtcroomcallback-onuserleave) | 远端用户离开房间，或切至不可见时，本地用户会收到此事件 |
+| [onTokenWillExpire](#rtcroomcallback-ontokenwillexpire) | Token 过期前 30 秒将触发该回调。 |
+| [onAVSyncStateChange](#rtcroomcallback-onavsyncstatechange) | 发布端调用 `setMultiDeviceAVSync` 后音视频同步状态发生改变时，会收到此回调。 |
+| [onRoomStats](#rtcroomcallback-onroomstats) | 房间通话统计信息回调。<br>用户进房开始通话后，每 2s 收到一次本回调。 |
+| [onLocalStreamStats](#rtcroomcallback-onlocalstreamstats) | 反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调。<br>本地用户发布音视频流成功后，每隔 2s 收到此回调。 |
+| [onRemoteStreamStats](#rtcroomcallback-onremotestreamstats) | 反映通话中本地设备接收订阅的远端音/视频流的统计信息以及网络状况的回调。每隔 2s 收到此回调。 |
+| [onUserPublishStream](#rtcroomcallback-onuserpublishstream) | 房间内新增远端麦克风采集的音频流的回调。 |
+| [onUserUnpublishStream](#rtcroomcallback-onuserunpublishstream) | 房间内远端麦克风采集的音频流移除的回调。 |
+| [onUserPublishScreen](#rtcroomcallback-onuserpublishscreen) | 房间内新增远端屏幕共享音视频流的回调。 |
+| [onUserUnpublishScreen](#rtcroomcallback-onuserunpublishscreen) | 房间内远端屏幕共享音视频流移除的回调。 |
+| [onStreamSubscribed](#rtcroomcallback-onstreamsubscribed) | 关于订阅媒体流状态改变的回调 |
+| [onVideoStreamBanned](#rtcroomcallback-onvideostreambanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。 |
+| [onAudioStreamBanned](#rtcroomcallback-onaudiostreambanned) | 通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。 |
+| [onRoomMessageReceived](#rtcroomcallback-onroommessagereceived) | 接收到房间内广播消息的回调。 |
+| [onRoomBinaryMessageReceived](#rtcroomcallback-onroombinarymessagereceived) | 接收到房间内广播二进制消息的回调。 |
+| [onUserMessageReceived](#rtcroomcallback-onusermessagereceived) | 收到来自房间中其他用户通过 `sendUserMessage` 发来的点对点文本消息时，会收到此回调。 |
+| [onUserBinaryMessageReceived](#rtcroomcallback-onuserbinarymessagereceived) | 收到来自房间中其他用户通过 `sendUserBinaryMessage` 发来的点对点二进制消息时，会收到此回调。 |
+| [onUserMessageSendResult](#rtcroomcallback-onusermessagesendresult) | 向房间内单个用户发送点对点文本或点对点二进制消息后，消息发送方会收到该消息发送结果回调。 |
+| [onRoomMessageSendResult](#rtcroomcallback-onroommessagesendresult) | 调用 `sendRoomMessage` 或 `sendRoomBinaryMessage` 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。 |
+| [onForwardStreamStateChanged](#rtcroomcallback-onforwardstreamstatechanged) | 跨房间媒体流转发状态和错误回调 |
+| [onForwardStreamEvent](#rtcroomcallback-onforwardstreamevent) | 跨房间媒体流转发事件回调 |
+| [onNetworkQuality](#rtcroomcallback-onnetworkquality) | 加入房间后， 以 2 秒 1 次的频率，报告用户的网络质量信息 |
+| [onPublishPrivilegeTokenWillExpire](#rtcroomcallback-onpublishprivilegetokenwillexpire) | Token 发布权限过期前 30 秒将触发该回调。 |
+| [onSubscribePrivilegeTokenWillExpire](#rtcroomcallback-onsubscribeprivilegetokenwillexpire) | Token 订阅权限过期前 30 秒将触发该回调。 |
+| [onSetRoomExtraInfoResult](#rtcroomcallback-onsetroomextrainforesult) | 调用 [setRoomExtraInfo](85532.md#rtcroom-setroomextrainfo) 设置房间附加信息结果的回调。 |
+| [onRoomExtraInfoUpdate](#rtcroomcallback-onroomextrainfoupdate) | 接收同一房间内，其他用户调用 [setRoomExtraInfo](85532.md#rtcroom-setroomextrainfo) 设置的房间附加信息的回调。 |
+| [onSubtitleStateChanged](#rtcroomcallback-onsubtitlestatechanged) | 字幕状态发生改变回调。<br>当用户调用 [startSubtitle](85532.md#startsubtitle) 和 [stopSubtitle](85532.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。 |
+| [onSubtitleMessageReceived](#rtcroomcallback-onsubtitlemessagereceived) | 字幕相关内容回调。<br>当用户成功调用 [startSubtitle](85532.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。 |
+
+
+### onUserVisibilityChanged <span id="rtcroomcallback-onuservisibilitychanged"></span> 
+
+用户调用 [setUserVisibility](85532.md#rtcroom-setuservisibility) 设置用户可见性的回调。
+
+- **类型**
+
+  ```ts
+  (current_user_visibility: boolean, error_code: UserVisibilityChangeError) => void
+  ```
+
+- **参数**
+
+  - **current_user_visibility**
+
+    类型: boolean
+
+    当前用户的可见性。  
+
++ true: 可见，用户可以在房间内发布音视频流，房间中的其他用户将收到用户的行为通知，例如进房、开启视频采集和退房。
++ false: 不可见，用户不可以在房间内发布音视频流，房间中的其他用户不会收到用户的行为通知，例如进房、开启视频采集和退房。
+
+  - **error_code**
+
+    类型: [UserVisibilityChangeError](85534.md#uservisibilitychangeerror)
+
+    设置用户可见性错误码
+
+### onRoomStateChanged <span id="rtcroomcallback-onroomstatechanged"></span> 
+
+房间状态改变回调，加入房间、离开房间、发生房间相关的警告或错误时会收到此回调。
+
+- **类型**
+
+  ```ts
+  (room_id: string, uid: string, state: number, extra_info: string) => void
+  ```
+
+- **参数**
+
+  - **room_id**
+
+    类型: string
+
+    房间 ID。
+
+  - **uid**
+
+    类型: string
+
+    用户 ID。
+
+  - **state**
+
+    类型: number
+
+    房间状态码。
+
++ 0: 成功。
++ !0: 失败，参看 [ErrorCode](85534.md#errorcode) 及 [WarningCode](85534.md#warningcode)。
+
+  - **extra_info**
+
+    类型: string
+
+    额外信息。
+`joinType`表示加入房间的类型，`0`为首次进房，`1`为重连进房。
+`elapsed`表示加入房间耗时，即本地用户从调用 [joinRoom](85532.md#joinroom) 到加入房间成功所经历的时间间隔，单位为 ms。
+
+### onStreamStateChanged <span id="rtcroomcallback-onstreamstatechanged"></span> 
+
+流状态改变回调，发生流相关的警告或错误时会收到此回调。
+
+- **类型**
+
+  ```ts
+  (room_id: string, uid: string, state: number, extra_info: string) => void
+  ```
+
+- **参数**
+
+  - **room_id**
+
+    类型: string
+
+    房间 ID。
+
+  - **uid**
+
+    类型: string
+
+    用户 ID。
+
+  - **state**
+
+    类型: number
+
+    流状态码，参看 [ErrorCode](85534.md#errorcode) 及 [WarningCode](85534.md#warningcode)。
+
+  - **extra_info**
+
+    类型: string
+
+    附加信息，目前为空。
+
+### onLeaveRoom <span id="rtcroomcallback-onleaveroom"></span> 
+
+离开房间成功回调。
+
+- **类型**
+
+  ```ts
+  (stats: RtcRoomStats) => void
+  ```
+
+- **注意**
+
+  + 用户调用 [leaveRoom](85532.md#leaveroom) 方法后，SDK 会停止所有的发布订阅流，并在释放所有通话相关的音视频资源后，通过此回调通知用户离开房间成功。
+  + 用户调用 [leaveRoom](85532.md#leaveroom) 方法离开房间后，如果立即调用 [destroy](85532.md#destroy) 销毁房间实例或 [destroyRTCVideo](85532.md#rtcvideo-destroyrtcvideo) 方法销毁 RTC 引擎，则将无法收到此回调事件。
+  + 离开房间后，如果 App 需要使用系统音视频设备，则建议在收到此回调后再初始化音视频设备，否则可能由于 SDK 占用音视频设备导致初始化失败。
+
+- **参数**
+
+  - **stats**
+
+    类型: [RtcRoomStats](85535.md#rtcroomstats)
+
+    本次通话的统计数据。
+
+### onUserJoined <span id="rtcroomcallback-onuserjoined"></span> 
+
+可见用户加入房间，或房内不可见用户切换为可见的回调。
+1.远端可见用户调用 `setUserVisibility` 方法将自身设为可见后加入房间时，房间内其他用户将收到该事件。
+2.远端可见用户断网后重新连入房间时，房间内其他用户将收到该事件。
+3.房间内隐身远端用户调用 `setUserVisibility` 方法切换至可见时，房间内其他用户将收到该事件。
+4.新进房用户也会收到进房前已在房内的可见角色用户的进房回调通知。
+
+- **类型**
+
+  ```ts
+  (user_info: UserInfo, elapsed: number) => void
+  ```
+
+- **参数**
+
+  - **user_info**
+
+    类型: [UserInfo](85535.md#userinfo)
+
+    用户信息。
+
+  - **elapsed**
+
+    类型: number
+
+    可见角色用户调用 [joinRoom](85532.md#joinroom) 加入房间到房间内其他用户收到该事件经历的时间，单位为 ms。
+
+### onUserLeave <span id="rtcroomcallback-onuserleave"></span> 
+
+远端用户离开房间，或切至不可见时，本地用户会收到此事件
+
+- **类型**
+
+  ```ts
+  (uid: string, reason: UserOfflineReasonType) => void
+  ```
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    离开房间，或切至不可见的的远端用户 ID。
+
+  - **reason**
+
+    类型: [UserOfflineReasonType](85535.md#userofflinereasontype)
+
+    用户离开房间的原因
+
+### onTokenWillExpire <span id="rtcroomcallback-ontokenwillexpire"></span> 
+
+Token 过期前 30 秒将触发该回调。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  调用 [updateToken](85532.md#updatetoken) 更新 Token。否则 Token 过期后，用户将被移出房间无法继续进行音视频通话。
+
+### onAVSyncStateChange <span id="rtcroomcallback-onavsyncstatechange"></span> 
+
+发布端调用 `setMultiDeviceAVSync` 后音视频同步状态发生改变时，会收到此回调。
+
+- **类型**
+
+  ```ts
+  (state: AVSyncState) => void
+  ```
+
+- **参数**
+
+  - **state**
+
+    类型: [AVSyncState](85535.md#avsyncstate)
+
+    音视频同步状态
+
+### onRoomStats <span id="rtcroomcallback-onroomstats"></span> 
+
+房间通话统计信息回调。
+用户进房开始通话后，每 2s 收到一次本回调。
+
+- **类型**
+
+  ```ts
+  (stats: RtcRoomStats) => void
+  ```
+
+- **参数**
+
+  - **stats**
+
+    类型: [RtcRoomStats](85535.md#rtcroomstats)
+
+    房间内的汇总统计数据。
+
+### onLocalStreamStats <span id="rtcroomcallback-onlocalstreamstats"></span> 
+
+反映通话中本地设备发送音/视频流的统计信息以及网络状况的回调。
+本地用户发布音视频流成功后，每隔 2s 收到此回调。
+
+- **类型**
+
+  ```ts
+  (stats: LocalStreamStats) => void
+  ```
+
+- **参数**
+
+  - **stats**
+
+    类型: [LocalStreamStats](85535.md#localstreamstats)
+
+    音视频流以及网络状况统计信息。
+
+### onRemoteStreamStats <span id="rtcroomcallback-onremotestreamstats"></span> 
+
+反映通话中本地设备接收订阅的远端音/视频流的统计信息以及网络状况的回调。每隔 2s 收到此回调。
+
+- **类型**
+
+  ```ts
+  (stats: RemoteStreamStats) => void
+  ```
+
+- **参数**
+
+  - **stats**
+
+    类型: [RemoteStreamStats](85535.md#remotestreamstats)
+
+    音视频流以及网络状况统计信息。
+
+### onUserPublishStream <span id="rtcroomcallback-onuserpublishstream"></span> 
+
+房间内新增远端麦克风采集的音频流的回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, type: MediaStreamType) => void
+  ```
+
+- **注意**
+
+  当房间内的远端用户调用 [publishStream](85532.md#publishstream) 成功发布由麦克风采集的音频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeStream](85532.md#subscribestream) 订阅此流。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    远端流发布用户的用户 ID。
+
+  - **type**
+
+    类型: [MediaStreamType](85535.md#mediastreamtype)
+
+    远端媒体流的类型。
+
+### onUserUnpublishStream <span id="rtcroomcallback-onuserunpublishstream"></span> 
+
+房间内远端麦克风采集的音频流移除的回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, type: MediaStreamType, reason: StreamRemoveReason) => void
+  ```
+
+- **注意**
+
+  收到该回调通知后，你可以自行选择是否调用 [unsubscribeStream](85532.md#unsubscribestream) 取消订阅此流。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    移除的远端流发布用户的用户 ID。
+
+  - **type**
+
+    类型: [MediaStreamType](85535.md#mediastreamtype)
+
+    远端媒体流的类型。
+
+  - **reason**
+
+    类型: [StreamRemoveReason](85535.md#streamremovereason)
+
+    远端流移除的原因
+
+### onUserPublishScreen <span id="rtcroomcallback-onuserpublishscreen"></span> 
+
+房间内新增远端屏幕共享音视频流的回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, type: MediaStreamType) => void
+  ```
+
+- **注意**
+
+  当房间内的远端用户调用 [publishScreen](85532.md#publishscreen) 成功发布来自屏幕共享的音视频流时，本地用户会收到该回调，此时本地用户可以自行选择是否调用 [subscribeScreen](85532.md#subscribescreen) 订阅此流。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    远端流发布用户的用户 ID。
+
+  - **type**
+
+    类型: [MediaStreamType](85535.md#mediastreamtype)
+
+    远端媒体流的类型
+
+### onUserUnpublishScreen <span id="rtcroomcallback-onuserunpublishscreen"></span> 
+
+房间内远端屏幕共享音视频流移除的回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, type: MediaStreamType, reason: StreamRemoveReason) => void
+  ```
+
+- **注意**
+
+  收到该回调通知后，你可以自行选择是否调用 [unsubscribeScreen](85532.md#unsubscribescreen) 取消订阅此流。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    移除的远端流发布用户的用户 ID。
+
+  - **type**
+
+    类型: [MediaStreamType](85535.md#mediastreamtype)
+
+    移除的远端流类型
+
+  - **reason**
+
+    类型: [StreamRemoveReason](85535.md#streamremovereason)
+
+    远端流移除的原因
+
+### onStreamSubscribed <span id="rtcroomcallback-onstreamsubscribed"></span> 
+
+关于订阅媒体流状态改变的回调
+
+- **类型**
+
+  ```ts
+  (state_code: SubscribeState, user_id: string, info: SubscribeConfig) => void
+  ```
+
+- **注意**
+
+  本地用户收到该回调的时机包括：
+
+  + 调用 [subscribeStream](85532.md#subscribestream) 或 [unsubscribeStream](85532.md#unsubscribestream) 订阅/取消订阅指定远端摄像头音视频流后；
+  + 调用 [subscribeScreen](85532.md#subscribescreen) 或 [unsubscribeScreen](85532.md#unsubscribescreen) 订阅/取消订阅指定远端屏幕共享流后。
+
+- **参数**
+
+  - **state_code**
+
+    类型: [SubscribeState](85535.md#subscribestate)
+
+    订阅媒体流状态
+
+  - **user_id**
+
+    类型: string
+
+    流发布用户的用户 ID
+
+  - **info**
+
+    类型: [SubscribeConfig](85535.md#subscribeconfig)
+
+    流的属性
+
+### onVideoStreamBanned <span id="rtcroomcallback-onvideostreambanned"></span> 
+
+通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户视频流的发送时，触发此回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, banned: boolean) => void
+  ```
+
+- **注意**
+
+  + 房间内指定用户被禁止/解禁视频流发送时，房间内所有用户都会收到该回调。
+  + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。
+  + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。
+  + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。
+  + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    被禁用/解禁的视频流用户 ID
+
+  - **banned**
+
+    类型: boolean
+
+    视频流发送状态
+
++ true: 视频流发送被禁用
++ false: 视频流发送被解禁
+
+### onAudioStreamBanned <span id="rtcroomcallback-onaudiostreambanned"></span> 
+
+通过调用服务端 BanUserStream/UnbanUserStream 方法禁用/解禁指定房间内指定用户音频流的发送时，触发此回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, banned: boolean) => void
+  ```
+
+- **注意**
+
+  + 房间内指定用户被禁止/解禁音频流发送时，房间内所有用户都会收到该回调。
+  + 若被封禁用户退房后再进房，则依然是封禁状态，且房间内所有人会再次收到该回调。
+  + 若被封禁用户断网后重连进房，则依然是封禁状态，且只有本人会再次收到该回调。
+  + 指定用户被封禁后，房间内其他用户退房后再进房，会再次收到该回调。
+  + 通话人数超过 5 人时，只有被封禁/解禁用户会收到该回调。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    被禁用/解禁的音频流用户 ID
+
+  - **banned**
+
+    类型: boolean
+
+    音频流发送状态
+
++ true: 音频流发送被禁用
++ false: 音频流发送被解禁
+
+### onRoomMessageReceived <span id="rtcroomcallback-onroommessagereceived"></span> 
+
+接收到房间内广播消息的回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, message: string) => void
+  ```
+
+- **注意**
+
+  房间内其他用户调用 [`sendRoomMessage`](85532.md#sendroommessage) 发送广播消息时，收到此回调。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    消息发送者 ID
+
+  - **message**
+
+    类型: string
+
+    收到的消息内容
+
+### onRoomBinaryMessageReceived <span id="rtcroomcallback-onroombinarymessagereceived"></span> 
+
+接收到房间内广播二进制消息的回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, message: string) => void
+  ```
+
+- **注意**
+
+  房间内其他用户调用 [`sendRoomBinaryMessage`](85532.md#sendroombinarymessage) 发送广播二进制消息时，收到此回调。
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    消息发送者 ID
+
+  - **message**
+
+    类型: string
+
+    收到的二进制消息内容
+
+### onUserMessageReceived <span id="rtcroomcallback-onusermessagereceived"></span> 
+
+收到来自房间中其他用户通过 `sendUserMessage` 发来的点对点文本消息时，会收到此回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, message: string) => void
+  ```
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    消息发送者的用户 ID 。
+
+  - **message**
+
+    类型: string
+
+    收到的文本消息内容。
+
+### onUserBinaryMessageReceived <span id="rtcroomcallback-onuserbinarymessagereceived"></span> 
+
+收到来自房间中其他用户通过 `sendUserBinaryMessage` 发来的点对点二进制消息时，会收到此回调。
+
+- **类型**
+
+  ```ts
+  (uid: string, message: string) => void
+  ```
+
+- **参数**
+
+  - **uid**
+
+    类型: string
+
+    消息发送者的用户 ID 。
+
+  - **message**
+
+    类型: string
+
+    收到的二进制消息内容。
+
+### onUserMessageSendResult <span id="rtcroomcallback-onusermessagesendresult"></span> 
+
+向房间内单个用户发送点对点文本或点对点二进制消息后，消息发送方会收到该消息发送结果回调。
+
+- **类型**
+
+  ```ts
+  (msgid: number, error: number) => void
+  ```
+
+- **注意**
+
+  调用 [sendUserMessage](85532.md#sendusermessage) 或 [sendUserBinaryMessage](85532.md#senduserbinarymessage) 接口，才能收到此回调。
+
+- **参数**
+
+  - **msgid**
+
+    类型: number
+
+    本条消息的 ID。
+
+  - **error**
+
+    类型: number
+
+    文本或二进制消息发送结果
+
++ `200`: 消息发送成功
++ `100`: 失败，发送方未加入房间
++ `102`: 失败，没有可用的数据传输通道连接
++ `103`: 失败，消息超过最大长度，当前为 64 KB
++ `1000`: 失败，未知错误
+
+### onRoomMessageSendResult <span id="rtcroomcallback-onroommessagesendresult"></span> 
+
+调用 `sendRoomMessage` 或 `sendRoomBinaryMessage` 向房间内群发文本或二进制消息后，消息发送方会收到该消息发送结果回调。
+
+- **类型**
+
+  ```ts
+  (msgid: number, error: number) => void
+  ```
+
+- **参数**
+
+  - **msgid**
+
+    类型: number
+
+    本条消息的 ID。
+
+  - **error**
+
+    类型: number
+
+    消息发送结果
+
++ `200`: 消息发送成功
++ `100`: 失败，发送方未加入房间
++ `102`: 失败，没有可用的数据传输通道连接
++ `103`: 失败，消息超过最大长度，当前为 64 KB
++ `1000`: 失败，未知错误
+
+### onForwardStreamStateChanged <span id="rtcroomcallback-onforwardstreamstatechanged"></span> 
+
+跨房间媒体流转发状态和错误回调
+
+- **类型**
+
+  ```ts
+  (infos: ForwardStreamStateInfo[], info_count: number) => void
+  ```
+
+- **参数**
+
+  - **infos**
+
+    类型: [ForwardStreamStateInfo](85535.md#forwardstreamstateinfo)[]
+
+    跨房间媒体流转发目标房间信息数组
+
+  - **info_count**
+
+    类型: number
+
+    数量
+
+### onForwardStreamEvent <span id="rtcroomcallback-onforwardstreamevent"></span> 
+
+跨房间媒体流转发事件回调
+
+- **类型**
+
+  ```ts
+  (infos: ForwardStreamEventInfo[], info_count: number) => void
+  ```
+
+- **参数**
+
+  - **infos**
+
+    类型: [ForwardStreamEventInfo](85535.md#forwardstreameventinfo)[]
+
+    跨房间媒体流转发目标房间事件数组
+
+  - **info_count**
+
+    类型: number
+
+    数量
+
+### onNetworkQuality <span id="rtcroomcallback-onnetworkquality"></span> 
+
+加入房间后， 以 2 秒 1 次的频率，报告用户的网络质量信息
+
+- **类型**
+
+  ```ts
+  (localQuality: NetworkQualityStats, remoteQualities: NetworkQualityStats[]) => void
+  ```
+
+- **注意**
+
+  更多通话中的监测接口，详见[通话中质量监测](106866)
+
+- **参数**
+
+  - **localQuality**
+
+    类型: [NetworkQualityStats](85535.md#networkqualitystats)
+
+    本地网络质量。
+
+  - **remoteQualities**
+
+    类型: [NetworkQualityStats](85535.md#networkqualitystats)[]
+
+    已订阅用户的网络质量。
+
+### onPublishPrivilegeTokenWillExpire <span id="rtcroomcallback-onpublishprivilegetokenwillexpire"></span> 
+
+Token 发布权限过期前 30 秒将触发该回调。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  收到该回调后，你需调用 [updateToken](85532.md#updatetoken) 更新 Token 发布权限。若收到该回调后未及时更新 Token，Token 发布权限过期后：
+
+  + 此时尝试发布流会收到 [onStreamStateChanged](#onstreamstatechanged) 回调，提示错误码为 `-1002` 没有发布权限；
+  + 已在发布中的流会停止发布，发布端会收到 [onStreamStateChanged](#onstreamstatechanged) 回调，提示错误码为 `-1002` 没有发布权限，同时远端用户会收到 [onUserUnPublishStream](#onuserunpublishstream) 回调，提示原因为 `6` 发流端发布权限过期。
+
+### onSubscribePrivilegeTokenWillExpire <span id="rtcroomcallback-onsubscribeprivilegetokenwillexpire"></span> 
+
+Token 订阅权限过期前 30 秒将触发该回调。
+
+- **类型**
+
+  ```ts
+  () => void
+  ```
+
+- **注意**
+
+  收到该回调后，你需调用 [updateToken](85532.md#updatetoken) 更新 Token 订阅权限有效期。若收到该回调后未及时更新 Token，Token 订阅权限过期后，尝试新订阅流会失败，已订阅的流会取消订阅，并且会收到 [onStreamStateChanged](#onstreamstatechanged) 回调，提示错误码为 `-1003` 没有订阅权限。
+
+### onSetRoomExtraInfoResult <span id="rtcroomcallback-onsetroomextrainforesult"></span> 
+
+调用 [setRoomExtraInfo](85532.md#rtcroom-setroomextrainfo) 设置房间附加信息结果的回调。
+
+- **类型**
+
+  ```ts
+  (task_id: number, error_code: SetRoomExtraInfoResult) => void
+  ```
+
+- **参数**
+
+  - **task_id**
+
+    类型: number
+
+    调用 setRoomExtraInfo 的任务编号。
+
+  - **error_code**
+
+    类型: [SetRoomExtraInfoResult](85535.md#setroomextrainforesult)
+
+    error_code 设置房间附加信息的结果。
+
+### onRoomExtraInfoUpdate <span id="rtcroomcallback-onroomextrainfoupdate"></span> 
+
+接收同一房间内，其他用户调用 [setRoomExtraInfo](85532.md#rtcroom-setroomextrainfo) 设置的房间附加信息的回调。
+
+- **类型**
+
+  ```ts
+  (key: string, value: string, last_update_user_id: string, last_update_time_ms: number) => void
+  ```
+
+- **注意**
+
+  新进房的用户会收到进房前房间内已有的全部附加信息通知。
+
+- **参数**
+
+  - **key**
+
+    类型: string
+
+    房间附加信息的键值
+
+  - **value**
+
+    类型: string
+
+    房间附加信息的内容
+
+  - **last_update_user_id**
+
+    类型: string
+
+    最后更新本条信息的用户 ID。
+
+  - **last_update_time_ms**
+
+    类型: number
+
+    最后更新本条信息的 Unix 时间，单位：毫秒。
+
+### onSubtitleStateChanged <span id="rtcroomcallback-onsubtitlestatechanged"></span> 
+
+字幕状态发生改变回调。
+当用户调用 [startSubtitle](85532.md#startsubtitle) 和 [stopSubtitle](85532.md#stopsubtitle) 使字幕状态发生改变或字幕任务出现错误时，触发该回调。
+
+- **类型**
+
+  ```ts
+  (state: SubtitleState, error_code: SubtitleErrorCode, error_message: string) => void
+  ```
+
+- **参数**
+
+  - **state**
+
+    类型: [SubtitleState](85535.md#subtitlestate)
+
+    字幕状态。
+
+  - **error_code**
+
+    类型: [SubtitleErrorCode](85534.md#subtitleerrorcode)
+
+    字幕任务错误码。
+
+  - **error_message**
+
+    类型: string
+
+    与第三方服务有关的错误信息。
+
+### onSubtitleMessageReceived <span id="rtcroomcallback-onsubtitlemessagereceived"></span> 
+
+字幕相关内容回调。
+当用户成功调用 [startSubtitle](85532.md#startsubtitle) 后会收到此回调，通知字幕的相关信息。
+
+- **类型**
+
+  ```ts
+  (subtitles: SubtitleMessage[]) => void
+  ```
+
+- **参数**
+
+  - **subtitles**
+
+    类型: [SubtitleMessage](85535.md#subtitlemessage)[]
+
+    字幕消息内容。
+
+
+## RTCAUDIOEFFECTPLAYERCALLBACK <span id="rtcaudioeffectplayercallback"></span>
+
+类型: `interface`
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [onAudioEffectPlayerStateChanged](#rtcaudioeffectplayercallback-onaudioeffectplayerstatechanged) | 播放状态改变时回调。 |
+
+
+### onAudioEffectPlayerStateChanged <span id="rtcaudioeffectplayercallback-onaudioeffectplayerstatechanged"></span> 
+
+播放状态改变时回调。
+
+- **类型**
+
+  ```ts
+  (effect_id: number, state: PlayerState, error: PlayerError) => void
+  ```
+
+- **参数**
+
+  - **effect_id**
+
+    类型: number
+
+    veRTCAudioEffectPlayer 的 ID。通过 [getAudioEffectPlayer](85532.md#rtcvideo-getaudioeffectplayer) 设置。
+
+  - **state**
+
+    类型: [PlayerState](85535.md#playerstate)
+
+    混音状态。
+
+  - **error**
+
+    类型: [PlayerError](85534.md#playererror)
+
+    错误码。
+
+
+## RTCMediaPlayerCALLBACK <span id="rtcmediaplayercallback"></span>
+
+类型: `interface`
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [onMediaPlayerStateChanged](#rtcmediaplayercallback-onmediaplayerstatechanged) | 播放状态改变时回调。 |
+| [onMediaPlayerPlayingProgress](#rtcmediaplayercallback-onmediaplayerplayingprogress) | 播放进度周期性回调。回调周期通过 [setAudioMixingProgressInterval] 设置。 |
+
+
+### onMediaPlayerStateChanged <span id="rtcmediaplayercallback-onmediaplayerstatechanged"></span> 
+
+播放状态改变时回调。
+
+- **类型**
+
+  ```ts
+  (player_id: number, state: PlayerState, error: PlayerError) => void
+  ```
+
+- **参数**
+
+  - **player_id**
+
+    类型: number
+
+    veRTCMediaPlayer 的 ID。通过 [getMediaPlayer](85532.md#rtcvideo-getmediaplayer) 设置。
+
+  - **state**
+
+    类型: [PlayerState](85535.md#playerstate)
+
+    混音状态。
+
+  - **error**
+
+    类型: [PlayerError](85534.md#playererror)
+
+    错误码。
+
+### onMediaPlayerPlayingProgress <span id="rtcmediaplayercallback-onmediaplayerplayingprogress"></span> 
+
+播放进度周期性回调。回调周期通过 [setAudioMixingProgressInterval] 设置。
+
+- **类型**
+
+  ```ts
+  (player_id: number, progress: string) => void
+  ```
+
+- **参数**
+
+  - **player_id**
+
+    类型: number
+
+    veRTCMediaPlayer 的 ID。通过 [getMediaPlayer](85532.md#rtcvideo-getmediaplayer) 设置。
+
+  - **progress**
+
+    类型: string
+
+    进度。单位 ms。

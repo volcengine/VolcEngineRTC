@@ -1,3 +1,19 @@
+## UserVisibilityChangeError <span id="uservisibilitychangeerror"></span>
+
+类型: `enum`
+
+用户可见性状态改变错误码。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kUserVisibilityChangeErrorOk | `0` | 成功。 |
+  | kUserVisibilityChangeErrorUnknown | `1` | 未知错误。 |
+  | kUserVisibilityChangeErrorTooManyVisibleUser | `2` | 房间内可见用户达到上限。 |
+
+
+
 ## ForwardStreamError <span id="forwardstreamerror"></span>
 
 类型: `enum`
@@ -49,21 +65,53 @@ KTV 错误码。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kErrorCodeKTVOK | `0` | 成功。 |
-  | kErrorCodeKTVAppidInValid | `-3000` | AppID 异常。 |
-  | kErrorCodeKTVParasInValid | `-3001` | 非法参数，传入的参数不正确。 |
-  | kErrorCodeKTVGetMusicFailed | `-3002` | 获取歌曲资源失败。 |
-  | kErrorCodeKTVGetLyricFailed | `-3003` | 获取歌词失败。 |
-  | kErrorCodeKTVMusicTakedown | `-3004` | 歌曲下架。 |
-  | kErrorCodeKTVMusicDownload | `-3005` | 歌曲文件下载失败。 |
-  | kErrorCodeKTVMidiDownloadFailed | `-3006` | MIDI 文件下载失败。 |
-  | kErrorCodeKTVSystemBusy | `-3007` | 系统繁忙。 |
-  | kErrorCodeKTVNetwork | `-3008` | 网络异常。 |
-  | kErrorCodeKTVNotJoinRoom | `-3009` | KTV 功能未加入房间。 |
-  | kErrorCodeKTVParseData | `-3010` | 解析数据失败。 |
-  | kErrorCodeKTVDownload | `-3011` | 下载失败。 |
-  | kErrorCodeKTVDownloading | `-3012` | 已在下载中。 |
-  | kErrorCodeKTVInternalDomain | `-3013` | 内部错误，联系技术支持人员。 |
+  | kKTVErrorCodeOK | `0` | 成功。 |
+  | kKTVErrorCodeAppidInValid | `-3000` | AppID 异常。 |
+  | kKTVErrorCodeParasInValid | `-3001` | 非法参数，传入的参数不正确。 |
+  | kKTVErrorCodeGetMusicFailed | `-3002` | 获取歌曲资源失败。 |
+  | kKTVErrorCodeGetLyricFailed | `-3003` | 获取歌词失败。 |
+  | kKTVErrorCodeMusicTakedown | `-3004` | 歌曲下架。 |
+  | kKTVErrorCodeMusicDownload | `-3005` | 歌曲文件下载失败。 |
+  | kKTVErrorCodeMidiDownloadFailed | `-3006` | MIDI 文件下载失败。 |
+  | kKTVErrorCodeSystemBusy | `-3007` | 系统繁忙。 |
+  | kKTVErrorCodeNetwork | `-3008` | 网络异常。 |
+  | kKTVErrorCodeNotJoinRoom | `-3009` | KTV 功能未加入房间。 |
+  | kKTVErrorCodeParseData | `-3010` | 解析数据失败。 |
+  | kKTVErrorCodeDownload | `-3011` | 下载失败。 |
+  | kKTVErrorCodeDownloading | `-3012` | 已在下载中。 |
+  | kKTVErrorCodeInternalDomain | `-3013` | 内部错误，联系技术支持人员。 |
+  | kKTVErrorCodeInsufficientDiskSpace | `-3014` | 下载失败，磁盘空间不足。清除缓存后重试。 |
+  | kKTVErrorCodeMusicDecryptionFailed | `-3015` | 下载失败，音乐文件解密失败，联系技术支持人员。 |
+  | kKTVErrorCodeFileRenameFailed | `-3016` | 下载失败，音乐文件重命名失败，请重试。 |
+  | kKTVErrorCodeDownloadTimeOut | `-3017` | 下载失败，下载超时，请重试。 |
+  | kKTVErrorCodeClearCacheFailed | `-3018` | 清除缓存失败，可能原因是文件被占用或者系统异常，请重试。 |
+  | kKTVErrorCodeDownloadCanceled | `-3019` | 取消下载。 |
+
+
+
+## KTVPlayerErrorCode <span id="ktvplayererrorcode"></span>
+
+类型: `enum`
+
+KTV 播放器错误码。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kKTVPlayerErrorCodeOK | `0` | 成功。 |
+  | kKTVPlayerErrorCodeFileNotExist | `-3020` | 播放错误，请下载后播放。 |
+  | kKTVPlayerErrorCodeFileError | `-3021` | 播放错误，请确认文件播放格式。 |
+  | kKTVPlayerErrorCodeNotJoinRoom | `-3022` | 播放错误，未进入房间。 |
+  | kKTVPlayerErrorCodeParam | `-3023` | 参数错误。 |
+  | kKTVPlayerErrorCodeStartError | `-3024` | 播放失败，找不到文件或文件打开失败。 |
+  | kKTVPlayerErrorCodeMixIdError | `-3025` | 混音 ID 异常。 |
+  | kKTVPlayerErrorCodePositionError | `-3026` | 设置播放位置出错。 |
+  | kKTVPlayerErrorCodeAudioVolumeError | `-3027` | 音量参数不合法，可设置的取值范围为 [0,400]。 |
+  | kKTVPlayerErrorCodeTypeError | `-3028` | 不支持此混音类型。 |
+  | kKTVPlayerErrorCodePitchError | `-3029` | 音调文件不合法。 |
+  | kKTVPlayerErrorCodeAudioTrackError | `-3030` | 音轨不合法。 |
+  | kKTVPlayerErrorCodeStartingError | `-3031` | 混音启动中。 |
 
 
 
@@ -84,6 +132,26 @@ KTV 错误码。
   | kAudioRecordingNotStarted | `-4` | 录制还未开始 |
   | kAudioRecordingErrorCodeNotSupport | `-5` | 录制失败。文件格式不支持。 |
   | kAudioRecordingErrorCodeOther | `-6` | 其他异常 |
+
+
+
+## LocalProxyError <span id="localproxyerror"></span>
+
+类型: `enum`
+
+本地代理错误信息。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kLocalProxyErrorOK | `0` | 代理无错误 |
+  | kLocalProxyErrorSocks5VersionError | `1` | 代理服务器回复的版本号错误，导致 socks5 连接失败。 |
+  | kLocalProxyErrorSocks5FormatError | `2` | 代理服务器回复的格式错误，导致 socks5 连接失败。 |
+  | kLocalProxyErrorSocks5InvalidValue | `3` | 代理服务器回复的字段值错误，导致 socks5 连接失败。 |
+  | kLocalProxyErrorSocks5UserPassNotGiven | `4` | 未提供本地代理的用户名及密码，导致 socks5 连接失败。 |
+  | kLocalProxyErrorSocks5TcpClosed | `5` | TCP 关闭，导致 socks5 连接失败。 |
+  | kLocalProxyErrorHttpTunnelFailed | `6` | http隧道代理错误。 |
 
 
 
@@ -147,19 +215,23 @@ KTV 错误码。
   | kWarningCodePublishStreamFailed | `-2002` | 发布音视频流失败。<br>当你在所在房间中发布音视频流时，由于服务器错误导致发布失败。SDK 会自动重试发布。 |
   | kWarningCodeSubscribeStreamFailed404 | `-2003` | 订阅音视频流失败。<br>当前房间中找不到订阅的音视频流导致订阅失败。SDK 会自动重试订阅，若仍订阅失败则建议你退出重试。 |
   | kWarningCodeSubscribeStreamFailed5xx | `-2004` | 订阅音视频流失败。<br>当你订阅所在房间中的音视频流时，由于服务器错误导致订阅失败。SDK 会自动重试订阅。 |
-  | kWarningCodePublishStreamForbiden | `-2009` | 当调用 [setUserVisibility](Electron-api.md#setuservisibility) 将自身可见性设置为 false 后，再尝试发布流会触发此警告。 |
+  | kWarningCodePublishStreamForbiden | `-2009` | 当调用 [setUserVisibility](85532.md#setuservisibility) 将自身可见性设置为 false 后，再尝试发布流会触发此警告。 |
   | kWarningCodeSendCustomMessage | `-2011` | 发送自定义广播消息失败，当前你未在房间中。 |
-  | kWarningCodeUserNotifyStop | `-2013` | 当房间内人数超过 500 人时，停止向房间内已有用户发送 [onUserJoined](Electron-event.md#onuserjoined) 和 [onUserLeave](Electron-event.md#onuserleave) 回调，并通过广播提示房间内所有用户。 |
+  | kWarningCodeUserNotifyStop | `-2013` | 当房间内人数超过 500 人时，停止向房间内已有用户发送 [onUserJoined](85533.md#onuserjoined) 和 [onUserLeave](85533.md#onuserleave) 回调，并通过广播提示房间内所有用户。 |
   | kWarningCodeUserInPublish | `-2014` | 用户已经在其他房间发布过流，或者用户正在发布公共流。 |
   | kWarningCodeOldRoomBeenReplaced | `-2016` | 新生成的房间已经替换了同样roomId的旧房间 |
   | kWarningCodeInEchoTestMode | `-2017` | 当前正在进行回路测试，该接口调用无效 |
   | kWarningCodeNoCameraPermission | `-5001` | 摄像头权限异常，当前应用没有获取摄像头权限。 |
-  | kWarningCodeSetScreenAudioStreamIndexFailed | `-5010` | 不支持在 [publishScreen](Electron-api.md#publishscreen) 之后，<br>通过 [setScreenAudioStreamIndex](Electron-api.md#setscreenaudiostreamindex) 设置屏幕共享时的音频采集方式。 |
+  | kWarningCodeSetScreenAudioStreamIndexFailed | `-5010` | 不支持在 [publishScreen](85532.md#publishscreen) 之后，<br>通过 [setScreenAudioStreamIndex](85532.md#setscreenaudiostreamindex) 设置屏幕共享时的音频采集方式。 |
   | kWarningCodeInvalidVoicePitch | `-5011` | 设置语音音高不合法 |
   | kWarningCodeInvalidAudioFormat | `-5012` | 设置音频格式不合法 |
   | kWarningCodeInvalidCallForExtAudio | `-5013` | 外部音频源新旧接口混用 |
-  | kWarningCodeInvalidCanvasHandle | `-6001` | 指定的内部渲染画布句柄无效。   当你调用 [setupLocalVideo(Electron-api.md#setuplocalvideo) 或 [setupRemoteVideo](Electron-api.md#setupremotevideo) 时指定了无效的画布句柄，触发此回调。 |
+  | kWarningCodeInvalidCanvasHandle | `-6001` | 指定的内部渲染画布句柄无效。   当你调用 [setupLocalVideo(85532.md#setuplocalvideo) 或 [setupRemoteVideo](85532.md#setupremotevideo) 时指定了无效的画布句柄，触发此回调。 |
   | kWarningLicenseFileExpired | `-7001` | 鉴权文件失效，当检查鉴权文件状态时，本地文件与远端文件不一致会触发次警告。 |
+  | kWarningInvaildSamiAppkeyORToken | `-7002` | [音频技术](https://www.volcengine.com/docs/6489/71986) SDK 鉴权失效。联系技术支持人员。 |
+  | kWarningInvaildSamiResourcePath | `-7003` | [音频技术](https://www.volcengine.com/docs/6489/71986) 资源加载失败。传入正确的 DAT 路径，或联系技术支持人员。 |
+  | kWarningLoadSamiLibraryFailed | `-7004` | [音频技术](https://www.volcengine.com/docs/6489/71986) 库加载失败。使用正确的库，或联系技术支持人员。 |
+  | kWarningInvaildSamiEffectType | `-7005` | [音频技术](https://www.volcengine.com/docs/6489/71986) 不支持此音效。联系技术支持人员。 |
 
 
 
@@ -167,14 +239,14 @@ KTV 错误码。
 
 类型: `enum`
 
-回调错误码。  SDK 内部遇到不可恢复的错误时，会通过 [onError](Electron-event.md#onerror) 回调通知用户。
+回调错误码。  SDK 内部遇到不可恢复的错误时，会通过 [onError](85533.md#rtcvideocallback-onerror) 回调通知用户。
 
 - **成员**
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kErrorCodeInvalidToken | `-1000` | Token 无效。调用 [joinRoom](Electron-api.md#joinroom) 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 [updateToken](Electron-api.md#updatetoken) 方法更新 Token。 |
-  | kErrorCodeJoinRoom | `-1001` | 加入房间错误。调用 [joinRoom](Electron-api.md#joinroom) 方法时发生未知错误导致加入房间失败。需要用户重新加入房间。 |
+  | kErrorCodeInvalidToken | `-1000` | Token 无效。调用 [joinRoom](85532.md#joinroom) 方法时使用的 Token 无效或过期失效。需要用户重新获取 Token，并调用 [updateToken](85532.md#updatetoken) 方法更新 Token。 |
+  | kErrorCodeJoinRoom | `-1001` | 加入房间错误。调用 [joinRoom](85532.md#joinroom) 方法时发生未知错误导致加入房间失败。需要用户重新加入房间。 |
   | kErrorCodeNoPublishPermission | `-1002` | 没有发布音视频流权限。用户在所在房间中发布音视频流失败，失败原因为用户没有发布流的权限。 |
   | kErrorCodeNoSubscribePermission | `-1003` | 没有订阅音视频流权限。用户订阅所在房间中的音视频流失败，失败原因为用户没有订阅流的权限。 |
   | kErrorCodeDuplicateLogin | `-1004` | 用户重复登录。本地用户所在房间中有相同用户 ID 的用户加入房间，导致本地用户被踢出房间。 |
@@ -192,8 +264,6 @@ KTV 错误码。
   | kErrorCodeJoinRoomRoomForbidden | `-1025` | 房间被封禁。 |
   | kErrorCodeJoinRoomUserForbidden | `-1026` | 用户被封禁。 |
   | kErrorCodeJoinRoomLicenseFunctionNotFound | `-1027` | license 计费方法没有加载成功。可能是因为 license 相关插件未正确集成。 |
-  | [Deprecated]kErrorCodeOverScreenPublishLimit | `-1081` | 发布屏幕流失败，发布流总数超过上限。RTC 系统会限制单个房间内发布的总流数，总流数包括视频流、音频流和屏幕流。如果房间内发布流数已达上限时，本地用户再向房间中发布流时会失败，同时会收到此错误通知。 |
-  | [Deprecated]kErrorCodeOverVideoPublishLimit | `-1082` | 发布视频流总数超过上限。RTC 系统会限制单个房间内发布的视频流数。如果房间内发布视频流数已达上限时，本地用户再向房间中发布视频流时会失败，同时会收到此错误通知。 |
 
 
 
@@ -213,7 +283,7 @@ KTV 错误码。
   | kAudioMixingErrorIdNotFound | `3` | 混音 ID 异常 |
   | kAudioMixingErrorSetPositionFailed | `4` | 设置混音文件的播放位置出错 |
   | kAudioMixingErrorInValidVolume | `5` | 音量参数不合法，仅支持设置的音量值为[0, 400] |
-  | kAudioMixingErrorLoadConflict | `6` | 播放的文件与预加载的文件不一致，请先使用 [unloadAudioMixing](Electron-api.md#unloadaudiomixing) 卸载文件 |
+  | kAudioMixingErrorLoadConflict | `6` | 播放的文件与预加载的文件不一致，请先使用 [unloadAudioMixing](85532.md#unloadaudiomixing) 卸载文件 |
   | kAudioMixingErrorIdTypeNotMatch | `7` | 不支持此混音类型。 |
   | kAudioMixingErrorInValidPitch | `8` | 设置混音文件的音调不合法 |
   | kAudioMixingErrorInValidAudioTrack | `9` | 设置混音文件的音轨不合法 |
@@ -282,3 +352,26 @@ KTV 错误码。
   | MESSAGE_CODE_ERROR_EXCEED_MAX_LENGTH | `103` | 消息超过最大长度，当前为64KB |
   | MESSAGE_CODE_ERROR_EMPTY_USER | `104` | 接收消息的单个用户 id 为空 |
   | MESSAGE_CODE_ERROR_UNKNOWN | `1000` | 未知错误 |
+
+
+
+## PlayerError <span id="playererror"></span>
+
+类型: `enum`
+
+播放错误码。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kPlayerErrorOK | `0` | 正常 |
+  | kPlayerErrorFormatNotSupport | `1` | 不支持此类型 |
+  | kPlayerErrorInvalidPath | `2` | 无效的播放路径 |
+  | kPlayerErrorInvalidState | `3` | 未满足前序接口调用的要求。请查看具体接口文档。 |
+  | kPlayerErrorInvalidPosition | `4` | 设置播放位置出错。 |
+  | kPlayerErrorInvalidVolume | `5` | 音量参数不合法。 |
+  | kPlayerErrorInvalidPitch | `6` | 音调参数设置不合法。 |
+  | kPlayerErrorInvalidAudioTrackIndex | `7` | 音轨参数设置不合法。 |
+  | kPlayerErrorInvalidPlaybackSpeed | `8` | 播放速度参数设置不合法 |
+  | kPlayerErrorInvalidEffectId | `9` | 音效 ID 异常。还未加载或播放文件，就调用其他 API。 |

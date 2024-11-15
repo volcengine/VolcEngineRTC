@@ -12,7 +12,7 @@
 
 ## 其他平台的 SDK
 
-| Electron 3.52 |
+| Electron 3.54 |
 | --- |
 | [概览](src/Electron-overview.md) |
 | [API 详情](src/Electron-api.md) |

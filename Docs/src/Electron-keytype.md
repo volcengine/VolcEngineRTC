@@ -1,3 +1,148 @@
+## AudioEffectPlayerConfig <span id="audioeffectplayerconfig"></span>
+
+类型: `interface`
+
+混音配置
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [type](#audioeffectplayerconfig-type) | 混音播放类型 |
+| [play_count](#audioeffectplayerconfig-play_count) | 混音播放次数<br>+ play_count <= 0: 无限循环  <br>+ play_count == 1: 播放一次（默认）  <br>+ play_count > 1: 播放 play_count 次 |
+| [pitch](#audioeffectplayerconfig-pitch) | 与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。 |
+| [start_pos](#audioeffectplayerconfig-start_pos) | 混音起始位置。默认值为 0，单位为毫秒。 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> type <span id="audioeffectplayerconfig-type"></span></p> 
+
+类型: [AudioMixingType](#audiomixingtype)
+
+混音播放类型
+
+<p style="font-size: 16px;font-weight: bolder;"> play_count <span id="audioeffectplayerconfig-play_count"></span></p> 
+
+类型: number
+
+混音播放次数
+
++ play_count <= 0: 无限循环  
++ play_count == 1: 播放一次（默认）  
++ play_count > 1: 播放 play_count 次
+
+<p style="font-size: 16px;font-weight: bolder;"> pitch <span id="audioeffectplayerconfig-pitch"></span></p> 
+
+类型: number
+
+与音乐文件原始音调相比的升高/降低值，取值范围为 `[-12，12]`，默认值为 0。每相邻两个值的音高距离相差半音，正值表示升调，负值表示降调。
+
+<p style="font-size: 16px;font-weight: bolder;"> start_pos <span id="audioeffectplayerconfig-start_pos"></span></p> 
+
+类型: number
+
+混音起始位置。默认值为 0，单位为毫秒。
+
+
+## AudioMixingType <span id="audiomixingtype"></span>
+
+类型: `enum`
+
+混音播放类型
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kAudioMixingTypePlayout | `0` | 仅本地播放 |
+  | kAudioMixingTypePublish | `1` | 仅远端播放 |
+  | kAudioMixingTypePlayoutAndPublish | `2` | 本地和远端同时播放 |
+
+
+
+## MediaPlayerConfig <span id="mediaplayerconfig"></span>
+
+类型: `interface`
+
+混音配置
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [play_count](#mediaplayerconfig-play_count) | 混音播放次数<br>+ play_count <= 0: 无限循环  <br>+ play_count == 1: 播放一次（默认）  <br>+ play_count > 1: 播放 play_count 次 |
+| [start_pos](#mediaplayerconfig-start_pos) | 混音起始位置。默认值为 0，单位为毫秒。 |
+| [callback_on_progress_interval](#mediaplayerconfig-callback_on_progress_interval) | 设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。单位毫秒。<br>+ interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。<br>+ interval <= 0 时，不会触发回调。 |
+| [sync_progress_to_record_frame](#mediaplayerconfig-sync_progress_to_record_frame) | 在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。 |
+| [auto_play](#mediaplayerconfig-auto_play) | 是否自动播放。如果不自动播放，调用 [startAudioMixing](85532.md#rtcvideo-startaudiomixing) 播放音乐文件。 |
+| [type](#mediaplayerconfig-type) | 混音播放类型 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> play_count <span id="mediaplayerconfig-play_count"></span></p> 
+
+类型: number
+
+混音播放次数
+
++ play_count <= 0: 无限循环  
++ play_count == 1: 播放一次（默认）  
++ play_count > 1: 播放 play_count 次
+
+<p style="font-size: 16px;font-weight: bolder;"> start_pos <span id="mediaplayerconfig-start_pos"></span></p> 
+
+类型: number
+
+混音起始位置。默认值为 0，单位为毫秒。
+
+<p style="font-size: 16px;font-weight: bolder;"> callback_on_progress_interval <span id="mediaplayerconfig-callback_on_progress_interval"></span></p> 
+
+类型: string
+
+设置音频文件混音时，收到 [onMediaPlayerPlayingProgress](85533.md#rtcmediaplayercallback-onmediaplayerplayingprogress) 的间隔。单位毫秒。
+
++ interval > 0 时，触发回调。实际间隔为 10 的倍数。如果输入数值不能被 10 整除，将自动向上取整。例如传入 `52`，实际间隔为 60 ms。
++ interval <= 0 时，不会触发回调。
+
+<p style="font-size: 16px;font-weight: bolder;"> sync_progress_to_record_frame <span id="mediaplayerconfig-sync_progress_to_record_frame"></span></p> 
+
+类型: boolean
+
+在采集音频数据时，附带本地混音文件播放进度的时间戳。启用此功能会提升远端人声和音频文件混音播放时的同步效果。
+
+- **注意**
+
+  + 仅在单个音频文件混音时使用有效。
+  + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
+
+<p style="font-size: 16px;font-weight: bolder;"> auto_play <span id="mediaplayerconfig-auto_play"></span></p> 
+
+类型: boolean
+
+是否自动播放。如果不自动播放，调用 [startAudioMixing](85532.md#rtcvideo-startaudiomixing) 播放音乐文件。
+
+<p style="font-size: 16px;font-weight: bolder;"> type <span id="mediaplayerconfig-type"></span></p> 
+
+类型: [AudioMixingType](#audiomixingtype)
+
+混音播放类型
+
+
+## AudioMixingDualMonoMode <span id="audiomixingdualmonomode"></span>
+
+类型: `enum`
+
+混音播放声道类型
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kAudioMixingDualMonoModeAuto | `0` | 和音频文件一致 |
+  | kAudioMixingDualMonoModeL | `1` | 只能听到音频文件中左声道的音频 |
+  | kAudioMixingDualMonoModeR | `2` | 只能听到音频文件中右声道的音频 |
+  | kAudioMixingDualMonoModeMix | `3` | 能同时听到音频文件中左右声道的音频 |
+
+
+
 ## UserInfo <span id="userinfo"></span>
 
 用户信息
@@ -15,8 +160,8 @@
 
   | 名称 | 类型 | 描述 |
   | :-- | :-- | :-- |
-  | uid | string | 用户 ID。该字符串符合正则表达式：`[a-zA-Z0-9_@\-\.]{1,128}`。你需要自行设置或管理 uid，并保证同一房间内每个 uid 的唯一性。 |
-  | extra_info | string \| undefined | 用户的额外信息，最大长度为 200 字节。会在 [onUserJoined](Electron-event.md#onuserjoined) 中回调给远端用户。 |
+  | uid | string | 用户 ID。该字符串符合正则表达式：`[a-zA-Z0-9_@\-\.]{1,128}`。  你需要自行设置或管理 uid，并保证同一房间内每个 uid 的唯一性。 |
+  | extra_info | string \| undefined | 用户的额外信息，最大长度为 200 字节。会在 [onUserJoined](85533.md#onuserjoined) 中回调给远端用户。 |
 
 
 
@@ -31,9 +176,9 @@
 | 方法 | 描述 |
 | :-- | :-- |
 | [room_profile_type](#rtcroomconfig-room_profile_type) | 房间模式，默认为普通音视频通话模式，进房后不可更改。 |
-| [is_auto_publish](#rtcroomconfig-is_auto_publish) | 是否自动发布音视频流，默认为自动发布。<br>创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>若调用 [setUserVisibility](Electron-api.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。 |
-| [is_auto_subscribe_audio](#rtcroomconfig-is_auto_subscribe_audio) | 是否自动订阅音频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。 |
-| [is_auto_subscribe_video](#rtcroomconfig-is_auto_subscribe_video) | 是否自动订阅主视频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。 |
+| [is_auto_publish](#rtcroomconfig-is_auto_publish) | 是否自动发布音视频流，默认为自动发布。<br>创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。<br>若调用 [setUserVisibility](85532.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。 |
+| [is_auto_subscribe_audio](#rtcroomconfig-is_auto_subscribe_audio) | 是否自动订阅音频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。 |
+| [is_auto_subscribe_video](#rtcroomconfig-is_auto_subscribe_video) | 是否自动订阅主视频流，默认为自动订阅。包含主流和屏幕流。<br>进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。 |
 | [remote_video_config](#rtcroomconfig-remote_video_config) | 远端视频流参数 |
 
 
@@ -49,21 +194,21 @@
 
 是否自动发布音视频流，默认为自动发布。
 创建和加入多房间时，只能将其中一个房间设置为自动发布。若每个房间均不做设置，则默认在第一个加入的房间内自动发布流。
-若调用 [setUserVisibility](Electron-api.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
+若调用 [setUserVisibility](85532.md#setuservisibility) 将自身可见性设为 false，无论是默认的自动发布流还是手动设置的自动发布流都不会进行发布，你需要将自身可见性设为 true 后方可发布。
 
 <p style="font-size: 16px;font-weight: bolder;"> is_auto_subscribe_audio <span id="rtcroomconfig-is_auto_subscribe_audio"></span></p> 
 
 类型: boolean | undefined
 
 是否自动订阅音频流，默认为自动订阅。包含主流和屏幕流。
-进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> is_auto_subscribe_video <span id="rtcroomconfig-is_auto_subscribe_video"></span></p> 
 
 类型: boolean | undefined
 
 是否自动订阅主视频流，默认为自动订阅。包含主流和屏幕流。
-进房后，你可以调用 [subscribeStream](Electron-api.md#subscribestream) 修改订阅设置。
+进房后，你可以调用 [subscribeStream](85532.md#subscribestream) 修改订阅设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> remote_video_config <span id="rtcroomconfig-remote_video_config"></span></p> 
 
@@ -84,8 +229,8 @@
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kRoomProfileTypeCommunication | `0` | 普通音视频通话模式。<br>你应在 1V1 音视频通话时，使用此设置。<br>此设置下，弱网抗性较好。 |
-  | kRoomProfileTypeGame | `2` | 游戏语音模式，低功耗、低流量消耗。<br>低端机在此模式下运行时，进行了额外的性能优化：<br>    + 部分低端机型配置编码帧长 40/60<br>    + 部分低端机型关闭软件 3A 音频处理<br>增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。 |
+  | kRoomProfileTypeCommunication | `0` | 默认场景，通用模式<br>与 `kRoomProfileTypeMeeting = 16` 配置相同。<br>你可以联系技术支持更换默认配置参数。 |
+  | kRoomProfileTypeGame | `2` | 游戏语音模式，低功耗、低流量消耗。<br>低端机在此模式下运行时，进行了额外的性能优化：<br>+ 部分低端机型配置编码帧长 40/60<br>+ 部分低端机型关闭软件 3A 音频处理<br>增强对 iOS 其他屏幕录制进行的兼容性，避免音频录制被 RTC 打断。 |
   | kRoomProfileTypeCloudGame | `3` | 云游戏模式。<br>如果你的游戏场景需要低延迟的配置，使用此设置。<br>此设置下，弱网抗性较差。 |
   | kRoomProfileTypeLowLatency | `4` | 低时延模式。SDK 会使用低延时设置。<br>当你的场景非游戏或云游戏场景，又需要极低延时的体验时，可以使用该模式。<br>该模式下，音视频通话延时会明显降低，但同时弱网抗性、通话音质等均会受到一定影响。<br>在使用此模式前，强烈建议咨询技术支持同学。 |
   | kRoomProfileTypeChat | `5` | 适用于 1 vs 1 音视频通话 |
@@ -96,6 +241,7 @@
   | kRoomProfileTypeInteractivePodcast | `10` | 适用于单主播和观众进行音视频互动的直播。通话模式，上下麦不会有模式切换，避免音量突变现象 |
   | kRoomProfileTypeKTV | `11` | 线上 KTV 场景，音乐音质，低延迟<br>使用 RTC 传输伴奏音乐，混音后的歌声，适合独唱或单通合唱 |
   | kRoomProfileTypeChorus | `12` | 适合在线实时合唱场景，高音质，超低延迟。使用本配置前请联系技术支持进行协助完成其他配置。 |
+  | kRoomProfileTypeVRChat | `13` | 适用于 VR 场景。支持最高 192 KHz 音频采样率，可开启球形立体声。自 V3.45 及之后版本支持。 |
   | kRoomProfileTypeGameStreaming | `14` | 适用于 1 vs 1 游戏串流，支持公网或局域网。 |
   | kRoomProfileTypeLanLiveStreaming | `15` | 适用于局域网的 1 对多视频直播，最高支持 8K， 60 帧/秒， 100 Mbps 码率<br>需要在局域网配置私有化部署媒体服务器。 |
   | kRoomProfileTypeMeeting | `16` | 适用于云端会议中的个人设备 |
@@ -543,6 +689,105 @@ z 方向向量
 本地用户 ID。
 
 
+## RTCPluginInfo <span id="rtcplugininfo"></span>
+
+类型: `interface`
+
+插件信息
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [id](#rtcplugininfo-id) | 插件 ID，插件唯一标识 |
+| [path](#rtcplugininfo-path) | 插件库路径 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> id <span id="rtcplugininfo-id"></span></p> 
+
+类型: string
+
+插件 ID，插件唯一标识
+
+<p style="font-size: 16px;font-weight: bolder;"> path <span id="rtcplugininfo-path"></span></p> 
+
+类型: string
+
+插件库路径
+
+
+## RTCPlugin <span id="rtcplugin"></span>
+
+类型: `interface`
+
+插件定义
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [id](#rtcplugin-id) | 插件 ID，插件唯一标识 |
+| [setEnabled](#rtcplugin-setenabled) | 启用插件 |
+| [setParameter](#rtcplugin-setparameter) | 设置参数 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> id <span id="rtcplugin-id"></span></p> 
+
+类型: string
+
+插件 ID，插件唯一标识
+
+<p style="font-size: 16px;font-weight: bolder;"> setEnabled <span id="rtcplugin-setenabled"></span></p> 
+
+启用插件
+
+- **类型**
+
+  ```ts
+  (enabled: boolean) => number
+  ```
+
+- **参数**
+
+  - **enabled**
+
+    类型: boolean
+
+    是否启用插件
+
+- **返回值**
+
+  类型: number
+
+  + `0`: 成功
+  + `-1`: 失败
+
+<p style="font-size: 16px;font-weight: bolder;"> setParameter <span id="rtcplugin-setparameter"></span></p> 
+
+设置参数
+
+- **类型**
+
+  ```ts
+  (json_string: string) => number
+  ```
+
+- **参数**
+
+  - **json_string**
+
+    类型: string
+
+    json 字符串
+
+- **返回值**
+
+  类型: number
+
+  + `0`: 成功
+  + `-1`: 失败
+
+
 ## EchoTestConfig <span id="echotestconfig"></span>
 
 类型: `interface`
@@ -601,7 +846,7 @@ z 方向向量
 | [enable_spectrum](#audiopropertiesconfig-enable_spectrum) | 是否开启音频频谱检测。 |
 | [enable_vad](#audiopropertiesconfig-enable_vad) | 是否开启人声检测 (VAD)。 |
 | [local_main_report_mode](#audiopropertiesconfig-local_main_report_mode) | 音量回调配置模式。 |
-| [audio_report_mode](#audiopropertiesconfig-audio_report_mode) | 设置 [`onLocalAudioPropertiesReport`](Electron-event.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。<br>默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。 |
+| [audio_report_mode](#audiopropertiesconfig-audio_report_mode) | 设置 [`onLocalAudioPropertiesReport`](85533.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。<br>默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。 |
 | [smooth](#audiopropertiesconfig-smooth) | 适用于音频属性信息提示的平滑系数。取值范围是 `(0.0, 1.0]`。<br>默认值为 `1.0`，不开启平滑效果；值越小，提示音量平滑效果越明显。如果要开启平滑效果，可以设置为 `0.3`。 |
 
 
@@ -637,7 +882,7 @@ z 方向向量
 
 类型: [AudioPropertiesMode](#audiopropertiesmode) | undefined
 
-设置 [`onLocalAudioPropertiesReport`](Electron-event.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。
+设置 [`onLocalAudioPropertiesReport`](85533.md#onlocalaudiopropertiesreport) 回调中是否包含本地混音音频数据。
 默认仅包含本地麦克风采集的音频数据和本地屏幕音频采集数据。
 
 <p style="font-size: 16px;font-weight: bolder;"> smooth <span id="audiopropertiesconfig-smooth"></span></p> 
@@ -985,12 +1230,13 @@ z 方向向量
 
 | 方法 | 描述 |
 | :-- | :-- |
-| [interpolation_mode](#ipublicstreamparam-interpolation_mode) | 补帧模式<br> + `0`: 补最后一帧<br> + `1`: 补背景图片，如果没有设置背景图片则补黑帧 |
+| [interpolation_mode](#ipublicstreamparam-interpolation_mode) | 补帧模式<br>+ `0`: 补最后一帧<br>+ `1`: 补背景图片，如果没有设置背景图片则补黑帧 |
 | [room_id](#ipublicstreamparam-room_id) | 合流房间 ID，必填 |
 | [background_image_uri](#ipublicstreamparam-background_image_uri) | 背景图片链接 |
 | [video_param](#ipublicstreamparam-video_param) | 公共流视频参数。 |
 | [layout_regions](#ipublicstreamparam-layout_regions) | 公共流视窗布局信息。 |
 | [layout_mode](#ipublicstreamparam-layout_mode) | 公共流的布局模式 |
+| [bg_color](#ipublicstreamparam-bg_color) | 背景颜色 |
 
 
 <p style="font-size: 16px;font-weight: bolder;"> interpolation_mode <span id="ipublicstreamparam-interpolation_mode"></span></p> 
@@ -999,8 +1245,8 @@ z 方向向量
 
 补帧模式
 
- + `0`: 补最后一帧
- + `1`: 补背景图片，如果没有设置背景图片则补黑帧
++ `0`: 补最后一帧
++ `1`: 补背景图片，如果没有设置背景图片则补黑帧
 
 <p style="font-size: 16px;font-weight: bolder;"> room_id <span id="ipublicstreamparam-room_id"></span></p> 
 
@@ -1031,6 +1277,12 @@ z 方向向量
 类型: [StreamLayoutMode](#streamlayoutmode)
 
 公共流的布局模式
+
+<p style="font-size: 16px;font-weight: bolder;"> bg_color <span id="ipublicstreamparam-bg_color"></span></p> 
+
+类型: string
+
+背景颜色
 
 
 ## PublicStreamVideoParam <span id="publicstreamvideoparam"></span>
@@ -1211,7 +1463,7 @@ z 方向向量
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kRenderModeHidden | `1` | 视窗填满优先。<br>视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。 |
+  | kRenderModeHidden | `1` | 视窗填满优先，默认值。<br>视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。 |
   | kRenderModeFit | `2` | 视频帧内容全部显示优先。<br>视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。 |
   | kRenderModeFill | `3` | 视频帧自适应画布<br>视频帧非等比缩放，直至画布被填满。在此过程中，视频帧的长宽比例可能会发生变化。 |
 
@@ -1268,8 +1520,65 @@ z 方向向量
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kLayoutAutoMode | `0` | 自动布局 |
+  | kLayoutAutoMode | `0` | （默认）自动布局 |
   | kLayoutCustomerMode | `2` | 自定义 |
+
+
+
+## RenderOptions <span id="renderoptions"></span>
+
+类型: `interface`
+
+本地渲染选项
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [render_mode](#renderoptions-render_mode) | 渲染时，视频内容缩放模式 |
+| [mirror](#renderoptions-mirror) | 是否镜像渲染 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> render_mode <span id="renderoptions-render_mode"></span></p> 
+
+类型: [RenderMode](#rendermode)
+
+渲染时，视频内容缩放模式
+
+<p style="font-size: 16px;font-weight: bolder;"> mirror <span id="renderoptions-mirror"></span></p> 
+
+类型: boolean
+
+是否镜像渲染
+
+
+## RenderMode <span id="rendermode"></span>
+
+类型: `enum`
+
+渲染时，视频内容缩放模式
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | FIT | `1` | 视频帧内容全部显示优先。<br>视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。 |
+  | HIDDEN | `2` | 视窗填满优先。<br>视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。 |
+
+
+
+## PixelFormat <span id="pixelformat"></span>
+
+类型: `enum`
+
+视频帧编码格式
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kI420 |  | YUV I420 格式 |
+  | kRGBA |  | RGBA 格式, 字节序为 R8 G8 B8 A8 |
 
 
 
@@ -1278,7 +1587,7 @@ z 方向向量
 类型: `interface`
 
 屏幕共享对象信息
-[startScreenVideoCapture](Electron-api.md#startscreenvideocapture) 接口的中的参数类型
+[startScreenVideoCapture](85532.md#startscreenvideocapture) 接口的中的参数类型
 
 - **API**
 
@@ -1504,7 +1813,7 @@ z 方向向量
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kAudioChannelAuto | `-1` | 自动声道，适用于从 SDK 获取音频数据，使用 SDK 内部处理的声道，不经过 resample。<br>当你需要从 SDK 获取音频数据时，若对声道没有强依赖，建议设置成该值，可以通过避免 resample 带来一些性能优化。 |
+  | kAudioChannelAuto | `-1` | 默认设置。 |
   | kAudioChannelMono | `1` | 单声道 |
   | kAudioChannelStereo | `2` | 双声道 |
 
@@ -1515,7 +1824,7 @@ z 方向向量
 类型: `interface`
 
 屏幕共享对象缩略图
-调用 [getThumbnail](Electron-api.md#getthumbnail) 后返回本对象
+调用 [getThumbnail](85532.md#rtcvideo-getthumbnail) 后返回本对象
 
 - **API**
 
@@ -1550,7 +1859,7 @@ z 方向向量
 类型: `interface`
 
 共享窗体的图标信息
-调用 [getWindowAppIcon](Electron-api.md#getwindowappicon) 后返回本对象
+调用 [getWindowAppIcon](85532.md#rtcvideo-getwindowappicon) 后返回本对象
 
 - **API**
 
@@ -1689,10 +1998,26 @@ SEI 发送模式。
 
   | 名称 | 类型 | 描述 |
   | :-- | :-- | :-- |
-  | capturePreference | CapturePreference \| undefined | 视频采集模式 |
+  | capturePreference | [CapturePreference](#capturepreference) \| undefined | 视频采集模式 |
   | width | number \| undefined | 视频采集分辨率的宽度，单位：px。 |
   | height | number \| undefined | 视频采集分辨率的高度，单位：px。 |
   | frameRate | number \| undefined | 视频采集帧率，单位：fps。 |
+
+
+
+## CapturePreference <span id="capturepreference"></span>
+
+类型: `enum`
+
+视频采集配置
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | KAuto | `0` | （默认）自动设置采集参数。<br>SDK在开启采集时根据服务端下发的采集配置结合编码参数设置最佳采集参数。 |
+  | KManual | `1` | 手动设置采集参数，包括采集分辨率、帧率。 |
+  | KAutoPerformance | `2` | 采集参数与编码参数一致，即在 [setVideoEncoderConfig](85532.md#setvideoencoderconfig) 中设置的参数。 |
 
 
 
@@ -1753,39 +2078,6 @@ SEI 发送模式。
 
   + 仅在单个音频文件混音时使用有效。
   + `true` 时开启此功能，`false` 时关闭此功能，默认为关闭。
-
-
-## AudioMixingType <span id="audiomixingtype"></span>
-
-类型: `enum`
-
-混音播放类型
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | kAudioMixingTypePlayout | `0` | 仅本地播放 |
-  | kAudioMixingTypePublish | `1` | 仅远端播放 |
-  | kAudioMixingTypePlayoutAndPublish | `2` | 本地和远端同时播放 |
-
-
-
-## AudioMixingDualMonoMode <span id="audiomixingdualmonomode"></span>
-
-类型: `enum`
-
-混音播放声道类型
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | kAudioMixingDualMonoModeAuto | `0` | 和音频文件一致 |
-  | kAudioMixingDualMonoModeL | `1` | 只能听到音频文件中左声道的音频 |
-  | kAudioMixingDualMonoModeR | `2` | 只能听到音频文件中右声道的音频 |
-  | kAudioMixingDualMonoModeMix | `3` | 能同时听到音频文件中左右声道的音频 |
-
 
 
 ## RecordingConfig <span id="recordingconfig"></span>
@@ -1977,48 +2269,6 @@ SEI 发送模式。
 水印图片高度与视频流高度的比值，取值范围为 [0,1)。
 
 
-## RenderOptions <span id="renderoptions"></span>
-
-类型: `interface`
-
-本地渲染选项
-
-- **API**
-
-| 方法 | 描述 |
-| :-- | :-- |
-| [render_mode](#renderoptions-render_mode) | 渲染时，视频内容缩放模式 |
-| [mirror](#renderoptions-mirror) | 是否镜像渲染 |
-
-
-<p style="font-size: 16px;font-weight: bolder;"> render_mode <span id="renderoptions-render_mode"></span></p> 
-
-类型: [RenderMode](#rendermode)
-
-渲染时，视频内容缩放模式
-
-<p style="font-size: 16px;font-weight: bolder;"> mirror <span id="renderoptions-mirror"></span></p> 
-
-类型: boolean
-
-是否镜像渲染
-
-
-## RenderMode <span id="rendermode"></span>
-
-类型: `enum`
-
-渲染时，视频内容缩放模式
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | FIT | `1` | 视频帧内容全部显示优先。<br>视频帧等比缩放，直至视频帧能够在视窗上全部显示。如果视频帧长宽比例与视窗不同，视窗上未被视频帧填满区域将被涂黑。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长小于等于视窗对应边长。 |
-  | HIDDEN | `2` | 视窗填满优先。<br>视频帧等比缩放，直至视窗被视频填满。如果视频帧长宽比例与视窗不同，视频帧的多出部分将无法显示。<br>缩放完成后，视频帧的一边长和视窗的对应边长一致，另一边长大于等于视窗对应边长。 |
-
-
-
 ## AudioTrackType <span id="audiotracktype"></span>
 
 类型: `enum`
@@ -2029,8 +2279,8 @@ SEI 发送模式。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kAudioTrackTypeOriginal | `1` | 播放原唱。 |
-  | kAudioTrackTypeAccompy | `2` | 播放伴唱。 |
+  | kOriginal | `1` | 播放原唱。 |
+  | kAccompy | `2` | 播放伴唱。 |
 
 
 
@@ -2044,9 +2294,9 @@ SEI 发送模式。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kAudioPlayTypeLocal | `0` | 仅本地播放。 |
-  | kAudioPlayTypeRemote | `1` | 仅远端播放。 |
-  | kAudioPlayTypeLocalAndRemote | `2` | 本地、远端同时播放。 |
+  | kLocal | `0` | 仅本地播放。 |
+  | kRemote | `1` | 仅远端播放。 |
+  | kLocalAndRemote | `2` | 本地、远端同时播放。 |
 
 
 
@@ -2060,8 +2310,8 @@ SEI 发送模式。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kDownKrc | `0` | KRC 歌词文件。 |
-  | kDownLrc | `1` | LRC 歌词文件。 |
+  | kKRC | `0` | KRC 歌词文件。 |
+  | kLRC | `1` | LRC 歌词文件。 |
 
 
 
@@ -2118,13 +2368,47 @@ K 歌评分配置。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kAudioSampleRateAuto | `-1` | 自动采样率，适用于从 SDK 获取音频数据，使用 SDK 内部处理的采样率，不经过 resample。<br>当你需要从 SDK 获取音频数据时，若对采样率没有强依赖，建议设置成该值，可以通过避免 resample 带来一些性能优化。 |
+  | kAudioSampleRateAuto | `-1` | 默认设置。48000Hz。 |
   | kAudioSampleRate8000 | `8000` | 8000 Hz 采样率 |
   | kAudioSampleRate16000 | `16000` | 16000 Hz 采样率 |
   | kAudioSampleRate32000 | `32000` | 32000 Hz 采样率 |
   | kAudioSampleRate44100 | `44100` | 44100 Hz 采样率 |
   | kAudioSampleRate48000 | `48000` | 48000 Hz 采样率 |
 
+
+
+## StandardPitchInfo <span id="standardpitchinfo"></span>
+
+类型: `interface`
+
+标准音高数据
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [start_time](#standardpitchinfo-start_time) | 开始时间，单位 ms。 |
+| [duration](#standardpitchinfo-duration) | 持续时间，单位 ms。 |
+| [pitch](#standardpitchinfo-pitch) | 音高。 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> start_time <span id="standardpitchinfo-start_time"></span></p> 
+
+类型: number
+
+开始时间，单位 ms。
+
+<p style="font-size: 16px;font-weight: bolder;"> duration <span id="standardpitchinfo-duration"></span></p> 
+
+类型: number
+
+持续时间，单位 ms。
+
+<p style="font-size: 16px;font-weight: bolder;"> pitch <span id="standardpitchinfo-pitch"></span></p> 
+
+类型: number
+
+音高。
 
 
 ## VoiceEqualizationConfig <span id="voiceequalizationconfig"></span>
@@ -2243,7 +2527,7 @@ K 歌评分配置。
 | 方法 | 描述 |
 | :-- | :-- |
 | [absolute_file_name](#audiorecordingconfig-absolute_file_name) | 录制文件路径。一个有读写权限的绝对路径，包含文件名和文件后缀。 |
-| [frame_source](#audiorecordingconfig-frame_source) | 录音内容来源 |
+| [frame_source](#audiorecordingconfig-frame_source) | 录音内容来源<br>默认为 kAudioFrameSourceMixed = 2。 |
 | [sample_rate](#audiorecordingconfig-sample_rate) | 录音采样率 |
 | [channel](#audiorecordingconfig-channel) | 录音音频声道。 |
 | [quality](#audiorecordingconfig-quality) | 录音音质。仅在录制文件格式为 .aac 时可以设置。 |
@@ -2264,6 +2548,7 @@ K 歌评分配置。
 类型: [AudioFrameSource](#audioframesource)
 
 录音内容来源
+默认为 kAudioFrameSourceMixed = 2。
 
 <p style="font-size: 16px;font-weight: bolder;"> sample_rate <span id="audiorecordingconfig-sample_rate"></span></p> 
 
@@ -2295,7 +2580,7 @@ K 歌评分配置。
   采样率为 32kHz 时，不同音质录制文件（时长为 10min）的大小分别是：
 
   + 低音质：1.2MB；
-  + 中音质：2MB；
+  + 【默认】中音质：2MB；
   + 高音质：3.75MB；
   + 超高音质：7.5MB。
 
@@ -2337,7 +2622,7 @@ K 歌评分配置。
 
 类型: `enum`
 
-RTC 对视频帧旋转角度，枚举类型，定义了以 90 度为间隔的四种旋转模式。
+视频旋转信息，枚举类型，定义了以 90 度为间隔的四种旋转模式。
 
 - **成员**
 
@@ -2395,6 +2680,7 @@ RTC 对视频帧旋转角度，枚举类型，定义了以 90 度为间隔的四
 
 | 方法 | 描述 |
 | :-- | :-- |
+| [is_support_client_push_stream](#imixedstreamconfig-is_support_client_push_stream) | 本端是否具有推流能力。如果需要开启端云一体转推直播功能，你必须确保你的 App 包含 librtmp，具有推流能力。此时，设置该回调为 true<br>默认为 false。 |
 | [expected_mix_type](#imixedstreamconfig-expected_mix_type) | 设置合流类型。本参数不支持过程中更新。 |
 | [room_id](#imixedstreamconfig-room_id) | 媒体流所在的房间 ID。必填。 |
 | [user_id](#imixedstreamconfig-user_id) | 媒体流所属的用户 ID |
@@ -2407,41 +2693,48 @@ RTC 对视频帧旋转角度，枚举类型，定义了以 90 度为间隔的四
 | [user_config_extra_info](#imixedstreamconfig-user_config_extra_info) | 设置透传的 App 数据 |
 
 
+<p style="font-size: 16px;font-weight: bolder;"> is_support_client_push_stream <span id="imixedstreamconfig-is_support_client_push_stream"></span></p> 
+
+类型: boolean
+
+本端是否具有推流能力。如果需要开启端云一体转推直播功能，你必须确保你的 App 包含 librtmp，具有推流能力。此时，设置该回调为 true
+默认为 false。
+
 <p style="font-size: 16px;font-weight: bolder;"> expected_mix_type <span id="imixedstreamconfig-expected_mix_type"></span></p> 
 
 类型: [MixedStreamType](#mixedstreamtype)
 
-设置合流类型。本参数不支持过程中更新。
+设置合流类型。本参数不支持过程中更新。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> room_id <span id="imixedstreamconfig-room_id"></span></p> 
 
 类型: string
 
-媒体流所在的房间 ID。必填。
+媒体流所在的房间 ID。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> user_id <span id="imixedstreamconfig-user_id"></span></p> 
 
 类型: string
 
-媒体流所属的用户 ID
+媒体流所属的用户 ID。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> push_url <span id="imixedstreamconfig-push_url"></span></p> 
 
 类型: string
 
-设置推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`
+设置推流 CDN 地址。仅支持 RTMP 协议，Url 必须满足正则 `/^rtmps?:\/\//`。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> audio_config <span id="imixedstreamconfig-audio_config"></span></p> 
 
 类型: [MixedStreamAudioConfig](#mixedstreamaudioconfig)
 
-音频参数
+音频参数。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> video_config <span id="imixedstreamconfig-video_config"></span></p> 
 
 类型: [MixedStreamVideoConfig](#mixedstreamvideoconfig)
 
-视频参数
+视频参数。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> client_mix_config <span id="imixedstreamconfig-client_mix_config"></span></p> 
 
@@ -2453,13 +2746,13 @@ RTC 对视频帧旋转角度，枚举类型，定义了以 90 度为间隔的四
 
 类型: [MixedStreamLayoutRegionConfig](#mixedstreamlayoutregionconfig)[]
 
-设置视频流合流整体布局信息。必填。
+设置视频流合流整体布局信息。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> background_color <span id="imixedstreamconfig-background_color"></span></p> 
 
 类型: string
 
-背景颜色
+背景颜色。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> user_config_extra_info <span id="imixedstreamconfig-user_config_extra_info"></span></p> 
 
@@ -2478,7 +2771,7 @@ RTC 对视频帧旋转角度，枚举类型，定义了以 90 度为间隔的四
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kMixedStreamTypeByServer | `0` | 服务端合流。 |
+  | kMixedStreamTypeByServer | `0` | 服务端合流 |
   | kMixedStreamTypeByClient | `1` | 端云一体合流。SDK 智能决策在客户端或服务端完成合流。<br>使用前，请联系技术支持同学开通，否则不生效。 |
 
 
@@ -2504,25 +2797,25 @@ RTC 对视频帧旋转角度，枚举类型，定义了以 90 度为间隔的四
 
 类型: 32000 | 44100 | 48000
 
-音频采样率，单位 Hz。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。
+音频采样率，单位 Hz。建议设置。可取 32000 Hz、44100 Hz、48000 Hz，默认值为 48000 Hz。
 
 <p style="font-size: 16px;font-weight: bolder;"> channels <span id="mixedstreamaudioconfig-channels"></span></p> 
 
 类型: 1 | 2
 
-音频声道数。可取 1（单声道）、2（双声道），默认值为 2。
+音频声道数。建议设置。可取 1（单声道）、2（双声道），默认值为 2。
 
 <p style="font-size: 16px;font-weight: bolder;"> bitrate <span id="mixedstreamaudioconfig-bitrate"></span></p> 
 
 类型: number
 
-音频码率，单位 Kbps。可取范围 [32, 192]，默认值为 64 Kbps。
+音频码率，单位 Kbps。建议设置。可取范围 [32, 192]，默认值为 64 Kbps。
 
 <p style="font-size: 16px;font-weight: bolder;"> audio_profile <span id="mixedstreamaudioconfig-audio_profile"></span></p> 
 
 类型: [MixedStreamAudioProfile](#mixedstreamaudioprofile)
 
-AAC 编码规格。默认值为 `0`。
+AAC 编码规格。建议设置。默认值为 `0`。
 
 <p style="font-size: 16px;font-weight: bolder;"> audio_codec <span id="mixedstreamaudioconfig-audio_codec"></span></p> 
 
@@ -2530,7 +2823,7 @@ AAC 编码规格。默认值为 `0`。
 
 值: `0`
 
-音频编码格式。默认值为 `0`。
+音频编码格式。建议设置。默认值为 `0`。
 
 
 ## MixedStreamAudioProfile <span id="mixedstreamaudioprofile"></span>
@@ -2565,21 +2858,21 @@ AAC 编码规格(新)。
 | [gop](#mixedstreamvideoconfig-gop) | 视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。<br>本参数不支持过程中更新。 |
 | [bitrate](#mixedstreamvideoconfig-bitrate) | 合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。 |
 | [video_codec](#mixedstreamvideoconfig-video_codec) | 视频编码格式。默认值为 `0`。<br>本参数不支持过程中更新。 |
-| [enable_Bframe](#mixedstreamvideoconfig-enable_bframe) | 是否在合流中开启B帧，仅服务端合流支持：  <br>+ true: 是  <br>+ false: 否 |
+| [enable_Bframe](#mixedstreamvideoconfig-enable_bframe) | 是否在合流中开启 B 帧，仅服务端合流支持：<br>+ true: 是<br>+ false: 否 |
 
 
 <p style="font-size: 16px;font-weight: bolder;"> width <span id="mixedstreamvideoconfig-width"></span></p> 
 
 类型: number
 
-合流视频宽度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。
+合流视频宽度。建议设置。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 360 px。
 设置值为非偶数时，自动向上取偶数。
 
 <p style="font-size: 16px;font-weight: bolder;"> height <span id="mixedstreamvideoconfig-height"></span></p> 
 
 类型: number
 
-合流视频高度。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。
+合流视频高度。建议设置。单位为 px，范围为 [2, 1920]，必须是偶数。默认值为 640 px。
 设置值为非偶数时，自动向上取偶数。
 
 <p style="font-size: 16px;font-weight: bolder;"> fps <span id="mixedstreamvideoconfig-fps"></span></p> 
@@ -2592,29 +2885,29 @@ AAC 编码规格(新)。
 
 类型: number
 
-视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。
+视频 I 帧时间间隔。建议设置。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。
 本参数不支持过程中更新。
 
 <p style="font-size: 16px;font-weight: bolder;"> bitrate <span id="mixedstreamvideoconfig-bitrate"></span></p> 
 
 类型: number
 
-合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。
+合流视频码率。建议设置。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。
 
 <p style="font-size: 16px;font-weight: bolder;"> video_codec <span id="mixedstreamvideoconfig-video_codec"></span></p> 
 
 类型: [MixedStreamVideoCodecType](#mixedstreamvideocodectype)
 
-视频编码格式。默认值为 `0`。
+视频编码格式。建议设置。默认值为 `0`。
 本参数不支持过程中更新。
 
 <p style="font-size: 16px;font-weight: bolder;"> enable_Bframe <span id="mixedstreamvideoconfig-enable_bframe"></span></p> 
 
 类型: boolean
 
-是否在合流中开启B帧，仅服务端合流支持：  
+是否在合流中开启 B 帧，仅服务端合流支持：
 
-+ true: 是  
++ true: 是
 + false: 否
 
 
@@ -2689,7 +2982,7 @@ AAC 编码规格(新)。
 | 方法 | 描述 |
 | :-- | :-- |
 | [region_id](#mixedstreamlayoutregionconfig-region_id) | 合流用户的 ID。必填。 |
-| [room_id](#mixedstreamlayoutregionconfig-room_id) | 图片或视频流所在房间的房间 ID。必填。<br>如果此图片或视频流是通过 [startForwardStreamToRooms](Electron-api.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。 |
+| [room_id](#mixedstreamlayoutregionconfig-room_id) | 图片或视频流所在房间的房间 ID。必填。<br>如果此图片或视频流是通过 [startForwardStreamToRooms](85532.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。 |
 | [location_x](#mixedstreamlayoutregionconfig-location_x) | 视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。 |
 | [location_y](#mixedstreamlayoutregionconfig-location_y) | 视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。 |
 | [width_proportion](#mixedstreamlayoutregionconfig-width_proportion) | 视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。 |
@@ -2697,7 +2990,7 @@ AAC 编码规格(新)。
 | [alpha](#mixedstreamlayoutregionconfig-alpha) | 透明度，可选范围为 (0.0, 1.0]，0.0 为全透明。默认值为 1.0。 |
 | [corner_radius](#mixedstreamlayoutregionconfig-corner_radius) | 圆角半径相对画布宽度的比例。默认值为 `0.0`。 |
 | [z_order](#mixedstreamlayoutregionconfig-z_order) | 用户视频布局在画布中的层级。取值范围为 [0 - 100]，0 为底层，值越大越上层。默认值为 0。 |
-| [is_local_user](#mixedstreamlayoutregionconfig-is_local_user) | 是否为本地用户：  <br>+ true: 是  <br>+ false: 否 |
+| [is_local_user](#mixedstreamlayoutregionconfig-is_local_user) | 是否为本地用户：<br>+ true: 是<br>+ false: 否 |
 | [stream_type](#mixedstreamlayoutregionconfig-stream_type) | 是否为屏幕流： |
 | [media_type](#mixedstreamlayoutregionconfig-media_type) | 合流内容控制。默认值为 `kMediaTypeAudioAndVideo`。 |
 | [render_mode](#mixedstreamlayoutregionconfig-render_mode) | 图片或视频流的缩放模式。默认值为 1。 |
@@ -2712,38 +3005,38 @@ AAC 编码规格(新)。
 
 类型: string
 
-合流用户的 ID。必填。
+合流用户的 ID。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> room_id <span id="mixedstreamlayoutregionconfig-room_id"></span></p> 
 
 类型: string
 
-图片或视频流所在房间的房间 ID。必填。
-如果此图片或视频流是通过 [startForwardStreamToRooms](Electron-api.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
+图片或视频流所在房间的房间 ID。建议设置。
+如果此图片或视频流是通过 [startForwardStreamToRooms](85532.md#rtcroom-startforwardstreamtorooms) 转发到你所在房间的媒体流时，你应将房间 ID 设置为你所在的房间 ID。
 
 <p style="font-size: 16px;font-weight: bolder;"> location_x <span id="mixedstreamlayoutregionconfig-location_x"></span></p> 
 
 类型: number
 
-视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
+视频流对应区域左上角的横坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> location_y <span id="mixedstreamlayoutregionconfig-location_y"></span></p> 
 
 类型: number
 
-视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。
+视频流对应区域左上角的纵坐标相对整体画面的归一化比例，取值的范围为 [0.0, 1.0)。默认值为 0.0。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> width_proportion <span id="mixedstreamlayoutregionconfig-width_proportion"></span></p> 
 
 类型: number
 
-视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。
+视频流对应区域宽度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> height_proportion <span id="mixedstreamlayoutregionconfig-height_proportion"></span></p> 
 
 类型: number
 
-视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。
+视频流对应区域高度相对整体画面的归一化比例，取值的范围为 [0.0, 1.0]。默认值为 1.0。建议设置。
 
 <p style="font-size: 16px;font-weight: bolder;"> alpha <span id="mixedstreamlayoutregionconfig-alpha"></span></p> 
 
@@ -2771,11 +3064,11 @@ AAC 编码规格(新)。
 
 类型: boolean
 
-是否为本地用户：  
+是否为本地用户：
 
-+ true: 是  
++ true: 是
 + false: 否
-
+客户端合流时，必须为 true。
 <p style="font-size: 16px;font-weight: bolder;"> stream_type <span id="mixedstreamlayoutregionconfig-stream_type"></span></p> 
 
 类型: [MixedStreamVideoType](#mixedstreamvideotype)
@@ -2918,11 +3211,13 @@ region中流的类型属性
 
 类型: `interface`
 
+本地代理配置详细信息。
+
 - **API**
 
 | 方法 | 描述 |
 | :-- | :-- |
-| [local_proxy_type](#localproxyconfiguration-local_proxy_type) | 本地代理的类型。 |
+| [local_proxy_type](#localproxyconfiguration-local_proxy_type) | 本地代理类型 |
 | [local_proxy_ip](#localproxyconfiguration-local_proxy_ip) | 本地代理服务器 IP。 |
 | [local_proxy_port](#localproxyconfiguration-local_proxy_port) | 本地代理服务器端口。 |
 | [local_proxy_username](#localproxyconfiguration-local_proxy_username) | 本地代理用户名。 |
@@ -2933,7 +3228,7 @@ region中流的类型属性
 
 类型: [LocalProxyType](#localproxytype)
 
-本地代理的类型。
+本地代理类型
 
 <p style="font-size: 16px;font-weight: bolder;"> local_proxy_ip <span id="localproxyconfiguration-local_proxy_ip"></span></p> 
 
@@ -2964,12 +3259,158 @@ region中流的类型属性
 
 类型: `enum`
 
+本地代理的类型。
+
 - **成员**
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kLocalProxyTypeSocks5 | `1` | Socks5 代理。 |
+  | kLocalProxyTypeSocks5 | `1` | Socks5 代理。选用此代理服务器，需满足 Socks5 协议标准文档的要求。 |
   | kLocalProxyTypeHttpTunnel | `2` | Http 隧道代理。 |
+
+
+
+## EarMonitorMode <span id="earmonitormode"></span>
+
+类型: `enum`
+
+是否开启耳返功能
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kEarMonitorModeOff | `0` | 不开启 |
+  | kEarMonitorModeOn | `1` | 开启 |
+
+
+
+## AudioFrameCallbackMethod <span id="audioframecallbackmethod"></span>
+
+类型: `enum`
+
+音频回调方法
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kAudioFrameCallbackRecord | `0` | 本地麦克风录制的音频数据回调 [onRecordAudioFrame](85533.md#rtcvideocallback-onrecordaudioframe)|
+  | kAudioFrameCallbackPlayback | `1` | 订阅的远端所有用户混音后的音频数据回调 [onPlaybackAudioFrame](85533.md#rtcvideocallback-onplaybackaudioframe)|
+  | kAudioFrameCallbackMixed | `2` | 本地麦克风录制和订阅的远端所有用户混音后的音频数据回调 [onMixedAudioFrame](85533.md#rtcvideocallback-onmixedaudioframe) |
+  | kAudioFrameCallbackRemoteUser | `3` | 订阅的远端每个用户混音前的音频数据回调 [onRemoteUserAudioFrame](85533.md#rtcvideocallback-onremoteuseraudioframe) |
+  | kAudioFrameCallbackRecordScreen | `4` | 本地屏幕录制的音频数据回调 [onRecordScreenAudioFrame](85533.md#rtcvideocallback-onrecordscreenaudioframe) |
+
+
+
+## AudioFormat <span id="audioformat"></span>
+
+类型: `interface`
+
+音频格式
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [sample_rate](#audioformat-sample_rate) | 音频采样率 |
+| [channel](#audioformat-channel) | 音频声道 |
+| [samples_per_call](#audioformat-samples_per_call) | 单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。<br>最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。<br>最大值是 `2048`。超出取值范围时，采样点数取默认值。 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> sample_rate <span id="audioformat-sample_rate"></span></p> 
+
+类型: [AudioSampleRate](#audiosamplerate)
+
+音频采样率
+
+<p style="font-size: 16px;font-weight: bolder;"> channel <span id="audioformat-channel"></span></p> 
+
+类型: [AudioChannel](#audiochannel)
+
+音频声道
+
+<p style="font-size: 16px;font-weight: bolder;"> samples_per_call <span id="audioformat-samples_per_call"></span></p> 
+
+类型: number
+
+单次回调的音频帧中包含的采样点数。默认值为 `0`，此时，采样点数取最小值。
+最小值为回调间隔是 0.01s 时的值，即 `sampleRate * channel * 0.01s`。
+最大值是 `2048`。超出取值范围时，采样点数取默认值。
+该参数仅在设置读写回调时生效，调用 [enableAudioFrameCallback](85532.md#rtcvideo-enableaudioframecallback) 开启只读模式回调时设置该参数不生效。
+
+
+## AudioAlignmentMode <span id="audioalignmentmode"></span>
+
+类型: `enum`
+
+远端音频流精准对齐模式
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kAudioAlighmentModeOff | `0` | 不对齐 |
+  | kAudioAlighmentModeAudioMixing | `1` | 远端音频流都对齐伴奏进度同步播放 |
+
+
+
+## LogConfig <span id="logconfig"></span>
+
+类型: `interface`
+
+本地日志参数。
+
+- **API**
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [log_path](#logconfig-log_path) | 日志存储路径，必填。 |
+| [log_level](#logconfig-log_level) | 日志等级，默认为警告级别，选填。 |
+
+
+<p style="font-size: 16px;font-weight: bolder;"> log_path <span id="logconfig-log_path"></span></p> 
+
+类型: string
+
+日志存储路径，必填。
+
+<p style="font-size: 16px;font-weight: bolder;"> log_level <span id="logconfig-log_level"></span></p> 
+
+类型: [LocalLogLevel](#localloglevel)
+
+日志等级，默认为警告级别，选填。
+
+
+## LocalLogLevel <span id="localloglevel"></span>
+
+类型: `enum`
+
+本地日志输出等级。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kInfo | `0` | 信息级别。 |
+  | kWarning | `1` | （默认值）警告级别。 |
+  | kError | `2` | 错误级别。 |
+  | kNone | `3` | 关闭日志。 |
+
+
+
+## RenderType <span id="rendertype"></span>
+
+类型: `enum`
+
+渲染类型
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kRenderTypeWebGL | `1` | WebGL渲染。 |
+  | kRenderTypeSoftware | `2` | Software渲染。 |
 
 
 
@@ -2998,8 +3439,6 @@ region中流的类型属性
 | [rx_screen_kbitrate](#rtcroomstats-rx_screen_kbitrate) | 屏幕接收码率，获取该数据时的瞬时值，单位为 Kbps |
 | [tx_screen_kbitrate](#rtcroomstats-tx_screen_kbitrate) | 屏幕发送码率，获取该数据时的瞬时值，单位为 Kbps |
 | [user_count](#rtcroomstats-user_count) | 当前房间内的用户人数 |
-| [tx_jitter](#rtcroomstats-tx_jitter) | 系统上行网络抖动（ms） |
-| [rx_jitter](#rtcroomstats-rx_jitter) | 系统下行网络抖动（ms） |
 | [tx_cellular_kbitrate](#rtcroomstats-tx_cellular_kbitrate) | 蜂窝路径发送的码率 (kbps)，获取该数据时的瞬时值 |
 | [rx_cellular_kbitrate](#rtcroomstats-rx_cellular_kbitrate) | 蜂窝路径接收码率 (kbps)，获取该数据时的瞬时值 |
 
@@ -3094,18 +3533,6 @@ region中流的类型属性
 
 当前房间内的用户人数
 
-<p style="font-size: 16px;font-weight: bolder;"> tx_jitter <span id="rtcroomstats-tx_jitter"></span></p> 
-
-类型: number
-
-系统上行网络抖动（ms）
-
-<p style="font-size: 16px;font-weight: bolder;"> rx_jitter <span id="rtcroomstats-rx_jitter"></span></p> 
-
-类型: number
-
-系统下行网络抖动（ms）
-
 <p style="font-size: 16px;font-weight: bolder;"> tx_cellular_kbitrate <span id="rtcroomstats-tx_cellular_kbitrate"></span></p> 
 
 类型: number
@@ -3124,13 +3551,13 @@ region中流的类型属性
 类型: `enum`
 
 用户离线原因。
-房间内的远端用户离开房间时，本端用户会收到 [`onUserLeave`](Electron-event.md#onuserleave) 回调通知，此枚举类型为回调的用户离线原因。
+房间内的远端用户离开房间时，本端用户会收到 [`onUserLeave`](85533.md#onuserleave) 回调通知，此枚举类型为回调的用户离线原因。
 
 - **成员**
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kUserOfflineReasonQuit | `0` | 远端用户调用 [leaveRoom](Electron-api.md#leaveroom) 方法退出房间。 |
+  | kUserOfflineReasonQuit | `0` | 远端用户调用 [leaveRoom](85532.md#leaveroom) 方法退出房间。 |
   | kUserOfflineReasonDropped | `1` | 远端用户因网络等原因掉线。 |
   | kUserOfflineReasonSwitchToInvisible | `2` | 远端用户切换至隐身状态。 |
   | kUserOfflineReasonKickedByAdmin | `3` | 远端用户被踢出出房间。<br>因调用踢出用户的 OpenAPI，远端用户被踢出房间。 |
@@ -3192,7 +3619,7 @@ region中流的类型属性
 
 类型: `interface`
 
-本地音频流统计信息，统计周期为 2s 。  本地用户发布音频流成功后，SDK 会周期性地通过 [onLocalStreamStats](Electron-event.md#onlocalstreamstats) 通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
+本地音频流统计信息，统计周期为 2s 。  本地用户发布音频流成功后，SDK 会周期性地通过 [onLocalStreamStats](85533.md#onlocalstreamstats) 通知用户发布的音频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
 
 - **API**
 
@@ -3263,7 +3690,7 @@ region中流的类型属性
 类型: `interface`
 
 本地视频流统计信息，统计周期为 2s 。
-本地用户发布视频流成功后，SDK 会周期性地通过 [onLocalStreamStats](Electron-event.md#onlocalstreamstats)  通知用户发布的视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
+本地用户发布视频流成功后，SDK 会周期性地通过 [onLocalStreamStats](85533.md#onlocalstreamstats)  通知用户发布的视频流在此次统计周期内的发送状况。此数据结构即为回调给用户的参数类型。
 
 - **API**
 
@@ -3284,6 +3711,7 @@ region中流的类型属性
 | [codec_type](#localvideostats-codec_type) | 视频的编码类型 |
 | [is_screen](#localvideostats-is_screen) | 所属用户的媒体流是否为屏幕流。你可以知道当前统计数据来自主流还是屏幕流。 |
 | [jitter](#localvideostats-jitter) | 视频上行网络抖动，单位为 ms 。 |
+| [codec_elapse_per_frame](#localvideostats-codec_elapse_per_frame) | 视频编码平均耗时，单位ms。 |
 
 
 <p style="font-size: 16px;font-weight: bolder;"> sent_kbitrate <span id="localvideostats-sent_kbitrate"></span></p> 
@@ -3377,6 +3805,12 @@ region中流的类型属性
 
 视频上行网络抖动，单位为 ms 。
 
+<p style="font-size: 16px;font-weight: bolder;"> codec_elapse_per_frame <span id="localvideostats-codec_elapse_per_frame"></span></p> 
+
+类型: number
+
+视频编码平均耗时，单位ms。
+
 
 ## VideoCodecType <span id="videocodectype"></span>
 
@@ -3398,7 +3832,7 @@ region中流的类型属性
 类型: `interface`
 
 用户订阅的远端音/视频流统计信息以及网络状况，统计周期为 2s 。
-订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](Electron-event.md#onremotestreamstats)
+订阅远端用户发布音/视频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](85533.md#onremotestreamstats)
 通知本地用户订阅的远端音/视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
 
 - **API**
@@ -3441,7 +3875,7 @@ region中流的类型属性
 类型: `interface`
 
 远端音频流统计信息，统计周期为 2s。
-本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](Electron-event.md#onremotestreamstats) 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
+本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](85533.md#onremotestreamstats) 通知本地用户订阅的音频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
 
 - **API**
 
@@ -3595,7 +4029,7 @@ PLC 累计次数。
 类型: `interface`
 
 远端音频流统计信息，统计周期为 2s 。
-本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](Electron-event.md#onremotestreamstats)
+本地用户订阅远端音频流成功后，SDK 会周期性地通过 [onRemoteStreamStats](85533.md#onremotestreamstats)
 通知本地用户订阅的远端视频流在此次统计周期内的接收状况。此数据结构即为回调给本地用户的参数类型。
 
 - **API**
@@ -3618,6 +4052,7 @@ PLC 累计次数。
 | [codec_type](#remotevideostats-codec_type) | 视频的编码类型 |
 | [video_index](#remotevideostats-video_index) | 对应多种分辨率的流的下标 |
 | [jitter](#remotevideostats-jitter) | 视频下行网络抖动，单位为 ms 。 |
+| [codec_elapse_per_frame](#remotevideostats-codec_elapse_per_frame) | 视频解码平均耗时，单位ms。 |
 
 
 <p style="font-size: 16px;font-weight: bolder;"> width <span id="remotevideostats-width"></span></p> 
@@ -3720,6 +4155,12 @@ PLC 累计次数。
 
 视频下行网络抖动，单位为 ms 。
 
+<p style="font-size: 16px;font-weight: bolder;"> codec_elapse_per_frame <span id="remotevideostats-codec_elapse_per_frame"></span></p> 
+
+类型: number
+
+视频解码平均耗时，单位ms。
+
 
 ## StreamRemoveReason <span id="streamremovereason"></span>
 
@@ -3770,8 +4211,8 @@ PLC 累计次数。
 | [is_screen](#subscribeconfig-is_screen) | 是否是屏幕流，默认为否。 |
 | [sub_video](#subscribeconfig-sub_video) | 是否订阅视频。 |
 | [sub_audio](#subscribeconfig-sub_audio) | 是否订阅音频。 |
-| [video_index](#subscribeconfig-video_index) | 订阅的视频流分辨率下标。<br>用户可以通过调用 [setVideoEncoderConfig](Electron-api.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。 |
-| [priority](#subscribeconfig-priority) | 远端用户的需求优先级，0 为默认值。<br>+ `0`: 默认，用户优先级为低<br>+ `100`: 用户优先级为正常<br>+ `200`: 用户优先级为高<br>当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](Electron-api.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。 |
+| [video_index](#subscribeconfig-video_index) | 订阅的视频流分辨率下标。<br>用户可以通过调用 [setVideoEncoderConfig](85532.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。 |
+| [priority](#subscribeconfig-priority) | 远端用户的需求优先级，0 为默认值。<br>+ `0`: 默认，用户优先级为低<br>+ `100`: 用户优先级为正常<br>+ `200`: 用户优先级为高<br>当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](85532.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。 |
 | [svc_layer](#subscribeconfig-svc_layer) | 远端用户的时域分层，0 为默认值。<br>仅码流支持 SVC 特性时可以生效。 |
 | [framerate](#subscribeconfig-framerate) | 期望订阅的最高帧率，单位：fps，默认值为 0，设为大于 0 的值时开始生效。<br>当发布端帧率低于设定帧率，或订阅端开启性能回退后下行弱网，则帧率会相应下降。<br>仅码流支持 SVC 分级编码特性时方可生效。 |
 | [sub_width](#subscribeconfig-sub_width) | 用户通过指定 UI 对应的最合适的流的宽度，单位：px |
@@ -3801,7 +4242,7 @@ PLC 累计次数。
 类型: number
 
 订阅的视频流分辨率下标。
-用户可以通过调用 [setVideoEncoderConfig](Electron-api.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。
+用户可以通过调用 [setVideoEncoderConfig](85532.md#setvideoencoderconfig) 方法在一路流中发布多个不同分辨率的视频。因此订阅流时，需要指定订阅的具体分辨率。此参数即用于指定需订阅的分辨率的下标，默认值为 0 。
 
 <p style="font-size: 16px;font-weight: bolder;"> priority <span id="subscribeconfig-priority"></span></p> 
 
@@ -3812,7 +4253,7 @@ PLC 累计次数。
 + `0`: 默认，用户优先级为低
 + `100`: 用户优先级为正常
 + `200`: 用户优先级为高
-当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](Electron-api.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。
+当开启了订阅流回退选项功能（详见 [setSubscribeFallbackOption](85532.md#setsubscribefallbackoption) 方法），弱网或性能不足时会优先保证收到的高优先级用户的流的质量。
 
 <p style="font-size: 16px;font-weight: bolder;"> svc_layer <span id="subscribeconfig-svc_layer"></span></p> 
 
@@ -3872,7 +4313,7 @@ PLC 累计次数。
 
 <p style="font-size: 16px;font-weight: bolder;"> error <span id="forwardstreamstateinfo-error"></span></p> 
 
-类型: [ForwardStreamError](Electron-errorcode.md#forwardstreamerror)
+类型: [ForwardStreamError](85534.md#forwardstreamerror)
 
 跨房间转发媒体流过程中该目标房间抛出的错误码
 
@@ -3889,7 +4330,7 @@ PLC 累计次数。
   | :-- | :-- | :-- |
   | kForwardStreamStateIdle | `0` | 空闲状态<br>+ 成功调用 `stopForwardStreamToRooms` 后，所有目标房间为空闲状态。<br>+ 成功调用 `updateForwardStreamToRooms` 减少目标房间后，本次减少的目标房间为空闲状态。 |
   | kForwardStreamStateSuccess | `1` | 开始转发<br>+ 调用 `startForwardStreamToRooms` 成功向所有房间开始转发媒体流后，返回此状态。<br>+ 调用 `updateForwardStreamToRooms` 后，成功向新增目标房间开始转发媒体流后，返回此状态。 |
-  | kForwardStreamStateFailure | `2` | 转发失败，失败详情参考 [ForwardStreamError](Electron-errorcode.md#forwardstreamerror)<br>调用 `startForwardStreamToRooms` 或 `updateForwardStreamToRooms` 后，如遇转发失败，返回此状态。 |
+  | kForwardStreamStateFailure | `2` | 转发失败，失败详情参考 [ForwardStreamError](85534.md#forwardstreamerror)<br>调用 `startForwardStreamToRooms` 或 `updateForwardStreamToRooms` 后，如遇转发失败，返回此状态。 |
 
 
 
@@ -4070,7 +4511,7 @@ PLC 累计次数。
 | [user_id](#subtitlemessage-user_id) | 说话者的用户ID。 |
 | [text](#subtitlemessage-text) | 语音识别或翻译后的文本, 采用 UTF-8 编码。 |
 | [sequence](#subtitlemessage-sequence) | 语音识别或翻译后形成的文本的序列号，同一发言人的完整发言和不完整发言会按递增顺序单独分别编号。 |
-| [definite](#subtitlemessage-definite) | 语音识别出的文本是否为一段完整的一句话。 True 代表是, False 代表不是。 |
+| [definite](#subtitlemessage-definite) | 语音识别出的文本是否为一段完整的一句话。 true 代表是, false 代表不是。 |
 
 
 <p style="font-size: 16px;font-weight: bolder;"> user_id <span id="subtitlemessage-user_id"></span></p> 
@@ -4095,7 +4536,7 @@ PLC 累计次数。
 
 类型: boolean
 
-语音识别出的文本是否为一段完整的一句话。 True 代表是, False 代表不是。
+语音识别出的文本是否为一段完整的一句话。 true 代表是, false 代表不是。
 
 
 ## MusicInfo <span id="musicinfo"></span>
@@ -4205,10 +4646,10 @@ PLC 累计次数。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kLyricStatusNone | `0` | 无歌词。 |
-  | kLyricStatusKRC | `1` | KRC 歌词。 |
-  | kLyricStatusLRC | `2` | LRC 歌词。 |
-  | kLyricStatusKRCAndLRC | `3` | KRC 歌词和 LRC 歌词均有。 |
+  | kNone | `0` | 无歌词。 |
+  | kKRC | `1` | KRC 歌词。 |
+  | kLRC | `2` | LRC 歌词。 |
+  | kKRCAndLRC | `3` | KRC 歌词和 LRC 歌词均有。 |
 
 
 
@@ -4256,8 +4697,8 @@ PLC 累计次数。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kHotContentCenter |  | 火山内容中心热歌榜。 |
-  | kHotProject |  | 项目热歌榜。 |
+  | kMusicHotTypeContentCenter |  | 火山内容中心热歌榜。 |
+  | kMusicHotTypeProject |  | 项目热歌榜。 |
 
 
 
@@ -4305,10 +4746,10 @@ PLC 累计次数。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kDownloadMusic | `1` | 音频文件。 |
-  | kDownloadKRC | `2` | KRC 歌词文件。 |
-  | kDownloadLRC | `3` | LRC 歌词文件。 |
-  | kDownloadMIDI | `4` | MIDI 文件。 |
+  | kDownloadFileTypeMusic | `1` | 音频文件。 |
+  | kDownloadFileTypeKRC | `2` | KRC 歌词文件。 |
+  | kDownloadFileTypeLRC | `3` | LRC 歌词文件。 |
+  | kDownloadFileTypeMIDI | `4` | MIDI 文件。 |
 
 
 
@@ -4322,37 +4763,11 @@ PLC 累计次数。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kPlayStatePlaying | `1` | 播放中。 |
-  | kPlayStatePaused | `2` | 暂停中。 |
-  | kPlayStateStoped | `3` | 已停止。 |
-  | kPlayStateFailed | `4` | 播放失败。 |
-  | kPlayStateFinished | `5` | 播放结束。 |
-
-
-
-## KTVPlayerErrorCode <span id="ktvplayererrorcode"></span>
-
-类型: `enum`
-
-KTV 播放器错误码。
-
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | kErrorCodeKTVPlayOK | `0` | 成功。 |
-  | kErrorCodeKTVPlayFileNotExist | `-3020` | 播放错误，请下载后播放。 |
-  | kErrorCodeKTVPlayFileError | `-3021` | 播放错误，请确认文件播放格式。 |
-  | kErrorCodeKTVPlayNotJoinRoom | `-3022` | 播放错误，未进入房间。 |
-  | kErrorCodeKTVPlayParam | `-3023` | 参数错误。 |
-  | kErrorCodeKTVPlayStartError | `-3024` | 播放失败，找不到文件或文件打开失败。 |
-  | kErrorCodeKTVPlayMixIdError | `-3025` | 混音 ID 异常。 |
-  | kErrorCodeKTVPlayPositionError | `-3026` | 设置播放位置出错。 |
-  | kErrorCodeKTVPlayAudioVolumeError | `-3027` | 音量参数不合法，可设置的取值范围为 [0,400]。 |
-  | kErrorCodeKTVPlayTypeError | `-3028` | 不支持此混音类型。 |
-  | kErrorCodeKTVPlayPitchError | `-3029` | 音调文件不合法。 |
-  | kErrorCodeKTVPlayAudioTrackError | `-3030` | 音轨不合法。 |
-  | kErrorCodeKTVPlayStartingError | `-3031` | 混音启动中。 |
+  | kPlaying | `1` | 播放中。 |
+  | kPaused | `2` | 暂停中。 |
+  | kStoped | `3` | 已停止。 |
+  | kFailed | `4` | 播放失败。 |
+  | kFinished | `5` | 播放结束。 |
 
 
 
@@ -4366,8 +4781,8 @@ KTV 播放器错误码。
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kVideoSuperResolutionModeChangedReasonAPIOff | `0` | 调用 [setRemoteVideoSuperResolution](Electron-api.md#setremotevideosuperresolution) 成功关闭超分。 |
-  | kVideoSuperResolutionModeChangedReasonAPIOn | `1` | 调用 [setRemoteVideoSuperResolution](Electron-api.md#setremotevideosuperresolution) 成功开启超分。 |
+  | kVideoSuperResolutionModeChangedReasonAPIOff | `0` | 调用 [setRemoteVideoSuperResolution](85532.md#setremotevideosuperresolution) 成功关闭超分。 |
+  | kVideoSuperResolutionModeChangedReasonAPIOn | `1` | 调用 [setRemoteVideoSuperResolution](85532.md#setremotevideosuperresolution) 成功开启超分。 |
   | kVideoSuperResolutionModeChangedReasonResolutionExceed | `2` | 开启超分失败，远端视频流的原始视频分辨率超过 640 × 360 px。 |
   | kVideoSuperResolutionModeChangedReasonOverUse | `3` | 开启超分失败，已对一路远端流开启超分。 |
   | kVideoSuperResolutionModeChangedReasonDeviceNotSupport | `4` | 设备不支持使用超分辨率。 |
@@ -4627,33 +5042,15 @@ SEI 信息来源。
 
 类型: `enum`
 
-- **成员**
-
-  | 属性 | 值 | 描述 |
-  | :-- | :-- | :-- |
-  | kLocalProxyStateInited | `0` | 代理tcp连接成功 |
-  | kLocalProxyStateConnected | `1` | 代理成功 |
-  | kLocalProxyStateError | `2` | 代理错误 |
-
-
-
-## LocalProxyError <span id="localproxyerror"></span>
-
-类型: `enum`
-
-本地代理错误信息。
+本地代理连接状态。
 
 - **成员**
 
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
-  | kLocalProxyErrorOK | `0` | 代理无错误 |
-  | kLocalProxyErrorSocks5VersionError | `1` | 代理服务器回复的版本号错误，导致 socks5 连接失败。 |
-  | kLocalProxyErrorSocks5FormatError | `2` | 代理服务器回复的格式错误，导致 socks5 连接失败。 |
-  | kLocalProxyErrorSocks5InvalidValue | `3` | 代理服务器回复的字段值错误，导致 socks5 连接失败。 |
-  | kLocalProxyErrorSocks5UserPassNotGiven | `4` | 未提供本地代理的用户名及密码，导致 socks5 连接失败。 |
-  | kLocalProxyErrorSocks5TcpClosed | `5` | TCP 关闭，导致 socks5 连接失败。 |
-  | kLocalProxyErrorHttpTunnelFailed | `6` | http隧道代理错误。 |
+  | kLocalProxyStateInited | `0` | TCP 代理服务器连接成功。 |
+  | kLocalProxyStateConnected | `1` | 本地代理连接成功。 |
+  | kLocalProxyStateError | `2` | 本地代理连接出现错误。 |
 
 
 
@@ -4708,6 +5105,8 @@ SEI 信息来源。
 | [plane_size_v](#ivideoframe-plane_size_v) | 视频数据缓冲区 V 大小 |
 | [format](#ivideoframe-format) | 视频帧数据格式 |
 | [rotation](#ivideoframe-rotation) | 视频帧旋转角度 |
+| [rgba](#ivideoframe-rgba) | 视频数据缓冲区 RGBA |
+| [rgba_size](#ivideoframe-rgba_size) | 视频数据缓冲区 RGBA 大小 |
 | [public_stream_id](#ivideoframe-public_stream_id) | 公共流 ID |
 | [task_id](#ivideoframe-task_id) | 合流任务 ID |
 
@@ -4774,7 +5173,7 @@ SEI 信息来源。
 
 <p style="font-size: 16px;font-weight: bolder;"> format <span id="ivideoframe-format"></span></p> 
 
-类型: number
+类型: [VideoPixelFormat](#videopixelformat)
 
 视频帧数据格式
 
@@ -4783,6 +5182,18 @@ SEI 信息来源。
 类型: number
 
 视频帧旋转角度
+
+<p style="font-size: 16px;font-weight: bolder;"> rgba <span id="ivideoframe-rgba"></span></p> 
+
+类型: Uint8Array
+
+视频数据缓冲区 RGBA
+
+<p style="font-size: 16px;font-weight: bolder;"> rgba_size <span id="ivideoframe-rgba_size"></span></p> 
+
+类型: number
+
+视频数据缓冲区 RGBA 大小
 
 <p style="font-size: 16px;font-weight: bolder;"> public_stream_id <span id="ivideoframe-public_stream_id"></span></p> 
 
@@ -4797,6 +5208,27 @@ SEI 信息来源。
 合流任务 ID
 
 
+## VideoPixelFormat <span id="videopixelformat"></span>
+
+类型: `enum`
+
+视频帧颜色编码格式
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kVideoPixelFormatUnknown | `0` | 未知的颜色编码格式 |
+  | kVideoPixelFormatI420 | `1` | YUV I420 格式 |
+  | kVideoPixelFormatNV12 | `2` | YUV NV12 格式 |
+  | kVideoPixelFormatNV21 | `3` | YUV NV21 格式 |
+  | kVideoPixelFormatRGB24 | `4` | RGB 24bit格式， |
+  | kVideoPixelFormatRGBA | `5` | RGBA 编码格式 |
+  | kVideoPixelFormatARGB | `6` | ARGB 编码格式 |
+  | kVideoPixelFormatBGRA | `7` | BGRA 编码格式 |
+
+
+
 ## IAudioFrame <span id="iaudioframe"></span>
 
 类型: `interface`
@@ -4807,7 +5239,7 @@ SEI 信息来源。
 
 | 方法 | 描述 |
 | :-- | :-- |
-| [type](#iaudioframe-type) | 音频帧类型 |
+| [frame_type](#iaudioframe-frame_type) | 音频帧类型 |
 | [channels](#iaudioframe-channels) | 音频通道数<br>双声道的情况下，左右声道的音频帧数据以 LRLRLR 形式排布。 |
 | [sample_rate](#iaudioframe-sample_rate) | 音频采样率 |
 | [buffer](#iaudioframe-buffer) | 音频数据内存地址 |
@@ -4815,7 +5247,7 @@ SEI 信息来源。
 | [mute](#iaudioframe-mute) | 获取音频静音标志 |
 
 
-<p style="font-size: 16px;font-weight: bolder;"> type <span id="iaudioframe-type"></span></p> 
+<p style="font-size: 16px;font-weight: bolder;"> frame_type <span id="iaudioframe-frame_type"></span></p> 
 
 类型: AudioFrameType
 
@@ -4867,7 +5299,6 @@ SEI 信息来源。
 | :-- | :-- |
 | [frame_type](#idataframe-frame_type) | 数据帧类型 |
 | [u8_data](#idataframe-u8_data) | 数据帧数据 |
-| [u32_data_size](#idataframe-u32_data_size) | 数据帧数据大小 |
 | [u64_ts_us](#idataframe-u64_ts_us) | 数据帧时间戳，单位：微秒 |
 
 
@@ -4884,12 +5315,6 @@ SEI 信息来源。
 类型: Uint8Array
 
 数据帧数据
-
-<p style="font-size: 16px;font-weight: bolder;"> u32_data_size <span id="idataframe-u32_data_size"></span></p> 
-
-类型: number
-
-数据帧数据大小
 
 <p style="font-size: 16px;font-weight: bolder;"> u64_ts_us <span id="idataframe-u64_ts_us"></span></p> 
 
@@ -5010,7 +5435,7 @@ SDK 网络连接类型。
 
 类型: `enum`
 
-[onPerformanceAlarms](Electron-event.md#onperformancealarms) 告警的原因
+[onPerformanceAlarms](85533.md#onperformancealarms) 告警的原因
 
 - **成员**
 
@@ -5066,7 +5491,7 @@ SDK 网络连接类型。
 类型: `interface`
 
 App 使用的 cpu 和内存信息。
-信息由 SDK 周期性（2s）地通过 [onSysStats](Electron-event.md#onsysstats) 回调通知给用户。
+信息由 SDK 周期性（2s）地通过 [onSysStats](85533.md#onsysstats) 回调通知给用户。
 
 - **API**
 
@@ -5239,6 +5664,44 @@ App 使用的 cpu 和内存信息。
 
 
 
+## RemoteAudioState <span id="remoteaudiostate"></span>
+
+类型: `enum`
+
+远端音频流状态。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kRemoteAudioStateStopped | `0` | 不接收远端音频流。 |
+  | kRemoteAudioStateStarting | `1` |  |
+  | kRemoteAudioStateDecoding | `2` |  |
+  | kRemoteAudioStateFrozen | `3` | 远端音频流卡顿。 |
+
+
+
+## RemoteAudioStateChangeReason <span id="remoteaudiostatechangereason"></span>
+
+类型: `enum`
+
+接收远端音频流状态改变的原因。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kRemoteAudioStateChangeReasonInternal | `0` | 内部原因 |
+  | kRemoteAudioStateChangeReasonNetworkCongestion | `1` | 网络阻塞 |
+  | kRemoteAudioStateChangeReasonNetworkRecovery | `2` | 网络恢复正常 |
+  | kRemoteAudioStateChangeReasonLocalMuted | `3` | 本地用户停止接收远端音频流 |
+  | kRemoteAudioStateChangeReasonLocalUnmuted | `4` | 本地用户恢复接收远端音频流 |
+  | kRemoteAudioStateChangeReasonRemoteMuted | `5` | 远端用户停止发送音频流 |
+  | kRemoteAudioStateChangeReasonRemoteUnmuted | `6` | 远端用户恢复发送音频流 |
+  | kRemoteAudioStateChangeReasonRemoteOffline | `7` | 远端用户离开房间 |
+
+
+
 ## LocalVideoStreamState <span id="localvideostreamstate"></span>
 
 类型: `enum`
@@ -5253,6 +5716,45 @@ App 使用的 cpu 和内存信息。
   | kLocalVideoStreamStateRecording | `1` | 本地视频采集设备启动成功 |
   | kLocalVideoStreamStateEncoding | `2` | 本地视频采集后，首帧编码成功 |
   | kLocalVideoStreamStateFailed | `3` | 本地视频采集设备启动失败 |
+
+
+
+## RemoteVideoState <span id="remotevideostate"></span>
+
+类型: `enum`
+
+远端视频流状态。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kRemoteVideoStateStopped | `0` | 远端视频流默认初始状态，视频尚未开始播放。 |
+  | kRemoteVideoStateStarting | `1` | 本地用户已接收远端视频流首包。 |
+  | kRemoteVideoStateDecoding | `2` | 远端视频流正在解码，正常播放。 |
+  | kRemoteVideoStateFrozen | `3` | 远端视频流卡顿，可能有网络等原因。 |
+  | kRemoteVideoStateFailed | `4` | 远端视频流播放失败。 |
+
+
+
+## RemoteVideoStateChangeReason <span id="remotevideostatechangereason"></span>
+
+类型: `enum`
+
+远端视频流状态改变的原因
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kRemoteVideoStateChangeReasonInternal | `0` | 内部原因 |
+  | kRemoteVideoStateChangeReasonNetworkCongestion | `1` | 网络阻塞 |
+  | kRemoteVideoStateChangeReasonNetworkRecovery | `2` | 网络恢复正常 |
+  | kRemoteVideoStateChangeReasonLocalMuted | `3` | 本地用户停止接收远端视频流或本地用户禁用视频模块 |
+  | kRemoteVideoStateChangeReasonLocalUnmuted | `4` | 本地用户恢复接收远端视频流或本地用户启用视频模块 |
+  | kRemoteVideoStateChangeReasonRemoteMuted | `5` | 远端用户停止发送视频流或远端用户禁用视频模块 |
+  | kRemoteVideoStateChangeReasonRemoteUnmuted | `6` | 远端用户恢复发送视频流或远端用户启用视频模块 |
+  | kRemoteVideoStateChangeReasonRemoteOffline | `7` | 远端用户离开频道。<br>状态转换参考 onStreamRemove(85533#onstreamremove) |
 
 
 
@@ -5470,3 +5972,56 @@ App 使用的 cpu 和内存信息。
   | kAudioReceiveError | `5` | 音频接收异常 |
   | kVideoReceiveError | `6` | 视频接收异常 |
   | kInternalError | `7` | 内部错误，不可恢复 |
+
+
+
+## MediaDeviceWarning <span id="mediadevicewarning"></span>
+
+类型: `enum`
+
+媒体设备警告
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kMediaDeviceWarningOK | `0` | 无警告 |
+  | kMediaDeviceWarningOperationDenied | `1` | 非法设备操作。在使用外部设备时，调用了 SDK 内部设备 API。 |
+  | kMediaDeviceWarningCaptureSilence | `2` | 采集静音。 |
+  | kMediaDeviceWarningDetectLeakEcho | `11` | 通话中出现回声现象。<br>当 [RoomProfileType](85535.md#roomprofiletype) 为 `kRoomProfileTypeMeeting` 和<br>`kRoomProfileTypeMeetingRoom`，且 AEC 关闭时，SDK 自动启动回声检测，如果检测到回声问题，将通过<br>`onAudioDeviceWarning` 返回本枚举值。 |
+  | kMediaDeviceWarningCaptureDetectHowling | `16` | 啸叫。触发该回调的情况如下：1）不支持啸叫抑制的房间模式下，检测到啸叫；2）支持啸叫抑制的房间模式下，检测到未被抑制的啸叫。<br>仅 kRoomProfileTypeCommunication、kRoomProfileTypeMeeting、kRoomProfileTypeMeetingRoom<br>三种房间模式支持啸叫抑制。 建议提醒用户检查客户端的距离或将麦克风和扬声器调至静音。 |
+
+
+
+## SEIStreamEventType <span id="seistreameventtype"></span>
+
+类型: `enum`
+
+黑帧视频流状态
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kSEIStreamEventTypeStreamAdd | `0` | 远端用户发布黑帧视频流。 <br>纯语音通话场景下，远端用户调用 [sendSEIMessage](85532.md#rtcvideo-sendseimessage) 发送 SEI 数据时，SDK 会自动发布一路黑帧视频流，并触发该回调。 |
+  | kSEIStreamEventTypeStreamRemove | `1` | 远端黑帧视频流移除。该回调的触发时机包括： <br>+ 远端用户开启摄像头采集，由语音通话切换至视频通话，黑帧视频流停止发布； <br>+ 远端用户调用 [sendSEIMessage](85532.md#rtcvideo-sendseimessage) 后 1min 内未有 SEI 数据发送，黑帧视频流停止发布； <br>+ 远端用户切换至自定义视频采集时，黑帧视频流停止发布。 |
+
+
+
+## PlayerState <span id="playerstate"></span>
+
+类型: `enum`
+
+播放状态。
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | kPlayerStateIdle | `0` | 播放未启动 |
+  | kPlayerStatePreloaded | `1` | 已加载 |
+  | kPlayerStateOpened | `2` | 播放文件已打开 |
+  | kPlayerStatePlaying | `3` | 正在播放 |
+  | kPlayerStatePaused | `4` | 播放已暂停 |
+  | kPlayerStateStopped | `5` | 播放已停止 |
+  | kPlayerStateFailed | `6` | 播放失败 |
