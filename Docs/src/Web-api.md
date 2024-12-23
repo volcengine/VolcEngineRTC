@@ -42,10 +42,10 @@
 | [sendRoomMessage](#rtcengine-sendroommessage) | 给房间内的所有其他用户群发文本消息。<br>若消息发送成功，同一房间内的其他用户会收到 [onRoomMessageReceived](Web-event.md#onroommessagereceived) 回调。 |
 | [sendRoomBinaryMessage](#rtcengine-sendroombinarymessage) | 给房间内的所有其他用户群发二进制消息。<br>若消息发送成功，同一房间内的其他用户会收到通过 [onRoomBinaryMessageReceived](Web-event.md#onroombinarymessagereceived) 回调发送的消息 |
 | [sendSEIMessage](#rtcengine-sendseimessage) | 通过视频帧发送 SEI 数据。<br>在视频通话场景下，SEI 数据会随视频帧发送；在语音通话场景下，SDK 会自动生成一路 16px × 16px 的黑帧视频流用来发送 SEI 数据。 |
-| [setVideoEncoderConfig](#rtcengine-setvideoencoderconfig) | 在视频发布端设置发布的视频流参数。 |
+| [setVideoEncoderConfig](#rtcengine-setvideoencoderconfig) | 在视频发布端设置摄像头视频流的发布参数。 |
 | [setScreenEncoderConfig](#rtcengine-setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
-| [setRemoteVideoConfig](#rtcengine-setremotevideoconfig) | 设置期望订阅的远端视频流的参数。 |
-| [enableSimulcastMode](#rtcengine-enablesimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式。 |
+| [setRemoteSimulcastStreamType](#rtcengine-setremotesimulcaststreamtype) | 设置期望订阅的远端视频流的参数。 |
+| [setLocalSimulcastMode](#rtcengine-setlocalsimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式，并指定小流的发布参数。 |
 | [enableAudioPropertiesReport](#rtcengine-enableaudiopropertiesreport) | 启用音频信息提示。 |
 | [startLiveTranscoding](#rtcengine-startlivetranscoding) | 开启转推直播，并设置合流的视频视图布局和音频属性。 |
 | [updateLiveTranscoding](#rtcengine-updatelivetranscoding) | 更新转推直播参数。<br>使用 [startLiveTranscoding](Web-api.md#startlivetranscoding) 启用转推直播功能后，使用此方法更新功能配置参数。 |
@@ -108,6 +108,8 @@
 | [getRemoteAudioStats](#rtcengine-getremoteaudiostats) | 获取用户订阅的远端音频流统计信息以及网络状况。 |
 | [getLocalVideoStats](#rtcengine-getlocalvideostats) | 获取本地视频流统计信息以及网络状况。 |
 | [getLocalAudioStats](#rtcengine-getlocalaudiostats) | 本地音频流统计信息以及网络状况。 |
+| [setEarMonitorMode](#rtcengine-setearmonitormode) | 打开/关闭耳返功能。 |
+| [setEarMonitorVolume](#rtcengine-setearmonitorvolume) | 设置耳返音量。 |
 
 
 ### joinRoom <span id="rtcengine-joinroom"></span> 
@@ -1286,8 +1288,8 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
     类型: <code>string | Uint8Array</code>
 
     SEI 消息，不大于 4 KB。
-    当消息为空或大小超限，终止发送，并收到相应的错误提示。
-    SEI PayLoadType 需为 `5` 或 `100`。
+当消息为空或大小超限，终止发送，并收到相应的错误提示。
+SEI PayLoadType 需为 `5` 或 `100`。
 
   - **repeatCount**
 
@@ -1297,7 +1299,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
 ### setVideoEncoderConfig <span id="rtcengine-setvideoencoderconfig"></span> 
 
-在视频发布端设置发布的视频流参数。
+在视频发布端设置摄像头视频流的发布参数。
 
 - **类型**
 
@@ -1307,12 +1309,11 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
 - **注意**
 
+  + 若期望发布多路不同分辨率的流，你需要通过 [setLocalSimulcastMode](#rtcengine-setlocalsimulcastmode) 开启并分别指定小流的发布参数。发布 Simulcast 流时，本接口设置的是大流参数。
   + 调用该方法前，SDK 默认发布一条分辨率 640 × 480 px，帧率 15 FPS，最大编码码率 600 Kbps 的流。
-  + 发布单流时，可以在视频流发布前后调用本方法。视频流发布后，不支持单流与多路流之间的动态切换，不支持修改发布的多路流参数。
+  + 你可以在视频流发布前后调用本方法。
   + 当使用移动端在竖持状态下发布视频流时，设置的分辨率宽高与实际发流参数相反。例如，当设置发送分辨率为 640 × 480 px 时，实际发流参数为 480 × 640 px。
   + 若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。
-  + 若期望发布多路不同分辨率的流，你需要取消自动发布，并调用本方法和 [enableSimulcastMode](#enablesimulcastmode) 方法开启多路流模式，再调用 [publishStream](#publishstream) 手动发布音视频流。
-  + 若调用本方法设置了多个分辨率，但未开启多路流模式，SDK 默认发布分辨率最大的一条流。若开启了发布多路流，但仅调用本方法设置了一路流的参数，SDK 会自动填充 1～2 组小流参数。
   + 该方法适用于摄像头采集的视频流，设置屏幕共享视频流参数参看 [setScreenEncoderConfig](#setscreenencoderconfig)。
 
 - **参数**
@@ -1321,10 +1322,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
     类型: <code>[VideoEncoderConfig](Web-keytype.md#videoencoderconfig) | [VideoEncoderConfig](Web-keytype.md#videoencoderconfig)[]</code>
 
-    要推送的多路视频流的参数，所设置的分辨率是各路流的最大分辨率。
-最多支持设置 3 路参数，超过 3 路时默认取前 3 路的值。
-当设置了多路参数时，分辨率和帧率必须是从大到小排列。为了更好的兼容性，推荐设置的最大层级分辨率与其他层级分辨率比值为整数倍。
-参数最大的一路流的分辨率大于等于 540P 时，支持发布 3 路流；在 270P（含）和 450P（含）之间时，支持发布 2 路流；在 180P 及以下时，开启发布多路流不生效。
+    视频流的发布参数。
 
 - **返回值**
 
@@ -1358,21 +1356,22 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
   类型: <code>Promise<void\></code>
 
-### setRemoteVideoConfig <span id="rtcengine-setremotevideoconfig"></span> 
+### setRemoteSimulcastStreamType <span id="rtcengine-setremotesimulcaststreamtype"></span> 
 
-设置期望订阅的远端视频流的参数。
+发布端开启 Simulcast 功能时，订阅端可以使用本方法设置期望订阅的远端视频流的参数。
 
 - **类型**
 
   ```ts
-  (userId: string, remoteVideoConfig: RemoteVideoConfig) => Promise<void>
+  (userId: string, streamType: SimulcastStreamType) => Promise<void>
   ```
 
 - **注意**
 
-  + 该方法仅在发布端调用 [enableSimulcastMode](#enablesimulcastmode) 开启了发送多路视频流的情况下生效，此时订阅端将收到与设置的期望参数最相近的一路流。
+  + 该方法仅在发布端调用 [setLocalSimulcastMode](#setlocalsimulcastmode) 开启了发送多路视频流的情况下生效，此时订阅端将收到与设置的期望参数最相近的一路流。
   + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。
-  + 该方法需在进房后调用，若想进房前设置，你需调用 [joinRoom](#joinroom)，并对 `roomConfig` 中的 `remoteVideoConfig` 进行设置。
+  + 该方法可在进房后调用。
+  + 更多信息详见[使用 Simulcast 功能](https://www.volcengine.com/docs/6348/1359024)文档。
 
 - **参数**
 
@@ -1382,46 +1381,57 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
     期望配置订阅参数的远端视频流发布用户的 ID。
 
-  - **remoteVideoConfig**
+  - **streamType**
 
-    类型: <code>[RemoteVideoConfig](Web-keytype.md#remotevideoconfig)</code>
+    类型: <code>[SimulcastStreamType](Web-keytype.md#simulcaststreamtype)</code>
 
-    期望配置的远端视频流参数。
+    订阅偏好。
+选项中的大、中、小流对应发布端已发布的三路流，按照分辨率大小排序。
+当不开启 SImulcast 功能时，即发布端只发布了一路流，无论选择哪种偏好，只能订阅到这路流。
+当发布端只发布了两路流时，则选择中流或小流，实际订阅到的都是分辨率较小的流。
 
 - **返回值**
 
   类型: <code>Promise<void\></code>
 
-### enableSimulcastMode <span id="rtcengine-enablesimulcastmode"></span> 
+  调用失败说明参见 [MIXING_OLD_AND_NEW_APIS](Web-errorcode.md#errorcode)。
 
-在视频发布端设置摄像头视频流的大小流模式。
+### setLocalSimulcastMode <span id="rtcengine-setlocalsimulcastmode"></span> 
+
+在视频发布端开启 Simulcast 功能，设置或更新中、小流的发布参数。
 
 - **类型**
 
   ```ts
-  (enabled: boolean) => boolean
+  (mode: VideoSimulcastMode, streamConfig?: VideoEncoderConfig[]) => Promise<void>
   ```
 
 - **注意**
 
-  + 仅可以在发布之前进行大小流模式的设置。
-  + 开启大小流模式后，SDK 会自动设置各路视频的编码参数。如果你需要手动设置，可以调用 [setVideoEncoderConfig](#setvideoencoderconfig)。
-  + Firefox 浏览器不支持大小流功能。
+  + Simulcast 只对摄像头采集到的视频流生效。
+  + 在发布端开启 Simulcast 功能对浏览器的版本要求参见[Web SDK 浏览器兼容性和已知问题](https://www.volcengine.com/docs/6348/111854)。
 
 - **参数**
 
-  - **enabled**
+  - **mode**
 
-    类型: <code>boolean</code>
+    类型: <code>[VideoSimulcastMode](Web-keytype.md#videosimulcastmode)</code>
 
-    是否开启大小流。
+    默认为只发送单流。你应在进房前调用本接口设定本参数。
+
+  - **streamConfig**
+
+    类型: <code>[VideoEncoderConfig](Web-keytype.md#videoencoderconfig)[] | undefined</code>
+
+    中、小流发布编码参数。分辨率按照从小到大顺序，且每路流参数分辨率需小于通过 [setVideoEncoderConfig](#rtcengine-setvideoencoderconfig) 设置的大流参数。否则可能会设置失败。
+你可以在进房前后设置本参数。发布后，无法修改小流路数，但可以更新中、小流的编码参数。
+多流模式下，默认小流参数为 120px × 90px @10fps, 码率为 100kpbs。
 
 - **返回值**
 
-  类型: <code>boolean</code>
+  类型: <code>Promise<void\></code>
 
-  + `true`：设置成功。
-  + `false`：设置失败。
+  调用失败说明参见 [SET_SIMULCAST_FAILED](Web-errorcode.md#errorcode) 和  [MIXING_OLD_AND_NEW_APIS](Web-errorcode.md#errorcode)。
 
 ### enableAudioPropertiesReport <span id="rtcengine-enableaudiopropertiesreport"></span> 
 
@@ -2306,7 +2316,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
 - **注意**
 
-  + 必须在进房前设置，进房后设置或更改设置无效。
+  + 使用前提：必须在进房前调用本方法，进房后设置或更改设置无效。并且已经调用 [setLocalSimulcastMode](#rtcengine-setlocalsimulcastmode) 开启 Simulcast 功能。
   + 设置回退选项后，订阅的音视频流发生回退或从回退中恢复时，会收到 [onSimulcastSubscribeFallback](Web-event.md#onsimulcastsubscribefallback) 和 [onRemoteVideoSizeChanged](Web-event.md#onremotevideosizechanged) 回调通知。
   + 可以调用 API 或者在服务端下发策略设置回退。当使用服务端下发配置实现时，下发配置优先级高于在客户端使用 API 设定的配置。
 
@@ -2639,8 +2649,9 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
   ```
 
 - **注意**
+
   + 在调用此接口前，请确保已经发起采集。当 [getLocalStreamTrack](Web-api.md#getlocalstreamtrack) 不为空时，说明已经采集到视频流。
-  + 本地视频处理的效果，镜像、美颜和虚拟背景均包含在截取的画面中。
+  + 本地视频处理的效果仅美颜和虚拟背景会包含在截取的画面中。
   + 不管采用 SDK 内部采集，还是自定义采集，都可以进行截图。
 
 - **参数**
@@ -2668,6 +2679,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
   ```
 
 - **注意**
+
   在调用此接口前，请确保已经订阅远端流。当 [getRemoteStreamTrack](Web-api.md#rtcengine-getremotestreamtrack) 不为空时，说明已经订阅到远端流。
 
 - **参数**
@@ -3150,6 +3162,60 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
   包括麦克风采集和屏幕共享音频。
 
+### setEarMonitorMode <span id="rtcengine-setearmonitormode"></span> 
+
+打开/关闭耳返功能。
+
+- **类型**
+
+  ```ts
+  (streamIndex: StreamIndex, position: EarMonitorPosition) => Promise<void>
+  ```
+
+- **参数**
+
+  - **streamIndex**
+
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
+
+    流属性，包括主流、屏幕流。
+
+  - **position**
+
+    类型: <code>[EarMonitorPosition](Web-keytype.md#earmonitorposition)</code>
+
+    是否开启耳返音频。指定耳返的音频是否经过前处理。
+
+- **返回值**
+
+  类型: <code>Promise<void\></code>
+
+  开启功能后，如果耳返自动播放失败，建议在收到 [onAutoplayFailed](Web-event.md#engineevents-onautoplayfailed) 通知时再次调用本接口开启。
+
+### setEarMonitorVolume <span id="rtcengine-setearmonitorvolume"></span> 
+
+设置耳返音量。
+
+- **类型**
+
+  ```ts
+  (streamIndex: StreamIndex, volume: number) => void
+  ```
+
+- **参数**
+
+  - **streamIndex**
+
+    类型: <code>[StreamIndex](Web-keytype.md#streamindex)</code>
+
+    流属性，包括主流、屏幕流。
+
+  - **volume**
+
+    类型: <code>number</code>
+
+    耳返音量，调节范围：[0,400]。初始值为 `100`。
+
 
 ## VERTC <span id="vertc"></span>
 
@@ -3171,6 +3237,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 | [getSupportedCodecs](#vertc-getsupportedcodecs) | 获取当前浏览器支持的编解码类型。<br>若你已开通 vp8 业务，可以在进房前调用该接口查看当前浏览器是否支持 vp8 编码类型 |
 | [setLogConfig](#vertc-setlogconfig) | 配置本地缓存的日志级别, 以及可使用的最大缓存空间。 |
 | [downloadLog](#vertc-downloadlog) | 下载本地缓存生成文件。 |
+| [getElectronScreenSources](#vertc-getelectronscreensources) | 在 Electron 框架下使用屏幕共享功能时，返回屏幕共享源列表。 |
 
 
 ### createEngine <span id="vertc-createengine"></span> 
@@ -3267,7 +3334,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
   类型: <code>Promise<MediaDeviceInfo[]\></code>
 
-  媒体设备列表。
+  媒体设备列表。参看 [MediaDeviceInfo](https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo)。
 
 ### enableDevices <span id="vertc-enabledevices"></span> 
 
@@ -3323,7 +3390,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
   类型: <code>Promise<MediaDeviceInfo[]\></code>
 
-  所有的麦克风设备列表。
+  所有的麦克风设备列表。参看 [MediaDeviceInfo](https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo)。
 
 ### enumerateVideoCaptureDevices <span id="vertc-enumeratevideocapturedevices"></span> 
 
@@ -3344,7 +3411,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
   类型: <code>Promise<MediaDeviceInfo[]\></code>
 
-  所有的摄像头设备列表。
+  所有的摄像头设备列表。参看 [MediaDeviceInfo](https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo)。
 
 ### enumerateAudioPlaybackDevices <span id="vertc-enumerateaudioplaybackdevices"></span> 
 
@@ -3365,7 +3432,7 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
 
   类型: <code>Promise<MediaDeviceInfo[]\></code>
 
-  所有的音频播放设备列表。
+  所有的音频播放设备列表。参看 [MediaDeviceInfo](https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo)。
 
 ### isSupported <span id="vertc-issupported"></span> 
 
@@ -3446,6 +3513,35 @@ SDK 将在指定用户发布音频流后开始回调音频数据。
     类型: <code>string | undefined</code>
 
     本地缓存的 key。若为空则下载当前缓存中的日志。
+
+### getElectronScreenSources <span id="vertc-getelectronscreensources"></span> 
+
+在 Electron 框架下使用屏幕共享功能时，返回屏幕共享源列表。
+
+- **类型**
+
+  ```ts
+  (type?: ScreenSourceType) => Promise<ElectronDesktopCapturerSource[]>
+  ```
+
+- **注意**
+
+  实现步骤和注意事项参见 [Electron 框架下通过 Web SDK 实现屏幕共享](https://www.volcengine.com/docs/6348/1340581)
+
+- **参数**
+
+  - **type**
+
+    类型: <code>[ScreenSourceType](Web-keytype.md#screensourcetype) | undefined</code>
+
+    需要获取的共享源类型，应用窗口或屏幕。如果为空则获取所有可以获取的共享源。
+
+- **返回值**
+
+  类型: <code>Promise<[ElectronDesktopCapturerSource](Web-keytype.md#electrondesktopcapturersource)[]\></code>
+
+  屏幕共享源列表。
+  调用失败说明参见 [ERR_ELECTRON_IS_NULL](Web-errorcode.md#errorcode) 和 [ELECTRON_DESKTOP_CAPTURER_GET_SOURCES_ERROR](Web-errorcode.md#errorcode)
 
 
 ## AudioMixingManager <span id="audiomixingmanager"></span>

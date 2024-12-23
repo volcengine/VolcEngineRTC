@@ -28,6 +28,10 @@
 | [stopAudioDeviceRecordAndPlayTest](Web-api.md#rtcengine-stopaudiodevicerecordandplaytest) | 停止采集本地音频，并开始播放采集到的声音。录音播放完毕后，设备测试流程结束。<br>调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 30s 内调用本接口来停止采集并开始播放此前采集到的声音。 |
 | [stopAudioDevicePlayTest](Web-api.md#rtcengine-stopaudiodeviceplaytest) | 停止由调用 [startAudioDeviceRecordTest](Web-api.md#startaudiodevicerecordtest) 开始的音频播放设备测试。<br>在音频播放设备测试自动结束前，可调用本接口停止音频采集与播放测试。 |
 | [onAudioPlaybackDeviceTestVolume](Web-event.md#engineevents-onaudioplaybackdevicetestvolume) | 回调音频设备测试时的播放音量 |
+| [setAudioCaptureDevice](Web-api.md#rtcengine-setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
+| [onAudioDeviceStateChanged](Web-event.md#engineevents-onaudiodevicestatechanged) | 音频媒体设备状态改变。 |
+| [setVideoCaptureDevice](Web-api.md#rtcengine-setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
+| [onVideoDeviceStateChanged](Web-event.md#engineevents-onvideodevicestatechanged) | 视频媒体设备状态改变。 |
 
 
 
@@ -56,7 +60,6 @@
 
 | 方法 | 描述 |
 | :-- | :-- |
-| [setAudioCaptureDevice](Web-api.md#rtcengine-setaudiocapturedevice) | 设置内部采集时使用的麦克风。 |
 | [setAudioPlaybackDevice](Web-api.md#rtcengine-setaudioplaybackdevice) | 设置音频播放设备，例如扬声器或者耳机，默认使用扬声器。 |
 | [startAudioCapture](Web-api#rtcengine-startaudiocapture) | 开启内部音频采集。默认为关闭状态。<br>内部采集是指：使用 RTC SDK 内置采集机制进行音频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
 | [startAudioAndVideoCapture](Web-api#rtcengine-startaudioandvideocapture) | 使用内部采集模块同时开启音视频采集。调用该方法，浏览器会同时请求麦克风和摄像头授权，用户只需授权一次。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 和 [onUserStartAudioCapture](Web-event.md#onuserstartaudiocapture) 的回调。 |
@@ -67,13 +70,14 @@
 | [getAudioVolume](Web-api.md#rtcengine-getaudiovolume) | 获取音量大小。包括内部采集、外部采集的本地流以及远端流。 |
 | [setAudioCaptureConfig](Web-api.md#rtcengine-setaudiocaptureconfig) | 设置 RTC SDK 内部采集时的音频采集参数。默认参数由浏览器决定。 |
 | [enableAudioPropertiesReport](Web-api.md#rtcengine-enableaudiopropertiesreport) | 启用音频信息提示。 |
-| [onAudioDeviceStateChanged](Web-event.md#engineevents-onaudiodevicestatechanged) | 音频媒体设备状态改变。 |
-| [onLocalAudioPropertiesReport](Web-event#engineevents-onlocalaudiopropertiesreport) | 调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的相关信息。<br>本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。 |
+| [onLocalAudioPropertiesReport](Web-event#engineevents-onlocalaudiopropertiesreport) | 调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，根据设置的 interval 值，你会周期性地收到此回调，了解本地音频的瞬时信息。<br>本地音频包括使用 RTC SDK 内部机制采集的麦克风音频和屏幕音频。 |
 | [onRemoteAudioPropertiesReport](Web-event#engineevents-onremoteaudiopropertiesreport) | 远端用户进房后，本地调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport)，根据设置的 interval 值，本地会周期性地收到此回调，了解订阅的远端用户的瞬时音频信息。<br>远端用户的音频包括使用 RTC SDK 内部机制/自定义机制采集的麦克风音频和屏幕音频。 |
 | [onActiveSpeaker](Web-event#engineevents-onactivespeaker) | 成功调用 [enableAudioPropertiesReport](Web-api.md#enableaudiopropertiesreport) 后，当房间内用户数量大于或等于 2 且有活跃用户时，你会周期性收到此回调，获取房间内音量最大用户的信息。 |
 | [onAudioPlaybackDeviceChanged](Web-event#engineevents-onaudioplaybackdevicechanged) | 当调用 [setAudioPlaybackDevice](Web-api.md#setaudioplaybackdevice) 设置音频播放设备时，会收到此事件。 |
 | [onUserStartAudioCapture](Web-event#engineevents-onuserstartaudiocapture) | 房间内的可见用户调用 [startAudioCapture](Web-api.md#startaudiocapture) 开启音频采集时，房间内其他用户会收到此事件。 |
 | [onUserStopAudioCapture](Web-event#engineevents-onuserstopaudiocapture) | 房间内的可见用户调用 [stopAudioCapture](Web-api.md#stopaudiocapture) 关闭音频采集时，房间内其他用户会收到此事件。 |
+| [setEarMonitorMode](Web-api.md#rtcengine-setearmonitormode) | 打开/关闭耳返功能。 |
+| [setEarMonitorVolume](Web-api.md#rtcengine-setearmonitorvolume) | 设置耳返音量。 |
 
 
 
@@ -81,7 +85,6 @@
 
 | 方法 | 描述 |
 | :-- | :-- |
-| [setVideoCaptureDevice](Web-api.md#rtcengine-setvideocapturedevice) | 设置内部采集时使用的摄像头。 |
 | [startVideoCapture](Web-api#rtcengine-startvideocapture) | 开启内部视频采集。默认为关闭状态。<br>内部视频采集是指：使用 RTC SDK 内置的视频采集机制进行视频采集。<br>可见用户进房后调用该方法，房间中的其他用户会收到 [onUserStartVideoCapture](Web-event.md#onuserstartvideocapture) 的回调。 |
 | [stopVideoCapture](Web-api#rtcengine-stopvideocapture) | 关闭内部视频采集。<br>发布流后调用该方法，房间中的其他用户会收到 [onUserStopVideoCapture](Web-event.md#onuserstopvideocapture) 的回调。 |
 | [setLocalVideoPlayer](Web-api.md#rtcengine-setlocalvideoplayer) | 设置本地视频渲染时，使用的视图，并设置渲染模式。<br>调用本方法绑定视图以后，你可以通过 `onPlayerEvent` 来监听播放状态。<br>你可以通过再次调用本方法，并绑定空视图来解除绑定。如果已创建了多个播放器，且存在默认播放器，不指定 playerId，将解绑默认播放器。 |
@@ -90,9 +93,8 @@
 | [stop](Web-api.md#rtcengine-stop) | 暂停音视频流播放。 |
 | [setLocalVideoMirrorType](Web-api.md#rtcengine-setlocalvideomirrortype) | 是否开启本地视频流镜像模式。 |
 | [setRemoteVideoMirrorType](Web-api.md#rtcengine-setremotevideomirrortype) | 开关远端视频流镜像模式。 |
-| [setVideoEncoderConfig](Web-api.md#rtcengine-setvideoencoderconfig) | 在视频发布端设置发布的视频流参数。 |
+| [setVideoEncoderConfig](Web-api.md#rtcengine-setvideoencoderconfig) | 在视频发布端设置摄像头视频流的发布参数。 |
 | [setDummyCaptureImagePath](Web-api.md#rtcengine-setdummycaptureimagepath) | 停止内部摄像头采集时，使用静态图片填充本地推送的视频流。 |
-| [onVideoDeviceStateChanged](Web-event.md#engineevents-onvideodevicestatechanged) | 视频媒体设备状态改变。 |
 | [onUserStartVideoCapture](Web-event#engineevents-onuserstartvideocapture) | 房间内的可见用户调用 [startVideoCapture](Web-api.md#startvideocapture) 开启内部视频采集时，房间内其他用户会收到此事件。 |
 | [onUserStopVideoCapture](Web-event#engineevents-onuserstopvideocapture) | 房间内的可见用户调用 [stopVideoCapture](Web-api.md#stopvideocapture) 关闭内部视频采集时，房间内其他用户会收到此事件。 |
 | [onLocalVideoSizeChanged](Web-event.md#engineevents-onlocalvideosizechanged) | 当实际采集的参数与设置的编码参数不一致时，SDK 会触发该回调返回实际采集视频的参数。 |
@@ -112,8 +114,8 @@
 | [unsubscribeStream](Web-api.md#rtcengine-unsubscribestream) | 取消订阅房间内指定的通过摄像头/麦克风采集的媒体流。<br>该方法对自动订阅和手动订阅模式均适用。 |
 | [pauseAllSubscribedStream](Web-api.md#rtcengine-pauseallsubscribedstream) | 暂停接收来自远端的媒体流。 |
 | [resumeAllSubscribedStream](Web-api.md#rtcengine-resumeallsubscribedstream) | 恢复接收来自远端的媒体流 |
-| [setRemoteVideoConfig](Web-api.md#rtcengine-setremotevideoconfig) | 设置期望订阅的远端视频流的参数。 |
-| [enableSimulcastMode](Web-api.md#rtcengine-enablesimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式。 |
+| [setLocalSimulcastMode](Web-api.md#rtcengine-setlocalsimulcastmode) | 在视频发布端设置摄像头视频流的大小流模式，并指定小流的发布参数。 |
+| [setRemoteSimulcastStreamType](Web-api.md#rtcengine-setremotesimulcaststreamtype) | 设置期望订阅的远端视频流的参数。 |
 | [setSubscribeFallbackOption](Web-api.md#rtcengine-setsubscribefallbackoption) | 设置订阅的音视频流的回退选项。<br>回退指在网络不佳时允许订阅流进行降级或只订阅音频流，以保证通话流畅。 |
 | [setRemoteUserPriority](Web-api.md#rtcengine-setremoteuserpriority) | 设置用户优先级。<br>该方法与 [setSubscribeFallbackOption](Web-api.md#setsubscribefallbackoption) 搭配使用。<br>开启回退后，会优先保证收到的高优先级用户的流的质量。 |
 | [startForwardStreamToRooms](Web-api.md#rtcengine-startforwardstreamtorooms) | 开始跨房间转发媒体流，示例代码可参看[跨房间转发媒体流功能文档](https://www.volcengine.com/docs/6348/104398)。<br>在调用 [joinRoom](Web-api.md#rtcengine-joinroom) 后调用本接口，实现向多个房间转发媒体流，适用于跨房间连麦等场景。 |
@@ -168,6 +170,7 @@
 | :-- | :-- |
 | [startScreenCapture](Web-api.md#rtcengine-startscreencapture) | 使用内部采集模块，采集当前屏幕视频流，用于共享。 |
 | [stopScreenCapture](Web-api.md#rtcengine-stopscreencapture) | 停止屏幕共享流内部采集。 |
+| [getElectronScreenSources](Web-api.md#vertc-getelectronscreensources) | 在 Electron 框架下使用屏幕共享功能时，返回屏幕共享源列表。 |
 | [setScreenEncoderConfig](Web-api#rtcengine-setscreenencoderconfig) | 设置共享屏幕的视频编码参数，同时对视频采集生效。<br>若设置的参数浏览器不支持，RTC SDK 按照浏览器支持的参数范围进行采集和编码，并通过回调 [onLocalVideoSizeChanged](Web-event.md#onlocalvideosizechanged) 通知采集的实际参数。 |
 | [publishScreen](Web-api.md#rtcengine-publishscreen) | 在当前所在房间内发布本地屏幕共享音视频流 |
 | [unpublishScreen](Web-api.md#rtcengine-unpublishscreen) | 停止将本地屏幕共享音视频流发布到当前所在房间中 |
@@ -278,6 +281,16 @@
 | :-- | :-- |
 | [takeLocalSnapshot](Web-api.md#rtcengine-takelocalsnapshot) | 截取本地视频画面 |
 | [takeRemoteSnapshot](Web-api.md#rtcengine-takeremotesnapshot) | 截取远端视频画面 |
+
+
+
+## 安全与加密
+
+| 方法 | 描述 |
+| :-- | :-- |
+| [startCloudProxy](Web-api.md#rtcengine-startcloudproxy) | 开启云代理 |
+| [stopCloudProxy](Web-api.md#rtcengine-stopcloudproxy) | 关闭云代理 |
+| [onCloudProxyConnected](Web-event#engineevents-oncloudproxyconnected) | 调用 [startCloudProxy](Web-api.md#startcloudproxy) 开启云代理，SDK 首次成功连接云代理服务器时，回调此事件。 |
 
 
 

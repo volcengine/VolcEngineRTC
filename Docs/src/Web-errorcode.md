@@ -67,6 +67,10 @@
   | UNEXPECTED_INVOKE_FORWARD_STREAM | `'UNEXPECTED_INVOKE_FORWARD_STREAM'` | 跨房间转发媒体流相关 API 的调用时机不正确，请参考各接口说明确认调用的先后顺序。 |
   | ROOM_FORBIDDEN | `'ROOM_FORBIDDEN'` | 调用 `joinRoom` 进房失败，原因是房间被封禁。 |
   | USER_FORBIDDEN | `'USER_FORBIDDEN'` | 调用 `joinRoom` 进房失败，原因是本地用户被封禁。 |
+  | ERR_ELECTRON_IS_NULL | `'ERR_ELECTRON_IS_NULL'` | 获取 Electron 实例失败。确认当前满足 Electron 开发环境要求，参考 [Electron 架构下通过 Web SDK 实现屏幕共享](https://www.volcengine.com/docs/6348/1340581)。 |
+  | ELECTRON_DESKTOP_CAPTURER_GET_SOURCES_ERROR | `'ELECTRON_DESKTOP_CAPTURER_GET_SOURCES_ERROR'` | 在 Electron 环境中获取桌面共享源失败。 |
+  | SET_SIMULCAST_FAILED | `'SET_SIMULCAST_FAILED'` | Simulcast 功能设置失败。确认调用时机是否满足 [`setLocalSimulcastMode`](Web-api.md#rtcengine-setlocalsimulcastmode) 要求。<br>开始发布后可以更改分辨率，但不能更改路数。 |
+  | MIXING_OLD_AND_NEW_APIS | `'MIXING_OLD_AND_NEW_APIS'` | 混用了 Simulcast 功能的废弃接口和当前接口。后续版本将不再维护废弃接口，并预计在多个版本后删除，建议尽快替换为当前接口。<br>+ `setRemoteVideoConfig` 已废弃，请使用 [`setRemoteSimulcastStreamType`](Web-api.md#rtcengine-setremotesimulcaststreamtype)。<br>+ `enableSimulcastMode` 已废弃，请使用 [`setLocalSimulcastMode`](Web-api.md#rtcengine-setlocalsimulcastmode)。 |
 
 
 

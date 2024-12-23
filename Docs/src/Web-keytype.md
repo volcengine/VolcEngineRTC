@@ -615,6 +615,14 @@ inactive：设备已断开连接。
 
 客户端到服务端数据传输的往返时延，单位：ms
 
+<p style="font-size: 16px;font-weight: bolder;"> codecType <span id="remotevideostats-codectype"></span></p> 
+
+类型: <code>"H264" | "VP8"</code>
+
+视频编码格式。
+"H264": H.264 格式。
+"VP8": VP8 格式。
+
 
 ## LocalStreamStats <span id="localstreamstats"></span>
 
@@ -755,7 +763,7 @@ inactive：设备已断开连接。
 
 <p style="font-size: 16px;font-weight: bolder;"> codecType <span id="localvideostats-codectype"></span></p> 
 
-类型: <code>string</code>
+类型: <code>"H264" | "VP8"</code>
 
 视频编码格式。
 "H264": H.264 格式。
@@ -1049,6 +1057,28 @@ inactive：设备已断开连接。
 类型: <code>string | undefined</code>
 
 播放器 ID。空值为默认播放器。
+
+<p style="font-size: 16px;font-weight: bolder;"> position <span id="autoplayfailedevent-position"></span></p> 
+
+类型: <code>[EarMonitorPosition](#earmonitorposition) | undefined</code>
+
+是否开启耳返音频。耳返的音频是否经过前处理。
+
+
+## EarMonitorPosition <span id="earmonitorposition"></span>
+
+类型: `enum`
+
+是否开启耳返音频
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | NONE | `0` | 不开启耳返 |
+  | AFTER_CAPTURE | `1` | 未经混音和前处理的本地音频 |
+  | AFTER_PROCESS | `2` | 经过前处理的本地音频，未经混音 |
+
 
 
 ## AudioMixingStateChangedEvent <span id="audiomixingstatechangedevent"></span>
@@ -1621,6 +1651,7 @@ false: 音频流发布被解禁
 `include`：（默认）允许。
 `exclude`：禁止。
 Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
+Electron 框架下，只支持在 Windows 系统共享系统音频。
 详见 [systemAudio](https://developer.chrome.com/docs/web-platform/screen-sharing-controls/#systemAudio)。
 
 <p style="font-size: 16px;font-weight: bolder;"> surfaceSwitching <span id="screenconfig-surfaceswitching"></span></p> 
@@ -1642,6 +1673,14 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 `exclude`：禁止。
 仅支持 Chrome 107 及以上版本、Edge 107 及以上版本。
 详见 [selfBrowserSurface](https://developer.chrome.com/docs/web-platform/screen-sharing-controls/#selfBrowserSurface)。
+
+<p style="font-size: 16px;font-weight: bolder;"> sourceId <span id="screenconfig-sourceid"></span></p> 
+
+类型: <code>string | undefined</code>
+
+在 Electron 框架下指定屏幕共享源 ID。
+你可以通过 [getElectronScreenSources](Web-api.md#vertc-getelectronscreensources) 获取。
+不传本参数时，SDK 将在开始共享前弹出默认选择框，供用户选择屏幕共享源。
 
 
 ## VideoPlayerOption <span id="videoplayeroption"></span>
@@ -1813,6 +1852,38 @@ Windows 设备上的 Chrome 105 及以上版本、Edge 105 及以上版本。
 - **注意**
 
   Firefox 浏览器不支持设置此参数，参看 [contentHint 浏览器兼容信息](https://caniuse.com/?search=contentHint)。
+
+
+## SimulcastStreamType <span id="simulcaststreamtype"></span>
+
+类型: `enum`
+
+订阅大小流偏好
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | VIDEO_STREAM_HIGH | `'high'` | 大流 |
+  | VIDEO_STREAM_MID | `'mid'` | 中流 |
+  | VIDEO_STREAM_LOW | `'low'` | 小流 |
+
+
+
+## VideoSimulcastMode <span id="videosimulcastmode"></span>
+
+类型: `enum`
+
+发布大小流模式
+
+- **成员**
+
+  | 属性 | 值 | 描述 |
+  | :-- | :-- | :-- |
+  | VIDEO_ONLY_ONE | `0` | 单流模式。始终只有 1 路分辨率的流。 |
+  | VIDEO_ON_DEMAND | `1` | 按需订阅模式。发送端会根据订阅端的状态，按需发布。无订阅偏好设置默认发送 2 路。 |
+  | VIDEO_ALWAYS_SIMULCAST | `2` | 多流模式。发送端始终按照设置的参数发布所有大小流。默认发送 2 路。 |
+
 
 
 ## AudioPropertiesConfig <span id="audiopropertiesconfig"></span>
@@ -2013,6 +2084,11 @@ AAC 编码规格。
 视频 I 帧时间间隔。单位为秒，取值范围为 [1, 5]，默认值为 2 秒。
 本参数不支持过程中更新。
 
+<p style="font-size: 16px;font-weight: bolder;"> kBitRate <span id="livetranscodevideoconfig-kbitrate"></span></p> 
+
+类型: <code>number</code>
+
+合流视频码率。单位为 Kbps，取值范围为 [1,10000]，默认值为自适应模式。
 
 ## TRANSCODING_VIDEO_CODEC <span id="transcoding_video_codec"></span>
 
@@ -2270,6 +2346,7 @@ RTC 配置下发的代理地址
 ## PublicStreamLayoutRegion <span id="publicstreamlayoutregion"></span>
 
 多路媒体流中一路流的布局设置。
+本结构体包含了 [LiveTranscodeLayoutRegion](#livetranscodelayoutregion) 中 `isLocalUser` 和 `contentControl` 除外的所有参数及以下参数。
 
 - **类型**
 
@@ -2327,7 +2404,7 @@ RTC 配置下发的代理地址
   | 属性 | 值 | 描述 |
   | :-- | :-- | :-- |
   | DISABLE | `0` | 不开启回退功能。默认设置。 |
-  | VIDEO_STREAM_LOW | `1` | 下行网络不佳时，对视频流做降级处理。具体降级规则参看[音视频流回退](https://www.volcengine.com/docs/6348/70137)文档。<br>该设置仅对发布端调用 [EnableSimulcastMode](Web-api.md#enablesimulcastmode) 开启发送多路流功能的情况生效。 |
+  | VIDEO_STREAM_LOW | `1` | 下行网络不佳时，对视频流做降级处理。<br>该设置仅对发布端开启 Simulcast 功能时生效。参见[使用 Simulcast 功能](https://www.volcengine.com/docs/6348/1359024)。 |
   | AUDIO_ONLY | `2` | 下行网络不佳时，取消接收视频，仅接收音频。<br>当发布端开启发送多路流功能时，设置此选项不利于提升用户体验，因此不建议设置此选项。 |
 
 
@@ -2543,3 +2620,63 @@ RTC 配置下发的代理地址
   | AUTO_PLAY | `0` | 默认值，自动播放音频和视频 |
   | VIDEO_ONLY | `1` | 自动播放视频，不自动播放音频 |
   | PLAY_MANUALLY | `2` | 不自动播放，引导用户通过交互，手动播放 |
+
+
+
+## ScreenSourceType <span id="screensourcetype"></span>
+
+Electron 框架下，需要获取的共享源类型。
+• `'screen'`: 屏幕。
+• `'window'`: 应用和窗口。
+
+- **类型**
+
+  ```ts
+  'screen' | 'window'
+  ```
+
+
+## ElectronDesktopCapturerSource <span id="electrondesktopcapturersource"></span>
+
+类型: `interface`
+
+Electron 框架下屏幕共享源对象。
+
+<p style="font-size: 16px;font-weight: bolder;"> id <span id="electrondesktopcapturersource-id"></span></p> 
+
+类型: <code>string</code>
+
+唯一标识。
+
+<p style="font-size: 16px;font-weight: bolder;"> name <span id="electrondesktopcapturersource-name"></span></p> 
+
+类型: <code>string</code>
+
+共享源名称。
+
+<p style="font-size: 16px;font-weight: bolder;"> thumbnail <span id="electrondesktopcapturersource-thumbnail"></span></p> 
+
+类型: <code>[IElectronNativeImage](#ielectronnativeimage)</code>
+
+缩略图。
+
+
+## IElectronNativeImage <span id="ielectronnativeimage"></span>
+
+类型: `interface`
+
+在 Electron 框架下屏幕共享源的缩略图
+
+<p style="font-size: 16px;font-weight: bolder;"> toDataURL <span id="ielectronnativeimage-todataurl"></span></p> 
+
+base 64 编码 Data URL 字符串。参见 [nativeImage](http://electron.atom.io/docs/api/native-image)。
+
+- **类型**
+
+  ```ts
+  () => string
+  ```
+
+- **返回值**
+
+  类型: <code>string</code>
