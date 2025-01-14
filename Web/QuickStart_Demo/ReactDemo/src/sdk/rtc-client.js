@@ -116,13 +116,13 @@ export default class RtcClient {
     if (this.streamOptions.audio && devices.audioInputs.length) {
       await this.engine.startAudioCapture(devices.audioInputs[0].deviceId);
     } else {
-      devicesStatus['video'] = 0;
+      devicesStatus['audio'] = 0;
       this.engine.unpublishStream(MediaType.AUDIO);
     }
     if (this.streamOptions.video && devices.videoInputs.length) {
       await this.engine.startVideoCapture(devices.videoInputs[0].deviceId);
     } else {
-      devicesStatus['audio'] = 0;
+      devicesStatus['video'] = 0;
       this.engine.unpublishStream(MediaType.VIDEO);
     }
 

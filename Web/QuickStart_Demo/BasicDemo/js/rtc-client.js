@@ -114,7 +114,7 @@ class RtcClient {
     if (streamOptions.audio && devices.audioInputs.length) {
       await this.engine.startAudioCapture();
     } else {
-      devicesStatus['video'] = 0;
+      devicesStatus['audio'] = 0;
       this.engine.unpublishStream(VERTC.MediaType.AUDIO);
       isVideoOn = false;
       changeMicOrVideoIconUrl('video', isVideoOn, OFFVIDEOICON, ONVIDEOICON);
@@ -122,7 +122,7 @@ class RtcClient {
     if (streamOptions.video && devices.videoInputs.length) {
       await this.engine.startVideoCapture();
     } else {
-      devicesStatus['audio'] = 0;
+      devicesStatus['video'] = 0;
       this.engine.unpublishStream(VERTC.MediaType.VIDEO);
       isMicOn = false;
       changeMicOrVideoIconUrl('mic', isMicOn, OFFMICICON, ONMICICON);
