@@ -1,10 +1,13 @@
 /**
  * @module LiveTranscode
  * @param {appid}: Your AppID
+ * @param {appKey}: Your AppKey
  */
-const appid = window.parent?.__BASE_CONFIG__?.appid;
+const appid = 'your_appid';
+const appKey = 'your_appkey';
 
 if (!appid) alert("请先获取 AppID");
+if (!appKey) alert("请先获取 AppKey");
 
 const engine = VERTC.createEngine(appid);
 
@@ -844,7 +847,7 @@ async function joinRoom() {
   let token;
   try {
     const res = await fetch(
-      `https://demo.volcvideo.com/exampleCenter/openApi/getTokenByAppId?appID=${appid}&roomID=${JoinRoomConfig.roomId}&userID=${JoinRoomConfig.userId}`
+      `https://demo.volcvideo.com/exampleCenter/openApi/getTokenByAppId?appID=${appid}&roomID=${JoinRoomConfig.roomId}&userID=${JoinRoomConfig.userId}&appKey=${appKey}`
     );
 
     const result = await res.json();

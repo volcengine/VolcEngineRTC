@@ -1,8 +1,10 @@
 /**
  * @module Beauty
  * @param {appid}: Your AppID
+ * @param {appKey}: Your AppKey
  */
-const appid = window.parent?.__BASE_CONFIG__?.appid;
+const appid = 'your_appid';
+const appKey = 'your_appkey';
 
 const engine = VERTC.createEngine(appid);
 
@@ -888,7 +890,7 @@ async function joinRoom() {
   let token;
   try {
     const res = await fetch(
-      `https://demo.volcvideo.com/exampleCenter/openApi/getTokenByAppId?appID=${appid}&roomID=${JoinRoomConfig.roomId}&userID=${JoinRoomConfig.userId}`
+      `https://demo.volcvideo.com/exampleCenter/openApi/getTokenByAppId?appID=${appid}&roomID=${JoinRoomConfig.roomId}&userID=${JoinRoomConfig.userId}&appKey=${appKey}`
     );
 
     const result = await res.json();

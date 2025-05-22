@@ -1,12 +1,15 @@
 /**
  * @module VirtualBackground
  * @param {appid}: Your AppID
+ * @param {appKey}: Your AppKey
  * @param {auth}:  Your Auth file url
  */
-const appid = window.parent?.__BASE_CONFIG__?.appid;
+const appid = 'your_appid';
+const appKey = 'your_appkey';
 const auth = window.parent?.__BASE_CONFIG__?.auth;
 
 if (!appid) alert("请先获取 AppID");
+if (!appKey) alert("请先获取 AppKey");
 if (!auth) alert("请先获取 Auth 鉴权文件");
 
 const BackgroundAIBackend = {
@@ -60,6 +63,7 @@ async function registerBeautyExtension() {
   }
   $("#enable").change(async function () {
     if (this.checked) {
+      console.log('check',this.checked)
       /** Default in blur mode */
       extension.setBackgroundMode(currentMode);
       extension.enableVirtualBackground();
@@ -977,7 +981,7 @@ async function joinRoom() {
   let token;
   try {
     const res = await fetch(
-      `https://demo.volcvideo.com/exampleCenter/openApi/getTokenByAppId?appID=${appid}&roomID=${JoinRoomConfig.roomId}&userID=${JoinRoomConfig.userId}`
+      `https://demo.volcvideo.com/exampleCenter/openApi/getTokenByAppId?appID=${appid}&roomID=${JoinRoomConfig.roomId}&userID=${JoinRoomConfig.userId}&appKey=${appKey}`
     );
 
     const result = await res.json();
