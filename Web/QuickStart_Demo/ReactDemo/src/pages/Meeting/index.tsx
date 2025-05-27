@@ -74,14 +74,7 @@ const Meeting: React.FC<Record<string, unknown>> = () => {
     },
     [rtc, setJoin]
   );
-  // alert(111);
 
-  // useEffect(() => {
-  //   if (sessionStorage.getItem('store')) {
-  //     const a = sessionStorage.getItem('store');
-  //     a && alert(a);
-  //   }
-  // }, []);
   /**
    * @brief call leaveRoom function when the browser window closes or refreshes
    */

@@ -39,9 +39,7 @@ export default class RtcClient {
     this.engine.on(VERTC.events.onError, (e) => this.handleEventError(e, VERTC));
   }
   async setRemoteVideoPlayer(remoteUserId, domId) {
-    // 如果进房的config有自动订阅，这里就不需要订阅了
-    // await this.engine.subscribeStream(remoteUserId, MediaType.AUDIO_AND_VIDEO);
-
+    await this.engine.subscribeStream(remoteUserId, MediaType.AUDIO_AND_VIDEO);
     await this.engine.setRemoteVideoPlayer(StreamIndex.STREAM_INDEX_MAIN, {
       userId: remoteUserId,
       renderDom: domId,
@@ -159,10 +157,11 @@ export default class RtcClient {
   }
 
   async leave() {
-    this.engine.stopVideoCapture();
-    this.engine.stopAudioCapture();
-    this.engine.unpublishStream(MediaType.AUDIO);
+    await Promise.all([
+      this.engine?.stopVideoCapture(),
+      this.engine?.stopAudioCapture(),
+    ]);
+    await this.engine?.unpublishStream(MediaType.AUDIO_AND_VIDEO).catch(console.warn);
     this.engine.leaveRoom();
-    // VERTC.destroyEngine(this.engine);
   }
 }

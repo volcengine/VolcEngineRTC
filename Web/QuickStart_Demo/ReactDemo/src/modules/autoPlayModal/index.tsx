@@ -49,19 +49,17 @@ const AutoPlayModal: React.FC<AutoPlayModalProps> = ({ handleAutoPlay, autoPlayF
   }, [autoPlayFailUser]);
 
   return (
-    <>
-      <ModalWrapper
-        footer={null}
-        closable={false}
-        width={450}
-        visible={visible}
-        style={{ top: '20%', minHeight: 150 }}
-      >
-        <ButtonWrapper block size="large" onClick={handleAutoPlay}>
-          自动播放
-        </ButtonWrapper>
-      </ModalWrapper>
-    </>
+    <ModalWrapper
+      footer={null}
+      closable={false}
+      width={450}
+      visible={visible}
+      style={{ top: '20%', minHeight: 150 }}
+    >
+      <ButtonWrapper block size="large" onClick={handleAutoPlay}>
+        自动播放
+      </ButtonWrapper>
+    </ModalWrapper>
   );
 };
 

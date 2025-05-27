@@ -10,4 +10,6 @@ export default interface IIconBlockProps {
   radius?: number;
   shape?: 'circle' | 'square';
   onClick?: ReactEventHandler;
+  children?: React.ReactNode;
+// eslint-disable-next-line semi
 }
