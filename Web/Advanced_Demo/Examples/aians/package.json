@@ -9,6 +9,6 @@
   "license": "MIT",
   "devDependencies": {
     "vite": "^4.4.4",
-    "@volcengine/rtc": "~4.58.18"
+    "@volcengine/rtc": "~4.58.19"
   }
 }
