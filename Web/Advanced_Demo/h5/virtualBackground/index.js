@@ -6,7 +6,7 @@
  */
 const appid = 'your_appid';
 const appKey = 'your_appkey';
-const auth = window.parent?.__BASE_CONFIG__?.auth;
+const auth = 'xx.auth';
 
 const BackgroundAIBackend = {
   CPU: -1,

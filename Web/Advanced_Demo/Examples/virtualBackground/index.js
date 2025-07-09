@@ -6,7 +6,7 @@
  */
 const appid = 'your_appid';
 const appKey = 'your_appkey';
-const auth = window.parent?.__BASE_CONFIG__?.auth;
+const auth = 'xx.auth';
 
 if (!appid) alert("请先获取 AppID");
 if (!appKey) alert("请先获取 AppKey");

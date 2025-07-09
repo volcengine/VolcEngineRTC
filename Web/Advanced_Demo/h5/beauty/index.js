@@ -2,9 +2,11 @@
  * @module Beauty
  * @param {appid}: Your AppID
  * @param {appKey}: Your AppKey
+ * @param {auth}:  Your Auth file url
  */
 const appid = 'your_appid';
 const appKey = 'your_appkey';
+const auth = 'xx.auth';
 
 const engine = VERTC.createEngine(appid);
 

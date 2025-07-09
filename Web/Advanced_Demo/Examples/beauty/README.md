@@ -9,6 +9,8 @@ RTC 提供基础美颜插件，你可以通过此插件实现美白、磨皮、�
    - 开启美颜的接口名由 `enable` 变更为 `enableBeauty`，关闭美颜的接口名由 `disable` 变更为 `disableBeauty`，原接口废弃。
    - 优化该功能的浏览器兼容性，由支持在桌面端 Chrome 94+、Edge 94+ 上使用变更为支持在桌面端 Chrome 70+、	Edge 83+、Safari 12+、Firefox 80+ 上使用，即与当前 [Web SDK 浏览器兼容性](https://www.volcengine.com/docs/6348/111854)下限一致。
 
+3. Web SDK v4.60.2 及之后版本需传入鉴权文件 [Web 端基础美颜](https://www.volcengine.com/docs/6348/148646)
+
 # 前置条件
 
 1. RTC SDK v4.47+ 你需要集成 RTC SDK，并实现音视频通话功能。
@@ -49,7 +51,9 @@ import VERTC from '@volcengine/rtc';
 const engine = VERTC.createEngine('appid');
 
 // 创建美颜插件实例
-const beautyExtension = new RTCBeautyExtension();
+const beautyExtension = new RTCBeautyExtension({
+    authFileUrl: 'xx.auth',
+});
 // 注册美颜插件
 try {
   await engine.registerExtension(beautyExtension);

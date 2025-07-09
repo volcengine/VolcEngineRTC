@@ -2,18 +2,23 @@
  * @module Beauty
  * @param {appid}: Your AppID
  * @param {appKey}: Your AppKey
+ * @param {auth}:  Your Auth file url
  */
 const appid = 'your_appid';
 const appKey = 'your_appkey';
+const auth = 'xx.auth';
 
 if (!appid) alert("请先获取 AppID");
 if (!appKey) alert("请先获取 AppKey");
+if (!auth) alert("请先获取 Auth 鉴权文件");
 
 const engine = VERTC.createEngine(appid);
 
 // enable beauty plugin
 const { EffectBeautyMode, RTCBeautyExtension } = window.VERTCExtensions;
-const BeautyExtension = new RTCBeautyExtension();
+const BeautyExtension = new RTCBeautyExtension({
+  authFileUrl: auth,
+});
 
 let registryExtension = false;
 
