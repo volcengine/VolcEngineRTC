@@ -71,6 +71,10 @@ android {
         pickFirst 'lib/x86_64/libbytertc_vp8codec_extension.so'
         pickFirst 'lib/x86_64/libh265enc.so'
 
+
+        // 删除重复的 libc++ 共享库
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
     }
 
 
@@ -92,10 +96,9 @@ dependencies {
     implementation files('libs/ByteEffect.aar')
     implementation'com.faceunity:core:8.7.0'
     implementation'com.faceunity:model:8.7.0'
-    implementation "com.bytedanceapi:ttsdk-player_premium:1.40.2.8"
+    implementation 'com.bytedanceapi:ttsdk-player_premium:1.47.1.10'
+    implementation 'com.bytedanceapi:ttsdk-ttlivepull_rtc:1.47.1.10'
 
-    implementation ("com.bytedanceapi:ttsdk-ttlivepull:1.40.2.8") {
-    }
     implementation 'commons-net:commons-net:3.6'
 
     // 日志上报 SDK，用于点播日志上传, 使用 6.14.3 及以上版本

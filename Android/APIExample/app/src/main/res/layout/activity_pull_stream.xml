@@ -15,6 +15,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/streamTypeGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/flvStreamType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="FLV 拉流" />
+
+            <RadioButton
+                android:id="@+id/rtmStreamType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="RTM 拉流" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
@@ -62,12 +92,5 @@
         android:singleLine="false"
         android:text="SEI："
         />
-
-
-
-
-
-
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>

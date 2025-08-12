@@ -8,9 +8,12 @@ import Foundation
 import TTSDKFramework
 
 
-class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
+class PullRTMPViewController: BaseViewController, VeLivePlayerObserver {
     var livePlayer: TVLManager?
 
+    // TVL拉流 或 RTM拉流，默认TVL拉流
+    var streamFormat: VeLivePlayerFormat        = .FLV
+    var streamProtocol: VeLivePlayerProtocol    = .TCP
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +50,8 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     }
     
     func buildTVEngine() -> Void {
+        print(TTSDKManager.sdkVersionString)
+        
         // 创建播放器
         self.livePlayer = TVLManager.init()
         
@@ -63,7 +68,7 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
         print("setConfig")
         self.livePlayer?.setConfig(config)
                 
-        self.livePlayer?.setObserver(self)        
+        self.livePlayer?.setObserver(self)
     }
     
     func buildRenderView() -> Void {
@@ -87,11 +92,18 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     
     func createUI() -> Void {
         
-        view.addSubview(liveView)
-        view.addSubview(urlTextFieldView)
+        view.addSubview(ttsdkVersionLabel)
         
+        view.addSubview(liveView)
+        
+        view.addSubview(streamTypeControl)
+        
+        view.addSubview(urlTextFieldView)
         view.addSubview(startButton)
         view.addSubview(stopButton)
+        
+        view.addSubview(receivedSEILabel)
+        view.addSubview(receivedSEITextField)
         
         liveView.snp.makeConstraints { make in
             make.top.equalTo(topView.snp.bottom)
@@ -99,8 +111,22 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
             make.height.equalTo(liveView.snp.width)
         }
         
+        ttsdkVersionLabel.snp.makeConstraints { make in
+            make.top.equalTo(liveView.snp.bottom).offset(5)
+            make.left.equalToSuperview().offset(10)
+            make.right.equalToSuperview().offset(-10)
+            make.height.equalTo(30)
+        }
+        
+        streamTypeControl.snp.makeConstraints { make in
+            make.top.equalTo(ttsdkVersionLabel.snp.bottom).offset(10)
+            make.left.equalToSuperview().offset(10)
+            make.right.equalToSuperview().offset(-10)
+            make.height.equalTo(30)
+        }
+        
         urlTextFieldView.snp.makeConstraints { make in
-            make.top.equalTo(liveView.snp.bottom).offset(20)
+            make.top.equalTo(streamTypeControl.snp.bottom).offset(20)
             make.left.equalToSuperview().offset(10)
             make.right.equalToSuperview().offset(-10)
             make.height.equalTo(36)
@@ -114,36 +140,63 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
         
         stopButton.snp.makeConstraints { make in
             make.centerY.equalTo(startButton)
-            make.left.equalTo(startButton.snp.right).offset(20)
+            make.left.equalTo(startButton.snp.right).offset(10)
             make.right.equalToSuperview().offset(-10)
             make.width.height.equalTo(startButton)
         }
         
-        view.addSubview(receivedSEILabel)
-        view.addSubview(receivedSEITextField)
-        
         receivedSEILabel.snp.makeConstraints { make in
-            make.top.equalTo(startButton.snp.bottom).offset(20)
+            make.top.equalTo(startButton.snp.bottom).offset(10)
             make.left.equalToSuperview().offset(10)
             make.right.equalToSuperview().offset(-10)
             make.height.equalTo(30)
         }
         
         receivedSEITextField.snp.makeConstraints { make in
-            make.top.equalTo(receivedSEILabel.snp.bottom).offset(20)
+            make.top.equalTo(receivedSEILabel.snp.bottom).offset(5)
             make.left.equalToSuperview().offset(10)
             make.right.equalToSuperview().offset(-10)
-            make.bottom.equalToSuperview().offset(-20)
-            
+            make.bottom.equalToSuperview().offset(-10)
+            make.height.equalTo(30)
+        }
+    }
+    
+    @objc func streamTypeControlChanged(_ sender: UISegmentedControl) {
+        let selectedStreamTypeIndex = sender.selectedSegmentIndex
+        
+        if selectedStreamTypeIndex == 0 {
+            streamFormat    = .FLV
+            streamProtocol  = .TCP
+            print("Selected stream type: FLV")
+        } else if selectedStreamTypeIndex == 1 {
+            streamFormat    = .RTM
+            streamProtocol  = .TLS
+            print("Selected stream type: RTM")
         }
     }
     
     @objc func startPull() {
-        if let text = self.urlTextFieldView.text, !text.isEmpty {
-            self.livePlayer?.setPlayUrl(text)
+        if let urlText = self.urlTextFieldView.text, !urlText.isEmpty {
+            ToastComponents.shared.show(withMessage: "当前拉流URL : \(urlText)")
+            
+            let playerStream = VeLivePlayerStream()
+            playerStream.url = urlText
+            playerStream.format = streamFormat
+            playerStream.resolution = .origin
+            playerStream.type = .main
+            
+            let streamData = VeLivePlayerStreamData()
+            streamData.mainStream = [playerStream]
+            streamData.defaultFormat = streamFormat
+            streamData.defaultProtocol = streamProtocol
+            
+            // 不再使用 self.livePlayer?.setPlayUrl(text)
+            self.livePlayer?.setPlay(streamData)
             self.livePlayer?.play()
+
+            print("URL: \(urlText)")
         } else {
-            ToastComponents.shared.show(withMessage: "无效的推流地址")
+            ToastComponents.shared.show(withMessage: "拉流URL为空！")
         }
     }
     
@@ -152,10 +205,24 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     }
     
     // MARK: Lazy laod
+    lazy var ttsdkVersionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "TTSDK版本：\(TTSDKManager.sdkVersionString)"
+        return label
+    }()
+    
     lazy var liveView: UIView = {
         let view = UIView.init()
         view.backgroundColor = .groupTableViewBackground
         return view
+    }()
+    
+    lazy var streamTypeControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["FLV拉流", "RTM拉流"])
+        control.selectedSegmentIndex = 0 // 默认FLV拉流
+        control.addTarget(self, action: #selector(streamTypeControlChanged(_:)), for: .valueChanged)
+        control.translatesAutoresizingMaskIntoConstraints = false
+        return control
     }()
     
     lazy var urlTextFieldView: TextFieldView = {
@@ -196,7 +263,10 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     // MARK: VeLivePlayerObserver
     func onError(_ player: TVLManager, error: VeLivePlayerError) {
         ToastComponents.shared.show(withMessage: "onError:\(error.errorMsg ?? "")")
-
+    }
+    
+    func onFirstVideoFrameRender(_ player: TVLManager, isFirstFrame: Bool) {
+        ToastComponents.shared.show(withMessage: "First Video Frame Received")
     }
     
     func onReceiveSeiMessage(_ player: TVLManager, message: String) {
@@ -206,8 +276,6 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     
     func onPlayerStatusUpdate(_ player: TVLManager, status: VeLivePlayerStatus) {
         ToastComponents.shared.show(withMessage: "onPlayerStatusUpdate:\(status.rawValue)")
-        
-        
     }
     
 }
