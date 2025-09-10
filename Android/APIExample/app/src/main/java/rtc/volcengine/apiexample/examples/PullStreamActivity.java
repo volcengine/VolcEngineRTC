@@ -248,6 +248,7 @@ public class PullStreamActivity extends BaseActivity {
                 .setApplicationContext(getApplicationContext())
                 .setAppID(getString(R.string.player_app_id))
                 .setAppName("ApiExampleDemo")
+                .setVodConfig(vodBuilder.build())
                 // 将 license 文件拷贝到 app 的 assets 文件夹中，并设置 LicenseUri
                 // 下面 LicenseUri 对应工程中 assets 路径为：assets/license/vod.lic
                 .setLicenseUri("assets:///tt.lic")
