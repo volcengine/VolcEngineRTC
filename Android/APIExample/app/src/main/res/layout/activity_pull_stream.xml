@@ -15,59 +15,82 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
-        >
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/stream_type_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/flv_type_rbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="FLV 拉流" />
+
+            <RadioButton
+                android:id="@+id/rtm_type_rbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="RTM 拉流" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/url_input"
             android:layout_width="match_parent"
-            android:layout_weight="1"
             android:layout_height="36dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_weight="1"
             android:hint="拉流地址"
             android:paddingLeft="5dp"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp">
+        android:orientation="horizontal">
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_start_pull"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="开始拉流"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="开始拉流" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_stop_pull"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:text="停止拉流"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="停止拉流" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/sei_msg"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="19sp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
         android:singleLine="false"
         android:text="SEI："
-        />
-
-
-
-
-
-
-
+        android:textSize="19sp" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

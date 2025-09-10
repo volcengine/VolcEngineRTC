@@ -1,27 +1,25 @@
 package rtc.volcengine.apiexample.examples;
 
+import static com.ss.videoarch.liveplayer.VeLivePlayerDef.VeLivePlayerResolution.VeLivePlayerResolutionOrigin;
+
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bytedance.vcloud.cacheModule.utils.CmLog;
 import com.pandora.common.env.Env;
 import com.pandora.common.env.config.Config;
 import com.pandora.common.env.config.VodConfig;
-import com.pandora.live.player.LivePlayerBuilder;
 import com.pandora.ttlicense2.LicenseManager;
 import com.ss.mediakit.medialoader.AVMDLLog;
 import com.ss.ttvideoengine.utils.TTVideoEngineLog;
-import com.ss.videoarch.liveplayer.ILiveListener;
-import com.ss.videoarch.liveplayer.INetworkClient;
 import com.ss.videoarch.liveplayer.VeLivePlayer;
 import com.ss.videoarch.liveplayer.VeLivePlayerAudioFrame;
 import com.ss.videoarch.liveplayer.VeLivePlayerConfiguration;
@@ -32,13 +30,8 @@ import com.ss.videoarch.liveplayer.VeLivePlayerStatistics;
 import com.ss.videoarch.liveplayer.VeLivePlayerStreamData;
 import com.ss.videoarch.liveplayer.VeLivePlayerVideoFrame;
 import com.ss.videoarch.liveplayer.VideoLiveManager;
-import com.ss.videoarch.liveplayer.log.LiveError;
-import com.ss.videoarch.liveplayer.log.VeLivePlayerLog;
-
-import org.json.JSONObject;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import rtc.volcengine.apiexample.BaseActivity;
@@ -57,6 +50,8 @@ public class PullStreamActivity extends BaseActivity {
     private AppCompatButton btnStartPull, btnStopPull;
     private TextView seiMsg;
     private VeLivePlayer livePlayer;
+    private VeLivePlayerDef.VeLivePlayerFormat streamFormat = VeLivePlayerDef.VeLivePlayerFormat.VeLivePlayerFormatFLV;
+    private VeLivePlayerDef.VeLivePlayerProtocol streamProtocol = VeLivePlayerDef.VeLivePlayerProtocol.VeLivePlayerProtocolTCP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +70,8 @@ public class PullStreamActivity extends BaseActivity {
         config.enableSei = true;
         // 初始化播放器
         livePlayer.setConfig(config);
-
         // 配置播放器回调
         livePlayer.setObserver(mLivePlayerObserver);
-
-
-
     }
 
     // VeLivePlayerObserver 回调
@@ -188,6 +179,21 @@ public class PullStreamActivity extends BaseActivity {
         urlInput = findViewById(R.id.url_input);
         seiMsg = findViewById(R.id.sei_msg);
 
+        RadioGroup radioGroup = findViewById(R.id.stream_type_group);
+        radioGroup.check(R.id.flv_type_rbtn);
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.flv_type_rbtn:
+                    streamFormat = VeLivePlayerDef.VeLivePlayerFormat.VeLivePlayerFormatFLV;
+                    streamProtocol = VeLivePlayerDef.VeLivePlayerProtocol.VeLivePlayerProtocolTCP;
+                    break;
+                case R.id.rtm_type_rbtn:
+                    streamFormat = VeLivePlayerDef.VeLivePlayerFormat.VeLivePlayerFormatRTM;
+                    streamProtocol = VeLivePlayerDef.VeLivePlayerProtocol.VeLivePlayerProtocolTLS;
+                    break;
+            }
+        });
         btnStartPull.setOnClickListener(v -> {
             String url = urlInput.getText().toString();
             if (TextUtils.isEmpty(url)) {
@@ -195,34 +201,31 @@ public class PullStreamActivity extends BaseActivity {
                 return;
             }
 
-            // 配置 RTM 地址
-            VeLivePlayerStreamData.VeLivePlayerStream playStreamRTM = new VeLivePlayerStreamData.VeLivePlayerStream();
-            playStreamRTM.url = url;
-            playStreamRTM.format = VeLivePlayerDef.VeLivePlayerFormat.VeLivePlayerFormatFLV;
-            playStreamRTM.resolution = VeLivePlayerDef.VeLivePlayerResolution.VeLivePlayerResolutionOrigin;
-            playStreamRTM.streamType = VeLivePlayerDef.VeLivePlayerStreamType.VeLivePlayerStreamTypeMain;
+            // 配置流信息
+            VeLivePlayerStreamData.VeLivePlayerStream playStream = new VeLivePlayerStreamData.VeLivePlayerStream();
+            playStream.url = url;
+            playStream.format = streamFormat;
+            playStream.resolution = new VeLivePlayerDef.VeLivePlayerResolution(VeLivePlayerResolutionOrigin);
+            playStream.streamType = VeLivePlayerDef.VeLivePlayerStreamType.VeLivePlayerStreamTypeMain;
 
             // 创建 VeLivePlayerStreamData
             VeLivePlayerStreamData streamData = new VeLivePlayerStreamData();
             streamData.mainStreamList = new ArrayList<>();
 
-// 添加 RTM 流地址
-            streamData.mainStreamList.add(playStreamRTM);
+            // 添加 RTM 流地址
+            streamData.mainStreamList.add(playStream);
 
             // 配置默认 format 和 protocol
-            streamData.defaultFormat = VeLivePlayerDef.VeLivePlayerFormat.VeLivePlayerFormatFLV;
-            streamData.defaultProtocol = VeLivePlayerDef.VeLivePlayerProtocol.VeLivePlayerProtocolTCP;
+            streamData.defaultFormat = streamFormat;
+            streamData.defaultProtocol = streamProtocol;
 
-// 配置播放源
+            // 配置播放源
             livePlayer.setPlayStreamData(streamData);
-
-// 开始播放
+            // 开始播放
             livePlayer.play();
-
-//            livePlayer.setPlayUrl(url);
-//            livePlayer.play();
         });
         btnStopPull.setOnClickListener(v -> livePlayer.stop());
+
     }
 
     private void initTTEnv() {

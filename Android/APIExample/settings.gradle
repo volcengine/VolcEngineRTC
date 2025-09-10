@@ -14,6 +14,16 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url 'https://artifact.bytedance.com/repository/Volcengine/' }
         maven { url 'https://maven.faceunity.com/repository/maven-public/' }
+        maven {
+            url "https://artifact.bytedance.com/repository/thrall_base/"
+            credentials {
+                username = 'veVOS'
+                password = 'KUC9TpKrqbryrxHz'
+            }
+            authentication {
+                digest(BasicAuthentication)
+            }
+        }
     }
 }
 rootProject.name = "APIExample"
