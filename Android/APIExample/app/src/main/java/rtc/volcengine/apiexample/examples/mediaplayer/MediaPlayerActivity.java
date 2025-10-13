@@ -19,21 +19,17 @@ import com.pandora.common.env.config.VodConfig;
 import com.pandora.ttlicense2.LicenseManager;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.data.AudioMixingType;
 import com.ss.bytertc.engine.data.AudioSourceType;
-import com.ss.bytertc.engine.data.RemoteStreamKey;
-import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.data.EngineConfig;
+import com.ss.bytertc.engine.data.StreamInfo;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
-import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
-import com.ss.bytertc.engine.type.StreamRemoveReason;
 import com.ss.mediakit.medialoader.AVMDLLog;
-import com.ss.ttm.player.TTPlayer;
 import com.ss.ttvideoengine.SeekCompletionListener;
 import com.ss.ttvideoengine.TTVideoEngine;
 import com.ss.ttvideoengine.VideoEngineCallback;
@@ -50,7 +46,6 @@ import rtc.volcengine.apiexample.BuildConfig;
 import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
-import rtc.volcengine.apiexample.common.annotations.ApiExample;
 
 public class MediaPlayerActivity extends BaseActivity {
 
@@ -67,7 +62,7 @@ public class MediaPlayerActivity extends BaseActivity {
     private AppCompatButton btnSeek;
     private SurfaceView mediaPlayerView;
     private boolean isJoined;
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcEngine;
     private RTCRoom rtcRoom;
     private String roomID;
     private TTVideoEngine ttVideoEngine;
@@ -81,7 +76,10 @@ public class MediaPlayerActivity extends BaseActivity {
         initUI();
         initTTEnv();
 
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, rtcVideoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcEngine = RTCEngine.createRTCEngine(config, rtcVideoEventHandler);
         initTTVideoEngine();
     }
 
@@ -106,7 +104,6 @@ public class MediaPlayerActivity extends BaseActivity {
         remoteViewContainer = findViewById(R.id.remote_view_container);
         btnSeek = findViewById(R.id.btn_seek);
         seekPosInput = findViewById(R.id.position_input);
-
 
 
         btnJoinRoom.setOnClickListener(v -> {
@@ -181,7 +178,7 @@ public class MediaPlayerActivity extends BaseActivity {
         ttVideoEngine = new TTVideoEngine(getApplicationContext(), TTVideoEngine.PLAYER_TYPE_OWN);
 
         ttVideoEngine.setSurfaceHolder(mediaPlayerView.getHolder());
-        audioProcessor = new MediaAudioProcess(rtcVideo);
+        audioProcessor = new MediaAudioProcess(rtcEngine);
         ttVideoEngine.setVideoEngineCallback(new VideoEngineCallback() {
             @Override
             public void onError(Error error) {
@@ -202,9 +199,9 @@ public class MediaPlayerActivity extends BaseActivity {
             }
         });
 
-        playVolumeBar.setMax((int)ttVideoEngine.getMaxVolume());
-        playVolumeText.setText((int)ttVideoEngine.getMaxVolume() + "");
-        playVolumeBar.setProgress((int)ttVideoEngine.getVolume());
+        playVolumeBar.setMax((int) ttVideoEngine.getMaxVolume());
+        playVolumeText.setText((int) ttVideoEngine.getMaxVolume() + "");
+        playVolumeBar.setProgress((int) ttVideoEngine.getVolume());
 
     }
 
@@ -235,7 +232,7 @@ public class MediaPlayerActivity extends BaseActivity {
         String vid = "video_id" + new Random().nextInt(1000); // 视频源与 vid 必须一一对应
         final String cacheKey = TTVideoEngine.computeMD5(url);
 
-    // 1.组装资源
+        // 1.组装资源
         StrategySource directUrlSource = new DirectUrlSource.Builder()
                 .setVid(vid)
                 .addItem(new DirectUrlSource.UrlItem.Builder()
@@ -244,17 +241,13 @@ public class MediaPlayerActivity extends BaseActivity {
                         .build())
                 .build();
 
-    // 2.设置播放源
+        // 2.设置播放源
         ttVideoEngine.setStrategySource(directUrlSource);
         ttVideoEngine.setObjectOption(TTVideoEngine.PLAYER_OPTION_AUDIO_PROCESSOR_OBJECT, audioProcessor);
-//        Log.i(TAG, "setAudioProcessor start");
-//        ttVideoEngine.setAudioProcessor(audioProcessor);
-//        Log.i(TAG, "setAudioProcessor end");
-
     }
 
     private void startPublish() {
-        rtcVideo.setAudioSourceType(AudioSourceType.AUDIO_SOURCE_TYPE_EXTERNAL);
+        rtcEngine.setAudioSourceType(AudioSourceType.AUDIO_SOURCE_TYPE_EXTERNAL);
         audioProcessor.enablePublishStream(true);
 
     }
@@ -274,7 +267,7 @@ public class MediaPlayerActivity extends BaseActivity {
         }
     }
 
-    private void setRemoteRenderView(String uid) {
+    private void setRemoteRenderView(String streamId) {
         TextureView textureView = new TextureView(this);
         remoteViewContainer.removeAllViews();
         remoteViewContainer.addView(textureView);
@@ -282,35 +275,35 @@ public class MediaPlayerActivity extends BaseActivity {
         VideoCanvas videoCanvas = new VideoCanvas();
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
-
-        RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
         // 设置本地视频渲染视图
-        rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
+        rtcEngine.setRemoteVideoCanvas(streamId, videoCanvas);
     }
 
-    private void removeRemoteView(String uid) {
-        RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
-        rtcVideo.setRemoteVideoCanvas(remoteStreamKey, null);
+    private void removeRemoteView(String streamId) {
+        rtcEngine.setRemoteVideoCanvas(streamId, null);
     }
 
     /**
      * 加入房间
+     *
      * @param roomId
      */
     private void joinRoom(String roomId) {
         this.roomID = roomId;
-        rtcRoom = rtcVideo.createRTCRoom(roomId);
+        rtcRoom = rtcEngine.createRTCRoom(roomId);
         rtcRoom.setRTCRoomEventHandler(rtcRoomEventHandler);
         String token = requestRoomToken(roomId);
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);
+        ;
     }
 
     /**
@@ -324,7 +317,7 @@ public class MediaPlayerActivity extends BaseActivity {
         }
     }
 
-    IRTCVideoEventHandler rtcVideoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler rtcVideoEventHandler = new IRTCEngineEventHandler() {
     };
 
     IRTCRoomEventHandler rtcRoomEventHandler = new IRTCRoomEventHandler() {
@@ -337,27 +330,20 @@ public class MediaPlayerActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserJoined(UserInfo userInfo, int elapsed) {
-            super.onUserJoined(userInfo, elapsed);
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
             ToastUtil.showLongToast(MediaPlayerActivity.this, "onUserJoined, uid:" + userInfo.getUid());
         }
 
         @Override
-        public void onUserPublishStream(String uid, MediaStreamType type) {
-            super.onUserPublishStream(uid, type);
-            runOnUiThread(() -> {
+        public void onUserPublishStreamVideo(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            if (isPublish) {
                 // 设置远端视频渲染视图
-                setRemoteRenderView(uid);
-            });
-        }
-
-        @Override
-        public void onUserUnpublishStream(String uid, MediaStreamType type, StreamRemoveReason reason) {
-            super.onUserUnpublishStream(uid, type, reason);
-            runOnUiThread(() -> {
+                runOnUiThread(() -> setRemoteRenderView(streamInfo.streamId));
+            } else {
                 // 解除远端视频渲染视图绑定
-                removeRemoteView(uid);
-            });
+                runOnUiThread(() -> removeRemoteView(streamInfo.streamId));
+            }
         }
 
         @Override
@@ -371,15 +357,15 @@ public class MediaPlayerActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (rtcVideo != null) {
-            rtcVideo.stopAudioCapture();
-            rtcVideo.stopVideoCapture();
+        if (rtcEngine != null) {
+            rtcEngine.stopAudioCapture();
+            rtcEngine.stopVideoCapture();
         }
         if (rtcRoom != null) {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        RTCVideo.destroyRTCVideo();
+        rtcEngine.destroyRTCEngine();
         if (ttVideoEngine != null) {
             ttVideoEngine.releaseAsync();
             ttVideoEngine = null;

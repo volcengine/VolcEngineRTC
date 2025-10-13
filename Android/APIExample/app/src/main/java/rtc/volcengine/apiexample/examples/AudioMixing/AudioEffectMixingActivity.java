@@ -16,17 +16,17 @@ import android.widget.TextView;
 import com.ss.bytertc.engine.IAudioEffectPlayerEventHandler;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.audio.IAudioEffectPlayer;
 import com.ss.bytertc.engine.data.AudioEffectPlayerConfig;
 import com.ss.bytertc.engine.data.AudioMixingType;
+import com.ss.bytertc.engine.data.EngineConfig;
 import com.ss.bytertc.engine.data.PlayerError;
 import com.ss.bytertc.engine.data.PlayerState;
-import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 
@@ -38,9 +38,6 @@ import rtc.volcengine.apiexample.BaseActivity;
 import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
-import rtc.volcengine.apiexample.examples.CrossRoomPKActivity;
-import rtc.volcengine.apiexample.examples.MultiRoomActivity;
-import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： VolcEngineRTC 音效混音
@@ -48,8 +45,8 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  * 参考文档：https://www.volcengine.com/docs/6348/70141
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     createRTCRoom 创建RTC房间
  *     joinRoom 进入RTC房间
@@ -73,8 +70,6 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  *     onLeaveRoom 离房回调
  *     onUserJoined 用户加入回调
  *     onUserLeave  用户离开回调
- *     onUserPublishStream 用户发流回调
- *     onUserUnpublishStream 用户停止发流回调
  *
  *     onAudioEffectPlayerStateChanged 播放状态回调
  *
@@ -117,7 +112,7 @@ public class AudioEffectMixingActivity extends BaseActivity {
 
 
     private boolean isJoined;
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcVideo;
     private RTCRoom rtcRoom;
     private IAudioEffectPlayer effectPlayer;
 
@@ -125,7 +120,7 @@ public class AudioEffectMixingActivity extends BaseActivity {
     private static final int EFFECT_ID_2 = 222;
 
     private String path1;
-    private  String path2;
+    private String path2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,8 +129,10 @@ public class AudioEffectMixingActivity extends BaseActivity {
         initUI();
         initEffectResource();
 
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, rtcVideoEventHandler, null, null);
-        // 开启音频采集
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcVideo = RTCEngine.createRTCEngine(config, rtcVideoEventHandler);// 开启音频采集
         rtcVideo.startAudioCapture();
         rtcVideo.startVideoCapture();
         setLocalRenderView();
@@ -204,24 +201,10 @@ public class AudioEffectMixingActivity extends BaseActivity {
         volumeBar1.setOnSeekBarChangeListener(volumeBarChangeListener);
 
         // preload
-        btnPreload2.setOnClickListener(v -> {
-            path2 = resInput2.getText().toString();
-            if (TextUtils.isEmpty(path2)) {
-                ToastUtil.showShortToast(this, "url is null");
-                return;
-            }
-            effectPlayer.preload(EFFECT_ID_2, path2);
-        });
+        btnPreload2.setOnClickListener(v -> effectPlayer.preload(EFFECT_ID_2, path2));
         // unload
         btnUnload2.setOnClickListener(v -> effectPlayer.unload(EFFECT_ID_2));
-        btnPlay2.setOnClickListener(v -> {
-            path2 = resInput2.getText().toString();
-            if (TextUtils.isEmpty(path2)) {
-                ToastUtil.showShortToast(this, "url is null");
-                return;
-            }
-            startEffect(EFFECT_ID_2, path2);
-        });
+        btnPlay2.setOnClickListener(v -> startEffect(EFFECT_ID_2, path2));
         btnStop2.setOnClickListener(v -> effectPlayer.stop(EFFECT_ID_2));
         btnPause2.setOnClickListener(v -> effectPlayer.pause(EFFECT_ID_2));
         btnResume2.setOnClickListener(v -> effectPlayer.resume(EFFECT_ID_2));
@@ -270,7 +253,7 @@ public class AudioEffectMixingActivity extends BaseActivity {
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcVideo.setLocalVideoCanvas(videoCanvas);
     }
 
     private void startEffect(int effectId, String path) {
@@ -293,12 +276,19 @@ public class AudioEffectMixingActivity extends BaseActivity {
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM,
+                "",
+                isAutoPublishAudio,
+                isAutoPublishVideo,
+                isAutoSubscribeAudio,
+                isAutoSubscribeVideo);
+
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);;
     }
 
     /**
@@ -320,7 +310,7 @@ public class AudioEffectMixingActivity extends BaseActivity {
         }
     };
 
-    IRTCVideoEventHandler rtcVideoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler rtcVideoEventHandler = new IRTCEngineEventHandler() {
     };
 
     IRTCRoomEventHandler rtcRoomEventHandler = new IRTCRoomEventHandler() {
@@ -338,8 +328,8 @@ public class AudioEffectMixingActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserJoined(UserInfo userInfo, int elapsed) {
-            super.onUserJoined(userInfo, elapsed);
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
             ToastUtil.showShortToast(AudioEffectMixingActivity.this, "onUserJoined, uid:" + userInfo.getUid());
         }
 
@@ -355,6 +345,8 @@ public class AudioEffectMixingActivity extends BaseActivity {
         copyAssetsFile("effect_1.mp3");
         // 本地文件路径
         path1 = getExternalFilesDir("").getPath() + "/effect_1.mp3";
+        // 在线url
+        path2 = "https://preview.tosound.com:3321/preview?file=freesound/0/137/239241.mp3";
     }
 
     private void copyAssetsFile(String fileName) {
@@ -392,6 +384,7 @@ public class AudioEffectMixingActivity extends BaseActivity {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        RTCVideo.destroyRTCVideo();
+        RTCEngine.destroyRTCEngine();
     }
+
 }

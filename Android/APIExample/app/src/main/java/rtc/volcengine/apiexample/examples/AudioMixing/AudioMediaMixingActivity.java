@@ -16,22 +16,23 @@ import android.widget.TextView;
 import com.ss.bytertc.engine.IMediaPlayerEventHandler;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
 import com.ss.bytertc.engine.audio.IMediaPlayer;
 import com.ss.bytertc.engine.data.AudioChannel;
 import com.ss.bytertc.engine.data.AudioMixingType;
 import com.ss.bytertc.engine.data.AudioSampleRate;
+import com.ss.bytertc.engine.data.EngineConfig;
 import com.ss.bytertc.engine.data.MediaPlayerConfig;
 import com.ss.bytertc.engine.data.MediaPlayerCustomSource;
 import com.ss.bytertc.engine.data.MediaPlayerCustomSourceMode;
 import com.ss.bytertc.engine.data.MediaPlayerCustomSourceStreamType;
 import com.ss.bytertc.engine.data.PlayerError;
+import com.ss.bytertc.engine.data.PlayerEvent;
 import com.ss.bytertc.engine.data.PlayerState;
-import com.ss.bytertc.engine.data.StreamIndex;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 import com.ss.bytertc.engine.utils.AudioFrame;
@@ -50,7 +51,6 @@ import rtc.volcengine.apiexample.BaseActivity;
 import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
-import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： VolcEngineRTC 音乐混音
@@ -58,8 +58,8 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  * 参考文档：https://www.volcengine.com/docs/6348/70141
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     createRTCRoom 创建RTC房间
  *     joinRoom 进入RTC房间
@@ -86,8 +86,6 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  *     onLeaveRoom 离房回调
  *     onUserJoined 用户加入回调
  *     onUserLeave  用户离开回调
- *     onUserPublishStream 用户发流回调
- *     onUserUnpublishStream 用户停止发流回调
  *
  *     onMediaPlayerStateChanged 播放状态改变时回调
  *     onMediaPlayerPlayingProgress 播放进度实时回调
@@ -130,7 +128,7 @@ public class AudioMediaMixingActivity extends BaseActivity {
     private FrameLayout localViewContainer;
 
     private boolean isJoined;
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcVideo;
     private RTCRoom rtcRoom;
     private IMediaPlayer mediaPlayer;
     private IMediaPlayer pcmPlayer;
@@ -157,7 +155,10 @@ public class AudioMediaMixingActivity extends BaseActivity {
         initUI();
         initMediaResource();
 
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, rtcVideoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcVideo = RTCEngine.createRTCEngine(config, rtcVideoEventHandler);
         // 开启音视频采集
         rtcVideo.startAudioCapture();
         rtcVideo.startVideoCapture();
@@ -254,7 +255,7 @@ public class AudioMediaMixingActivity extends BaseActivity {
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcVideo.setLocalVideoCanvas(videoCanvas);
     }
 
 
@@ -421,12 +422,13 @@ public class AudioMediaMixingActivity extends BaseActivity {
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM,null, isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);;
     }
 
     /**
@@ -484,9 +486,14 @@ public class AudioMediaMixingActivity extends BaseActivity {
                 }
             });
         }
+
+        @Override
+        public void onMediaPlayerEvent(int playerId, PlayerEvent event, String message) {
+
+        }
     };
 
-    IRTCVideoEventHandler rtcVideoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler rtcVideoEventHandler = new IRTCEngineEventHandler() {
     };
 
     IRTCRoomEventHandler rtcRoomEventHandler = new IRTCRoomEventHandler() {
@@ -504,8 +511,8 @@ public class AudioMediaMixingActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserJoined(UserInfo userInfo, int elapsed) {
-            super.onUserJoined(userInfo, elapsed);
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
             ToastUtil.showShortToast(AudioMediaMixingActivity.this, "onUserJoined, uid:" + userInfo.getUid());
         }
 
@@ -528,6 +535,6 @@ public class AudioMediaMixingActivity extends BaseActivity {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        RTCVideo.destroyRTCVideo();
+        RTCEngine.destroyRTCEngine();
     }
 }

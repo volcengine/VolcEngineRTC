@@ -42,6 +42,33 @@
         android:orientation="vertical"
         android:layout_marginHorizontal="20dp">
 
+        <LinearLayout
+            android:id="@+id/main_room_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/transmit_room_layout"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            >
+
+            <EditText
+                android:id="@+id/main_room_input"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:hint="房间ID"
+                android:paddingLeft="10dp"
+                />
+            <Button
+                android:id="@+id/btn_join_room"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="加入房间"
+                android:layout_gravity="right" />
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

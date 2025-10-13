@@ -8,9 +8,6 @@ import android.os.Bundle;
 
 import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
-import rtc.volcengine.apiexample.examples.AudioMixing.AudioEffectMixingActivity;
-import rtc.volcengine.apiexample.examples.AudioMixing.AudioMediaMixingActivity;
-import rtc.volcengine.apiexample.examples.AudioMixing.AudioMixingActivity;
 import rtc.volcengine.apiexample.examples.ThirdBeauty.Fubeauty.FuBeautyActivity;
 import rtc.volcengine.apiexample.examples.ThirdBeauty.byteBeauty.ByteBeautyActivity;
 

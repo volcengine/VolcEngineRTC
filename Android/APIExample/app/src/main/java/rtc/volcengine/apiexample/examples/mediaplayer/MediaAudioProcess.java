@@ -2,7 +2,7 @@ package rtc.volcengine.apiexample.examples.mediaplayer;
 
 import android.util.Log;
 
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.data.AudioChannel;
 import com.ss.bytertc.engine.data.AudioSampleRate;
 import com.ss.bytertc.engine.utils.AudioFrame;
@@ -14,15 +14,15 @@ import java.nio.ByteOrder;
 public class MediaAudioProcess extends AudioProcessor {
     private static final String TAG = "MediaAudioProcess";
 
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcEngine;
     private int sampleRate;
     private int channelNum;
     private boolean isPublishStream = false;
     private ByteBuffer mRTCBuffer;
     private int volume = 100;
 
-    public MediaAudioProcess(RTCVideo rtcVideo) {
-        this.rtcVideo = rtcVideo;
+    public MediaAudioProcess(RTCEngine rtcEngine) {
+        this.rtcEngine = rtcEngine;
     }
 
 
@@ -61,8 +61,8 @@ public class MediaAudioProcess extends AudioProcessor {
 
         AudioFrame frame = new AudioFrame(mRTCBuffer.array(), samples, AudioSampleRate.fromId(sampleRate), AudioChannel.fromId(channelNum));
 
-        if (rtcVideo != null && isPublishStream) {
-            rtcVideo.pushExternalAudioFrame(frame);
+        if (rtcEngine != null && isPublishStream) {
+            rtcEngine.pushExternalAudioFrame(frame);
         }
     }
 

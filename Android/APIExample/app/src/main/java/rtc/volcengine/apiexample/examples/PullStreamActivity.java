@@ -6,9 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,12 +14,9 @@ import com.bytedance.vcloud.cacheModule.utils.CmLog;
 import com.pandora.common.env.Env;
 import com.pandora.common.env.config.Config;
 import com.pandora.common.env.config.VodConfig;
-import com.pandora.live.player.LivePlayerBuilder;
 import com.pandora.ttlicense2.LicenseManager;
 import com.ss.mediakit.medialoader.AVMDLLog;
 import com.ss.ttvideoengine.utils.TTVideoEngineLog;
-import com.ss.videoarch.liveplayer.ILiveListener;
-import com.ss.videoarch.liveplayer.INetworkClient;
 import com.ss.videoarch.liveplayer.VeLivePlayer;
 import com.ss.videoarch.liveplayer.VeLivePlayerAudioFrame;
 import com.ss.videoarch.liveplayer.VeLivePlayerConfiguration;
@@ -32,13 +27,8 @@ import com.ss.videoarch.liveplayer.VeLivePlayerStatistics;
 import com.ss.videoarch.liveplayer.VeLivePlayerStreamData;
 import com.ss.videoarch.liveplayer.VeLivePlayerVideoFrame;
 import com.ss.videoarch.liveplayer.VideoLiveManager;
-import com.ss.videoarch.liveplayer.log.LiveError;
-import com.ss.videoarch.liveplayer.log.VeLivePlayerLog;
-
-import org.json.JSONObject;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import rtc.volcengine.apiexample.BaseActivity;
@@ -71,16 +61,13 @@ public class PullStreamActivity extends BaseActivity {
         // 打开周期性回调
         config.enableStatisticsCallback = true;
         // 打开 Local DNS 预解析
-        config.enableLiveDNS = true;
+        config.enableLiveDNS = false;
         config.enableSei = true;
         // 初始化播放器
         livePlayer.setConfig(config);
 
         // 配置播放器回调
         livePlayer.setObserver(mLivePlayerObserver);
-
-
-
     }
 
     // VeLivePlayerObserver 回调

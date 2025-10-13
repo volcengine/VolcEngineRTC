@@ -1,28 +1,25 @@
 package rtc.volcengine.apiexample.examples;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.TextureView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
+import com.ss.bytertc.engine.data.EngineConfig;
 import com.ss.bytertc.engine.data.ForwardStreamEventInfo;
 import com.ss.bytertc.engine.data.ForwardStreamInfo;
 import com.ss.bytertc.engine.data.ForwardStreamStateInfo;
-import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.data.StreamInfo;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
-import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 
 import java.util.Collections;
@@ -32,7 +29,6 @@ import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
-import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： ByteRTC 跨房转推
@@ -41,8 +37,8 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  * 参考文档： https://www.volcengine.com/docs/6348/104398
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     startVideoCapture 开启视频采集
  *     createRTCRoom 创建RTC房间
@@ -60,8 +56,6 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  *     onLeaveRoom 离房回调
  *     onUserJoined 用户加入回调
  *     onUserLeave  用户离开回调
- *     onUserPublishStream 用户发流回调
- *     onUserUnpublishStream 用户停止发流回调
  *
  * Demo实现时的逻辑
  *    本Demo演示功能：在本端房间向其他房间转推媒体流
@@ -80,7 +74,7 @@ public class CrossRoomPKActivity extends BaseActivity {
     private EditText mainRoomIdInput;
     private EditText transmitRoomIdInput;
 
-    RTCVideo rtcVideo;
+    RTCEngine rtcEngine;
     RTCRoom rtcRoom;
 
     boolean isJoined;
@@ -93,12 +87,16 @@ public class CrossRoomPKActivity extends BaseActivity {
         initUI();
 
         // 创建引擎
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, videoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcEngine = rtcEngine.createRTCEngine(config, videoEventHandler);
+
         // 设置本端渲染视图
         setLocalRenderView();
         // 开启音视频采集
-        rtcVideo.startVideoCapture();
-        rtcVideo.startAudioCapture();
+        rtcEngine.startVideoCapture();
+        rtcEngine.startAudioCapture();
 
     }
 
@@ -170,7 +168,7 @@ public class CrossRoomPKActivity extends BaseActivity {
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcEngine.setLocalVideoCanvas(videoCanvas);
     }
 
     /**
@@ -178,18 +176,19 @@ public class CrossRoomPKActivity extends BaseActivity {
      * @param roomId
      */
     private void joinRoom(String roomId) {
-        rtcRoom = rtcVideo.createRTCRoom(roomId);
+        rtcRoom = rtcEngine.createRTCRoom(roomId);
         rtcRoom.setRTCRoomEventHandler(roomEventHandler);
         String token = requestRoomToken(roomId);
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);;
     }
 
     /**
@@ -236,14 +235,14 @@ public class CrossRoomPKActivity extends BaseActivity {
         public void onForwardStreamEvent(ForwardStreamEventInfo[] eventInfos) {
             super.onForwardStreamEvent(eventInfos);
             String msg = String.format("ForwardStreamEvent, roomid:%s, event:%d", eventInfos[0].roomId, eventInfos[0].event.value());
-            ToastUtil.showLongToast(CrossRoomPKActivity.this, msg);
+            ToastUtil.showShortToast(CrossRoomPKActivity.this, msg);
         }
 
         @Override
         public void onForwardStreamStateChanged(ForwardStreamStateInfo[] stateInfos) {
             super.onForwardStreamStateChanged(stateInfos);
-            String msg = String.format("ForwardStreamStateChanged, roomid:%s, event:%d", stateInfos[0].roomId, stateInfos[0].state.value());
-            ToastUtil.showLongToast(CrossRoomPKActivity.this, msg);
+            String msg = String.format("ForwardStreamStateChanged, roomid:%s, state:%d, error:%d", stateInfos[0].roomId, stateInfos[0].state.value(), stateInfos[0].error.value());
+            ToastUtil.showShortToast(CrossRoomPKActivity.this, msg);
         }
 
         @Override
@@ -253,35 +252,34 @@ public class CrossRoomPKActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserJoined(UserInfo userInfo, int elapsed) {
-            super.onUserJoined(userInfo, elapsed);
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
             ToastUtil.showShortToast(CrossRoomPKActivity.this, "onUserJoined, uid:" + userInfo.getUid());
         }
 
         @Override
-        public void onUserPublishStream(String uid, MediaStreamType type) {
-            super.onUserPublishStream(uid, type);
-            ToastUtil.showShortToast(CrossRoomPKActivity.this, "onUserPublishStream, uid:" + uid);
+        public void onUserPublishStreamVideo(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            ToastUtil.showShortToast(CrossRoomPKActivity.this, "onUserPublishStreamVideo, uid:" + streamInfo.userId + " isPublish:" + isPublish);
         }
     };
 
     /**
      * 引擎回调信息
      */
-    IRTCVideoEventHandler videoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler videoEventHandler = new IRTCEngineEventHandler() {
     };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (rtcVideo != null) {
-            rtcVideo.stopAudioCapture();
-            rtcVideo.stopVideoCapture();
+        if (rtcEngine != null) {
+            rtcEngine.stopAudioCapture();
+            rtcEngine.stopVideoCapture();
         }
         if (rtcRoom != null) {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        RTCVideo.destroyRTCVideo();
+        rtcEngine.destroyRTCEngine();
     }
 }

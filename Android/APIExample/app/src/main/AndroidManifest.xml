@@ -8,6 +8,8 @@
 
     <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +21,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.APIExample"
         tools:targetApi="31">
+        <activity
+            android:name=".examples.screenshare.ScreenShareActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.encodevideoframe.EncodeVideoFrameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.CustomAudioCaptureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.videorender.VideoRenderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".examples.ExternalVideoFrameActivity"
+            android:exported="false" />
         <activity
             android:name=".examples.PullStreamActivity"
             android:exported="false" />
@@ -84,6 +101,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.ss.bytertc.base.media.screen.RXScreenCaptureService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
     </application>
 
 </manifest>

@@ -16,32 +16,29 @@ import androidx.annotation.NonNull;
 
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.data.RemoteStreamKey;
-import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.data.EngineConfig;
+import com.ss.bytertc.engine.data.StreamInfo;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
-import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
-import com.ss.bytertc.engine.type.StreamRemoveReason;
 
 import rtc.volcengine.apiexample.BaseActivity;
 import rtc.volcengine.apiexample.R;
 import rtc.volcengine.apiexample.Utils.ToastUtil;
 import rtc.volcengine.apiexample.common.Constants;
 import rtc.volcengine.apiexample.common.annotations.ApiExample;
-import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
 
 /**
  * 功能名称： VolcEngineRTC 画中画
  * 功能简单描述：实现画中画功能
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     startVideoCapture 开启视频采集
  *     createRTCRoom 创建RTC房间
@@ -55,8 +52,6 @@ import rtc.volcengine.apiexample.examples.mediaplayer.MediaPlayerActivity;
  *     onLeaveRoom 离房回调
  *     onUserJoined 用户加入回调
  *     onUserLeave  用户离开回调
- *     onUserPublishStream 用户发流回调
- *     onUserUnpublishStream 用户停止发流回调
  *
 
  *
@@ -73,7 +68,7 @@ public class PictureInPictureActivity extends BaseActivity {
     private Button btnOpenFloatWindow;
     private EditText roomIdInput;
     private boolean isJoined;
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcVideo;
     private RTCRoom rtcRoom;
     private String roomID;
 
@@ -90,7 +85,10 @@ public class PictureInPictureActivity extends BaseActivity {
         initUI();
 
 
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, rtcVideoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcVideo = RTCEngine.createRTCEngine(config, rtcVideoEventHandler);
         // 设置本端渲染视图
         setLocalRenderView();
         // 开启音频采集
@@ -141,12 +139,13 @@ public class PictureInPictureActivity extends BaseActivity {
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);;
     }
 
     /**
@@ -161,10 +160,10 @@ public class PictureInPictureActivity extends BaseActivity {
         videoCanvas.renderView = localTextureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcVideo.setLocalVideoCanvas(videoCanvas);
     }
 
-    private void setRemoteRenderView(String uid) {
+    private void setRemoteRenderView(String streamId) {
         if (textureView.getParent() == null) {
             remoteViewContainer.removeAllViews();
             remoteViewContainer.addView(textureView);
@@ -172,15 +171,12 @@ public class PictureInPictureActivity extends BaseActivity {
         VideoCanvas videoCanvas = new VideoCanvas();
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
-
-        RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
         // 设置远端视频渲染视图
-        rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
+        rtcVideo.setRemoteVideoCanvas(streamId, videoCanvas);
     }
 
-    private void removeRemoteView(String uid) {
-        RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
-        rtcVideo.setRemoteVideoCanvas(remoteStreamKey, null);
+    private void removeRemoteView(String streamId)  {
+        rtcVideo.setRemoteVideoCanvas(streamId, null);
     }
 
 
@@ -245,7 +241,7 @@ public class PictureInPictureActivity extends BaseActivity {
         this.roomID = null;
     }
 
-    IRTCVideoEventHandler rtcVideoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler rtcVideoEventHandler = new IRTCEngineEventHandler() {
     };
 
     IRTCRoomEventHandler rtcRoomEventHandler = new IRTCRoomEventHandler() {
@@ -257,22 +253,16 @@ public class PictureInPictureActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserPublishStream(String uid, MediaStreamType type) {
-            super.onUserPublishStream(uid, type);
-            runOnUiThread(() -> {
+        public void onUserPublishStreamVideo(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            if (isPublish) {
                 // 设置远端视频渲染视图
-                setRemoteRenderView(uid);
-            });
+                runOnUiThread(() -> setRemoteRenderView(streamInfo.streamId));
+            } else {
+                // 解除远端视频渲染视图绑定
+                runOnUiThread(() -> removeRemoteView(streamInfo.streamId));
+            }
         }
 
-        @Override
-        public void onUserUnpublishStream(String uid, MediaStreamType type, StreamRemoveReason reason) {
-            super.onUserUnpublishStream(uid, type, reason);
-            runOnUiThread(() -> {
-                // 解除远端视频渲染视图绑定
-                removeRemoteView(uid);
-            });
-        }
 
         @Override
         public void onLeaveRoom(RTCRoomStats stats) {
@@ -292,7 +282,7 @@ public class PictureInPictureActivity extends BaseActivity {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        RTCVideo.destroyRTCVideo();
+        RTCEngine.destroyRTCEngine();
         closeFloatingWindow();
     }
 }

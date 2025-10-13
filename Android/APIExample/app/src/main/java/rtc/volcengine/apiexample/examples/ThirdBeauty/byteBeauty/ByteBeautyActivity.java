@@ -12,21 +12,18 @@ import android.widget.FrameLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.data.RemoteStreamKey;
-import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.data.EngineConfig;
+import com.ss.bytertc.engine.data.StreamInfo;
 import com.ss.bytertc.engine.data.VideoOrientation;
 import com.ss.bytertc.engine.data.VirtualBackgroundSource;
 import com.ss.bytertc.engine.data.VirtualBackgroundSourceType;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
-import com.ss.bytertc.engine.type.MediaStreamType;
 import com.ss.bytertc.engine.type.RTCRoomStats;
-import com.ss.bytertc.engine.type.StreamRemoveReason;
-import com.ss.bytertc.engine.utils.LogUtil;
 import com.ss.bytertc.engine.video.IVideoEffect;
 
 import java.io.File;
@@ -47,8 +44,8 @@ import rtc.volcengine.apiexample.common.Constants;
  * 参考文档：https://www.volcengine.com/docs/6348/114717
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     startVideoCapture 开启视频采集
  *     createRTCRoom 创建RTC房间
@@ -97,9 +94,9 @@ public class ByteBeautyActivity extends BaseActivity {
     private HashMap<String, Integer> remoteUserViewMap = new HashMap<>();
     private boolean[] isRemoteViewUsed = new boolean[3];
     private TabLayout tabLayout;
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcEngine;
     private RTCRoom rtcRoom;
-    private IVideoEffect rtcVideoEffect;
+    private IVideoEffect RTCEngineEffect;
     private EffectResourceManager effectResourceManager;
 
     @Override
@@ -112,13 +109,16 @@ public class ByteBeautyActivity extends BaseActivity {
         new Thread(() -> effectResourceManager.initVideoEffectResource()).start();
 
         // 创建引擎
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, videoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcEngine = RTCEngine.createRTCEngine(config, videoEventHandler);
         // 设置本端渲染视图
         setLocalRenderView();
         // 开启音视频采集
-        rtcVideo.startVideoCapture();
-        rtcVideo.startAudioCapture();
-        rtcVideo.setVideoOrientation(VideoOrientation.PORTRAIT);
+        rtcEngine.startVideoCapture();
+        rtcEngine.startAudioCapture();
+        rtcEngine.setVideoOrientation(VideoOrientation.PORTRAIT);
 
         initEffect();
         joinRoom(roomID);
@@ -128,7 +128,7 @@ public class ByteBeautyActivity extends BaseActivity {
         localViewContainer = findViewById(R.id.local_view_container);
         remoteContainers[0] = findViewById(R.id.remote_view_container1);
         remoteContainers[1] = findViewById(R.id.remote_view_container2);
-        remoteContainers[2]= findViewById(R.id.remote_view_container3);
+        remoteContainers[2] = findViewById(R.id.remote_view_container3);
 
         tabLayout = findViewById(R.id.tab_layout);
         effectLayoutContainer = findViewById(R.id.effect_beauty_layout_container);
@@ -196,10 +196,10 @@ public class ByteBeautyActivity extends BaseActivity {
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcEngine.setLocalVideoCanvas(videoCanvas);
     }
 
-    private void setRemoteRenderView(String uid) {
+    private void setRemoteRenderView(String uid, String streamId) {
         for (int i = 0; i < isRemoteViewUsed.length; i++) {
             if (!isRemoteViewUsed[i]) {
                 isRemoteViewUsed[i] = true;
@@ -209,17 +209,17 @@ public class ByteBeautyActivity extends BaseActivity {
                 remoteContainers[i].removeAllViews();
                 remoteContainers[i].addView(textureView);
 
-                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
+
                 VideoCanvas videoCanvas = new VideoCanvas();
                 videoCanvas.renderView = textureView;
                 videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
-                rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
+                rtcEngine.setRemoteVideoCanvas(streamId, videoCanvas);
                 break;
             }
         }
     }
 
-    private void removeRemoteView(String uid) {
+    private void removeRemoteView(String uid, String streamId) {
         int index = remoteUserViewMap.get(uid);
         if (index >= 0 && index < 3) {
             remoteContainers[index].removeAllViews();
@@ -227,32 +227,34 @@ public class ByteBeautyActivity extends BaseActivity {
         }
         remoteUserViewMap.remove(uid);
 
-        RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID, uid, StreamIndex.STREAM_INDEX_MAIN);
+
         VideoCanvas videoCanvas = new VideoCanvas();
         videoCanvas.renderView = null;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
-        rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
+        rtcEngine.setRemoteVideoCanvas(streamId, videoCanvas);
 
     }
 
     /**
      * 加入房间
+     *
      * @param roomId
      */
     private void joinRoom(String roomId) {
 
-        rtcRoom = rtcVideo.createRTCRoom(roomId);
+        rtcRoom = rtcEngine.createRTCRoom(roomId);
         rtcRoom.setRTCRoomEventHandler(rtcRoomEventHandler);
         String token = requestRoomToken(roomId);
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);
     }
 
     /**
@@ -275,16 +277,16 @@ public class ByteBeautyActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserPublishStream(String uid, MediaStreamType type) {
-            super.onUserPublishStream(uid, type);
-            setRemoteRenderView(uid);
+        public void onUserPublishStreamVideo(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            if (isPublish) {
+                // 设置远端视频渲染视图
+                runOnUiThread(() -> setRemoteRenderView(streamInfo.userId, streamInfo.streamId));
+            } else {
+                // 解除远端视频渲染视图绑定
+                runOnUiThread(() -> removeRemoteView(streamInfo.userId, streamInfo.streamId));
+            }
         }
 
-        @Override
-        public void onUserUnpublishStream(String uid, MediaStreamType type, StreamRemoveReason reason) {
-            super.onUserUnpublishStream(uid, type, reason);
-            removeRemoteView(uid);
-        }
 
         @Override
         public void onLeaveRoom(RTCRoomStats stats) {
@@ -293,8 +295,8 @@ public class ByteBeautyActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserJoined(UserInfo userInfo, int elapsed) {
-            super.onUserJoined(userInfo, elapsed);
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
             ToastUtil.showLongToast(ByteBeautyActivity.this, "onUserJoined, uid:" + userInfo.getUid());
         }
     };
@@ -302,27 +304,27 @@ public class ByteBeautyActivity extends BaseActivity {
     /**
      * 引擎回调信息
      */
-    IRTCVideoEventHandler videoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler videoEventHandler = new IRTCEngineEventHandler() {
     };
 
     /**
      * 初始化美颜相关资源
      */
     public void initEffect() {
-        rtcVideoEffect = rtcVideo.getVideoEffectInterface();
+        RTCEngineEffect = rtcEngine.getVideoEffectInterface();
 
         String licPath = effectResourceManager.getLicensePath();
         String modelPath = effectResourceManager.getModelPath();
 
-        int res =  rtcVideoEffect.initCVResource(licPath,modelPath);
+        int res =  RTCEngineEffect.initCVResource(licPath,modelPath);
         Log.i(TAG, "initCVResource: " + res);
 
 
-        int enableEffectRes = rtcVideoEffect.enableVideoEffect();
+        int enableEffectRes = RTCEngineEffect.enableVideoEffect();
         Log.i(TAG, "enableVideoEffect: " + enableEffectRes);
 
         List<String> effectNodePaths = Arrays.asList(effectResourceManager.getBeautyPath(), effectResourceManager.getReshapePath());
-        int effectNodesRes = rtcVideoEffect.setEffectNodes(effectNodePaths);
+        int effectNodesRes = RTCEngineEffect.setEffectNodes(effectNodePaths);
         Log.i(TAG, "setVideoEffectNodes: " + effectNodesRes);
     }
 
@@ -332,10 +334,10 @@ public class ByteBeautyActivity extends BaseActivity {
      * @param value 具体的值，取值范围[0, 1]，值越大越明显
      */
     public void onBeautyEffectChanged(String key, float value) {
-        if (rtcVideoEffect == null) {
+        if (RTCEngineEffect == null) {
             return;
         }
-        rtcVideoEffect.updateEffectNode(effectResourceManager.getBeautyPath(), key, value);
+        RTCEngineEffect.updateEffectNode(effectResourceManager.getBeautyPath(), key, value);
     }
 
     /**
@@ -344,10 +346,10 @@ public class ByteBeautyActivity extends BaseActivity {
      * @param value 具体的值，取值范围[0, 1]，值越大越明显
      */
     public void onReshapeEffectChanged(String key, float value) {
-        if (rtcVideoEffect == null) {
+        if (RTCEngineEffect == null) {
             return;
         }
-        rtcVideoEffect.updateEffectNode(effectResourceManager.getReshapePath(), key, value);
+        RTCEngineEffect.updateEffectNode(effectResourceManager.getReshapePath(), key, value);
     }
 
     /**
@@ -356,11 +358,11 @@ public class ByteBeautyActivity extends BaseActivity {
      * @param value 具体的值，取值范围[0, 1]，值越大越明显
      */
     public void onFilterEffectChanged(String key, float value) {
-        if (rtcVideoEffect == null) {
+        if (RTCEngineEffect == null) {
             return;
         }
-        rtcVideoEffect.setColorFilter(effectResourceManager.getFilterPathByName(key));
-        rtcVideoEffect.setColorFilterIntensity(value);
+        RTCEngineEffect.setColorFilter(effectResourceManager.getFilterPathByName(key));
+        RTCEngineEffect.setColorFilterIntensity(value);
     }
 
     /**
@@ -369,7 +371,7 @@ public class ByteBeautyActivity extends BaseActivity {
      * @param selected 是否选中
      */
     public void onStickerEffectClicked(String key, boolean selected) {
-        if (rtcVideoEffect == null) {
+        if (RTCEngineEffect == null) {
             return;
         }
         ArrayList<String> pathList = new ArrayList<>();
@@ -378,7 +380,7 @@ public class ByteBeautyActivity extends BaseActivity {
         if (selected) {
             pathList.add(effectResourceManager.getStickerPathByName(key));
         }
-        rtcVideoEffect.setEffectNodes(pathList);
+        RTCEngineEffect.setEffectNodes(pathList);
     }
 
     /**
@@ -387,7 +389,7 @@ public class ByteBeautyActivity extends BaseActivity {
      * @param selected 是否选中
      */
     public void onVirtualEffectClicked(String type, boolean selected) {
-        if (rtcVideoEffect == null) {
+        if (RTCEngineEffect == null) {
             return;
         }
         if (selected) {
@@ -403,17 +405,17 @@ public class ByteBeautyActivity extends BaseActivity {
             }
 
             String portraitPath = effectResourceManager.getEffectPortraitPath();
-            rtcVideoEffect.enableVirtualBackground(portraitPath,backgroundSource);
+            RTCEngineEffect.enableVirtualBackground(portraitPath,backgroundSource);
         } else {
-            rtcVideoEffect.disableVirtualBackground();
+            RTCEngineEffect.disableVirtualBackground();
         }
     }
 
     private final EffectNode.EffectNodeCallback effectNodeCallback = new EffectNode.EffectNodeCallback() {
         @Override
         public void onEffectClicked(EffectNode effectNode) {
-            if (rtcVideo == null) {
-                Log.i("EffectNodeCallback", "onEffectClicked() : RTCVideo is null");
+            if (rtcEngine == null) {
+                Log.i("EffectNodeCallback", "onEffectClicked() : RTCEngine is null");
                 return;
             }
             if (effectNode.type == EffectNode.EffectType.beauty) {
@@ -435,8 +437,8 @@ public class ByteBeautyActivity extends BaseActivity {
 
         @Override
         public void onEffectValueChanged(EffectNode effectNode) {
-            if (rtcVideo == null) {
-                Log.i("EffectNodeCallback", "onEffectValueChanged() : RTCVideo is null");
+            if (rtcEngine == null) {
+                Log.i("EffectNodeCallback", "onEffectValueChanged() : RTCEngine is null");
                 return;
             }
             if (effectNode.type == EffectNode.EffectType.beauty) {
@@ -508,10 +510,10 @@ public class ByteBeautyActivity extends BaseActivity {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        if (rtcVideo != null) {
-            rtcVideo.stopAudioCapture();
-            rtcVideo.stopVideoCapture();
+        if (rtcEngine != null) {
+            rtcEngine.stopAudioCapture();
+            rtcEngine.stopVideoCapture();
         }
-        RTCVideo.destroyRTCVideo();
+        rtcEngine.destroyRTCEngine();
     }
 }

@@ -7,20 +7,17 @@ import android.view.TextureView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.data.RemoteStreamKey;
-import com.ss.bytertc.engine.data.StreamIndex;
+import com.ss.bytertc.engine.data.EngineConfig;
+import com.ss.bytertc.engine.data.StreamInfo;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
-import com.ss.bytertc.engine.type.MediaStreamType;
-import com.ss.bytertc.engine.type.StreamRemoveReason;
 
 import java.util.regex.Pattern;
 
@@ -36,8 +33,8 @@ import rtc.volcengine.apiexample.common.annotations.ApiExample;
  * 参考文档： https://www.volcengine.com/docs/6348/196844
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     startVideoCapture 开启视频采集
  *     createRTCRoom 创建RTC房间
@@ -51,8 +48,6 @@ import rtc.volcengine.apiexample.common.annotations.ApiExample;
  *     onLeaveRoom 离房回调
  *     onUserJoined 用户加入回调
  *     onUserLeave  用户离开回调
- *     onUserPublishStream 用户发流回调
- *     onUserUnpublishStream 用户停止发流回调
  *
  * Demo实现时的逻辑
  *    为了展示简单，所有功能的token都由客户端生成，请在真正接入时视具体情况而定
@@ -75,7 +70,7 @@ public class MultiRoomActivity extends BaseActivity {
     private TextView remoteUserName1;
     private TextView remoteUserName2;
 
-    RTCVideo rtcVideo;
+    RTCEngine rtcVideo;
 
     RTCRoom rtcRoom1;
     RTCRoom rtcRoom2;
@@ -92,7 +87,10 @@ public class MultiRoomActivity extends BaseActivity {
         initUI();
 
         // 初始化引擎
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, videoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcVideo = RTCEngine.createRTCEngine(config, videoEventHandler);
         // 设置本地视频渲染视图
         setLocalRenderView();
         // 开启音视频采集
@@ -153,7 +151,7 @@ public class MultiRoomActivity extends BaseActivity {
         videoCanvas.renderView = localView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcVideo.setLocalVideoCanvas(videoCanvas);
     }
 
     /**
@@ -176,12 +174,13 @@ public class MultiRoomActivity extends BaseActivity {
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom1.joinRoom(token, userInfo, roomConfig);
+        rtcRoom1.joinRoom(token, userInfo, true, roomConfig);
     }
 
     /**
@@ -201,12 +200,16 @@ public class MultiRoomActivity extends BaseActivity {
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // room2不发流
-        boolean isAutoPublish = false;
+        boolean isAutoPublishAudio = false;
+        boolean isAutoPublishVideo = false;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom2.joinRoom(token, userInfo, roomConfig);
+        int ret = rtcRoom2.joinRoom(token, userInfo, true, roomConfig);
+        if (ret != 0) {
+            ToastUtil.showAlert(this, "加入房间失败, ret : " + ret);
+        }
     }
 
     public void leaveFirstRoom() {
@@ -243,37 +246,47 @@ public class MultiRoomActivity extends BaseActivity {
             });
         }
         @Override
-        public void onUserPublishStream(String uid, MediaStreamType type) {
-            super.onUserPublishStream(uid, type);
-            runOnUiThread(() -> {
-                // 设置远端视频渲染视图
-                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID1, uid, StreamIndex.STREAM_INDEX_MAIN);
-                VideoCanvas videoCanvas = new VideoCanvas();
-                videoCanvas.renderView = firstRoomRemoteView;
-                videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
-                rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
+        public void onUserPublishStreamVideo(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            String info = String.format("onUserPublishStreamVideo, roomId:%s, uid:%s, isPublish:%b", streamInfo.roomId, streamInfo.userId, isPublish);
+            Log.i(TAG, "room1: " + info);
+            if (isPublish) {
+                ToastUtil.showLongToast(MultiRoomActivity.this, info);
+                runOnUiThread(() -> {
+                    // 设置远端视频渲染视图
+                    VideoCanvas videoCanvas = new VideoCanvas();
+                    videoCanvas.renderView = firstRoomRemoteView;
+                    videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
+                    rtcVideo.setRemoteVideoCanvas(streamId, videoCanvas);
+                    remoteUserName1.setText(streamInfo.userId);
+                });
+            } else {
+                runOnUiThread(() -> {
+                    // 解除远端视频渲染视图绑定
+                    rtcVideo.setRemoteVideoCanvas(streamId, null);
+                    remoteUserName1.setText("");
+                });
+            }
 
-                remoteUserName1.setText(uid);
-            });
         }
-
         @Override
-        public void onUserUnpublishStream(String uid, MediaStreamType type, StreamRemoveReason reason) {
-            super.onUserUnpublishStream(uid, type, reason);
-            runOnUiThread(() -> {
-                // 解除远端视频渲染视图绑定
-                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID1, uid, StreamIndex.STREAM_INDEX_MAIN);
-                rtcVideo.setRemoteVideoCanvas(remoteStreamKey, null);
-
-                remoteUserName1.setText("");
-            });
+        public void onUserPublishStreamAudio(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            String info = String.format("onUserPublishStreamAudio, roomId:%s, uid:%s, isPublish:%b", streamInfo.roomId, streamInfo.userId, isPublish);
+            ToastUtil.showShortToast(MultiRoomActivity.this, info);
+            Log.i(TAG, "room1: " + info);
         }
 
         @Override
         public void onUserLeave(String uid, int reason) {
             super.onUserLeave(uid, reason);
             String info = String.format("onUserLeave, roomId:%s, uid:%s, reason:%s", roomID1, uid, reason + "");
-            ToastUtil.showLongToast(MultiRoomActivity.this, info);
+            ToastUtil.showShortToast(MultiRoomActivity.this, info);
+        }
+
+        @Override
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
+            String info = String.format("onUserJoined, uid:%s", userInfo.uid);
+            ToastUtil.showShortToast(MultiRoomActivity.this, info);
         }
     };
 
@@ -292,41 +305,52 @@ public class MultiRoomActivity extends BaseActivity {
         }
 
         @Override
-        public void onUserPublishStream(String uid, MediaStreamType type) {
-            super.onUserPublishStream(uid, type);
-            runOnUiThread(() -> {
-                // 设置房间二远端用户视图
-                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID2, uid, StreamIndex.STREAM_INDEX_MAIN);
-                VideoCanvas videoCanvas = new VideoCanvas();
-                videoCanvas.renderView = secondRoomRemoteView;
-                videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
-                rtcVideo.setRemoteVideoCanvas(remoteStreamKey, videoCanvas);
+         public void onUserPublishStreamVideo(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            String info = String.format("onUserPublishStreamVideo, roomId:%s, uid:%s, isPublish:%b", streamInfo.roomId, streamInfo.userId, isPublish);
+            if (isPublish) {
+                ToastUtil.showShortToast(MultiRoomActivity.this, info);
+                runOnUiThread(() -> {
+                    // 设置房间二远端用户视图
+                    VideoCanvas videoCanvas = new VideoCanvas();
+                    videoCanvas.renderView = secondRoomRemoteView;
+                    videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
+                    rtcVideo.setRemoteVideoCanvas(streamId, videoCanvas);
+                    remoteUserName2.setText(streamInfo.userId);
+                });
+            } else {
+                runOnUiThread(() -> {
+                    // 解除远端视频渲染视图绑定
+                    rtcVideo.setRemoteVideoCanvas(streamId, null);
+                    remoteUserName2.setText("");
+                });
+            }
+            Log.i(TAG, "room2: " + info);
 
-                remoteUserName2.setText(uid);
-            });
         }
 
         @Override
-        public void onUserUnpublishStream(String uid, MediaStreamType type, StreamRemoveReason reason) {
-            super.onUserUnpublishStream(uid, type, reason);
-            runOnUiThread(() -> {
-                // 解除远端视频渲染视图绑定
-                RemoteStreamKey remoteStreamKey = new RemoteStreamKey(roomID2, uid, StreamIndex.STREAM_INDEX_MAIN);
-                rtcVideo.setRemoteVideoCanvas(remoteStreamKey, null);
-
-                remoteUserName2.setText("");
-            });
+        public void onUserPublishStreamAudio(String streamId, StreamInfo streamInfo, boolean isPublish) {
+            String info = String.format("onUserPublishStreamAudio, roomId:%s, uid:%s, isPublish:%b", streamInfo.roomId, streamInfo.userId, isPublish);
+            ToastUtil.showShortToast(MultiRoomActivity.this, info);
+            Log.i(TAG, "room2: " + info);
         }
 
         @Override
         public void onUserLeave(String uid, int reason) {
             super.onUserLeave(uid, reason);
             String info = String.format("onUserLeave, roomId:%s, uid:%s, reason:%s", roomID2, uid, reason + "");
-            ToastUtil.showLongToast(MultiRoomActivity.this, info);
+            ToastUtil.showShortToast(MultiRoomActivity.this, info);
+        }
+
+        @Override
+        public void onUserJoined(UserInfo userInfo) {
+            super.onUserJoined(userInfo);
+            String info = String.format("onUserJoined, uid:%s", userInfo.uid);
+            ToastUtil.showShortToast(MultiRoomActivity.this, info);
         }
     };
 
-    private final IRTCVideoEventHandler videoEventHandler = new IRTCVideoEventHandler() {
+    private final IRTCEngineEventHandler videoEventHandler = new IRTCEngineEventHandler() {
         @Override
         public void onWarning(int warn) {
             super.onWarning(warn);
@@ -348,6 +372,6 @@ public class MultiRoomActivity extends BaseActivity {
             rtcVideo.stopAudioCapture();
             rtcVideo.stopVideoCapture();
         }
-        RTCVideo.destroyRTCVideo();
+        RTCEngine.destroyRTCEngine();
     }
 }

@@ -8,7 +8,6 @@ import android.view.Gravity;
 
 import android.view.MotionEvent;
 import android.view.TextureView;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -56,26 +55,23 @@ public class FloatWindowManager {
         floatView.setBackgroundResource(R.color.grey);
         isWindowOpen = false;
 
-        floatView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-                        initialWindowX = windowParams.x;
-                        initialWindowY = windowParams.y;
-                        return true;
-                    case MotionEvent.ACTION_MOVE:
-                        float dx = event.getRawX() - initialTouchX;
-                        float dy = event.getRawY() - initialTouchY;
-                        windowParams.x = (int) (initialWindowX + dx);
-                        windowParams.y = (int) (initialWindowY + dy);
-                        windowManager.updateViewLayout(floatView, windowParams);
-                        return true;
-                }
-                return false;
+        floatView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    initialTouchX = event.getRawX();
+                    initialTouchY = event.getRawY();
+                    initialWindowX = windowParams.x;
+                    initialWindowY = windowParams.y;
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    float dx = event.getRawX() - initialTouchX;
+                    float dy = event.getRawY() - initialTouchY;
+                    windowParams.x = (int) (initialWindowX + dx);
+                    windowParams.y = (int) (initialWindowY + dy);
+                    windowManager.updateViewLayout(floatView, windowParams);
+                    return true;
             }
+            return false;
         });
     }
 

@@ -138,42 +138,95 @@
                         android:layout_gravity="right"/>
 
                 </LinearLayout>
-            </LinearLayout>
 
-            <EditText
-                android:layout_marginTop="20dp"
-                android:id="@+id/push_url_input"
-                android:layout_width="match_parent"
-                android:textSize="12sp"
-                android:hint="CDN地址"
-                android:paddingLeft="10dp"
-                android:layout_height="36dp"
-                android:layout_weight="4"/>
+                <EditText
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/push_url_input"
+                    android:layout_width="match_parent"
+                    android:hint="CDN地址"
+                    android:paddingLeft="10dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="4"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_start_push"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:text="开始推流"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_stop_push"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:text="停止推流"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                >
+                android:orientation="vertical"
+                android:paddingHorizontal="5dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/layout_background">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_start_push"
+                <TextView
+                    android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minWidth="0dp"
-                    android:paddingHorizontal="0dp"
-                    android:text="开始推流"/>
+                    android:layout_height="24dp"
+                    android:text="自定义视频采集"
+                    android:textStyle="bold"/>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_stop_push"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/video_frame_msg_input"
+                    android:layout_width="match_parent"
+                    android:hint="sei消息"
+                    android:paddingLeft="10dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="4"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:minWidth="0dp"
-                    android:paddingHorizontal="0dp"
-                    android:text="停止推流"/>
+                    >
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_start_push_frame"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:text="开始推流"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_stop_push_frame"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minWidth="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:text="停止推流"/>
+                </LinearLayout>
+
+
 
             </LinearLayout>
+
+
+
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </LinearLayout>

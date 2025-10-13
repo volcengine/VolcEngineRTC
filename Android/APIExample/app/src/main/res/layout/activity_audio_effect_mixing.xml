@@ -203,9 +203,19 @@
                 android:id="@+id/res_input2"
                 android:layout_width="0dp"
                 android:textSize="12sp"
+                android:text="https://preview.tosound.com:3321/preview?file=freesound/0/137/239241.mp3"
+                android:enabled="false"
                 android:paddingLeft="10dp"
                 android:layout_height="36dp"
-                android:layout_weight="4"/>
+android:layout_weight="4"/>                                                                                                                                                                                                                                                                                                                                                                                                                                    android:layout_weight="1"/>                                                                                                                                                                                                        android:layout_weight="1"/>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_open2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="0dp"
+                android:paddingHorizontal="0dp"
+android:text="打开"/>
         </LinearLayout>
 
         <LinearLayout

@@ -1,6 +1,5 @@
 package rtc.volcengine.apiexample;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +11,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.TextView;
 
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,7 +48,7 @@ public class MainActivity extends BaseActivity {
         buildExampleList();
         requestPermission();
 
-        ((TextView)findViewById(R.id.version)).setText("sdk 版本: " + RTCVideo.getSDKVersion());
+        ((TextView)findViewById(R.id.version)).setText("sdk 版本: " + RTCEngine.getSDKVersion());
     }
 
 

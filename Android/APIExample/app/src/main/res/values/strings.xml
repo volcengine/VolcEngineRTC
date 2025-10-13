@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">API Example</string>
 
+    <string name="app_id">5a7451222679214f668e7085</string>
 
     <string name="player_app_id">573449</string>
 
@@ -19,4 +20,9 @@
     <string name="title_fu_beauty">相芯美颜</string>
     <string name="title_sei_msg">SEI消息</string>
     <string name="title_stream_sync_info">随帧同步消息</string>
+    <string name="title_screen_share">屏幕共享</string>
+    <string name="title_external_video_frame">外部视频源</string>
+    <string name="title_video_render">自定义渲染</string>
+    <string name="title_custom_audio_capture">自定义音频采集</string>
+    <string name="title_encode_video_frame">自定义编码视频帧</string>
 </resources>

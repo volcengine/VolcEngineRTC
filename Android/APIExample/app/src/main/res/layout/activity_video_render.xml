@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".examples.videorender.VideoRenderActivity">
+
+    <FrameLayout
+        android:id="@+id/local_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/main_room_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        >
+
+        <EditText
+            android:id="@+id/room_id_input"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:hint="房间ID"
+            android:paddingLeft="5dp"
+            />
+        <Button
+            android:id="@+id/btn_join_room"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="加入房间"
+            android:layout_gravity="right"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="视频格式"/>
+
+        <Spinner
+            android:id="@+id/video_format_spinner"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:entries="@array/videoFormat"
+            android:spinnerMode="dropdown"
+            android:background="@drawable/spinner_bg"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="20dp"
+        >
+
+        <Button
+            android:id="@+id/btn_start_render"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开始渲染"
+            />
+
+        <Button
+            android:id="@+id/btn_stop_render"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="停止渲染"
+            />
+
+
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,7 +1,5 @@
 package rtc.volcengine.apiexample.examples;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.TextureView;
@@ -11,14 +9,14 @@ import android.widget.FrameLayout;
 
 import com.ss.bytertc.engine.RTCRoom;
 import com.ss.bytertc.engine.RTCRoomConfig;
-import com.ss.bytertc.engine.RTCVideo;
+import com.ss.bytertc.engine.RTCEngine;
 import com.ss.bytertc.engine.UserInfo;
 import com.ss.bytertc.engine.VideoCanvas;
-import com.ss.bytertc.engine.data.RemoteStreamKey;
-import com.ss.bytertc.engine.data.StreamIndex;
-import com.ss.bytertc.engine.data.StreamSycnInfoConfig;
+import com.ss.bytertc.engine.data.EngineConfig;
+import com.ss.bytertc.engine.data.StreamInfo;
+import com.ss.bytertc.engine.data.StreamSyncInfoConfig;
 import com.ss.bytertc.engine.handler.IRTCRoomEventHandler;
-import com.ss.bytertc.engine.handler.IRTCVideoEventHandler;
+import com.ss.bytertc.engine.handler.IRTCEngineEventHandler;
 import com.ss.bytertc.engine.type.ChannelProfile;
 import com.ss.bytertc.engine.type.RTCRoomStats;
 
@@ -39,7 +37,7 @@ public class StreamSyncInfoActivity extends BaseActivity {
     private EditText roomIdInput, msgInput;
     private FrameLayout localViewContainer;
 
-    private RTCVideo rtcVideo;
+    private RTCEngine rtcVideo;
     private RTCRoom rtcRoom;
     private boolean isJoined;
 
@@ -51,7 +49,10 @@ public class StreamSyncInfoActivity extends BaseActivity {
 
         initUI();
 
-        rtcVideo = RTCVideo.createRTCVideo(this, Constants.APP_ID, rtcVideoEventHandler, null, null);
+        EngineConfig config = new EngineConfig();
+        config.context = this;
+        config.appID = Constants.APP_ID;
+        rtcVideo = RTCEngine.createRTCEngine(config, rtcVideoEventHandler);
         // 开启音视频采集
         rtcVideo.startAudioCapture();
         rtcVideo.startVideoCapture();
@@ -108,7 +109,7 @@ public class StreamSyncInfoActivity extends BaseActivity {
         videoCanvas.renderView = textureView;
         videoCanvas.renderMode = VideoCanvas.RENDER_MODE_HIDDEN;
         // 设置本地视频渲染视图
-        rtcVideo.setLocalVideoCanvas(StreamIndex.STREAM_INDEX_MAIN, videoCanvas);
+        rtcVideo.setLocalVideoCanvas(videoCanvas);
     }
 
     /**
@@ -123,16 +124,17 @@ public class StreamSyncInfoActivity extends BaseActivity {
         // 用户信息
         UserInfo userInfo = new UserInfo(localUid, "");
         // 设置房间配置
-        boolean isAutoPublish = true;
+        boolean isAutoPublishAudio = true;
+        boolean isAutoPublishVideo = true;
         boolean isAutoSubscribeAudio = true;
         boolean isAutoSubscribeVideo = true;
-        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, isAutoPublish, isAutoSubscribeAudio, isAutoSubscribeVideo);
+        RTCRoomConfig roomConfig = new RTCRoomConfig(ChannelProfile.CHANNEL_PROFILE_CHAT_ROOM, "", isAutoPublishAudio, isAutoPublishVideo, isAutoSubscribeAudio, isAutoSubscribeVideo);
         // 加入房间
-        rtcRoom.joinRoom(token, userInfo, roomConfig);
+        rtcRoom.joinRoom(token, userInfo, true, roomConfig);;
     }
 
     private void sendMsg(String msg) {
-        StreamSycnInfoConfig config = new StreamSycnInfoConfig(StreamIndex.STREAM_INDEX_MAIN, 0, StreamSycnInfoConfig.SyncInfoStreamType.SYNC_INFO_STREAM_TYPE_AUDIO);
+        StreamSyncInfoConfig config = new StreamSyncInfoConfig(0, StreamSyncInfoConfig.SyncInfoStreamType.SYNC_INFO_STREAM_TYPE_AUDIO);
         rtcVideo.sendStreamSyncInfo(msg.getBytes(StandardCharsets.UTF_8), config);
     }
 
@@ -147,10 +149,9 @@ public class StreamSyncInfoActivity extends BaseActivity {
         }
     }
 
-    IRTCVideoEventHandler rtcVideoEventHandler = new IRTCVideoEventHandler() {
+    IRTCEngineEventHandler rtcVideoEventHandler = new IRTCEngineEventHandler() {
         @Override
-        public void onStreamSyncInfoReceived(RemoteStreamKey streamKey, StreamSycnInfoConfig.SyncInfoStreamType streamType, ByteBuffer data) {
-            super.onStreamSyncInfoReceived(streamKey, streamType, data);
+            public void onStreamSyncInfoReceived(String streamId, StreamInfo streamInfo, StreamSyncInfoConfig.SyncInfoStreamType streamType, ByteBuffer data) {
             Charset charset = Charset.defaultCharset();
             String dataString = charset.decode(data).toString();
             ToastUtil.showLongToast(StreamSyncInfoActivity.this, "onStreamSyncInfoReceived：" + dataString);
@@ -183,7 +184,7 @@ public class StreamSyncInfoActivity extends BaseActivity {
             rtcRoom.destroy();
             rtcRoom = null;
         }
-        RTCVideo.destroyRTCVideo();
+        RTCEngine.destroyRTCEngine();
     }
 
 }
