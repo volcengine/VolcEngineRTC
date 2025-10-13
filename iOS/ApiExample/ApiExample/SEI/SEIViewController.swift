@@ -1,21 +1,78 @@
-//
-//  SEIViewController.swift
-//  ApiExample
-//
-//  Created by bytedance on 2024/1/17.
-//  Copyright © 2021 bytedance. All rights reserved.
-//
+/**
+* 功能名称： VolcEngineRTC SEI方案
+* 功能简单描述：在音视频流媒体应用中，除了可以收发音视频内容外，可能还需要收发一些与音视频内容同步的文本消息。
+*   你可以 H.264/H.265 视频视频流中插入 SEI，并在订阅端接收这些信息。
+* 参考文档：https://www.volcengine.com/docs/6348/70140
+*
+* 此功能涉及的API及回调：
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
+*     startAudioCapture 开启音频采集
+*     startVideoCapture 开启视频采集
+*     createRTCRoom 创建RTC房间
+*     joinRoom 进入RTC房间
+*     leaveRoom 离开RTC房间
+*     destroy 销毁RTC房间
+*
+*     通用方案： RTC本端通过sendSEIMessage发送SEI， RTC远端收到onSEIMessageReceived，当合流转推时，RTMP流 h264视频中包含SEI信息
+*     相关接口：
+*     sendSEIMessage 发送SEI信息
+*     onSEIMessageReceived 收到SEI信息的回调
+*     当时纯音频场景时，本端需要发布视频流，远端需要订阅视频流才能收到SEI
+*
+*     合流转推方案：合流转推时通过 setLayoutConfig 接口将app_data设置在SEI信息中，观众端拉流时可以解析SEI，SEI结构如下
+*     {
+        "app_data": "自定义消息",
+        "canvas": {
+            "bgnd": "#000000",
+            "h": 640,
+            "w": 360
+        },
+        "regions": [{
+            "alpha": 1.0,
+            "contentControl": 0,
+            "height": 640,
+            "locationX": 0,
+            "locationY": 50,
+            "renderMode": 1,
+            "uid": "user_343",
+            "width": 360,
+            "zorder": 0
+            }],
+        "ts": 1705994199709
+    }
+      相关接口：
+*     startPushMixedStreamToCDN 开始合流转推
+*     setLayoutConfig 设置SEI中的app_data信息
+*     stopPushStreamToCDN 停止合流转推
+*
+*
+*     音频随帧方案：请参考音频随帧部分
+*
+*     其他接口：
+*     setLocalVideoCanvas 设置本地视频渲染视图
+
+*
+*     onRoomStateChanged 房间状态回调
+*     onLeaveRoom 离房回调
+*     onUserJoined 用户加入回调
+*     onUserLeave  用户离开回调
+*     onUserPublishStream 用户发流回调
+*     onUserUnpublishStream 用户停止发流回调
+*/
 
 import UIKit
 import SnapKit
 import VolcEngineRTC
-
-class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate, ByteRTCMixedStreamObserver {
+import Foundation
+import CommonCrypto
+class SEIViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
     
-    var rtcVideo: ByteRTCVideo?
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
-    var users : Array = Array<ByteRTCRemoteStreamKey>()
+    var userVideoStreamMap: Dictionary = Dictionary<String, ByteRTCStreamInfo>()
     var mixConfig: ByteRTCMixedStreamConfig?
+    var targetMixConfig: ByteRTCMixedStreamPushTargetConfig?
     let taskId = "1999"
     
     override func viewDidLoad() {
@@ -26,12 +83,11 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
     }
     
     deinit {
-        
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -69,22 +125,27 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
             userInfo.userId = userId
             
             let roomCfg = ByteRTCRoomConfig.init()
-            roomCfg.isAutoPublish = true
+            roomCfg.isPublishAudio = true
+            roomCfg.isPublishVideo = true
             roomCfg.isAutoSubscribeAudio = true
             roomCfg.isAutoSubscribeVideo = true
             
-            self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+            self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
         }
         else {
             joinButton.setTitle("加入房间", for: .normal)
-            self.rtcRoom?.leaveRoom()
+            self.stopPushCDN()
+            self.rtcRoom?.leave()
         }
     }
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
-        
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
+
         // 开启本地音视频采集
         self.rtcVideo?.startVideoCapture()
         self.rtcVideo?.startAudioCapture()
@@ -93,6 +154,7 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
         
         // 设置默认合流参数
         self.mixConfig = ByteRTCMixedStreamConfig.default()
+        self.targetMixConfig = ByteRTCMixedStreamPushTargetConfig()
     }
     
     func bindLocalRenderView() {
@@ -102,56 +164,121 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
         canvas.renderMode = .hidden
         self.localView.userId = userSettingItem.text ?? ""
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     func updateRenderView() {
         // 获取room的第一个用户
-        var remoteUser:ByteRTCRemoteStreamKey?
+        var remoteStreamInfo:ByteRTCStreamInfo?
         
-        for streamKey in self.users {
-            if remoteUser == nil && streamKey.roomId ==  self.roomSettingItem.text {
-                remoteUser = streamKey
+        for (userId, info) in self.userVideoStreamMap {
+            if info.roomId == self.roomSettingItem.text {
+                remoteStreamInfo = info
             }
         }
         
-        if (remoteUser != nil) {
-            self.bindRemoteRenderView(view: self.firstRemoteView,roomId: (remoteUser?.roomId)!,userId: (remoteUser?.userId)!)
+        if (remoteStreamInfo != nil) {
+            self.bindRemoteRenderView(view: self.firstRemoteView, roomId:remoteStreamInfo!.roomId, userId:remoteStreamInfo!.userId)
         }
     }
     
+//    @objc func startPushCDN() {
+//        if let text = self.urlTextFieldView.text, !text.isEmpty {
+//            self.mixConfig?.pushURL = text
+//            
+//            let roomId = roomSettingItem.text
+//            let userId = userSettingItem.text
+//            
+//            self.mixConfig?.regions = self.getMixRegions()
+//            self.mixConfig?.backgroundColor = "#FFFFFF"
+//            
+//            // 合流用户透传的额外数据,通过拉流端SEI接收
+//            self.mixConfig?.userConfigExtraInfo = self.layoutTextFieldView.text ?? ""
+//            
+//            self.mixConfig?.roomID = roomId!
+//            self.mixConfig?.userID = userId!
+//            
+//            self.targetMixConfig?.pushCDNURL = text
+//            self.targetMixConfig?.pushTargetType = .toCDN
+//            
+//            self.rtcVideo?.startPushMixedStream(taskId, with: self.targetMixConfig, withMixedConfig: self.mixConfig)
+//        } else {
+//            ToastComponents.shared.show(withMessage: "无效的推流地址")
+//        }
+//    }
+    
+    func signURL(roomID: String) -> String? {
+    // 获取当前时间戳
+    let timeStamp = Int(Date().timeIntervalSince1970)
+    let expire = timeStamp + 7200
+    
+    // 构建路径
+    let path = "/rtc_test/sei\(roomID)111"
+    let authKey = "Uq8e962ghCCY2pBUB9Me2Fwy"
+    
+    // 构建签名字符串
+    let keyStr = "\(path)\(authKey)\(expire)"
+    
+    // 计算 MD5 签名
+    guard let sign = md5(string: keyStr) else {
+        return nil
+    }
+    
+    // 构建最终的 URL
+    let finalURL = "rtmp://fcdn-test-hl.uplive.ixigua.com/rtc_test/sei\(roomID)111?sign=\(sign)&expire=\(expire)"
+    
+    return finalURL
+    }
+
+    // MD5 计算函数
+    func md5(string: String) -> String? {
+        let length = Int(CC_MD5_DIGEST_LENGTH)
+        let messageData = string.data(using: .utf8)!
+        var digest = [UInt8](repeating: 0, count: length)
+        
+        messageData.withUnsafeBytes {
+            _ = CC_MD5($0.baseAddress, CC_LONG(messageData.count), &digest)
+        }
+        
+        return digest.map { String(format: "%02hhx", $0) }.joined()
+    }
+    
     @objc func startPushCDN() {
-        if let text = self.urlTextFieldView.text, !text.isEmpty {
-            self.mixConfig?.pushURL = text
-            
-            let roomId = roomSettingItem.text
-            let userId = userSettingItem.text
-            
-            self.mixConfig?.layoutConfig.regions = self.getMixRegions()
-            self.mixConfig?.layoutConfig.backgroundColor = "#FFFFFF"
-            
-            // 合流用户透传的额外数据,通过拉流端SEI接收
-            self.mixConfig?.layoutConfig.userConfigExtraInfo = self.layoutTextFieldView.text ?? ""
-            
-            self.mixConfig?.roomID = roomId!
-            self.mixConfig?.userID = userId!
-            
-            self.rtcVideo?.startPushMixedStream(toCDN: taskId, mixedConfig: self.mixConfig, observer: self)
+        let roomId = roomSettingItem.text ?? ""
+        let userId = userSettingItem.text ?? ""
+        if let text = signURL(roomID: roomId), !text.isEmpty {
+            if let cdnurl = signURL(roomID: roomId) {
+                self.mixConfig?.regions = self.getMixRegions()
+                self.mixConfig?.roomID = roomId
+                self.mixConfig?.userID = userId
+                self.mixConfig?.userConfigExtraInfo = self.layoutTextFieldView.text ?? ""
+
+                self.targetMixConfig?.pushCDNURL = cdnurl
+                self.urlTextFieldView.text = cdnurl
+                self.targetMixConfig?.pushTargetType = .toCDN
+                
+                print("URL: \(cdnurl)")
+                ToastComponents.shared.show(withMessage: "Updated URL: \(cdnurl)")
+                ToastComponents.shared.show(withMessage: "Pull sdk using key : sei\(roomId)111")
+
+                self.rtcVideo?.startPushMixedStream(taskId, with: self.targetMixConfig, withMixedConfig: self.mixConfig)
+            } else {
+                print("Failed to generate signed URL")
+            }
         } else {
             ToastComponents.shared.show(withMessage: "无效的推流地址")
         }
     }
-    
     @objc func updatePushCDN()  {
         // 合流用户透传的额外数据,通过拉流端SEI接收
-        self.mixConfig?.layoutConfig.userConfigExtraInfo = self.layoutTextFieldView.text ?? ""
+        self.mixConfig?.userConfigExtraInfo = self.layoutTextFieldView.text ?? ""
         
-        self.rtcVideo?.updatePushMixedStream(toCDN: taskId, mixedConfig: self.mixConfig!)
+        self.rtcVideo?.updatePushMixedStream(taskId, with: self.targetMixConfig, withMixedConfig: self.mixConfig!)
     }
     
     
     @objc func stopPushCDN()  {
-        self.rtcVideo?.stopPushStreamToCDN(taskId)
+        self.rtcVideo?.stopPushMixedStream(taskId, with: ByteRTCMixedStreamPushTargetType.toCDN)
     }
     
     func getMixRegions() -> [ByteRTCMixedStreamLayoutRegionConfig] {
@@ -185,7 +312,7 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
         let message = self.seiTextFieldView.text;
         
         if !message!.isEmpty, let data = message?.data(using: .utf8) {
-            self.rtcVideo?.sendSEIMessage(.indexMain, andMessage: data, andRepeatCount: 3, andCountPerFrame: .single)
+            self.rtcVideo?.sendSEIMessage(data, andRepeatCount: 3, andCountPerFrame: .single)
         }else {
             ToastComponents.shared.show(withMessage: "本端不能发送空消息")
         }
@@ -194,17 +321,21 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
     
     func bindRemoteRenderView(view: UserVideoView, roomId: String, userId: String) {
         // 设置远端用户视频渲染视图
+        var streamInfo = self.userVideoStreamMap[userId]
+        if streamInfo == nil {
+            return
+        }
+        var streamId = streamInfo?.streamId
+        if streamId == nil {
+            return
+        }
+        
         let canvas = ByteRTCVideoCanvas.init()
         canvas.view = view.videoView
         canvas.renderMode = .hidden
         view.userId = userId
-
-        let streamKey = ByteRTCRemoteStreamKey.init()
-        streamKey.userId = userId;
-        streamKey.roomId = roomId;
-        streamKey.streamIndex = .indexMain
         
-        self.rtcVideo?.setRemoteVideoCanvas(streamKey, withCanvas: canvas)
+        self.rtcVideo?.setRemoteVideoCanvas(streamId!, withCanvas: canvas)
     }
     
     func createUI() -> Void {
@@ -357,7 +488,7 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
     lazy var urlTextFieldView: TextFieldView = {
         let settingView = TextFieldView()
         settingView.title = "推流地址"
-        settingView.text = kCDNUrl
+        settingView.text = ""
         return settingView
     }()
     
@@ -411,7 +542,7 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
         return view
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")
@@ -419,45 +550,20 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
     }
     
     // 远端用户发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStream userId: String, type: ByteRTCMediaStreamType) {
-        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(userId)")
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStreamVideo streamId: String, info: ByteRTCStreamInfo, isPublish: Bool) {
+        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(info.userId), isPub: \(isPublish)")
+
         
-        if type == .video || type == .both {
-            
-            let streamKey = ByteRTCRemoteStreamKey.init()
-            streamKey.userId = userId;
-            streamKey.roomId = rtcRoom.getId();
-            streamKey.streamIndex = .indexMain
-            
-            self.users.append(streamKey)
+        if isPublish {
+            self.userVideoStreamMap.updateValue(info, forKey: info.userId)
             
             DispatchQueue.main.async {
                 self.updateRenderView()
             }
-        }
-    }
-    
-     // 远端用户取消发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserUnpublishStream userId: String, type: ByteRTCMediaStreamType, reason: ByteRTCStreamRemoveReason) {
-        ToastComponents.shared.show(withMessage: "onUserUnpublishStream uid: \(userId)")
-        
-        if type == .video || type == .both {
-            
+        } else {
             // 从self.users中移除
-            var itemsToRemove: [ByteRTCRemoteStreamKey] = []
-            
-            for streamKey in self.users {
-                if streamKey.userId == userId {
-                    itemsToRemove.append(streamKey)
-                }
-            }
-            
-            for item in itemsToRemove {
-                if let index = self.users.firstIndex(of: item) {
-                    self.users.remove(at: index)
-                }
-            }
-            
+            self.userVideoStreamMap.removeValue(forKey: info.userId)
+
             DispatchQueue.main.async {
                 for videoView in self.containerView.subviews {
                     if let view = videoView as? UserVideoView {
@@ -476,8 +582,9 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
         }
     }
     
+    
     // 远端用户加入房间
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo) {
         ToastComponents.shared.show(withMessage: "onUserJoined uid: \(userInfo.userId)")
         
     }
@@ -489,24 +596,27 @@ class SEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDe
     }
     
     // 收到SEI信息
-    func rtcEngine(_ engine: ByteRTCVideo, onSEIMessageReceived remoteStreamKey: ByteRTCRemoteStreamKey, andMessage message: Data) {
+    func rtcEngine(_ engine: ByteRTCEngine, onSEIMessageReceived streamId: String, info: ByteRTCStreamInfo, andMessage message: Data) {
        
         
         if let string = String(data: message, encoding: .utf8) {
-            ToastComponents.shared.show(withMessage: "onSEIMessageReceived: uid = \(remoteStreamKey.userId ?? ""), data = \(string)")
+            ToastComponents.shared.show(withMessage: "onSEIMessageReceived: streamId = \(streamId), userId = \(info.userId), data = \(string)")
 
             self.receivedSEIItem.text = string
         }
     }
     
-    // MARK: ByteRTCMixedStreamObserver
-    func isSupportClientPushStream() -> Bool {
-        return false
-    }
     
     // 合流事件回调
-    func onMixingEvent(_ event: ByteRTCStreamMixingEvent, taskId: String, error errorCode: ByteRTCStreamMixingErrorCode, mix mixType: ByteRTCMixedStreamType) {
-        ToastComponents.shared.show(withMessage: "onMixingEvent:\(event.rawValue) taskId:\(taskId) errorCode:\(errorCode.rawValue) + mixType:\(mixType.rawValue)")
+    func onMixedStreamEvent(event: ByteRTCMixedStreamTaskEvent, with info: ByteRTCMixedStreamTaskInfo, withErrorCode errorCode: ByteRTCMixedStreamTaskErrorCode) {
+        ToastComponents.shared.show(withMessage: "onMixedStreamEvent:\(event.rawValue) taskId:\(info.taskId) errorCode:\(errorCode.rawValue) + mixType:\(info.description)")
     }
+    
+    func rtcEngine(_ engine: ByteRTCEngine, onMixedStreamEvent event: ByteRTCMixedStreamTaskEvent, withMixedStreamInfo info: ByteRTCMixedStreamTaskInfo, with errorCode: ByteRTCMixedStreamTaskErrorCode) {
+            ToastComponents.shared.show(withMessage: "onMixedStreamEvent:\(event.rawValue) taskId:\(info.taskId) errorCode:\(errorCode.rawValue) + mixType:\(info.description)")
+        NSLog("onMixedStreamEvent: \(event), info_des: \(info.description), errorcode : \(errorCode)")
+    }
+    
+
     
 }

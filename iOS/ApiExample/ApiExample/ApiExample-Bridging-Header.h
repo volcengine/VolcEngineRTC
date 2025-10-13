@@ -12,5 +12,6 @@
 #import "TokenGenerator.h"
 #import <FURenderKit/FURenderKit.h>
 #import "FUDemoManager.h"
+#import "VideoDecoder.h"
 
 #endif /* ApiExample_Bridging_Header_h */

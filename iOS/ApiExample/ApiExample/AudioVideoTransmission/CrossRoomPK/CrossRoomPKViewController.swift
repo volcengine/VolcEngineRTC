@@ -5,8 +5,8 @@
 * 参考文档： https://www.volcengine.com/docs/6348/104398
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -29,8 +29,6 @@
 *     onLeaveRoom 离房回调
 *     onUserJoined 用户加入回调
 *     onUserLeave  用户离开回调
-*     onUserPublishStream 用户发流回调
-*     onUserUnpublishStream 用户停止发流回调
 *
 * Demo实现时的逻辑
 *    本Demo演示功能：在本端房间向其他房间转推媒体流
@@ -42,8 +40,8 @@ import UIKit
 import SnapKit
 import VolcEngineRTC
 
-class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate {
-    var rtcVideo: ByteRTCVideo?
+class CrossRoomPKViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
     
     override func viewDidLoad() {
@@ -55,11 +53,11 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
     
     
     deinit {
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -104,15 +102,16 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
             userInfo.userId = userId
             
             let roomCfg = ByteRTCRoomConfig.init()
-            roomCfg.isAutoPublish = true
+            roomCfg.isPublishAudio = true
+            roomCfg.isPublishVideo = true
             roomCfg.isAutoSubscribeAudio = true
             roomCfg.isAutoSubscribeVideo = true
             
-            self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+            self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
         }
         else {
             joinButton.setTitle("加入房间", for: .normal)
-            self.rtcRoom?.leaveRoom()
+            self.rtcRoom?.leave()
         }
         
     }
@@ -175,8 +174,11 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
-        
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        // 创建引擎
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         // 开启本地音视频采集
         self.rtcVideo?.startVideoCapture()
         self.rtcVideo?.startAudioCapture()
@@ -191,7 +193,7 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
         canvas.renderMode = .hidden
         self.localView.userId = userTextField.text ?? ""
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -303,6 +305,7 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
     lazy var roomTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
+        textField.keyboardType = .default
         return textField
     }()
     
@@ -383,7 +386,7 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
         return view
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")
@@ -391,19 +394,12 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
     }
     
     // 远端用户发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStream userId: String, type: ByteRTCMediaStreamType) {
-        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(userId)")
-        
-    }
-    
-     // 远端用户取消发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserUnpublishStream userId: String, type: ByteRTCMediaStreamType, reason: ByteRTCStreamRemoveReason) {
-        ToastComponents.shared.show(withMessage: "onUserUnpublishStream uid: \(userId)")
-        
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStreamVideo streamId: String, info: ByteRTCStreamInfo, isPublish: Bool) {
+        ToastComponents.shared.show(withMessage: "onUserPublishStreamVideo uid: \(info.userId), isPub: \(isPublish)")
     }
     
     // 远端用户加入房间
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo) {
         ToastComponents.shared.show(withMessage: "onUserJoined uid: \(userInfo.userId)")
         
     }
@@ -416,7 +412,7 @@ class CrossRoomPKViewController: BaseViewController, ByteRTCVideoDelegate, ByteR
     
     // 转推状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onForwardStreamStateChanged infos: [ByteRTCForwardStreamStateInfo]) {
-        ToastComponents.shared.show(withMessage: "onForwardStreamStateChanged state: \(String(describing: infos.first?.state.rawValue))")
+        ToastComponents.shared.show(withMessage: "onForwardStreamStateChanged state: \(String(describing: infos.first?.state.rawValue))，error: \(String(describing: infos.first?.error.rawValue))")
     }
     
     // 转推事件

@@ -5,8 +5,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/79888
 *
 * 此功能涉及的RTC API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -40,20 +40,20 @@ import UIKit
 import SnapKit
 import VolcEngineRTC
 
-class FaceUnityViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate {
+class FaceUnityViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
     
-    var rtcVideo: ByteRTCVideo?
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
     let roomId = "202311"
     let userId = "999999"
     var processor:FaceUnityProcessor?
     
     deinit {
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
         
         FUDemoManager.destory()
@@ -94,7 +94,10 @@ class FaceUnityViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTC
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         
         // 开启本地音视频采集
         self.rtcVideo?.startVideoCapture()
@@ -102,6 +105,7 @@ class FaceUnityViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTC
         
         let processorConfig = ByteRTCVideoPreprocessorConfig.init()
         processorConfig.requiredPixelFormat = .I420
+        
         
         self.processor = FaceUnityProcessor.init()
         
@@ -116,7 +120,7 @@ class FaceUnityViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTC
         canvas.renderMode = .hidden
         self.localView.userId = userId
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     @objc func joinRoom()  {
@@ -131,14 +135,15 @@ class FaceUnityViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTC
         userInfo.userId = userId
         
         let roomCfg = ByteRTCRoomConfig.init()
-        roomCfg.isAutoPublish = true
+        roomCfg.isPublishAudio = true
+        roomCfg.isPublishVideo = true
         roomCfg.isAutoSubscribeAudio = true
         roomCfg.isAutoSubscribeVideo = true
         
-        self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+        self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
     }
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")

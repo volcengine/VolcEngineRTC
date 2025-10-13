@@ -3,12 +3,24 @@ source 'https://github.com/volcengine/volcengine-specs.git'
 
 platform :ios, '11.0'
 
+  pod 'VolcEngineRTC', :podspec => '../script/VolcEngineRTC.podspec'
+  pod 'VolcEngineRTC/ScreenCapture', :podspec => '../script/VolcEngineRTC.podspec'
+
 target 'ApiExample' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod 'VolcEngineRTC', '3.58.1.100'
-
+  # CV
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  pod 'BytedEffectSDK', :path => '../script/Depends/BytedEffectSDK'
+  
+  # 布局
   pod 'SnapKit'
   
   # 请求token需要依赖
@@ -23,4 +35,8 @@ target 'ApiExample' do
   ## TT rtmp拉流sdk
   pod 'TTSDKFramework', '1.40.3.6-premium', :subspecs => ['LivePull']
 
+end
+
+target 'ApiExampleScreenShare' do
+  use_frameworks!
 end

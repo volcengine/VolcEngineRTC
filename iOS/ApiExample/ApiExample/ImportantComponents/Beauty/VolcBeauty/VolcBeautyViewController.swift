@@ -4,8 +4,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/114717
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -27,8 +27,6 @@
 *     onLeaveRoom 离房回调
 *     onUserJoined 用户加入回调
 *     onUserLeave  用户离开回调
-*     onUserPublishStream 用户发流回调
-*     onUserUnpublishStream 用户停止发流回调
 *
 * 火山美颜集成参考：https://www.volcengine.com/docs/6348/114717
 * 本功能需付费使用，请联系美颜技术支持团队获取 v4.4.2+ 的 Standard/Lite 版本特效 SDK 及符合业务功能需求的 License 和素材资源包。
@@ -46,9 +44,9 @@ import UIKit
 import SnapKit
 import VolcEngineRTC
 
-class VolcBeautyViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate,BeautyBarViewDelegate {
+class VolcBeautyViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate,BeautyBarViewDelegate {
     
-    var rtcVideo: ByteRTCVideo?
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
     let roomId = "202311"
     let userId = "888888"
@@ -57,11 +55,11 @@ class VolcBeautyViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
     private var rtcVideoEffect: ByteRTCVideoEffect?
     
     deinit {
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -105,7 +103,10 @@ class VolcBeautyViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         
         // 开启本地音视频采集
         self.rtcVideo?.startVideoCapture()
@@ -161,7 +162,7 @@ class VolcBeautyViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         canvas.renderMode = .hidden
         self.localView.userId = userId
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     @objc func joinRoom()  {
@@ -176,11 +177,12 @@ class VolcBeautyViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         userInfo.userId = userId
         
         let roomCfg = ByteRTCRoomConfig.init()
-        roomCfg.isAutoPublish = true
+        roomCfg.isPublishAudio = true
+        roomCfg.isPublishVideo = true
         roomCfg.isAutoSubscribeAudio = true
         roomCfg.isAutoSubscribeVideo = true
         
-        self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+        self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
     }
     
     //MARK: 处理美颜点击事件
@@ -255,7 +257,7 @@ class VolcBeautyViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         }
     }
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")

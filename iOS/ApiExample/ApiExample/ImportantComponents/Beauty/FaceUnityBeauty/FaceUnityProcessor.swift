@@ -11,7 +11,7 @@ import VolcEngineRTC
 // 处理RTC的视频帧回调
 class FaceUnityProcessor: NSObject, ByteRTCVideoProcessorDelegate {
     func processVideoFrame(_ srcFrame: ByteRTCVideoFrame) -> ByteRTCVideoFrame? {
-        
+        srcFrame.addRef()
         FUDemoManager.shared().checkAITrackedResult()
         if !FUDemoManager.shared().shouldRender {
             return srcFrame
@@ -19,7 +19,7 @@ class FaceUnityProcessor: NSObject, ByteRTCVideoProcessorDelegate {
         
         FUDemoManager.updateBeautyBlurEffect()
         
-        guard let srcPixelBuffer = srcFrame.textureBuf else { return nil }
+        guard let srcPixelBuffer = srcFrame.cvpixelbuffer else { return nil }
         CVPixelBufferLockBaseAddress(srcPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
         
         let width = CVPixelBufferGetWidth(srcPixelBuffer)

@@ -69,12 +69,18 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         let dic32 = ["音效混音":"AudioEffectMixingViewController"]
         let dic33 = ["音乐混音":"AudioMediaMixingViewController"]
         let dic34 = ["音频特效":"SoundEffectsViewController"]
-        let grpup3 = ["音频管理":[dic31,dic32,dic33,dic34]]
+        let externalAudioItem = ["外部音频源":"CustomAudioCaptureViewController"]
+        let grpup3 = ["音频管理":[dic31,dic32,dic33,dic34,externalAudioItem]]
         
-        let dic42 = ["画中画":"PipViewController"]
-        let dic43 = ["常用视频配置":"CommonVideoConfigViewController"]
-        let dic44 = ["视频旋转":"VideoRotationViewController"]
-        let grpup4 = ["视频管理":[dic42,dic43,dic44]]
+        let pipItem = ["画中画":"PipViewController"]
+        let commonItem = ["常用视频配置":"CommonVideoConfigViewController"]
+        let rotationItem = ["视频旋转":"VideoRotationViewController"]
+        let screenShareItem = ["屏幕共享":"ScreenShareViewController"]
+        let customVideoCaptureItem = ["自定义视频采集":"CustomVideoCaptureViewController"]
+        let customVideoRenderItem = ["自定义视频渲染":"CustomVideoRenderViewController"]
+        let customVideoEncodeItem = ["自定义视频编码":"CustomVideoEncodeVideoCaptureViewController"]
+
+        let grpup4 = ["视频管理":[pipItem,commonItem,rotationItem,screenShareItem,customVideoCaptureItem,customVideoRenderItem,customVideoEncodeItem]]
         
         let dic51 = ["直推CDN":"PushCDNViewController"]
         let grpup5 = ["直播相关":[dic51]]
@@ -84,9 +90,10 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         let grpup6 = ["重要组件":[dic62,pullItem]]
         
         let seiItem = ["SEI":"SEIViewController"]
+        let externalSeiItem = ["外部视频源SEI":"ExternalVidoeSourceSEIViewController"]
         let seiAudioItem = ["音频随帧":"AudioSEIViewController"]
 
-        let messageGroup = ["消息管理":[seiItem,seiAudioItem]]
+        let messageGroup = ["消息管理":[seiItem,externalSeiItem,seiAudioItem]]
 
         let dataArray = [grpup0,grpup1,grpup2,grpup3,grpup4,grpup5,grpup6,messageGroup]
         
@@ -118,7 +125,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
 
     lazy var versionLabel: UILabel = {
         let versionLabel = UILabel()
-        versionLabel.text = "SDK版本 v" + ByteRTCVideo.getSDKVersion()
+        versionLabel.text = "SDK版本 v" + ByteRTCEngine.getSDKVersion()
         versionLabel.font = UIFont.systemFont(ofSize: 16)
         versionLabel.textColor = UIColor.black
         versionLabel.sizeToFit()

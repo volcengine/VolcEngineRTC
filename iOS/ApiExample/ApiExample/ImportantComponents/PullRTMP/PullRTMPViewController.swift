@@ -1,10 +1,8 @@
-//
-//  PullRTMPViewController.swift
-//  ApiExample
-//
-//  Created by bytedance on 2024/1/18.
-//  Copyright © 2021 bytedance. All rights reserved.
-//
+/**
+* 功能名称： 拉流SDK拉取直播流
+* 功能简单描述：通过拉流 SDK 实现直播拉流播放控制的能力，包括建播放器、初始化配置、事件监听、配置渲染 View、配置播放地址。
+* 参考文档：https://www.volcengine.com/docs/6469/97858
+*/
 
 import Foundation
 import TTSDKFramework
@@ -142,8 +140,13 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     
     @objc func startPull() {
         if let text = self.urlTextFieldView.text, !text.isEmpty {
-            self.livePlayer?.setPlayUrl(text)
+            ToastComponents.shared.show(withMessage: "当前拉流字符串 : \(text)")
+            let newText = "\(PullUrlPre)\(text).flv"
+            ToastComponents.shared.show(withMessage: "当前拉流地址 : \(newText)")
+            self.livePlayer?.setPlayUrl(newText)
             self.livePlayer?.play()
+            print("URL: \(newText)")
+
         } else {
             ToastComponents.shared.show(withMessage: "无效的推流地址")
         }
@@ -163,7 +166,6 @@ class PullRTMPViewController: BaseViewController,VeLivePlayerObserver {
     lazy var urlTextFieldView: TextFieldView = {
         let settingView = TextFieldView()
         settingView.title = "拉流地址"
-        settingView.text = kPullUrl
         return settingView
     }()
     

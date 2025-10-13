@@ -1,0 +1,24 @@
+//
+//
+
+#ifndef EFFECTSSDK_BEF_AI_IMAGE_QUALITY_ENHANCEMENT_VIDEO_DEFILCKERING_H
+#define EFFECTSSDK_BEF_AI_IMAGE_QUALITY_ENHANCEMENT_VIDEO_DEFILCKERING_H
+
+#include "bef_ai_image_quality_enhancement_public_define.h"
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_deflicker_create(bef_image_quality_enhancement_handle *handle, const bef_ai_video_deflicker_init_config* config);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_deflicker_process(bef_image_quality_enhancement_handle handle, const bef_ai_video_deflicker_process_config* config, bef_ai_lens_video_deflicker_data *output);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_deflicker_check_license(bef_image_quality_enhancement_handle handle, const char* licensePath);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_deflicker_check_online_license(bef_image_quality_enhancement_handle handle, const char* licensePath);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_deflicker_destroy(bef_image_quality_enhancement_handle handle);
+
+#endif //EFFECTSSDK_BEF_AI_IMAGE_QUALITY_ENHANCEMENT_VIF_H

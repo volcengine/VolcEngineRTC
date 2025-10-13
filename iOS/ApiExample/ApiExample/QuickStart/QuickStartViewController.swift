@@ -3,8 +3,8 @@
 * 功能简单描述：快速跑通 ByteRTC 音视频通话功能
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -30,11 +30,12 @@ import UIKit
 import SnapKit
 import VolcEngineRTC
 
-class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate {
+class QuickStartViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
     
-    var rtcVideo: ByteRTCVideo?
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
-    
+    var userVideoStreamMap: Dictionary = Dictionary<String, ByteRTCStreamInfo>()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,11 +44,11 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
     }
     
     deinit {
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -57,7 +58,10 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         stepButton1.buttonAction = { [weak self] in
             if self?.rtcVideo == nil {
                 // 创建引擎
-                self?.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+                let engineCfg = ByteRTCEngineConfig.init()
+                engineCfg.appID = kAppID
+                engineCfg.parameters = [:]
+                self?.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
             }
         }
         
@@ -80,13 +84,15 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
             if self?.rtcVideo != nil {
                 // 加入房间
                 self?.joinRoom()
+            } else {
+                ToastComponents.shared.show(withMessage: "RTCEngine has't been created")
             }
         }
         
         stepButton6.buttonAction = { [weak self] in
             if self?.rtcRoom != nil {
                 // 离开房间
-                self?.rtcRoom?.leaveRoom()
+                self?.rtcRoom?.leave()
             }
         }
         
@@ -102,7 +108,7 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
             self?.localView.userId = ""
             if self?.rtcVideo != nil {
                 // 销毁引擎
-                ByteRTCVideo.destroyRTCVideo()
+                ByteRTCEngine.destroyRTCEngine()
                 self?.rtcVideo = nil
             }
         }
@@ -135,11 +141,12 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         userInfo.userId = userId
         
         let roomCfg = ByteRTCRoomConfig.init()
-        roomCfg.isAutoPublish = true
+        roomCfg.isPublishAudio = true
+        roomCfg.isPublishVideo = true
         roomCfg.isAutoSubscribeAudio = true
         roomCfg.isAutoSubscribeVideo = true
         
-        self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+        self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
     }
     
     func bindLocalRenderView() {
@@ -151,26 +158,39 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         canvas.view = self.localView.videoView
         canvas.renderMode = .hidden
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     func bindRemoteRenderView(view: UserVideoView, roomId: String, userId: String) {
         // 设置远端用户视频渲染视图
+        var streamInfo = self.userVideoStreamMap[userId]
+        if streamInfo == nil {
+            return
+        }
+        var streamId = streamInfo?.streamId
+        if streamId == nil {
+            return
+        }
+        
         let canvas = ByteRTCVideoCanvas.init()
         canvas.view = view.videoView
         canvas.renderMode = .hidden
         view.userId = userId
         
-        let streamKey = ByteRTCRemoteStreamKey.init()
-        streamKey.userId = userId;
-        streamKey.roomId = roomId;
-        streamKey.streamIndex = .indexMain
-        
-        self.rtcVideo?.setRemoteVideoCanvas(streamKey, withCanvas: canvas)
+        self.rtcVideo?.setRemoteVideoCanvas(streamId!, withCanvas: canvas)
     }
     
     func removeRemoteRenderView(view: UserVideoView, roomId: String, userId: String) {
         // 移除远端用户视频渲染视图
+        var streamInfo = self.userVideoStreamMap[userId]
+        if streamInfo == nil {
+            return
+        }
+        var streamId = streamInfo?.streamId
+        if streamId == nil {
+            return
+        }
+        
         let canvas = ByteRTCVideoCanvas.init()
         // view置为空
         canvas.view = nil
@@ -182,7 +202,7 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         streamKey.roomId = roomId;
         streamKey.streamIndex = .indexMain
         
-        self.rtcVideo?.setRemoteVideoCanvas(streamKey, withCanvas: canvas)
+        self.rtcVideo?.setRemoteVideoCanvas(streamId!, withCanvas: canvas)
     }
     
     func createUI() -> Void {
@@ -353,7 +373,7 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
         return view
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")
@@ -362,35 +382,33 @@ class QuickStartViewController: BaseViewController, ByteRTCVideoDelegate, ByteRT
             print("Join Room Success")
         }
     }
-
-    // 远端用户发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStream userId: String, type: ByteRTCMediaStreamType) {
-        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(userId)")
-        // 渲染远端用户
-        if type == .video || type == .both {
-            DispatchQueue.main.async {
-                self.bindRemoteRenderView(view: self.remoteView, roomId: rtcRoom.getId(), userId: userId)
-            }
-        }
-    }
     
-    // 远端用户取消发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserUnpublishStream userId: String, type: ByteRTCMediaStreamType, reason: ByteRTCStreamRemoveReason) {
-        ToastComponents.shared.show(withMessage: "onUserUnpublishStream uid: \(userId)")
-        
-        if type == .video || type == .both {
+    // 远端用户发布流
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStreamVideo streamId: String, info: ByteRTCStreamInfo, isPublish: Bool) {
+        self.userVideoStreamMap.updateValue(info, forKey: info.userId)
+        ToastComponents.shared.show(withMessage: "onUserPublishStreamVideo uid: \(info.userId), isPub: \(isPublish)")
+        // 渲染远端用户
+        if isPublish {
+            DispatchQueue.main.async {
+                self.bindRemoteRenderView(view: self.remoteView, roomId: info.roomId, userId: info.userId)
+            }
+        } else {
             // 移除UI显示
             DispatchQueue.main.async {
                 // 移除远端视图
-                if userId == self.remoteView.userId {
-                    self.removeRemoteRenderView(view: self.remoteView, roomId: rtcRoom.getId(), userId: userId)
+                if info.userId == self.remoteView.userId {
+                    self.removeRemoteRenderView(view: self.remoteView, roomId: info.roomId, userId: info.userId)
                 }
             }
         }
     }
     
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStreamAudio streamId: String, info: ByteRTCStreamInfo, isPublish: Bool) {
+        ToastComponents.shared.show(withMessage: "onUserPublishStreamAudio uid: \(info.userId), isPub: \(isPublish)")
+    }
+    
     // 远端用户加入房间
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo) {
         ToastComponents.shared.show(withMessage: "onUserJoined uid: \(userInfo.userId)")
     }
     

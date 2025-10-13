@@ -17,6 +17,15 @@
 		CC443D532ABD829500DF3DDD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC443D512ABD829500DF3DDD /* LaunchScreen.storyboard */; };
 		CC58B5892B075B6E00C03D52 /* SwitchSetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC58B5882B075B6E00C03D52 /* SwitchSetingView.swift */; };
 		CC6AE8592B02435A00E63421 /* qilixiang.m4a in Resources */ = {isa = PBXBuildFile; fileRef = CC6AE8582B02435A00E63421 /* qilixiang.m4a */; };
+		CC79D5CE2BA1A3B800CF7F5C /* ScreenShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D5CD2BA1A3B800CF7F5C /* ScreenShareViewController.swift */; };
+		CC79D5F72BA2D30E00CF7F5C /* CustomVideoRenderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D5F62BA2D30E00CF7F5C /* CustomVideoRenderViewController.swift */; };
+		CC79D6002BAC331700CF7F5C /* CustomVideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D5FF2BAC331700CF7F5C /* CustomVideoCapture.swift */; };
+		CC79D6022BAC34CB00CF7F5C /* CustomVideoCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D6012BAC34CB00CF7F5C /* CustomVideoCaptureViewController.swift */; };
+		CC79D6082BAC6FC800CF7F5C /* ExternalVidoeSourceSEIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D6072BAC6FC800CF7F5C /* ExternalVidoeSourceSEIViewController.swift */; };
+		CC79D60B2BAD7C0300CF7F5C /* CustomAudioCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D60A2BAD7C0300CF7F5C /* CustomAudioCaptureViewController.swift */; };
+		CC79D60E2BB11D8A00CF7F5C /* CustomVideoEncodeVideoCaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC79D60D2BB11D8A00CF7F5C /* CustomVideoEncodeVideoCaptureViewController.swift */; };
+		CC79D6152BB163C300CF7F5C /* yiyi_no_bframe.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = CC79D6142BB163C300CF7F5C /* yiyi_no_bframe.mp4 */; };
+		CC79D6512BB194B300CF7F5C /* VideoDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CC79D64F2BB194B200CF7F5C /* VideoDecoder.mm */; };
 		CC7E63972AC55CD100B9D0D7 /* MutiRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E63962AC55CD100B9D0D7 /* MutiRoomViewController.swift */; };
 		CC7E63992AC575E700B9D0D7 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E63982AC575E700B9D0D7 /* BaseViewController.swift */; };
 		CC7E639B2AD1333B00B9D0D7 /* Tool.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E639A2AD1333B00B9D0D7 /* Tool.swift */; };
@@ -110,16 +119,41 @@
 		CC7E64DD2AF4CAA100B9D0D7 /* ToastComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E64DC2AF4CAA100B9D0D7 /* ToastComponents.swift */; };
 		CC7E64DF2AF4CFD000B9D0D7 /* StepButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E64DE2AF4CFD000B9D0D7 /* StepButton.swift */; };
 		CC7E64E12AFA347000B9D0D7 /* CustomVideoRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E64E02AFA347000B9D0D7 /* CustomVideoRenderView.swift */; };
+		CC934D812BB510B300E49FD6 /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CC79D5D62BA2CEFC00CF7F5C /* ReplayKit.framework */; };
+		CC934D842BB510B300E49FD6 /* SampleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC934D832BB510B300E49FD6 /* SampleHandler.swift */; };
+		CC934D882BB510B300E49FD6 /* ApiExampleScreenShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CC934D802BB510B300E49FD6 /* ApiExampleScreenShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CC934D8D2BB5118A00E49FD6 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7E63EB2AF348D700B9D0D7 /* Config.swift */; };
 		CCB1E61C2B5805480040AFA0 /* SEIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1E61B2B5805480040AFA0 /* SEIViewController.swift */; };
 		CCB1E61E2B5911BD0040AFA0 /* AudioSEIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1E61D2B5911BD0040AFA0 /* AudioSEIViewController.swift */; };
 		CCB1E6212B5923890040AFA0 /* PullRTMPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1E6202B5923890040AFA0 /* PullRTMPViewController.swift */; };
-		CCB1E6232B5928000040AFA0 /* tt_license.lic in Resources */ = {isa = PBXBuildFile; fileRef = CCB1E6222B5928000040AFA0 /* tt_license.lic */; };
 		CCC607FD2B21C649000EFE3B /* BaseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC607FC2B21C649000EFE3B /* BaseButton.swift */; };
 		CCC607FF2B230234000EFE3B /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC607FE2B230234000EFE3B /* TextFieldView.swift */; };
 		CCC608012B26DE7B000EFE3B /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCC608002B26DE7B000EFE3B /* SliderView.swift */; };
+		F8B726C579D4ED47EA0E5260 /* Pods_ApiExampleScreenShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07B4DE9C2E779BA36DE2DA08 /* Pods_ApiExampleScreenShare.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CC934D862BB510B300E49FD6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CC443D3B2ABD829300DF3DDD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CC934D7F2BB510B300E49FD6;
+			remoteInfo = ApiExampleScreenShare;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
+		CC79D5F42BA2CEFD00CF7F5C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				CC934D882BB510B300E49FD6 /* ApiExampleScreenShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CC7E63FF2AF395FB00B9D0D7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -134,6 +168,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		07B4DE9C2E779BA36DE2DA08 /* Pods_ApiExampleScreenShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ApiExampleScreenShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0EC6FB3BF486F43FA39A2E12 /* Pods-ApiExampleScreenShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ApiExampleScreenShare.debug.xcconfig"; path = "Target Support Files/Pods-ApiExampleScreenShare/Pods-ApiExampleScreenShare.debug.xcconfig"; sourceTree = "<group>"; };
+		2BE95D8D2E9D2B970044BF94 /* authpack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = authpack.h; sourceTree = "<group>"; };
 		4A82FE180E6EAD947558E0C0 /* Pods_ApiExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ApiExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D3D2918A3E122B6768F80D6 /* Pods-ApiExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ApiExample.debug.xcconfig"; path = "Target Support Files/Pods-ApiExample/Pods-ApiExample.debug.xcconfig"; sourceTree = "<group>"; };
 		CC26CD6C2B3419B60062F0DB /* bdaudioeffect.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = bdaudioeffect.framework; sourceTree = "<group>"; };
@@ -146,6 +183,20 @@
 		CC443D542ABD829500DF3DDD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC58B5882B075B6E00C03D52 /* SwitchSetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSetingView.swift; sourceTree = "<group>"; };
 		CC6AE8582B02435A00E63421 /* qilixiang.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = qilixiang.m4a; sourceTree = "<group>"; };
+		CC79D5CD2BA1A3B800CF7F5C /* ScreenShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenShareViewController.swift; sourceTree = "<group>"; };
+		CC79D5D62BA2CEFC00CF7F5C /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
+		CC79D5E22BA2CEFC00CF7F5C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		CC79D5F62BA2D30E00CF7F5C /* CustomVideoRenderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoRenderViewController.swift; sourceTree = "<group>"; };
+		CC79D5FF2BAC331700CF7F5C /* CustomVideoCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoCapture.swift; sourceTree = "<group>"; };
+		CC79D6012BAC34CB00CF7F5C /* CustomVideoCaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoCaptureViewController.swift; sourceTree = "<group>"; };
+		CC79D6072BAC6FC800CF7F5C /* ExternalVidoeSourceSEIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalVidoeSourceSEIViewController.swift; sourceTree = "<group>"; };
+		CC79D60A2BAD7C0300CF7F5C /* CustomAudioCaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAudioCaptureViewController.swift; sourceTree = "<group>"; };
+		CC79D60D2BB11D8A00CF7F5C /* CustomVideoEncodeVideoCaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoEncodeVideoCaptureViewController.swift; sourceTree = "<group>"; };
+		CC79D6142BB163C300CF7F5C /* yiyi_no_bframe.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = yiyi_no_bframe.mp4; sourceTree = "<group>"; };
+		CC79D64F2BB194B200CF7F5C /* VideoDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoDecoder.mm; sourceTree = "<group>"; };
+		CC79D6502BB194B300CF7F5C /* VideoDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoDecoder.h; sourceTree = "<group>"; };
+		CC79D6572BB2C60E00CF7F5C /* ApiExampleRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApiExampleRelease.entitlements; sourceTree = "<group>"; };
+		CC79D6592BB2F60900CF7F5C /* ApiExampleDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApiExampleDebug.entitlements; sourceTree = "<group>"; };
 		CC7E63962AC55CD100B9D0D7 /* MutiRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutiRoomViewController.swift; sourceTree = "<group>"; };
 		CC7E63982AC575E700B9D0D7 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		CC7E639A2AD1333B00B9D0D7 /* Tool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tool.swift; sourceTree = "<group>"; };
@@ -267,19 +318,23 @@
 		CC7E64682AF3DA0800B9D0D7 /* stickers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stickers.json; sourceTree = "<group>"; };
 		CC7E64692AF3DA0800B9D0D7 /* sdlu.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = sdlu.bundle; sourceTree = "<group>"; };
 		CC7E646A2AF3DA0800B9D0D7 /* sdlr.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = sdlr.bundle; sourceTree = "<group>"; };
-		CC7E64BD2AF3DA3700B9D0D7 /* authpack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = authpack.h; sourceTree = "<group>"; };
 		CC7E64D82AF4C88F00B9D0D7 /* QuickStartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickStartViewController.swift; sourceTree = "<group>"; };
 		CC7E64DA2AF4CA8E00B9D0D7 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		CC7E64DC2AF4CAA100B9D0D7 /* ToastComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastComponents.swift; sourceTree = "<group>"; };
 		CC7E64DE2AF4CFD000B9D0D7 /* StepButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepButton.swift; sourceTree = "<group>"; };
 		CC7E64E02AFA347000B9D0D7 /* CustomVideoRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVideoRenderView.swift; sourceTree = "<group>"; };
+		CC934D802BB510B300E49FD6 /* ApiExampleScreenShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ApiExampleScreenShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC934D832BB510B300E49FD6 /* SampleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleHandler.swift; sourceTree = "<group>"; };
+		CC934D852BB510B300E49FD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CC934D8C2BB510F100E49FD6 /* ApiExampleScreenShareDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApiExampleScreenShareDebug.entitlements; sourceTree = "<group>"; };
 		CCB1E61B2B5805480040AFA0 /* SEIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SEIViewController.swift; sourceTree = "<group>"; };
 		CCB1E61D2B5911BD0040AFA0 /* AudioSEIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSEIViewController.swift; sourceTree = "<group>"; };
 		CCB1E6202B5923890040AFA0 /* PullRTMPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PullRTMPViewController.swift; sourceTree = "<group>"; };
-		CCB1E6222B5928000040AFA0 /* tt_license.lic */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tt_license.lic; sourceTree = "<group>"; };
+		CCC2A0DB2BB54B93009C5D39 /* ApiExampleScreenShareRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ApiExampleScreenShareRelease.entitlements; sourceTree = "<group>"; };
 		CCC607FC2B21C649000EFE3B /* BaseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseButton.swift; sourceTree = "<group>"; };
 		CCC607FE2B230234000EFE3B /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
 		CCC608002B26DE7B000EFE3B /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
+		D7DFF2B947628C3E2B229425 /* Pods-ApiExampleScreenShare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ApiExampleScreenShare.release.xcconfig"; path = "Target Support Files/Pods-ApiExampleScreenShare/Pods-ApiExampleScreenShare.release.xcconfig"; sourceTree = "<group>"; };
 		EC77A5081920DED2D1E2D56B /* Pods-ApiExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ApiExample.release.xcconfig"; path = "Target Support Files/Pods-ApiExample/Pods-ApiExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -293,6 +348,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CC934D7D2BB510B300E49FD6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC934D812BB510B300E49FD6 /* ReplayKit.framework in Frameworks */,
+				F8B726C579D4ED47EA0E5260 /* Pods_ApiExampleScreenShare.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -301,6 +365,8 @@
 			children = (
 				6D3D2918A3E122B6768F80D6 /* Pods-ApiExample.debug.xcconfig */,
 				EC77A5081920DED2D1E2D56B /* Pods-ApiExample.release.xcconfig */,
+				0EC6FB3BF486F43FA39A2E12 /* Pods-ApiExampleScreenShare.debug.xcconfig */,
+				D7DFF2B947628C3E2B229425 /* Pods-ApiExampleScreenShare.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -309,6 +375,7 @@
 			isa = PBXGroup;
 			children = (
 				CC443D452ABD829300DF3DDD /* ApiExample */,
+				CC934D822BB510B300E49FD6 /* ApiExampleScreenShare */,
 				CC443D442ABD829300DF3DDD /* Products */,
 				1257DC8DC5F50C314A505DBC /* Pods */,
 				D4AC22F72E4A483E78D592A7 /* Frameworks */,
@@ -319,6 +386,7 @@
 			isa = PBXGroup;
 			children = (
 				CC443D432ABD829300DF3DDD /* ApiExample.app */,
+				CC934D802BB510B300E49FD6 /* ApiExampleScreenShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -326,11 +394,12 @@
 		CC443D452ABD829300DF3DDD /* ApiExample */ = {
 			isa = PBXGroup;
 			children = (
+				CC79D6592BB2F60900CF7F5C /* ApiExampleDebug.entitlements */,
+				CC79D6572BB2C60E00CF7F5C /* ApiExampleRelease.entitlements */,
 				CC443D462ABD829300DF3DDD /* AppDelegate.swift */,
 				CC443D4A2ABD829300DF3DDD /* ViewController.swift */,
 				CC7E63EB2AF348D700B9D0D7 /* Config.swift */,
 				CC7E63A72AD145ED00B9D0D7 /* ApiExample-Bridging-Header.h */,
-				CCB1E6222B5928000040AFA0 /* tt_license.lic */,
 				CC6AE85A2B03243900E63421 /* Common */,
 				CC7E639C2AD13E4400B9D0D7 /* TokenGenerator */,
 				CC7E64D72AF4C87B00B9D0D7 /* QuickStart */,
@@ -368,6 +437,51 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
+		CC79D5CC2BA1A33C00CF7F5C /* ScreenShare */ = {
+			isa = PBXGroup;
+			children = (
+				CC79D5CD2BA1A3B800CF7F5C /* ScreenShareViewController.swift */,
+			);
+			name = ScreenShare;
+			path = ApiExample/VideoManager/ScreenShare;
+			sourceTree = SOURCE_ROOT;
+		};
+		CC79D5F52BA2D2FD00CF7F5C /* CustomVideoRender */ = {
+			isa = PBXGroup;
+			children = (
+				CC79D5F62BA2D30E00CF7F5C /* CustomVideoRenderViewController.swift */,
+			);
+			path = CustomVideoRender;
+			sourceTree = "<group>";
+		};
+		CC79D5FE2BAC330B00CF7F5C /* CustomVideoCapture */ = {
+			isa = PBXGroup;
+			children = (
+				CC79D5FF2BAC331700CF7F5C /* CustomVideoCapture.swift */,
+				CC79D6012BAC34CB00CF7F5C /* CustomVideoCaptureViewController.swift */,
+			);
+			path = CustomVideoCapture;
+			sourceTree = "<group>";
+		};
+		CC79D6092BAD7BF100CF7F5C /* CustomAudioCapture */ = {
+			isa = PBXGroup;
+			children = (
+				CC79D60A2BAD7C0300CF7F5C /* CustomAudioCaptureViewController.swift */,
+			);
+			path = CustomAudioCapture;
+			sourceTree = "<group>";
+		};
+		CC79D60C2BB11D6600CF7F5C /* CustomVideoEncode */ = {
+			isa = PBXGroup;
+			children = (
+				CC79D6142BB163C300CF7F5C /* yiyi_no_bframe.mp4 */,
+				CC79D6502BB194B300CF7F5C /* VideoDecoder.h */,
+				CC79D64F2BB194B200CF7F5C /* VideoDecoder.mm */,
+				CC79D60D2BB11D8A00CF7F5C /* CustomVideoEncodeVideoCaptureViewController.swift */,
+			);
+			path = CustomVideoEncode;
+			sourceTree = "<group>";
+		};
 		CC7E638D2AC55CAD00B9D0D7 /* RoomManager */ = {
 			isa = PBXGroup;
 			children = (
@@ -387,6 +501,7 @@
 		CC7E638F2AC55CAD00B9D0D7 /* AudioManager */ = {
 			isa = PBXGroup;
 			children = (
+				CC79D6092BAD7BF100CF7F5C /* CustomAudioCapture */,
 				CC7E63B42AD542BF00B9D0D7 /* AudioMediaMixing */,
 				CC7E63922AC55CAD00B9D0D7 /* AudioEffectMixing */,
 				CC7E63902AC55CAD00B9D0D7 /* SoundEffects */,
@@ -471,6 +586,10 @@
 		CC7E63C42AE1169200B9D0D7 /* VideoManager */ = {
 			isa = PBXGroup;
 			children = (
+				CC79D60C2BB11D6600CF7F5C /* CustomVideoEncode */,
+				CC79D5FE2BAC330B00CF7F5C /* CustomVideoCapture */,
+				CC79D5F52BA2D2FD00CF7F5C /* CustomVideoRender */,
+				CC79D5CC2BA1A33C00CF7F5C /* ScreenShare */,
 				CC7E63C62AE116E200B9D0D7 /* CommonConfig */,
 				CC7E63C52AE116E200B9D0D7 /* VideoRotation */,
 				CC7E63C12ADD63A300B9D0D7 /* PictureInPicture */,
@@ -555,7 +674,7 @@
 		CC7E64022AF3D7F600B9D0D7 /* FaceUnityBeauty */ = {
 			isa = PBXGroup;
 			children = (
-				CC7E64BD2AF3DA3700B9D0D7 /* authpack.h */,
+				2BE95D8D2E9D2B970044BF94 /* authpack.h */,
 				CC7E64052AF3DA0700B9D0D7 /* FaceUnityUI */,
 				CC7E63DF2AEF981000B9D0D7 /* FaceUnityViewController.swift */,
 				CC7E64032AF3D86100B9D0D7 /* FaceUnityProcessor.swift */,
@@ -774,11 +893,23 @@
 			path = QuickStart;
 			sourceTree = "<group>";
 		};
+		CC934D822BB510B300E49FD6 /* ApiExampleScreenShare */ = {
+			isa = PBXGroup;
+			children = (
+				CCC2A0DB2BB54B93009C5D39 /* ApiExampleScreenShareRelease.entitlements */,
+				CC934D8C2BB510F100E49FD6 /* ApiExampleScreenShareDebug.entitlements */,
+				CC934D832BB510B300E49FD6 /* SampleHandler.swift */,
+				CC934D852BB510B300E49FD6 /* Info.plist */,
+			);
+			path = ApiExampleScreenShare;
+			sourceTree = "<group>";
+		};
 		CCB1E6132B57F85A0040AFA0 /* SEI */ = {
 			isa = PBXGroup;
 			children = (
 				CCB1E61B2B5805480040AFA0 /* SEIViewController.swift */,
 				CCB1E61D2B5911BD0040AFA0 /* AudioSEIViewController.swift */,
+				CC79D6072BAC6FC800CF7F5C /* ExternalVidoeSourceSEIViewController.swift */,
 			);
 			path = SEI;
 			sourceTree = "<group>";
@@ -796,6 +927,9 @@
 			children = (
 				CC26CD6C2B3419B60062F0DB /* bdaudioeffect.framework */,
 				4A82FE180E6EAD947558E0C0 /* Pods_ApiExample.framework */,
+				CC79D5D62BA2CEFC00CF7F5C /* ReplayKit.framework */,
+				CC79D5E22BA2CEFC00CF7F5C /* UIKit.framework */,
+				07B4DE9C2E779BA36DE2DA08 /* Pods_ApiExampleScreenShare.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -814,15 +948,35 @@
 				33BDF26D1F8EC635697BD7F6 /* [CP] Embed Pods Frameworks */,
 				CC7E63FF2AF395FB00B9D0D7 /* Embed Frameworks */,
 				38CD94D414F7E1F52F73C374 /* [CP] Copy Pods Resources */,
+				CC79D5F42BA2CEFD00CF7F5C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				CC934D872BB510B300E49FD6 /* PBXTargetDependency */,
 			);
 			name = ApiExample;
 			productName = ApiExample;
 			productReference = CC443D432ABD829300DF3DDD /* ApiExample.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CC934D7F2BB510B300E49FD6 /* ApiExampleScreenShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC934D892BB510B300E49FD6 /* Build configuration list for PBXNativeTarget "ApiExampleScreenShare" */;
+			buildPhases = (
+				7D194CB0CE77BA83C2659205 /* [CP] Check Pods Manifest.lock */,
+				CC934D7C2BB510B300E49FD6 /* Sources */,
+				CC934D7D2BB510B300E49FD6 /* Frameworks */,
+				CC934D7E2BB510B300E49FD6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ApiExampleScreenShare;
+			productName = ApiExampleScreenShare;
+			productReference = CC934D802BB510B300E49FD6 /* ApiExampleScreenShare.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -835,6 +989,9 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					CC443D422ABD829300DF3DDD = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+					CC934D7F2BB510B300E49FD6 = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
 				};
@@ -854,6 +1011,7 @@
 			projectRoot = "";
 			targets = (
 				CC443D422ABD829300DF3DDD /* ApiExample */,
+				CC934D7F2BB510B300E49FD6 /* ApiExampleScreenShare */,
 			);
 		};
 /* End PBXProject section */
@@ -893,15 +1051,22 @@
 				CC7E64972AF3DA0800B9D0D7 /* qianzhihe.bundle in Resources */,
 				CC7E63B22AD3DDA300B9D0D7 /* rtc_test.aac in Resources */,
 				CC7E648E2AF3DA0800B9D0D7 /* tianmei.bundle in Resources */,
-				CCB1E6232B5928000040AFA0 /* tt_license.lic in Resources */,
 				CC7E64902AF3DA0800B9D0D7 /* chaomo.bundle in Resources */,
 				CC7E649C2AF3DA0800B9D0D7 /* xinggan.bundle in Resources */,
 				CC7E649F2AF3DA0800B9D0D7 /* fashi.bundle in Resources */,
 				CC7E64982AF3DA0800B9D0D7 /* wumei.bundle in Resources */,
 				CC6AE8592B02435A00E63421 /* qilixiang.m4a in Resources */,
 				CC7E64862AF3DA0800B9D0D7 /* beauty_filter.json in Resources */,
+				CC79D6152BB163C300CF7F5C /* yiyi_no_bframe.mp4 in Resources */,
 				CC7E64932AF3DA0800B9D0D7 /* gangfeng.bundle in Resources */,
 				CC7E648A2AF3DA0800B9D0D7 /* oumei.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC934D7E2BB510B300E49FD6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -942,6 +1107,28 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ApiExample/Pods-ApiExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		7D194CB0CE77BA83C2659205 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ApiExampleScreenShare-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9E35C7527C65593336B22902 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -974,6 +1161,7 @@
 				CC7E64782AF3DA0800B9D0D7 /* FUMakeupModel.m in Sources */,
 				CC7E63EA2AF347A900B9D0D7 /* EffectResource.swift in Sources */,
 				CC7E63AB2AD18B3C00B9D0D7 /* CrossRoomPKViewController.swift in Sources */,
+				CC79D6002BAC331700CF7F5C /* CustomVideoCapture.swift in Sources */,
 				CC7E646E2AF3DA0800B9D0D7 /* FUStickerViewModel.m in Sources */,
 				CC7E64DB2AF4CA8E00B9D0D7 /* ToastView.swift in Sources */,
 				CC443D4B2ABD829300DF3DDD /* ViewController.swift in Sources */,
@@ -987,7 +1175,9 @@
 				CC7E64842AF3DA0800B9D0D7 /* FUSegmentBar.m in Sources */,
 				CCC608012B26DE7B000EFE3B /* SliderView.swift in Sources */,
 				CC7E63992AC575E700B9D0D7 /* BaseViewController.swift in Sources */,
+				CC79D60B2BAD7C0300CF7F5C /* CustomAudioCaptureViewController.swift in Sources */,
 				CC7E63972AC55CD100B9D0D7 /* MutiRoomViewController.swift in Sources */,
+				CC79D5CE2BA1A3B800CF7F5C /* ScreenShareViewController.swift in Sources */,
 				CC7E63E62AF1044500B9D0D7 /* BeautyBarView.swift in Sources */,
 				CC7E63B62AD542D500B9D0D7 /* AudioMediaMixingViewController.swift in Sources */,
 				CCC607FF2B230234000EFE3B /* TextFieldView.swift in Sources */,
@@ -1011,6 +1201,7 @@
 				CC7E647F2AF3DA0800B9D0D7 /* FUBeautyFilterView.m in Sources */,
 				CC7E63BA2AD68BA100B9D0D7 /* SettingItemView.swift in Sources */,
 				CC7E64742AF3DA0800B9D0D7 /* FUBeautyFilterModel.m in Sources */,
+				CC79D5F72BA2D30E00CF7F5C /* CustomVideoRenderViewController.swift in Sources */,
 				CC7E63E22AF0FA5D00B9D0D7 /* EffectModel.swift in Sources */,
 				CC7E64042AF3D86100B9D0D7 /* FaceUnityProcessor.swift in Sources */,
 				CC7E63EC2AF348D700B9D0D7 /* Config.swift in Sources */,
@@ -1038,11 +1229,32 @@
 				CC7E63C32ADD63B300B9D0D7 /* PipViewController.swift in Sources */,
 				CC7E64792AF3DA0800B9D0D7 /* FUStickerView.m in Sources */,
 				CC7E63A22AD13E4500B9D0D7 /* Packer.cpp in Sources */,
+				CC79D6022BAC34CB00CF7F5C /* CustomVideoCaptureViewController.swift in Sources */,
 				CC7E63E02AEF981000B9D0D7 /* FaceUnityViewController.swift in Sources */,
+				CC79D6082BAC6FC800CF7F5C /* ExternalVidoeSourceSEIViewController.swift in Sources */,
+				CC79D6512BB194B300CF7F5C /* VideoDecoder.mm in Sources */,
+				CC79D60E2BB11D8A00CF7F5C /* CustomVideoEncodeVideoCaptureViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC934D7C2BB510B300E49FD6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CC934D842BB510B300E49FD6 /* SampleHandler.swift in Sources */,
+				CC934D8D2BB5118A00E49FD6 /* Config.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CC934D872BB510B300E49FD6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CC934D7F2BB510B300E49FD6 /* ApiExampleScreenShare */;
+			targetProxy = CC934D862BB510B300E49FD6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		CC443D4C2ABD829300DF3DDD /* Main.storyboard */ = {
@@ -1123,7 +1335,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1177,7 +1389,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1191,14 +1403,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6D3D2918A3E122B6768F80D6 /* Pods-ApiExample.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ApiExample/ApiExampleDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3XMD9D6A65;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1221,10 +1435,10 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = ApiExampleDev;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RtcVertcdemoApiexampleDemoDist;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/ApiExample/ApiExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -1236,14 +1450,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EC77A5081920DED2D1E2D56B /* Pods-ApiExample.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ApiExample/ApiExampleRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 53URFX25J4;
+				DEVELOPMENT_TEAM = 3XMD9D6A65;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1266,12 +1482,78 @@
 					"$(PROJECT_DIR)",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample;
+				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample.demo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RTCVertcDemoAPIExampleDist;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RtcVertcdemoApiexampleDemoDist;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/ApiExample/ApiExample-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CC934D8A2BB510B300E49FD6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0EC6FB3BF486F43FA39A2E12 /* Pods-ApiExampleScreenShare.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ApiExampleScreenShare/ApiExampleScreenShareDebug.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ApiExampleScreenShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ApiExampleScreenShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample.demo.screenshare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RtcVertcdemoApiexampleDemoScreenshareDist;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CC934D8B2BB510B300E49FD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D7DFF2B947628C3E2B229425 /* Pods-ApiExampleScreenShare.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ApiExampleScreenShare/ApiExampleScreenShareRelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = X46375UBYG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ApiExampleScreenShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ApiExampleScreenShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = rtc.vertcdemo.apiexample.demo.screenshare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RtcVertcdemoApiexampleDemoScreenshareDist;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1294,6 +1576,15 @@
 			buildConfigurations = (
 				CC443D582ABD829500DF3DDD /* Debug */,
 				CC443D592ABD829500DF3DDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CC934D892BB510B300E49FD6 /* Build configuration list for PBXNativeTarget "ApiExampleScreenShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CC934D8A2BB510B300E49FD6 /* Debug */,
+				CC934D8B2BB510B300E49FD6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

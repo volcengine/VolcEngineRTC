@@ -4,8 +4,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/70122
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -21,8 +21,7 @@
 *     onLeaveRoom 离房回调
 *     onUserJoined 用户加入回调
 *     onUserLeave  用户离开回调
-*     onUserPublishStream 用户发流回调
-*     onUserUnpublishStream 用户停止发流回调
+*     onUserPublishStreamVideo 用户发流回调
 *
 
 *
@@ -36,14 +35,13 @@ import UIKit
 import SnapKit
 import VolcEngineRTC
 
-class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate {
+class CommonVideoConfigViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
     
-    var rtcVideo: ByteRTCVideo?
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
     var captureConfig: ByteRTCVideoCaptureConfig?
     var encoderCfg : ByteRTCVideoEncoderConfig?
-    
-    var users : Array = Array<ByteRTCRemoteStreamKey>()
+    var userVideoStreamMap: Dictionary = Dictionary<String, ByteRTCStreamInfo>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,11 +53,11 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
     
     deinit {
         
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -97,21 +95,25 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
             userInfo.userId = userId
             
             let roomCfg = ByteRTCRoomConfig.init()
-            roomCfg.isAutoPublish = true
+            roomCfg.isPublishAudio = true
+            roomCfg.isPublishVideo = true
             roomCfg.isAutoSubscribeAudio = true
             roomCfg.isAutoSubscribeVideo = true
             
-            self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+            self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
         }
         else {
             joinButton.setTitle("加入房间", for: .normal)
-            self.rtcRoom?.leaveRoom()
+            self.rtcRoom?.leave()
         }
     }
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         
         // 设置视频采集参数
         let config = ByteRTCVideoCaptureConfig.init()
@@ -128,7 +130,7 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
         encoderCfg.frameRate = 15
         encoderCfg.maxBitrate = 1000
         self.encoderCfg = encoderCfg
-        self.rtcVideo?.setMaxVideoEncoderConfig(encoderCfg)
+        self.rtcVideo?.setVideoEncoderConfig(encoderCfg)
         
         // 开启本地音视频采集
         self.rtcVideo?.startVideoCapture()
@@ -144,21 +146,21 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
         canvas.renderMode = .hidden
         self.localView.userId = userSettingItem.text ?? ""
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     func updateRenderView() {
         // 获取room的第一个用户
-        var remoteUser:ByteRTCRemoteStreamKey?
+        var remoteStreamInfo:ByteRTCStreamInfo?
         
-        for streamKey in self.users {
-            if remoteUser == nil && streamKey.roomId ==  self.roomSettingItem.text {
-                remoteUser = streamKey
+        for (userId, info) in self.userVideoStreamMap {
+            if info.roomId == self.roomSettingItem.text {
+                remoteStreamInfo = info
             }
         }
         
-        if (remoteUser != nil) {
-            self.bindRemoteRenderView(view: self.firstRemoteView,roomId: (remoteUser?.roomId)!,userId: (remoteUser?.userId)!)
+        if (remoteStreamInfo != nil) {
+            self.bindRemoteRenderView(view: self.firstRemoteView, roomId:remoteStreamInfo!.roomId, userId:remoteStreamInfo!.userId)
         }
     }
     
@@ -237,7 +239,7 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
                 weakSelf?.encoderCfg?.height = 640
             }
             
-            weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
+            weakSelf?.rtcVideo?.setVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
         // 设置编码帧率
@@ -254,31 +256,31 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
                 weakSelf?.encoderCfg?.frameRate = 15
             }
                         
-            weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
+            weakSelf?.rtcVideo?.setVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
         // 设置最大码率
         self.maxBitrateSettingItem.onValueChanged = {(value) in
             weakSelf?.encoderCfg?.maxBitrate = Int(value)!
-            weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
+            weakSelf?.rtcVideo?.setVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
         // 设置最低码率
         self.minBitrateSettingItem.onValueChanged = {(value) in
             weakSelf?.encoderCfg?.minBitrate = Int(value)!
-            weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
+            weakSelf?.rtcVideo?.setVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
         // 设置编码策略偏好
         self.encodePrefrenceSheetView.didSelectOption = {(value) in
             weakSelf?.encoderCfg?.encoderPreference = ByteRTCVideoEncoderPreference(rawValue: value)!
             
-            weakSelf?.rtcVideo?.setMaxVideoEncoderConfig(weakSelf?.encoderCfg)
+            weakSelf?.rtcVideo?.setVideoEncoderConfig(weakSelf?.encoderCfg)
         }
         
         // 设置本地渲染填充模式
         self.localRenderModeSheetView.didSelectOption = {(value) in
-            weakSelf?.rtcVideo?.updateLocalVideoCanvas(.indexMain, withRenderMode: ByteRTCRenderMode(rawValue: UInt(value)+1)!, withBackgroundColor: 0xffffff)
+            weakSelf?.rtcVideo?.updateLocalVideoCanvas(ByteRTCRenderMode(rawValue: UInt(value)+1)!, withBackgroundColor: 0xffffff)
         }
         
         // 设置本地视频镜像模式
@@ -302,35 +304,41 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
         self.remoteRenderModeSheetView.didSelectOption = {[weak self] value in
             weak var weakSelf = self
 
-            var remoteUser:ByteRTCRemoteStreamKey?
+            var remoteUser:ByteRTCStreamInfo?
             
-            if let users = self?.users {
-                for streamKey in users {
-                    if remoteUser == nil && streamKey.roomId == self?.roomSettingItem.text {
-                        remoteUser = streamKey
-                    }
+            var users = self?.userVideoStreamMap.values
+            if users == nil {
+                return
+            }
+            for streamKey in users! {
+                if remoteUser == nil && streamKey.roomId == self?.roomSettingItem.text {
+                    remoteUser = streamKey
                 }
             }
-            
+                    
             if (remoteUser != nil) {
-                weakSelf?.rtcVideo?.updateRemoteStreamVideoCanvas(remoteUser!, withRenderMode:  ByteRTCRenderMode(rawValue: UInt(value)+1)!, withBackgroundColor: 0xffffff)
+                weakSelf?.rtcVideo?.updateRemoteStreamVideoCanvas(remoteUser!.streamId, withRenderMode: ByteRTCRenderMode(rawValue: UInt(value)+1)!, withBackgroundColor: 0xffffff)
             }
         }
     }
     
     func bindRemoteRenderView(view: UserVideoView, roomId: String, userId: String) {
         // 设置远端用户视频渲染视图
+        var streamInfo = self.userVideoStreamMap[userId]
+        if streamInfo == nil {
+            return
+        }
+        var streamId = streamInfo?.streamId
+        if streamId == nil {
+            return
+        }
+        
         let canvas = ByteRTCVideoCanvas.init()
         canvas.view = view.videoView
-         canvas.renderMode = .hidden
+        canvas.renderMode = .hidden
         view.userId = userId
         
-        let streamKey = ByteRTCRemoteStreamKey.init()
-        streamKey.userId = userId;
-        streamKey.roomId = roomId;
-        streamKey.streamIndex = .indexMain
-        
-        self.rtcVideo?.setRemoteVideoCanvas(streamKey, withCanvas: canvas)
+        self.rtcVideo?.setRemoteVideoCanvas(streamId!, withCanvas: canvas)
     }
     
     func createUI() -> Void {
@@ -601,7 +609,7 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
     }()
     
     lazy var encodePrefrenceSheetView: ActionSheetView = {
-        let actionSheetView = ActionSheetView.init(title: "编码策略", optionArray: ["Disable","MaintainFramerate","MaintainQuality","Balance"], defaultIndex: 0)
+        let actionSheetView = ActionSheetView.init(title: "编码策略", optionArray: ["Disable","MaintainFramerate","MaintainQuality","Auto"], defaultIndex: 0)
         actionSheetView.presentingViewController = self
         
         return actionSheetView
@@ -638,7 +646,7 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
         return view
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")
@@ -646,44 +654,18 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
     }
     
     // 远端用户发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStream userId: String, type: ByteRTCMediaStreamType) {
-        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(userId)")
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStreamVideo streamId: String, info: ByteRTCStreamInfo, isPublish: Bool) {
+        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(info.userId), isPub: \(isPublish)")
         
-        if type == .video || type == .both {
-            
-            let streamKey = ByteRTCRemoteStreamKey.init()
-            streamKey.userId = userId;
-            streamKey.roomId = rtcRoom.getId();
-            streamKey.streamIndex = .indexMain
-            
-            self.users.append(streamKey)
-            
+        if isPublish {
+            self.userVideoStreamMap.updateValue(info, forKey: info.userId)
+
             DispatchQueue.main.async {
                 self.updateRenderView()
             }
-        }
-    }
-    
-     // 远端用户取消发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserUnpublishStream userId: String, type: ByteRTCMediaStreamType, reason: ByteRTCStreamRemoveReason) {
-        ToastComponents.shared.show(withMessage: "onUserUnpublishStream uid: \(userId)")
-        
-        if type == .video || type == .both {
-            
+        } else {
             // 从self.users中移除
-            var itemsToRemove: [ByteRTCRemoteStreamKey] = []
-            
-            for streamKey in self.users {
-                if streamKey.userId == userId {
-                    itemsToRemove.append(streamKey)
-                }
-            }
-            
-            for item in itemsToRemove {
-                if let index = self.users.firstIndex(of: item) {
-                    self.users.remove(at: index)
-                }
-            }
+            self.userVideoStreamMap.removeValue(forKey: info.userId)
             
             DispatchQueue.main.async {
                 for videoView in self.containerView.subviews {
@@ -702,16 +684,16 @@ class CommonVideoConfigViewController: BaseViewController, ByteRTCVideoDelegate,
                 self.updateRenderView()
             }
         }
-        
     }
     
+    
     // 本地视频尺寸或者方向发生变化回调
-    func rtcEngine(_ engine: ByteRTCVideo, onLocalVideoSizeChanged streamIndex: ByteRTCStreamIndex, withFrameInfo frameInfo: ByteRTCVideoFrameInfo) {
+    func rtcEngine(_ engine: ByteRTCEngine, onLocalVideoSizeChanged videoSource: ByteRTCVideoSource?, withFrameInfo frameInfo: ByteRTCVideoFrameInfo) {
         ToastComponents.shared.show(withMessage: "onLocalVideoSizeChanged width: \(frameInfo.width) height: \(frameInfo.height) rotation: \(frameInfo.rotation)")
     }
     
     // 远端用户加入房间
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo) {
         ToastComponents.shared.show(withMessage: "onUserJoined uid: \(userInfo.userId)")
         
     }

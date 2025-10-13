@@ -4,8 +4,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/1178327
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -24,8 +24,6 @@
 *     onLeaveRoom 离房回调
 *     onUserJoined 用户加入回调
 *     onUserLeave  用户离开回调
-*     onUserPublishStream 用户发流回调
-*     onUserUnpublishStream 用户停止发流回调
 *
 
 *
@@ -40,8 +38,8 @@ import SnapKit
 import VolcEngineRTC
 
 
-class SoundEffectsViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate {
-    var rtcVideo: ByteRTCVideo?
+class SoundEffectsViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
     
     override func viewDidLoad() {
@@ -53,11 +51,11 @@ class SoundEffectsViewController: BaseViewController, ByteRTCVideoDelegate, Byte
     }
     
     deinit {
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -94,26 +92,33 @@ class SoundEffectsViewController: BaseViewController, ByteRTCVideoDelegate, Byte
             userInfo.userId = userId
             
             let roomCfg = ByteRTCRoomConfig.init()
-            roomCfg.isAutoPublish = true
+            roomCfg.isPublishAudio = true
+            roomCfg.isPublishVideo = true
             roomCfg.isAutoSubscribeAudio = true
             roomCfg.isAutoSubscribeVideo = true
+            roomCfg.profile = .meeting
             
-            self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+            self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
         }
         else {
             joinButton.setTitle("加入房间", for: .normal)
-            self.rtcRoom?.leaveRoom()
+            self.rtcRoom?.leave()
         }
         
     }
     
     func buildRTCEngine() {
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         
         // 开启本地音视频采集
+        self.rtcVideo?.setAudioScenario(ByteRTCAudioScenarioType.chatRoom)
         self.rtcVideo?.startVideoCapture()
         self.rtcVideo?.startAudioCapture()
+        self.rtcVideo?.setAudioScenario(ByteRTCAudioScenarioType.gameStreaming)
         
         self.bindLocalRenderView()
     }
@@ -125,7 +130,7 @@ class SoundEffectsViewController: BaseViewController, ByteRTCVideoDelegate, Byte
         canvas.renderMode = .hidden
         self.localView.userId = userSettingItem.text ?? ""
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     func buildActions() {
@@ -452,7 +457,7 @@ class SoundEffectsViewController: BaseViewController, ByteRTCVideoDelegate, Byte
         return view
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")

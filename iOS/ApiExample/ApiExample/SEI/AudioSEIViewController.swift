@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 import VolcEngineRTC
 
-class AudioSEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate {
+class AudioSEIViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate {
     
-    var rtcVideo: ByteRTCVideo?
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom: ByteRTCRoom?
     
     override func viewDidLoad() {
@@ -24,11 +24,11 @@ class AudioSEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCR
     
     deinit {
         
-        self.rtcRoom?.leaveRoom()
+        self.rtcRoom?.leave()
         self.rtcRoom?.destroy()
         self.rtcRoom = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -66,21 +66,25 @@ class AudioSEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCR
             userInfo.userId = userId
             
             let roomCfg = ByteRTCRoomConfig.init()
-            roomCfg.isAutoPublish = true
+            roomCfg.isPublishAudio = true
+            roomCfg.isPublishVideo = true
             roomCfg.isAutoSubscribeAudio = true
             roomCfg.isAutoSubscribeVideo = true
             
-            self.rtcRoom?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+            self.rtcRoom?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
         }
         else {
             joinButton.setTitle("加入房间", for: .normal)
-            self.rtcRoom?.leaveRoom()
+            self.rtcRoom?.leave()
         }
     }
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         
         // 开启本地音频采集
         self.rtcVideo?.startAudioCapture()
@@ -91,8 +95,7 @@ class AudioSEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCR
         let message = self.seiTextFieldView.text;
         
         if !message!.isEmpty, let data = message?.data(using: .utf8) {
-            let config = ByteRTCStreamSycnInfoConfig.init()
-            config.streamIndex = .indexMain
+            let config = ByteRTCStreamSyncInfoConfig.init()
             config.streamType = .audio
             config.repeatCount = 3
             self.rtcVideo?.sendStreamSyncInfo(data, config: config)
@@ -192,26 +195,15 @@ class AudioSEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCR
         return settingView
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")
         
     }
     
-    // 远端用户发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserPublishStream userId: String, type: ByteRTCMediaStreamType) {
-        ToastComponents.shared.show(withMessage: "onUserPublishStream uid: \(userId) type = \(type)")
-    }
-    
-     // 远端用户取消发布流
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserUnpublishStream userId: String, type: ByteRTCMediaStreamType, reason: ByteRTCStreamRemoveReason) {
-        ToastComponents.shared.show(withMessage: "onUserUnpublishStream uid: \(userId)")
-        
-    }
-    
     // 远端用户加入房间
-    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo, elapsed: Int) {
+    func rtcRoom(_ rtcRoom: ByteRTCRoom, onUserJoined userInfo: ByteRTCUserInfo) {
         ToastComponents.shared.show(withMessage: "onUserJoined uid: \(userInfo.userId)")
         
     }
@@ -223,10 +215,10 @@ class AudioSEIViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCR
     }
     
     // 收到SEI信息
-    func rtcEngine(_ engine: ByteRTCVideo, onStreamSyncInfoReceived remoteStreamKey: ByteRTCRemoteStreamKey, streamType: ByteRTCSyncInfoStreamType, data: Data) {
+    func rtcEngine(_ engine: ByteRTCEngine, onStreamSyncInfoReceived streamId: String, info: ByteRTCStreamInfo, streamType: ByteRTCSyncInfoStreamType, data: Data) {
         if let string = String(data: data, encoding: .utf8) {
-            ToastComponents.shared.show(withMessage: "onStreamSyncInfoReceived uid: \(remoteStreamKey.userId!) streamType = \(streamType.rawValue) data = \(string)")
-            self.receivedSEIItem.text = "uid = \(remoteStreamKey.userId ?? ""), data = \(string)"
+            ToastComponents.shared.show(withMessage: "onStreamSyncInfoReceived streamId: \(streamId), uid: \(info.userId), roomId: \(info.roomId), data: \(string)")
+            self.receivedSEIItem.text = "\(string)"
         }
     }
 }

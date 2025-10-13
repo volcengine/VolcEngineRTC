@@ -1,0 +1,29 @@
+#ifndef bef_ai_image_quality_enhancement_taint_detect_h
+#define bef_ai_image_quality_enhancement_taint_detect_h
+
+#include "bef_ai_image_quality_enhancement_public_define.h"
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_taint_detect_create(bef_image_quality_enhancement_handle *handle, bef_ai_taint_scene_detect_param *param);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_taint_detect_process(bef_image_quality_enhancement_handle handle, bef_ai_taint_scene_detect_buffer *input, float *score);
+
+#if defined(__ANDROID__) || defined(TARGET_OS_ANDROID)
+#include<jni.h>
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_taint_detect_check_license(JNIEnv* env, jobject context, bef_image_quality_enhancement_handle handle, const char* license_path);
+#endif
+
+#ifdef __APPLE__
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_taint_detect_check_license(bef_image_quality_enhancement_handle handle, const char* licensePath);
+#endif
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_taint_detect_check_online_license(bef_image_quality_enhancement_handle handle, const char* licensePath);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_taint_detect_destroy(bef_image_quality_enhancement_handle handle);
+
+#endif /* bef_ai_image_quality_enhancement_taint_detect_h */

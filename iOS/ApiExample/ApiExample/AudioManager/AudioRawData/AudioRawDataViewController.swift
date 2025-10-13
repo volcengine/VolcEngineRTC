@@ -4,8 +4,8 @@
 * 参考文档：
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -20,8 +20,6 @@
 *     onLeaveRoom 离房回调
 *     onUserJoined 用户加入回调
 *     onUserLeave  用户离开回调
-*     onUserPublishStream 用户发流回调
-*     onUserUnpublishStream 用户停止发流回调
 *
 *     onRecordAudioFrame 返回麦克风录制的音频数据
 *     onPlaybackAudioFrame 返回订阅的所有远端用户混音后的音频数据
@@ -41,9 +39,9 @@ import SnapKit
 import VolcEngineRTC
 
 
-class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, ByteRTCRoomDelegate,ByteRTCAudioFrameObserver {
-    
-    var rtcVideo: ByteRTCVideo?
+class AudioRawDataViewController: BaseViewController, ByteRTCEngineDelegate, ByteRTCRoomDelegate,ByteRTCAudioFrameObserver {
+     
+    var rtcVideo: ByteRTCEngine?
     var rtcRoom1: ByteRTCRoom?
     var lastLogTime: Date?
 
@@ -59,11 +57,11 @@ class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, Byte
     deinit {
         self.rtcVideo!.registerAudioFrameObserver(nil)
 
-        self.rtcRoom1?.leaveRoom()
+        self.rtcRoom1?.leave()
         self.rtcRoom1?.destroy()
         self.rtcRoom1 = nil
         
-        ByteRTCVideo.destroyRTCVideo()
+        ByteRTCEngine.destroyRTCEngine()
         self.rtcVideo = nil
     }
     
@@ -101,21 +99,25 @@ class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, Byte
             userInfo.userId = userId
             
             let roomCfg = ByteRTCRoomConfig.init()
-            roomCfg.isAutoPublish = true
+            roomCfg.isPublishAudio = true
+            roomCfg.isPublishVideo = true
             roomCfg.isAutoSubscribeAudio = true
             roomCfg.isAutoSubscribeVideo = true
             
-            self.rtcRoom1?.joinRoom(token, userInfo: userInfo, roomConfig: roomCfg)
+            self.rtcRoom1?.joinRoom(token, userInfo: userInfo, userVisibility: true, roomConfig: roomCfg)
         }
         else {
             joinButton.setTitle("加入房间", for: .normal)
-            self.rtcRoom1?.leaveRoom()
+            self.rtcRoom1?.leave()
         }
     }
     
     func buildRTCEngine() {
         // 创建引擎
-        self.rtcVideo = ByteRTCVideo.createRTCVideo(kAppID, delegate: self, parameters: [:])
+        let engineCfg = ByteRTCEngineConfig.init()
+        engineCfg.appID = kAppID
+        engineCfg.parameters = [:]
+        self.rtcVideo = ByteRTCEngine.createRTCEngine(engineCfg, delegate: self)
         
         // 开启本地音视频采集
         self.rtcVideo?.startVideoCapture()
@@ -192,7 +194,7 @@ class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, Byte
         canvas.renderMode = .hidden
         self.localView.userId = userTextField.text ?? ""
         
-        self.rtcVideo?.setLocalVideoCanvas(.indexMain, withCanvas: canvas);
+        self.rtcVideo?.setLocalVideoCanvas(withCanvas: canvas);
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -342,7 +344,7 @@ class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, Byte
         return view
     }()
     
-    // MARK: ByteRTCVideoDelegate & ByteRTCRoomDelegate
+    // MARK: ByteRTCEngineDelegate & ByteRTCRoomDelegate
     //进房状态
     func rtcRoom(_ rtcRoom: ByteRTCRoom, onRoomStateChanged roomId: String, withUid uid: String, state: Int, extraInfo: String) {
         ToastComponents.shared.show(withMessage: "onRoomStateChanged uid: \(uid) state:\(state)")
@@ -374,7 +376,7 @@ class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, Byte
         }
     }
     
-    func onRemoteUserAudioFrame(_ streamKey: ByteRTCRemoteStreamKey, audioFrame: ByteRTCAudioFrame) {
+    func onRemoteUserAudioFrame(_ streamId: String, info: ByteRTCStreamInfo, audioFrame: ByteRTCAudioFrame) {
         print("onRemoteUserAudioFrame")
         
         if checkLogTimeVaild() {
@@ -382,6 +384,13 @@ class AudioRawDataViewController: BaseViewController, ByteRTCVideoDelegate, Byte
         }
     }
     
+    func onCaptureMixedAudioFrame(_ audioFrame: ByteRTCAudioFrame) {
+        print("onCaptureMixedAudioFrame")
+        
+        if checkLogTimeVaild() {
+            ToastComponents.shared.show(withMessage: "onCaptureMixedAudioFrame")
+        }
+    }
     // 检查距离上次log是否超过5秒
     func checkLogTimeVaild() -> Bool {
         let currentTime = Date()

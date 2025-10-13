@@ -54,7 +54,7 @@ class TextFieldView: UIView {
     lazy var inputTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
-        textField.keyboardType = .numberPad
+        textField.keyboardType = .default
         return textField
     }()
     

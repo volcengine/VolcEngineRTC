@@ -1,0 +1,25 @@
+#ifndef     BEF_AI_IMAGE_QUALITY_ENHANCEMENT_VIDEO_STAB_H
+#define     BEF_AI_IMAGE_QUALITY_ENHANCEMENT_VIDEO_STAB_H
+
+#include "bef_ai_image_quality_enhancement_public_define.h"
+
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_stab_create(bef_image_quality_enhancement_handle *handle, const bef_ai_video_stab_config *param);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_stab_process(bef_image_quality_enhancement_handle handle, const unsigned char* inputBuffer, bef_ai_lens_video_stab_params* inputParam, bef_ai_lens_video_stab_out* algoOutput, const unsigned char* outputBuffer);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_stab_set_smooth_param(bef_image_quality_enhancement_handle handle, const bef_ai_video_stab_config *param);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_stab_check_license(bef_image_quality_enhancement_handle handle, const char* licensePath);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_stab_check_online_license(bef_image_quality_enhancement_handle handle, const char* licensePath);
+
+BEF_SDK_API bef_effect_result_t
+bef_ai_image_quality_enhancement_video_stab_destroy(bef_image_quality_enhancement_handle handle);
+
+#endif 
