@@ -6,43 +6,43 @@
 #import <Foundation/Foundation.h>
 #import "ByteRTCDefines.h"
 @class ByteRTCRoom;
-@class ByteRTCVideo;
+@class ByteRTCEngine;
 @class ByteRTCVideoEncoderConfig;
 @class ByteRTCAmazingEffect;
 
 #define BYTERTC_APPLE_EXPORT __attribute__((visibility("default")))
 
-/** {zh}
+/** 
  * @type keytype
  * @brief 5.18版本后，飞书会议弱网提示专用，设置订阅视频基线数据用于计算网络等级
  */
 
 BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoBaseline: NSObject
-/** {zh}
+/** 
  * @brief 网络等级判定为优秀的视频分辨率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableGoodVideoPixelBaseline;
-/** {zh}
+/** 
  * @brief 网络等级判定为优秀的视频帧率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableGoodVideoFpsBaseline;
-/** {zh}
+/** 
  * @brief 网络等级判定为差的视频分辨率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableBadVideoPixelBaseline;
-/** {zh}
+/** 
  * @brief 网络等级判定为差的视频帧率基线，-1表示业务不设置计算时忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableBadVideoFpsBaseline;
-/** {zh}
+/** 
  * @brief 业务可以接受的最小分辨率宽度，-1表示业务忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableMinVideoResolutionWidth;
-/** {zh}
+/** 
  * @brief 业务可以接受的最小分辨率宽度，-1表示业务忽略此参数
  */
 @property (nonatomic, assign) NSInteger acceptableMinVideoResolutionHeight;
-/** {zh}
+/** 
  * @brief 流的优先级，-1表示业务忽略此参数
  */
 @property (nonatomic, assign) NSInteger streamPriority;
@@ -52,6 +52,7 @@ BYTERTC_APPLE_EXPORT @interface ByteRTCSubscribeVideoBaseline: NSObject
 BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 
 /**
+ * 
  * @hidden
  * @brief 推流到子频道channelName
  * > 支持会前、会中设置
@@ -61,6 +62,7 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 + (int) setPublishChannel:(ByteRTCRoom *_Nonnull)room
               channelName:(NSString *_Nonnull)channelName;
 /**
+ * 
  * @hidden
  * @brief 订阅子频道数组里的所有流
  * > 支持会前、会中设置
@@ -72,6 +74,7 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
                 channelsInfo:(NSArray <NSString *> * _Nonnull)channelsInfo
          enableVolumeRescale:(bool)enableVolumeRescale;
 /**
+ * 
  * @hidden
  * @brief 设置是否开启音频抑制
  * > 支持会前、会中设置
@@ -81,6 +84,7 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 + (int) enableRescaleAudioVolume:(ByteRTCRoom *_Nonnull)room
              enableVolumeRescale:(bool)enableVolumeRescale;
 /**
+ * 
  * @hidden
  * @brief 设置发布的特殊流类型
  * > 支持会前设置
@@ -90,6 +94,7 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 + (int) setPublishSpecialStream:(ByteRTCRoom *_Nonnull)room
                            type:(int)type;
 /**
+ * 
  * @hidden
  * @brief 设置订阅的特殊流类型
  * > 支持会前、会中设置
@@ -100,7 +105,8 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
                             types:(NSArray<NSNumber*> * _Nonnull)types;
 
 /**
-* @hidden
+ * 
+ * @hidden
 * @brief 判断本地音视频流是否取消发布成功状态
 * > 支持会中设置
 * @param [ByteRTCRoom *_Nonnull] room 目标room
@@ -112,17 +118,22 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 + (bool)isStreamUnpublished:(ByteRTCRoom *_Nonnull)room type:(ByteRTCMediaStreamType)type;
 
 /**
-* @hidden
+ * 
+ * @hidden
 * @brief 设置视频编码参数
 * > 该方法用于编码参数设置
 * @return
 *        0: 成功；
 *        != 0: 失败；
 */
-+ (int) setVideoEncoderConfig:(ByteRTCVideo*_Nonnull)video channelSolutions:(NSArray <ByteRTCVideoEncoderConfig *> * _Nonnull) channelSolutions
++ (int) setVideoEncoderConfig:(ByteRTCEngine*_Nonnull)video channelSolutions:(NSArray <ByteRTCVideoEncoderConfig *> * _Nonnull) channelSolutions
     mainSolutions:(NSArray <ByteRTCVideoEncoderConfig *> * _Nonnull) channelMainSolutions;
+
+
++ (int) enableSimulcastMode:(ByteRTCEngine*_Nonnull)video enable:(BOOL) enabled;
 /**
-* @hidden
+ * 
+ * @hidden
 * @brief 更新自动订阅选项
 * > 支持会中设置
 *@param [ByteRTCRoom *_Nonnull] room 目标room
@@ -132,7 +143,8 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 + (int) enableAutoSubscribe:(ByteRTCRoom *_Nonnull)room audioSubMode:(ByteRTCSubscribeMode)audioMode videoMode:(ByteRTCSubscribeMode)videoMode;
 
 /**
-* @hidden
+ * 
+ * @hidden
 * @brief 订阅基线设置
 * > 支持订阅流前设置
 * @param [ByteRTCRoom *_Nonnull] room 目标room
@@ -143,39 +155,45 @@ BYTERTC_APPLE_EXPORT @interface MeetingAdvance : NSObject
 + (void) setSubscribeBaselineData:(ByteRTCRoom *_Nonnull)room userId:(NSString *_Nonnull)userId isScreen:(BOOL)isScreen videoBaseline:(ByteRTCSubscribeVideoBaseline* _Nullable)videoBaseline;
 
 /**
-* @hidden
+ * 
+ * @hidden
 * @brief 获取用于实时crash分子数据信息
 * @return
 *        [NSString * _Nonnull]: 返回json格式的信息
 */
 + (NSString * _Nonnull) getSessionLaunchParams;
 /**
-* @brief 获取视频特效接口ByteRTCAmazingEffect
-* @param [ByteRTCVideo *_Nonnull] ivideo 目标ByteRTCVideo
+ * 
+ * @brief 获取视频特效接口ByteRTCAmazingEffect
+* @param [ByteRTCEngine *_Nonnull] ivideo 目标ByteRTCVideo
 */
-+ (ByteRTCAmazingEffect* _Null_unspecified) getAmazingEffectInterface:(ByteRTCVideo *_Nonnull)video;
++ (ByteRTCAmazingEffect* _Null_unspecified) getAmazingEffectInterface:(ByteRTCEngine *_Nonnull)video;
 
 /**
+ * 
  * @hidden
  * @brief 设置屏幕流多分辨率参数
  * @return 0 成功 !0失败
  */
-+ (int)setScreenVideoConfigs:(ByteRTCVideo * _Nonnull)video;
++ (int)setScreenVideoConfigs:(ByteRTCEngine * _Nonnull)video;
 
 /**
+ * 
  * @hidden
  * @brief 清空屏幕流多分辨率参数
  * @return 0 成功 !0失败
  */
-+ (int)resetScreenVideoConfigs:(ByteRTCVideo * _Nonnull)video;
++ (int)resetScreenVideoConfigs:(ByteRTCEngine * _Nonnull)video;
 
 /**
+ * 
  * @brief 获取上行带宽状态
  * @param [ByteRTCRoom*] room 目标room
  */
 + (int)getUplinkNetworkBandwidthEstimationStatus:(ByteRTCRoom *_Nonnull)room;
 
 /**
+ * 
  * @brief 获取下行带宽状态
  * @param [ByteRTCRoom*] room 目标room
  */

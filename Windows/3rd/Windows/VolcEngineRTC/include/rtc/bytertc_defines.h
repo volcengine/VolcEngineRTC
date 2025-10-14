@@ -9,3 +9,4 @@
 #include "bytertc_media_defines.h"
 #include "bytertc_audio_defines.h"
 #include "bytertc_video_defines.h"
+#include "bytertc_transcoder_define.h"

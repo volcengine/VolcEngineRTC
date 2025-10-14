@@ -2,7 +2,7 @@
 #include "ui_RawAudioData.h"
 
 #include "bytertc_room.h"
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "Config.h"
 #include "Utils.h"
 #include "UserWidget.h"
@@ -25,8 +25,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/1178324
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -94,7 +94,10 @@ void RawAudioData::initRTCVideo()
     m_handler.reset(new ByteRTCEventHandler());
     connect(m_handler.get(), &ByteRTCEventHandler::sigAudioDeviceWarning, this, &RawAudioData::onSigAudioDeviceWarning);
     connect(m_handler.get(), &ByteRTCEventHandler::sigAudioDeviceStateChanged, this, &RawAudioData::onSigAudioDeviceStateChanged);
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_audio = m_video->getAudioDeviceManager();
     updateAudioCaptureList();
 
@@ -109,7 +112,7 @@ void RawAudioData::initRTCVideo()
         return;
     }
 
-    QStringList list = {"createRTCVideo", "getAudioDeviceManager", "registerAudioFrameObserver", "enableAudioFrameCallback", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "getAudioDeviceManager", "registerAudioFrameObserver", "enableAudioFrameCallback", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
@@ -125,7 +128,7 @@ void RawAudioData::cleanRTCVideo()
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
         m_video->registerAudioFrameObserver(nullptr);
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
     }
     if (m_observer) {
@@ -133,7 +136,7 @@ void RawAudioData::cleanRTCVideo()
         m_observer = nullptr;
     }
 
-    QStringList list = {"leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "stopVideoCapture", "registerAudioFrameObserver", "destroyRTCVideo"};
+    QStringList list = {"leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "stopVideoCapture", "registerAudioFrameObserver", "destroyRTCEngine"};
     appendAPI(list);
 }
 
@@ -144,8 +147,8 @@ std::unique_ptr<ByteRTCRoomHandler> RawAudioData::createRoomHandler(std::string 
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &RawAudioData::onSigLeaveRoom);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &RawAudioData::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &RawAudioData::onSigUserJoined);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &RawAudioData::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &RawAudioData::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &RawAudioData::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &RawAudioData::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("Token will expire,please updateToken"), QMessageBox::Ok);
         box.exec();
@@ -175,7 +178,8 @@ void RawAudioData::updateAudioCaptureList()
         if (info.is_system_default) {
             default_index = i;
         }
-        ui->comboBox_device->addItem(info.device_name, QVariant(info.device_id));
+        std::string tmp(info.device_id);
+        ui->comboBox_device->addItem(info.device_name, QVariant(QString::fromStdString(tmp)));
         qDebug() << Q_FUNC_INFO <<  "index:" << i << ",name:" << info.device_name << ",id:" << info.device_id
                  << ",test:" << ui->comboBox_device->itemData(i).toString();
     }
@@ -261,19 +265,20 @@ void RawAudioData::onBtnJoinClicked()
         cas.view = ui->widget->getWinId();
         cas.background_color = 0;
         cas.render_mode = bytertc::kRenderModeHidden;
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        m_video->setLocalVideoCanvas(cas);
         ui->widget->setUserInfo(str_room, str_uid);
 
         bytertc::UserInfo info;
         bytertc::RTCRoomConfig config;
 
         info.uid = str_uid.c_str();
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
 
         str_token = Utils::generateToken(str_room, str_uid);
-        int ret = m_room->joinRoom(str_token.c_str(), info, config);
+        int ret = m_room->joinRoom(str_token.c_str(), info, true, config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error"), QMessageBox::Ok);
             box.exec();
@@ -423,23 +428,30 @@ void RawAudioData::onSigAudioDeviceStateChanged(std::string device_id, bytertc::
     }
 }
 
-void RawAudioData::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType)
+void RawAudioData::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str = "onUserPublishStream, roomid:" + QString::fromStdString(roomid)
-             + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
+
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+    appendCallback(log_str);
 
 }
 
-void RawAudioData::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason)
+void RawAudioData::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str = "onUserUnPublishStream, roomid:" + QString::fromStdString(roomid)
-             + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
 
+    appendCallback(log_str);
 }
 
-void RawAudioData::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void RawAudioData::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
              + ",uid:" + QString::fromStdString(info.uid);
@@ -514,7 +526,7 @@ void RawAudioDataObserver::onPlaybackAudioFrame(const bytertc::IAudioFrame& audi
     num++;
 }
 
-void RawAudioDataObserver::onRemoteUserAudioFrame(const bytertc::RemoteStreamKey& stream_info, const bytertc::IAudioFrame& audio_frame) 
+void RawAudioDataObserver::onRemoteUserAudioFrame(const char* stream_id, const bytertc::StreamInfo& stream_info, const bytertc::IAudioFrame& audio_frame)
 {
     // 返回远端单个用户的音频数据.本端开启音频采集且注册音频回调 kAudioFrameCallbackRemoteUser 类型后即可收到该回调
     static long long num = 0;
@@ -545,5 +557,10 @@ void RawAudioDataObserver::onRecordScreenAudioFrame(const bytertc::IAudioFrame& 
         emit showCallbackLog("onRecordScreenAudioFrame, channel=" + QString::number(audio_frame.channel()) + ",sample_rate=" + QString::number(audio_frame.sampleRate()));
     }
     num++;
+}
+
+void RawAudioDataObserver::onCaptureMixedAudioFrame(const bytertc::IAudioFrame &audio_frame)
+{
+
 }
 

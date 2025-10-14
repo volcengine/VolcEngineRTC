@@ -9,7 +9,7 @@
 #include <QDateTime>
 
 #include "ByteRTCEventHandler.h"
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 #include "Config.h"
 #include "Utils.h"
@@ -22,8 +22,8 @@
 * 参考文档： https://www.volcengine.com/docs/6348/104398
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -222,7 +222,7 @@ void CrossRoomPK::onBtnJoinClicked() {
 
         bytertc::VideoCanvas cavas;
         cavas.view = (void*)ui->widget->getWinId();
-        m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, cavas);
+        m_video->setLocalVideoCanvas(cavas);
         ui->widget->setUserInfo(roomid, uid);
 
 
@@ -230,11 +230,12 @@ void CrossRoomPK::onBtnJoinClicked() {
         bytertc::UserInfo info;
         bytertc::RTCRoomConfig config;
         info.uid = uid.c_str();
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
-        int ret = m_room1->joinRoom(token.c_str(), info, config);
+        int ret = m_room1->joinRoom(token.c_str(), info, true, config);
         m_uid = uid;
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("createRTCRoom error"), QMessageBox::Ok);
@@ -260,17 +261,20 @@ void CrossRoomPK::onBtnJoinClicked() {
 void CrossRoomPK::initRTCVideo()
 {
     m_handler.reset(new ByteRTCEventHandler());
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
 void CrossRoomPK::cleanRTCVideo()
 {
-    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     if (m_video) {
         if (m_room1) {
             m_room1->leaveRoom();
@@ -281,7 +285,7 @@ void CrossRoomPK::cleanRTCVideo()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
         appendAPI(list);
     }
@@ -328,8 +332,8 @@ std::unique_ptr<ByteRTCRoomHandler> CrossRoomPK::createRoomHandler(std::string r
 {
     std::unique_ptr<ByteRTCRoomHandler> roomH = std::make_unique<ByteRTCRoomHandler>(roomid, uid);
     connect(roomH.get(), &ByteRTCRoomHandler::sigRoomStateChanged, this, &CrossRoomPK::onSigRoomStateChanged);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &CrossRoomPK::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &CrossRoomPK::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &CrossRoomPK::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &CrossRoomPK::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &CrossRoomPK::onSigLeaveRoom);
     connect(roomH.get(), &ByteRTCRoomHandler::sigForwardStreamStateChanged, this, &CrossRoomPK::onSigForwardStreamStateChanged);
     connect(roomH.get(), &ByteRTCRoomHandler::sigForwardStreamEvent, this, &CrossRoomPK::onForwardStreamEvent);
@@ -360,23 +364,24 @@ void CrossRoomPK::onSigRoomStateChanged(std::string roomid, std::string uid, int
     }
 }
 
-void CrossRoomPK::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void CrossRoomPK::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",state:" + QString::number(type);
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
 }
 
-void CrossRoomPK::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason)
+void CrossRoomPK::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserUnPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",state:" + QString::number(type);
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
-
 }
 
 void CrossRoomPK::onSigLeaveRoom(std::string roomid, std::string uid, const bytertc::RtcRoomStats stats)

@@ -67,7 +67,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>TextLabel</string>
+        <string>&lt;a href=&quot;https://www.volcengine.com/docs/6348/1178327&quot;&gt;参考文档</string>
        </property>
       </widget>
      </item>
@@ -88,7 +88,7 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(0, 0, 0);</string>
+      <string notr="true"/>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <property name="spacing">

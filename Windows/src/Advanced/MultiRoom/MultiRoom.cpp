@@ -1,13 +1,12 @@
 ﻿#include "MultiRoom.h"
 #include "ui_MultiRoom.h"
 
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 
 #include "Config.h"
 #include "Utils.h"
 #include "Resources.h"
-
 
 #include <QDebug>
 #include <QMessageBox>
@@ -23,8 +22,8 @@
  * 参考文档： https://www.volcengine.com/docs/6348/196844
  *
  * 此功能涉及的API及回调：
- *     createRTCVideo 创建引擎
- *     destroyRTCVideo 销毁引擎
+ *     createRTCEngine 创建引擎
+ *     destroyRTCEngine 销毁引擎
  *     startAudioCapture 开启音频采集
  *     startVideoCapture 开启视频采集
  *     createRTCRoom 创建RTC房间
@@ -100,17 +99,18 @@ void MultiRoom::onBtn1Clicked()
         m_room1->setRTCRoomEventHandler(m_room_handler1.get());
 
         cavas.view = (void*)ui->widget->getWinId();
-        m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, cavas);
+        m_video->setLocalVideoCanvas(cavas);
         ui->widget->setUserInfo(room1, uid1);
 
         bytertc::UserInfo user;
         bytertc::RTCRoomConfig config;
-        config.is_auto_publish = true; //第一个房间发流，发布后可以用unPublishStream 取消发布
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true; //第一个房间发流，发布后可以用unPublishStream 取消发布
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
         user.uid = uid1.c_str();
-        int ret = m_room1->joinRoom(token.c_str(), user, config);
+        int ret = m_room1->joinRoom(token.c_str(), user, true, config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error,please check params"), QMessageBox::Ok);
             box.exec();
@@ -173,15 +173,18 @@ void MultiRoom::onBtn2Clicked()
 
         bytertc::UserInfo user;
         bytertc::RTCRoomConfig config;
-        config.is_auto_publish = false; //第二个房间不发流
+        config.is_auto_publish_audio = false; //第二个房间不发流
+        config.is_auto_publish_video = false;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
         user.uid = uid2.c_str();
-        int ret = m_room2->joinRoom(token.c_str(), user, config);
+        int ret = m_room2->joinRoom(token.c_str(), user, false, config);
         if (ret < 0) {
-            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error,please check params"), QMessageBox::Ok);
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error ret=") + QString::number(ret), QMessageBox::Ok);
             box.exec();
+            m_room2->destroy();
+            m_room2 = nullptr;
             return;
         }
 
@@ -211,10 +214,13 @@ void MultiRoom::onBtn2Clicked()
 void MultiRoom::createRTC()
 {
     m_handler.reset(new ByteRTCEventHandler());
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
@@ -234,10 +240,10 @@ void MultiRoom::cleanRTC()
     if (m_video) {
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
     }
-    QStringList list = { "leaveRoom", "destroy", "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+    QStringList list = { "leaveRoom", "destroy", "stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     appendAPI(list);
 }
 
@@ -249,8 +255,8 @@ std::unique_ptr<ByteRTCRoomHandler> MultiRoom::createRoomHandler(std::string roo
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &MultiRoom::onSigLeaveRoom);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &MultiRoom::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &MultiRoom::onSigUserJoined);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &MultiRoom::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &MultiRoom::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &MultiRoom::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &MultiRoom::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("Token will expire,please updateToken"), QMessageBox::Ok);
         box.exec();
@@ -289,59 +295,59 @@ void MultiRoom::onSigRoomStateChanged(std::string roomid, std::string uid, int s
     
 }
 
-void MultiRoom::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void MultiRoom::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str_log = "onUserPublishStream,roomid:"
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
-    appendCallback(str_log);
+        + ",pub:" + QString::number(pub);
+    appendCallback(log_str);
 
     //仅渲染room1和room2的一个远端用户
 
-    bytertc::RemoteStreamKey key;
-    key.user_id = uid.c_str();
-    key.room_id = roomid.c_str();
-    key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
+    //bytertc::RemoteStreamKey key;
+    //key.user_id = uid.c_str();
+    //key.room_id = roomid.c_str();
+    //key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
     bytertc::VideoCanvas cavas;
     cavas.background_color = 0;
     cavas.render_mode = bytertc::kRenderModeHidden;
     cavas.view = nullptr;
     if (m_video == nullptr) return;
     if (roomid == m_remote_u1.roomid) {
-        if (m_remote_u1.uid.empty() || m_remote_u1.uid == uid) {
-            m_remote_u1.uid = uid;
-            m_remote_u1.widget = ui->widget_2;
-            cavas.view = (void*)m_remote_u1.widget->getWinId();
-            m_remote_u1.widget->setUserInfo(roomid, uid);
-        }
+        m_remote_u1.uid = uid;
+        m_remote_u1.widget = ui->widget_2;
+        cavas.view = (void*)m_remote_u1.widget->getWinId();
+        m_remote_u1.widget->setUserInfo(roomid, uid);
+
     } else {
-        if (m_remote_u2.uid.empty()) {
-            m_remote_u2.uid = uid;
-            m_remote_u2.widget = ui->widget_3;
-            cavas.view = (void*)m_remote_u2.widget->getWinId();
-            m_remote_u2.widget->setUserInfo(roomid, uid);
-        }
+        m_remote_u2.uid = uid;
+        m_remote_u2.widget = ui->widget_3;
+        cavas.view = (void*)m_remote_u2.widget->getWinId();
+        m_remote_u2.widget->setUserInfo(roomid, uid);
     }
-    m_video->setRemoteVideoCanvas(key, cavas);
+    m_video->setRemoteVideoCanvas(stream_id.c_str(), cavas);
+
+    if (m_userStreamIds.find(uid) == m_userStreamIds.end()) {
+        m_userStreamIds[uid] = stream_id;
+    }
+
     appendAPI("setRemoteVideoCanvas");
 }
 
-void MultiRoom::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)
+void MultiRoom::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str_log = "onUserUnPublishStream,roomid:"
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type)
-        + ",reason:" + QString::number(reason);
-    appendCallback(str_log);
+        + ",pub:" + QString::number(pub);
 
-    if (type & bytertc::kMediaStreamTypeVideo) {
-        removeCavas(roomid, uid);
-    }
+    appendCallback(log_str);
 }
 
-void MultiRoom::onSigUserJoined(ByteRTCRoomHandler::UserInfo userinfo, int elapsed)
+void MultiRoom::onSigUserJoined(ByteRTCRoomHandler::UserInfo userinfo)
 {
     QString str_log = "onUserJoined,roomid:"
         + QString::fromStdString(userinfo.roomid)
@@ -373,14 +379,20 @@ void MultiRoom::removeCavas(std::string roomid, std::string uid)
         return;
     }
 
-    bytertc::RemoteStreamKey key;
+    if (m_userStreamIds.find(uid) == m_userStreamIds.end()) {
+        return;
+    }
+
+    std::string stream_id = m_userStreamIds[uid];
+
+    //bytertc::RemoteStreamKey key;
     bytertc::VideoCanvas cavas;
 
-    key.user_id = uid.c_str();
-    key.room_id = roomid.c_str();
-    key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
+    //key.user_id = uid.c_str();
+    //key.room_id = roomid.c_str();
+    //key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
     cavas.view = nullptr;
-    m_video->setRemoteVideoCanvas(key, cavas);
+    m_video->setRemoteVideoCanvas(stream_id.c_str(), cavas);
     appendAPI("setRemoteVideoCanvas");
 
     if (roomid == m_remote_u1.roomid && uid == m_remote_u1.uid) {

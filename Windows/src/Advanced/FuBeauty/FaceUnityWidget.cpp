@@ -13,7 +13,11 @@
 #include <tuple>
 #include <thread>
 
-#include "bytertc_video.h"
+#ifdef Q_OS_MAC
+#include <CoreVideo/CoreVideo.h>
+#endif // Q_OS_MAC
+
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 
 
@@ -26,8 +30,8 @@
 *   第三方美颜常见问题：https://www.volcengine.com/docs/6348/1178328
 *
 * 此功能涉及的RTC API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -93,10 +97,7 @@ FaceUnityWidget::FaceUnityWidget(QWidget *parent) :
     //用于测试
     m_outFile = new QFile("out.yuv");
     bool ret = m_outFile->open(QIODevice::WriteOnly);
-    m_inFile = new QFile("in.yuv");
-    ret = m_inFile->open(QIODevice::WriteOnly);
-    
-
+    m_inFile = new QFile("in1.yuv");
 }
 
 FaceUnityWidget::~FaceUnityWidget()
@@ -135,17 +136,20 @@ void FaceUnityWidget::initRTC()
 {
     if (m_video == nullptr) {
         m_handler.reset(new ByteRTCEventHandler());
-        m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+        bytertc::EngineConfig conf;
+        conf.app_id = g_appid.c_str();
+        conf.parameters = Utils::getParameters();
+        m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
         m_video->startAudioCapture();
         m_video->startVideoCapture();
     }
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
 void FaceUnityWidget::cleanRTC()
 {
-    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     if (m_video) {
         if (m_room) {
             m_room->leaveRoom();
@@ -156,7 +160,7 @@ void FaceUnityWidget::cleanRTC()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
         ui->btn_joinroom->setText(QStringLiteral("进房"));
         appendAPI(list);
@@ -170,8 +174,8 @@ std::unique_ptr<ByteRTCRoomHandler> FaceUnityWidget::createRoomHandler(std::stri
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &FaceUnityWidget::onSigLeaveRoom);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &FaceUnityWidget::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &FaceUnityWidget::onSigUserJoined);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &FaceUnityWidget::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &FaceUnityWidget::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &FaceUnityWidget::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &FaceUnityWidget::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("Token will expire,please updateToken"), QMessageBox::Ok);
         box.exec();
@@ -185,13 +189,12 @@ int FaceUnityWidget::initNama()
 {
 #ifdef CNAMASDK_H
     std::unique_lock<std::mutex> l(m_mutex_process);
-    m_nama = new NamaNameSpace::Nama();
+    m_nama = new NamasNameSpace::Namas();
     if (!m_nama->InitNama()) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"),
             QStringLiteral("相芯美颜初始化失败，请检查相芯证书是否填写到 authpack.h 中"), QMessageBox::Ok);
         box.exec();
     }
-
 #endif
     return 0;
 }
@@ -251,7 +254,7 @@ int FaceUnityWidget::joinRoom()
     }
 
     bytertc::VideoCanvas canvas((void*)ui->widget->getWinId(), bytertc::RenderMode::kRenderModeHidden, 0);
-    m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, canvas);
+    m_video->setLocalVideoCanvas(canvas);
     m_room = m_video->createRTCRoom(roomid.c_str());
     if (m_room == nullptr) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("createRTCRoom error, please check"), QMessageBox::Ok);
@@ -270,11 +273,12 @@ int FaceUnityWidget::joinRoom()
     bytertc::UserInfo userinfo;
     userinfo.uid = uid.c_str();
     bytertc::RTCRoomConfig config;
-    config.is_auto_publish = true;
+    config.is_auto_publish_audio = true;
+    config.is_auto_publish_video = true;
     config.is_auto_subscribe_audio = true;
     config.is_auto_subscribe_video = true;
 
-    int ret = m_room->joinRoom(token.c_str(), userinfo, config);
+    int ret = m_room->joinRoom(token.c_str(), userinfo, true, config);
     if (ret != 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error, please check"), QMessageBox::Ok);
         box.exec();
@@ -323,9 +327,7 @@ void FaceUnityWidget::funcProcessVideoFrame()
             continue;
         }
 
-        if (m_dmp_out) {
-            m_inFile->write((const char*)curFrame.yuv_buffer, curFrame.width*curFrame.height*3/2);
-        }
+
 
         if (m_nama) {
             m_nama->processVideoFrame(curFrame.yuv_buffer, curFrame.width, curFrame.height); //process video frame
@@ -346,8 +348,108 @@ void FaceUnityWidget::funcProcessVideoFrame()
 bytertc::IVideoFrame *FaceUnityWidget::processVideoFrame(bytertc::IVideoFrame * src)
 {
     if (!src) return nullptr;
-    pushVideoFrame(src); //push to in frames
-    return popVideoFrame(src); //pop from out frames
+    src->addRef();
+
+    static VideoFrame frame;
+    int size = src->width()*src->height();
+    if (src->bufferType() == bytertc::kVideoBufferTypeCVPixelBuffer) {
+
+#ifdef Q_OS_MAC
+        CVPixelBufferRef sourceBuffer = reinterpret_cast<CVPixelBufferRef>(src->hwBuffer());
+        if (sourceBuffer) {
+            CVPixelBufferLockBaseAddress(sourceBuffer, 0);
+            int planeSizeY = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 0);
+            int planeSizeU = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 1);
+            int planeSizeV = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 2);
+
+
+            uint8_t * yData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 0));
+            uint8_t * uData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 1));
+            uint8_t * vData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 2));
+            CVPixelBufferUnlockBaseAddress(sourceBuffer, 0);
+
+            memset(frame.yuv_buffer, 0, 1270*720*3);
+            memcpy(frame.yuv_buffer, yData, size);
+            memcpy(frame.yuv_buffer+size, uData, size/4);
+            memcpy(frame.yuv_buffer+size + size/4, vData, size/4);
+
+            if (m_nama) {
+                m_nama->processVideoFrame(frame.yuv_buffer, src->width(),  src->height());
+            }
+
+            memcpy(yData, frame.yuv_buffer, size);
+            memcpy(uData, frame.yuv_buffer+size, size/4);
+            memcpy(vData, frame.yuv_buffer+size+size/4, size/4);
+            CVPixelBufferUnlockBaseAddress(sourceBuffer, 0);
+
+        }
+#endif // Q_OS_MAC
+    } else {
+        //按行拷贝
+        if (src->planeStride(0) > src->width() || src->planeStride(1) > src->width() / 2 || src->planeStride(2) > src->width() / 2) {
+            int dst_offset = 0;
+            int src_offset = 0;
+            for (int i = 0; i < src->height(); i++) {
+                memcpy(frame.yuv_buffer + dst_offset, src->planeData(0) + src_offset, src->width());
+                src_offset += src->planeStride(0);
+                dst_offset += src->width();
+            }
+            src_offset = 0;
+            for (int i = 0; i < src->height() / 2; i++) {
+                memcpy(frame.yuv_buffer + dst_offset, src->planeData(1) + src_offset, src->width() / 2);
+                src_offset += src->planeStride(1);
+                dst_offset += src->width() / 2;
+            }
+            src_offset = 0;
+            for (int i = 0; i < src->height() / 2; i++) {
+                memcpy(frame.yuv_buffer + dst_offset, src->planeData(2) + src_offset, src->width() / 2);
+                src_offset += src->planeStride(2);
+                dst_offset += src->width() / 2;
+            }
+
+            if (m_nama) {
+                m_nama->processVideoFrame(frame.yuv_buffer, src->width(), src->height());
+            }
+
+            src_offset = 0;
+            dst_offset = 0;
+            for (int i = 0; i < src->height(); i++) {
+                memcpy(src->planeData(0) + dst_offset, frame.yuv_buffer + src_offset, src->width());
+                src_offset += src->width();
+                dst_offset += src->planeStride(0);
+            }
+
+            dst_offset = 0;
+            for (int i = 0; i < src->height() / 2; i++) {
+                memcpy(src->planeData(1) + dst_offset, frame.yuv_buffer + src_offset, src->width() / 2);
+                src_offset += src->width() / 2;
+                dst_offset += src->planeStride(1);
+            }
+
+            dst_offset = 0;
+            for (int i = 0; i < src->height() / 2; i++) {
+                memcpy(src->planeData(2) + dst_offset, frame.yuv_buffer + src_offset, src->width() / 2);
+                src_offset += src->width() / 2;
+                dst_offset += src->planeStride(2);
+            }
+
+
+        } //按块拷贝
+        else {
+            memcpy(frame.yuv_buffer, src->planeData(0), size);
+            memcpy(frame.yuv_buffer + size, src->planeData(1), size / 4);
+            memcpy(frame.yuv_buffer + size + size/4, src->planeData(2), size/4);
+            if (m_nama) {
+                m_nama->processVideoFrame(frame.yuv_buffer, src->width(), src->height());
+            }
+
+            memcpy(src->planeData(0), frame.yuv_buffer, size);
+            memcpy(src->planeData(1), frame.yuv_buffer + size, size / 4);
+            memcpy(src->planeData(2), frame.yuv_buffer + size*5/4, size/4);
+        }
+    }
+
+    return src;
 }
 
 void FaceUnityWidget::cleanThread()
@@ -407,20 +509,7 @@ void FaceUnityWidget::initConnections()
     };
 
 #ifdef CNAMASDK_H
-    btn_func1(ui->btn_ar_1, NamaNameSpace::MASK_baozi);
-    btn_func1(ui->btn_ar_2, NamaNameSpace::MASK_bluebird);
-    btn_func1(ui->btn_ar_3, NamaNameSpace::MASK_fenhudie);
-    btn_func1(ui->btn_ar_4, NamaNameSpace::MASK_lanhudie);
-    btn_func1(ui->btn_ar_5, NamaNameSpace::MASK_tiger);
-    btn_func1(ui->btn_ar_6, NamaNameSpace::MASK_tiger_bai);
-    btn_func1(ui->btn_ar_7, NamaNameSpace::MASK_tiger_huang);
-    btn_func1(ui->btn_ar_8, NamaNameSpace::MASK_xiongmao);
 
-    btn_func2(ui->btn_tool_1, NamaNameSpace::ItemSticker_CatSparks);
-    btn_func2(ui->btn_tool_2, NamaNameSpace::ItemSticker_newy1);
-    btn_func2(ui->btn_tool_3, NamaNameSpace::ItemSticker_redribbt);
-    btn_func2(ui->btn_tool_4, NamaNameSpace::ItemSticker_sdlr);
-    btn_func2(ui->btn_tool_5, NamaNameSpace::ItemSticker_xlong_zh_fu);
 #endif
 
 }
@@ -453,58 +542,58 @@ void FaceUnityWidget::onSliderValueChanged(int value)
 #ifdef CNAMASDK_H
     QSlider *slider = dynamic_cast<QSlider*>(QObject::sender());
     if (slider == ui->slider_mopi) { //磨皮
-        NamaNameSpace::Nama::mFaceBeautyLevel[BEAUTY_SKIN_BLUR] = value;
+        NamasNameSpace::Namas::mFaceBeautyLevel[BEAUTY_SKIN_BLUR] = value;
         ui->label_mopi->setText(QString::number(value));
 
     } else if (slider == ui->slider_white) { //美白
-        NamaNameSpace::Nama::mFaceBeautyLevel[BEAUTY_SKIN_WHITE] = value;
+        NamasNameSpace::Namas::mFaceBeautyLevel[BEAUTY_SKIN_WHITE] = value;
         ui->label_meibai->setText(QString::number(value));
     } else if (slider == ui->slider_red) { //红润
-        NamaNameSpace::Nama::mFaceBeautyLevel[BEAUTY_SKIN_RED] = value;
+        NamasNameSpace::Namas::mFaceBeautyLevel[BEAUTY_SKIN_RED] = value;
         ui->label_red->setText(QString::number(value));
     } else if (slider == ui->slider_eye) { //亮眼
         ui->label_eye->setText(QString::number(value));
-        NamaNameSpace::Nama::mFaceBeautyLevel[BEAUTY_SKIN_LIGHT] = value;
+        NamasNameSpace::Namas::mFaceBeautyLevel[BEAUTY_SKIN_LIGHT] = value;
     } else if (slider == ui->slider_meiya){ //美牙
-        NamaNameSpace::Nama::mFaceBeautyLevel[BEAUTY_SKIN_TOOTH] = value;
+        NamasNameSpace::Namas::mFaceBeautyLevel[BEAUTY_SKIN_TOOTH] = value;
         ui->label_meiya->setText(QString::number(value));
     }
 
     //美型
     else if (slider == ui->slider_xiaba) { //下巴
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_XIABA] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_XIABA] = value;
         ui->label_xiaba->setText(QString::number(value));
     }
     else if (slider == ui->slider_etou) { //额头
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_ETOU] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_ETOU] = value;
         ui->label_etou->setText(QString::number(value));
     }
     else if (slider == ui->slider_shoubi) { //瘦鼻
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_SHOUBI] = value;
+        NamasNameSpace::Namas::Namas::mFaceShapeLevel[SHAPE_FACE_SHOUBI] = value;
         ui->label_shoubi->setText(QString::number(value));
     }
     else if (slider == ui->slider_zuixing) { //嘴型
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_ZUIXING] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_ZUIXING] = value;
         ui->label_zuixing->setText(QString::number(value));
     }
     else if (slider == ui->slider_vlian) { //v脸
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_VLIAN] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_VLIAN] = value;
         ui->label_vlian->setText(QString::number(value));
     }
     else if (slider == ui->slider_zhailian) { //窄脸
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_ZHAILIAN] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_ZHAILIAN] = value;
         ui->label_zhailian->setText(QString::number(value));
     }
     else if (slider == ui->slider_xiaolian) { //小脸
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_XIAOLIAN] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_XIAOLIAN] = value;
         ui->label_xiaolian->setText(QString::number(value));
     }
     else if (slider == ui->slider_shoulian) { //瘦脸
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_SHOULIAN] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_SHOULIAN] = value;
         ui->label_shoulian->setText(QString::number(value));
     }
     else if (slider == ui->slider_dayan) { //大眼睛
-        NamaNameSpace::Nama::mFaceShapeLevel[SHAPE_FACE_DAYAN] = value;
+        NamasNameSpace::Namas::mFaceShapeLevel[SHAPE_FACE_DAYAN] = value;
         ui->label_dayan->setText(QString::number(value));
     }
 
@@ -563,23 +652,28 @@ void FaceUnityWidget::onSigRoomStateChanged(std::string roomid, std::string uid,
 
 }
 
-void FaceUnityWidget::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType)
+void FaceUnityWidget::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str = "onUserPublishStream, roomid:" + QString::fromStdString(roomid)
-             + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
-
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+    appendCallback(log_str);
 }
 
-void FaceUnityWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason)
-{
-    QString str = "onUserUnPublishStream, roomid:" + QString::fromStdString(roomid)
-             + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
+void FaceUnityWidget::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
+{ 
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
 
+    appendCallback(log_str);
 }
 
-void FaceUnityWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void FaceUnityWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
              + ",uid:" + QString::fromStdString(info.uid);
@@ -649,6 +743,7 @@ void FaceUnityWidget::clearVideoFrames()
 
 void FaceUnityWidget::copyIVideoFram2LocalFrame(bytertc::IVideoFrame *src, VideoFrame &frame)
 {
+    if (src == nullptr) return;
     std::unique_lock<std::mutex> l(m_mutex_in);
     int width = src->width();
     int height = src->height();
@@ -657,35 +752,71 @@ void FaceUnityWidget::copyIVideoFram2LocalFrame(bytertc::IVideoFrame *src, Video
     frame.width = width;
     frame.height = height;
 
+    qDebug() << Q_FUNC_INFO << "type:" << src->bufferType() << ",pixel:" << src->pixelFormat()
+             << ",w:" << src->width() << ",h:" << src->height()
+             << ",hwbuffer" << src->hwBuffer();
 
-    frame.yuv_buffer = new uint8_t[size*3/2];
 
-    //按行拷贝
-    if (src->getPlaneStride(0) > src->width() || src->getPlaneStride(1) > src->width() / 2 || src->getPlaneStride(2) > src->width() / 2) {
-        int dst_offset = 0;
-        int src_offset = 0;
-        for (int i = 0; i < src->height(); i++) {
-            memcpy(frame.yuv_buffer + dst_offset, src->getPlaneData(0) + src_offset, width);
-            src_offset += src->getPlaneStride(0);
-            dst_offset += width;
+    if (src->bufferType() == bytertc::kVideoBufferTypeCVPixelBuffer) {
+
+#ifdef Q_OS_MAC
+        CVPixelBufferRef sourceBuffer = reinterpret_cast<CVPixelBufferRef>(src->hwBuffer());
+        if (sourceBuffer) {
+            CVPixelBufferLockBaseAddress(sourceBuffer, 0);
+            int planeSizeY = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 0);
+            int planeSizeU = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 1);
+            int planeSizeV = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 2);
+
+
+            uint8_t * yData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 0));
+            uint8_t * uData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 1));
+            uint8_t * vData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 2));
+            CVPixelBufferUnlockBaseAddress(sourceBuffer, 0);
+//            qDebug() << Q_FUNC_INFO << "y=" << planeSizeY << ",u=" << planeSizeU << ",v=" << planeSizeV
+//                     << ",ydata:" << yData << ",udata:" << uData << ",vdata:" << vData;
+
+            memset(frame.yuv_buffer, 0, 1270*720*3);
+            memcpy(frame.yuv_buffer, yData, size);
+            memcpy(frame.yuv_buffer+size, uData, size/4);
+            memcpy(frame.yuv_buffer+size + size/4, vData, size/4);
+
+            if (m_dmp_out) {
+                m_inFile->write((const char*)(frame.yuv_buffer), size + size/2);
+            }
+//            m_vframe->linesize[0] = planeSizeY;
+//            m_vframe->linesize[1] = planeSizeU;
+//            m_vframe->linesize[2] = planeSizeV;
+
         }
-        src_offset = 0;
-        for (int i = 0; i < height / 2; i++) {
-            memcpy(frame.yuv_buffer + dst_offset, src->getPlaneData(1) + src_offset, width / 2);
-            src_offset += src->getPlaneStride(1);
-            dst_offset += width / 2;
+#endif // Q_OS_MAC
+    } else {
+        //按行拷贝
+        if (src->planeStride(0) > src->width() || src->planeStride(1) > src->width() / 2 || src->planeStride(2) > src->width() / 2) {
+            int dst_offset = 0;
+            int src_offset = 0;
+            for (int i = 0; i < src->height(); i++) {
+                memcpy(frame.yuv_buffer + dst_offset, src->planeData(0) + src_offset, width);
+                src_offset += src->planeStride(0);
+                dst_offset += width;
+            }
+            src_offset = 0;
+            for (int i = 0; i < height / 2; i++) {
+                memcpy(frame.yuv_buffer + dst_offset, src->planeData(1) + src_offset, width / 2);
+                src_offset += src->planeStride(1);
+                dst_offset += width / 2;
+            }
+            src_offset = 0;
+            for (int i = 0; i < height / 2; i++) {
+                memcpy(frame.yuv_buffer + dst_offset, src->planeData(2) + src_offset, width / 2);
+                src_offset += src->planeStride(2);
+                dst_offset += width / 2;
+            }
+        } //按块拷贝
+        else {
+            memcpy(frame.yuv_buffer, src->planeData(0), size);
+            memcpy(frame.yuv_buffer + size, src->planeData(1), size / 4);
+            memcpy(frame.yuv_buffer + size + size/4, src->planeData(2), size/4);
         }
-        src_offset = 0;
-        for (int i = 0; i < height / 2; i++) {
-            memcpy(frame.yuv_buffer + dst_offset, src->getPlaneData(2) + src_offset, width / 2);
-            src_offset += src->getPlaneStride(2);
-            dst_offset += width / 2;
-        }
-    } //按块拷贝
-    else {
-        memcpy(frame.yuv_buffer, src->getPlaneData(0), size);
-        memcpy(frame.yuv_buffer + size, src->getPlaneData(1), size / 4);
-        memcpy(frame.yuv_buffer + size *5/4, src->getPlaneData(2), size/4);
     }
 
 }
@@ -697,36 +828,63 @@ void FaceUnityWidget::copyLocalFrame2IVideoFrame(bytertc::IVideoFrame *dst, Vide
     int dst_offset = 0;
     int src_offset = 0;
 
-    if (dst->getPlaneStride(0) > dst->width() || dst->getPlaneStride(1) > dst->width() / 2 || dst->getPlaneStride(2) > dst->width() / 2) {
-        
-        src_offset = 0;
-        dst_offset = 0;
+    if (dst->bufferType() == bytertc::kVideoBufferTypeCVPixelBuffer) {
+#ifdef Q_OS_MAC
+        CVPixelBufferRef sourceBuffer = reinterpret_cast<CVPixelBufferRef>(dst->hwBuffer());
+        if (sourceBuffer) {
+            CVPixelBufferLockBaseAddress(sourceBuffer, 0);
+            int planeSizeY = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 0);
+            int planeSizeU = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 1);
+            int planeSizeV = CVPixelBufferGetBytesPerRowOfPlane(sourceBuffer, 2);
 
-        for (int i = 0; i < dst->height(); i++) {
-            memcpy(dst->getPlaneData(0) + dst_offset, frame.yuv_buffer + src_offset, dst->width());
-            src_offset += dst->width();
-            dst_offset += dst->getPlaneStride(0);
+            uint8_t * yData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 0));
+            uint8_t * uData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 1));
+            uint8_t * vData = static_cast<uint8_t *>(CVPixelBufferGetBaseAddressOfPlane(sourceBuffer, 2));
+
+
+            memcpy(yData, frame.yuv_buffer, size);
+            memcpy(uData, frame.yuv_buffer+size, size/4);
+            memcpy(vData, frame.yuv_buffer+size+size/4, size/4);
+            //            m_vframe->linesize[0] = planeSizeY;
+            //            m_vframe->linesize[1] = planeSizeU;
+            //            m_vframe->linesize[2] = planeSizeV;
+            CVPixelBufferUnlockBaseAddress(sourceBuffer, 0);
         }
+#endif
+    } else {
+        if (dst->planeStride(0) > dst->width() || dst->planeStride(1) > dst->width() / 2 || dst->planeStride(2) > dst->width() / 2) {
 
-        dst_offset = 0;
-        for (int i = 0; i < dst->height() / 2; i++) {
-            memcpy(dst->getPlaneData(1) + dst_offset, frame.yuv_buffer + src_offset, dst->width() / 2);
-            src_offset += dst->width() / 2;
-            dst_offset += dst->getPlaneStride(1);
+            src_offset = 0;
+            dst_offset = 0;
+
+            for (int i = 0; i < dst->height(); i++) {
+                memcpy(dst->planeData(0) + dst_offset, frame.yuv_buffer + src_offset, dst->width());
+                src_offset += dst->width();
+                dst_offset += dst->planeStride(0);
+            }
+
+            dst_offset = 0;
+            for (int i = 0; i < dst->height() / 2; i++) {
+                memcpy(dst->planeData(1) + dst_offset, frame.yuv_buffer + src_offset, dst->width() / 2);
+                src_offset += dst->width() / 2;
+                dst_offset += dst->planeStride(1);
+            }
+
+            dst_offset = 0;
+            for (int i = 0; i < dst->height() / 2; i++) {
+                memcpy(dst->planeData(2) + dst_offset, frame.yuv_buffer + src_offset, dst->width() / 2);
+                src_offset += dst->width() / 2;
+                dst_offset += dst->planeStride(2);
+            }
         }
-
-        dst_offset = 0;
-        for (int i = 0; i < dst->height() / 2; i++) {
-            memcpy(dst->getPlaneData(2) + dst_offset, frame.yuv_buffer + src_offset, dst->width() / 2);
-            src_offset += dst->width() / 2;
-            dst_offset += dst->getPlaneStride(2);
+        else {
+            memcpy(dst->planeData(0), frame.yuv_buffer, size);
+            memcpy(dst->planeData(1), frame.yuv_buffer + size, size / 4);
+            memcpy(dst->planeData(2), frame.yuv_buffer + size*5/4, size/4);
         }
     }
-    else {
-        memcpy(dst->getPlaneData(0), frame.yuv_buffer, size);
-        memcpy(dst->getPlaneData(1), frame.yuv_buffer + size, size / 4);
-        memcpy(dst->getPlaneData(2), frame.yuv_buffer + size*5/4, size/4);
-    }
+
+
 }
 
 void FaceUnityWidget::onBtnFilterClicked()
@@ -734,22 +892,22 @@ void FaceUnityWidget::onBtnFilterClicked()
 #ifdef CNAMASDK_H
     QPushButton* btn = dynamic_cast<QPushButton*>(QObject::sender());
     if (btn == ui->btn_filter_orign) { //原图
-        NamaNameSpace::Nama::m_curFilterIdx = 0;
+        NamasNameSpace::Namas::m_curFilterIdx = 0;
     }
     else if (btn == ui->btn_filter_bailiang) { //白亮
-        NamaNameSpace::Nama::m_curFilterIdx = 1;
+        NamasNameSpace::Namas::m_curFilterIdx = 1;
     }
     else if (btn == ui->btn_filter_fennen) { //粉嫩
-        NamaNameSpace::Nama::m_curFilterIdx = 2;
+        NamasNameSpace::Namas::m_curFilterIdx = 2;
     }
     else if (btn == ui->btn_filter_leng) { //冷色调
-        NamaNameSpace::Nama::m_curFilterIdx = 3;
+        NamasNameSpace::Namas::m_curFilterIdx = 3;
     }
     else if (btn == ui->btn_filter_nuan) { // 暖色调
-        NamaNameSpace::Nama::m_curFilterIdx = 4;
+        NamasNameSpace::Namas::m_curFilterIdx = 4;
     }
     else if (btn == ui->btn_filter_qingxin) { //小清新
-        NamaNameSpace::Nama::m_curFilterIdx = 5;
+        NamasNameSpace::Namas::m_curFilterIdx = 5;
     }
 
     {

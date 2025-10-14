@@ -22,7 +22,13 @@ void UserWidget::setUserInfo(std::string roomid, std::string uid)
 {
     m_roomid = roomid;
     m_uid = uid;
-    ui->label_user_id->setText("room:" + QString::fromStdString(m_roomid) + ",uid:" + QString::fromStdString(m_uid));
+    if (!m_roomid.empty() && !m_uid.empty()) {
+        ui->label_user_id->setText("room:" + QString::fromStdString(m_roomid) + ",uid:" + QString::fromStdString(m_uid));
+    }
+    else {
+        ui->label_user_id->setText("");
+    }
+    
 }
 
 const std::string UserWidget::getUid()
@@ -38,6 +44,11 @@ const std::string UserWidget::getRoomid()
 void *UserWidget::getWinId()
 {
     return (void*)ui->widget->winId();
+}
+
+QWidget *UserWidget::getWidget()
+{
+    return ui->widget;
 }
 
 

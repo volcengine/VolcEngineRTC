@@ -5,6 +5,12 @@
 
 @interface RTSRoom ()
 
-- (instancetype _Nonnull)initWithRtsRoom:(bytertc::IRTSRoom *_Nonnull)rtsRoom roomId:(NSString *_Nonnull)roomId;
+/**
+ * 
+ * @type api
+ * @hidden 仅内部使用接口
+ */
+
+- (instancetype _Nonnull)initWithRtsRoom:(byterts::IRTSRoom *_Nonnull)rtsRoom roomId:(NSString *_Nonnull)roomId;
 
 @end

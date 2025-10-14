@@ -4,12 +4,13 @@
 #include <QWidget>
 #include <mutex>
 #include <QFile>
+#include <thread>
 #include "BaseWidget.h"
 #include "ByteRTCEventHandler.h"
 
 #if __has_include("CNamaSDK.h")
 #include "CNamaSDK.h"
-#include "Nama.h"
+#include "Namas.h"
 #endif
 
 
@@ -18,12 +19,12 @@ class FaceUnityWidget;
 }
 
 namespace bytertc {
-    class IRTCVideo;
+    class IRTCEngine;
     class IRTCRoom;
     class IVideoFrame;
 };
-namespace NamaNameSpace {
-class Nama;
+namespace NamasNameSpace {
+class Namas;
 };
 
 class PixTextWidget;
@@ -34,7 +35,7 @@ class FaceUnityWidget :public BaseWidget, public bytertc::IVideoProcessor
 public:
     typedef struct VideoFrame {
         bytertc::IVideoFrame* frame = nullptr;
-        uint8_t* yuv_buffer = nullptr;
+        uint8_t* yuv_buffer = new uint8_t[1280*720*3];
         int width =0 ,height = 0;
 
     public:
@@ -83,9 +84,9 @@ private slots:
     void onRTCState(std::string str);
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
 
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo info);
     void onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason);
     void onSigLeaveRoom(std::string roomid, std::string uid, bytertc::RtcRoomStats);
 
@@ -108,11 +109,11 @@ private:
     std::vector<PixTextWidget*>  m_mapTools;
     std::vector<PixTextWidget*>  m_mapMasks;
 
-    bytertc::IRTCVideo *m_video = nullptr;
+    bytertc::IRTCEngine *m_video = nullptr;
     bytertc::IRTCRoom  *m_room = nullptr;
     std::unique_ptr<ByteRTCEventHandler> m_handler;
     std::unique_ptr<ByteRTCRoomHandler>  m_room_handler;
-    NamaNameSpace::Nama* m_nama = nullptr;
+    NamasNameSpace::Namas* m_nama = nullptr;
 
     std::thread* m_thread_process = nullptr;
     std::mutex   m_mutex_process;

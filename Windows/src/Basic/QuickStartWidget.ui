@@ -93,7 +93,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background: black;</string>
+        <string notr="true"/>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">

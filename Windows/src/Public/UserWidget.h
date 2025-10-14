@@ -21,6 +21,7 @@ public:
 
 
     void *getWinId();
+    QWidget *getWidget();
 
 private:
     Ui::UserWidget *ui;

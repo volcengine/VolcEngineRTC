@@ -1,7 +1,7 @@
 ﻿#include "AudioMessage.h"
 #include "ui_AudioMessage.h"
 
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 #include "Config.h"
 #include "Resources.h"
@@ -57,11 +57,15 @@ void AudioMessage::initRTCVideo()
 {
     m_handler.reset(new ByteRTCEventHandler());
     connect(m_handler.get(), &ByteRTCEventHandler::sigStreamSyncInfoReceived, this, &AudioMessage::onSigStreamSyncInfoReceived);
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 
 }
@@ -79,10 +83,10 @@ void AudioMessage::cleanRTCVideo()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
 
         m_video = nullptr;
-        list = list + QStringList{ "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo" };
+        list = list + QStringList{ "stopAudioCapture", "stopVideoCapture", "destroyRTCEngine" };
         appendAPI(list);
     }
 }
@@ -97,8 +101,8 @@ std::unique_ptr<ByteRTCRoomHandler> AudioMessage::createRoomHandler(std::string 
 {
     std::unique_ptr<ByteRTCRoomHandler> roomH = std::make_unique<ByteRTCRoomHandler>(roomid, uid);
     connect(roomH.get(), &ByteRTCRoomHandler::sigRoomStateChanged, this, &AudioMessage::onSigRoomStateChanged);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &AudioMessage::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &AudioMessage::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &AudioMessage::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &AudioMessage::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &AudioMessage::onSigUserJoined);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &AudioMessage::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
@@ -143,7 +147,7 @@ void AudioMessage::onBtnJoinClicked()
 
         cas.view = (void*)ui->widget_1->getWinId();
         ui->widget_1->setUserInfo(m_roomid, m_uid);
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        m_video->setLocalVideoCanvas(cas);
 
         m_roomHandler = createRoomHandler(m_roomid, m_uid);
         m_room->setRTCRoomEventHandler(m_roomHandler.get());
@@ -151,11 +155,12 @@ void AudioMessage::onBtnJoinClicked()
         bytertc::UserInfo userinfo;
         userinfo.uid = m_uid.c_str();
         bytertc::RTCRoomConfig config;
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
 
-        int ret = m_room->joinRoom(token.c_str(), userinfo, config);
+        int ret = m_room->joinRoom(token.c_str(), userinfo, true, config);
         if (ret != 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error, please check"), QMessageBox::Ok);
             box.exec();
@@ -187,8 +192,7 @@ void AudioMessage::onBtnSendClicked()
         box.exec();
         return;
     }
-    bytertc::StreamSycnInfoConfig config;
-    config.stream_index = bytertc::kStreamIndexMain;
+    bytertc::StreamSyncInfoConfig config;
     config.stream_type = bytertc::kSyncInfoStreamTypeAudio;
     config.repeat_count = 0; //0表示不重复
     int ret = m_video->sendStreamSyncInfo((const uint8_t*)str.c_str(), str.size(), config);
@@ -215,27 +219,27 @@ void AudioMessage::onSigRoomStateChanged(std::string roomid, std::string uid, in
 
 }
 
-void AudioMessage::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void AudioMessage::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-                      + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamVideo")
+                      + ",stream_id:" + QString::fromStdString(stream_id)
+                      + ",roomid:" + QString::fromStdString(roomid)
                       + ",uid:" + QString::fromStdString(uid)
-                      + ",type:" + QString::number(type);
+                      + ",pub:" + QString::number(pub);
     appendCallback(log_str);
-
 }
 
-void AudioMessage::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason)
+void AudioMessage::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-                      + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamAudio")
+                      + ",stream_id:" + QString::fromStdString(stream_id)
+                      + ",roomid:" + QString::fromStdString(roomid)
                       + ",uid:" + QString::fromStdString(uid)
-                      + ",type:" + QString::number(type);
+                      + ",pub:" + QString::number(pub);
     appendCallback(log_str);
-
 }
 
-void AudioMessage::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void AudioMessage::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, uid:" + QString::fromStdString(info.uid) + ",roomid:" + QString::fromStdString(info.roomid);
     appendCallback(str);
@@ -251,7 +255,8 @@ void AudioMessage::onSigUserLeave(std::string roomid, std::string uid, bytertc::
 
 void AudioMessage::onSigStreamSyncInfoReceived(ByteRTCEventHandler::Stru_RemoteStreamKey stream_key, bytertc::SyncInfoStreamType stream_type, std::string str)
 {
-    QString sss = "onStreamSyncInfoReceived, roomid:" + QString::fromStdString(stream_key.room_id)
+    QString sss = "onStreamSyncInfoReceived, streamid:" + QString::fromStdString(stream_key.stream_id)
+                  + ",roomid:" + QString::fromStdString(stream_key.room_id)
                   + ",uid:" + QString::fromStdString(stream_key.user_id)
                   + ",message:" + QString::fromStdString(str);
     ui->textEdit_receive->append(sss);

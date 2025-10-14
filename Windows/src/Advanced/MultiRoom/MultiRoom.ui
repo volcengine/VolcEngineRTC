@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>702</height>
+    <width>820</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -84,11 +84,11 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>480</height>
+       <height>400</height>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(0, 0, 0);</string>
+      <string notr="true"/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="spacing">
@@ -128,14 +128,14 @@
          <widget class="UserWidget" name="widget" native="true">
           <property name="minimumSize">
            <size>
-            <width>320</width>
-            <height>240</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>320</width>
-            <height>240</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -167,14 +167,14 @@
          <widget class="UserWidget" name="widget_2" native="true">
           <property name="minimumSize">
            <size>
-            <width>320</width>
-            <height>240</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>320</width>
-            <height>240</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
          </widget>
@@ -183,14 +183,14 @@
          <widget class="UserWidget" name="widget_3" native="true">
           <property name="minimumSize">
            <size>
-            <width>320</width>
-            <height>240</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>320</width>
-            <height>240</height>
+            <width>200</width>
+            <height>200</height>
            </size>
           </property>
           <property name="styleSheet">

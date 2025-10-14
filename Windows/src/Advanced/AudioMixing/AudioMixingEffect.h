@@ -12,7 +12,7 @@
 #include <memory>
 
 namespace bytertc {
-    class IRTCVideo;
+    class IRTCEngine;
     class IRTCRoom;
 };
 
@@ -64,15 +64,15 @@ private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
     void onSigAudioEffectPlayerStateChanged(int effect_id, bytertc::PlayerState state, bytertc::PlayerError error);
 
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo info);
     void onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason);
     void onSigLeaveRoom(std::string roomid, std::string uid, bytertc::RtcRoomStats);
 
 private:
     Ui::AudioMixingEffect *ui;
-    bytertc::IRTCVideo* m_video = nullptr;
+    bytertc::IRTCEngine* m_video = nullptr;
     bytertc::IRTCRoom* m_room = nullptr;
     std::string m_roomid;
     std::unique_ptr<ByteRTCEventHandler> m_handler;

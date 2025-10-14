@@ -8,7 +8,7 @@
 #include <QWidget>
 
 namespace bytertc {
-    class IRTCVideo;
+    class IRTCEngine;
     class IRTCRoom;
 };
 
@@ -42,9 +42,9 @@ private:
 
 private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo);
     void onSigUserLeave(std::string, std::string, bytertc::UserOfflineReason);
     void onSigLeaveRoom(std::string, std::string, bytertc::RtcRoomStats);
 
@@ -52,7 +52,7 @@ private slots:
 private:
     Ui::QuickStartWidget *ui;
 
-    bytertc::IRTCVideo* m_video = nullptr;
+    bytertc::IRTCEngine* m_video = nullptr;
     bytertc::IRTCRoom* m_room = nullptr;
     std::unique_ptr<ByteRTCEventHandler> m_handler;
     std::unique_ptr<ByteRTCRoomHandler> m_roomHandler;

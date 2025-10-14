@@ -14,7 +14,7 @@ class VideoConfigWidget;
 
 class QComboBox;
 namespace bytertc {
-    class IRTCVideo;
+    class IRTCEngine;
     class IRTCRoom;
 };
 
@@ -24,13 +24,15 @@ class VideoConfigWidget : public BaseWidget
 
 public:
     struct Stru_User {
+        std::string streamId;
         std::string roomId;
         std::string uid;
     public:
         Stru_User() {}
-        Stru_User(std::string room,std::string u) {
+        Stru_User(std::string stream, std::string room,std::string u) {
+            streamId = stream;
             roomId = room;
-            u = uid;
+            uid = u;
         }
     };
 
@@ -60,14 +62,13 @@ private slots:
 
 private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigLocalVideoSizeChanged(bytertc::StreamIndex index,
-                                  const bytertc::VideoFrameInfo info);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigLocalVideoSizeChanged(const bytertc::VideoFrameInfo info);
 
 private:
     Ui::VideoConfigWidget *ui;
-    bytertc::IRTCVideo* m_video = nullptr;
+    bytertc::IRTCEngine* m_video = nullptr;
     bytertc::IRTCRoom* m_room = nullptr;
     std::string m_roomid;
     std::map<std::string, Stru_User> m_rusers;

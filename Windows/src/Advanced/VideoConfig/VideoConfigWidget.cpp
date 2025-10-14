@@ -1,7 +1,7 @@
 ﻿#include "VideoConfigWidget.h"
 #include "ui_VideoConfigWidget.h"
 
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 
 #include "Config.h"
@@ -22,8 +22,8 @@
 
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -86,11 +86,14 @@ void VideoConfigWidget::initRTCVideo()
 {
     m_handler.reset(new ByteRTCEventHandler());
     connect(m_handler.get(), &ByteRTCEventHandler::sigLocalVideoSizeChanged, this, &VideoConfigWidget::onSigLocalVideoSizeChanged);
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
@@ -106,10 +109,10 @@ void VideoConfigWidget::cleanRTCVideo()
 
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
     }
-    QStringList list = { "leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+    QStringList list = { "leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     appendAPI(list);
 }
 
@@ -161,8 +164,8 @@ ByteRTCRoomHandler* VideoConfigWidget::createRoomHandler(std::string roomid, std
 {
     auto roomH = new ByteRTCRoomHandler(roomid, uid);
     connect(roomH, &ByteRTCRoomHandler::sigRoomStateChanged, this, &VideoConfigWidget::onSigRoomStateChanged);
-    connect(roomH, &ByteRTCRoomHandler::sigUserPublishStream, this, &VideoConfigWidget::onSigUserPublishStream);
-    connect(roomH, &ByteRTCRoomHandler::sigUserUnPublishStream, this, &VideoConfigWidget::onSigUserUnPublishStream);
+    connect(roomH, &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &VideoConfigWidget::onSigUserPublishStreamVideo);
+    connect(roomH, &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &VideoConfigWidget::onSigUserPublishStreamAudio);
 
     return roomH;
 }
@@ -220,7 +223,7 @@ void VideoConfigWidget::onBtnJoinClicked() {
         cavs.view = (void*)ui->widget->getWinId();
         cavs.render_mode = getRenderMode(ui->comboBox_c_render); //渲染参数
         cavs.background_color = 0x00FF0000;
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cavs);
+        m_video->setLocalVideoCanvas(cavs);
         ui->widget->setUserInfo(str_room, str_uid);
         
 
@@ -237,15 +240,13 @@ void VideoConfigWidget::onBtnJoinClicked() {
         bytertc::RTCRoomConfig config;
 
         info.uid = str_uid.c_str();
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
-        config.remote_video_config.framerate = 15;
-        config.remote_video_config.resolution_height = ui->widget_2->height();
-        config.remote_video_config.resolution_width = ui->widget_2->height();
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
         str_token = Utils::generateToken(str_room, str_uid);
-        int ret = m_room->joinRoom(str_token.c_str(), info, config);
+        int ret = m_room->joinRoom(str_token.c_str(), info, true, config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error"), QMessageBox::Ok);
             box.exec();
@@ -327,12 +328,12 @@ void VideoConfigWidget::onComboLocalRenderTextChanged(const QString &text) //本
         int ret = 0;
         bytertc::VideoCanvas cas;
         cas.view = nullptr;
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        m_video->setLocalVideoCanvas(cas);
 
         cas.view = (void*)ui->widget->getWinId();
         cas.render_mode = getRenderMode(ui->comboBox_c_render);
         cas.background_color = 0; //默认黑色背景
-        ret = m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        ret = m_video->setLocalVideoCanvas(cas);
 
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setLocalVideoCanvas error"), QMessageBox::Ok);
@@ -352,16 +353,16 @@ void VideoConfigWidget::onComboRemoteRenderTextChanged(const QString &text) //�
     if (m_video) {
         int ret = 0;
         bytertc::VideoCanvas cas;
-        bytertc::RemoteStreamKey key;
-        key.room_id = m_roomid.c_str();
-        key.stream_index = bytertc::kStreamIndexMain;
-        key.user_id = m_rendering.c_str();
+        //bytertc::RemoteStreamKey key;
+        //key.room_id = m_roomid.c_str();
+        //key.stream_index = bytertc::kStreamIndexMain;
+        //key.user_id = m_rendering.c_str();
         cas.background_color = 0;
         cas.render_mode = getRenderMode(ui->comboBox_remote_render);
         cas.view = nullptr;
-        m_video->setRemoteVideoCanvas(key, cas);
+        m_video->setRemoteVideoCanvas(m_rendering.c_str(), cas);
         cas.view = (void*)ui->widget_2->getWinId();
-        ret = m_video->setRemoteVideoCanvas(key, cas);
+        ret = m_video->setRemoteVideoCanvas(m_rendering.c_str(), cas);
         ui->widget_2->setUserInfo(m_roomid, m_rendering);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setRemoteVideoCanvas error"), QMessageBox::Ok);
@@ -388,7 +389,7 @@ void VideoConfigWidget::onCheckWaterClicked(int state) { //水印
         config.position_in_landscape_mode = mark;
         config.position_in_portrait_mode = mark;
 
-        ret = m_video->setVideoWatermark(bytertc::kStreamIndexMain, path.c_str(), config);
+        ret = m_video->setVideoWatermark(path.c_str(), config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setVideoWatermark error:") + QString::number(ret), QMessageBox::Ok);
             box.exec();
@@ -396,7 +397,7 @@ void VideoConfigWidget::onCheckWaterClicked(int state) { //水印
         appendAPI("setVideoWatermark");
     }
     else {
-        ret = m_video->clearVideoWatermark(bytertc::kStreamIndexMain);
+        ret = m_video->clearVideoWatermark();
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("clearVideoWatermark error") + QString::number(ret), QMessageBox::Ok);
             box.exec();
@@ -427,76 +428,72 @@ void VideoConfigWidget::onSigRoomStateChanged(std::string roomid, std::string ui
     }
 }
 
-void VideoConfigWidget::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void VideoConfigWidget::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str = QString("onUserPublishStream, roomid:") + QString::fromStdString(roomid)
-                      + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+    appendCallback(log_str);
 
-    if (type & bytertc::kMediaStreamTypeVideo) {
-        Stru_User user(roomid, uid);
+    if (pub) {
+        Stru_User user(stream_id, roomid, uid);
         m_rusers[uid] = user;
         
         if (m_rendering.empty()) //没有正在渲染的用户
         {
             if (m_video) {
-                bytertc::RemoteStreamKey key;
+                //bytertc::RemoteStreamKey key;
                 bytertc::VideoCanvas cas;
-                key.room_id = roomid.c_str();
-                key.user_id = uid.c_str();
-                key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
+                //key.room_id = roomid.c_str();
+                //key.user_id = uid.c_str();
+                //key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
                 cas.render_mode = getRenderMode(ui->comboBox_remote_render);
                 cas.view = (void*)ui->widget_2->getWinId();
-                m_video->setRemoteVideoCanvas(key, cas);
-                m_rendering = uid;
+                m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
+                m_rendering = stream_id;
                 ui->widget_2->setUserInfo(roomid, uid);
                 appendAPI("setRemoteVideoCanvas");
             }
         }
-    }
-}
+    } else {
 
-void VideoConfigWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason)
-{
-    QString str = QString("onUserUnPublishStream, roomid:") + QString::fromStdString(roomid)
-                  + ",uid:" + QString::fromStdString(uid);
+        m_rusers.erase(uid);
 
-    appendCallback(str);
-    if (m_video == nullptr) return;
-    if (type & bytertc::kMediaStreamTypeVideo) {
-        if (m_rusers.count(uid) > 0) {
-            m_rusers.erase(uid);
-        }
+        // 下面的逻辑只对正在渲染的远端流生效。对于没有在渲染的远端流，其中断与否不需要额外处理。
+        // 将远端流画面设为m_rusers的第一个用户
+        if (m_rendering == stream_id && !m_rusers.empty()) {
+            if (m_video) {
+                auto new_user = m_rusers.begin();
+                auto new_user_stru = new_user->second;
+                std::string new_stream_id = new_user_stru.streamId;
 
-
-        if (uid == m_rendering) {
-            bytertc::RemoteStreamKey key;
-            bytertc::VideoCanvas cas;
-
-            m_rendering = "";
-            key.room_id = roomid.c_str();
-            key.stream_index = bytertc::kStreamIndexMain;
-            key.user_id = uid.c_str();
-            cas.view = nullptr;
-            m_video->setRemoteVideoCanvas(key, cas);
-
-            if (m_rusers.size() > 0) {
-                key.room_id = m_rusers.begin()->second.roomId.c_str();
-                key.user_id = m_rusers.begin()->first.c_str();
-                key.stream_index = bytertc::StreamIndex::kStreamIndexMain;
+                bytertc::VideoCanvas cas;
                 cas.render_mode = getRenderMode(ui->comboBox_remote_render);
                 cas.view = (void*)ui->widget_2->getWinId();
-                m_video->setRemoteVideoCanvas(key, cas);
-                m_rendering = m_rusers.begin()->first;
-                ui->widget_2->setUserInfo(m_rusers.begin()->second.roomId, m_rusers.begin()->first);
+                m_video->setRemoteVideoCanvas(new_stream_id.c_str(), cas);
+                m_rendering = new_stream_id;
+                ui->widget_2->setUserInfo(new_user_stru.roomId, new_user_stru.uid);
                 appendAPI("setRemoteVideoCanvas");
             }
         }
-        
+
     }
 }
 
-void VideoConfigWidget::onSigLocalVideoSizeChanged(bytertc::StreamIndex index, const bytertc::VideoFrameInfo info)
+void VideoConfigWidget::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
+{
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+
+    appendCallback(log_str);
+}
+
+void VideoConfigWidget::onSigLocalVideoSizeChanged(const bytertc::VideoFrameInfo info)
 {
     QString str = "onLocalVideoSizeChanged, w=" + QString::number(info.width) + ",h=" + QString::number(info.height) + ",rotation=" + QString::number(info.rotation);
     appendCallback(str);
@@ -532,11 +529,8 @@ bytertc::VideoEncodePreference VideoConfigWidget::getEncoderPreference()
     else if (str.contains("Quality")) {
         result = bytertc::kVideoEncodePreferenceQuality;
     }
-    else if (str.contains("Balance")) {
-        result = bytertc::kVideoEncodePreferenceBalance;
-    }
     else {
-        result = bytertc::kVideoEncodePreferenceDisabled;
+        result = bytertc::kVideoEncodePreferenceAuto;
     }
     return result;
 }

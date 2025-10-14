@@ -1,7 +1,7 @@
 ﻿#include "QuickStartWidget.h"
 #include "ui_QuickStartWidget.h"
 
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 
 #include "Config.h"
@@ -17,8 +17,8 @@
 * 功能简单描述：快速跑通 ByteRTC 音视频通话功能
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -112,9 +112,11 @@ void QuickStartWidget::onBtnCreateVideoClicked()
 {
     if (m_video == nullptr) {
         m_handler.reset(new ByteRTCEventHandler());
-        m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
-
-        QString str_log = "createRTCVideo";
+        bytertc::EngineConfig conf;
+        conf.app_id = g_appid.c_str();
+        conf.parameters = Utils::getParameters();
+        m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
+        QString str_log = "createRTCEngine";
         appendAPI(str_log);
         if (m_video == nullptr) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("CreateRTCVideo error"), QMessageBox::Ok);
@@ -187,11 +189,12 @@ void QuickStartWidget::onBtnJoinRoomClicked()
         uinfo.uid = uid.c_str();
         uinfo.extra_info = nullptr;
         bytertc::RTCRoomConfig config;
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
-        ret = m_room->joinRoom(token.c_str(), uinfo, config);
+        ret = m_room->joinRoom(token.c_str(), uinfo, true, config);
         appendAPI("joinRoom");
         ui->widget_local->setUserInfo(ui->lineEdit_room->text().toStdString(), ui->lineEdit_uid->text().toStdString());
 
@@ -224,7 +227,7 @@ void QuickStartWidget::onBtnLeaveRoomClicked()
 //销毁引擎
 void QuickStartWidget::onBtnDestroyVideoClicked()
 {
-    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     if (m_video) {
         if (m_room) {
             m_room->leaveRoom();
@@ -235,7 +238,7 @@ void QuickStartWidget::onBtnDestroyVideoClicked()
         
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
         appendAPI(list);
     }
@@ -258,7 +261,7 @@ void QuickStartWidget::onBtnSetLocalViewClicked()
         cas.background_color = 0x00000000;
         cas.render_mode = bytertc::kRenderModeHidden;
         cas.view = (void*)ui->widget_local->getWinId();
-        ret = m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        ret = m_video->setLocalVideoCanvas(cas);
         appendAPI("setLocalVideoCanvas");
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setLocalVideoCanvas error, ret=") + QString::number(ret), QMessageBox::Ok);
@@ -272,8 +275,8 @@ std::unique_ptr<ByteRTCRoomHandler> QuickStartWidget::createRoomHandler(std::str
 {
     std::unique_ptr<ByteRTCRoomHandler> roomH = std::make_unique<ByteRTCRoomHandler>(roomid, uid);
     connect(roomH.get(), &ByteRTCRoomHandler::sigRoomStateChanged, this, &QuickStartWidget::onSigRoomStateChanged);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &QuickStartWidget::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &QuickStartWidget::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &QuickStartWidget::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &QuickStartWidget::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &QuickStartWidget::onSigUserJoined);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &QuickStartWidget::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &QuickStartWidget::onSigLeaveRoom);
@@ -297,62 +300,52 @@ void QuickStartWidget::onSigRoomStateChanged(std::string roomid, std::string uid
 }
 
 //远端用户发流
-void QuickStartWidget::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void QuickStartWidget::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
 
-    if (!m_remote_rendered) {
+    if (pub) {
         bytertc::VideoCanvas cas;
-        bytertc::RemoteStreamKey key;
-        key.room_id = roomid.c_str();
-        key.user_id = uid.c_str();
-        key.stream_index = bytertc::kStreamIndexMain;
         cas.background_color = 0;
         cas.render_mode = bytertc::kRenderModeHidden;
         cas.view = nullptr;
-        m_video->setRemoteVideoCanvas(key, cas);
-
+        m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
         cas.view = (void*)ui->widget_remote->getWinId();
-        m_video->setRemoteVideoCanvas(key, cas);
-
+        m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
         ui->widget_remote->setUserInfo(roomid, uid);
-        m_remote_rendered = true;
-    }
-}
-
-//远端用户停止发流
-void QuickStartWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason)
-{
-    QString log_str = QString("onUserUnPublishStream,roomid:")
-        + QString::fromStdString(roomid)
-        + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
-    appendCallback(log_str);
-
-    if (m_remote_rendered) {
+    } else {
         if (ui->widget_remote->getRoomid() == roomid && ui->widget_remote->getUid() == uid) {
             bytertc::VideoCanvas cas;
-            bytertc::RemoteStreamKey key;
-            key.room_id = roomid.c_str();
-            key.user_id = uid.c_str();
-            key.stream_index = bytertc::kStreamIndexMain;
             cas.background_color = 0;
             cas.render_mode = bytertc::kRenderModeHidden;
             cas.view = nullptr;
-            m_video->setRemoteVideoCanvas(key, cas);
+            m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
             ui->widget_remote->setUserInfo("", "");
-            m_remote_rendered = false;
             ui->widget_remote->update();
         }
     }
+
+}
+
+//远端用户停止发流
+void QuickStartWidget::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
+{
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+
+    appendCallback(log_str);
 }
 
 //远端用户加入
-void QuickStartWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void QuickStartWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
         + ",uid:" + QString::fromStdString(info.uid);

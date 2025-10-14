@@ -2,7 +2,7 @@
 #include "ui_CDNStreamByServer.h"
 
 #include "bytertc_room.h"
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 
 #include <QMessageBox>
 #include <QDebug>
@@ -11,6 +11,7 @@
 #include "Utils.h"
 #include "Config.h"
 #include "Resources.h"
+#include "md5.h"
 
 #include <sstream>
 
@@ -20,8 +21,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/69817
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -83,11 +84,14 @@ void CDNStreamByServer::initRTCVideo()
     m_handler.reset(new ByteRTCEventHandler());
     m_handler->setIsSupportClientPushStream(false); //本Demo使用RTC服务器推流，因此isSupportClientPushStream返回false
     connect(m_handler.get(), &ByteRTCEventHandler::sigMixingEvent, this, &CDNStreamByServer::onSigMixingEvent);
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
@@ -104,10 +108,10 @@ void CDNStreamByServer::cleanRTCVideo()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
 
         m_video = nullptr;
-        list = list + QStringList{ "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo" };
+        list = list + QStringList{ "stopAudioCapture", "stopVideoCapture", "destroyRTCEngine" };
         appendAPI(list);
     }
     
@@ -119,7 +123,6 @@ void CDNStreamByServer::initConnects()
 	connect(ui->btn_start, &QPushButton::clicked, this, &CDNStreamByServer::on_start_clicked);
 	connect(ui->btn_update, &QPushButton::clicked, this, &CDNStreamByServer::on_update_clicked);
 	connect(ui->btn_stop, &QPushButton::clicked, this, &CDNStreamByServer::on_stop_clicked);
-    connect(ui->btn_color, &QPushButton::clicked, this, &CDNStreamByServer::on_btncolor_clicked);
 }
 
 void CDNStreamByServer::on_btnjoinroom_clicked()
@@ -158,7 +161,7 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
 
         cas.view = (void*)ui->widget1->getWinId();
         ui->widget1->setUserInfo(m_roomid, m_localid);
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        m_video->setLocalVideoCanvas(cas);
 
         m_roomHandler = createRoomHandler(m_roomid, m_localid);
         m_room->setRTCRoomEventHandler(m_roomHandler.get());
@@ -166,11 +169,12 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
 		bytertc::UserInfo userinfo;
         userinfo.uid = m_localid.c_str();
 		bytertc::RTCRoomConfig config;
-		config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
 		config.is_auto_subscribe_audio = true;
 		config.is_auto_subscribe_video = true;
 
-		int ret = m_room->joinRoom(token.c_str(), userinfo, config);
+		int ret = m_room->joinRoom(token.c_str(), userinfo, true, config);
 		if (ret != 0) {
 			QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error, please check"), QMessageBox::Ok);
 			box.exec();
@@ -180,6 +184,9 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
         appendAPI(list);
 
     }else {
+        // 首先停止推流
+        stop_push_cdn();
+
         if (m_room) {
             m_room->leaveRoom();
             m_room->destroy();
@@ -200,7 +207,7 @@ void CDNStreamByServer::on_btnjoinroom_clicked()
 void CDNStreamByServer::resetRTCVideo()
 {
     std::lock_guard<std::recursive_mutex> locker(m_mutex);
-    QStringList list = { "stopAudioCapture", "stopVideoCapture", "destroyRTCVideo" };
+    QStringList list = { "stopAudioCapture", "stopVideoCapture", "destroyRTCEngine" };
 	if (m_video) {
 		if (m_room) {
 			m_room->leaveRoom();
@@ -210,7 +217,7 @@ void CDNStreamByServer::resetRTCVideo()
 		}
 		m_video->stopAudioCapture();
 		m_video->stopVideoCapture();
-		bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
 	}
     appendAPI(list);
@@ -248,7 +255,6 @@ void CDNStreamByServer::initData()
     ui->btn_start->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->btn_stop->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->btn_update->setStyleSheet(APIDemo::str_qss_btn2_3);
-    ui->btn_color->setStyleSheet("background-color: rgb(0,0,0);");
     ui->comboBox_a_code1->setStyleSheet(APIDemo::str_qss_combobox);
     ui->comboBox_a_code2->setStyleSheet(APIDemo::str_qss_combobox);
     ui->comboBox_channel->setStyleSheet(APIDemo::str_qss_combobox);
@@ -263,7 +269,6 @@ void CDNStreamByServer::initData()
     ui->label_t2->setStyleSheet(APIDemo::str_qss_label_ttile);
     ui->label_t3->setStyleSheet(APIDemo::str_qss_label_ttile);
     ui->label_t4->setStyleSheet(APIDemo::str_qss_label_ttile);
-    ui->label_t5->setStyleSheet(APIDemo::str_qss_label_ttile);
 }
 
 void CDNStreamByServer::updateBtns(bool btn1, bool btn2, bool btn3)
@@ -299,8 +304,8 @@ bytertc::IMixedStreamConfig* CDNStreamByServer::getMixedStreamConfig()
     videoParam.bitrate = ui->spinBox_v_bitrate->value();
     videoParam.fps = ui->spinBox_v_fps->value();
     videoParam.gop = 2;
-    videoParam.width = 640;
-    videoParam.height = 360;
+    videoParam.width = (ui->lineEdit_v_w->text()).toInt();
+    videoParam.height = (ui->lineEdit_v_h->text()).toInt();
     videoParam.enable_bframe = false;
     if (ui->comboBox_v_code->currentText().contains("264")) {
         videoParam.video_codec = bytertc::kMixedStreamVideoCodecTypeH264; //本参数不支持过程中更新
@@ -317,25 +322,14 @@ bytertc::IMixedStreamConfig* CDNStreamByServer::getMixedStreamConfig()
 
     for (ite = m_rendered_users.begin(); ite != m_rendered_users.end(); ite++) {
         bytertc::MixedStreamLayoutRegionConfig lay;
-        lay.region_id = ite->first.c_str();
+        lay.user_id = ite->first.c_str();
         lay.room_id = m_roomid.c_str();
 
         lay.location_x = (i % 2) * 0.5 * videoParam.width; //确定每个流的位置
         lay.location_y = (i / 2) * 0.5 *  videoParam.height;
 
-
-        if (m_rendered_users.size() == 1) {
-            lay.width = 0.8 * videoParam.width; //只有一路流时，为了展示背景色，设置宽度和高度为0.8
-            lay.height = 0.8 * videoParam.height;
-        }
-        else if (m_rendered_users.size() == 2) {
-            lay.width = 0.4 * videoParam.width; //有2路流时，横向并排展示，宽度0.4，高度0.8
-            lay.height = 0.8 * videoParam.height;
-        }
-        else {
-            lay.width = 0.4 * videoParam.width; //有3或4路流时，4宫格展示，每路流宽度0.4，高度0.4
-            lay.height = 0.4 * videoParam.height;
-        }
+        lay.width = 0.5 * videoParam.width;
+        lay.height = 0.5* videoParam.height;
 
         if (ite->first == m_localid) {
             lay.is_local_user = true;
@@ -354,21 +348,14 @@ bytertc::IMixedStreamConfig* CDNStreamByServer::getMixedStreamConfig()
         layouts[i++] = lay;
     }
 
-    bytertc::MixedStreamClientMixConfig client_conf;
-    client_conf.use_audio_mixer = true;
-    client_conf.video_format = bytertc::kMixedStreamClientMixVideoFormatI420;
-
     std::string url = ui->lineEdit_url->text().toStdString();
 
-    bytertc::IMixedStreamConfig* mixed_stream_param = bytertc::createMixedStreamConfig();
+    bytertc::IMixedStreamConfig* mixed_stream_param = bytertc::IMixedStreamConfig::createMixedStreamConfig();
     mixed_stream_param->setAudioConfig(audioParam);
     mixed_stream_param->setVideoConfig(videoParam);
-    mixed_stream_param->setLayoutConfig(layouts, m_rendered_users.size(), m_str_color.c_str(), nullptr);
-    mixed_stream_param->setExpectedMixingType(bytertc::kMixedStreamTypeByServer); //由RTC服务端进行合流转推
-    mixed_stream_param->setPushURL(url.c_str());
+    mixed_stream_param->setLayoutConfig(layouts, m_rendered_users.size());
     mixed_stream_param->setRoomID(m_roomid.c_str());
     mixed_stream_param->setUserID(m_localid.c_str());
-    mixed_stream_param->setClientMixConfig(client_conf);
 
     delete[]layouts;
     return mixed_stream_param;
@@ -381,15 +368,15 @@ std::unique_ptr<ByteRTCRoomHandler> CDNStreamByServer::createRoomHandler(std::st
 {
     std::unique_ptr<ByteRTCRoomHandler> roomH = std::make_unique<ByteRTCRoomHandler>(roomid, uid);
     connect(roomH.get(), &ByteRTCRoomHandler::sigRoomStateChanged, this, &CDNStreamByServer::onSigRoomStateChanged);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &CDNStreamByServer::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &CDNStreamByServer::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &CDNStreamByServer::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &CDNStreamByServer::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &CDNStreamByServer::onSigUserJoined);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &CDNStreamByServer::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &CDNStreamByServer::onSigLeaveRoom);
     connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("Token will expire,please updateToken"), QMessageBox::Ok);
         box.exec();
-        });
+    });
     return roomH;
 }
 
@@ -409,12 +396,13 @@ void CDNStreamByServer::onSigRoomStateChanged(std::string roomid, std::string ui
     m_rendered_users[uid] = ui->widget1;
 }
 
-void CDNStreamByServer::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void CDNStreamByServer::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
 
     if (m_rendered_users.count(uid) > 0) {
@@ -431,10 +419,10 @@ void CDNStreamByServer::onSigUserPublishStream(std::string roomid, std::string u
             key.room_id = roomid.c_str();
             key.user_id = uid.c_str();
             cas.view = nullptr;
-            m_video->setRemoteVideoCanvas(key, cas);
+            m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
 
             cas.view = (void*)w->getWinId();
-            m_video->setRemoteVideoCanvas(key, cas);
+            m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
             m_rendered_users[uid] = w;
             w->setUserInfo(roomid, uid);
 
@@ -444,12 +432,13 @@ void CDNStreamByServer::onSigUserPublishStream(std::string roomid, std::string u
 
 }
 
-void CDNStreamByServer::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason)
+void CDNStreamByServer::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserUnPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
 
     if (m_rendered_users.count(uid) > 0) { //正在渲染的用户离开了
@@ -461,7 +450,7 @@ void CDNStreamByServer::onSigUserUnPublishStream(std::string roomid, std::string
         key.room_id = roomid.c_str();
         key.user_id = uid.c_str();
         cas.view = nullptr;
-        m_video->setRemoteVideoCanvas(key, cas);
+        m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
         m_rendered_users[uid]->setUserInfo("", "");
         m_rendered_users[uid]->update();
         m_widgets.push_back(m_rendered_users[uid]);
@@ -476,7 +465,7 @@ void CDNStreamByServer::onSigUserUnPublishStream(std::string roomid, std::string
                 key.room_id = roomid.c_str();
                 key.user_id = new_id.c_str();
                 cas.view = (void*)w->getWinId();
-                m_video->setRemoteVideoCanvas(key, cas);
+                m_video->setRemoteVideoCanvas(stream_id.c_str(), cas);
                 m_unrender_users.erase(new_id);
             }
         }
@@ -489,14 +478,15 @@ void CDNStreamByServer::onSigUserUnPublishStream(std::string roomid, std::string
     }
 }
 
-void CDNStreamByServer::onSigMixingEvent(bytertc::StreamMixingEvent event, std::string task_id, bytertc::StreamMixingErrorCode error, bytertc::MixedStreamType mix_type)
+void CDNStreamByServer::onSigMixingEvent(ByteRTCEventHandler::MixedStreamTaskInfo info, bytertc::MixedStreamTaskEvent event, bytertc::MixedStreamTaskErrorCode error_code)
 {
-    QString str = "onMixingEvent, event:" + QString::number(event) + ",taskid:" + QString::fromStdString(task_id)
-                  + ",error:" + QString::number(error) + ",type:" + QString::number(mix_type);
+    qDebug() << Q_FUNC_INFO << QString::fromStdString(info.task_id) << info.push_target_type << event << error_code;
+    QString str = "onMixedStreamEvent, event:" + QString::number(event) + ",taskid:" + QString::fromStdString(info.task_id)
+                  + ",error:" + QString::number(error_code) + ",type:" + QString::number(info.push_target_type);
     appendCallback(str);
 }
 
-void CDNStreamByServer::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void CDNStreamByServer::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, uid:" + QString::fromStdString(info.uid) + ",roomid:" + QString::fromStdString(info.roomid);
     appendCallback(str);
@@ -514,25 +504,69 @@ void CDNStreamByServer::onSigLeaveRoom(std::string roomid, std::string uid, byte
     appendCallback(str);
 }
 
+// 获得最终要推流的地址
+// 如果用户不指定URL（文本框设为空），那就推流到默认地址
+// 如果用户指定URL，那就推流到用户指定的URL
+std::string CDNStreamByServer::get_final_url(const std::string& surl, const std::string& taskId, const std::string& roomId) {
+    if (surl.empty()) {
+        std::time_t timeStamp = std::time(nullptr);
+        int expire = timeStamp + 7200;
+        std::string path = "/rtc_test/pushcdn" + (ui->lineEdit_room->text()).toStdString() + taskId;
+        std::string authKey = "Uq8e962ghCCY2pBUB9Me2Fwy";
+        std::string keyStr = path + authKey + std::to_string(expire);
+        std::string sign = md5::calculate(keyStr);
+        return "rtmp://fcdn-test-hl.uplive.ixigua.com/rtc_test/pushcdn" + roomId + taskId + "?sign=" + sign + "&expire=" + std::to_string(expire);
+    } else {
+        return surl;
+    }
+}
+
+// 停止cdn推流
+void CDNStreamByServer::stop_push_cdn() {
+    std::lock_guard<std::recursive_mutex> locker(m_mutex);
+    if (m_video == nullptr) return;
+
+    int ret = m_video->stopClientMixedStream(m_task.c_str());
+    if (ret != 0) {
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("stopPushStreamToCDN error，Error code: " + QString::number(ret)), QMessageBox::Ok);
+        box.exec();
+        return;
+    }
+    updateBtns(true, false, false);
+    ui->comboBox_v_code->setEnabled(true);
+    appendAPI("stopPushStreamToCDN");
+}
 
 //开始cdn推流
 void CDNStreamByServer::on_start_clicked()
 {
     m_task = "task1";
+
+    // 如果用户不指定URL，程序不会报错，而是会自动计算一个合法的URL。参见get_final_url()方法
+    /*
     if (ui->lineEdit_url->text().isEmpty()) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("url is empty"), QMessageBox::Ok);
         box.exec();
         return;
     }
+    */
 
+    std::string surl = ui->lineEdit_url->text().toStdString();
     std::lock_guard<std::recursive_mutex> locker(m_mutex);
     if (m_video == nullptr) return;
 
-    bytertc::IMixedStreamConfig* mixed_stream_param = getMixedStreamConfig();
+    std::string final_url = get_final_url(surl, m_task, m_roomid);
+    ui->lineEdit_url->setText(QString::fromStdString(final_url));
 
-    int ret = m_video->startPushMixedStreamToCDN(m_task.c_str(), mixed_stream_param, m_handler.get());
+    bytertc::IMixedStreamConfig* mixed_stream_param = getMixedStreamConfig();
+    bytertc::MixedStreamPushTargetConfig cf;
+    cf.push_cdn_url = final_url.c_str();
+    appendAPI(("The URL of the CDN stream: " + final_url).c_str());
+
+    int ret = m_video->startPushMixedStream(m_task.c_str(), cf, mixed_stream_param);
+
     if (ret != 0) {
-        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("startPushMixedStreamToCDN error，请检查是否已经在控制台开通该功能"), QMessageBox::Ok);
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("startPushMixedStreamToCDN error. Error code: " + QString::number(ret)), QMessageBox::Ok);
         box.exec();
         return;
     }
@@ -544,13 +578,21 @@ void CDNStreamByServer::on_start_clicked()
 
 void CDNStreamByServer::on_update_clicked()
 {
+    m_task = "task1";
+
     std::lock_guard<std::recursive_mutex> locker(m_mutex);
     if (m_video == nullptr) return;
+    std::string surl = ui->lineEdit_url->text().toStdString();
+    std::string final_url = get_final_url(surl, m_task, m_roomid);
+    ui->lineEdit_url->setText(QString::fromStdString(final_url));
+
+    bytertc::MixedStreamPushTargetConfig cf;
+    cf.push_cdn_url = final_url.c_str();
 
     bytertc::IMixedStreamConfig* config = getMixedStreamConfig();
-    int ret = m_video->updatePushMixedStreamToCDN(m_task.c_str(), config);
+    int ret = m_video->updatePushMixedStream(m_task.c_str(), cf, config);
     if (ret != 0) {
-        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("updatePushMixedStreamToCDN error，请检查参数"), QMessageBox::Ok);
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("updatePushMixedStreamToCDN error. Error code: " + QString::number(ret)), QMessageBox::Ok);
         box.exec();
         return;
     }
@@ -559,32 +601,5 @@ void CDNStreamByServer::on_update_clicked()
 
 void CDNStreamByServer::on_stop_clicked()
 {
-    std::lock_guard<std::recursive_mutex> locker(m_mutex);
-    if (m_video == nullptr) return;
-
-    int ret = m_video->stopPushStreamToCDN(m_task.c_str());
-    if (ret != 0) {
-        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("stopPushStreamToCDN error，请检查参数"), QMessageBox::Ok);
-        box.exec();
-        return;
-    }
-    updateBtns(true, false, false);
-    ui->comboBox_v_code->setEnabled(true);
-    appendAPI("stopPushStreamToCDN");
-}
-
-
-
-void CDNStreamByServer::on_btncolor_clicked()
-{
-    QColorDialog dlg;
-    if (dlg.exec() == QDialog::Accepted) {
-        QColor c = dlg.selectedColor();
-        QString name = c.name();
-        QString sty = QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue());
-        ui->btn_color->setStyleSheet(sty);
-        m_str_color = name.toStdString();
-        qDebug() << Q_FUNC_INFO << sty;
-    }
-    
+    stop_push_cdn();
 }

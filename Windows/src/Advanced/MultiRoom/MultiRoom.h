@@ -1,6 +1,7 @@
 #ifndef MULTIROOM_H
 #define MULTIROOM_H
 #include <map>
+#include <unordered_map>
 #include <QWidget>
 
 #include "BaseWidget.h"
@@ -12,7 +13,7 @@ class MultiRoom;
 }
 
 namespace bytertc {
-    class IRTCVideo;
+    class IRTCEngine;
     class IRTCRoom;
 };
 
@@ -52,15 +53,15 @@ private:
 
 private slots:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo);
     void onSigUserLeave(std::string, std::string, bytertc::UserOfflineReason);
     void onSigLeaveRoom(std::string, std::string,  bytertc::RtcRoomStats);
 
 private:
     Ui::MultiRoom *ui;
-    bytertc::IRTCVideo* m_video = nullptr;
+    bytertc::IRTCEngine* m_video = nullptr;
     bytertc::IRTCRoom* m_room1 = nullptr;
     bytertc::IRTCRoom* m_room2 = nullptr;
     std::string m_uid1, m_uid2; //本地用户
@@ -68,6 +69,7 @@ private:
 
     std::unique_ptr<ByteRTCEventHandler> m_handler;
     std::unique_ptr<ByteRTCRoomHandler>  m_room_handler1, m_room_handler2;
+    std::unordered_map<std::string, std::string> m_userStreamIds;
 
 };
 

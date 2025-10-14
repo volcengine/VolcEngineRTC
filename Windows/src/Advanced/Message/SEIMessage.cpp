@@ -3,7 +3,7 @@
 
 #include "Resources.h"
 
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 #include "Config.h"
 #include "Utils.h"
@@ -18,8 +18,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/70140
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -74,6 +74,9 @@
 *     onUserUnpublishStream 用户停止发流回调
 */
 
+
+extern QString qstr_file_yuv;
+
 SEIMessage::SEIMessage(QWidget *parent) :
     BaseWidget(parent),
     ui(new Ui::SEIMessage)
@@ -119,6 +122,10 @@ void SEIMessage::initUI()
     ui->btn_stop2->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->btn_update2->setStyleSheet(APIDemo::str_qss_btn2_3);
     ui->label_title->setStyleSheet(APIDemo::str_qss_label_ttile);
+    ui->btn_start3->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_stop3->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->btn_update3->setStyleSheet(APIDemo::str_qss_btn2_3);
+    ui->textEdit_send2_2->setStyleSheet(APIDemo::str_qss_text);
 }
 
 void SEIMessage::initConnections()
@@ -130,7 +137,9 @@ void SEIMessage::initConnections()
     connect(ui->btn_stop1, &QPushButton::clicked, this, &SEIMessage::onBtnStopRTMPClicked);
     connect(ui->btn_stop2, &QPushButton::clicked, this, &SEIMessage::onBtnStopRTMPClicked);
     connect(ui->btn_update2, &QPushButton::clicked, this, &SEIMessage::onBtnUpdate2Clicked);
-
+    connect(&m_timer_send, &QTimer::timeout, this, &SEIMessage::onTimeoutExternalVideoSEI);
+    connect(ui->btn_start3, &QPushButton::clicked, this, &SEIMessage::onBtnStarRTMPhClicked);
+    connect(ui->btn_stop3, &QPushButton::clicked, this, &SEIMessage::onBtnStopRTMPClicked);
 }
 
 void SEIMessage::initRTCVideo()
@@ -139,17 +148,20 @@ void SEIMessage::initRTCVideo()
     m_handler->setIsSupportClientPushStream(false); //本Demo使用RTC服务器推流，因此isSupportClientPushStream返回false
     connect(m_handler.get(), &ByteRTCEventHandler::sigMixingEvent, this, &SEIMessage::onSigMixingEvent);
     connect(m_handler.get(), &ByteRTCEventHandler::sigSEIMessageReceived, this, &SEIMessage::onSEIMessageReceived);
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
-    m_video->startVideoCapture();
+    
 
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture"};
     appendAPI(list);
 }
 
 void SEIMessage::cleanRTCVideo()
 {
-    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+    QStringList list = {"stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     if (m_video) {
         if (m_room) {
             m_room->leaveRoom();
@@ -160,7 +172,7 @@ void SEIMessage::cleanRTCVideo()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
         appendAPI(list);
     }
@@ -171,8 +183,8 @@ std::unique_ptr<ByteRTCRoomHandler> SEIMessage::createRoomHandler(std::string ro
 {
     std::unique_ptr<ByteRTCRoomHandler> roomH = std::make_unique<ByteRTCRoomHandler>(roomid, uid);
     connect(roomH.get(), &ByteRTCRoomHandler::sigRoomStateChanged, this, &SEIMessage::onSigRoomStateChanged);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &SEIMessage::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &SEIMessage::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &SEIMessage::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &SEIMessage::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &SEIMessage::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &SEIMessage::onSigUserJoined);
 
@@ -183,6 +195,36 @@ std::unique_ptr<ByteRTCRoomHandler> SEIMessage::createRoomHandler(std::string ro
 
     return roomH;
 
+}
+
+void SEIMessage::startPushExternalVideo()
+{
+    if (m_video == nullptr) {
+        return;
+    }
+
+    if (m_file) {
+        fclose(m_file);
+        m_file = nullptr;
+    }
+
+    m_video->setVideoSourceType(bytertc::kVideoSourceTypeExternal);
+    std::string file_path =  QString(QApplication::applicationDirPath() + qstr_file_yuv).toStdString();
+    m_file = fopen(file_path.c_str(), "rb");
+    if (m_file == nullptr) {
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("警告"), QStringLiteral("打开文件失败"), QMessageBox::Ok);
+        box.exec();
+        return;
+    }
+    m_1frame_size = m_push_width * m_push_height * 3 / 2;
+    fpos_t file_size;
+    fseek(m_file, 0, SEEK_END);
+    fgetpos(m_file, &file_size);
+    fseek(m_file, 0, SEEK_SET);
+
+    m_frame_index = 0;
+    m_frame_count = file_size / m_1frame_size;
+    m_timer_send.start(1000/ 15);
 }
 
 void SEIMessage::onBtnJoinClicked()
@@ -217,7 +259,7 @@ void SEIMessage::onBtnJoinClicked()
 
         bytertc::VideoCanvas cavas;
         cavas.view = (void*)ui->widget->getWinId();
-        m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, cavas);
+        m_video->setLocalVideoCanvas(cavas);
         ui->widget->setUserInfo(roomid, uid);
 
 
@@ -225,11 +267,12 @@ void SEIMessage::onBtnJoinClicked()
         bytertc::UserInfo info;
         bytertc::RTCRoomConfig config;
         info.uid = uid.c_str();
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
         config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
-        int ret = m_room->joinRoom(token.c_str(), info, config);
+        int ret = m_room->joinRoom(token.c_str(), info, true, config);
         m_uid = uid;
         m_roomid = roomid;
         if (ret < 0) {
@@ -279,7 +322,7 @@ bytertc::IMixedStreamConfig* SEIMessage::getMixedStreamConfig(std::string url, s
     bytertc::MixedStreamLayoutRegionConfig* layouts = new bytertc::MixedStreamLayoutRegionConfig[1];
 
     bytertc::MixedStreamLayoutRegionConfig lay;
-    lay.region_id = m_uid.c_str();
+    lay.user_id = m_uid.c_str();
     lay.room_id = m_roomid.c_str();
 
     lay.location_x = 0; //确定每个流的位置
@@ -296,19 +339,22 @@ bytertc::IMixedStreamConfig* SEIMessage::getMixedStreamConfig(std::string url, s
     lay.apply_spatial_audio = false;
     layouts[0] = lay;
 
-    bytertc::MixedStreamClientMixConfig client_conf;
-    client_conf.use_audio_mixer = true;
-    client_conf.video_format = bytertc::kMixedStreamClientMixVideoFormatI420;
+    bytertc::MixedStreamPushTargetConfig client_conf;
+//    client_conf.use_audio_mixer = true;
+//    client_conf.video_format = bytertc::kMixedStreamClientMixVideoFormatI420;
+    client_conf.push_cdn_url = url.c_str();
+    client_conf.push_target_type = bytertc::kMixedStreamPushTargetTypeToCDN;
 
-    bytertc::IMixedStreamConfig* mixed_stream_param = bytertc::createMixedStreamConfig();
+    bytertc::IMixedStreamConfig* mixed_stream_param = bytertc::IMixedStreamConfig::createMixedStreamConfig();
+    mixed_stream_param->setUserConfigExtraInfo(app_data.c_str());
     mixed_stream_param->setAudioConfig(audioParam);
     mixed_stream_param->setVideoConfig(videoParam);
-    mixed_stream_param->setLayoutConfig(layouts, 1, "#000000", app_data.c_str());
-    mixed_stream_param->setExpectedMixingType(bytertc::kMixedStreamTypeByServer); //由RTC服务端进行合流转推
-    mixed_stream_param->setPushURL(url.c_str());
+    mixed_stream_param->setLayoutConfig(layouts, 1);
+    //mixed_stream_param->setExpectedMixingType(bytertc::kMixedStreamTypeByServer); //由RTC服务端进行合流转推
+    //mixed_stream_param->setPushURL(url.c_str());
     mixed_stream_param->setRoomID(m_roomid.c_str());
     mixed_stream_param->setUserID(m_uid.c_str());
-    mixed_stream_param->setClientMixConfig(client_conf);
+   // mixed_stream_param->setClientMixConfig(client_conf);
 
     delete[]layouts;
     return mixed_stream_param;
@@ -322,11 +368,19 @@ void SEIMessage::onBtnStarRTMPhClicked()
 {
     if (m_video == nullptr) return;
     QString url, app_data;
+    std::string surl;
+
+
+    bytertc::MixedStreamPushTargetConfig cf;
 
     if (sender() == ui->btn_start1) { //sendSEIMessage方案
+        m_video->startVideoCapture();
         url = ui->lineEdit_url->text();
+        surl = url.toStdString();
+        cf.push_cdn_url = surl.c_str();
+
         bytertc::IMixedStreamConfig *config = getMixedStreamConfig(url.toStdString(), "");
-        int ret = m_video->startPushMixedStreamToCDN("task1", config, m_handler.get());
+        int ret = m_video->startPushMixedStream("task1", cf, config);
         appendAPI("startPushMixedStreamToCDN,ret=" + QString::number(ret));
         if (ret != 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("startPushMixedStreamToCDN error，请检查是否已经在控制台开通该功能"), QMessageBox::Ok);
@@ -334,12 +388,15 @@ void SEIMessage::onBtnStarRTMPhClicked()
             return;
         }
         ui->btn_start1->setEnabled(false);
-    } else {
+    } else if (sender() == ui->btn_start2){
+        m_video->startVideoCapture();
         url = ui->lineEdit_url2->text(); //合流转推布局方案
         app_data = ui->textEdit_send2->toPlainText();
+        surl = url.toStdString();
+        cf.push_cdn_url = surl.c_str();
 
         bytertc::IMixedStreamConfig *config = getMixedStreamConfig(url.toStdString(), app_data.toStdString());
-        int ret = m_video->startPushMixedStreamToCDN("task2", config, m_handler.get());
+        int ret = m_video->startPushMixedStream("task2", cf, config);
         appendAPI("startPushMixedStreamToCDN,ret=" + QString::number(ret));
 
         if (ret != 0) {
@@ -349,6 +406,28 @@ void SEIMessage::onBtnStarRTMPhClicked()
         }
         ui->btn_start2->setEnabled(false);
     }
+    else if (sender() == ui->btn_start3){ // 外部视频源 Sei 方案
+        m_video->stopVideoCapture();
+        startPushExternalVideo();
+        url = ui->lineEdit_url2_2->text();
+        surl = url.toStdString();
+        cf.push_cdn_url = surl.c_str();
+        app_data = ui->textEdit_send2_2->toPlainText();
+
+        bytertc::IMixedStreamConfig *config = getMixedStreamConfig(url.toStdString(), app_data.toStdString());
+        int ret = m_video->startPushMixedStream("task3", cf, config);
+        appendAPI("startPushMixedStreamToCDN,ret=" + QString::number(ret));
+        if (ret != 0) {
+            QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("startPushMixedStreamToCDN error，请检查是否已经在控制台开通该功能"), QMessageBox::Ok);
+            box.exec();
+            return;
+        }
+        ui->btn_start3->setEnabled(false);
+        
+    }
+    else {
+
+    }
 
     appendAPI("startPushMixedStreamToCDN, app_data=" + app_data);
 }
@@ -357,13 +436,20 @@ void SEIMessage::onBtnStopRTMPClicked()
 {
     if (m_video == nullptr) return;
     int ret = 0;
+    bytertc::MixedStreamPushTargetType type = bytertc::kMixedStreamPushTargetTypeToCDN;
     if (sender() == ui->btn_stop1) { //sendSEIMEssage 方案
 
-        ret = m_video->stopPushStreamToCDN("task1");
+        ret = m_video->stopPushMixedStream("task1", type);
         ui->btn_start1->setEnabled(true);
-    } else { // 合流转推布局方案
-        ret = m_video->stopPushStreamToCDN("task2");
+    } else if (sender() == ui->btn_stop2){ // 合流转推布局方案
+        ret = m_video->stopPushMixedStream("task2", type);
         ui->btn_start2->setEnabled(true);
+    } else if (sender() == ui->btn_stop3) { //外部SEI方案
+        ret = m_video->stopPushMixedStream("task3", type);
+        ui->btn_start3->setEnabled(true);
+        m_timer_send.stop();
+    } else {
+
     }
     appendAPI("stopPushStreamToCDN,ret=" + QString::number(ret));
 
@@ -387,7 +473,7 @@ void SEIMessage::onBtnSendSeiClicked()
     }
 
     std::string str_text = qstr_text.toStdString();
-    int ret = m_video->sendSEIMessage(bytertc::kStreamIndexMain, (uint8_t*)str_text.c_str(), str_text.size(), 2, bytertc::kSEICountPerFrameSingle);
+    int ret = m_video->sendSEIMessage((uint8_t*)str_text.c_str(), str_text.size(), 2, bytertc::kSEICountPerFrameSingle);
     if (ret < 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QStringLiteral("sendSEIMessage error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
@@ -400,12 +486,17 @@ void SEIMessage::onBtnUpdate2Clicked()
 {
     if (m_video == nullptr) return;
     QString url, app_data;
+    std::string surl;
+    bytertc::MixedStreamPushTargetConfig cf;
+
 
     url = ui->lineEdit_url2->text(); //合流转推布局方案
+    surl = url.toStdString();
     app_data = ui->textEdit_send2->toPlainText();
+    cf.push_cdn_url = surl.c_str();
 
     bytertc::IMixedStreamConfig *config = getMixedStreamConfig(url.toStdString(), app_data.toStdString());
-    int ret = m_video->updatePushMixedStreamToCDN("task2", config);
+    int ret = m_video->updatePushMixedStream("task2", cf, config);
 
     if (ret != 0) {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("updatePushMixedStreamToCDN error，请检查是否已经在控制台开通该功能"), QMessageBox::Ok);
@@ -415,6 +506,7 @@ void SEIMessage::onBtnUpdate2Clicked()
     ui->btn_start2->setEnabled(false);
     appendAPI("updatePushMixedStreamToCDN, app_data=" + app_data);
 }
+
 
 void SEIMessage::onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info)
 {
@@ -437,29 +529,32 @@ void SEIMessage::onSigRoomStateChanged(std::string roomid, std::string uid, int 
 
 }
 
-void SEIMessage::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void SEIMessage::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-                      + QString::fromStdString(roomid)
-                      + ",uid:" + QString::fromStdString(uid)
-                      + ",state:" + QString::number(type);
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
 
 }
 
-void SEIMessage::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)
+void SEIMessage::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserUnPublishStream,roomid:")
-                      + QString::fromStdString(roomid)
-                      + ",uid:" + QString::fromStdString(uid)
-                      + ",state:" + QString::number(type);
-    appendCallback(log_str);
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
 
+    appendCallback(log_str);
 }
 
 void SEIMessage::onSEIMessageReceived(ByteRTCEventHandler::Stru_RemoteStreamKey stream_key, std::string str)
 {
-    QString sss = "onSEIMessageReceived, roomid:" + QString::fromStdString(stream_key.room_id) +
+    QString sss = "onSEIMessageReceived, streamid:" + QString::fromStdString(stream_key.stream_id) +
+                  ",roomid:" + QString::fromStdString(stream_key.room_id) +
                   ",uid:" + QString::fromStdString(stream_key.user_id) +
                   ",message:" + QString::fromStdString(str);
     ui->textEdit_receive1->append(sss);
@@ -467,14 +562,14 @@ void SEIMessage::onSEIMessageReceived(ByteRTCEventHandler::Stru_RemoteStreamKey 
     appendCallback(sss);
 }
 
-void SEIMessage::onSigMixingEvent(bytertc::StreamMixingEvent event, std::string task_id, bytertc::StreamMixingErrorCode error, bytertc::MixedStreamType mix_type)
+void SEIMessage::onSigMixingEvent(ByteRTCEventHandler::MixedStreamTaskInfo info, bytertc::MixedStreamTaskEvent event, bytertc::MixedStreamTaskErrorCode error_code)
 {
-    QString str = "onMixingEvent, event:" + QString::number(event) + ",taskid:" + QString::fromStdString(task_id)
-                  + ",error:" + QString::number(error) + ",type:" + QString::number(mix_type);
-    appendCallback(str);
+//    QString str = "onMixingEvent, event:" + QString::number(event) + ",taskid:" + QString::fromStdString(task_id)
+//                  + ",error:" + QString::number(error) + ",type:" + QString::number(mix_type);
+//    appendCallback(str);
 }
 
-void SEIMessage::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void SEIMessage::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
                   + ",uid:" + QString::fromStdString(info.uid);
@@ -487,6 +582,55 @@ void SEIMessage::onSigUserLeave(std::string roomid, std::string uid, bytertc::Us
     QString str = "onUserLeave, roomid:" + QString::fromStdString(roomid)
                   + ",uid:" + QString::fromStdString(uid);
     appendCallback(str);
+
+}
+
+void SEIMessage::onTimeoutExternalVideoSEI()
+{
+    if (m_file == nullptr) return;
+
+    unsigned char* buffer = (unsigned char*)malloc(m_1frame_size);
+    m_frame_index = m_frame_index % m_frame_count;
+    auto fileOffset = (uint64_t)m_1frame_size * m_frame_index;
+    m_frame_index++;
+#if defined(WIN32)
+    auto ret = _fseeki64(m_file, fileOffset, SEEK_SET);
+#else
+    auto ret = fseek(m_file, fileOffset, SEEK_SET);
+#endif
+    if (ret == -1) {
+        free(buffer);
+        return;
+    }
+
+    ret = fread(buffer, sizeof(char), m_1frame_size, m_file);
+    if (ret == -1) {
+        fseek(m_file, 0, SEEK_SET);
+        fread(buffer, sizeof(char), m_1frame_size, m_file);
+        if (ret == -1) {
+            free(buffer);
+            return;
+        }
+    }
+
+    std::string external_data = ui->textEdit_send2_2->toPlainText().toStdString();
+    std::vector<uint8_t> sei_data(external_data.begin(), external_data.end());
+
+    bytertc::VideoFrameData frameData;
+    frameData.plane_data[0] = buffer;
+    frameData.plane_data[1] = buffer + m_push_width * m_push_height;
+    frameData.plane_data[2] = buffer + m_push_width * m_push_height * 5 / 4;
+    frameData.pixel_format = bytertc::kVideoPixelFormatI420;
+    frameData.rotation = bytertc::kVideoRotation0;
+    frameData.timestamp_us = QDateTime::currentMSecsSinceEpoch();
+    frameData.content_type = bytertc::kVideoContentTypeNormalFrame;
+    frameData.width = m_push_width;
+    frameData.height = m_push_height;
+    frameData.plane_stride[0] = m_push_width;
+    frameData.plane_stride[1] = m_push_width >> 1;
+    frameData.plane_stride[2] = m_push_width >> 1;
+
+    m_video->pushExternalVideoFrame(frameData);
 
 }
 

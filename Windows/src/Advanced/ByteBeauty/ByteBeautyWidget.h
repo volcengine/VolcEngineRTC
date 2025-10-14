@@ -6,7 +6,7 @@
 #include "BaseWidget.h"
 
 namespace bytertc {
-	class IRTCVideo;
+    class IRTCEngine;
 	class IRTCRoom;
 };
 
@@ -92,9 +92,9 @@ private:
         const char* room_id, const char* uid, int state, const char* extra_info);
 
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo);
     void onSigUserLeave(std::string, std::string, bytertc::UserOfflineReason);
 
 private slots:
@@ -116,7 +116,7 @@ private:
 	BeautyKeyType			m_currentBeautyKeyType = kWhiteKeyType;
 	QString				    m_currentStickerName;
 	QString				    m_currentColorFilter;
-	bytertc::IRTCVideo* m_video = nullptr;
+    bytertc::IRTCEngine* m_video = nullptr;
 	bytertc::IRTCRoom* m_room = nullptr;
 	CheckLicenseStatus      m_checkStatus = kRuqestLicense;
 	std::unique_ptr<ByteRTCEventHandler> m_handler;

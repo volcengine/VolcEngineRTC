@@ -3,9 +3,10 @@
 # Project created by QtCreator 2019-10-28T09:17:50
 #
 #-------------------------------------------------
-QT       += core gui network
+QT       += core gui network opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 5.4): QT += openglwidgets
 
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 CONFIG += sdk_no_version_check
@@ -53,18 +54,29 @@ SOURCES += \
     src/Advanced/AudioMixing/AudioMixItem.cpp \
     src/Advanced/AudioMixing/AudioMixingEffect.cpp \
     src/Advanced/AudioMixing/AudioMixingMedia.cpp \
+    src/Advanced/AudioMixing/CustomAudioCapture.cpp \
+    src/Advanced/FuBeauty/Namas.cpp \
     src/Advanced/Message/AudioMessage.cpp \
     src/Advanced/RawAudioData/RawAudioData.cpp \
     src/Advanced/ByteBeauty/ByteBeautyWidget.cpp \
     src/Advanced/CDNStream/CDNStreamByServer.cpp \
+    src/Advanced/CDNStream/md5.cpp \
     src/Advanced/CrossRoomPK/CrossRoomPK.cpp \
     src/Advanced/FuBeauty/FaceUnityWidget.cpp \
-    src/Advanced/FuBeauty/Nama.cpp \
+    #src/Advanced/FuBeauty/Nama.cpp \
     src/Advanced/FuBeauty/PixTextWidget.cpp \
     src/Advanced/MultiRoom/MultiRoom.cpp \
     src/Advanced/Message/SEIMessage.cpp \
     src/Advanced/SoundEffects/SoundEffectsWidget.cpp \
+    src/Advanced/VideoConfig/CustomVideoCapture.cpp \
+    src/Advanced/VideoConfig/CustomVideoRender.cpp \
+    src/Advanced/VideoConfig/PlayerYUVNV12.cpp \
+    src/Advanced/VideoConfig/RenderRGB.cpp \
+    src/Advanced/VideoConfig/ScreenShare.cpp \
+    src/Advanced/VideoConfig/ShareWidget.cpp \
     src/Advanced/VideoConfig/VideoConfigWidget.cpp \
+    src/Advanced/VideoConfig/share_view_container.cpp \
+    src/Advanced/VideoConfig/share_view_wnd.cpp \
     src/Basic/QuickStartWidget.cpp \
     src/Public/BaseWidget.cpp \
     src/Public/ByteRTCEventHandler.cpp \
@@ -82,21 +94,32 @@ HEADERS += \
     src/Advanced/AudioMixing/AudioMixItem.h \
     src/Advanced/AudioMixing/AudioMixingEffect.h \
     src/Advanced/AudioMixing/AudioMixingMedia.h \
+    src/Advanced/AudioMixing/CustomAudioCapture.h \
+    src/Advanced/FuBeauty/Namas.h \
     src/Advanced/Message/AudioMessage.h \
     src/Advanced/RawAudioData/RawAudioData.h \
     src/Advanced/ByteBeauty/ByteBeautyWidget.h \
     src/Advanced/CDNStream/CDNStreamByServer.h \
+    src/Advanced/CDNStream/md5.h \
     src/Advanced/CrossRoomPK/CrossRoomPK.h \
     src/Advanced/FuBeauty/FConfig.h \
     src/Advanced/FuBeauty/FaceUnityWidget.h \
     src/Advanced/FuBeauty/Language.h \
-    src/Advanced/FuBeauty/Nama.h \
+    #src/Advanced/FuBeauty/Nama.h \
     src/Advanced/FuBeauty/PixTextWidget.h \
     src/Advanced/FuBeauty/authpack.h \
     src/Advanced/MultiRoom/MultiRoom.h \
     src/Advanced/Message/SEIMessage.h \
     src/Advanced/SoundEffects/SoundEffectsWidget.h \
+    src/Advanced/VideoConfig/CustomVideoCapture.h \
+    src/Advanced/VideoConfig/CustomVideoRender.h \
+    src/Advanced/VideoConfig/PlayerYUVNV12.h \
+    src/Advanced/VideoConfig/RenderRGB.h \
+    src/Advanced/VideoConfig/ScreenShare.h \
+    src/Advanced/VideoConfig/ShareWidget.h \
     src/Advanced/VideoConfig/VideoConfigWidget.h \
+    src/Advanced/VideoConfig/share_view_container.h \
+    src/Advanced/VideoConfig/share_view_wnd.h \
     src/Basic/QuickStartWidget.h \
     src/Public/BaseItem.h \
     src/Public/BaseWidget.h \
@@ -152,6 +175,7 @@ FORMS += \
     src/Advanced/AudioMixing/AudioMixItem.ui \
     src/Advanced/AudioMixing/AudioMixingEffect.ui \
     src/Advanced/AudioMixing/AudioMixingMedia.ui \
+    src/Advanced/AudioMixing/CustomAudioCapture.ui \
     src/Advanced/Message/AudioMessage.ui \
     src/Advanced/RawAudioData/RawAudioData.ui \
     src/Advanced/ByteBeauty/ByteBeautyWidget.ui \
@@ -162,6 +186,10 @@ FORMS += \
     src/Advanced/MultiRoom/MultiRoom.ui \
     src/Advanced/Message/SEIMessage.ui \
     src/Advanced/SoundEffects/SoundEffectsWidget.ui \
+    src/Advanced/VideoConfig/CustomVideoCapture.ui \
+    src/Advanced/VideoConfig/CustomVideoRender.ui \
+    src/Advanced/VideoConfig/ScreenShare.ui \
+    src/Advanced/VideoConfig/ShareWidget.ui \
     src/Advanced/VideoConfig/VideoConfigWidget.ui \
     src/Basic/QuickStartWidget.ui \
     src/Public/LogWidget.ui \
@@ -273,9 +301,10 @@ macx: {
         message("ARM 架构")
 
         INCLUDEPATH += $$PWD/3rd/mac/openssl/include \
-            $$PWD/3rd/mac/VolcEngineRTC/arm64/VolcEngineRTC.framework/Headers/native \
+            $$PWD/3rd/mac/VolcEngineRTC/arm64/VolcEngineRTC.framework/Versions/3/Headers/native \
             $$PWD/3rd/mac/FaceUnity/include #相芯美颜
 
+        LIBS += -framework CoreVideo
         LIBS += -L$$PWD/3rd/mac/openssl/lib/ -lcrypto
         LIBS += -L$$PWD/3rd/mac/FaceUnity/lib/arm64/ -lCnamaSDK #相芯美颜
         LIBS += -L$$PWD/3rd/mac/VolcEngineRTC/arm64/ -lbdaudioeffect
@@ -289,6 +318,7 @@ macx: {
             $$PWD/3rd/mac/VolcEngineRTC/x86/VolcEngineRTC.framework/Headers/native \
             $$PWD/3rd/mac/FaceUnity/include #相芯美颜
 
+        LIBS += -framework CoreVideo
         LIBS += -L$$PWD/3rd/mac/openssl/lib/ -lcrypto
         LIBS += -L$$PWD/3rd/mac/FaceUnity/lib/x86_64/ -lCnamaSDK #相芯美颜
         LIBS += -L$$PWD/3rd/mac/VolcEngineRTC/x86/ -lbdaudioeffect
@@ -319,7 +349,7 @@ macx: {
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH2) $$system_path($$DESTDIR/API_Example.app/Contents/Frameworks) #相芯美颜
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH3) $$system_path($$DESTDIR/API_Example.app/Contents/MacOS)
     QMAKE_POST_LINK += && cp -R $$system_path($$PATH4) $$system_path($$DESTDIR/API_Example.app/Contents/MacOS/Resources)
-    QMAKE_POST_LINK += && $$[QT_INSTALL_BINS]/macdeployqt $$DESTDIR/API_Example.app -dmg -no-strip
+    #QMAKE_POST_LINK += && $$[QT_INSTALL_BINS]/macdeployqt $$DESTDIR/API_Example.app -dmg -no-strip
 }
 
 

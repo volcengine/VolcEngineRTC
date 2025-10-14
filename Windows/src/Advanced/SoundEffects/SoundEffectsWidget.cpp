@@ -8,7 +8,7 @@
 
 
 #include "bytertc_room.h"
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 
 #include "Config.h"
 #include "Utils.h"
@@ -22,8 +22,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/1178327
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -98,9 +98,12 @@ SoundEffectsWidget::~SoundEffectsWidget()
 
 void SoundEffectsWidget::initRTCVideo()
 {
-    QStringList list = {"createRTCVideo"};
+    QStringList list = {"createRTCEngine"};
     m_handler = new ByteRTCEventHandler();
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler, nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler);
 
 #ifdef  Q_OS_WINDOWS
     QJsonObject obj;
@@ -133,10 +136,10 @@ void SoundEffectsWidget::cleanRTCVideo()
             m_room = nullptr;
         }
         m_video->stopAudioCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
     }
-    QStringList list = {"leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "destroyRTCVideo"};
+    QStringList list = {"leaveRoom", "setRTCRoomEventHandler", "destroy", "stopAudioCapture", "destroyRTCEngine"};
     appendAPI(list);
 }
 
@@ -219,22 +222,28 @@ void SoundEffectsWidget::onSigRoomStateChanged(std::string roomid, std::string u
     }
 }
 
-void SoundEffectsWidget::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void SoundEffectsWidget::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    
+    
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",state:" + QString::number(type);
+        + ",pub:" + QString::number(pub);
     appendCallback(log_str);
 }
 
-void SoundEffectsWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type, bytertc::StreamRemoveReason reason)
+void SoundEffectsWidget::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserUnPublishStream,roomid:")
-        + QString::fromStdString(roomid)
+    
+    
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
         + ",uid:" + QString::fromStdString(uid)
-        + ",state:" + QString::number(type)
-        + ",reason:" + QString::number(reason);
+        + ",pub:" + QString::number(pub);
+
     appendCallback(log_str);
 }
 
@@ -273,18 +282,19 @@ void SoundEffectsWidget::onBtnJoinClicked() {
 
         bytertc::VideoCanvas cas;
         cas.view = (void*)ui->widget_user->getWinId();
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cas);
+        m_video->setLocalVideoCanvas(cas);
         ui->widget_user->setUserInfo(roomid, uid);
 
         token = Utils::generateToken(roomid, uid);
         bytertc::UserInfo info;
         bytertc::RTCRoomConfig config;
         info.uid = uid.c_str();
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
-        config.room_profile_type = bytertc::kRoomProfileTypeCommunication;
-        int ret = m_room->joinRoom(token.c_str(), info, config);
+        config.room_profile_type = bytertc::kRoomProfileTypeMeeting;
+        int ret = m_room->joinRoom(token.c_str(), info, true, config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("createRTCRoom error"), QMessageBox::Ok);
             box.exec();
@@ -487,8 +497,8 @@ ByteRTCRoomHandler* SoundEffectsWidget::createRoomHandler(std::string roomid, st
 {
     auto roomH = new ByteRTCRoomHandler(roomid, uid);
     connect(roomH, &ByteRTCRoomHandler::sigRoomStateChanged, this, &SoundEffectsWidget::onSigRoomStateChanged);
-    connect(roomH, &ByteRTCRoomHandler::sigUserPublishStream, this, &SoundEffectsWidget::onSigUserPublishStream);
-    connect(roomH, &ByteRTCRoomHandler::sigUserUnPublishStream, this, &SoundEffectsWidget::onSigUserUnPublishStream);
+    connect(roomH, &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &SoundEffectsWidget::onSigUserPublishStreamVideo);
+    connect(roomH, &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &SoundEffectsWidget::onSigUserPublishStreamAudio);
     connect(roomH, &ByteRTCRoomHandler::sigUserJoined, this, &SoundEffectsWidget::onSigUserJoined);
     connect(roomH, &ByteRTCRoomHandler::sigUserLeave, this, &SoundEffectsWidget::onSigUserLeave);
 
@@ -501,9 +511,9 @@ void SoundEffectsWidget::onSigUserLeave(std::string roomid, std::string uid, byt
     appendCallback(str);
 }
 
-void SoundEffectsWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int elapsed)
+void SoundEffectsWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined: roomid:" + QString::fromStdString(info.roomid)
-        + ",uid:" + QString::fromStdString(info.uid) + ",elapsed:" + QString::number(elapsed);
+        + ",uid:" + QString::fromStdString(info.uid) + ",elapsed:";
     appendCallback(str);
 }

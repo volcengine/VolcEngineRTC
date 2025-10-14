@@ -85,7 +85,7 @@ static  QString str_qss_scrollstyle="QScrollBar:vertical"          // 纵向的�
 
 static QString str_qss_label = "QLabel{color:#42464E; background-color:transparent;font-family: PingFang SC;font-size: 13px;}";
 
-static QString str_qss_label_user_info = "QLabel{color:white; background-color:transparent;font-family: PingFang SC;font-size: 13px;}";
+static QString str_qss_label_user_info = "QLabel{color:#0C0D0E; background-color:transparent;font-family: PingFang SC;font-size: 13px;}";
 
 
 static QString str_qss_label_ttile = "QLabel{color: var(--text-color-text-1, #0C0D0E);text-align: center;font-family: PingFang SC;font-size: 14px;font-style: normal;font-weight: 600;line-height: normal;}";

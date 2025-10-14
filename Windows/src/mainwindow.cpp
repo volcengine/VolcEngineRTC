@@ -1,7 +1,8 @@
 ﻿#include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include "bytertc_video.h"
+//#include "Message/AudioMessage.h"
+#include "bytertc_engine.h"
 
 
 #include <QDebug>
@@ -19,9 +20,14 @@
 #include "AudioMixingMedia.h"
 #include "RawAudioData.h"
 #include "QuickStartWidget.h"
+#include "CustomVideoRender.h"
+#include "CustomVideoCapture.h"
 #include "Resources.h"
 #include "SEIMessage.h"
 #include "AudioMessage.h"
+#include "CustomAudioCapture.h"
+#include "ScreenShare.h"
+
 
 
 enum FunctionTyp{
@@ -32,13 +38,18 @@ enum FunctionTyp{
     TYPE_RAW_AUDIO,
     TYPE_AUDIOMIXING_EFFECT,
     TYPE_AUDIOMIXING_MEDIA,
+    TYPE_AUDIO_CUSTOM_CAPTURE,
     TYPE_SOUND_EFFECTS,   
     TYPE_VIDEO_CONFIG,
     TYPE_PUSHCDN_BYSERVER,
     TYPE_BYTE_BEAUTY,    
-    TYPE_FU_BEAUTY ,
+    TYPE_FU_BEAUTY , 
     TYPE_SEI,
     TYPE_AUDIO_MESSAGE,
+    TYPE_CUSTOM_VIDEO_RENDER,
+    TYPE_CUSTOM_VIDEO_CAPTURE,
+    TYPE_CUSTOM_VIDEO_ENCODER,
+    TYPE_VIDEO_SCREEN_SHARE,
     TYPE_END
 };
 
@@ -76,7 +87,7 @@ void MainWindow::initUI()
 {
     setWindowTitle("API-Demo");
     initListViews();
-    std::string version = bytertc::getSDKVersion() == nullptr ? "" : bytertc::getSDKVersion();
+    std::string version = bytertc::IRTCEngine::getSDKVersion() == nullptr ? "" : bytertc::IRTCEngine::getSDKVersion();
     ui->label_version->setText(QString::fromStdString(version));
     ui->label_version->setStyleSheet(APIDemo::str_qss_label);
     ui->label_v->setStyleSheet(APIDemo::str_qss_label);
@@ -103,6 +114,11 @@ QString getStringByType(int type) {
     case TYPE_AUDIOMIXING_MEDIA:
         result = QStringLiteral("音乐混音");
         break;
+
+    case TYPE_AUDIO_CUSTOM_CAPTURE:
+        result = QStringLiteral("自定义音频采集");
+        break;
+
     case TYPE_SOUND_EFFECTS:
         result = QStringLiteral("美声与音效");
         break;
@@ -119,13 +135,29 @@ QString getStringByType(int type) {
     case TYPE_FU_BEAUTY:
         result = QStringLiteral("相芯美颜");
         break;
-
     case TYPE_SEI:
         result = QStringLiteral("发送SEI");
         break;
     case TYPE_AUDIO_MESSAGE:
         result = QStringLiteral("音频随帧");
         break;
+
+    case TYPE_CUSTOM_VIDEO_RENDER:
+        result = QStringLiteral("自定义视频渲染");
+        break;
+
+    case TYPE_CUSTOM_VIDEO_CAPTURE:
+        result = QStringLiteral("自定义视频采集");
+        break;
+
+//    case TYPE_CUSTOM_VIDEO_ENCODER:
+//        result = QStringLiteral("自定义视频编码");
+//        break;
+
+    case TYPE_VIDEO_SCREEN_SHARE:
+        result = QStringLiteral("屏幕共享");
+        break;
+
     default:
         break;
     }
@@ -156,6 +188,11 @@ BaseWidget* MainWindow::createFunctionWidget(int type, QWidget* parent) {
     case TYPE_AUDIOMIXING_MEDIA:
         item = new AudioMixingMedia(parent);
         break;
+
+    case TYPE_AUDIO_CUSTOM_CAPTURE:
+        item = new CustomAudioCapture(parent);
+        break;
+
     case TYPE_SOUND_EFFECTS:
         item = new SoundEffectsWidget(parent);
         break;
@@ -179,6 +216,19 @@ BaseWidget* MainWindow::createFunctionWidget(int type, QWidget* parent) {
     case TYPE_AUDIO_MESSAGE:
         item = new AudioMessage(parent);
         break;
+
+    case TYPE_CUSTOM_VIDEO_RENDER:
+        item = new CustomVideoRender(parent);
+        break;
+
+    case TYPE_CUSTOM_VIDEO_CAPTURE:
+        item = new CustomVideoCapture(parent);
+        break;
+
+    case TYPE_VIDEO_SCREEN_SHARE:
+        item = new ScreenShare(parent);
+        break;
+
     default:
         break;
     }
@@ -204,9 +254,14 @@ QListWidgetItem *MainWindow::createListItem(int type, QListWidget *&widget){
     case TYPE_AUDIOMIXING_EFFECT:
     case TYPE_AUDIOMIXING_MEDIA:
     case TYPE_SOUND_EFFECTS:
+    case TYPE_AUDIO_CUSTOM_CAPTURE:
         widget = ui->listWidget_audio;
         break;
     case TYPE_VIDEO_CONFIG:
+    case TYPE_CUSTOM_VIDEO_RENDER:
+    case TYPE_CUSTOM_VIDEO_CAPTURE:
+    //case TYPE_CUSTOM_VIDEO_ENCODER:
+    case TYPE_VIDEO_SCREEN_SHARE:
         widget = ui->listWidget_video;
         break;
     case TYPE_PUSHCDN_BYSERVER:

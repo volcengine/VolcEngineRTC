@@ -18,6 +18,7 @@ private:
 
 public:
 
+    static const char* getParameters();
     static std::string generateToken(const std::string& room_id, const std::string& uid);
     static bool checkIDValid(const QString name, const QString properity, QString& error_msg); //TODO
 

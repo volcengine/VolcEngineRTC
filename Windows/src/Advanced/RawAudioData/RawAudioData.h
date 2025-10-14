@@ -11,7 +11,7 @@ class RawAudioData;
 }
 
 namespace bytertc{
-class IRTCVideo;
+class IRTCEngine;
 class IRTCRoom;
 class IAudioDeviceManager;
 };
@@ -30,12 +30,13 @@ public:
 
     virtual void onPlaybackAudioFrame(const bytertc::IAudioFrame& audio_frame) override;
 
-    virtual void onRemoteUserAudioFrame(const bytertc::RemoteStreamKey& stream_info, const bytertc::IAudioFrame& audio_frame) override;
+    virtual void onRemoteUserAudioFrame(const char* stream_id, const bytertc::StreamInfo& stream_info, const bytertc::IAudioFrame& audio_frame) override;
 
     virtual void onMixedAudioFrame(const bytertc::IAudioFrame& audio_frame) override;
 
     virtual void onRecordScreenAudioFrame(const bytertc::IAudioFrame& audio_frame);
 
+    virtual void onCaptureMixedAudioFrame(const bytertc::IAudioFrame& audio_frame) override;
 signals:
     void showCallbackLog(QString str);
 
@@ -78,16 +79,16 @@ private slots:
         bytertc::MediaDeviceState device_state,
         bytertc::MediaDeviceError device_error);
 
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo info);
     void onSigUserLeave(std::string roomid, std::string uid, bytertc::UserOfflineReason);
     void onSigLeaveRoom(std::string roomid, std::string uid, bytertc::RtcRoomStats);
 
 
 private:
     Ui::RawAudioData *ui;
-    bytertc::IRTCVideo *m_video = nullptr;
+    bytertc::IRTCEngine *m_video = nullptr;
     bytertc::IRTCRoom *m_room = nullptr;
     std::string m_roomid;
     std::unique_ptr<ByteRTCEventHandler> m_handler;

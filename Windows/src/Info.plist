@@ -20,5 +20,15 @@
 	<string>需要打开麦克风</string>
 	<key>NSCameraUsageDescription</key>
 	<string>需要打开摄像头</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
+	<key>CFBundleIdentifier</key>
+	<string>Principal class</string>
+	<key>CFBundleExecutable</key>
+	<string>API_Example</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<string>true</string>
 </dict>
 </plist>

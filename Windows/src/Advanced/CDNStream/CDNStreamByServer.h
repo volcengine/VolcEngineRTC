@@ -16,7 +16,7 @@ class CDNStreamByServer;
 }
 
 namespace bytertc {
-    class IRTCVideo;
+    class IRTCEngine;
     class IRTCRoom;
 };
 
@@ -43,12 +43,18 @@ private:
 
 private:
     void onSigRoomStateChanged(std::string roomid, std::string uid, int state, std::string extra_info);
-    void onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType);
-    void onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason);
-    void onSigMixingEvent(bytertc::StreamMixingEvent event, std::string task_id, bytertc::StreamMixingErrorCode error, bytertc::MixedStreamType mix_type);
-    void onSigUserJoined(ByteRTCRoomHandler::UserInfo, int);
+    void onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub);
+    void onSigMixingEvent(ByteRTCEventHandler::MixedStreamTaskInfo info, bytertc::MixedStreamTaskEvent event, bytertc::MixedStreamTaskErrorCode error_code);
+    void onSigUserJoined(ByteRTCRoomHandler::UserInfo);
     void onSigUserLeave(std::string, std::string, bytertc::UserOfflineReason);
     void onSigLeaveRoom(std::string, std::string, bytertc::RtcRoomStats);
+
+    // 最终要推流的CDN URL
+    std::string get_final_url(const std::string&, const std::string&, const std::string&);
+
+    // 停止CDN推流
+    void stop_push_cdn();
 
 
 private slots:
@@ -56,14 +62,13 @@ private slots:
     void on_start_clicked();
     void on_update_clicked();
     void on_stop_clicked();
-    void on_btncolor_clicked();
 
 signals:
     void showState(QString str);
 
 private:
     Ui::CDNStreamByServer *ui;
-    bytertc::IRTCVideo* m_video = nullptr;
+    bytertc::IRTCEngine* m_video = nullptr;
     bytertc::IRTCRoom* m_room = nullptr;
     std::map<std::string, UserWidget*> m_rendered_users; //已经渲染的用户
     std::map<std::string, UserWidget*> m_unrender_users; //没有渲染的用户
@@ -71,7 +76,6 @@ private:
     std::string m_roomid;
     std::string m_localid;
     std::recursive_mutex  m_mutex;
-    std::string   m_str_color = "#000000";
     std::string m_task;
     std::unique_ptr<ByteRTCEventHandler> m_handler;
     std::unique_ptr<ByteRTCRoomHandler> m_roomHandler;

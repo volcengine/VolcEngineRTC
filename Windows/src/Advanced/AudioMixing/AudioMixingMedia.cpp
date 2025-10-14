@@ -1,7 +1,7 @@
 ﻿#include "AudioMixingMedia.h"
 #include "ui_AudioMixingMedia.h"
 
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 #include "rtc/bytertc_media_player.h"
 #include "ByteRTCEventHandler.h"
@@ -22,8 +22,8 @@
 * 参考文档：https://www.volcengine.com/docs/6348/70141
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -69,6 +69,8 @@
 
 const int id_player_audio = 0; //播放非PCM文件
 const int id_player_pcm = 1;   //播放PCM文件
+
+const QString qstr_pcm_file_path = "/Resources/audio/16k-mono-speech_fft_32s.pcm";
 
 AudioMixingMedia::AudioMixingMedia(QWidget *parent) :
     BaseWidget(parent),
@@ -119,7 +121,10 @@ void AudioMixingMedia::initRTCVideo()
     connect(m_handler.get(), &ByteRTCEventHandler::sigMediaPlayerPlayingProgress, this, &AudioMixingMedia::onSigMediaPlayerPlayingProgress);
     connect(m_handler.get(), &ByteRTCEventHandler::sigMediaPlayerStateChanged, this, &AudioMixingMedia::onSigMediaPlayerStateChanged);
 
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+    conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
 
@@ -139,13 +144,13 @@ void AudioMixingMedia::initRTCVideo()
     m_infos[id_player_audio]->setEventHandler(m_handler.get());
     m_infos[id_player_pcm]->setEventHandler(m_handler.get());
 
-    QStringList list = {"createRTCVideo", "startAudioCapture", "startVideoCapture", "getMediaPlayer", "setEventHandler"};
+    QStringList list = {"createRTCEngine", "startAudioCapture", "startVideoCapture", "getMediaPlayer", "setEventHandler"};
     appendAPI(list);
 }
 
 void AudioMixingMedia::initFile() {
     
-    QString name = QApplication::applicationDirPath() + "/Resources/audio/16k-mono-speech_fft_32s.pcm";
+    QString name = QApplication::applicationDirPath() + qstr_pcm_file_path;
     m_pcm_file = new QFile(name);
     bool ret = m_pcm_file->exists() && m_pcm_file->open(QIODevice::ReadOnly);
     if (!ret) {
@@ -232,9 +237,9 @@ void AudioMixingMedia::cleanRTCVideo()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
-        list = list + QStringList{"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+        list = list + QStringList{"stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
         appendAPI(list);
     }
 
@@ -248,8 +253,8 @@ std::unique_ptr<ByteRTCRoomHandler> AudioMixingMedia::createRoomHandler(std::str
     connect(roomH.get(), &ByteRTCRoomHandler::sigLeaveRoom, this, &AudioMixingMedia::onSigLeaveRoom);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &AudioMixingMedia::onSigUserLeave);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &AudioMixingMedia::onSigUserJoined);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &AudioMixingMedia::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &AudioMixingMedia::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &AudioMixingMedia::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &AudioMixingMedia::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
         QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("Token will expire,please updateToken"), QMessageBox::Ok);
         box.exec();
@@ -296,19 +301,20 @@ void AudioMixingMedia::onBtnJoinClicked()
         bytertc::VideoCanvas cavs;
         cavs.view = (void*)ui->widget->getWinId();
         cavs.render_mode = bytertc::kRenderModeHidden;
-        m_video->setLocalVideoCanvas(bytertc::kStreamIndexMain, cavs);
+        m_video->setLocalVideoCanvas(cavs);
         ui->widget->setUserInfo(str_room, str_uid);
 
         bytertc::UserInfo info;
         bytertc::RTCRoomConfig config;
 
         info.uid = str_uid.c_str();
-        config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
         config.is_auto_subscribe_audio = true;
         config.is_auto_subscribe_video = true;
 
         str_token = Utils::generateToken(str_room, str_uid);
-        int ret = m_room->joinRoom(str_token.c_str(), info, config);
+        int ret = m_room->joinRoom(str_token.c_str(), info, true, config);
         if (ret < 0) {
             QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error"), QMessageBox::Ok);
             box.exec();
@@ -577,7 +583,7 @@ void AudioMixingMedia::onBtnGetTimeClicked()
     int ret = player->getPosition();
     appendAPI("getPosition");
     if (ret < 0) {
-        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("setPlaybackSpeed error:") + QString::number(ret), QMessageBox::Ok);
+        QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("getPosition error:") + QString::number(ret), QMessageBox::Ok);
         box.exec();
         return;
     }
@@ -648,23 +654,27 @@ void AudioMixingMedia::onSigRoomStateChanged(std::string roomid, std::string uid
     }
 }
 
-void AudioMixingMedia::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType)
+void AudioMixingMedia::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str = "onUserPublishStream, roomid:" + QString::fromStdString(roomid)
-             + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
-
+    QString log_str = QString("onUserPublishStreamVideo")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+    appendCallback(log_str);
 }
 
-void AudioMixingMedia::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType, bytertc::StreamRemoveReason)
+void AudioMixingMedia::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString str = "onUserUnPublishStream, roomid:" + QString::fromStdString(roomid)
-             + ",uid:" + QString::fromStdString(uid);
-    appendCallback(str);
-
+    QString log_str = QString("onUserPublishStreamAudio")
+        + ",stream_id:" + QString::fromStdString(stream_id)
+        + ",roomid:" + QString::fromStdString(roomid)
+        + ",uid:" + QString::fromStdString(uid)
+        + ",pub:" + QString::number(pub);
+    appendCallback(log_str);
 }
 
-void AudioMixingMedia::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void AudioMixingMedia::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, roomid:" + QString::fromStdString(info.roomid)
              + ",uid:" + QString::fromStdString(info.uid);

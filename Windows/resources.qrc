@@ -40,4 +40,8 @@
         <file>Resources/ui/spin_down.png</file>
         <file>Resources/ui/spin_up.png</file>
     </qresource>
+    <qresource prefix="/shader">
+        <file>src/Advanced/VideoConfig/fragment_YUVNV12.fsh</file>
+        <file>src/Advanced/VideoConfig/vertexYUVNV12.vsh</file>
+    </qresource>
 </RCC>

@@ -91,6 +91,11 @@ inline std::string base64_encode(std::string const& input) {
     );
 }
 
+const char* Utils::getParameters()
+{
+    return "";
+}
+
 std::string Utils::generateToken(
         const std::string& room_id,
         const std::string& uid) {

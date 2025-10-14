@@ -11,14 +11,14 @@ namespace bytertc {
 
 class IRTCRoomEventHandlerEx;
 /**
- * @locale zh
+ * 
  * @type api
  * @brief IRTCRoomEx Class
  */
 class IRTCRoomEx : public IRTCRoom {
 public:
     /**
-     * @locale zh
+     * 
      * @type api
      * @region 房间管理
      * @brief 在当前所在房间内发布媒体流
@@ -31,12 +31,12 @@ public:
      *        + 如果你已经在用户进房时通过调用 joinRoom{@link #IRTCRoom#joinRoom} 成功选择了自动发布，则无需再调用本接口。<br>
      *        + 调用 setUserVisibility{@link #IRTCRoom#setUserVisibility} 方法将自身设置为不可见后无法调用该方法，需将自身切换至可见后方可调用该方法发布摄像头音视频流。 <br>
      *        + 如果你需要向多个房间发布流，调用 startForwardStreamToRooms{@link #IRTCRoom#startForwardStreamToRooms}。  <br>
-     *        + 调用此方法后，房间中的所有远端用户会收到 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 onFirstRemoteAudioFrame{@link #IRTCVideoEventHandler#onFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 onFirstRemoteVideoFrameDecoded{@link #IRTCVideoEventHandler#onFirstRemoteVideoFrameDecoded} 回调。<br>
+     *        + 调用此方法后，房间中的所有远端用户会收到 onUserPublishStream{@link #IRTCRoomEventHandler#onUserPublishStream} 回调通知，其中成功收到了音频流的远端用户会收到 onFirstRemoteAudioFrame{@link #IRTCEngineEventHandler#onFirstRemoteAudioFrame} 回调，订阅了视频流的远端用户会收到 onFirstRemoteVideoFrameDecoded{@link #IRTCEngineEventHandler#onFirstRemoteVideoFrameDecoded} 回调。<br>
      *        + 调用 unpublishStream{@link #IRTCRoom#unpublishStream} 取消发布。
      */
     virtual int publishStream(StreamIndex stream_index, MediaStreamType type) = 0;
     /**
-     * @locale zh
+     * 
      * @type api
      * @region 房间管理
      * @brief 停止将本地摄像头/麦克风采集的媒体流发布到当前所在房间中
@@ -51,7 +51,7 @@ public:
      */
     virtual int unpublishStream(StreamIndex stream_index, MediaStreamType type) = 0;
     /**
-     * @locale zh
+     * 
      * @type api
      * @region 房间管理
      * @brief 订阅房间内指定的媒体流，或更新对指定媒体流的订阅选项
@@ -70,7 +70,7 @@ public:
      */
     virtual int subscribeStream(const char *user_id, StreamIndex stream_index, MediaStreamType type) = 0;
     /**
-     * @locale zh
+     * 
      * @type api
      * @region 房间管理
      * @brief 取消订阅房间内指定的媒体流。  <br>
@@ -87,16 +87,36 @@ public:
      */
     virtual int unsubscribeStream(const char *user_id, StreamIndex stream_index, MediaStreamType type) = 0;
     /**
-     * @locale zh
+     * 
      * @type api
-     * @region 多房间
+     * @region 房间管理
      * @brief 通过设置 IRTCRoomEx{@link #IRTCRoomEx} 对象的事件句柄，监听此对象对应的回调事件。
      * @param room_event_handler 参见 IRTCRoomEventHandlerEx{@link #IRTCRoomEventHandlerEx}
      * @return  
      *        + 0: 调用成功。<br>
      *        + < 0 : 调用失败。查看 ReturnStatus{@link #ReturnStatus} 获得更多错误说明
      */
-    virtual int setRTCRoomEventHandlerEx(IRTCRoomEventHandlerEx* room_event_handler) = 0;
+    
+
+    /**
+     * 
+     * @type api
+     * @region 视频管理
+     * @brief 设置期望订阅的远端视频流的参数。
+     * @param userId 期望配置订阅参数的远端视频流发布用户的 ID。
+     * @param stream_index 流索引，参看 StreamIndex{@link #StreamIndex}。
+     * @param remoteVideoConfig 期望配置的远端视频流参数，参看 ByteRTCRemoteVideoConfig{@link #ByteRTCRemoteVideoConfig}。
+     * @return 方法调用结果： <br>
+     *        + 0：成功；<br>
+     *        + !0：失败。
+     * @note 
+     *        + 若使用 342 及以前版本的 SDK，调用该方法前请联系技术支持人员开启按需订阅功能。  <br>
+     *        + 该方法仅在发布端调用 setLocalSimulcastMode:{@link #IRTCEngine#setLocalSimulcastMode:} 开启了发送多路视频流的情况下生效，此时订阅端将收到来自发布端与期望设置的参数最相近的一路流；否则订阅端只会收到一路参数为分辨率 640px × 360px、帧率 15fps 的视频流。  <br>
+     *        + 若发布端开启了推送多路流功能，但订阅端不对流参数进行设置，则默认接受发送端设置的分辨率最大的一路视频流。  <br>
+     *        + 该方法需在进房后调用，若想进房前设置，你需调用 joinRoom:userInfo:roomConfig:{@link #ByteRTCRoom#joinRoom:userInfo:roomConfig:}，并对 `roomConfig` 中的 `remoteVideoConfig` 进行设置。  <br>
+     *        + SDK 会根据发布端和所有订阅端的设置灵活调整视频流的参数，具体调整策略详见[推送多路流](https:
+     */
+    
 };
 
-}  // namespace bytertc
+}  

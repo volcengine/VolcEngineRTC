@@ -17,7 +17,7 @@
 
 #include "Public/http/http.h"
 #include "QtCore/qglobal.h"
-#include "bytertc_video.h"
+#include "bytertc_engine.h"
 #include "bytertc_room.h"
 #include "Config.h"
 #include "Utils.h"
@@ -32,8 +32,8 @@
 *   第三方美颜常见问题：https://www.volcengine.com/docs/6348/1178328
 *
 * 此功能涉及的API及回调：
-*     createRTCVideo 创建引擎
-*     destroyRTCVideo 销毁引擎
+*     createRTCEngine 创建引擎
+*     destroyRTCEngine 销毁引擎
 *     startAudioCapture 开启音频采集
 *     startVideoCapture 开启视频采集
 *     createRTCRoom 创建RTC房间
@@ -649,7 +649,7 @@ void ByteBeautyWidget::on_joinRoom_clicked()
 
         bytertc::VideoCanvas canvas;
         canvas.view = (void*)ui->widget->getWinId();
-		m_video->setLocalVideoCanvas(bytertc::StreamIndex::kStreamIndexMain, canvas);
+		m_video->setLocalVideoCanvas(canvas);
 		ui->widget->setUserInfo(str_room, str_user_name);
 
 		m_room = m_video->createRTCRoom(qstr_room.toStdString().c_str());
@@ -665,11 +665,12 @@ void ByteBeautyWidget::on_joinRoom_clicked()
 		bytertc::UserInfo userinfo;
 		userinfo.uid = str_user_name.c_str();
 		bytertc::RTCRoomConfig config;
-		config.is_auto_publish = true;
+        config.is_auto_publish_audio = true;
+        config.is_auto_publish_video = true;
 		config.is_auto_subscribe_audio = true;
 		config.is_auto_subscribe_video = true;
 		
-		int ret = m_room->joinRoom(token.c_str(), userinfo, config);
+		int ret = m_room->joinRoom(token.c_str(), userinfo, true, config);
 		if (ret != 0) {
 			QMessageBox box(QMessageBox::Warning, QStringLiteral("提示"), QString("joinRoom error, please check"), QMessageBox::Ok);
 			box.exec();
@@ -732,10 +733,13 @@ void ByteBeautyWidget::resetUI() {
 void ByteBeautyWidget::initRTCVideo()
 {
     m_handler = std::make_unique<ByteRTCEventHandler>();
-    m_video = bytertc::createRTCVideo(g_appid.c_str(), m_handler.get(), nullptr);
+    bytertc::EngineConfig conf;
+    conf.app_id = g_appid.c_str();
+	conf.parameters = Utils::getParameters();
+    m_video = bytertc::IRTCEngine::createRTCEngine(conf, m_handler.get());
     m_video->startAudioCapture();
     m_video->startVideoCapture();
-	QStringList list = { "createRTCVideo","startAudioCapture","startVideoCapture", };
+	QStringList list = { "createRTCEngine","startAudioCapture","startVideoCapture", };
     appendAPI(list);
 }
 
@@ -753,9 +757,9 @@ void ByteBeautyWidget::cleanRTCVideo()
         }
         m_video->stopAudioCapture();
         m_video->stopVideoCapture();
-        bytertc::destroyRTCVideo();
+        bytertc::IRTCEngine::destroyRTCEngine();
         m_video = nullptr;
-		list = list + QStringList{"stopAudioCapture", "stopVideoCapture", "destroyRTCVideo"};
+		list = list + QStringList{"stopAudioCapture", "stopVideoCapture", "destroyRTCEngine"};
     }
     appendAPI(list);
 }
@@ -764,8 +768,8 @@ std::unique_ptr<ByteRTCRoomHandler> ByteBeautyWidget::createRoomHandler(std::str
 {
 	std::unique_ptr<ByteRTCRoomHandler> roomH = std::make_unique<ByteRTCRoomHandler>(roomid, uid);
     connect(roomH.get(), &ByteRTCRoomHandler::sigRoomStateChanged, this, &ByteBeautyWidget::onSigRoomStateChanged);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStream, this, &ByteBeautyWidget::onSigUserPublishStream);
-    connect(roomH.get(), &ByteRTCRoomHandler::sigUserUnPublishStream, this, &ByteBeautyWidget::onSigUserUnPublishStream);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamVideo, this, &ByteBeautyWidget::onSigUserPublishStreamVideo);
+    connect(roomH.get(), &ByteRTCRoomHandler::sigUserPublishStreamAudio, this, &ByteBeautyWidget::onSigUserPublishStreamAudio);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserJoined, this, &ByteBeautyWidget::onSigUserJoined);
     connect(roomH.get(), &ByteRTCRoomHandler::sigUserLeave, this, &ByteBeautyWidget::onSigUserLeave);
 	connect(roomH.get(), &ByteRTCRoomHandler::sigTokenWillExpire, this, [this]() {
@@ -799,25 +803,27 @@ void ByteBeautyWidget::onSigRoomStateChanged(std::string roomid, std::string uid
 
 }
 
-void ByteBeautyWidget::onSigUserPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type)
+void ByteBeautyWidget::onSigUserPublishStreamVideo(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserPublishStream,roomid:")
-        + QString::fromStdString(roomid)
-        + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
-    appendCallback(log_str);
+	QString log_str = QString("onUserPublishStreamVideo")
+		+ ",stream_id:" + QString::fromStdString(stream_id)
+		+ ",roomid:" + QString::fromStdString(roomid)
+		+ ",uid:" + QString::fromStdString(uid)
+		+ ",pub:" + QString::number(pub);
+	appendCallback(log_str);
 }
 
-void ByteBeautyWidget::onSigUserUnPublishStream(std::string roomid, std::string uid, bytertc::MediaStreamType type , bytertc::StreamRemoveReason)
+void ByteBeautyWidget::onSigUserPublishStreamAudio(std::string stream_id, std::string roomid, std::string uid, bool pub)
 {
-    QString log_str = QString("onUserUnPublishStream,roomid:")
-        + QString::fromStdString(roomid)
-        + ",uid:" + QString::fromStdString(uid)
-        + ",type:" + QString::number(type);
-    appendCallback(log_str);
+	QString log_str = QString("onUserPublishStreamAudio")
+		+ ",stream_id:" + QString::fromStdString(stream_id)
+		+ ",roomid:" + QString::fromStdString(roomid)
+		+ ",uid:" + QString::fromStdString(uid)
+		+ ",pub:" + QString::number(pub);
+	appendCallback(log_str);
 }
 
-void ByteBeautyWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info, int)
+void ByteBeautyWidget::onSigUserJoined(ByteRTCRoomHandler::UserInfo info)
 {
     QString str = "onUserJoined, uid:" + QString::fromStdString(info.uid) + ",roomid:" + QString::fromStdString(info.roomid);
     appendCallback(str);
