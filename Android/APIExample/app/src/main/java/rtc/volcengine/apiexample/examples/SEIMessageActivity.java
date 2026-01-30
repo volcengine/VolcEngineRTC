@@ -282,7 +282,7 @@ public class SEIMessageActivity extends BaseActivity {
             frame.width = 360;
             frame.height = 640;
             frame.rotation = VideoRotation.fromId(0);
-            frame.timestampUs = System.currentTimeMillis() * TimeUnit.MILLISECONDS.toNanos(1);
+            frame.timestampUs = System.currentTimeMillis() * TimeUnit.MILLISECONDS.toMicros(1);
             frame.planeData = new ByteBuffer[3];
             frame.planeStride = new int[3];
             frame.planeData[0] = directBufferY;
