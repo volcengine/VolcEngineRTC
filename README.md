@@ -49,3 +49,7 @@ veRTC SDK 支持 Android、iOS、macOS、Windows、Linux、Web、小程序、Ele
 - 场景方案：你可以参考[场景解决方案](https://www.volcengine.com/docs/6348/70008)了解 veRTC SDK 在复杂场景下的应用。
 - 高级功能：你可以参考[功能文档](https://www.volcengine.com/docs/6348/69814)了解如何实现具体的功能。
 - 如果你在开发中遇到了问题，欢迎参阅[常见问题](https://www.volcengine.com/docs/6348/70011)。你也可以通过 issue 提交问题，或前往[官网](https://www.volcengine.com/docs/6348)联系技术支持。
+
+## Security and privacy
+
+This project takes security seriously. For vulnerability reporting and supported versions, see [SECURITY.md](SECURITY.md).
