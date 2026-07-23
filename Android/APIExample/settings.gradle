@@ -7,6 +7,41 @@ pluginManagement {
         maven { url 'https://maven.faceunity.com/repository/maven-public/' }
     }
 }
+
+def localProperties = new Properties()
+def localPropertiesFile = new File(settingsDir, 'local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        localProperties.load(stream)
+    }
+}
+
+def getPrivateMavenCredential = { String propertyName, String environmentName ->
+    def localProperty = localProperties.getProperty(propertyName)
+    if (localProperty) {
+        return localProperty
+    }
+
+    def gradleProperty = providers.gradleProperty(propertyName)
+    if (gradleProperty.isPresent()) {
+        return gradleProperty.get()
+    }
+
+    def environmentVariable = providers.environmentVariable(environmentName)
+    if (environmentVariable.isPresent()) {
+        return environmentVariable.get()
+    }
+
+    return localProperties.getProperty(propertyName)
+}
+
+// Contact ByteDance staff to obtain the username and password for the thrall_base Maven repository.
+def thrallBaseUsername = getPrivateMavenCredential('thrallBaseUsername', 'THRALL_BASE_USERNAME')
+def thrallBasePassword = getPrivateMavenCredential('thrallBasePassword', 'THRALL_BASE_PASSWORD')
+if (!thrallBaseUsername || !thrallBasePassword) {
+    throw new GradleException('Missing thrall_base Maven credentials. Set thrallBaseUsername/thrallBasePassword in Android/APIExample/local.properties, ~/.gradle/gradle.properties, or THRALL_BASE_USERNAME/THRALL_BASE_PASSWORD environment variables.')
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -17,11 +52,11 @@ dependencyResolutionManagement {
         maven {
             url "https://artifact.bytedance.com/repository/thrall_base/"
             credentials {
-                username = 'veVOS'
-                password = 'KUC9TpKrqbryrxHz'
+                username = thrallBaseUsername
+                password = thrallBasePassword
             }
             authentication {
-                digest(BasicAuthentication)
+                basic(BasicAuthentication)
             }
         }
     }
